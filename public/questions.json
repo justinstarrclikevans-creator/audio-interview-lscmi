@@ -1,0 +1,118 @@
+[
+    {
+        "text": "What is your full name and date of birth?",
+        "subtext": ""
+    },
+    {
+        "text": "What is your license status?",
+        "subtext": ""
+    },
+    {
+        "text": "What forms of ID do you have access to?",
+        "subtext": "State ID, Birth certificate, Social Security card, prison ID"
+    },
+    {
+        "text": "How many prior dispositions (or convictions) did you have as a youth (juvenile)?",
+        "subtext": ""
+    },
+    {
+        "text": "How many prior adult convictions do you have?",
+        "subtext": ""
+    },
+    {
+        "text": "How many present (or current) offenses do you have?",
+        "subtext": "Or how many offenses were dealt with at the same time on the last conviction?"
+    },
+    {
+        "text": "Can you list the offenses?",
+        "subtext": ""
+    },
+    {
+        "text": "At what age were you first arrested or charged?",
+        "subtext": ""
+    },
+    {
+        "text": "Were you ever incarcerated as a result of a conviction?",
+        "subtext": ""
+    },
+    {
+        "text": "Were you ever punished for institutional misconduct?",
+        "subtext": "How many times?"
+    },
+    {
+        "text": "Have you ever had your probation or parole suspended (or revoked) while you were under any kind of community supervision?",
+        "subtext": ""
+    },
+    {
+        "text": "What is your current employment (job) status?",
+        "subtext": "Employed full-time, part-time, or unemployed?"
+    },
+    {
+        "text": "What is the longest period of time that you have been employed for?",
+        "subtext": ""
+    },
+    {
+        "text": "What is the last grade that you have successfully completed in academic or technical high school?",
+        "subtext": ""
+    },
+    {
+        "text": "Have you ever been suspended or expelled?",
+        "subtext": ""
+    },
+    {
+        "text": "How satisfied are you with your marital (or equivalent) situation?",
+        "subtext": "Describe."
+    },
+    {
+        "text": "Please describe your relationship with your parents.",
+        "subtext": "The people who actually raised you."
+    },
+    {
+        "text": "Does anyone in your family, including spouse and close relatives, have a criminal record?",
+        "subtext": "Who?"
+    },
+    {
+        "text": "How do you usually spend your free time?",
+        "subtext": "What kind of hobbies do you have?"
+    },
+    {
+        "text": "Do you know many people who are involved in crime?",
+        "subtext": ""
+    },
+    {
+        "text": "Have you ever had an alcohol or drug problem?",
+        "subtext": ""
+    },
+    {
+        "text": "Would you like to lead a life without crime?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you feel that the supervision you are being placed under is appropriate and fair?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you have any existing debts?",
+        "subtext": "If yes, how much and to whom?"
+    },
+    {
+        "text": "Are you afraid of anyone harming you?",
+        "subtext": ""
+    },
+    {
+        "text": "Have you ever physically hurt your partner?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you feel depressed?",
+        "subtext": ""
+    },
+    {
+        "text": "Are you presently being abused?",
+        "subtext": ""
+    },
+    {
+        "text": "Is there anything else that will hinder or hold back your progress in programs or treatment?",
+        "subtext": ""
+    }
+]

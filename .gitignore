@@ -1,0 +1,4 @@
+node_modules
+email-settings.txt
+.env
+.DS_Store

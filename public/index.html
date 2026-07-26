@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interview App</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Intro Screen -->
+        <div id="intro-screen" class="screen active">
+            <h1>Welcome to the Interview</h1>
+            <p>We are going to ask you a few questions. Please speak clearly into the microphone. Press the button below when you are ready to begin.</p>
+            <button id="start-btn" class="primary-btn pulse">Start Interview</button>
+            <div id="permission-error" class="error hidden">Microphone permission denied. Please allow microphone access to continue.</div>
+        </div>
+
+        <!-- Question Screen -->
+        <div id="question-screen" class="screen hidden">
+            <div class="recording-indicator">
+                <span class="red-dot"></span>
+                <span>Recording...</span>
+            </div>
+            
+            <div class="question-container">
+                <h2 id="question-text">Loading question...</h2>
+                <p id="question-subtext" class="subtext"></p>
+            </div>
+
+            <div class="controls">
+                <button id="prev-btn" class="secondary-btn hidden">Previous</button>
+                <button id="next-btn" class="primary-btn">Next Question</button>
+                <button id="finish-btn" class="primary-btn finish hidden">Finish & Submit</button>
+            </div>
+            
+            <div class="progress-bar-container">
+                <div id="progress-bar" class="progress-bar"></div>
+            </div>
+            <div id="progress-text" class="progress-text">Question 1 of 10</div>
+        </div>
+
+        <!-- Outro Screen -->
+        <div id="outro-screen" class="screen hidden">
+            <h1 id="outro-title">Finishing up...</h1>
+            <p id="outro-text">Please wait while we save and send your recording.</p>
+            <div id="spinner" class="spinner"></div>
+            <button id="restart-btn" class="secondary-btn hidden">Start New Interview</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
