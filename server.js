@@ -3,6 +3,11 @@ const cors = require('cors');
 const multer = require('multer');
 const nodemailer = require('nodemailer');
 const path = require('path');
+const dns = require('dns');
+
+// Force IPv4 to fix Render ENETUNREACH error with Gmail
+dns.setDefaultResultOrder('ipv4first');
+
 require('dotenv').config({ path: path.join(__dirname, '..', 'email-settings.txt') });
 
 const app = express();
