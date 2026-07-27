@@ -153,7 +153,7 @@ function resetApp() {
     spinner.classList.remove('hidden');
     outroTitle.innerText = "Finishing up...";
     outroTitle.style.color = "var(--primary-color)";
-    outroText.innerText = "Please wait while we save and send your recording.";
+    outroText.innerHTML = "You may leave the room, but <strong>please leave the computer and browser open while it uploads.</strong>";
     restartBtn.classList.add('hidden');
     permissionError.classList.add('hidden');
 }
