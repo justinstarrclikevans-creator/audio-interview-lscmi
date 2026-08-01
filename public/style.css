@@ -242,3 +242,36 @@ button {
     margin-top: 20px;
     font-weight: 600;
 }
+
+/* Form Inputs */
+.input-group {
+    margin-bottom: 25px;
+    text-align: left;
+    width: 100%;
+    max-width: 400px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.input-group input,
+.input-group select {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.2rem;
+    font-family: 'Inter', sans-serif;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+    border-color: var(--primary-color);
+}

@@ -1,18 +1,28 @@
 let questions = [];
 let currentQuestionIndex = 0;
-let mediaRecorder;
-let audioChunks = [];
+
+// MicRecorder from mic-recorder-to-mp3
+const recorder = new MicRecorder({ bitRate: 128 });
+
+let participantName = "";
+let participantLocation = "";
 
 // DOM Elements
 const introScreen = document.getElementById('intro-screen');
+const detailsScreen = document.getElementById('details-screen');
 const questionScreen = document.getElementById('question-screen');
 const outroScreen = document.getElementById('outro-screen');
 
 const startBtn = document.getElementById('start-btn');
+const beginInterviewBtn = document.getElementById('begin-interview-btn');
 const prevBtn = document.getElementById('prev-btn');
 const nextBtn = document.getElementById('next-btn');
 const finishBtn = document.getElementById('finish-btn');
 const restartBtn = document.getElementById('restart-btn');
+
+const nameInput = document.getElementById('participant-name');
+const locationSelect = document.getElementById('participant-location');
+const detailsError = document.getElementById('details-error');
 const permissionError = document.getElementById('permission-error');
 
 const questionText = document.getElementById('question-text');
@@ -34,35 +44,37 @@ async function loadQuestions() {
     }
 }
 
-async function startInterview() {
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorder = new MediaRecorder(stream);
-        
-        mediaRecorder.ondataavailable = (event) => {
-            if (event.data.size > 0) {
-                audioChunks.push(event.data);
-            }
-        };
+function showDetailsScreen() {
+    introScreen.classList.remove('active');
+    introScreen.classList.add('hidden');
+    detailsScreen.classList.remove('hidden');
+    detailsScreen.classList.add('active');
+}
 
-        mediaRecorder.onstop = async () => {
-            await submitAudio();
-        };
+function startInterview() {
+    participantName = nameInput.value.trim();
+    participantLocation = locationSelect.value;
 
-        mediaRecorder.start();
-        
-        // Hide intro, show questions
-        introScreen.classList.remove('active');
-        introScreen.classList.add('hidden');
+    if (!participantName || !participantLocation) {
+        detailsError.classList.remove('hidden');
+        return;
+    }
+    
+    detailsError.classList.add('hidden');
+
+    // Start recording
+    recorder.start().then(() => {
+        // Hide details, show questions
+        detailsScreen.classList.remove('active');
+        detailsScreen.classList.add('hidden');
         questionScreen.classList.remove('hidden');
         questionScreen.classList.add('active');
         
         showQuestion(0);
-        
-    } catch (error) {
+    }).catch((error) => {
         console.error('Microphone access denied:', error);
         permissionError.classList.remove('hidden');
-    }
+    });
 }
 
 function showQuestion(index) {
@@ -95,26 +107,32 @@ function showQuestion(index) {
     }
 }
 
-async function finishInterview() {
+function finishInterview() {
     // Show outro screen
     questionScreen.classList.remove('active');
     questionScreen.classList.add('hidden');
     outroScreen.classList.remove('hidden');
     outroScreen.classList.add('active');
     
-    // Stop recording, which triggers the onstop event to submit
-    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-        mediaRecorder.stop();
-        
-        // Stop all tracks to turn off the microphone light
-        mediaRecorder.stream.getTracks().forEach(track => track.stop());
-    }
+    // Stop recording and submit
+    recorder.stop().getMp3().then(([buffer, blob]) => {
+        submitAudio(blob);
+    }).catch((e) => {
+        console.error('Error stopping recording:', e);
+        showUploadError();
+    });
 }
 
-async function submitAudio() {
-    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+async function submitAudio(audioBlob) {
+    // Clean up name for filename
+    const safeName = participantName.replace(/[^a-z0-9]/gi, '_');
+    const safeLocation = participantLocation.replace(/[^a-z0-9]/gi, '_');
+    const filename = `${safeName}_${safeLocation}.mp3`;
+
     const formData = new FormData();
-    formData.append('audio', audioBlob, 'recording.webm');
+    formData.append('audio', audioBlob, filename);
+    formData.append('participantName', participantName);
+    formData.append('participantLocation', participantLocation);
     
     try {
         const response = await fetch('/api/upload-audio', {
@@ -133,17 +151,24 @@ async function submitAudio() {
         }
     } catch (error) {
         console.error('Upload failed:', error);
-        spinner.classList.add('hidden');
-        outroTitle.innerText = "Upload Failed";
-        outroTitle.style.color = "var(--danger-color)";
-        outroText.innerText = "There was an error sending the recording. Please contact support or try again.";
-        restartBtn.classList.remove('hidden');
+        showUploadError();
     }
 }
 
+function showUploadError() {
+    spinner.classList.add('hidden');
+    outroTitle.innerText = "Upload Failed";
+    outroTitle.style.color = "var(--danger-color)";
+    outroText.innerText = "There was an error sending the recording. Please contact support or try again.";
+    restartBtn.classList.remove('hidden');
+}
+
 function resetApp() {
-    audioChunks = [];
     currentQuestionIndex = 0;
+    nameInput.value = '';
+    locationSelect.value = '';
+    participantName = '';
+    participantLocation = '';
     
     outroScreen.classList.remove('active');
     outroScreen.classList.add('hidden');
@@ -156,10 +181,12 @@ function resetApp() {
     outroText.innerHTML = "You may leave the room, but <strong>please leave the computer and browser open while it uploads.</strong>";
     restartBtn.classList.add('hidden');
     permissionError.classList.add('hidden');
+    detailsError.classList.add('hidden');
 }
 
 // Event Listeners
-startBtn.addEventListener('click', startInterview);
+startBtn.addEventListener('click', showDetailsScreen);
+beginInterviewBtn.addEventListener('click', startInterview);
 prevBtn.addEventListener('click', () => showQuestion(currentQuestionIndex - 1));
 nextBtn.addEventListener('click', () => showQuestion(currentQuestionIndex + 1));
 finishBtn.addEventListener('click', finishInterview);

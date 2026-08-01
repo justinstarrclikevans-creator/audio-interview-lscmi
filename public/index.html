@@ -6,6 +6,7 @@
     <title>Interview App</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/mic-recorder-to-mp3@2.2.2"></script>
 </head>
 <body>
     <div class="app-container">
@@ -13,7 +14,27 @@
         <div id="intro-screen" class="screen active">
             <h1>Welcome to the Interview</h1>
             <p>We are going to ask you a few questions. <strong>Please speak each question out loud before speaking your answer out loud.</strong> If you don’t know an answer to a question, don’t worry. Just give an answer to the best of your memory and knowledge. Please speak clearly into the microphone. Press the button below when you are ready to begin.</p>
-            <button id="start-btn" class="primary-btn pulse">Start Interview</button>
+            <button id="start-btn" class="primary-btn pulse">Continue</button>
+        </div>
+
+        <!-- Details Screen -->
+        <div id="details-screen" class="screen hidden">
+            <h1>Participant Details</h1>
+            <div class="input-group">
+                <label for="participant-name">Full Name</label>
+                <input type="text" id="participant-name" placeholder="Enter your name" required>
+            </div>
+            <div class="input-group">
+                <label for="participant-location">Location</label>
+                <select id="participant-location" required>
+                    <option value="" disabled selected>Select a location...</option>
+                    <option value="Charleston">Charleston</option>
+                    <option value="Columbia">Columbia</option>
+                    <option value="Spartanburg">Spartanburg</option>
+                </select>
+            </div>
+            <div id="details-error" class="error hidden">Please enter your name and select a location.</div>
+            <button id="begin-interview-btn" class="primary-btn pulse">Start Interview</button>
             <div id="permission-error" class="error hidden">Microphone permission denied. Please allow microphone access to continue.</div>
         </div>
 
