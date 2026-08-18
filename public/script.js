@@ -2,7 +2,7 @@ let questions = [];
 let currentQuestionIndex = 0;
 
 // MicRecorder from mic-recorder-to-mp3
-const recorder = new MicRecorder({ bitRate: 128 });
+const recorder = new MicRecorder({ bitRate: 32 });
 
 let participantName = "";
 let participantLocation = "";
