@@ -8,11 +8,15 @@ let participantName = "";
 let participantLocation = "";
 
 // DOM Elements
-const introScreen = document.getElementById('intro-screen');
+const introScreen1 = document.getElementById('intro-screen-1');
+const introScreen2 = document.getElementById('intro-screen-2');
+const introScreen3 = document.getElementById('intro-screen-3');
 const detailsScreen = document.getElementById('details-screen');
 const questionScreen = document.getElementById('question-screen');
 const outroScreen = document.getElementById('outro-screen');
 
+const nextIntro1Btn = document.getElementById('next-intro-1-btn');
+const nextIntro2Btn = document.getElementById('next-intro-2-btn');
 const startBtn = document.getElementById('start-btn');
 const beginInterviewBtn = document.getElementById('begin-interview-btn');
 const prevBtn = document.getElementById('prev-btn');
@@ -45,8 +49,8 @@ async function loadQuestions() {
 }
 
 function showDetailsScreen() {
-    introScreen.classList.remove('active');
-    introScreen.classList.add('hidden');
+    introScreen3.classList.remove('active');
+    introScreen3.classList.add('hidden');
     detailsScreen.classList.remove('hidden');
     detailsScreen.classList.add('active');
 }
@@ -172,8 +176,8 @@ function resetApp() {
     
     outroScreen.classList.remove('active');
     outroScreen.classList.add('hidden');
-    introScreen.classList.remove('hidden');
-    introScreen.classList.add('active');
+    introScreen1.classList.remove('hidden');
+    introScreen1.classList.add('active');
     
     spinner.classList.remove('hidden');
     outroTitle.innerText = "Finishing up...";
@@ -185,6 +189,8 @@ function resetApp() {
 }
 
 // Event Listeners
+nextIntro1Btn.addEventListener('click', () => { introScreen1.classList.remove('active'); introScreen1.classList.add('hidden'); introScreen2.classList.remove('hidden'); introScreen2.classList.add('active'); });
+nextIntro2Btn.addEventListener('click', () => { introScreen2.classList.remove('active'); introScreen2.classList.add('hidden'); introScreen3.classList.remove('hidden'); introScreen3.classList.add('active'); });
 startBtn.addEventListener('click', showDetailsScreen);
 beginInterviewBtn.addEventListener('click', startInterview);
 prevBtn.addEventListener('click', () => showQuestion(currentQuestionIndex - 1));

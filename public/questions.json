@@ -1,105 +1,418 @@
 [
-    { "text": "What is your full name, date of birth, and current address?", "subtext": "" },
-    { "text": "What is your license status?", "subtext": "" },
-    { "text": "What forms of ID do you have access to?", "subtext": "State ID, Birth certificate, Social Security card, prison ID" },
-    { "text": "How many convictions did you have as a juvenile?", "subtext": "These include being sent to bootcamp or being put on supervision" },
-    { "text": "How many adult convictions do you have?", "subtext": "" },
-    { "text": "If you have pending charges, list all your pending charges and what state and counties the pending charges are in. If you don’t have pending charges, then list all the charges you were originally charged with and what you were convicted of.", "subtext": "" },
-    { "text": "At what age were you first arrested or charged with anything?", "subtext": "" },
-    { "text": "Were you ever incarcerated as a result of a conviction?", "subtext": "If so, please list each conviction and how long you were in prison" },
-    { "text": "Have you had any behavior reports or reports while in prison?", "subtext": "If so, how many and for what infraction" },
-    { "text": "Have you ever had your probation or parole suspended (or revoked) while you were under any kind of community supervision?", "subtext": "" },
-    { "text": "Have you ever been arrested while you were under any kind of community supervision?", "subtext": "If yes, describe what happened" },
-    { "text": "Are you currently employed?", "subtext": "" },
-    { "text": "How many months did you work a payroll job in the last 12 months?", "subtext": "" },
-    { "text": "What is the longest period of time that you have been employed for?", "subtext": "" },
-    { "text": "Have you ever been unemployed in the community during a 12-month period?", "subtext": "" },
-    { "text": "What is the last grade that you have successfully completed in academic or technical high school?", "subtext": "" },
-    { "text": "Have you completed a high school diploma or GED?", "subtext": "" },
-    { "text": "Have you ever been suspended or expelled?", "subtext": "" },
-    { "text": "Please give feedback on the work you have done. Did you like the job, how did you like your boss and coworkers.", "subtext": "Include prison industries if you worked at one" },
-    { "text": "Why did you leave any of the jobs you have had?", "subtext": "" },
-    { "text": "Are you single or in a relationship?", "subtext": "" },
-    { "text": "How do you feel about being single or in a relationship?", "subtext": "" },
-    { "text": "Please describe your relationship with your parents (the people who actually raised you).", "subtext": "" },
-    { "text": "Please describe your relationship with other relatives.", "subtext": "Grandparents, Siblings, Cousins, In-laws, Aunts, Uncles" },
-    { "text": "Does anyone in your family, including spouse and close relatives, have a criminal record? Who?", "subtext": "" },
-    { "text": "What kind of organizations or clubs have you belonged to over the past year (or in the year prior to your incarceration)?", "subtext": "" },
-    { "text": "How do you usually spend your free time?", "subtext": "" },
-    { "text": "What kind of satisfaction do you get from your free time?", "subtext": "" },
-    { "text": "Do you know many people who have been in trouble with the law?", "subtext": "" },
-    { "text": "Have many of your friends been in trouble with the law?", "subtext": "" },
-    { "text": "How seriously or often have they been involved with the law?", "subtext": "" },
-    { "text": "Do you know many people who are NOT involved in crime?", "subtext": "" },
-    { "text": "Do you have many friends who are not at all involved in criminal activities?", "subtext": "Can you give me some examples?" },
-    { "text": "Please describe your use of alcohol and drugs.", "subtext": "How often you use, your drugs of choice, what problems use led to, and the last time you used" },
-    { "text": "Have you had any medical problems due to drug or alcohol use?", "subtext": "" },
-    { "text": "Have you experienced any financial difficulties because of alcohol or drug use?", "subtext": "" },
-    { "text": "How does your family feel about your use?", "subtext": "" },
-    { "text": "How do you feel about the crimes you've committed?", "subtext": "" },
-    { "text": "Do you think the crimes were wrong?", "subtext": "" },
-    { "text": "Would you like to lead a life without crime?", "subtext": "" },
-    { "text": "Do you think your sentence was appropriate and fair?", "subtext": "Was your sentence too harsh" },
-    { "text": "Do you think that you had a choice in getting involved in crime?", "subtext": "" },
-    { "text": "Do you feel that the supervision you are being placed under is appropriate and fair?", "subtext": "" },
-    { "text": "Have you ever been assessed by a psychiatrist or psychologist?", "subtext": "If yes, do you know the diagnosis?" },
-    { "text": "Were you ever removed from your home by DSS when you were young?", "subtext": "" },
-    { "text": "Did you ever run away from home?", "subtext": "" },
-    { "text": "Did your parents have a lot of trouble raising you?", "subtext": "" },
-    { "text": "Do you have any convictions for violent offenses?", "subtext": "" },
-    { "text": "Have you had any history of escape or attempted escape from a youth or adult institutional facility?", "subtext": "" },
-    { "text": "What are the sources of Income for your household and what would you estimate is the annual income?", "subtext": "" },
-    { "text": "Does the household sometimes receive government assistance or other forms of assistance?", "subtext": "" },
-    { "text": "Are you worried about having sufficient money to pay debts?", "subtext": "" },
-    { "text": "Do you have a bank account (savings or checking)?", "subtext": "" },
-    { "text": "Do you know your credit score and, if so, what is it?", "subtext": "" },
-    { "text": "Have you had any phone calls, letters, or personal visits from creditors requesting payment of past due accounts?", "subtext": "" },
-    { "text": "Do you have any existing debts? If yes, how much and to who?", "subtext": "" },
-    { "text": "Do you have a personal budget?", "subtext": "" },
-    { "text": "Do you follow your budget, or do you have problems following your budget?", "subtext": "" },
-    { "text": "Are you worried about sufficient income to meet your basic needs?", "subtext": "housing, food?" },
-    { "text": "What is your current living situation?", "subtext": "Own place, with a partner, with family, in a traditional house" },
-    { "text": "How do you like where you live?", "subtext": "" },
-    { "text": "Is your probation/parole officer or worker fair and reasonable?", "subtext": "" },
-    { "text": "Are you afraid of anyone harming you?", "subtext": "" },
-    { "text": "Do you often act before thinking?", "subtext": "" },
-    { "text": "Do you set goals for yourself?", "subtext": "" },
-    { "text": "Do you make plans?", "subtext": "" },
-    { "text": "Do you check to see if you are following your plans?", "subtext": "" },
-    { "text": "Do you get into trouble almost by accident?", "subtext": "" },
-    { "text": "Do you have frequent arguments with friends?", "subtext": "" },
-    { "text": "Do you find yourself arguing with strangers?", "subtext": "" },
-    { "text": "Do you get into physical fights with people?", "subtext": "" },
-    { "text": "Do you often become impatient with others?", "subtext": "" },
-    { "text": "Have you ever physically hurt your partner?", "subtext": "" },
-    { "text": "Have you ever threatened someone?", "subtext": "" },
-    { "text": "Have you ever sexually assaulted anyone?", "subtext": "" },
-    { "text": "Have you ever drugged someone to have sex?", "subtext": "" },
-    { "text": "Do you frequent prostitutes?", "subtext": "" },
-    { "text": "Do you have difficulty making friends?", "subtext": "" },
-    { "text": "Please share your opinions on “Wokeness.”", "subtext": "" },
-    { "text": "Do you have any pending charges?", "subtext": "" },
-    { "text": "Have you ever been in a fight with a police officer, correctional staff, teacher, employer, or other person in authority?", "subtext": "" },
-    { "text": "Have you ever kept contacting someone against his or her will?", "subtext": "" },
-    { "text": "Have you ever used a weapon to commit a crime or threaten someone?", "subtext": "" },
-    { "text": "Have you ever intentionally set a fire to destroy property or harm someone?", "subtext": "" },
-    { "text": "Have you ever been convicted of driving under the influence?", "subtext": "" },
-    { "text": "Have you ever shoplifted?", "subtext": "" },
-    { "text": "Do you belong to a gang? Do you and your friends wear colors?", "subtext": "" },
-    { "text": "Have you ever been arrested/convicted for a hate crime?", "subtext": "" },
-    { "text": "Are you a citizen of this country?", "subtext": "" },
-    { "text": "Do you have some health problems that are a concern to you?", "subtext": "" },
-    { "text": "Do you feel depressed?", "subtext": "" },
-    { "text": "Do you think about committing suicide?", "subtext": "" },
-    { "text": "Are you unhappy with yourself?", "subtext": "" },
-    { "text": "Have you been considering going to see a psychologist or psychiatrist?", "subtext": "" },
-    { "text": "Are you taking any medications?", "subtext": "If Yes, list medications" },
-    { "text": "Have you ever been abused by a family member?", "subtext": "" },
-    { "text": "Are you presently being abused?", "subtext": "" },
-    { "text": "Do you have any health problems that we have not yet discussed?", "subtext": "" },
-    { "text": "Do you have any mental health (or psychiatric) problems that we have not yet discussed?", "subtext": "" },
-    { "text": "Do you have any personal needs that we have not yet discussed?", "subtext": "" },
-    { "text": "Do you follow any specific cultural or religious traditions involving diet, appearance, clothing, or special or sacred activities?", "subtext": "" },
-    { "text": "Do you belong to an ethnic/racial group?", "subtext": "" },
-    { "text": "Is there anything else that will hinder or hold back your progress in programs?", "subtext": "" }
+    {
+        "text": "What is your full name, date of birth, and current address?",
+        "subtext": ""
+    },
+    {
+        "text": "What is your license status?",
+        "subtext": ""
+    },
+    {
+        "text": "What forms of ID do you have access to?",
+        "subtext": "State ID, Birth certificate, Social Security card, prison ID"
+    },
+    {
+        "text": "How many convictions did you have as a juvenile?",
+        "subtext": "These include being sent to bootcamp or being put on supervision"
+    },
+    {
+        "text": "How many adult convictions do you have?",
+        "subtext": ""
+    },
+    {
+        "text": "If you have pending charges, list all your pending charges and what state and counties the pending charges are in. If you don’t have pending charges, then list all the charges you were originally charged with and what you were convicted of.",
+        "subtext": ""
+    },
+    {
+        "text": "At what age were you first arrested or charged with anything?",
+        "subtext": ""
+    },
+    {
+        "text": "Were you ever incarcerated as a result of a conviction?",
+        "subtext": "If so, please list each conviction and how long you were in prison"
+    },
+    {
+        "text": "Have you had any behavior reports or reports while in prison?",
+        "subtext": "If so, how many and for what infraction"
+    },
+    {
+        "text": "Have you ever had your probation or parole suspended (or revoked) while you were under any kind of community supervision?",
+        "subtext": ""
+    },
+    {
+        "text": "Have you ever been arrested while you were under any kind of community supervision?",
+        "subtext": "If yes, describe what happened"
+    },
+    {
+        "text": "Are you currently employed?",
+        "subtext": ""
+    },
+    {
+        "text": "How many months did you work a payroll job in the last 12 months?",
+        "subtext": ""
+    },
+    {
+        "text": "What is the longest period of time that you have been employed for?",
+        "subtext": ""
+    },
+    {
+        "text": "Have you ever been unemployed in the community during a 12-month period?",
+        "subtext": ""
+    },
+    {
+        "text": "What is the last grade that you have successfully completed in academic or technical high school?",
+        "subtext": ""
+    },
+    {
+        "text": "Have you completed a high school diploma or GED?",
+        "subtext": ""
+    },
+    {
+        "text": "Have you ever been suspended or expelled?",
+        "subtext": ""
+    },
+    {
+        "text": "Please give feedback on the work you have done. Did you like the job, how did you like your boss and coworkers.",
+        "subtext": "Include prison industries if you worked at one"
+    },
+    {
+        "text": "Why did you leave any of the jobs you have had?",
+        "subtext": ""
+    },
+    {
+        "text": "Are you single or in a relationship?",
+        "subtext": ""
+    },
+    {
+        "text": "How do you feel about being single or in a relationship?",
+        "subtext": ""
+    },
+    {
+        "text": "Please describe your relationship with your parents (the people who actually raised you).",
+        "subtext": ""
+    },
+    {
+        "text": "Please describe your relationship with other relatives.",
+        "subtext": "Grandparents, Siblings, Cousins, In-laws, Aunts, Uncles"
+    },
+    {
+        "text": "Does anyone in your family, including spouse and close relatives, have a criminal record? Who?",
+        "subtext": ""
+    },
+    {
+        "text": "What kind of organizations or clubs have you belonged to over the past year (or in the year prior to your incarceration)?",
+        "subtext": ""
+    },
+    {
+        "text": "How do you usually spend your free time?",
+        "subtext": ""
+    },
+    {
+        "text": "What kind of satisfaction do you get from your free time?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you know many people who have been in trouble with the law?",
+        "subtext": ""
+    },
+    {
+        "text": "Have many of your friends been in trouble with the law?",
+        "subtext": ""
+    },
+    {
+        "text": "How seriously or often have they been involved with the law?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you know many people who are NOT involved in crime?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you have many friends who are not at all involved in criminal activities?",
+        "subtext": "Can you give me some examples?"
+    },
+    {
+        "text": "Please describe your use of alcohol and drugs.",
+        "subtext": "How often you use, your drugs of choice, what problems use led to, and the last time you used"
+    },
+    {
+        "text": "Have you had any medical problems due to drug or alcohol use?",
+        "subtext": ""
+    },
+    {
+        "text": "Have you experienced any financial difficulties because of alcohol or drug use?",
+        "subtext": ""
+    },
+    {
+        "text": "How does your family feel about your use?",
+        "subtext": ""
+    },
+    {
+        "text": "How do you feel about the crimes you've committed?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you think the crimes were wrong?",
+        "subtext": ""
+    },
+    {
+        "text": "Would you like to lead a life without crime?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you think your sentence was appropriate and fair?",
+        "subtext": "Was your sentence too harsh"
+    },
+    {
+        "text": "Do you think that you had a choice in getting involved in crime?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you feel that the supervision you are being placed under is appropriate and fair?",
+        "subtext": ""
+    },
+    {
+        "text": "Have you ever been assessed by a psychiatrist or psychologist?",
+        "subtext": "If yes, do you know the diagnosis?"
+    },
+    {
+        "text": "Were you ever removed from your home by DSS when you were young?",
+        "subtext": ""
+    },
+    {
+        "text": "Did you ever run away from home?",
+        "subtext": ""
+    },
+    {
+        "text": "Did your parents have a lot of trouble raising you?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you have any convictions for violent offenses?",
+        "subtext": ""
+    },
+    {
+        "text": "Have you had any history of escape or attempted escape from a youth or adult institutional facility?",
+        "subtext": ""
+    },
+    {
+        "text": "What are the sources of Income for your household and what would you estimate is the annual income?",
+        "subtext": ""
+    },
+    {
+        "text": "Does the household sometimes receive government assistance or other forms of assistance?",
+        "subtext": ""
+    },
+    {
+        "text": "Are you worried about having sufficient money to pay debts?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you have a bank account (savings or checking)?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you know your credit score and, if so, what is it?",
+        "subtext": ""
+    },
+    {
+        "text": "Have you had any phone calls, letters, or personal visits from creditors requesting payment of past due accounts?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you have any existing debts? If yes, how much and to who?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you have a personal budget?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you follow your budget, or do you have problems following your budget?",
+        "subtext": ""
+    },
+    {
+        "text": "Are you worried about sufficient income to meet your basic needs?",
+        "subtext": "housing, food?"
+    },
+    {
+        "text": "What is your current living situation?",
+        "subtext": "Own place, with a partner, with family, in a traditional house"
+    },
+    {
+        "text": "How do you like where you live?",
+        "subtext": ""
+    },
+    {
+        "text": "Is your probation/parole officer or worker fair and reasonable?",
+        "subtext": ""
+    },
+    {
+        "text": "Are you afraid of anyone harming you?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you often act before thinking?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you set goals for yourself?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you make plans?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you check to see if you are following your plans?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you get into trouble almost by accident?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you have frequent arguments with friends?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you find yourself arguing with strangers?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you get into physical fights with people?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you often become impatient with others?",
+        "subtext": ""
+    },
+    {
+        "text": "Have you ever physically hurt your partner?",
+        "subtext": ""
+    },
+    {
+        "text": "Have you ever threatened someone?",
+        "subtext": ""
+    },
+    {
+        "text": "Have you ever sexually assaulted anyone?",
+        "subtext": ""
+    },
+    {
+        "text": "Have you ever drugged someone to have sex?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you frequent prostitutes?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you have difficulty making friends?",
+        "subtext": ""
+    },
+    {
+        "text": "Please share your opinions on “Wokeness.”",
+        "subtext": ""
+    },
+    {
+        "text": "Do you have any pending charges?",
+        "subtext": ""
+    },
+    {
+        "text": "Have you ever been in a fight with a police officer, correctional staff, teacher, employer, or other person in authority?",
+        "subtext": ""
+    },
+    {
+        "text": "Have you ever kept contacting someone against his or her will?",
+        "subtext": ""
+    },
+    {
+        "text": "Have you ever used a weapon to commit a crime or threaten someone?",
+        "subtext": ""
+    },
+    {
+        "text": "Have you ever intentionally set a fire to destroy property or harm someone?",
+        "subtext": ""
+    },
+    {
+        "text": "Have you ever been convicted of driving under the influence?",
+        "subtext": ""
+    },
+    {
+        "text": "Have you ever shoplifted?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you belong to a gang? Do you and your friends wear colors?",
+        "subtext": ""
+    },
+    {
+        "text": "Have you ever been arrested/convicted for a hate crime?",
+        "subtext": ""
+    },
+    {
+        "text": "Are you a citizen of this country?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you have some health problems that are a concern to you?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you feel depressed?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you think about committing suicide?",
+        "subtext": ""
+    },
+    {
+        "text": "Are you unhappy with yourself?",
+        "subtext": ""
+    },
+    {
+        "text": "Have you been considering going to see a psychologist or psychiatrist?",
+        "subtext": ""
+    },
+    {
+        "text": "Are you taking any medications?",
+        "subtext": "If Yes, list medications"
+    },
+    {
+        "text": "Have you ever been abused by a family member?",
+        "subtext": ""
+    },
+    {
+        "text": "Are you presently being abused?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you have any health problems that we have not yet discussed?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you have any mental health (or psychiatric) problems that we have not yet discussed?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you have any personal needs that we have not yet discussed?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you follow any specific cultural or religious traditions involving diet, appearance, clothing, or special or sacred activities?",
+        "subtext": ""
+    },
+    {
+        "text": "Do you belong to an ethnic/racial group?",
+        "subtext": ""
+    },
+    {
+        "text": "Is there anything else that will hinder or hold back your progress in programs?",
+        "subtext": ""
+    },
+    {
+        "text": "Please give us an overview of everything. Please start at the beginning of your life and tell us every time you got into trouble with school or the law. Please also list any infractions in prison. Make sure to include the state and county every arrest was in and if you were convicted or not. Also include any federal convictions. Please also include every job you can remember, how long you worked there, and why you left. This full timeline allows us to convince employers to work with you by being up front with them about your history. We understand you may not remember everything but include everything you can remember so we don't have any surprises later.",
+        "subtext": ""
+    }
 ]

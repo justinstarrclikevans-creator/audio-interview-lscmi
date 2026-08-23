@@ -10,10 +10,37 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Intro Screen -->
-        <div id="intro-screen" class="screen active">
+        <!-- Intro Screen 1 -->
+        <div id="intro-screen-1" class="screen active">
             <h1>Welcome to the Interview</h1>
-            <p>We are going to ask you a few questions. <strong>Please speak each question out loud before speaking your answer out loud.</strong> If you don’t know an answer to a question, don’t worry. Just give an answer to the best of your memory and knowledge. Please speak clearly into the microphone. Press the button below when you are ready to begin.</p>
+            <p>We are going to ask you a few questions today.</p>
+            <button id="next-intro-1-btn" class="primary-btn pulse">Next</button>
+        </div>
+
+        <!-- Intro Screen 2 -->
+        <div id="intro-screen-2" class="screen hidden">
+            <h1>How to Answer</h1>
+            <p><strong>Please speak each question out loud before speaking your answer out loud.</strong></p>
+            <p>If you don’t know an answer to a question, don’t worry. Just give an answer to the best of your memory and knowledge.</p>
+            <button id="next-intro-2-btn" class="primary-btn pulse">Next</button>
+        </div>
+
+        <!-- Intro Screen 3 (Mic Permission) -->
+        <div id="intro-screen-3" class="screen hidden">
+            <h1>Microphone Access</h1>
+            <p>Please speak clearly into the microphone.</p>
+            <p>When you click continue, your browser may ask for permission to use your microphone. <strong>Please click "Allow"</strong> as shown in the picture below.</p>
+            <div style="background-color: #fff; padding: 10px; border: 2px solid #ddd; border-radius: 8px; margin-bottom: 20px; display: inline-block;">
+                <svg width="200" height="80" viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="200" height="80" fill="#f8f9fa" rx="4"/>
+                    <text x="10" y="25" font-family="Arial" font-size="12" fill="#333">Use your microphone</text>
+                    <rect x="90" y="45" width="50" height="25" fill="#fff" stroke="#ccc" rx="4"/>
+                    <text x="100" y="62" font-family="Arial" font-size="12" fill="#333">Block</text>
+                    <rect x="145" y="45" width="50" height="25" fill="#1a73e8" rx="4"/>
+                    <text x="156" y="62" font-family="Arial" font-size="12" fill="#fff">Allow</text>
+                </svg>
+            </div>
+            <br>
             <button id="start-btn" class="primary-btn pulse">Continue</button>
         </div>
 
