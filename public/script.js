@@ -67,7 +67,7 @@ function startInterview() {
     detailsError.classList.add('hidden');
 
     // Initialize recorder during a user interaction (click) so the browser doesn't block audio
-    recorder = new MicRecorder({ bitRate: 32 });
+    recorder = new MicRecorder({ bitRate: 128 });
 
     // Start recording
     recorder.start().then(() => {
