@@ -2,7 +2,7 @@ let questions = [];
 let currentQuestionIndex = 0;
 
 // MicRecorder from mic-recorder-to-mp3
-const recorder = new MicRecorder({ bitRate: 32 });
+let recorder;
 
 let participantName = "";
 let participantLocation = "";
@@ -65,6 +65,9 @@ function startInterview() {
     }
     
     detailsError.classList.add('hidden');
+
+    // Initialize recorder during a user interaction (click) so the browser doesn't block audio
+    recorder = new MicRecorder({ bitRate: 32 });
 
     // Start recording
     recorder.start().then(() => {
