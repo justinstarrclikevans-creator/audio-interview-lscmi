@@ -3,9 +3,6 @@ let currentQuestionIndex = 0;
 
 let mediaRecorder;
 let audioChunks = [];
-    isRecording = true;
-    finalTranscript = "";
-    if (recognition) { try { recognition.start(); } catch(e) {} }
 
 let participantName = "";
 let participantLocation = "";
@@ -75,7 +72,6 @@ function initSpeechRecognition() {
 }
 initSpeechRecognition();
 
-
 // Initialize
 async function loadQuestions() {
     try {
@@ -105,6 +101,12 @@ function startInterview() {
     
     detailsError.classList.add('hidden');
     audioChunks = [];
+    
+    isRecording = true;
+    finalTranscript = "";
+    if (recognition) { 
+        try { recognition.start(); } catch(e) {} 
+    }
 
     navigator.mediaDevices.getUserMedia({ audio: true })
         .then(stream => {
@@ -177,7 +179,9 @@ function finishInterview() {
     
     // Stop recording and submit
     isRecording = false;
-    if (recognition) { try { recognition.stop(); } catch(e) {} }
+    if (recognition) { 
+        try { recognition.stop(); } catch(e) {} 
+    }
     
     if (mediaRecorder && mediaRecorder.state !== 'inactive') {
         mediaRecorder.stop();
