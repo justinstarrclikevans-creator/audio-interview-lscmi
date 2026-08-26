@@ -3,6 +3,9 @@ let currentQuestionIndex = 0;
 
 let mediaRecorder;
 let audioChunks = [];
+    isRecording = true;
+    finalTranscript = "";
+    if (recognition) { try { recognition.start(); } catch(e) {} }
 
 let participantName = "";
 let participantLocation = "";
@@ -36,6 +39,42 @@ const progressText = document.getElementById('progress-text');
 const outroTitle = document.getElementById('outro-title');
 const outroText = document.getElementById('outro-text');
 const spinner = document.getElementById('spinner');
+
+let recognition;
+let isRecording = false;
+let finalTranscript = "";
+
+function initSpeechRecognition() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        console.warn("Speech recognition not supported in this browser.");
+        return;
+    }
+    
+    recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = false;
+    
+    recognition.onresult = (event) => {
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+            if (event.results[i].isFinal) {
+                finalTranscript += event.results[i][0].transcript + "\n";
+            }
+        }
+    };
+    
+    recognition.onend = () => {
+        if (isRecording) {
+            try { recognition.start(); } catch(e) {}
+        }
+    };
+    
+    recognition.onerror = (event) => {
+        console.error("Speech recognition error:", event.error);
+    };
+}
+initSpeechRecognition();
+
 
 // Initialize
 async function loadQuestions() {
@@ -137,6 +176,9 @@ function finishInterview() {
     outroScreen.classList.add('active');
     
     // Stop recording and submit
+    isRecording = false;
+    if (recognition) { try { recognition.stop(); } catch(e) {} }
+    
     if (mediaRecorder && mediaRecorder.state !== 'inactive') {
         mediaRecorder.stop();
     } else {
@@ -154,6 +196,7 @@ async function submitAudio(audioBlob) {
     formData.append('audio', audioBlob, filename);
     formData.append('participantName', participantName);
     formData.append('participantLocation', participantLocation);
+    formData.append('transcript', finalTranscript);
     
     try {
         const response = await fetch('/api/upload-audio', {
