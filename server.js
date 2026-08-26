@@ -27,7 +27,7 @@ app.post('/api/upload-audio', upload.single('audio'), async (req, res) => {
         }
 
         const audioBuffer = req.file.buffer;
-        const originalName = req.file.originalname || 'interview_recording.mp3';
+        const originalName = req.file.originalname || 'interview_recording.webm';
         const name = req.body.participantName || 'Unknown';
         const location = req.body.participantLocation || 'Unknown';
         
@@ -35,7 +35,7 @@ app.post('/api/upload-audio', upload.single('audio'), async (req, res) => {
             from: 'Interview App <onboarding@resend.dev>', 
             to: process.env.EMAIL_USER, 
             subject: `New Interview Recording: ${name} (${location})`,
-            text: `Please find the attached MP3 audio recording from the interview app.\n\nParticipant: ${name}\nLocation: ${location}`,
+            text: `Please find the attached WebM audio recording from the interview app.\n\nParticipant: ${name}\nLocation: ${location}`,
             attachments: [
                 {
                     filename: originalName,

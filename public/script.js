@@ -1,8 +1,8 @@
 let questions = [];
 let currentQuestionIndex = 0;
 
-// MicRecorder from mic-recorder-to-mp3
-let recorder;
+let mediaRecorder;
+let audioChunks = [];
 
 let participantName = "";
 let participantLocation = "";
@@ -65,23 +65,38 @@ function startInterview() {
     }
     
     detailsError.classList.add('hidden');
+    audioChunks = [];
 
-    // Initialize recorder during a user interaction (click) so the browser doesn't block audio
-    recorder = new MicRecorder({ bitRate: 128 });
+    navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(stream => {
+            mediaRecorder = new MediaRecorder(stream);
+            
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    audioChunks.push(event.data);
+                }
+            };
 
-    // Start recording
-    recorder.start().then(() => {
-        // Hide details, show questions
-        detailsScreen.classList.remove('active');
-        detailsScreen.classList.add('hidden');
-        questionScreen.classList.remove('hidden');
-        questionScreen.classList.add('active');
-        
-        showQuestion(0);
-    }).catch((error) => {
-        console.error('Microphone access denied:', error);
-        permissionError.classList.remove('hidden');
-    });
+            mediaRecorder.onstop = () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                submitAudio(audioBlob);
+                stream.getTracks().forEach(track => track.stop());
+            };
+
+            mediaRecorder.start();
+
+            // Hide details, show questions
+            detailsScreen.classList.remove('active');
+            detailsScreen.classList.add('hidden');
+            questionScreen.classList.remove('hidden');
+            questionScreen.classList.add('active');
+            
+            showQuestion(0);
+        })
+        .catch(error => {
+            console.error('Microphone access denied:', error);
+            permissionError.classList.remove('hidden');
+        });
 }
 
 function showQuestion(index) {
@@ -122,19 +137,18 @@ function finishInterview() {
     outroScreen.classList.add('active');
     
     // Stop recording and submit
-    recorder.stop().getMp3().then(([buffer, blob]) => {
-        submitAudio(blob);
-    }).catch((e) => {
-        console.error('Error stopping recording:', e);
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+    } else {
         showUploadError();
-    });
+    }
 }
 
 async function submitAudio(audioBlob) {
     // Clean up name for filename
     const safeName = participantName.replace(/[^a-z0-9]/gi, '_');
     const safeLocation = participantLocation.replace(/[^a-z0-9]/gi, '_');
-    const filename = `${safeName}_${safeLocation}.mp3`;
+    const filename = `${safeName}_${safeLocation}.webm`;
 
     const formData = new FormData();
     formData.append('audio', audioBlob, filename);
