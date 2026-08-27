@@ -153,6 +153,11 @@ function showQuestion(index) {
     questionText.innerText = q.text;
     questionSubtext.innerText = q.subtext || "";
     
+    // Inject the question into the transcript automatically
+    if (isRecording) {
+        finalTranscript += `\n\n--- Question ${index + 1}: ${q.text} ---\nParticipant Answer: `;
+    }
+    
     // Update progress
     const progressPercent = ((index + 1) / questions.length) * 100;
     progressBar.style.width = `${progressPercent}%`;
