@@ -3,6 +3,7 @@ let currentQuestionIndex = 0;
 
 let mediaRecorder;
 let audioChunks = [];
+let currentAudioBlob = null;
 
 let participantName = "";
 let participantLocation = "";
@@ -122,6 +123,7 @@ function startInterview() {
 
             mediaRecorder.onstop = () => {
                 const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                currentAudioBlob = audioBlob;
                 submitAudio(audioBlob);
                 stream.getTracks().forEach(track => track.stop());
             };
@@ -229,7 +231,40 @@ function showUploadError() {
     spinner.classList.add('hidden');
     outroTitle.innerText = "Upload Failed";
     outroTitle.style.color = "var(--danger-color)";
-    outroText.innerText = "There was an error sending the recording. Please contact support or try again.";
+    outroText.innerText = "There was an error sending the recording. This is usually caused by a momentary Wi-Fi drop. Please ensure you are connected to the internet and click Retry Upload.";
+    
+    let retryBtn = document.getElementById('retry-btn');
+    if (!retryBtn) {
+        retryBtn = document.createElement('button');
+        retryBtn.id = 'retry-btn';
+        retryBtn.className = 'primary-btn pulse';
+        retryBtn.innerText = 'Retry Upload';
+        retryBtn.style.marginTop = '15px';
+        retryBtn.style.marginRight = '10px';
+        retryBtn.style.backgroundColor = '#f39c12'; // Orange warning color
+        
+        retryBtn.addEventListener('click', () => {
+            spinner.classList.remove('hidden');
+            outroTitle.innerText = "Retrying Upload...";
+            outroTitle.style.color = "var(--primary-color)";
+            outroText.innerText = "Please wait while we try to send the recording again.";
+            retryBtn.classList.add('hidden');
+            restartBtn.classList.add('hidden');
+    const retryBtn = document.getElementById('retry-btn');
+    if (retryBtn) retryBtn.classList.add('hidden');
+            if (currentAudioBlob) {
+                submitAudio(currentAudioBlob);
+            } else {
+                showUploadError();
+            }
+        });
+        
+        // Insert it before the restart button
+        restartBtn.parentNode.insertBefore(retryBtn, restartBtn);
+    } else {
+        retryBtn.classList.remove('hidden');
+    }
+    
     restartBtn.classList.remove('hidden');
 }
 
