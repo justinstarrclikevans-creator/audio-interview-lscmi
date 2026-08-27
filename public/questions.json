@@ -412,23 +412,15 @@
         "subtext": ""
     },
     {
-        "text": "Date of Birth",
-        "subtext": ""
-    },
-    {
-        "text": "Social Security Number",
-        "subtext": ""
-    },
-    {
-        "text": "Race",
-        "subtext": ""
-    },
-    {
-        "text": "Address at intake (where are you currently sleeping)",
+        "text": "What is your social security number?",
         "subtext": ""
     },
     {
         "text": "Emergency needs are things that must be addressed immediately for you to succeed. Let us know if any of the following applies. Do you have any emergency needs?",
+        "subtext": ""
+    },
+    {
+        "text": "For the following questions about supervision, just say 'Does not apply' if they don't apply.",
         "subtext": ""
     },
     {
@@ -492,22 +484,6 @@
         "subtext": ""
     },
     {
-        "text": "How old were you when you were arrested for the first time?",
-        "subtext": ""
-    },
-    {
-        "text": "How many times have you been arrested?",
-        "subtext": ""
-    },
-    {
-        "text": "How many times have you been convicted?",
-        "subtext": ""
-    },
-    {
-        "text": "How many times have you been incarcerated (including this most recent time)?",
-        "subtext": ""
-    },
-    {
         "text": "Date of your most recent release from incarceration?",
         "subtext": ""
     },
@@ -561,7 +537,7 @@
     },
     {
         "text": "Have you been in contact with child support enforcement to make sure you are current?",
-        "subtext": ""
+        "subtext": "Say 'Does not apply' if it does not apply."
     },
     {
         "text": "Who do you spend most of your time with?",
@@ -617,7 +593,7 @@
     },
     {
         "text": "Are you currently working on your GED?",
-        "subtext": ""
+        "subtext": "Say 'Does not apply' if it does not apply."
     },
     {
         "text": "Do you have a drivers license in good standing?",
@@ -653,10 +629,6 @@
     },
     {
         "text": "Is there anything else you'd like us to know?",
-        "subtext": ""
-    },
-    {
-        "text": "Please give us an overview of everything. Please start at the beginning of your life and tell us every time you got into trouble with school or the law. Please also list any infractions in prison. Make sure to include the state and county every arrest was in and if you were convicted or not. Also include any federal convictions. Please also include every job you can remember, how long you worked there, and why you left. This full timeline allows us to convince employers to work with you by being up front with them about your history. We understand you may not remember everything but include everything you can remember so we don't have any surprises later.",
         "subtext": ""
     }
 ]
