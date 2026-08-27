@@ -110,7 +110,9 @@ function startInterview() {
 
     navigator.mediaDevices.getUserMedia({ audio: true })
         .then(stream => {
-            mediaRecorder = new MediaRecorder(stream);
+            // Highly compress the audio (16kbps) to ensure small file size and prevent upload timeouts
+            const options = { audioBitsPerSecond: 16000 };
+            mediaRecorder = new MediaRecorder(stream, options);
             
             mediaRecorder.ondataavailable = (event) => {
                 if (event.data.size > 0) {
