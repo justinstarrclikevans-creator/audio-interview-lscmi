@@ -187,8 +187,57 @@ async function loadFsDashboard() {
 
         renderGateCriteria(data.weeks, currentGateWeek);
         loadFsPoints();
+        loadBriefcaseChecklist();
     } catch (err) {
         console.error('Failed to load FS dashboard:', err);
+    }
+}
+
+async function loadBriefcaseChecklist() {
+    const token = localStorage.getItem('fs_token');
+    const container = document.getElementById('briefcase-domains-container');
+    if (!container) return;
+
+    try {
+        const res = await fetch('/api/participant/briefcase', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        
+        const domainLabels = {
+            core_stability: '🛡️ Core Stability & Documents',
+            employment_readiness: '👔 Employment Readiness',
+            credentials: '🏅 Industry Credentials & Training',
+            health_wellness: '🏥 Health & Wellness',
+            financial: '💵 Financial & Life Management',
+            career_planning: '🚀 Career Planning & Goals'
+        };
+
+        let html = '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px;">';
+
+        for (const [domainKey, label] of Object.entries(domainLabels)) {
+            const items = data.items[domainKey] || [];
+            html += `
+                <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 16px;">
+                    <h4 style="font-size: 15px; font-weight: 700; color: var(--primary); margin-bottom: 10px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px;">${label}</h4>
+                    <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px;">
+                        ${items.map(i => `
+                            <li style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; background: white; padding: 8px 12px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                                <span>${i.title}</span>
+                                <span class="badge ${i.status === 'green' ? 'badge-green' : (i.status === 'red' ? 'badge-red' : 'badge-pending')}" style="font-size: 10px; padding: 3px 8px;">
+                                    ${i.status === 'green' ? 'Complete' : (i.status === 'red' ? 'Barrier' : 'Pending')}
+                                </span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            `;
+        }
+
+        html += '</div>';
+        container.innerHTML = html;
+    } catch (e) {
+        console.error('Failed to load briefcase checklist:', e);
     }
 }
 
@@ -642,14 +691,134 @@ async function loadCaseload() {
                     <span style="color: var(--danger); font-weight: bold;">${p.red_criteria || 0} Red</span>
                 </td>
                 <td>
-                    <button class="btn btn-outline" style="padding: 4px 8px; font-size: 11px;" onclick="advanceParticipantGate(${p.id}, ${(p.current_gate || 1) + 1})">
-                        Advance Gate &rarr;
-                    </button>
+                    <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                        <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px;" onclick="openCaseReviewModal(${p.id}, '${p.name.replace(/'/g, "\\'")}')">
+                            📋 Case Plan
+                        </button>
+                        <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: var(--danger); border-color: #fca5a5;" onclick="openStabilityActionModal(${p.id}, '${p.name.replace(/'/g, "\\'")}')">
+                            🚦 Stability
+                        </button>
+                        <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px;" onclick="advanceParticipantGate(${p.id}, ${(p.current_gate || 1) + 1})">
+                            Gate &rarr;
+                        </button>
+                    </div>
                 </td>
             </tr>
         `).join('');
     } catch (e) {
         console.error('Failed to load caseload:', e);
+    }
+}
+
+function openCaseReviewModal(userId, name) {
+    document.getElementById('cr-user-id').value = userId;
+    document.getElementById('case-review-modal-title').innerText = `Weekly Case Planning: ${name}`;
+    openModal('modal-case-review');
+}
+
+function toggleStabilityFields(val) {
+    const box = document.getElementById('cr-stability-details-box');
+    if (val === "1") box.style.display = 'block';
+    else box.style.display = 'none';
+}
+
+async function handleCaseReviewSubmit(e) {
+    e.preventDefault();
+    const token = localStorage.getItem('fs_token');
+    const payload = {
+        userId: parseInt(document.getElementById('cr-user-id').value),
+        weekNumber: 1,
+        hasStabilityIssues: document.getElementById('cr-has-stability').value === '1',
+        stabilityIssuesDetails: document.getElementById('cr-stability-details').value,
+        canMeetRapidly: document.getElementById('cr-meet-rapidly').value === '1',
+        needsMoreResources: document.getElementById('cr-more-resources').value === '1',
+        attendanceSatisfactory: document.getElementById('cr-attendance').value === '1',
+        abilityLearnQ2: document.getElementById('cr-q2-learning').value === '1',
+        cbtHomeworkCompleted: document.getElementById('cr-cbt-hw').checked,
+        cbtDiscussionActive: document.getElementById('cr-cbt-disc').checked,
+        cbtRoleplayEffort: document.getElementById('cr-cbt-role').checked,
+        transportationViable: document.getElementById('cr-trans-viable').value === '1',
+        noDisqualifyingConvictions: document.getElementById('cr-no-convictions').value === '1',
+        scheduleSupervisionAligned: document.getElementById('cr-supervision-aligned').value === '1',
+        caseDecision: document.getElementById('cr-decision').value,
+        decisionRationale: document.getElementById('cr-rationale').value
+    };
+
+    try {
+        const res = await fetch('/api/admin/weekly-case-review', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+
+        alert('Weekly Case Plan Review recorded.');
+        closeModal('modal-case-review');
+        loadCaseload();
+    } catch (err) {
+        alert('Error: ' + err.message);
+    }
+}
+
+async function openStabilityActionModal(userId, name) {
+    const token = localStorage.getItem('fs_token');
+    document.getElementById('stab-user-id').value = userId;
+    document.getElementById('stab-user-name').innerText = `Participant: ${name}`;
+
+    try {
+        const res = await fetch('/api/admin/stability-triggers', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const triggers = await res.json();
+        const container = document.getElementById('stability-triggers-checkboxes');
+
+        container.innerHTML = triggers.map(t => `
+            <label style="display: flex; align-items: baseline; gap: 6px; cursor: pointer;">
+                <input type="checkbox" name="stability-trigger-cb" value="${t.key}">
+                <span><strong>${t.title}</strong> — <span style="color: var(--slate); font-size: 11px;">${t.description}</span></span>
+            </label>
+        `).join('');
+
+        openModal('modal-stability-action');
+    } catch (e) {
+        alert('Failed to load stability triggers: ' + e.message);
+    }
+}
+
+function toggleOverrideFields(val) {
+    const box = document.getElementById('override-fields-box');
+    if (val === 'director_override') box.classList.remove('hidden');
+    else box.classList.add('hidden');
+}
+
+async function handleStabilityActionSubmit(e) {
+    e.preventDefault();
+    const token = localStorage.getItem('fs_token');
+    const selectedTriggers = Array.from(document.querySelectorAll('input[name="stability-trigger-cb"]:checked')).map(cb => cb.value);
+
+    const payload = {
+        userId: parseInt(document.getElementById('stab-user-id').value),
+        action: document.getElementById('stab-action-select').value,
+        triggers: selectedTriggers,
+        overrideBy: document.getElementById('stab-override-by').value,
+        overrideNotes: document.getElementById('stab-override-notes').value
+    };
+
+    try {
+        const res = await fetch('/api/admin/stability-action', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+
+        alert(data.message);
+        closeModal('modal-stability-action');
+        loadCaseload();
+    } catch (err) {
+        alert('Action failed: ' + err.message);
     }
 }
 

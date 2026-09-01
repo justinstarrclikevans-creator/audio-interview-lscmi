@@ -7,7 +7,7 @@ const fs = require('fs');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const { db, DEFAULT_GATE_CRITERIA, initUserGateCriteria } = require('./db');
+const { db, BRIEFCASE_DOMAINS, DEFAULT_GATE_CRITERIA, STABILITY_STEP_DOWN_TRIGGERS, initParticipantBriefcase } = require('./db');
 const { runPhase1, runPhase2 } = require('./llm_pipeline');
 const { cbtModules, T90_TRADE_TRACKS, REENTRY_EMPLOYERS } = require('./training_data');
 const { generateMondayNeedsReport, generateFridayMilestoneReport, importApricotCsv } = require('./reporting_engine');
@@ -106,7 +106,7 @@ app.post('/api/auth/register', async (req, res) => {
                 INSERT INTO participant_profiles (user_id, current_gate, overall_status)
                 VALUES (?, 1, 'active')
             `).run(userId);
-            initUserGateCriteria(userId);
+            initParticipantBriefcase(userId);
         }
 
         const token = jwt.sign({ id: userId, email: email.toLowerCase().trim(), name: name.trim(), role: userRole, track: userTrack }, JWT_SECRET, { expiresIn: '30d' });
@@ -268,6 +268,37 @@ app.post('/api/participant/feedback', authenticateToken, (req, res) => {
     res.json({ message: 'Thank you! Class feedback submitted.' });
 });
 
+// Get Participant Briefcase Checklist Items
+app.get('/api/participant/briefcase', authenticateToken, (req, res) => {
+    const userId = req.user.id;
+    // Ensure initialized
+    initParticipantBriefcase(userId);
+
+    const items = db.prepare('SELECT * FROM briefcase_items WHERE user_id = ? ORDER BY id').all(userId);
+    const grouped = {};
+    for (const d of Object.keys(BRIEFCASE_DOMAINS)) {
+        grouped[d] = items.filter(i => i.domain === d);
+    }
+    res.json({ domains: BRIEFCASE_DOMAINS, items: grouped });
+});
+
+// Update Participant Briefcase Item Status
+app.post('/api/participant/briefcase-item', authenticateToken, (req, res) => {
+    const userId = req.user.id;
+    const { itemKey, status, notes } = req.body;
+    if (!itemKey || !status) return res.status(400).json({ error: 'itemKey and status required.' });
+
+    db.prepare(`
+        UPDATE briefcase_items SET
+            status = ?,
+            notes = COALESCE(?, notes),
+            updated_at = CURRENT_TIMESTAMP
+        WHERE user_id = ? AND item_key = ?
+    `).run(status, notes, userId, itemKey);
+
+    res.json({ message: 'Briefcase item updated.' });
+});
+
 // -------------------------------------------------------------
 // RE-ENTRY NAVIGATION & TRAINING ROUTES
 // -------------------------------------------------------------
@@ -384,6 +415,92 @@ app.post('/api/admin/apricot/import-points', authenticateToken, requireRole('pro
 
     const result = importApricotCsv(csvData);
     res.json(result);
+});
+
+// Get All Official Stability Step-Down Triggers
+app.get('/api/admin/stability-triggers', authenticateToken, requireRole('program_manager', 'admin'), (req, res) => {
+    res.json(STABILITY_STEP_DOWN_TRIGGERS);
+});
+
+// Step-Down to Re-entry Nav OR Apply Director Override
+app.post('/api/admin/stability-action', authenticateToken, requireRole('program_manager', 'admin'), (req, res) => {
+    const { userId, action, triggers, overrideBy, overrideNotes } = req.body;
+    if (!userId || !action) return res.status(400).json({ error: 'userId and action required.' });
+
+    if (action === 'step_down') {
+        db.prepare(`
+            UPDATE participant_profiles SET
+                overall_status = 'reentry_nav_stabilizing',
+                stability_red_flags = ?,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE user_id = ?
+        `).run(JSON.stringify(triggers || []), userId);
+
+        db.prepare(`UPDATE users SET track = 'reentry_nav' WHERE id = ?`).run(userId);
+        return res.json({ message: 'Participant stepped down to Re-entry Navigation for stabilization.' });
+    } else if (action === 'director_override') {
+        if (!overrideBy || !overrideNotes) return res.status(400).json({ error: 'Director Name and Override Reason required.' });
+
+        db.prepare(`
+            UPDATE participant_profiles SET
+                director_override = 1,
+                director_override_by = ?,
+                director_override_notes = ?,
+                stability_red_flags = ?,
+                overall_status = 'active',
+                updated_at = CURRENT_TIMESTAMP
+            WHERE user_id = ?
+        `).run(overrideBy, overrideNotes, JSON.stringify(triggers || []), userId);
+
+        return res.json({ message: 'Director Override recorded. Participant remains in First Shift.' });
+    }
+
+    res.status(400).json({ error: 'Invalid action.' });
+});
+
+// Submit Weekly 4-Pillar Case Planning Review
+app.post('/api/admin/weekly-case-review', authenticateToken, requireRole('program_manager', 'admin'), (req, res) => {
+    const {
+        userId, weekNumber, reviewedBy,
+        hasStabilityIssues, stabilityIssuesDetails, canMeetRapidly, needsMoreResources, resourceNotes,
+        attendanceSatisfactory, abilityLearnQ2, removingEmploymentBarriers,
+        cbtHomeworkCompleted, cbtDiscussionActive, cbtRoleplayEffort, cbtNotes,
+        transportationViable, qualifiedForDesiredJobs, noDisqualifyingConvictions,
+        scheduleSupervisionAligned, noPsfOvernightIssues, jobMatchNotes,
+        caseDecision, decisionRationale
+    } = req.body;
+
+    if (!userId || !weekNumber) return res.status(400).json({ error: 'userId and weekNumber required.' });
+
+    db.prepare(`
+        INSERT INTO weekly_case_reviews (
+            user_id, week_number, reviewed_by,
+            has_stability_issues, stability_issues_details, can_meet_rapidly, needs_more_resources, resource_notes,
+            attendance_satisfactory, ability_learn_q2, removing_employment_barriers,
+            cbt_homework_completed, cbt_discussion_active, cbt_roleplay_effort, cbt_notes,
+            transportation_viable, qualified_for_desired_jobs, no_disqualifying_convictions,
+            schedule_supervision_aligned, no_psf_overnight_issues, job_match_notes,
+            case_decision, decision_rationale
+        ) VALUES (
+            ?, ?, ?,
+            ?, ?, ?, ?, ?,
+            ?, ?, ?,
+            ?, ?, ?, ?,
+            ?, ?, ?,
+            ?, ?, ?,
+            ?, ?
+        )
+    `).run(
+        userId, weekNumber, reviewedBy || req.user.name,
+        hasStabilityIssues ? 1 : 0, stabilityIssuesDetails || '', canMeetRapidly ? 1 : 0, needsMoreResources ? 1 : 0, resourceNotes || '',
+        attendanceSatisfactory ? 1 : 0, abilityLearnQ2 ? 1 : 0, removingEmploymentBarriers ? 1 : 0,
+        cbtHomeworkCompleted ? 1 : 0, cbtDiscussionActive ? 1 : 0, cbtRoleplayEffort ? 1 : 0, cbtNotes || '',
+        transportationViable ? 1 : 0, qualifiedForDesiredJobs ? 1 : 0, noDisqualifyingConvictions ? 1 : 0,
+        scheduleSupervisionAligned ? 1 : 0, noPsfOvernightIssues ? 1 : 0, jobMatchNotes || '',
+        caseDecision || 'continue_first_shift', decisionRationale || ''
+    );
+
+    res.json({ message: 'Weekly case plan review saved successfully.' });
 });
 
 // Get Class Feedback Summary

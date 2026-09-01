@@ -160,8 +160,8 @@
             <div class="section-card mt-8">
                 <div class="section-header">
                     <div>
-                        <h2>4-Week Job Readiness Gate Tracker</h2>
-                        <p>Review the Red / Green criteria required to graduate each week and qualify for employer job matching.</p>
+                        <h2>First Shift 4-Week Gate Tracker (Placement Qualifying)</h2>
+                        <p>Must-have benchmarks in Weeks 1–4 to qualify for Week 9 Job Placement vs. Step-down for Stabilization.</p>
                     </div>
                 </div>
 
@@ -169,10 +169,21 @@
                     <button class="gate-tab-btn active" onclick="switchGateWeek(1)">Week 1 Gate</button>
                     <button class="gate-tab-btn" onclick="switchGateWeek(2)">Week 2 Gate</button>
                     <button class="gate-tab-btn" onclick="switchGateWeek(3)">Week 3 Gate</button>
-                    <button class="gate-tab-btn" onclick="switchGateWeek(4)">Week 4 Gate (Placement)</button>
+                    <button class="gate-tab-btn" onclick="switchGateWeek(4)">Week 4 Gate (Placement Triage)</button>
                 </div>
 
                 <div id="gate-criteria-table-container" class="mt-4">
+                    <!-- Loaded dynamically via JavaScript -->
+                </div>
+            </div>
+
+            <!-- THE MASTER BRIEFCASE CHECKLIST -->
+            <div class="section-card mt-8">
+                <div class="section-header">
+                    <h2>Master Briefcase Checklist (6 Domains)</h2>
+                    <p>Track your verified documents, employment readiness tools, credentials, health, and financial plans.</p>
+                </div>
+                <div id="briefcase-domains-container">
                     <!-- Loaded dynamically via JavaScript -->
                 </div>
             </div>
@@ -555,6 +566,162 @@
                     <button class="btn btn-accent hidden" id="btn-submit-interview" onclick="finishInterview()">Finish & Submit Audio Assessment</button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Weekly 4-Pillar Case Planning Audit Modal -->
+    <div id="modal-case-review" class="modal hidden">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3 id="case-review-modal-title">Weekly Case Planning & Progress Audit</h3>
+                <button class="modal-close" onclick="closeModal('modal-case-review')">&times;</button>
+            </div>
+            <form id="form-case-review" onsubmit="handleCaseReviewSubmit(event)">
+                <input type="hidden" id="cr-user-id">
+                
+                <!-- Pillar 1: Stability Check -->
+                <div class="report-summary-box">
+                    <h4 style="color: var(--primary);">Pillar 1: Stability & Rapid Barrier Resolution</h4>
+                    <div class="form-group" style="margin-top: 8px;">
+                        <label>Are there active stability issues (Housing, Legal, Substance, Transport, Health)?</label>
+                        <select id="cr-has-stability" onchange="toggleStabilityFields(this.value)">
+                            <option value="0">🟢 No Stability Issues (Stable)</option>
+                            <option value="1">🔴 Active Stability Issues Present</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="cr-stability-details-box" style="display: none;">
+                        <label>Stability Issue Details</label>
+                        <textarea id="cr-stability-details" rows="2" placeholder="Describe housing, arrest, childcare loss, or substance relapse issues..."></textarea>
+                    </div>
+                    <div class="form-row mt-4">
+                        <div class="form-group">
+                            <label>Can we meet these needs rapidly?</label>
+                            <select id="cr-meet-rapidly">
+                                <option value="1">Yes - Solvable within 1-3 days with program resources</option>
+                                <option value="0">No - Requires extended stabilization</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Do we need more outside resources?</label>
+                            <select id="cr-more-resources">
+                                <option value="0">No - Standard program support sufficient</option>
+                                <option value="1">Yes - Needs specialized external referral / emergency aid</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pillar 2: First Shift Progress -->
+                <div class="report-summary-box mt-4">
+                    <h4 style="color: var(--primary);">Pillar 2: First Shift Progress (Attendance, Q2 & CBT)</h4>
+                    <div class="form-row" style="margin-top: 8px;">
+                        <div class="form-group">
+                            <label>Attendance Satisfactory?</label>
+                            <select id="cr-attendance">
+                                <option value="1">Yes (No NCNS, &le;1 unplanned absence)</option>
+                                <option value="0">No (NCNS or multiple absences)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Ability to Learn Q2 Concepts?</label>
+                            <select id="cr-q2-learning">
+                                <option value="1">Yes - Grasping trade & workplace concepts</option>
+                                <option value="0">No - Struggling with comprehension/effort</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group mt-4">
+                        <label>CBT Participation & Accountability</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; font-size: 13px;">
+                            <label><input type="checkbox" id="cr-cbt-hw" checked> Completing Homework</label>
+                            <label><input type="checkbox" id="cr-cbt-disc" checked> Active in Discussions</label>
+                            <label><input type="checkbox" id="cr-cbt-role" checked> Effort in Role Plays</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pillar 3: Job Plan & Feasibility -->
+                <div class="report-summary-box mt-4">
+                    <h4 style="color: var(--primary);">Pillar 3: Job Plan & Week 9 Placement Feasibility</h4>
+                    <div class="form-row" style="margin-top: 8px;">
+                        <div class="form-group">
+                            <label>Transportation Viable Daily?</label>
+                            <select id="cr-trans-viable">
+                                <option value="1">Yes - Desired placements reachable without assistance</option>
+                                <option value="0">No - Transit barrier to job corridor</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>No Disqualifying Convictions?</label>
+                            <select id="cr-no-convictions">
+                                <option value="1">Yes - Eligible for target employer sites</option>
+                                <option value="0">No - Charge/PSF exclusions present</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group mt-4">
+                        <label>Supervision & Schedule Alignment</label>
+                        <select id="cr-supervision-aligned">
+                            <option value="1">Aligned - No court/probation mandates conflict with 1st shift</option>
+                            <option value="0">Conflict - Court/probation mandates occur during work hours</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Pillar 4: Case Decision -->
+                <div class="report-summary-box mt-4" style="background: #eef2ff;">
+                    <h4 style="color: var(--primary);">Pillar 4: Weekly Case Decision</h4>
+                    <div class="form-group" style="margin-top: 8px;">
+                        <label>Program Manager Decision</label>
+                        <select id="cr-decision" required>
+                            <option value="continue_first_shift">🟢 Continue in First Shift (On Track)</option>
+                            <option value="step_down_reentry_nav">🔴 Move Out of First Shift $\rightarrow$ Step Down to Re-entry Nav for Stabilization</option>
+                            <option value="director_override">⚠️ Request Director Override (Exception)</option>
+                            <option value="ready_placement">🌟 Approved for Week 9 Job Placement Matching</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Decision Rationale & Next Week Action Items</label>
+                        <textarea id="cr-rationale" rows="2" placeholder="Document reasons for decision and priority tasks for next week..."></textarea>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block mt-4">Save Weekly Case Review</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Stability Step-Down & Director Override Modal -->
+    <div id="modal-stability-action" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Stability Triage & Step-Down Manager</h3>
+                <button class="modal-close" onclick="closeModal('modal-stability-action')">&times;</button>
+            </div>
+            <form id="form-stability-action" onsubmit="handleStabilityActionSubmit(event)">
+                <input type="hidden" id="stab-user-id">
+                <p id="stab-user-name" style="font-weight: bold; margin-bottom: 12px;"></p>
+                <div class="form-group">
+                    <label>Active Stability Red-Flag Triggers (Check all that apply):</label>
+                    <div id="stability-triggers-checkboxes" style="display: flex; flex-direction: column; gap: 8px; font-size: 13px; max-height: 200px; overflow-y: auto; padding: 10px; background: #f8fafc; border: 1px solid var(--border); border-radius: 6px;">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+                <div class="form-group mt-4">
+                    <label>Action to Take</label>
+                    <select id="stab-action-select" onchange="toggleOverrideFields(this.value)">
+                        <option value="step_down">🔴 Step Down to Re-entry Navigation (Stabilization Track)</option>
+                        <option value="director_override">⚠️ Issue Director Override (Keep in First Shift with Exception)</option>
+                    </select>
+                </div>
+                <div id="override-fields-box" class="form-group hidden mt-4" style="background: #fef3c7; padding: 12px; border-radius: 6px; border: 1px solid #fde68a;">
+                    <label>Approved By (Program Director or Executive Director)</label>
+                    <input type="text" id="stab-override-by" placeholder="e.g. Program Director Jane Smith">
+                    <label class="mt-4">Documented Override Rationale</label>
+                    <textarea id="stab-override-notes" rows="2" placeholder="Explain why participant is allowed to remain in First Shift despite red-flag trigger..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block mt-4">Execute Action</button>
+            </form>
         </div>
     </div>
 

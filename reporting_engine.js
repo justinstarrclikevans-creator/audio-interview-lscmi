@@ -1,19 +1,22 @@
 // Automated Reporting Engine for Program Managers
-// - Monday Participant Needs Report
-// - Friday Milestone & Termination Report
+// - Monday Participant Needs Report (Weekly Case Planning & Rapid Barrier Analysis)
+// - Friday Milestone & Termination Report (Stability Red-Flags, Step-Downs, & Director Overrides)
 // - Apricot Points CSV Parser & Sync
 
-const { db } = require('./db');
+const { db, STABILITY_STEP_DOWN_TRIGGERS } = require('./db');
 
 function generateMondayNeedsReport(locationFilter = null) {
     let query = `
         SELECT u.id, u.name, u.email, u.phone, u.location, u.track,
                p.current_gate, p.w9_status, p.dl_status, p.dl_notes,
                p.child_support_status, p.child_support_notes, p.housing_status,
-               p.transportation_status, p.substance_status, p.court_dates, p.overall_status
+               p.transportation_status, p.substance_status, p.court_dates, p.overall_status,
+               p.stability_red_flags, p.director_override, p.director_override_notes,
+               (SELECT COUNT(*) FROM briefcase_items bi WHERE bi.user_id = u.id AND bi.status = 'green') as completed_briefcase_items,
+               (SELECT COUNT(*) FROM briefcase_items bi WHERE bi.user_id = u.id) as total_briefcase_items
         FROM users u
         LEFT JOIN participant_profiles p ON u.id = p.user_id
-        WHERE u.role = 'participant' AND (p.overall_status IS NULL OR p.overall_status = 'active')
+        WHERE u.role = 'participant' AND (p.overall_status IS NULL OR p.overall_status != 'terminated')
     `;
     const params = [];
     if (locationFilter) {
@@ -28,38 +31,59 @@ function generateMondayNeedsReport(locationFilter = null) {
         generatedAt: new Date().toISOString(),
         location: locationFilter || 'All Locations',
         totalActiveParticipants: participants.length,
-        needsBreakdown: {
-            driversLicenseIssues: 0,
-            childSupportIssues: 0,
-            housingAtRisk: 0,
-            w9Pending: 0,
-            transportationBarriers: 0
+        casePlanningAudit: {
+            needsRapidAction: 0,
+            needsExtraResources: 0,
+            dlBarriers: 0,
+            childSupportBarriers: 0,
+            housingInstability: 0,
+            missingW9orID: 0,
+            transportationGaps: 0
         },
         participants: []
     };
 
     participants.forEach(p => {
-        const issues = [];
+        const identifiedBarriers = [];
+        let canMeetRapidly = true;
+        let needsMoreResources = false;
+
+        // Driver's License
         if (p.dl_status === 'suspended' || p.dl_status === 'reinstatement_plan') {
-            reportData.needsBreakdown.driversLicenseIssues++;
-            issues.push(`Driver's License: ${p.dl_status} (${p.dl_notes || 'No notes'})`);
+            reportData.casePlanningAudit.dlBarriers++;
+            identifiedBarriers.push(`Driver's License: ${p.dl_status} (${p.dl_notes || 'Action plan needed'})`);
         }
+        // Child Support
         if (p.child_support_status === 'behind' || p.child_support_status === 'modification_needed') {
-            reportData.needsBreakdown.childSupportIssues++;
-            issues.push(`Child Support: ${p.child_support_status} (${p.child_support_notes || 'Action needed'})`);
+            reportData.casePlanningAudit.childSupportBarriers++;
+            identifiedBarriers.push(`Child Support: ${p.child_support_status} (${p.child_support_notes || 'Modification review needed'})`);
         }
-        if (p.housing_status === 'at_risk' || p.housing_status === 'shelter') {
-            reportData.needsBreakdown.housingAtRisk++;
-            issues.push(`Housing: ${p.housing_status}`);
+        // Housing
+        if (p.housing_status === 'at_risk' || p.housing_status === 'shelter' || p.housing_status === 'motel') {
+            reportData.casePlanningAudit.housingInstability++;
+            identifiedBarriers.push(`Housing: ${p.housing_status}`);
+            canMeetRapidly = false;
+            needsMoreResources = true;
         }
+        // W-9 & ID
         if (p.w9_status !== 'verified') {
-            reportData.needsBreakdown.w9Pending++;
-            issues.push(`W-9: ${p.w9_status || 'Missing'}`);
+            reportData.casePlanningAudit.missingW9orID++;
+            identifiedBarriers.push(`ID/W-9: ${p.w9_status || 'Missing documents'}`);
         }
+        // Transportation
         if (p.transportation_status === 'none' || p.transportation_status === 'needs_ride') {
-            reportData.needsBreakdown.transportationBarriers++;
-            issues.push(`Transportation: ${p.transportation_status}`);
+            reportData.casePlanningAudit.transportationGaps++;
+            identifiedBarriers.push(`Transportation: ${p.transportation_status}`);
         }
+
+        if (!canMeetRapidly) reportData.casePlanningAudit.needsExtraResources++;
+        if (identifiedBarriers.length > 0) reportData.casePlanningAudit.needsRapidAction++;
+
+        // Parse stability flags if any
+        let flags = [];
+        try {
+            if (p.stability_red_flags) flags = JSON.parse(p.stability_red_flags);
+        } catch(e) {}
 
         reportData.participants.push({
             id: p.id,
@@ -69,9 +93,14 @@ function generateMondayNeedsReport(locationFilter = null) {
             location: p.location,
             track: p.track,
             currentGate: p.current_gate || 1,
-            activeIssues: issues,
+            briefcaseProgress: `${p.completed_briefcase_items || 0} / ${p.total_briefcase_items || 47} Items`,
+            identifiedBarriers,
+            canMeetRapidly,
+            needsMoreResources,
             courtDates: p.court_dates || 'None listed',
-            urgentAttentionNeeded: issues.length >= 2
+            stabilityFlags: flags,
+            directorOverride: p.director_override === 1 ? `Approved by ${p.director_override_by || 'Director'}: ${p.director_override_notes || ''}` : null,
+            urgentPriority: identifiedBarriers.length >= 2 || flags.length > 0
         });
     });
 
@@ -82,9 +111,12 @@ function generateFridayMilestoneReport(locationFilter = null) {
     let query = `
         SELECT u.id, u.name, u.location, u.track,
                p.current_gate, p.overall_status, p.termination_reason, p.termination_date,
+               p.stability_red_flags, p.director_override, p.director_override_notes, p.director_override_by,
                (SELECT COUNT(*) FROM gate_criteria gc WHERE gc.user_id = u.id AND gc.status = 'green') as green_criteria_count,
                (SELECT COUNT(*) FROM gate_criteria gc WHERE gc.user_id = u.id AND gc.status = 'red') as red_criteria_count,
-               (SELECT AVG(points_earned) FROM daily_points dp WHERE dp.user_id = u.id) as avg_points
+               (SELECT AVG(points_earned) FROM daily_points dp WHERE dp.user_id = u.id) as avg_points,
+               (SELECT COUNT(*) FROM daily_points dp WHERE dp.user_id = u.id AND dp.attendance_status = 'ncns') as ncns_count,
+               (SELECT COUNT(*) FROM daily_points dp WHERE dp.user_id = u.id AND dp.attendance_status = 'unexcused') as unexcused_count
         FROM users u
         LEFT JOIN participant_profiles p ON u.id = p.user_id
         WHERE u.role = 'participant'
@@ -102,26 +134,43 @@ function generateFridayMilestoneReport(locationFilter = null) {
         generatedAt: new Date().toISOString(),
         location: locationFilter || 'All Locations',
         totalParticipants: records.length,
-        graduatingCount: 0,
-        atRiskCount: 0,
+        readyForPlacementCount: 0,
+        activeOnTrackCount: 0,
+        stepDownStabilizingCount: 0,
+        directorOverrideCount: 0,
         terminatedCount: 0,
-        activeCount: 0,
         roster: []
     };
 
     records.forEach(r => {
-        let statusTag = 'On Track';
+        let statusTag = 'Active On-Track';
+        let flags = [];
+        try {
+            if (r.stability_red_flags) flags = JSON.parse(r.stability_red_flags);
+        } catch(e) {}
+
+        // Check for NCNS or attendance infractions
+        if (r.ncns_count > 0 && !flags.includes('any_ncns')) {
+            flags.push(`ANY No Call No Show (${r.ncns_count} NCNS)`);
+        }
+        if (r.unexcused_count >= 2 && !flags.includes('two_unplanned_absences')) {
+            flags.push(`Two or more unplanned absences (${r.unexcused_count})`);
+        }
+
         if (r.overall_status === 'terminated') {
             reportData.terminatedCount++;
-            statusTag = 'Terminated';
-        } else if (r.overall_status === 'completed' || (r.current_gate === 4 && r.green_criteria_count >= 14)) {
-            reportData.graduatingCount++;
-            statusTag = 'Ready for Job Placement';
-        } else if (r.red_criteria_count > 0 || (r.avg_points !== null && r.avg_points < 7.5)) {
-            reportData.atRiskCount++;
-            statusTag = 'At-Risk (Red Criteria / Low Points)';
+            statusTag = 'Terminated / Dropped';
+        } else if (r.overall_status === 'reentry_nav_stabilizing' || (flags.length > 0 && r.director_override !== 1)) {
+            reportData.stepDownStabilizingCount++;
+            statusTag = 'Action: Step Down to Re-entry Nav for Stabilization';
+        } else if (r.director_override === 1) {
+            reportData.directorOverrideCount++;
+            statusTag = `Director Override Active (${r.director_override_by || 'Director'})`;
+        } else if (r.current_gate === 4 && r.green_criteria_count >= 14) {
+            reportData.readyForPlacementCount++;
+            statusTag = 'Week 9 Job Placement Ready (Green)';
         } else {
-            reportData.activeCount++;
+            reportData.activeOnTrackCount++;
         }
 
         reportData.roster.push({
@@ -133,9 +182,12 @@ function generateFridayMilestoneReport(locationFilter = null) {
             greenCriteria: r.green_criteria_count,
             redCriteria: r.red_criteria_count,
             avgPoints: r.avg_points ? Number(r.avg_points).toFixed(1) : 'N/A',
+            ncnsCount: r.ncns_count,
+            unexcusedCount: r.unexcused_count,
+            stabilityRedFlags: flags,
             statusTag: statusTag,
-            terminationReason: r.termination_reason || null,
-            terminationDate: r.termination_date || null
+            directorOverride: r.director_override === 1 ? `${r.director_override_by}: ${r.director_override_notes}` : null,
+            terminationReason: r.termination_reason || null
         });
     });
 
@@ -147,7 +199,6 @@ function importApricotCsv(csvContent) {
     const lines = csvContent.trim().split(/\r?\n/);
     if (lines.length < 2) return { success: false, error: 'CSV is empty or missing headers.' };
 
-    const header = lines[0].toLowerCase();
     const rows = lines.slice(1);
     let importedCount = 0;
     let errors = [];
@@ -171,7 +222,6 @@ function importApricotCsv(csvContent) {
             const cols = rows[i].split(',').map(c => c.trim().replace(/^["']|["']$/g, ''));
             if (cols.length < 3) continue;
 
-            // Expecting formats like: Name/Email, Date, Points, Status, Notes
             const identifier = cols[0].toLowerCase();
             const dateStr = cols[1];
             const points = parseFloat(cols[2]) || 0;
