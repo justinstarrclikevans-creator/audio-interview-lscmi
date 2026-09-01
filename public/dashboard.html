@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assessment Dashboard</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 20px; background-color: #f4f7f6; color: #333; }
+        h1 { text-align: center; color: #2c3e50; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .card h2 { margin-top: 0; font-size: 1.2rem; color: #2980b9; border-bottom: 2px solid #ecf0f1; padding-bottom: 10px; }
+        .file-list { list-style: none; padding: 0; }
+        .file-list li { margin: 10px 0; display: flex; align-items: center; }
+        .file-list a { text-decoration: none; color: #34495e; font-weight: 500; background: #ecf0f1; padding: 8px 12px; border-radius: 4px; display: inline-block; transition: background 0.2s; }
+        .file-list a:hover { background: #dcdde1; }
+        .badge { display: inline-block; padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; margin-right: 10px; }
+        .badge-audio { background: #ffeaa7; color: #d35400; }
+        .badge-md { background: #a29bfe; color: #fff; }
+        .badge-txt { background: #81ecec; color: #00b894; }
+        .badge-err { background: #ff7675; color: #fff; }
+        .alert { background: #ffeaa7; border-left: 4px solid #f39c12; padding: 15px; margin-bottom: 20px; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>LS/CMI Assessment Dashboard</h1>
+        
+        <div class="alert">
+            <strong>Warning: Ephemeral Storage!</strong> Because this app is hosted on Render's Free Tier, all files here will be deleted permanently when the server goes to sleep (usually after 15 minutes of inactivity). Download your files immediately after an interview completes!
+        </div>
+
+        <div id="clients-container">Loading...</div>
+    </div>
+
+    <script>
+        function getBadge(filename) {
+            if (filename.endsWith('.webm')) return '<span class="badge badge-audio">Audio</span>';
+            if (filename.endsWith('.md')) return '<span class="badge badge-md">Markdown</span>';
+            if (filename.endsWith('.txt')) {
+                if (filename.includes('error')) return '<span class="badge badge-err">Error</span>';
+                return '<span class="badge badge-txt">Text</span>';
+            }
+            return '<span class="badge">File</span>';
+        }
+
+        function formatName(id) {
+            const parts = id.split('_');
+            const date = new Date(parseInt(parts[0])).toLocaleString();
+            const name = parts[1] || 'Unknown';
+            return `${name} <span style="font-size: 0.8rem; color: #7f8c8d; font-weight: normal; margin-left: 10px;">${date}</span>`;
+        }
+
+        async function loadDashboard() {
+            try {
+                const res = await fetch('/api/interviews');
+                const data = await res.json();
+                const container = document.getElementById('clients-container');
+                container.innerHTML = '';
+
+                const clients = Object.keys(data).sort().reverse(); // newest first
+                
+                if (clients.length === 0) {
+                    container.innerHTML = '<p style="text-align:center; color:#7f8c8d;">No completed interviews found yet.</p>';
+                    return;
+                }
+
+                for (let id of clients) {
+                    let files = data[id];
+                    let card = document.createElement('div');
+                    card.className = 'card';
+                    
+                    let html = `<h2>${formatName(id)}</h2><ul class="file-list">`;
+                    files.forEach(f => {
+                        let url = `/data/${f}`;
+                        html += `<li>${getBadge(f)} <a href="${url}" target="_blank" download>${f.replace(id + '_', '')}</a></li>`;
+                    });
+                    html += `</ul>`;
+                    card.innerHTML = html;
+                    container.appendChild(card);
+                }
+            } catch(e) {
+                document.getElementById('clients-container').innerHTML = '<p style="color:red;">Failed to load data.</p>';
+            }
+        }
+
+        loadDashboard();
+        // refresh every 30 seconds to show newly processed LLM files
+        setInterval(loadDashboard, 30000);
+    </script>
+</body>
+</html>

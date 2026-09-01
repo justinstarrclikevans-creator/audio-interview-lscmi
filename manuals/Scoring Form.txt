@@ -1,0 +1,226 @@
+ LSCMI  Scoring  Form 
+ The  LS/CMI  assessment  is  a  quantitative  survey  of  offender  attributes  and  situations  relevant  to 
+ decision-making  regarding  level  of  service.  Some  items  are  in  a  no/yes  format,  and  some  are  in  a 
+ 3-0  rating  format,  based  on  the  following  scale: 
+ 3:  A  satisfactory  situation  with  no  need  for  improvement 
+ 2:  A  relatively  satisfactory  situation  with  some  room  for  improvement 
+ 1:  A  relatively  unsatisfactory  situation  with  a  need  for  improvement 
+ 0:  A  very  unsatisfactory  situation  with  a  very  clear  and  strong  need  for  improvement 
+ Each  item  asks  for  a  score  of  “yes”  or  “no”  OR  a  numerical  rating  of  0-3.  Answer  each  item  with  a  yes 
+ or  no  or  number  rating  based  on  what  that  item  is  asking  for. 
+ Section  1:  General  Risk/Need  Factors 
+ 1.1  Criminal  History  (CH) 
+ 1.  Any  prior  youth  dispositions  (number__)  or  adult  convictions  (number__)  Yes  or  No 
+ 2.  Two  or  more  prior  youth/adult  dispositions/convictions?  Yes  or  No 
+ 3.  Three  or  more  prior  youth/adult  dispositions/convictions?  Yes  or  No 
+ 4.  Three  or  more  present  offenses  (number__)?  Yes  or  No 
+ 5.  Arrested  or  charged  under  age  16?  Yes  or  No 
+ 6.  Ever  incarcerated  upon  conviction?  Yes  or  No 
+ 7.  Ever  punished  for  institutional  misconduct  or  a  behavior  report  (number__)?  Yes  or  No 
+ 8.  Charge  laid,  probation  breached,  or  parole  suspended  during  prior  community  supervision?  Yes 
+ or  No 
+ Strength?  Yes  or  No 
+ CH  Score__ 
+ 1.2  Education/Employment  (EE) 
+ When  in  the  labor  market  (either  in  the  community  or  long-term  imprisonment  with  work 
+ opportunities): 
+ 9.  Currently  unemployed?  Yes  or  No 
+ 10.  Frequently  unemployed?  Yes  or  No 
+ 11.  Never  employed  for  a  full  year?  Yes  or  No 
+ School  or  when  in  school: 
+ 12.  Less  than  regular  grade  10  or  equivalent?  Yes  or  No 
+ 13.  Less  than  regular  grade  12  or  equivalent?  Yes  or  No 
+ 14.  Suspended  or  expelled  at  least  once.  Yes  or  No 
+ For  the  next  three  questions,  if  the  offender  is  a  homemaker  or  retired,  complete  question  15  only. 
+ If  the  offender  is  in  school  or  working,  complete  15,  16,  and  17.  If  the  offender  is  available  for  the 
+ labor  market  but  is  unemployed  and  not  in  school,  rate  0  for  15-17. 
+ 15.  Participation/Performance.  Rate  0-3 
+ 16.  Peer  interactions.  Rate  0-3 
+ 17.  Authority  interaction.  Rate  0-3 
+ Strength?  Yes  or  No 
+ EE  Score____ 
+ 1.3  Family/Marital  (FM) 
+ 18.  Dissatisfaction  with  marital  or  equivalent  situation.  Rate  0-3 
+ 19.  Nonrewarding,  parental.  Rate  0-3 
+ 20.  Nonrewarding,  other  relatives.  Rate  0-3 
+ 21.  Criminal_-family/spouse.  Yes  or  No 
+ Strength?  Yes  or  No 
+ FM  Score____ 
+ 1.4  Leisure/Recreation  (LR) 
+ 22.  Absence  of  recent  participation  in  an  organized  activity.  Yes  or  No 
+ 23.  Could  make  better  use  of  time.  Rate  0-3 
+ Strength?  Yes  or  No 
+ LR  Score____ 
+ 1.5  Companions  (CO) 
+ 24.  Some  criminal  acquaintances.  Yes  or  No 
+ 25.  Some  criminal  friends.  Rate  0-3 
+ 26.  Few  anticriminal  acquaintances.  Yes  or  No 
+ 27.  Few  anticriminal  friends.  Rate  0-3 
+ Strength?  Yes  or  No 
+ CO  Score____ 
+ 1.6  Alcohol/Drug  Problem  (ADP) 
+ 28.  Alcohol  problem,  ever.  Yes  or  No 
+ 29.  Drug  problem,  ever.  Yes  or  No 
+ 30.  Alcohol  problem,  currently.  Rate  0-3 
+ 31.  Drug  problem,  currently.  Rate  0-3 
+ Specify  type  of  drug(s)  used: 
+ If  a  current  alcohol/drug  abuse  problem  exists,  complete  the  following: 
+ 32.  Law  violations.  Yes  or  No 
+ 33.  Marital/Family.  Yes  or  No 
+ 34.  School/Work.  Yes  or  No 
+ 35.  Medical  or  other  clinical  indicators?  Yes  or  No 
+ Specify  drugs  used: 
+ Strength?  Yes  or  No 
+ ADP  Score____ 
+ 1.7  Procriminal  Attitude/Orientation  (PA) 
+ 36.  Supportive  of  crime.  Rate  0-3 
+ 37.  Unfavorable  toward  convention.  Rate  0-3 
+ 38.  Poor,  toward  sentence/offense.  Yes  or  No 
+ 39.  Poor,  toward  supervision/treatment.  Yes  or  No 
+ Strength?  Yes  or  No 
+ PA  Score____ 
+ 1.8  Antisocial  Pattern  (AP) 
+ 40.  Specialized  assessment  for  antisocial  pattern.  Yes  or  No 
+ 41.  Early  and  diverse  antisocial  behavior.  Yes  or  No 
+ Item  a  must  be  “yes”,  plus  at  least  one  of  b,  c,  or  d  must  be  “yes”  for  item  41  to  be  “yes”  .  Indicate  all  that 
+ apply. 
+ a.  Severe  problems  of  adjustment  in  childhood,  as  indicated  by  school  and  social  welfare 
+ records,  or  arrested  or  charged  under  age  16.  (5) 
+ b.  Official  record  of  assault/violence. 
+ c.  Escape  history  from  a  correctional  facility,  unlawfully-at-large. 
+ d.  Charge  laid,  probation  breached,  or  parole  suspended  during  prior  community  supervision. 
+ (8) 
+ 42.  Criminal  attitude.  Yes  or  No 
+ At  least  one  of  the  following  items  must  be  “Yes”  for  item  42  to  be  “yes”.  Indicate  all  that  apply. 
+ a.  Supportive  of  crime.  (36) 
+ b.  Unfavorable  toward  convention.  (37) 
+ c.  Poor,  toward  supervision/treatment.  (39) 
+ 43.  Pattern  of  generalized  trouble.  Yes  or  No 
+ At  least  four  of  the  following  items  must  be  “Yes”  or  rated  “0-1”  for  43  to  be  “Yes”.  Indicate  all  that  apply. 
+ a.  Financial  problems.  Rate  0-3 
+ b.  3  or  more  address  changes  last  year.  (#___)  Yes  or  No 
+ c.  Never  employed  for  a  full  year.  (Same  answer  as  Item  11) 
+ d.  Less  than  regular  grade  10  or  equivalent.  (Same  answer  as  Item  12) 
+ e.  Suspended  or  expelled  at  least  once.  (Same  answer  as  Item  14) 
+ f.  Nonrewarding,  parental.  (Same  answer  as  Item  19) 
+ g.  Could  make  better  use  of  time.  (Same  answer  as  Item  23) 
+ h.  Few  anticriminal  friends.  (Same  answer  as  Item  27) 
+ Strength?  Yes  or  No 
+ AP  Score____ 
+ Total  Scores 
+ CH  EE  FM  LR  CO  ADP  PA  AP  Total 
+ Score 
+ Strength 
+ Section  2:  Speciﬁc  Risk/Need  Factors 
+ Circle  the  appropriate  response  for  the  following  items. 
+ 2.1  Personal  Problems  with  Criminogenic  Potential 
+ 1.  Clear  problems  of  compliance  (speciﬁc  conditions).  Yes  or  No 
+ 2.  Diagnosis  of  "psychopathy."  Yes  or  No 
+ 3.  Diagnosis  of  other  personality  disorder.  Yes  or  No 
+ 4.  Threat  from  third  party.  Yes  or  No 
+ 5.  Problem-solving/self-management  skill  deﬁcits.  Yes  or  No 
+ 6.  Anger  management  deﬁcits.  Yes  or  No 
+ 7.  Intimidating/controlling.  Yes  or  No 
+ 8.  Inappropriate  sexual  activity.  Yes  or  No 
+ 9.  Poor  social  skills.  Yes  or  No 
+ 10.  Peers  outside  of  age  range.  Yes  or  No 
+ 11.  Racist/sexist  behavior.  Yes  or  No 
+ 12.  Underachievement.  Yes  or  No 
+ 13.  Outstanding  charges.  Yes  or  No 
+ 14.  Other.  Specify  if  yes.  Yes  or  No 
+ 2.2  History  of  Perpetration 
+ Sexual  Assault 
+ 1.  Sexual  assault,  extrafamilial,  child/adolescent  -male  victim.  Yes  or  No 
+ 2.  Sexual  assault,  extrafamilial,  child/adolescent  female  victim.  Yes  or  No 
+ 3.  Sexual  assault,  extrafamilial,  adult  -male  victim.  Yes  or  No 
+ 4.  Sexual  assault,  extrafamilial,  adult  female  victim.  Yes  or  No 
+ 5.  Sexual  assault,  intrafamilial,  child/adolescent  male  victim.  Yes  or  No 
+ 6.  Sexual  assault,  intrafamilial,  child/adolescent-female  victim.  Yes  or  No 
+ 7.  Sexual  assault,  intrafamilial,  adult  spouse/partner  victim.  Yes  or  No 
+ Nonsexual  Physical  Assault  and  Other  Forms  of  Violence 
+ 8.  Physical  assault,  extrafamilial-  -adult  victim.  Yes  or  No 
+ 9.  Physical  assault,  intrafamilial  child/adolescent  victim.  Yes  or  No 
+ 10.  Physical  assault,  intrafamilial  -adult  partner  victim.  Yes  or  No 
+ 11.  Assault  on  an  authority  ﬁgure.  Yes  or  No 
+ 12.  Stalking/harassment.  Yes  or  No 
+ 13.  Weapon  use.  Yes  or  No 
+ 14.  Fire  setting.  Yes  or  No 
+ Other  Forms  of  Antisocial  Behavior 
+ 15.  Impaired  driving.  Yes  or  No 
+ 16.  Shoplifting.  Yes  or  No 
+ 17.  White  collar  crime.  Yes  or  No 
+ 18.  Gang  participation.  Yes  or  No 
+ 19.  Organized  crime.  Yes  or  No 
+ 20.  Hate  crime.  Yes  or  No 
+ 21.  Terrorist  activity.  Yes  or  No 
+ (Not  used  by  us)  Section  3:  Prison  Experience  Institutional 
+ Section  4:  Other  Client  Issues 
+ Complete  this  section  by  circling  the  appropriate  response.  For  items  16  to  20,  circle  all  that  apply. 
+ Social,  Health,  and  Mental  Health 
+ 1.  Financial  problems.  Yes  or  No 
+ 2.  Homeless  or  transient.  Yes  or  No 
+ 3.  Accommodation  problems.  Yes  or  No 
+ 4.  Immigration  issues.  Yes  or  No 
+ 5.  Parenting  concerns.  Yes  or  No 
+ 6.  Health  problems  (HIV,  AIDS,  etc.).  Yes  or  No 
+ 7.  Physical  disability.  Yes  or  No 
+ 8.  Learning  disability.  Yes  or  No 
+ 9.  Fetal  Alcohol  Spectrum  Disorder  (FASD).  Yes  or  No 
+ 10.  Depressed.  Yes  or  No 
+ 11.  Suicide  attempts/threat.  Yes  or  No 
+ 12.  Low  self-esteem.  Yes  or  No 
+ 13.  Shy/withdrawn.  Yes  or  No 
+ 14.  Diagnosis  of  serious  mental  disorder.  Yes  or  No 
+ 15.  Other  evidence  of  emotional  distress.  Specify  if  Yes.  Yes  or  No 
+ 16.  Victim  of  family  violence.  Yes  or  No:  Past,  Current,  Physical  and/or  Sexual 
+ 7.  Victim  of  physical  assault.  Yes  or  No:Past  orCurrent 
+ 18.  Victim  of  sexual  assault.  Yes  or  No:Past  or  Current 
+ 19.  Victim  of  emotional  abuse.  Yes  or  No:Past  or  Current 
+ 20.  Victim  of  neglect.  Yes  or  No 
+ 21.  Other.  Yes  or  No 
+ Section  5:  Special  Responsivity  Considerations 
+ See  supplemental  document  for  information. 
+ Section  6:  Risk/Need  Summary  and  Override 
+ This  section  summarizes  the  offender's  scores  and  assesses  the  need  for  client-based  or 
+ administrative/policy  overrides.  Consider  all  information  from  Sections  1  to  5  in  making  an  override 
+ decision. 
+ 6.1  Score-Based  Risk/Need  Level 
+ Total  LS/CMI  Score______  (from  Section  1) 
+ Score-based  LS/CMI  Risk/Need  Level______(See  Score-Based  Risk/Need  Level  Guide,  below) 
+ Score-Based  Risk/Need  Level  Guide 
+ Risk/Need  Level  Very  Low  Low  Medium  High  Very  High 
+ Total  Section  1  Score  0-4  5-10  11-19  20-29  30-43 
+ 6.2  Client-Based/Clinical  Override 
+ Use  the  client-based/clinical  override?  Yes  or  No 
+ List  the  reasons  for  lowering  security/supervision  levels  or  releasing  clients.  Refer  to  the  strengths 
+ in  Section  1. 
+ List  the  reasons  for  increasing  security/supervision  levels  or  not  releasing  clients.  Refer  to 
+ Sections  2  through  4. 
+ 6.3  Administrative/Policy  Override 
+ Use  the  administration/policy  override?  Yes  or  No 
+ If  Yes,  specify  reason. 
+ 6.4  Final  LS/CMI  Risk/Need  Level 
+ After  considering  any  need  for  a  client-based  or  administrative/policy  override,  indicate  the 
+ appropriate  risk/need  level. 
+ Final  Risk/Need  Level 
+ Very  Low/Low/Medium/High/Very  High 
+ Section  7:  Risk/Need  Proﬁle 
+ To  obtain  a  risk/needs  proﬁle,  transfer  the  subcomponent  scores  from  the  Section  1  scoring  pages, 
+ and  circle  the  appropriate  values  in  the  table  below. 
+ Risk/Need  CH  EE  FM  LR  CO  ADP  PA  AP  Total  R/N1  Override 
+ Very  High  8  8-9  4  /  4  7-8  4  4  30+  Very  High  Very  High 
+ High  6-7  6-7  3  2  3  5-6  3  3  20-29  High  High 
+ Medium  4-5  4-5  2  1  2  3-4  2  2  11-19  Medium  Medium 
+ Low  2-3  2-3  1  /  1  1-2  1  1  5-10  Low  Low 
+ Very  Low  0-1  0-1  0  0  0  0  0  0  0-4  Very  Low  Very  Low 
+ CH=Criminal  History 
+ CO=Companions 
+ Total=Total,  Section  1 
+ EE=Education/Employment 
+ ADP=Alcohol/Drug  Problem 
+ R/N1=Score-Based  Risk/Need  Level 
+ FM=Family/Marital 
+ PA=Procriminal  Attitude/Orientation 
+ Override=Risk/Need  Level  if  Override  used 
+ LR=Leisure/Recreation 
+ AP=Antisocial  Pattern 

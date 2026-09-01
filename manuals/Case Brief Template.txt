@@ -1,0 +1,107 @@
+ CASE  MANAGEMENT  BRIEF 
+ The  Case  Management  Brief  is  an  internal,  staff-facing  document  completed  after  LS/CMI  and 
+ TJ  New  Hire  Intake.  It  prepares  the  Program  Manager  for  effective,  structured  case  planning 
+ and  stabilization. 
+ The  Brief  includes: 
+ 1.  Risk  Profile 
+ 2.  Behavioral  Indicators 
+ 3.  Pattern  Over  Time 
+ 4.  Acute  /  Emergency  Needs 
+ 5.  Structural  Stability  Factors 
+ 6.  Legal  &  Placement  Constraints 
+ 7.  Responsivity  &  Engagement  Profile 
+ Length:  2  pages  maximum 
+ Tone:  Interpretive,  concise,  professional 
+ Purpose:  Translation  layer  between  assessment  and  case  planning 
+ DETAILED  EXPLANATION  OF  EACH  SECTION 
+ 1.  Risk  Profile 
+ Source:  LS/CMI 
+ Purpose:  Anchor  case  plan  direction 
+ Include: 
+ ●  Overall  risk  level 
+ ●  List  top  3  criminogenic  domains  in  risk  order  with  top  being  number  1 
+ ●  Brief  domain  indicators  (1–2  per  domain) 
+ This  section  defines: 
+ What  must  be  addressed  to  reduce  recidivism  risk. 
+ This  is  not  a  score  report.  It  is  a  structured  summary  of  the  most  important  drivers. 
+ 2.  Behavioral  Indicators 
+ Source:  LS/CMI  interpretation 
+ Purpose:  Translate  domains  into  observable  behavior 
+ Behavioral  indicators  describe  how  risk  manifests  in  real  life. 
+ Include: 
+ ●  Typical  triggers 
+ ●  Escalation  tendencies 
+ ●  Decision-making  patterns 
+ ●  Authority  response  style 
+ ●  Substance  relapse  patterns  (if  applicable) 
+ This  section  answers: 
+ How  does  this  risk  show  up  day-to-day? 
+ Behavioral  indicators  are  used  to: 
+ ●  Guide  pattern  menu  selection 
+ ●  Anticipate  friction  points 
+ ●  Inform  coaching  approach 
+ They  are  not  case  plan  goals. 
+ 3.  Pattern  Over  Time 
+ Source:  LS/CMI  +  justice  trajectory 
+ Purpose:  Understand  longitudinal  cycle 
+ Include: 
+ ●  Age  at  first  justice  involvement  (if  relevant) 
+ ●  Number/frequency  of  incarcerations 
+ ●  Recidivism  timing  patterns  (e.g.,  relapse  within  60  days  post-release) 
+ ●  Escalation  or  stability  trends 
+ ●  Supervision  violation  history 
+ This  section  answers: 
+ What  cycle  are  we  interrupting? 
+ This  helps  determine  urgency  and  intensity. 
+ 4.  Acute  /  Emergency  Needs 
+ Source:  Intake 
+ Purpose:  Immediate  stabilization 
+ Include  only  urgent  issues  requiring  early  intervention: 
+ ●  Housing  crisis 
+ ●  Active  substance  use 
+ ●  Mental  health  instability 
+ ●  Court  date  within  30  days 
+ ●  Transportation  crisis  affecting  attendance 
+ ●  Safety  concerns 
+ This  section  answers: 
+ What  must  be  addressed  immediately? 
+ If  this  section  is  empty,  state: 
+ “No  acute  needs  identified  at  intake.” 
+ 5.  Stability  Factors 
+ Source:  Intake  (interpreted) 
+ Purpose:  Anticipate  stressors  affecting  progress 
+ Include: 
+ ●  Housing  stability  level 
+ ●  Driver’s  license  status 
+ ●  Education  credential  status 
+ ●  Recent  substance  use 
+ ●  Employment  history  pattern 
+ ●  Supervision  intensity 
+ These  are  not  necessarily  criminogenic  drivers,  but  they  affect  stress,  stability,  and  sequencing 
+ of  support. 
+ This  section  answers: 
+ What  structural  barriers  may  affect  progress? 
+ 6.  Legal  &  Placement  Constraints 
+ Source:  Intake 
+ Purpose:  Protect  program  integrity  and  inform  supervision 
+ Include: 
+ ●  Pending  charges 
+ ●  Court  obligations 
+ ●  Supervision  restrictions 
+ ●  Sex  Offender  Registry  requirement  (yes/no) 
+ ●  Movement/contact  restrictions 
+ This  section  answers: 
+ What  legal  constraints  affect  supervision  and  placement? 
+ This  section  informs  placement  decisions,  not  treatment  focus. 
+ 7.  Responsivity  &  Engagement  Profile 
+ Source:  LS/CMI  +  professional  judgment 
+ Purpose:  Guide  delivery  style 
+ Include: 
+ ●  Literacy  limitations 
+ ●  Cognitive  considerations 
+ ●  Trauma  reactivity 
+ ●  Authority  sensitivity 
+ ●  Motivation  style 
+ ●  Learning  preferences 
+ This  section  answers: 
+ How  should  staff  work  with  this  person  to  be  effective? 
