@@ -2,3 +2,10 @@ node_modules
 email-settings.txt
 .env
 .DS_Store
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+data/
+test_*.js
+rerun_*.js
+

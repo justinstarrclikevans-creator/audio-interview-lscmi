@@ -3,99 +3,561 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interview App</title>
+    <title>First Shift & Re-entry Navigation Platform</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="app-container">
-        <!-- Intro Screen 1 -->
-        <div id="intro-screen-1" class="screen active">
-            <h1>Welcome to the Interview</h1>
-            <p>We are going to ask you a few questions today.</p>
-            <button id="next-intro-1-btn" class="primary-btn pulse">Next</button>
-        </div>
-
-        <!-- Intro Screen 2 -->
-        <div id="intro-screen-2" class="screen hidden">
-            <h1>How to Answer</h1>
-            <p>If you don’t know an answer to a question, don’t worry. Just give an answer to the best of your memory and knowledge.</p>
-            <button id="next-intro-2-btn" class="primary-btn pulse">Next</button>
-        </div>
-
-        <!-- Intro Screen 3 (Mic Permission) -->
-        <div id="intro-screen-3" class="screen hidden">
-            <h1>Microphone Access</h1>
-            <p>Please speak clearly into the microphone.</p>
-            <p>When you click continue, your browser may ask for permission to use your microphone. <strong>Please click "Allow"</strong> as shown in the picture below.</p>
-            <div style="background-color: #fff; padding: 10px; border: 2px solid #ddd; border-radius: 8px; margin-bottom: 20px; display: inline-block;">
-                <svg width="200" height="80" viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="200" height="80" fill="#f8f9fa" rx="4"/>
-                    <text x="10" y="25" font-family="Arial" font-size="12" fill="#333">Use your microphone</text>
-                    <rect x="90" y="45" width="50" height="25" fill="#fff" stroke="#ccc" rx="4"/>
-                    <text x="100" y="62" font-family="Arial" font-size="12" fill="#333">Block</text>
-                    <rect x="145" y="45" width="50" height="25" fill="#1a73e8" rx="4"/>
-                    <text x="156" y="62" font-family="Arial" font-size="12" fill="#fff">Allow</text>
-                </svg>
+    <!-- Top Global Navigation Bar -->
+    <header class="top-nav">
+        <div class="nav-container">
+            <div class="brand">
+                <span class="brand-badge">SC RE-ENTRY</span>
+                <span class="brand-title">First Shift <span class="accent-text">&</span> Re-entry Navigation</span>
             </div>
-            <br>
-            <button id="start-btn" class="primary-btn pulse">Continue</button>
-        </div>
-
-        <!-- Details Screen -->
-        <div id="details-screen" class="screen hidden">
-            <h1>Participant Details</h1>
-            <div class="input-group">
-                <label for="participant-name">Full Name</label>
-                <input type="text" id="participant-name" placeholder="Enter your name" required>
+            <div class="nav-right" id="nav-user-section">
+                <!-- Dynamically populated based on auth status -->
             </div>
-            <div class="input-group">
-                <label for="participant-location">Location</label>
-                <select id="participant-location" required>
-                    <option value="" disabled selected>Select a location...</option>
-                    <option value="Charleston">Charleston</option>
-                    <option value="Columbia">Columbia</option>
-                    <option value="Spartanburg">Spartanburg</option>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <!-- ========================================================= -->
+        <!-- VIEW 1: AUTHENTICATION (LOGIN / SIGN UP)                   -->
+        <!-- ========================================================= -->
+        <section id="view-auth" class="app-view active">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h2>Welcome to First Shift</h2>
+                    <p class="subtitle">Complete your orientation, manage your 4-week job readiness gates, and access re-entry navigation tools.</p>
+                </div>
+
+                <div class="auth-tabs">
+                    <button class="tab-btn active" onclick="switchAuthTab('login')">Log In</button>
+                    <button class="tab-btn" onclick="switchAuthTab('register')">New Participant Sign-Up</button>
+                </div>
+
+                <!-- Login Form -->
+                <form id="form-login" class="auth-form" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="login-email">Email Address</label>
+                        <input type="email" id="login-email" required placeholder="name@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" required placeholder="Enter password">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                    <div class="auth-hint">
+                        <p><strong>Demo Staff Login:</strong> pm@firstshift.org / FirstShift2026!</p>
+                    </div>
+                </form>
+
+                <!-- Registration Form -->
+                <form id="form-register" class="auth-form hidden" onsubmit="handleRegister(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="reg-name">Full Legal Name *</label>
+                            <input type="text" id="reg-name" required placeholder="First and Last Name">
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-phone">Phone Number</label>
+                            <input type="tel" id="reg-phone" placeholder="e.g. 843-555-0123">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="reg-email">Email Address *</label>
+                            <input type="email" id="reg-email" required placeholder="name@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-password">Create Password *</label>
+                            <input type="password" id="reg-password" required placeholder="Minimum 6 characters">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="reg-track">Program Track *</label>
+                            <select id="reg-track" required>
+                                <option value="first_shift">First Shift (Full 4-Week Orientation & Placement)</option>
+                                <option value="reentry_nav">Re-entry Navigation (Job Search & Training Only)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-location">Location / Cohort *</label>
+                            <select id="reg-location" required>
+                                <option value="Charleston">Charleston, SC</option>
+                                <option value="Columbia">Columbia, SC</option>
+                                <option value="Greenville">Greenville, SC</option>
+                                <option value="Spartanburg">Spartanburg, SC</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Create Participant Account</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- VIEW 2: FIRST SHIFT PARTICIPANT PORTAL                     -->
+        <!-- ========================================================= -->
+        <section id="view-fs-portal" class="app-view hidden">
+            <div class="portal-header">
+                <div>
+                    <h1 id="fs-welcome-title">First Shift Orientation Portal</h1>
+                    <p class="portal-sub">Track your 4-Week Job Readiness Gates, daily points, and orientation milestones.</p>
+                </div>
+                <div class="gate-status-pill" id="fs-gate-badge">Current: Gate 1 (Week 1)</div>
+            </div>
+
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- Card 1: Orientation Step 1 - LS/CMI Interview -->
+                <div class="portal-card action-card">
+                    <div class="card-icon">🎙️</div>
+                    <div class="card-body">
+                        <h3>1. Intake & LS/CMI Interview</h3>
+                        <p>Complete the full 158-question LS/CMI intake interview. Your audio is recorded and scored directly for your clinical case brief and Apricot import.</p>
+                        <button class="btn btn-accent" onclick="openInterviewModal()">Start / View Voice Interview</button>
+                    </div>
+                </div>
+
+                <!-- Card 2: Orientation Step 2 - Form W-9 Submission -->
+                <div class="portal-card action-card">
+                    <div class="card-icon">📝</div>
+                    <div class="card-body">
+                        <h3>2. Digital Form W-9 & ID</h3>
+                        <p id="w9-card-status">Status: Pending Verification. Submit your W-9 and upload your state ID / birth certificate.</p>
+                        <button class="btn btn-outline" onclick="openW9Modal()">Complete Form W-9</button>
+                    </div>
+                </div>
+
+                <!-- Card 3: Daily Points & Attendance -->
+                <div class="portal-card stats-card">
+                    <div class="card-icon">⭐</div>
+                    <div class="card-body">
+                        <h3>Daily Points & Attendance</h3>
+                        <div class="stat-highlight">
+                            <span class="stat-number" id="fs-avg-points">--</span>
+                            <span class="stat-label">Avg Daily Points / 10</span>
+                        </div>
+                        <p id="fs-attendance-summary">Attendance records synced from Apricot.</p>
+                    </div>
+                </div>
+
+                <!-- Card 4: Barrier Resolution Checklist -->
+                <div class="portal-card">
+                    <div class="card-icon">🚦</div>
+                    <div class="card-body">
+                        <h3>Driver's License & Child Support Plan</h3>
+                        <p>Track your action items for license reinstatement and child support modifications.</p>
+                        <button class="btn btn-outline" onclick="openBarriersModal()">Update Barrier Plan</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4-WEEK JOB READINESS GATE MATRIX -->
+            <div class="section-card mt-8">
+                <div class="section-header">
+                    <div>
+                        <h2>4-Week Job Readiness Gate Tracker</h2>
+                        <p>Review the Red / Green criteria required to graduate each week and qualify for employer job matching.</p>
+                    </div>
+                </div>
+
+                <div class="gate-tabs">
+                    <button class="gate-tab-btn active" onclick="switchGateWeek(1)">Week 1 Gate</button>
+                    <button class="gate-tab-btn" onclick="switchGateWeek(2)">Week 2 Gate</button>
+                    <button class="gate-tab-btn" onclick="switchGateWeek(3)">Week 3 Gate</button>
+                    <button class="gate-tab-btn" onclick="switchGateWeek(4)">Week 4 Gate (Placement)</button>
+                </div>
+
+                <div id="gate-criteria-table-container" class="mt-4">
+                    <!-- Loaded dynamically via JavaScript -->
+                </div>
+            </div>
+
+            <!-- Class Feedback Card -->
+            <div class="section-card mt-8">
+                <div class="section-header">
+                    <h2>Daily Workshop & Training Feedback</h2>
+                    <p>Tell us how today's workshop went so facilitators can adjust support.</p>
+                </div>
+                <form id="form-class-feedback" onsubmit="handleClassFeedback(event)" class="feedback-grid">
+                    <div class="form-group">
+                        <label>Workshop / Session Name</label>
+                        <input type="text" id="fb-session" required placeholder="e.g., Week 1 Workplace Etiquette & CBT">
+                    </div>
+                    <div class="form-group">
+                        <label>Facilitator</label>
+                        <input type="text" id="fb-facilitator" placeholder="Facilitator Name">
+                    </div>
+                    <div class="form-group">
+                        <label>Rating (1 to 5 Stars)</label>
+                        <select id="fb-rating" required>
+                            <option value="5">⭐⭐⭐⭐⭐ 5 - Excellent</option>
+                            <option value="4">⭐⭐⭐⭐ 4 - Very Good</option>
+                            <option value="3">⭐⭐⭐ 3 - Good</option>
+                            <option value="2">⭐⭐ 2 - Needs Improvement</option>
+                            <option value="1">⭐ 1 - Poor</option>
+                        </select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Key Takeaway or Comments</label>
+                        <textarea id="fb-text" rows="2" placeholder="What was the most useful thing you learned today?"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit Class Feedback</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- VIEW 3: RE-ENTRY NAVIGATION PARTICIPANT PORTAL             -->
+        <!-- ========================================================= -->
+        <section id="view-rn-portal" class="app-view hidden">
+            <div class="portal-header">
+                <div>
+                    <h1>Re-entry Navigation Hub</h1>
+                    <p class="portal-sub">Access verified fair-chance employers, build your resume, and complete online modules.</p>
+                </div>
+            </div>
+
+            <div class="nav-sub-tabs">
+                <button class="sub-tab-btn active" onclick="switchRnSection('jobs')">💼 Re-entry Job Board</button>
+                <button class="sub-tab-btn" onclick="switchRnSection('resume')">📄 AI Resume Builder</button>
+                <button class="sub-tab-btn" onclick="switchRnSection('cbt')">🧠 CBT & Trades Modules</button>
+                <button class="sub-tab-btn" onclick="switchRnSection('locker')">📁 Document Locker</button>
+            </div>
+
+            <!-- RN Section: Job Board -->
+            <div id="rn-section-jobs" class="rn-sub-view">
+                <div class="section-card">
+                    <h2>Fair-Chance Re-entry Employers in South Carolina</h2>
+                    <p class="mb-4">Verified partners offering competitive pay, 1st shift schedules, and rapid promotion paths.</p>
+                    <div id="job-listings-grid" class="job-grid">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- RN Section: Resume Builder -->
+            <div id="rn-section-resume" class="rn-sub-view hidden">
+                <div class="section-card">
+                    <h2>Master Resume Builder</h2>
+                    <p class="mb-4">Fill out your background to generate an employer-ready resume formatted for First Shift partners.</p>
+                    <form id="form-resume" onsubmit="handleSaveResume(event)" class="resume-form-grid">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="res-name" required placeholder="John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="text" id="res-phone" required placeholder="843-555-0199">
+                        </div>
+                        <div class="form-group">
+                            <label>City & State</label>
+                            <input type="text" id="res-location" required placeholder="Charleston, SC">
+                        </div>
+                        <div class="form-group">
+                            <label>Professional Objective</label>
+                            <input type="text" id="res-objective" placeholder="Dedicated professional seeking 1st shift manufacturing role...">
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Key Skills (comma separated)</label>
+                            <textarea id="res-skills" rows="2" placeholder="Forklift operation, blueprint reading, OSHA 10, assembly, teamwork"></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Work Experience</label>
+                            <textarea id="res-experience" rows="4" placeholder="Material Handler | Palmetto Logistics | 2024 - 2025&#10;- Operated forklift and managed pallet inventory..."></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Certifications & Education</label>
+                            <textarea id="res-education" rows="2" placeholder="GED - 2023 | OSHA 10 Safety Certification - 2024"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save & Generate Resume</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- RN Section: CBT Modules -->
+            <div id="rn-section-cbt" class="rn-sub-view hidden">
+                <div class="section-card">
+                    <h2>Cognitive Behavioral Training & Trades Curriculum</h2>
+                    <div class="training-accordion" id="cbt-accordion-container">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- RN Section: Document Locker -->
+            <div id="rn-section-locker" class="rn-sub-view hidden">
+                <div class="section-card">
+                    <h2>Personal Document Locker</h2>
+                    <p class="mb-4">Safely store copies of your State ID, Birth Certificate, W-9, and training certificates.</p>
+                    <form id="form-upload-doc" onsubmit="handleDocUpload(event)" class="upload-bar">
+                        <input type="file" id="locker-file" required>
+                        <select id="locker-type" required>
+                            <option value="id">State Driver's License / ID</option>
+                            <option value="ssn">Social Security Card</option>
+                            <option value="cert">Training / Trade Certificate</option>
+                            <option value="resume">Resume PDF</option>
+                            <option value="other">Other Legal Document</option>
+                        </select>
+                        <button type="submit" class="btn btn-outline">Upload to Locker</button>
+                    </form>
+                    <div id="locker-docs-list" class="mt-4">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- VIEW 4: PROGRAM MANAGER COMMAND CENTER                     -->
+        <!-- ========================================================= -->
+        <section id="view-pm-portal" class="app-view hidden">
+            <div class="portal-header">
+                <div>
+                    <h1>Program Manager Command Center</h1>
+                    <p class="portal-sub">Manage caseloads, review scoring drafts, generate Monday/Friday reports, and sync Apricot points.</p>
+                </div>
+                <div class="pm-actions-header">
+                    <button class="btn btn-primary" onclick="generateReport('monday')">📋 Monday Needs Report</button>
+                    <button class="btn btn-accent" onclick="generateReport('friday')">📊 Friday Milestones Report</button>
+                    <button class="btn btn-outline" onclick="openApricotModal()">📥 Sync Apricot CSV</button>
+                </div>
+            </div>
+
+            <!-- Filter Toolbar -->
+            <div class="filter-toolbar">
+                <select id="pm-filter-location" onchange="loadCaseload()">
+                    <option value="">All Locations</option>
+                    <option value="Charleston">Charleston, SC</option>
+                    <option value="Columbia">Columbia, SC</option>
+                    <option value="Greenville">Greenville, SC</option>
+                    <option value="Spartanburg">Spartanburg, SC</option>
+                </select>
+                <select id="pm-filter-track" onchange="loadCaseload()">
+                    <option value="">All Tracks</option>
+                    <option value="first_shift">First Shift</option>
+                    <option value="reentry_nav">Re-entry Navigation</option>
+                </select>
+                <select id="pm-filter-gate" onchange="loadCaseload()">
+                    <option value="">All Gates</option>
+                    <option value="1">Gate 1 (Week 1)</option>
+                    <option value="2">Gate 2 (Week 2)</option>
+                    <option value="3">Gate 3 (Week 3)</option>
+                    <option value="4">Gate 4 (Week 4)</option>
                 </select>
             </div>
-            <div id="details-error" class="error hidden">Please enter your name and select a location.</div>
-            <button id="begin-interview-btn" class="primary-btn pulse">Start Interview</button>
-            <div id="permission-error" class="error hidden">Microphone permission denied. Please allow microphone access to continue.</div>
-        </div>
 
-        <!-- Question Screen -->
-        <div id="question-screen" class="screen hidden">
-            <div class="recording-indicator">
-                <span class="red-dot"></span>
-                <span>Recording...</span>
-            </div>
-            
-            <div class="question-container">
-                <h2 id="question-text">Loading question...</h2>
-                <p id="question-subtext" class="subtext"></p>
+            <!-- Caseload Table -->
+            <div class="section-card mt-4">
+                <h2>Active Participant Caseload</h2>
+                <div class="table-responsive">
+                    <table class="data-table" id="caseload-table">
+                        <thead>
+                            <tr>
+                                <th>Participant</th>
+                                <th>Location & Track</th>
+                                <th>Current Gate</th>
+                                <th>W-9 & ID</th>
+                                <th>DL / Child Support</th>
+                                <th>Avg Points</th>
+                                <th>Criteria (Green/Red)</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="caseload-tbody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
-            <div class="controls">
-                <button id="prev-btn" class="secondary-btn hidden">Previous</button>
-                <button id="next-btn" class="primary-btn">Next Question</button>
-                <button id="finish-btn" class="primary-btn finish hidden">Finish & Submit</button>
+            <!-- Draft Scoring Reviews Section -->
+            <div class="section-card mt-8">
+                <h2>Human-in-the-Loop Scoring Reviews (Phase 1 &rarr; Phase 2)</h2>
+                <p class="mb-4">Review AI-generated draft scoring forms, provide supervisor feedback, and produce final clinical briefs & CSV imports.</p>
+                <div id="pm-drafts-list">
+                    <!-- Loaded dynamically -->
+                </div>
             </div>
-            
-            <div class="progress-bar-container">
-                <div id="progress-bar" class="progress-bar"></div>
-            </div>
-            <div id="progress-text" class="progress-text">Question 1 of 10</div>
-        </div>
+        </section>
+    </main>
 
-        <!-- Outro Screen -->
-        <div id="outro-screen" class="screen hidden">
-            <h1 id="outro-title">Finishing up...</h1>
-            <p id="outro-text">You may leave the room, but <strong>please leave the computer and browser open while it uploads.</strong></p>
-            <div id="spinner" class="spinner"></div>
-            <button id="restart-btn" class="secondary-btn hidden">Start New Interview</button>
+    <!-- ========================================================= -->
+    <!-- MODALS: W-9, BARRIERS, APRICOT, REPORTS, INTERVIEW        -->
+    <!-- ========================================================= -->
+
+    <!-- Form W-9 Modal -->
+    <div id="modal-w9" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Digital Form W-9 Submission</h3>
+                <button class="modal-close" onclick="closeModal('modal-w9')">&times;</button>
+            </div>
+            <form id="form-w9" onsubmit="handleW9Submit(event)">
+                <div class="form-group">
+                    <label>1. Name (as shown on your income tax return)</label>
+                    <input type="text" id="w9-name" required placeholder="Full Legal Name">
+                </div>
+                <div class="form-group">
+                    <label>2. Business Name / Disregarded Entity (if applicable)</label>
+                    <input type="text" id="w9-business" placeholder="Leave blank if Individual">
+                </div>
+                <div class="form-group">
+                    <label>3. Federal Tax Classification</label>
+                    <select id="w9-classification" required>
+                        <option value="Individual/sole proprietor">Individual / Sole Proprietor</option>
+                        <option value="Single-member LLC">Single-member LLC</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>4. Address (Number, Street, and Apt or Suite no.)</label>
+                    <input type="text" id="w9-address" required placeholder="123 Main St, Apt 4B">
+                </div>
+                <div class="form-group">
+                    <label>5. City, State, and ZIP Code</label>
+                    <input type="text" id="w9-city-state-zip" required placeholder="Charleston, SC 29401">
+                </div>
+                <div class="form-group">
+                    <label>6. Social Security Number (SSN)</label>
+                    <input type="password" id="w9-ssn" required placeholder="XXX-XX-XXXX" maxlength="11">
+                </div>
+                <div class="form-group">
+                    <label>Electronic Signature (Type full name to sign)</label>
+                    <input type="text" id="w9-sig" required placeholder="Your Legal Name">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Sign & Submit Form W-9</button>
+            </form>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- Barrier Plan Modal -->
+    <div id="modal-barriers" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Driver's License & Barrier Action Plan</h3>
+                <button class="modal-close" onclick="closeModal('modal-barriers')">&times;</button>
+            </div>
+            <form id="form-barriers" onsubmit="handleBarriersSubmit(event)">
+                <div class="form-group">
+                    <label>Driver's License Status</label>
+                    <select id="bar-dl-status">
+                        <option value="valid">Valid Driver's License</option>
+                        <option value="suspended">Suspended (Needs Reinstatement)</option>
+                        <option value="reinstatement_plan">Active Reinstatement / Payment Plan</option>
+                        <option value="not_applicable">Not Applicable</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Driver's License Notes (Fees, DMV Appointments, Routes)</label>
+                    <textarea id="bar-dl-notes" rows="2" placeholder="e.g. Needs $250 reinstatement fee to SCDMV..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Child Support Status</label>
+                    <select id="bar-cs-status">
+                        <option value="none">No Active Child Support Case</option>
+                        <option value="active_plan">Current on Payments / Active Plan</option>
+                        <option value="modification_needed">Modification / Review Needed</option>
+                        <option value="behind">Behind / Arrears Assistance Needed</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Child Support Action Notes</label>
+                    <textarea id="bar-cs-notes" rows="2" placeholder="e.g. Filing wage modification request with county court..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Housing Status</label>
+                    <select id="bar-housing-status">
+                        <option value="stable">Stable Housing (Own/Rent/Family)</option>
+                        <option value="transitional">Transitional Housing Program</option>
+                        <option value="shelter">Emergency Shelter</option>
+                        <option value="at_risk">At Risk of Homelessness</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Transportation Method</label>
+                    <select id="bar-trans-status">
+                        <option value="personal_vehicle">Personal Vehicle</option>
+                        <option value="bus">CARTA / Public Transit Bus</option>
+                        <option value="ride_share">First Shift Van / Ride Share</option>
+                        <option value="needs_ride">Needs Transportation Assistance</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Upcoming Court Dates / Supervision Appointments</label>
+                    <input type="text" id="bar-court-dates" placeholder="e.g. Probation meeting Oct 12, 10:00 AM">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Save Barrier Plan</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Apricot CSV Sync Modal -->
+    <div id="modal-apricot" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Sync Apricot Points & Case Management CSV</h3>
+                <button class="modal-close" onclick="closeModal('modal-apricot')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Paste Apricot CSV Export Content</label>
+                <textarea id="apricot-csv-text" rows="8" placeholder="Name or Email, Date, Points, Attendance Status, Notes&#10;Michael Smith, 2026-09-01, 9.5, present, Completed workshop on time&#10;Dillon Charleston, 2026-09-01, 10, present, Great participation"></textarea>
+            </div>
+            <button class="btn btn-primary btn-block" onclick="handleApricotImport()">Import & Update Participant Points</button>
+        </div>
+    </div>
+
+    <!-- Report Viewer Modal -->
+    <div id="modal-report" class="modal hidden">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3 id="report-modal-title">Weekly Report</h3>
+                <button class="modal-close" onclick="closeModal('modal-report')">&times;</button>
+            </div>
+            <div id="report-modal-body" class="report-content-body">
+                <!-- Loaded dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="window.print()">🖨️ Print / Save PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LS/CMI Voice Interview Modal -->
+    <div id="modal-interview" class="modal hidden">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3>LS/CMI Audio Intake Interview</h3>
+                <button class="modal-close" onclick="closeModal('modal-interview')">&times;</button>
+            </div>
+            <div class="interview-container">
+                <div class="interview-progress-bar">
+                    <div id="int-progress-fill" class="progress-fill" style="width: 2%;"></div>
+                </div>
+                <div class="question-box">
+                    <span class="question-number" id="int-q-number">Question 1 of 158</span>
+                    <h3 id="int-q-text">Loading question...</h3>
+                </div>
+                <div class="recording-controls">
+                    <button id="btn-record" class="btn btn-record" onclick="toggleRecording()">🔴 Start Voice Recording</button>
+                    <span id="recording-indicator" class="recording-pill hidden">Recording in progress...</span>
+                </div>
+                <div class="transcript-preview">
+                    <h4>Live Speech Transcript:</h4>
+                    <div id="int-transcript-box" class="transcript-box">Listening for microphone audio...</div>
+                </div>
+                <div class="interview-nav-buttons">
+                    <button class="btn btn-outline" onclick="prevQuestion()">Previous</button>
+                    <button class="btn btn-primary" id="btn-next-question" onclick="nextQuestion()">Next Question</button>
+                    <button class="btn btn-accent hidden" id="btn-submit-interview" onclick="finishInterview()">Finish & Submit Audio Assessment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
 </body>
 </html>

@@ -1,0 +1,195 @@
+Prepare for Import
+Import ConfigurationImport Configuration
+Import Instructions for Inserting First Shift 2.0 Intake Form Using Duplicate Checks Import Instructions for Inserting First Shift 2.0 Intake Form Using Duplicate Checks 
+First Shift 2.0 Intake Form
+Form
+Import Type
+Data
+Linking
+Enrollments
+Record Action
+Create New
+Update Existing
+Both
+Records with missing required fields will be rejected and skipped. All imported records will be regular records.
+Warning: Records with missing required fields will be imported as incomplete regular records. No validation errors will be shown.
+This may cause issues in forms or reports that expect required fields to have values.
+When Required Fields Are Missing
+Require all required fields to be complete (strict validation)
+Allow incomplete records (no validation)
+Reconcile First Shift 2.0 Intake Form Records Using
+Duplicate Check Fields
+Any value (including special characters).The first name and last name fields are required, but the middle name field is not.
+* First Shift 2.0 Intake Form - Your Name (field_4297)
+Accepts the following date formatsYYYYMMDDYYYY-MM-DDJanuary 1st, 2009Jan 1 2009mm/dd/yyyy
+* Todays Date (field_4296)
+Accepts the following date formatsYYYYMMDDYYYY-MM-DDJanuary 1st, 2009Jan 1 2009mm/dd/yyyy
+Date of Birth (field_4476)
+9 digit numbersThe spaces and the following characters will be ignored: -555555555555-55-5555
+Social Security Number (field_4477)
+Any one of the following valuesAmerican Indian or Alaska NativeAsian
+Race (field_4298)
+
+8/26/26, 10:03 PM Prepare for Import - Apricot
+https://apricot.socialsolutions.com/import/prepareimport 1/7
+Black or African AmericanNative Hawaiian or Other Pacific IslanderWhiteMore than 1 race
+Any value (including special characters)
+Address at intake (where are you currently sleeping) (field_4299)
+Any one of the following valuesFamily’s homeFriend's homeRenting an apartment or roomTransitional housingFederal halfway house
+What is your current housing status? (field_4300)
+Any one of the following valuesYesNo
+In the last five years, have you been prescribed medication for a physical or mental health condition? (field_4307)
+Any value (including special characters)
+List the drugs and diagnosis to the best of your knowledge (field_4308)
+Any number of the following values separated by a '|' characterimmediate risk of losing housinglack of transportationneed a state issued ID, social security card, or a birth certificateneed prescription medicationhave a medical need that need immediate attentionother medical need (high blood pressure, diabetes, etc)mental health concern
+Emergency needs are things that must be addressed immediately for you to succeed. Let us know if any of the following applies. Do youhave any emergency needs? (Check all that apply): (field_4309)
+Any one of the following valuesYesNo
+You are involved in the criminal justice system if you are on probation, parole, have pending charges, or are living in a federal BOPhalfway house. Are you currently involved in the criminal justice system? (field_4320)
+Any number of the following values separated by a '|' characterLiving in a Federal BOP Halfway HouseState Parole-The release of a person to supervision in the community before completion of their sentenceState Probation/SupervisionFederal SupervisionPending charges
+Involvement (check all that apply) (field_4327)
+Accepts the following date formatsYYYYMMDDYYYY-MM-DDJanuary 1st, 2009Jan 1 2009mm/dd/yyyy
+What is your projected release date from the Federal halfway house? (field_4322)
+Any one of the following valuesYesNo
+Parole - The release of a person to supervision in the community before completion of their sentence.Are you on parole? Parole - Therelease of a person to supervision in the community before completion of their sentence. Are you on parole? (field_4323)
+Accepts the following date formatsYYYYMMDDYYYY-MM-DDJanuary 1st, 2009Jan 1 2009mm/dd/yyyy
+When is the projected end date of your parole? (field_4324)
+Any one of the following valuesYesNo
+Are you in compliance with the terms of your parole? (field_4325)
+Any one of the following values
+Is Turn90 a condition of your parole? (field_4326)
+
+8/26/26, 10:03 PM Prepare for Import - Apricot
+https://apricot.socialsolutions.com/import/prepareimport 2/7
+YesNo
+Numeric values that do not contain '.' characterOnly whole numbers are acceptedThe spaces and the following characters will be ignored: , £ € $ %
+How many months did you have remaining on your prison sentence? (field_4333)
+Any one of the following valuesYesNo
+State Supervision-Did you receive a Diverted sentence? – you were facing criminal charges that carried a prison sentence, but wasdiverted away from prison, remaining in the community to complete Turn90 as part of a plea agreement and a condition of probation.(field_4334)
+Numeric values that do not contain '.' characterOnly whole numbers are acceptedThe spaces and the following characters will be ignored: , £ € $ %
+How many months was your diverted state sentence? (field_4335)
+Accepts the following date formatsYYYYMMDDYYYY-MM-DDJanuary 1st, 2009Jan 1 2009mm/dd/yyyy
+What is the projected end date of your state probation/community supervision? (field_4336)
+Any one of the following valuesYesNo
+Are you in compliance with the terms of your state supervision? (field_4337)
+Accepts the following date formatsYYYYMMDDYYYY-MM-DDJanuary 1st, 2009Jan 1 2009mm/dd/yyyy
+What is the projected end date of your federal supervision? (field_4338)
+Any one of the following valuesYesNo
+Are you in compliance with the terms of your federal supervision? (field_4339)
+Any one of the following valuesYesNo
+Federal-Did you receive a Diverted sentence? – you were facing federal criminal charges that carried a prison sentence, but was divertedaway from prison, remaining in the community to complete Turn90 as part of a plea agreement and a condition of probation.(field_4340)
+Numeric values that do not contain '.' characterOnly whole numbers are acceptedThe spaces and the following characters will be ignored: , £ € $ %
+How many months was your diverted federal sentence? (field_4341)
+Any one of the following valuesStateFederalBoth
+Are your pending charges State of Federal? (field_4342)
+Any value (including special characters)
+List pending charges and county charges are listed: (field_4343)
+Any one of the following valuesYesNo
+Are any of the pending charges a felony? (field_4344)
+Any one of the following valuesYesNo
+Are any of the charges considered violent by legal standards? (field_4345)
+
+8/26/26, 10:03 PM Prepare for Import - Apricot
+https://apricot.socialsolutions.com/import/prepareimport 3/7
+Any one of the following valuesYesNo
+Do you have an official agreement with the government to complete Turn90 in exchange for a lesser sentence or dismissed charges incourt?Do you have an official agreement with the government to complete Turn90 in exchange for a lesser sentence or dismissedcharges in court? (field_4346)
+Any one of the following valuesUnder 1616-1718-2425 or older
+How old were you when you were arrested for the first time? (field_4347)
+Any one of the following values1 times2-4 times5-8 times9 times or more
+How many times have you been arrested? (field_4348)
+Any one of the following valuesNever been convicted1 time2–3 times4 or more times
+How many times have you been convicted? (field_4349)
+Any one of the following valuesNever been incarcerated1 time2–3 times4 or more times
+How many times have you been incarcerated (including this most recent time?) (field_4350)
+Accepts the following date formatsYYYYMMDDYYYY-MM-DDJanuary 1st, 2009Jan 1 2009mm/dd/yyyy
+Date of your most recent release from incarceration? (field_4352)
+Any one of the following valuesJailState PrisonFederal Prison
+Were you most recently released from jail or prison? (field_4351)
+Any one of the following valuesBetween 1 and 90 daysBetween 91 and 365 daysBetween 366 days and three yearsMore than three years and less than five yearsMore than five years and less than ten yearsMore than ten years and less than fifteen yearsMore than fifteen years
+What was the length of your most recent incarceration? (field_4353)
+Any one of the following valuesYesNo
+Did your most recent criminal convictions include a violent offense? (field_4354)
+Any one of the following valuesYesNo
+Have you ever been charged or convicted of a sex offense? (field_4355)
+Any one of the following valuesYesNo
+Did your most recent criminal conviction include drug trafficking? (field_4356)
+Any one of the following valuesYesNo
+Did your most recent criminal conviction include possession of a firearm? (field_4357)
+
+8/26/26, 10:03 PM Prepare for Import - Apricot
+https://apricot.socialsolutions.com/import/prepareimport 4/7
+Any one of the following valuesYesNo
+Does your mother or father have a criminal record? (field_4358)
+Any one of the following valuesYesNo
+Do you have a history of major drug use? Illegal drug use that caused major life disruptions, problems in relationships, and led to criminalactions (stole just to get more drugs or money for more drugs, sold drugs just to be able get high, etc) (field_4365)
+Any one of the following valuesYesNo
+Do you have a history of major alcohol use? Alcohol use that caused major life disruptions, problems in relationships, and led to criminalactions (drunk driving offenses, fights while blacked out, etc) (field_4366)
+Any one of the following valuesYesNo
+Do you use marijuana but no other drugs? (field_4367)
+Any one of the following valuesNot applicable1-90 days91-365 daysMore than a year to three yearsMore than three years to seven yearsMore than seven years ago
+When was your last drug use? (field_4368)
+Any one of the following valuesYesNo
+Obligations to support children. Someone who is on court ordered child support OR has an agreement to pay a set amount to support achild OR reports financially helping out regularly, even without an official agreement, this includes paying for birthday parties, clothes,and school supplies. Do you financially support any biological children? (field_4369)
+Any one of the following valuesYesNo
+Are you court ordered to pay child support? (field_4370)
+Any one of the following valuesYesNo
+Have you been in contact with child support enforcement to make sure you are current? (field_4371)
+Any one of the following valuesPeople working or in schoolMostly people not working / involved in illegal activityA mix
+Who do you spend most of your time with? (field_4372)
+Any one of the following valuesI stay calm and walk awayIt dependsI react or confront them
+How do you usually respond when someone disrespects you or challenges you? (field_4373)
+Any one of the following valuesYesNo
+Have you ever had a payroll job? (field_4310)
+Any one of the following valuesLess than 1 year1-3 yearsMore than 3 years
+How much total work experience do you have? (field_4311)
+Any one of the following valuesLess than 3 months3-6 months6-12 monthsMore than 1 year
+What is the longest period of time you have stayed at one job? (field_4312) 
+8/26/26, 10:03 PM Prepare for Import - Apricot
+https://apricot.socialsolutions.com/import/prepareimport 5/7
+Any number of the following values separated by a '|' characterWarehouse / logisticsConstructionManufacturingFood serviceLandscapingCleaning / janitorialRetail
+What types of jobs have you had? (Check all that apply) (field_4314)
+Any one of the following valuesYesNo
+Do you have any physical or personal limitations that could affect the type of work you can do? (field_4313)
+Any number of the following values separated by a '|' characterUsing tools or equipmentDriving / deliveryForklift or machineryCustomer serviceComputer skillsOrganization / time managementWorking on a teamSupervising others
+What work skills do you have? (Check all that apply) (field_4315)
+Any number of the following values separated by a '|' characterI’ve never worked beforeI left for a better opportunityTransportation issuesAttendance issuesConflict at workLayoff / job endedDidn’t like the job so I quitIncarcerationLow pay
+What usually caused jobs to end for you? (Check all that apply) (field_4316)
+Any one of the following valuesYesNo
+Do you currently have any certifications or job training? (field_4317)
+Any number of the following values separated by a '|' characterForklift certificationOSHA-10NCCER / construction trainingCDLFood safety (ServSafe)CPR / First AidWelding
+What certifications do you have? (field_4318)
+Any value (including special characters)
+What certifications are you interested in? (field_4319)
+Any one of the following valuesLess than high schoolSome high schoolGEDHigh school diplomaSome collegeTrade certificationCollege degree
+What is the highest level of education you have completed? (field_4328)
+Any one of the following valuesYesNo
+Are you currently working on your GED? (field_4329)
+Any one of the following valuesYesNo
+Do you have a drivers license in good standing? (field_4330)
+Any one of the following valuesYes
+Do you have reliable transportation to attend everyday? (field_4331)
+
+8/26/26, 10:03 PM Prepare for Import - Apricot
+https://apricot.socialsolutions.com/import/prepareimport 6/7
+No
+Any one of the following valuesI have a car and a license - I drive myselfI have a car but no license and drive myselfMy family or support person drives meI have reliable public transportation
+What is your reliable transportation? (field_4332)
+Any one of the following valuesYesNo
+Do you have any regular obligations that could affect your ability to attend daily or work a full shift? (This could include court obligations,child care, sick family members who need care, your own medical issues) (field_4359)
+Any value (including special characters)
+What might make it hard for you to attend every day? (field_4360)
+Any value (including special characters)
+What are you hoping to get out of this program? (field_4361)
+Any value (including special characters)
+What type of job would you like? (you can be specific if there is a certain company or you can list the types of jobs you'd like) (field_4364)
+Any number of the following values separated by a '|' characterPayStabilityLocationHours / scheduleOpportunity to growBenefits
+What are the two most important to you in a job? (select 2) (field_4362)
+Any value (including special characters)
+Is there anything else you'd like us to know? (field_4363)
+Any number of the following Program Ids separated by a '|' characterId - Program Name5862 - Standard User
+Assigned Programs (field_4306)
+Assign one or more owners to each record using User IDs separated by '|' character.For new records: Sets all specified users as case managers.For existing records: Adds specified users to the existing case managers list.
+User ID - User Name32920 - Web Form Access1 - Amy Barch68343 - Daisy Boynton20035 - Terrence Brown74771 - Matt Carlisle77642 - Diyoung Dantzler100 - Justin Evans19114 - Terrance Ferrell66521 - Jenn Jeanquart62854 - Kat Norsworthy29706 - Deon Nowell
+Owner (field_owner)
+
+8/26/26, 10:03 PM Prepare for Import - Apricot
+https://apricot.socialsolutions.com/import/prepareimport 7/7
