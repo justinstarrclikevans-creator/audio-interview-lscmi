@@ -20,26 +20,24 @@ function loadManuals() {
     return manualsText;
 }
 
-async function runPipeline(transcriptText, clientName) {
+async function runPhase1(transcriptText, clientName) {
     if (!process.env.OPENAI_API_KEY) {
-        throw new Error("OPENAI_API_KEY is not set. Please add it to your environment variables in Render.");
+        throw new Error("OPENAI_API_KEY is missing");
     }
 
     const manuals = loadManuals();
-    const systemPrompt = `You are a clinical assessment expert. You must complete four deliverables based on the provided interview transcript and manuals.
+    const systemPrompt = `You are a clinical assessment expert. Phase 1: You must complete the Interview Guide and a DRAFT Scoring Form based on the provided interview transcript and manuals.
     
     Reference Manuals provided below:
     ${manuals}
     
-    Output your response EXACTLY as a JSON object with four keys:
+    Output your response EXACTLY as a JSON object with two keys:
     {
       "interview_guide": "# Interview Guide\\n...",
-      "scoring_form": "# Scoring Form\\n...",
-      "case_brief": "# Case Brief\\n...",
-      "csv_row": "comma,separated,values,representing,the,answers,to,the,intake,form"
+      "draft_scoring_form": "# Draft Scoring Form\\n..."
     }
     
-    Ensure the markdown documents are beautifully formatted and follow the rules in the manuals strictly. The case brief MUST NOT select Criminal History as one of the top needs.`;
+    Ensure the markdown documents are beautifully formatted and follow the rules in the manuals strictly.`;
 
     const completion = await openai.chat.completions.create({
         messages: [
@@ -53,4 +51,38 @@ async function runPipeline(transcriptText, clientName) {
     return JSON.parse(completion.choices[0].message.content);
 }
 
-module.exports = { runPipeline };
+async function runPhase2(transcriptText, clientName, draftScoringForm, feedback) {
+    if (!process.env.OPENAI_API_KEY) {
+        throw new Error("OPENAI_API_KEY is missing");
+    }
+
+    const manuals = loadManuals();
+    const systemPrompt = `You are a clinical assessment expert. Phase 2: The Program Manager has reviewed your Draft Scoring Form and provided feedback/corrections. 
+    You must output the FINAL Scoring Form incorporating their feedback. 
+    Then, using the Final Scoring Form, generate the Case Management Brief and the CSV row for the intake form.
+    
+    Reference Manuals provided below:
+    ${manuals}
+    
+    Output your response EXACTLY as a JSON object with three keys:
+    {
+      "final_scoring_form": "# Final Scoring Form\\n...",
+      "case_brief": "# Case Brief\\n...",
+      "csv_row": "comma,separated,values,representing,the,answers,to,the,intake,form"
+    }
+    
+    Ensure the markdown documents are beautifully formatted. The case brief MUST NOT select Criminal History as one of the top needs.`;
+
+    const completion = await openai.chat.completions.create({
+        messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: `Client: ${clientName}\n\nTranscript:\n${transcriptText}\n\nDraft Scoring Form:\n${draftScoringForm}\n\nProgram Manager Feedback:\n${feedback}` }
+        ],
+        model: "gpt-4o",
+        response_format: { type: "json_object" }
+    });
+
+    return JSON.parse(completion.choices[0].message.content);
+}
+
+module.exports = { runPhase1, runPhase2 };

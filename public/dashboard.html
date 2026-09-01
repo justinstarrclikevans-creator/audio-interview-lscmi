@@ -9,7 +9,7 @@
         h1 { text-align: center; color: #2c3e50; }
         .container { max-width: 900px; margin: 0 auto; }
         .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .card h2 { margin-top: 0; font-size: 1.2rem; color: #2980b9; border-bottom: 2px solid #ecf0f1; padding-bottom: 10px; }
+        .card h2 { margin-top: 0; font-size: 1.2rem; color: #2980b9; border-bottom: 2px solid #ecf0f1; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center;}
         .file-list { list-style: none; padding: 0; }
         .file-list li { margin: 10px 0; display: flex; align-items: center; }
         .file-list a { text-decoration: none; color: #34495e; font-weight: 500; background: #ecf0f1; padding: 8px 12px; border-radius: 4px; display: inline-block; transition: background 0.2s; }
@@ -19,21 +19,51 @@
         .badge-md { background: #a29bfe; color: #fff; }
         .badge-txt { background: #81ecec; color: #00b894; }
         .badge-err { background: #ff7675; color: #fff; }
+        
+        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; color: white;}
+        .status-draft { background-color: #f39c12; }
+        .status-completed { background-color: #27ae60; }
+        
         .alert { background: #ffeaa7; border-left: 4px solid #f39c12; padding: 15px; margin-bottom: 20px; font-size: 0.9rem; }
+        
+        .review-btn { background: #3498db; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 10px;}
+        .review-btn:hover { background: #2980b9; }
+
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
+        .modal { background: white; padding: 30px; border-radius: 8px; width: 90%; max-width: 700px; max-height: 90vh; overflow-y: auto; }
+        .modal h3 { margin-top: 0; }
+        .modal textarea { width: 100%; height: 120px; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit;}
+        .modal-buttons { display: flex; justify-content: flex-end; gap: 10px; }
+        .btn-cancel { background: #e74c3c; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; }
+        .btn-submit { background: #2ecc71; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; }
+        #draft-content { background: #f8f9fa; padding: 15px; border: 1px solid #ddd; border-radius: 4px; max-height: 250px; overflow-y: auto; margin-bottom: 15px; white-space: pre-wrap; font-family: monospace; font-size: 0.9rem;}
     </style>
 </head>
 <body>
     <div class="container">
         <h1>LS/CMI Assessment Dashboard</h1>
-        
         <div class="alert">
-            <strong>Warning: Ephemeral Storage!</strong> Because this app is hosted on Render's Free Tier, all files here will be deleted permanently when the server goes to sleep (usually after 15 minutes of inactivity). Download your files immediately after an interview completes!
+            <strong>Warning: Ephemeral Storage!</strong> Hosted on Render Free Tier. Files will be deleted when the server sleeps. Download your final documents!
         </div>
-
         <div id="clients-container">Loading...</div>
     </div>
 
+    <div class="modal-overlay" id="feedback-modal">
+        <div class="modal">
+            <h3>Review Draft Scoring Form</h3>
+            <p>Review the draft below and provide your clinical corrections (e.g., "Change the peer score to 0 because he is unemployed").</p>
+            <div id="draft-content">Loading draft...</div>
+            <textarea id="feedback-text" placeholder="Type your corrections here..."></textarea>
+            <div class="modal-buttons">
+                <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+                <button class="btn-submit" onclick="submitFeedback()">Submit Corrections (Run Phase 2)</button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        let currentClientId = null;
+
         function getBadge(filename) {
             if (filename.endsWith('.webm')) return '<span class="badge badge-audio">Audio</span>';
             if (filename.endsWith('.md')) return '<span class="badge badge-md">Markdown</span>';
@@ -44,11 +74,64 @@
             return '<span class="badge">File</span>';
         }
 
-        function formatName(id) {
+        function formatName(id, isDraft) {
             const parts = id.split('_');
             const date = new Date(parseInt(parts[0])).toLocaleString();
             const name = parts[1] || 'Unknown';
-            return `${name} <span style="font-size: 0.8rem; color: #7f8c8d; font-weight: normal; margin-left: 10px;">${date}</span>`;
+            const statusHtml = isDraft 
+                ? '<span class="status-badge status-draft">Needs Review</span>'
+                : '<span class="status-badge status-completed">Completed</span>';
+            
+            return `
+                <div>${name} <span style="font-size: 0.8rem; color: #7f8c8d; font-weight: normal; margin-left: 10px;">${date}</span></div>
+                ${statusHtml}
+            `;
+        }
+
+        async function openReviewModal(clientId, draftFilename) {
+            currentClientId = clientId;
+            document.getElementById('feedback-modal').style.display = 'flex';
+            document.getElementById('draft-content').textContent = "Loading...";
+            
+            try {
+                const res = await fetch(`/data/${draftFilename}`);
+                const text = await res.text();
+                document.getElementById('draft-content').textContent = text;
+            } catch (e) {
+                document.getElementById('draft-content').textContent = "Failed to load draft file.";
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('feedback-modal').style.display = 'none';
+            document.getElementById('feedback-text').value = '';
+            currentClientId = null;
+        }
+
+        async function submitFeedback() {
+            const feedback = document.getElementById('feedback-text').value.trim();
+            if (!feedback) {
+                alert("Please enter some feedback.");
+                return;
+            }
+            
+            try {
+                const res = await fetch('/api/submit-feedback', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ clientId: currentClientId, feedback })
+                });
+                
+                if (res.ok) {
+                    alert("Corrections submitted! The AI is now generating the final Case Brief and CSV row. Please wait ~30 seconds for it to appear.");
+                    closeModal();
+                    loadDashboard();
+                } else {
+                    alert("Failed to submit feedback.");
+                }
+            } catch (e) {
+                alert("Error submitting feedback.");
+            }
         }
 
         async function loadDashboard() {
@@ -58,7 +141,7 @@
                 const container = document.getElementById('clients-container');
                 container.innerHTML = '';
 
-                const clients = Object.keys(data).sort().reverse(); // newest first
+                const clients = Object.keys(data).sort().reverse(); 
                 
                 if (clients.length === 0) {
                     container.innerHTML = '<p style="text-align:center; color:#7f8c8d;">No completed interviews found yet.</p>';
@@ -67,15 +150,27 @@
 
                 for (let id of clients) {
                     let files = data[id];
+                    
+                    // Determine status based on presence of draft file
+                    let draftFile = files.find(f => f.includes('draft_scoring_form'));
+                    let isDraft = !!draftFile;
+
                     let card = document.createElement('div');
                     card.className = 'card';
                     
-                    let html = `<h2>${formatName(id)}</h2><ul class="file-list">`;
+                    let html = `<h2>${formatName(id, isDraft)}</h2><ul class="file-list">`;
+                    
                     files.forEach(f => {
                         let url = `/data/${f}`;
-                        html += `<li>${getBadge(f)} <a href="${url}" target="_blank" download>${f.replace(id + '_', '')}</a></li>`;
+                        let cleanName = f.replace(id + '_', '');
+                        html += `<li>${getBadge(f)} <a href="${url}" target="_blank" download>${cleanName}</a></li>`;
                     });
                     html += `</ul>`;
+
+                    if (isDraft) {
+                        html += `<button class="review-btn" onclick="openReviewModal('${id}', '${draftFile}')">Review & Edit Draft</button>`;
+                    }
+
                     card.innerHTML = html;
                     container.appendChild(card);
                 }
@@ -85,7 +180,6 @@
         }
 
         loadDashboard();
-        // refresh every 30 seconds to show newly processed LLM files
         setInterval(loadDashboard, 30000);
     </script>
 </body>

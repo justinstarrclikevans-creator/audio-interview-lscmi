@@ -4,7 +4,7 @@ const multer = require('multer');
 const { Resend } = require('resend');
 const path = require('path');
 const fs = require('fs');
-const { runPipeline } = require('./llm_pipeline');
+const { runPhase1, runPhase2 } = require('./llm_pipeline');
 
 require('dotenv').config({ path: path.join(__dirname, '..', 'email-settings.txt') });
 
@@ -20,7 +20,6 @@ if (!fs.existsSync(dataDir)) {
     fs.mkdirSync(dataDir);
 }
 
-// Serve data files statically so they can be downloaded from the dashboard
 app.use('/data', express.static(dataDir));
 
 const storage = multer.memoryStorage();
@@ -31,12 +30,11 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 app.get('/api/interviews', (req, res) => {
     try {
         const files = fs.readdirSync(dataDir);
-        // Group by client
         const clients = {};
         files.forEach(f => {
             const parts = f.split('_');
             if (parts.length > 1) {
-                const clientId = parts[0] + '_' + parts[1]; // e.g. timestamp_name
+                const clientId = parts[0] + '_' + parts[1];
                 if (!clients[clientId]) clients[clientId] = [];
                 clients[clientId].push(f);
             }
@@ -47,11 +45,45 @@ app.get('/api/interviews', (req, res) => {
     }
 });
 
+app.post('/api/submit-feedback', async (req, res) => {
+    const { clientId, feedback } = req.body;
+    if (!clientId || !feedback) return res.status(400).json({error: "Missing fields"});
+
+    res.status(200).json({message: "Feedback received, processing phase 2..."});
+
+    try {
+        const parts = clientId.split('_');
+        const name = parts[1];
+        
+        // Read transcript and draft
+        const transcript = fs.readFileSync(path.join(dataDir, `${clientId}_transcript.txt`), 'utf8');
+        const draftPath = path.join(dataDir, `${clientId}_draft_scoring_form.md`);
+        let draft = "";
+        if (fs.existsSync(draftPath)) {
+            draft = fs.readFileSync(draftPath, 'utf8');
+        }
+
+        const results = await runPhase2(transcript, name, draft, feedback);
+        
+        // Save final files
+        fs.writeFileSync(path.join(dataDir, `${clientId}_final_scoring_form.md`), results.final_scoring_form);
+        fs.writeFileSync(path.join(dataDir, `${clientId}_final_case_brief.md`), results.case_brief);
+        
+        const csvRow = results.csv_row + "\n";
+        fs.appendFileSync(path.join(__dirname, '..', 'FirstShift20IntakeForm.csv'), csvRow);
+
+        // Remove draft to mark as completed
+        if (fs.existsSync(draftPath)) fs.unlinkSync(draftPath);
+        console.log(`Phase 2 complete for ${name}`);
+    } catch (err) {
+        console.error("Phase 2 failed:", err);
+        fs.writeFileSync(path.join(dataDir, `${clientId}_error_phase2.txt`), `Failed Phase 2: ${err.message}`);
+    }
+});
+
 app.post('/api/upload-audio', upload.single('audio'), async (req, res) => {
     try {
-        if (!req.file) {
-            return res.status(400).json({ error: 'No audio file uploaded.' });
-        }
+        if (!req.file) return res.status(400).json({ error: 'No audio file uploaded.' });
 
         const audioBuffer = req.file.buffer;
         const originalName = req.file.originalname || 'interview_recording.webm';
@@ -63,11 +95,9 @@ app.post('/api/upload-audio', upload.single('audio'), async (req, res) => {
         const safeName = name.replace(/[^a-zA-Z0-9]/g, '');
         const filePrefix = `${timestamp}_${safeName}`;
 
-        // 1. Save Audio and Transcript to disk
         fs.writeFileSync(path.join(dataDir, `${filePrefix}_audio.webm`), audioBuffer);
         fs.writeFileSync(path.join(dataDir, `${filePrefix}_transcript.txt`), transcriptText);
 
-        // 2. Email the initial audio/transcript (fallback)
         const transcriptBuffer = Buffer.from(transcriptText, 'utf8');
         resend.emails.send({
             from: 'Interview App <onboarding@resend.dev>', 
@@ -80,25 +110,17 @@ app.post('/api/upload-audio', upload.single('audio'), async (req, res) => {
             ]
         }).catch(err => console.error("Resend error:", err));
         
-        // 3. Respond immediately to the client to avoid 100s timeout
         res.status(200).json({ message: 'Audio uploaded successfully. Processing in background...' });
 
-        // 4. Run LLM Pipeline in background
         if (process.env.OPENAI_API_KEY) {
-            console.log(`Starting LLM pipeline for ${name}...`);
+            console.log(`Starting LLM Phase 1 for ${name}...`);
             try {
-                const results = await runPipeline(transcriptText, name);
+                const results = await runPhase1(transcriptText, name);
                 fs.writeFileSync(path.join(dataDir, `${filePrefix}_interview_guide.md`), results.interview_guide);
-                fs.writeFileSync(path.join(dataDir, `${filePrefix}_scoring_form.md`), results.scoring_form);
-                fs.writeFileSync(path.join(dataDir, `${filePrefix}_case_brief.md`), results.case_brief);
-                
-                // Append CSV row
-                const csvRow = results.csv_row + "\n";
-                fs.appendFileSync(path.join(__dirname, '..', 'FirstShift20IntakeForm.csv'), csvRow);
-                
-                console.log(`LLM pipeline finished for ${name}.`);
+                fs.writeFileSync(path.join(dataDir, `${filePrefix}_draft_scoring_form.md`), results.draft_scoring_form);
+                console.log(`LLM Phase 1 finished for ${name}. Pending review.`);
             } catch (llmErr) {
-                console.error("LLM Pipeline failed:", llmErr);
+                console.error("LLM Phase 1 failed:", llmErr);
                 fs.writeFileSync(path.join(dataDir, `${filePrefix}_error.txt`), `Failed to generate assessment: ${llmErr.message}`);
             }
         } else {
