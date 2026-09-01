@@ -1,10 +1,10 @@
-const OpenAI = require('openai');
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 const fs = require('fs');
 const path = require('path');
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY || 'dummy_key'
-});
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'dummy_key');
+// We will use gemini-1.5-pro or gemini-1.5-flash. Flash is fast, Pro is smarter. Pro is better for complex clinical stuff.
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro", generationConfig: { responseMimeType: "application/json" } });
 
 const manualsDir = path.join(__dirname, 'manuals');
 
@@ -21,8 +21,8 @@ function loadManuals() {
 }
 
 async function runPhase1(transcriptText, clientName) {
-    if (!process.env.OPENAI_API_KEY) {
-        throw new Error("OPENAI_API_KEY is missing");
+    if (!process.env.GEMINI_API_KEY) {
+        throw new Error("GEMINI_API_KEY is missing");
     }
 
     const manuals = loadManuals();
@@ -31,7 +31,7 @@ async function runPhase1(transcriptText, clientName) {
     Reference Manuals provided below:
     ${manuals}
     
-    Output your response EXACTLY as a JSON object with two keys:
+    You must return a valid JSON object with EXACTLY these two keys:
     {
       "interview_guide": "# Interview Guide\\n...",
       "draft_scoring_form": "# Draft Scoring Form\\n..."
@@ -39,21 +39,16 @@ async function runPhase1(transcriptText, clientName) {
     
     Ensure the markdown documents are beautifully formatted and follow the rules in the manuals strictly.`;
 
-    const completion = await openai.chat.completions.create({
-        messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: `Here is the transcript for ${clientName}:\n\n${transcriptText}` }
-        ],
-        model: "gpt-4o",
-        response_format: { type: "json_object" }
-    });
+    const prompt = `${systemPrompt}\n\nHere is the transcript for ${clientName}:\n\n${transcriptText}`;
 
-    return JSON.parse(completion.choices[0].message.content);
+    const result = await model.generateContent(prompt);
+    const responseText = result.response.text();
+    return JSON.parse(responseText);
 }
 
 async function runPhase2(transcriptText, clientName, draftScoringForm, feedback) {
-    if (!process.env.OPENAI_API_KEY) {
-        throw new Error("OPENAI_API_KEY is missing");
+    if (!process.env.GEMINI_API_KEY) {
+        throw new Error("GEMINI_API_KEY is missing");
     }
 
     const manuals = loadManuals();
@@ -64,7 +59,7 @@ async function runPhase2(transcriptText, clientName, draftScoringForm, feedback)
     Reference Manuals provided below:
     ${manuals}
     
-    Output your response EXACTLY as a JSON object with three keys:
+    You must return a valid JSON object with EXACTLY these three keys:
     {
       "final_scoring_form": "# Final Scoring Form\\n...",
       "case_brief": "# Case Brief\\n...",
@@ -73,16 +68,11 @@ async function runPhase2(transcriptText, clientName, draftScoringForm, feedback)
     
     Ensure the markdown documents are beautifully formatted. The case brief MUST NOT select Criminal History as one of the top needs.`;
 
-    const completion = await openai.chat.completions.create({
-        messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: `Client: ${clientName}\n\nTranscript:\n${transcriptText}\n\nDraft Scoring Form:\n${draftScoringForm}\n\nProgram Manager Feedback:\n${feedback}` }
-        ],
-        model: "gpt-4o",
-        response_format: { type: "json_object" }
-    });
+    const prompt = `${systemPrompt}\n\nClient: ${clientName}\n\nTranscript:\n${transcriptText}\n\nDraft Scoring Form:\n${draftScoringForm}\n\nProgram Manager Feedback:\n${feedback}`;
 
-    return JSON.parse(completion.choices[0].message.content);
+    const result = await model.generateContent(prompt);
+    const responseText = result.response.text();
+    return JSON.parse(responseText);
 }
 
 module.exports = { runPhase1, runPhase2 };

@@ -112,7 +112,7 @@ app.post('/api/upload-audio', upload.single('audio'), async (req, res) => {
         
         res.status(200).json({ message: 'Audio uploaded successfully. Processing in background...' });
 
-        if (process.env.OPENAI_API_KEY) {
+        if (process.env.GEMINI_API_KEY) {
             console.log(`Starting LLM Phase 1 for ${name}...`);
             try {
                 const results = await runPhase1(transcriptText, name);
@@ -124,8 +124,8 @@ app.post('/api/upload-audio', upload.single('audio'), async (req, res) => {
                 fs.writeFileSync(path.join(dataDir, `${filePrefix}_error.txt`), `Failed to generate assessment: ${llmErr.message}`);
             }
         } else {
-            console.warn("OPENAI_API_KEY not found. Skipping LLM pipeline.");
-            fs.writeFileSync(path.join(dataDir, `${filePrefix}_error.txt`), `Failed: OPENAI_API_KEY is missing from environment variables.`);
+            console.warn("GEMINI_API_KEY not found. Skipping LLM pipeline.");
+            fs.writeFileSync(path.join(dataDir, `${filePrefix}_error.txt`), `Failed: GEMINI_API_KEY is missing from environment variables.`);
         }
 
     } catch (error) {
