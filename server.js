@@ -504,11 +504,11 @@ app.post('/api/upload-audio', memoryUpload.single('audio'), async (req, res) => 
 });
 
 // Fallback to index.html for SPA / client routes
-app.get('*', (req, res, next) => {
-    if (req.path.startsWith('/api/') || req.path.startsWith('/data/')) {
-        return next();
+app.use((req, res, next) => {
+    if (req.method === 'GET' && !req.path.startsWith('/api/') && !req.path.startsWith('/data/')) {
+        return res.sendFile(path.join(__dirname, 'public', 'index.html'));
     }
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    next();
 });
 
 app.listen(PORT, () => {
