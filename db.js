@@ -317,14 +317,16 @@ function initParticipantBriefcase(userId) {
 }
 
 function seedDefaultAccounts() {
-    const existingAdmin = db.prepare('SELECT id FROM users WHERE email = ?').get('pm@firstshift.org');
-    if (!existingAdmin) {
-        const hash = bcrypt.hashSync('FirstShift2026!', 10);
+    const hash = bcrypt.hashSync('T90dashboard', 10);
+    const existing = db.prepare('SELECT id FROM users WHERE email = ?').get('staff@turnninety.com');
+    if (!existing) {
         db.prepare(`
             INSERT INTO users (name, email, phone, password_hash, role, track, location)
-            VALUES (?, ?, ?, ?, 'program_manager', 'first_shift', 'Columbia')
-        `).run('Program Manager', 'pm@firstshift.org', '803-555-0100', hash);
-        console.log('Seeded default Program Manager: pm@firstshift.org / FirstShift2026!');
+            VALUES ('Turn90 Staff', 'staff@turnninety.com', '843-555-0190', ?, 'program_manager', 'first_shift', 'Charleston')
+        `).run(hash);
+        console.log('Seeded staff account: staff@turnninety.com');
+    } else {
+        db.prepare('UPDATE users SET password_hash = ? WHERE email = ?').run(hash, 'staff@turnninety.com');
     }
 }
 seedDefaultAccounts();
