@@ -79,9 +79,15 @@ function routeUserToPortal() {
 }
 
 function showView(viewId) {
-    document.querySelectorAll('.app-view').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.app-view').forEach(el => {
+        el.classList.remove('active');
+        el.classList.add('hidden');
+    });
     const target = document.getElementById(viewId);
-    if (target) target.classList.add('active');
+    if (target) {
+        target.classList.remove('hidden');
+        target.classList.add('active');
+    }
 }
 
 // -------------------------------------------------------------
