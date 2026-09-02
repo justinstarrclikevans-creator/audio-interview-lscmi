@@ -114,8 +114,8 @@
                     <div class="card-icon">🎙️</div>
                     <div class="card-body">
                         <h3>1. Intake & LS/CMI Interview</h3>
-                        <p>Complete the full 158-question LS/CMI intake interview. Your audio is recorded and scored directly for your clinical case brief and Apricot import.</p>
-                        <button class="btn btn-accent" onclick="openInterviewModal()">Start / View Voice Interview</button>
+                        <p id="fs-intake-desc">Complete the full 158-question LS/CMI intake interview. Your audio is recorded and scored directly for your clinical case brief and Apricot import.</p>
+                        <button id="fs-intake-btn" class="btn btn-accent" onclick="openInterviewModal()">Start Voice Interview</button>
                     </div>
                 </div>
 
@@ -125,7 +125,10 @@
                     <div class="card-body">
                         <h3>2. Digital Form W-9 & ID</h3>
                         <p id="w9-card-status">Status: Pending Verification. Submit your W-9 and upload your state ID / birth certificate.</p>
-                        <button class="btn btn-outline" onclick="openW9Modal()">Complete Form W-9</button>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <button class="btn btn-outline" id="btn-w9-action" onclick="openW9Modal()">Complete Form W-9</button>
+                            <button class="btn btn-outline hidden" id="btn-w9-view" onclick="openW9ViewModal(currentUser.id)">📄 View W-9</button>
+                        </div>
                     </div>
                 </div>
 
@@ -150,6 +153,17 @@
                         <p>Track your action items for license reinstatement and child support modifications.</p>
                         <button class="btn btn-outline" onclick="openBarriersModal()">Update Barrier Plan</button>
                     </div>
+                </div>
+            </div>
+
+            <!-- PARTICIPANT PRINTABLE CASE PLAN BANNER -->
+            <div class="section-card mt-8" style="background: #f0fdf4; border-left: 4px solid var(--success);">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                    <div>
+                        <h2 style="color: var(--success); margin-bottom: 4px;">🎯 My First Shift Action Plan</h2>
+                        <p style="font-size: 13px; color: var(--slate);">Review your top 2-3 focus areas, plain-language definitions, and weekly milestones designed to prepare you for job placement.</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openParticipantCasePlanModal()">📄 View & Print My Action Plan</button>
                 </div>
             </div>
 
@@ -386,8 +400,22 @@
             <!-- Draft Scoring Reviews Section -->
             <div class="section-card mt-8">
                 <h2>Human-in-the-Loop Scoring Reviews (Phase 1 &rarr; Phase 2)</h2>
-                <p class="mb-4">Review AI-generated draft scoring forms, provide supervisor feedback, and produce final clinical briefs & CSV imports.</p>
+                <p class="mb-4">Review AI-generated draft scoring forms, attach criminal history records, provide supervisor feedback, and produce final clinical briefs & CSV imports.</p>
                 <div id="pm-drafts-list">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+
+            <!-- Class Facilitation Evaluations Section -->
+            <div class="section-card mt-8">
+                <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                    <div>
+                        <h2>Class Facilitation Evaluations & Coaching Feedback</h2>
+                        <p>Automated QA scoring across the 20-item Turn90 Facilitation Scoring Guide (Modeling Neutrality, Pacing, Roleplays, Engagement).</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openFacilitationModal()">+ Evaluate Class Session</button>
+                </div>
+                <div id="pm-facilitation-evals-list" class="mt-4">
                     <!-- Loaded dynamically -->
                 </div>
             </div>
@@ -718,6 +746,154 @@
                     <textarea id="stab-override-notes" rows="2" placeholder="Explain why participant is allowed to remain in First Shift despite red-flag trigger..."></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary btn-block mt-4">Execute Action</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Interactive Master Briefcase Item Editor Modal -->
+    <div id="modal-briefcase-item-edit" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="bfe-modal-title">Edit Briefcase Item</h3>
+                <button class="modal-close" onclick="closeModal('modal-briefcase-item-edit')">&times;</button>
+            </div>
+            <form id="form-briefcase-item-edit" onsubmit="handleBriefcaseItemSave(event)">
+                <input type="hidden" id="bfe-item-key">
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="bfe-status" required>
+                        <option value="green">🟢 Complete / Verified</option>
+                        <option value="red">🔴 Active Barrier / Action Needed</option>
+                        <option value="pending">⚪ Pending In-Progress</option>
+                    </select>
+                </div>
+                <div class="form-group mt-4">
+                    <label>Notes & Next Steps</label>
+                    <textarea id="bfe-notes" rows="3" placeholder="Document appointments, account numbers, case progress, or specific next steps..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block mt-4">Save Item Status</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Official Form W-9 Summary Viewer Modal -->
+    <div id="modal-w9-view" class="modal hidden">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3>📄 Submitted Form W-9 Record</h3>
+                <button class="modal-close" onclick="closeModal('modal-w9-view')">&times;</button>
+            </div>
+            <div id="w9-view-body" style="padding: 10px 0;">
+                <!-- Loaded dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="window.print()">🖨️ Print Form W-9</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- In-Browser Draft Scoring & Case Brief Markdown/PDF Viewer Modal -->
+    <div id="modal-draft-viewer" class="modal hidden">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3 id="draft-viewer-title">Document Preview</h3>
+                <button class="modal-close" onclick="closeModal('modal-draft-viewer')">&times;</button>
+            </div>
+            <div id="draft-viewer-body" class="report-content-body" style="max-height: 550px; overflow-y: auto;">
+                <!-- Loaded dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('modal-draft-viewer')">Close Preview</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Supervisor Review & Criminal History PDF Upload Modal (Phase 2) -->
+    <div id="modal-supervisor-review" class="modal hidden">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3 id="sup-review-title">Supervisor Review & Final Approval (Phase 2)</h3>
+                <button class="modal-close" onclick="closeModal('modal-supervisor-review')">&times;</button>
+            </div>
+            <form id="form-supervisor-review" onsubmit="handleSupervisorFeedbackSubmit(event)">
+                <input type="hidden" id="sup-client-id">
+                
+                <div class="report-summary-box">
+                    <h4 style="color: var(--primary);">1. Criminal History PDF Record (Optional Attachment)</h4>
+                    <p style="font-size: 12px; color: var(--slate); margin: 4px 0 8px 0;">Upload a SLED/court summary PDF to synthesize criminal history with the interview for the final case brief and scoring.</p>
+                    <input type="file" id="sup-crim-file" accept=".pdf,.txt">
+                    <div class="form-group mt-2">
+                        <label>Or Paste Criminal History Summary</label>
+                        <textarea id="sup-crim-text" rows="2" placeholder="e.g. SLED Report: 2021 Possession with intent (3 yrs probation, active), no sex offenses, no PROs..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group mt-4">
+                    <label><strong>2. Supervisor Corrections / Clinical Guidance</strong></label>
+                    <textarea id="sup-feedback-text" rows="3" placeholder="Enter clinical corrections (e.g. adjust family score to 2 due to domestic stability, focus case plan on anti-social attitudes and substance recovery)..."></textarea>
+                </div>
+
+                <div class="mt-4" style="background: #eef2ff; padding: 12px; border-radius: 6px; font-size: 13px;">
+                    <strong>Phase 2 Output:</strong> Approving will generate the final LS/CMI scoring form, the PM clinical case brief, the participant-facing printable plan, append to the Apricot CSV, and auto-populate the participant's Briefcase.
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block mt-4" id="btn-submit-phase2">Approve & Generate Clinical Documents</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Participant Printable Case Plan Modal -->
+    <div id="modal-participant-case-plan" class="modal hidden">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3>🎯 My First Shift Action Plan</h3>
+                <button class="modal-close" onclick="closeModal('modal-participant-case-plan')">&times;</button>
+            </div>
+            <div id="participant-case-plan-body" class="report-content-body" style="max-height: 550px; overflow-y: auto;">
+                <!-- Loaded dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="window.print()">🖨️ Print My Action Plan (PDF)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Class Facilitation Evaluation Modal -->
+    <div id="modal-facilitation" class="modal hidden">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3>🏫 Evaluate Class Session</h3>
+                <button class="modal-close" onclick="closeModal('modal-facilitation')">&times;</button>
+            </div>
+            <form id="form-evaluate-class" onsubmit="handleClassEvaluationSubmit(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Location / Cohort</label>
+                        <select id="eval-location" required>
+                            <option value="Charleston">Charleston, SC</option>
+                            <option value="Columbia">Columbia, SC</option>
+                            <option value="Greenville">Greenville, SC</option>
+                            <option value="Spartanburg">Spartanburg, SC</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Facilitator Name</label>
+                        <input type="text" id="eval-facilitator" required placeholder="Facilitator Name">
+                    </div>
+                </div>
+                <div class="form-group mt-4">
+                    <label>Workshop / Module Title</label>
+                    <input type="text" id="eval-session-title" required placeholder="e.g. Module 1: Cognitive Triangle & Thoughts/Feelings/Actions">
+                </div>
+                <div class="form-group mt-4">
+                    <label>Upload Classroom Recording / Transcript File (or paste text below)</label>
+                    <input type="file" id="eval-file" accept=".txt,.webm,.mp3,.m4a,.wav">
+                </div>
+                <div class="form-group mt-4">
+                    <label>Classroom Transcript Text</label>
+                    <textarea id="eval-text" rows="6" placeholder="Paste dialogue or transcript of today's class session here..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block mt-4" id="btn-run-eval">Evaluate Against 20-Item Scoring Rubric</button>
             </form>
         </div>
     </div>

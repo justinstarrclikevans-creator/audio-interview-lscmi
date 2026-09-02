@@ -9,8 +9,11 @@ const jwt = require('jsonwebtoken');
 
 const { db, BRIEFCASE_DOMAINS, DEFAULT_GATE_CRITERIA, STABILITY_STEP_DOWN_TRIGGERS, initParticipantBriefcase } = require('./db');
 const { runPhase1, runPhase2 } = require('./llm_pipeline');
+const { convertSingleMdToPdf } = require('./convert_md_to_pdf');
+const { evaluateClassTranscript } = require('./facilitation_evaluator');
 const { cbtModules, T90_TRADE_TRACKS, REENTRY_EMPLOYERS } = require('./training_data');
 const { generateMondayNeedsReport, generateFridayMilestoneReport, importApricotCsv } = require('./reporting_engine');
+const pdfParse = require('pdf-parse');
 
 require('dotenv').config({ path: path.join(__dirname, '..', 'email-settings.txt') });
 if (!process.env.GEMINI_API_KEY && fs.existsSync(path.join(__dirname, '.env'))) {
@@ -534,16 +537,111 @@ app.get('/api/interviews', (req, res) => {
     }
 });
 
-app.post('/api/submit-feedback', async (req, res) => {
-    const { clientId, feedback } = req.body;
-    if (!clientId || !feedback) return res.status(400).json({error: "Missing fields"});
+// Fetch file content securely for in-browser preview
+app.get('/api/file-content', (req, res) => {
+    const filename = req.query.file;
+    if (!filename || filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
+        return res.status(400).json({ error: 'Invalid filename' });
+    }
+    const filePath = path.join(dataDir, filename);
+    if (!fs.existsSync(filePath)) return res.status(404).json({ error: 'File not found' });
+    
+    const content = fs.readFileSync(filePath, 'utf8');
+    res.json({ content, filename });
+});
 
-    res.status(200).json({message: "Feedback received, processing phase 2..."});
+// Fetch Participant-Facing Printable Case Plan
+app.get('/api/participant/case-plan', authenticateToken, (req, res) => {
+    const userId = req.user.id;
+    const user = db.prepare('SELECT name FROM users WHERE id = ?').get(userId);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    
+    const safeName = user.name.replace(/[^a-zA-Z0-9]/g, '');
+    const files = fs.readdirSync(dataDir);
+    const planFile = files.find(f => f.toLowerCase().includes(safeName.toLowerCase()) && f.endsWith('_participant_case_plan.md'));
+    
+    if (planFile) {
+        const content = fs.readFileSync(path.join(dataDir, planFile), 'utf8');
+        const pdfFile = planFile.replace(/\.md$/, '.pdf');
+        return res.json({ 
+            found: true, 
+            markdown: content, 
+            filename: planFile,
+            pdfUrl: fs.existsSync(path.join(dataDir, pdfFile)) ? `/data/${pdfFile}` : null
+        });
+    }
+    
+    res.json({ found: false, message: 'Case plan is currently being generated after supervisor review.' });
+});
+
+// Fetch Stored W-9 Details
+app.get('/api/participant/w9-details/:userId', authenticateToken, (req, res) => {
+    const targetId = parseInt(req.params.userId);
+    if (req.user.role === 'participant' && req.user.id !== targetId) {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+    const doc = db.prepare('SELECT * FROM documents WHERE user_id = ? AND doc_type = "w9" ORDER BY uploaded_at DESC LIMIT 1').get(targetId);
+    const profile = db.prepare('SELECT w9_status FROM participant_profiles WHERE user_id = ?').get(targetId);
+    const user = db.prepare('SELECT name, email, phone, location FROM users WHERE id = ?').get(targetId);
+    
+    res.json({
+        user,
+        status: profile ? profile.w9_status : 'pending',
+        w9Data: doc && doc.metadata_json ? JSON.parse(doc.metadata_json) : null
+    });
+});
+
+// Class Facilitation Evaluations API
+app.get('/api/admin/evaluations', authenticateToken, requireRole('program_manager', 'admin'), (req, res) => {
+    const location = req.query.location;
+    let query = 'SELECT * FROM class_facilitation_evaluations';
+    const params = [];
+    if (location) {
+        query += ' WHERE location = ?';
+        params.push(location);
+    }
+    query += ' ORDER BY created_at DESC LIMIT 50';
+    const evals = db.prepare(query).all(...params);
+    res.json(evals);
+});
+
+app.post('/api/admin/evaluate-classes', authenticateToken, requireRole('program_manager', 'admin'), memoryUpload.single('audioOrTranscript'), async (req, res) => {
+    try {
+        const { location, sessionTitle, facilitatorName, transcriptText } = req.body;
+        let textToEvaluate = transcriptText || '';
+        if (req.file) {
+            textToEvaluate = req.file.buffer.toString('utf8');
+        }
+        if (!textToEvaluate) return res.status(400).json({ error: 'Transcript or text content required for evaluation.' });
+
+        const result = await evaluateClassTranscript(location || 'Charleston', sessionTitle || 'Turn90 Workshop', facilitatorName || 'Staff Facilitator', textToEvaluate);
+        res.json({ success: true, result });
+    } catch (err) {
+        console.error('Class evaluation error:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/submit-feedback', memoryUpload.single('criminalHistoryFile'), async (req, res) => {
+    const { clientId, feedback, criminalHistoryText } = req.body;
+    if (!clientId) return res.status(400).json({ error: "Missing clientId" });
+
+    res.status(200).json({ message: "Feedback received. Generating final clinical case brief and participant plan..." });
 
     try {
         const parts = clientId.split('_');
         const name = parts[1];
         
+        let crimText = criminalHistoryText || '';
+        if (req.file && req.file.buffer) {
+            try {
+                const parsed = await pdfParse(req.file.buffer);
+                crimText += '\n\n' + parsed.text;
+            } catch (e) {
+                console.warn('Could not parse PDF buffer, using raw text:', e.message);
+            }
+        }
+
         const transcript = fs.readFileSync(path.join(dataDir, `${clientId}_transcript.txt`), 'utf8');
         const draftPath = path.join(dataDir, `${clientId}_draft_scoring_form.md`);
         let draft = "";
@@ -551,13 +649,85 @@ app.post('/api/submit-feedback', async (req, res) => {
             draft = fs.readFileSync(draftPath, 'utf8');
         }
 
-        const results = await runPhase2(transcript, name, draft, feedback);
+        const results = await runPhase2(transcript, name, draft, feedback || 'Approved as drafted', crimText);
         
-        fs.writeFileSync(path.join(dataDir, `${clientId}_final_scoring_form.md`), results.final_scoring_form);
-        fs.writeFileSync(path.join(dataDir, `${clientId}_final_case_brief.md`), results.case_brief);
+        const finalScoringPath = path.join(dataDir, `${clientId}_final_scoring_form.md`);
+        const finalBriefPath = path.join(dataDir, `${clientId}_final_case_brief.md`);
+        const participantPlanPath = path.join(dataDir, `${clientId}_participant_case_plan.md`);
+
+        fs.writeFileSync(finalScoringPath, results.final_scoring_form);
+        fs.writeFileSync(finalBriefPath, results.case_brief);
+        if (results.participant_case_plan) {
+            fs.writeFileSync(participantPlanPath, results.participant_case_plan);
+        }
         
-        const csvRow = results.csv_row + "\n";
-        fs.appendFileSync(path.join(__dirname, '..', 'FirstShift20IntakeForm.csv'), csvRow);
+        if (results.csv_row) {
+            const csvRow = results.csv_row + "\n";
+            fs.appendFileSync(path.join(__dirname, '..', 'FirstShift20IntakeForm.csv'), csvRow);
+        }
+
+        // Convert generated markdowns to PDFs asynchronously
+        convertSingleMdToPdf(finalScoringPath, finalScoringPath.replace(/\.md$/, '.pdf'));
+        convertSingleMdToPdf(finalBriefPath, finalBriefPath.replace(/\.md$/, '.pdf'));
+        if (results.participant_case_plan) {
+            convertSingleMdToPdf(participantPlanPath, participantPlanPath.replace(/\.md$/, '.pdf'));
+        }
+
+        // Auto-update Briefcase & Stability Factors in database
+        if (results.briefcase_autofill) {
+            const autofill = results.briefcase_autofill;
+            const user = db.prepare('SELECT id FROM users WHERE LOWER(name) LIKE ?').get(`%${name.toLowerCase()}%`);
+            if (user) {
+                const uId = user.id;
+                db.prepare(`
+                    UPDATE participant_profiles SET
+                        dl_status = COALESCE(?, dl_status),
+                        dl_notes = COALESCE(?, dl_notes),
+                        child_support_status = COALESCE(?, child_support_status),
+                        child_support_notes = COALESCE(?, child_support_notes),
+                        housing_status = COALESCE(?, housing_status),
+                        transportation_status = COALESCE(?, transportation_status),
+                        stability_red_flags = COALESCE(?, stability_red_flags),
+                        updated_at = CURRENT_TIMESTAMP
+                    WHERE user_id = ?
+                `).run(
+                    autofill.dl_status || null,
+                    autofill.dl_notes || null,
+                    autofill.child_support_status || null,
+                    autofill.child_support_notes || null,
+                    autofill.housing_status || null,
+                    autofill.transportation_status || null,
+                    autofill.detected_stability_flags ? JSON.stringify(autofill.detected_stability_flags) : null,
+                    uId
+                );
+
+                // Auto-check Briefcase items
+                if (autofill.dl_status === 'valid') {
+                    db.prepare(`UPDATE briefcase_items SET status = 'green', notes = 'Verified in LS/CMI interview' WHERE user_id = ? AND item_key = 'drivers_license'`).run(uId);
+                } else if (autofill.dl_status) {
+                    db.prepare(`UPDATE briefcase_items SET status = 'red', notes = ? WHERE user_id = ? AND item_key = 'drivers_license'`).run(autofill.dl_notes || 'Reinstatement needed', uId);
+                }
+
+                if (autofill.child_support_status === 'none' || autofill.child_support_status === 'current') {
+                    db.prepare(`UPDATE briefcase_items SET status = 'green', notes = 'No active arrears / current' WHERE user_id = ? AND item_key = 'child_support_status'`).run(uId);
+                } else if (autofill.child_support_status) {
+                    db.prepare(`UPDATE briefcase_items SET status = 'red', notes = ? WHERE user_id = ? AND item_key = 'child_support_status'`).run(autofill.child_support_notes || 'Modification needed', uId);
+                }
+
+                if (autofill.housing_status === 'stable') {
+                    db.prepare(`UPDATE briefcase_items SET status = 'green', notes = 'Stable address confirmed' WHERE user_id = ? AND item_key = 'housing_plan'`).run(uId);
+                } else if (autofill.housing_status) {
+                    db.prepare(`UPDATE briefcase_items SET status = 'red', notes = ? WHERE user_id = ? AND item_key = 'housing_plan'`).run(autofill.housing_status, uId);
+                }
+
+                if (autofill.transportation_status) {
+                    db.prepare(`UPDATE briefcase_items SET status = 'green', notes = 'Transit route mapped' WHERE user_id = ? AND item_key = 'transportation_plan'`).run(uId);
+                }
+
+                // Auto mark Week 1 Interview gate criteria as green
+                db.prepare(`UPDATE gate_criteria SET status = 'green', pm_notes = 'Interview completed and clinical case brief generated.' WHERE user_id = ? AND criterion_key = 'w1_interview'`).run(uId);
+            }
+        }
 
         if (fs.existsSync(draftPath)) fs.unlinkSync(draftPath);
         console.log(`Phase 2 complete for ${name}`);

@@ -5,25 +5,12 @@ const puppeteer = require('puppeteer');
 
 const DATA_DIR = path.join(__dirname, 'data');
 
-async function convertMdToPdf() {
-  const files = fs.readdirSync(DATA_DIR).filter(f => f.endsWith('.md'));
-  
-  if (files.length === 0) {
-    console.log('No .md files found in data/');
-    return;
-  }
+async function convertSingleMdToPdf(mdPath, pdfPath) {
+  if (!fs.existsSync(mdPath)) return;
+  const mdContent = fs.readFileSync(mdPath, 'utf-8');
+  const htmlBody = marked(mdContent);
 
-  console.log(`Found ${files.length} markdown files to convert...`);
-
-  const browser = await puppeteer.launch({ headless: 'new' });
-
-  for (const file of files) {
-    const mdPath = path.join(DATA_DIR, file);
-    const pdfPath = path.join(DATA_DIR, file.replace(/\.md$/, '.pdf'));
-    const mdContent = fs.readFileSync(mdPath, 'utf-8');
-    const htmlBody = marked(mdContent);
-
-    const fullHtml = `<!DOCTYPE html>
+  const fullHtml = `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
@@ -32,25 +19,25 @@ async function convertMdToPdf() {
       font-family: 'Helvetica Neue', Arial, sans-serif;
       font-size: 12px;
       line-height: 1.6;
-      color: #333;
+      color: #1e293b;
       max-width: 800px;
       margin: 0 auto;
       padding: 40px;
     }
-    h1 { font-size: 22px; border-bottom: 2px solid #333; padding-bottom: 8px; margin-top: 30px; }
-    h2 { font-size: 18px; border-bottom: 1px solid #999; padding-bottom: 6px; margin-top: 24px; }
-    h3 { font-size: 15px; margin-top: 20px; }
+    h1 { font-size: 20px; border-bottom: 2px solid #1e3a8a; padding-bottom: 6px; margin-top: 20px; color: #1e3a8a; }
+    h2 { font-size: 16px; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; margin-top: 18px; color: #0f172a; }
+    h3 { font-size: 14px; margin-top: 14px; color: #0284c7; }
     table { border-collapse: collapse; width: 100%; margin: 12px 0; }
-    th, td { border: 1px solid #ccc; padding: 8px 10px; text-align: left; font-size: 11px; }
-    th { background-color: #f0f0f0; font-weight: bold; }
-    tr:nth-child(even) { background-color: #fafafa; }
-    ul, ol { padding-left: 24px; }
+    th, td { border: 1px solid #cbd5e1; padding: 6px 10px; text-align: left; font-size: 11px; }
+    th { background-color: #f1f5f9; font-weight: bold; color: #0f172a; }
+    tr:nth-child(even) { background-color: #f8fafc; }
+    ul, ol { padding-left: 20px; }
     li { margin-bottom: 4px; }
-    strong { color: #111; }
-    blockquote { border-left: 3px solid #999; margin-left: 0; padding-left: 16px; color: #555; }
-    code { background: #f4f4f4; padding: 2px 4px; border-radius: 3px; font-size: 11px; }
-    pre { background: #f4f4f4; padding: 12px; border-radius: 4px; overflow-x: auto; }
-    hr { border: none; border-top: 1px solid #ccc; margin: 20px 0; }
+    strong { color: #0f172a; }
+    blockquote { border-left: 4px solid #0284c7; margin-left: 0; padding-left: 14px; color: #475569; background: #f0f9ff; padding-top: 4px; padding-bottom: 4px; }
+    code { background: #f1f5f9; padding: 2px 4px; border-radius: 3px; font-size: 11px; font-family: monospace; }
+    pre { background: #f8fafc; padding: 10px; border-radius: 4px; border: 1px solid #e2e8f0; overflow-x: auto; }
+    hr { border: none; border-top: 1px solid #cbd5e1; margin: 16px 0; }
   </style>
 </head>
 <body>
@@ -58,24 +45,40 @@ ${htmlBody}
 </body>
 </html>`;
 
+  let browser;
+  try {
+    browser = await puppeteer.launch({ 
+      headless: 'new',
+      args: ['--no-sandbox', '--disable-setuid-sandbox'] 
+    });
     const page = await browser.newPage();
     await page.setContent(fullHtml, { waitUntil: 'networkidle0' });
     await page.pdf({
       path: pdfPath,
       format: 'Letter',
-      margin: { top: '0.5in', bottom: '0.5in', left: '0.6in', right: '0.6in' },
+      margin: { top: '0.4in', bottom: '0.4in', left: '0.5in', right: '0.5in' },
       printBackground: true,
     });
     await page.close();
-
-    console.log(`  ✅ ${file} → ${path.basename(pdfPath)}`);
+    console.log(`Generated PDF: ${path.basename(pdfPath)}`);
+  } catch (err) {
+    console.error(`Failed to convert ${mdPath} to PDF:`, err.message);
+  } finally {
+    if (browser) await browser.close();
   }
-
-  await browser.close();
-  console.log(`\nDone! ${files.length} PDFs created in data/`);
 }
 
-convertMdToPdf().catch(err => {
-  console.error('Error:', err);
-  process.exit(1);
-});
+async function convertAllMdToPdf() {
+  const files = fs.readdirSync(DATA_DIR).filter(f => f.endsWith('.md'));
+  for (const file of files) {
+    const mdPath = path.join(DATA_DIR, file);
+    const pdfPath = path.join(DATA_DIR, file.replace(/\.md$/, '.pdf'));
+    await convertSingleMdToPdf(mdPath, pdfPath);
+  }
+}
+
+if (require.main === module) {
+  convertAllMdToPdf().then(() => console.log('All conversions complete.'));
+}
+
+module.exports = { convertSingleMdToPdf, convertAllMdToPdf };
