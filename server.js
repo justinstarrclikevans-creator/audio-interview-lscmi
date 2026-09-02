@@ -10,6 +10,7 @@ const jwt = require('jsonwebtoken');
 const { db, BRIEFCASE_DOMAINS, DEFAULT_GATE_CRITERIA, STABILITY_STEP_DOWN_TRIGGERS, initParticipantBriefcase } = require('./db');
 const { runPhase1, runPhase2 } = require('./llm_pipeline');
 const { convertSingleMdToPdf } = require('./convert_md_to_pdf');
+const { convertSingleMdToDocx } = require('./convert_md_to_docx');
 const { evaluateClassTranscript } = require('./facilitation_evaluator');
 const { cbtModules, T90_TRADE_TRACKS, REENTRY_EMPLOYERS } = require('./training_data');
 const { generateMondayNeedsReport, generateFridayMilestoneReport, importApricotCsv } = require('./reporting_engine');
@@ -666,11 +667,14 @@ app.post('/api/submit-feedback', memoryUpload.single('criminalHistoryFile'), asy
             fs.appendFileSync(path.join(__dirname, '..', 'FirstShift20IntakeForm.csv'), csvRow);
         }
 
-        // Convert generated markdowns to PDFs asynchronously
+        // Convert generated markdowns to PDFs and editable DOCX files asynchronously
         convertSingleMdToPdf(finalScoringPath, finalScoringPath.replace(/\.md$/, '.pdf'));
         convertSingleMdToPdf(finalBriefPath, finalBriefPath.replace(/\.md$/, '.pdf'));
+        convertSingleMdToDocx(finalScoringPath, finalScoringPath.replace(/\.md$/, '.docx'));
+        convertSingleMdToDocx(finalBriefPath, finalBriefPath.replace(/\.md$/, '.docx'));
         if (results.participant_case_plan) {
             convertSingleMdToPdf(participantPlanPath, participantPlanPath.replace(/\.md$/, '.pdf'));
+            convertSingleMdToDocx(participantPlanPath, participantPlanPath.replace(/\.md$/, '.docx'));
         }
 
         // Auto-update Briefcase & Stability Factors in database
