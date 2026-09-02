@@ -245,28 +245,32 @@ const BRIEFCASE_DOMAINS = {
 // 4-Week Job Readiness Gate Criteria (Must-Haves to Qualify for Weeks 5–8 & Week 9 Placement)
 const DEFAULT_GATE_CRITERIA = {
     1: [
-        { key: 'w1_attendance', title: 'Satisfactory Week 1 Attendance', description: 'Zero unexcused absences and no NCNS.' },
+        { key: 'w1_attendance', title: 'Satisfactory Week 1 Attendance', description: 'Zero unexcused absences and zero NCNS.' },
         { key: 'w1_interview', title: 'LS/CMI Assessment Interview Completed', description: '158-question audio interview recorded and draft scoring generated.' },
-        { key: 'w1_w9_id', title: 'Form W-9 & Primary ID Submitted', description: 'Digital W-9 completed and State ID/Birth Certificate uploaded.' },
+        { key: 'w1_w9_id', title: 'Form W-9 & Primary ID Submitted', description: 'Digital W-9 completed and State ID/Birth Certificate/SS card uploaded.' },
+        { key: 'w1_goal_email', title: '90-Day Goal & Professional Email Created', description: 'Baseline 90-day motivation worksheet and professional email handle established.' },
         { key: 'w1_stability_screen', title: 'Initial Stability Screen Clear', description: 'No immediate disqualifying sex offenses, PROs, or acute homelessness.' }
     ],
     2: [
         { key: 'w2_cbt_homework', title: 'CBT Modules 1-2 & Homework Active', description: 'Active in class discussion, completing worksheets, and effort in role plays.' },
         { key: 'w2_dl_cs_plan', title: 'Driver\'s License & Child Support Steps Active', description: 'SCDMV fee plan identified or court review paperwork initiated.' },
+        { key: 'w2_health_vision', title: 'Health, Vision & Prescription Screen', description: 'Welvista referral reviewed, vision appointment set, and maintenance meds confirmed.' },
         { key: 'w2_q2_learning', title: 'Satisfactory Q2 Concept Learning', description: 'Demonstrating ability to learn trades and workplace standards.' },
         { key: 'w2_attendance', title: 'Zero NCNS Attendance Compliance', description: 'Points meet 85%+ benchmark with zero unexcused no-call-no-shows.' }
     ],
     3: [
-        { key: 'w3_resume_approved', title: 'Master Resume Completed in Builder', description: 'Approved resume with background explanation pitch formatted.' },
+        { key: 'w3_resume_approved', title: 'Master Resume Completed in Builder', description: 'Approved resume with professional background explanation pitch formatted.' },
+        { key: 'w3_references_interview', title: '2-3 References & Interview Practice Completed', description: 'Workplace references verified and common interview questions practiced out loud.' },
         { key: 'w3_cbt_conflict', title: 'Workplace Conflict & Communication CBT Passed', description: 'Demonstrated emotional regulation and problem-solving framework.' },
         { key: 'w3_points_threshold', title: 'Cumulative 85%+ Points Benchmark', description: 'Daily Apricot points threshold sustained.' },
         { key: 'w3_barrier_resolution', title: 'Active Barrier Removal Progress', description: 'Concrete steps documented on transportation, housing, and court obligations.' }
     ],
     4: [
-        { key: 'w4_gate_triage', title: 'Week 4 Gate Triage: Approved for Placement Track', description: 'Clear of all stability step-down triggers; qualified for Weeks 5–8.' },
-        { key: 'w4_transport_transit', title: 'Independent Transportation Verified', description: 'Reachable daily without program rideshare assistance.' },
+        { key: 'w4_bank_direct_deposit', title: 'Bank Account & Direct Deposit Ready', description: 'Active bank account or payroll card verified for employment direct deposit.' },
+        { key: 'w4_work_gear', title: 'Work Clothing & Boots Verified', description: 'Workplace attire and steel-toe boots/PPE ready for 1st shift job placement.' },
+        { key: 'w4_transport_transit', title: 'Independent Transportation Verified', description: 'Reachable daily to manufacturing job corridors without program rideshare assistance.' },
         { key: 'w4_drug_compliance', title: 'Substance & Accountability Compliance', description: 'Clean drug/alcohol screen; active recovery engagement if applicable.' },
-        { key: 'w4_schedule_aligned', title: 'Supervision & Schedule Aligned', description: 'No court or probation mandates that conflict with 1st shift work hours.' }
+        { key: 'w4_gate_triage', title: 'Week 4 Gate Placement Approval', description: 'Final staff triage: Approved for Weeks 5–8 & Week 9 Placement vs. Step-Down.' }
     ]
 };
 
@@ -328,6 +332,10 @@ function seedDefaultAccounts() {
     } else {
         db.prepare('UPDATE users SET password_hash = ? WHERE email = ?').run(hash, 'staff@turnninety.com');
     }
+
+    // Sync all participants with latest briefcase and gate criteria
+    const participants = db.prepare("SELECT id FROM users WHERE role = 'participant'").all();
+    participants.forEach(p => initParticipantBriefcase(p.id));
 }
 seedDefaultAccounts();
 
