@@ -527,6 +527,31 @@
                         <!-- Dynamically filled -->
                     </div>
 
+                    <!-- Direct Links Section for Suggested Jobs & Referrals -->
+                    <div id="reentry-quick-links-section" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 20px;">
+                        <!-- Matched Jobs with Direct Apply Links -->
+                        <div style="background: #f8fafc; border: 1px solid var(--border); border-top: 3px solid var(--accent); border-radius: 8px; padding: 14px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <h4 style="margin: 0; color: var(--primary); font-size: 13.5px;">💼 Suggested Jobs with Direct Links</h4>
+                                <span style="font-size: 11px; color: var(--slate);">Click to Apply Online</span>
+                            </div>
+                            <div id="reentry-matched-jobs-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto;">
+                                <!-- Rendered dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Suggested Community Referrals with Direct Links -->
+                        <div style="background: #f8fafc; border: 1px solid var(--border); border-top: 3px solid var(--success); border-radius: 8px; padding: 14px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <h4 style="margin: 0; color: #166534; font-size: 13.5px;">📍 Suggested Referrals with Direct Links</h4>
+                                <span style="font-size: 11px; color: var(--slate);">Official Websites & Maps</span>
+                            </div>
+                            <div id="reentry-suggested-referrals-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto;">
+                                <!-- Rendered dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Subtabs for Dual Documents -->
                     <div style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 2px solid var(--border); padding-bottom: 8px;">
                         <button class="btn btn-primary" id="btn-subtab-part-guide" onclick="switchReentryDocTab('part')">🎯 Participant Action & Referral Guide</button>

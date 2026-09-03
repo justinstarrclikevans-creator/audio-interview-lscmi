@@ -1017,7 +1017,70 @@ function renderReentryAssessmentResults(data) {
         </div>
     `;
 
-    // Render markdowns
+    // Render Matched Jobs with Direct Apply Links
+    const jobsList = document.getElementById('reentry-matched-jobs-list');
+    const matchedJobs = result.matched_employers || [];
+    if (jobsList) {
+        if (matchedJobs.length === 0) {
+            jobsList.innerHTML = '<div style="font-size: 12px; color: var(--slate); padding: 8px;">No specific employer matches found.</div>';
+        } else {
+            jobsList.innerHTML = matchedJobs.map(job => `
+                <div style="background: white; border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+                        <div>
+                            <strong style="font-size: 13px; color: #0f172a;">${job.company}</strong>
+                            <div style="font-size: 12px; color: var(--primary); font-weight: 600;">
+                                ${job.role} ${job.pay ? `• <span style="color: #166534; font-weight: 700;">${job.pay}</span>` : ''}
+                            </div>
+                            ${job.shift ? `<div style="font-size: 11px; color: var(--slate);">${job.shift}</div>` : ''}
+                        </div>
+                        ${job.careersUrl ? `
+                            <a href="${job.careersUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="padding: 4px 10px; font-size: 11.5px; text-decoration: none; white-space: nowrap; font-weight: 700;">
+                                🔗 Apply / View
+                            </a>
+                        ` : ''}
+                    </div>
+                    ${job.matchReason ? `<div style="font-size: 11px; color: #475569; margin-top: 5px; background: #f8fafc; padding: 4px 8px; border-radius: 4px;">${job.matchReason}</div>` : ''}
+                </div>
+            `).join('');
+        }
+    }
+
+    // Render Community Referrals with Direct Web & Map Links
+    const referralsList = document.getElementById('reentry-suggested-referrals-list');
+    const referrals = result.recommended_referrals || [];
+    if (referralsList) {
+        if (referrals.length === 0) {
+            referralsList.innerHTML = '<div style="font-size: 12px; color: var(--slate); padding: 8px;">No specific referrals generated.</div>';
+        } else {
+            referralsList.innerHTML = referrals.map(ref => `
+                <div style="background: white; border: 1px solid #e2e8f0; padding: 10px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+                        <div>
+                            <span style="font-size: 10px; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: 0.5px;">${ref.category || 'COMMUNITY RESOURCE'}</span>
+                            <strong style="display: block; font-size: 13px; color: #0f172a;">${ref.resourceName}</strong>
+                            ${ref.contact ? `<div style="font-size: 11.5px; color: var(--slate); margin-top: 2px;">${ref.contact}</div>` : ''}
+                        </div>
+                        <div style="display: flex; gap: 4px; flex-shrink: 0;">
+                            ${ref.websiteUrl ? `
+                                <a href="${ref.websiteUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="padding: 3px 8px; font-size: 11px; text-decoration: none; font-weight: 600;">
+                                    🌐 Website
+                                </a>
+                            ` : ''}
+                            ${ref.contact && (ref.contact.includes('St') || ref.contact.includes('Ave') || ref.contact.includes('Rd') || ref.contact.includes('Dr')) ? `
+                                <a href="https://maps.google.com/?q=${encodeURIComponent(ref.contact)}" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="padding: 3px 8px; font-size: 11px; text-decoration: none;">
+                                    📍 Map
+                                </a>
+                            ` : ''}
+                        </div>
+                    </div>
+                    ${ref.actionStep ? `<div style="font-size: 11px; color: #166534; font-weight: 600; margin-top: 4px; background: #f0fdf4; padding: 4px 8px; border-radius: 4px;">🎯 <strong>Next Step:</strong> ${ref.actionStep}</div>` : ''}
+                </div>
+            `).join('');
+        }
+    }
+
+    // Render markdowns (marked parses all markdown links as clickable <a> tags)
     document.getElementById('reentry-part-guide-content').innerHTML = marked.parse(result.participant_guide_md || '');
     document.getElementById('reentry-staff-plan-content').innerHTML = marked.parse(result.navigator_case_plan_md || '');
 
@@ -1056,7 +1119,9 @@ async function openParticipantLinkedReentryPlan(userId) {
                     detected_flags: data.plan.detected_flags,
                     top_criminogenic_domains: data.plan.top_criminogenic_domains,
                     participant_guide_md: data.plan.participant_guide_md,
-                    navigator_case_plan_md: data.plan.staff_case_plan_md
+                    navigator_case_plan_md: data.plan.staff_case_plan_md,
+                    recommended_referrals: data.plan.recommended_referrals || [],
+                    matched_employers: data.plan.matched_employers || []
                 },
                 participantGuideDocx: data.plan.participant_guide_docx,
                 participantGuidePdf: data.plan.participant_guide_pdf,

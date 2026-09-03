@@ -9,6 +9,7 @@ const SC_COMMUNITY_RESOURCES = {
         category: "Emergency & Transitional Housing",
         phone: "(843) 723-9477",
         address: "35 Walnut St, Charleston, SC 29403",
+        websiteUrl: "https://one80place.org",
         services: "Emergency shelter, rapid rehousing, legal clinic, and re-entry stabilization services.",
         eligibility: "Individuals experiencing homelessness or imminent eviction."
       },
@@ -17,6 +18,7 @@ const SC_COMMUNITY_RESOURCES = {
         category: "Transitional Housing for Men",
         phone: "(843) 722-2473",
         address: "474 Meeting St, Charleston, SC 29403",
+        websiteUrl: "https://stargospelmission.org",
         services: "Structured transitional housing for men seeking employment and life recovery.",
         eligibility: "Men committed to working or seeking employment."
       },
@@ -25,6 +27,7 @@ const SC_COMMUNITY_RESOURCES = {
         category: "Housing Counseling & Financial Stability",
         phone: "(843) 628-3000",
         address: "8084 Rivers Ave, Suite 200, North Charleston, SC 29406",
+        websiteUrl: "https://originsc.org",
         services: "First-time renter coaching, budget planning, credit rehabilitation, and housing navigation."
       }
     ],
@@ -34,6 +37,7 @@ const SC_COMMUNITY_RESOURCES = {
         category: "Legal Aid & Expungements",
         phone: "(843) 720-7044",
         address: "2803 Carner Ave, North Charleston, SC 29405",
+        websiteUrl: "https://sclegal.org",
         services: "Free civil legal assistance, criminal record expungement consultations, and tenant rights."
       },
       {
@@ -41,6 +45,7 @@ const SC_COMMUNITY_RESOURCES = {
         category: "Child Support & Parenting Support",
         phone: "(843) 744-2126",
         address: "4925 Lacross Rd, North Charleston, SC 29406",
+        websiteUrl: "https://scfathersandfamilies.com",
         services: "Child support modification assistance, driver's license restoration support, and parenting classes."
       },
       {
@@ -48,6 +53,7 @@ const SC_COMMUNITY_RESOURCES = {
         category: "Driver's License Reinstatement",
         phone: "(803) 896-5000",
         address: "3790 Leeds Ave, North Charleston, SC 29405",
+        websiteUrl: "https://scdmvonline.com/Driver-Services/Reinstatement",
         services: "Official SCDMV driver records, Route 66 reinstatement applications, payment plan setups."
       }
     ],
@@ -57,6 +63,7 @@ const SC_COMMUNITY_RESOURCES = {
         category: "Free Prescription Medications",
         phone: "(803) 933-9183",
         address: "Mail-order delivery statewide / SC Office Columbia",
+        websiteUrl: "https://welvista.org",
         services: "Provides free 30/90-day maintenance prescription medications for uninsured South Carolinians.",
         eligibility: "Uninsured SC residents with household income at or below 300% Federal Poverty Level."
       },
@@ -65,6 +72,7 @@ const SC_COMMUNITY_RESOURCES = {
         category: "FQHC Primary Care & Dental",
         phone: "(843) 722-4112",
         address: "51 Nassau St, Charleston, SC 29403",
+        websiteUrl: "https://fetterhealthcare.org",
         services: "Affordable primary healthcare, sliding-scale dental, behavioral health, and lab services."
       },
       {
@@ -72,6 +80,7 @@ const SC_COMMUNITY_RESOURCES = {
         category: "Substance Recovery & Detox",
         phone: "(843) 958-3300",
         address: "5 Charleston Center Dr, Charleston, SC 29401",
+        websiteUrl: "https://charlestoncounty.org/departments/charleston-center/",
         services: "24/7 medically monitored detox, intensive outpatient (IOP), medication-assisted treatment (MAT), peer support."
       }
     ],
@@ -81,6 +90,7 @@ const SC_COMMUNITY_RESOURCES = {
         category: "Emergency Food & Nutrition",
         phone: "(843) 747-8146",
         address: "2864 Azalea Dr, North Charleston, SC 29405",
+        websiteUrl: "https://lowcountryfoodbank.org",
         services: "Pantry network distribution, fresh produce boxes, SNAP enrollment assistance."
       },
       {
@@ -88,6 +98,7 @@ const SC_COMMUNITY_RESOURCES = {
         category: "Public Transit",
         phone: "(843) 724-7420",
         address: "Service throughout Downtown, North Charleston, West Ashley, Mount Pleasant",
+        websiteUrl: "https://ridecarta.com",
         services: "Fixed route bus passes and workforce shuttle connections to major industrial parks."
       }
     ]
@@ -101,6 +112,7 @@ const SC_COMMUNITY_RESOURCES = {
         category: "Emergency & Program Housing",
         phone: "(803) 708-4861",
         address: "2025 Main St, Columbia, SC 29201",
+        websiteUrl: "https://transitionssc.org",
         services: "Comprehensive housing program with case management, job coaching, and daily meals."
       },
       {
@@ -108,6 +120,7 @@ const SC_COMMUNITY_RESOURCES = {
         category: "Men's Shelter & Recovery Program",
         phone: "(803) 254-6470",
         address: "1100 Taylor St, Columbia, SC 29201",
+        websiteUrl: "https://olivergospel.org",
         services: "Emergency shelter, vocational training, life skills classes, and recovery residency."
       }
     ],
@@ -117,6 +130,7 @@ const SC_COMMUNITY_RESOURCES = {
         category: "Child Support & Re-entry Support",
         phone: "(803) 933-0530",
         address: "1821 Hampton St, Columbia, SC 29201",
+        websiteUrl: "https://midlandsfathers.com",
         services: "Child support court representation, SCDMV reinstatement counseling, job placement assistance."
       },
       {
@@ -124,6 +138,7 @@ const SC_COMMUNITY_RESOURCES = {
         category: "Legal Aid & Record Relief",
         phone: "(803) 744-9430",
         address: "2109 Bull St, Columbia, SC 29201",
+        websiteUrl: "https://sclegal.org",
         services: "Free civil legal help, sealing records / expungements, public benefits advocacy."
       },
       {
@@ -131,6 +146,7 @@ const SC_COMMUNITY_RESOURCES = {
         category: "Driver's License Reinstatement",
         phone: "(803) 896-5000",
         address: "1630 Shop Rd, Columbia, SC 29201",
+        websiteUrl: "https://scdmvonline.com/Driver-Services/Reinstatement",
         services: "SCDMV suspension hearings, driving record printouts, payment plan setups."
       }
     ],
@@ -140,6 +156,7 @@ const SC_COMMUNITY_RESOURCES = {
         category: "Free Maintenance Prescriptions",
         phone: "(803) 933-9183",
         address: "2700 Middleburg Dr, Suite 105, Columbia, SC 29204",
+        websiteUrl: "https://welvista.org",
         services: "Full prescription program for chronic conditions (blood pressure, diabetes, asthma, mental health)."
       },
       {
@@ -147,6 +164,7 @@ const SC_COMMUNITY_RESOURCES = {
         category: "Substance Use Treatment & Recovery",
         phone: "(803) 726-9300",
         address: "2711 Colonial Dr, Columbia, SC 29203",
+        websiteUrl: "https://lradac.org",
         services: "Detoxification services, outpatient treatment, ADSAP DUI program, recovery peer coaching."
       },
       {
@@ -154,6 +172,7 @@ const SC_COMMUNITY_RESOURCES = {
         category: "Sliding-Scale Primary Care",
         phone: "(803) 786-4831",
         address: "4605 Monticello Rd, Columbia, SC 29203",
+        websiteUrl: "https://cooperativehealth.org",
         services: "Affordable medical, dental, behavioral health, and discount pharmacy."
       }
     ],
@@ -163,6 +182,7 @@ const SC_COMMUNITY_RESOURCES = {
         category: "Emergency Food Assistance",
         phone: "(803) 254-4432",
         address: "2220 Shop Rd, Columbia, SC 29201",
+        websiteUrl: "https://harvesthope.org",
         services: "Emergency food pantry, drive-through food boxes, emergency clothing vouchers."
       },
       {
@@ -170,6 +190,7 @@ const SC_COMMUNITY_RESOURCES = {
         category: "Public Transportation",
         phone: "(803) 255-7100",
         address: "Columbia, West Columbia, Cayce, Forest Acres",
+        websiteUrl: "https://catchthecometsc.gov",
         services: "Bus routes connecting residential neighborhoods to Shop Rd, Farrow Rd, and Killian industrial hubs."
       }
     ]
@@ -183,6 +204,7 @@ const SC_COMMUNITY_RESOURCES = {
         category: "Emergency Shelter & Recovery Housing",
         phone: "(864) 242-6933",
         address: "484 S Pleasantburg Dr, Greenville, SC 29607",
+        websiteUrl: "https://miraclehill.org",
         services: "Emergency shelter, long-term addiction recovery program, hot meals, and work assistance."
       },
       {
@@ -190,6 +212,7 @@ const SC_COMMUNITY_RESOURCES = {
         category: "Housing Stability & Employment Prep",
         phone: "(864) 232-6463",
         address: "606 Pendleton St, Greenville, SC 29601",
+        websiteUrl: "https://united-ministries.com",
         services: "Emergency rent assistance, job training, matched savings accounts, life coaching."
       }
     ],
@@ -199,6 +222,7 @@ const SC_COMMUNITY_RESOURCES = {
         category: "Child Support & License Reinstatement",
         phone: "(864) 244-9333",
         address: "201 E Broad St, Suite 200, Greenville, SC 29601",
+        websiteUrl: "https://scfathersandfamilies.com",
         services: "Child support modification, driver's license restoration, and job readiness."
       },
       {
@@ -206,6 +230,7 @@ const SC_COMMUNITY_RESOURCES = {
         category: "Civil Legal Aid",
         phone: "(864) 678-4680",
         address: "701 Laurens Rd, Greenville, SC 29607",
+        websiteUrl: "https://sclegal.org",
         services: "Expungement legal guidance, housing rights, consumer debt protection."
       }
     ],
@@ -215,6 +240,7 @@ const SC_COMMUNITY_RESOURCES = {
         category: "Comprehensive Addiction Treatment",
         phone: "(864) 467-3790",
         address: "1400 Cleveland St, Greenville, SC 29607",
+        websiteUrl: "https://phoenixcenter.org",
         services: "Inpatient medical detox (Serenity Place), outpatient counseling, MAT clinic, women's recovery."
       },
       {
@@ -222,6 +248,7 @@ const SC_COMMUNITY_RESOURCES = {
         category: "Free Health & Dental for Uninsured",
         phone: "(864) 232-1470",
         address: "600 Arlington Ave, Greenville, SC 29601",
+        websiteUrl: "https://greenvillefreeclinic.org",
         services: "Comprehensive doctor visits, dental cleanings/extractions, and on-site pharmacy."
       }
     ],
@@ -231,6 +258,7 @@ const SC_COMMUNITY_RESOURCES = {
         category: "Food Distribution",
         phone: "(864) 232-3595",
         address: "Greenville, SC",
+        websiteUrl: "https://loavesandfishesgreenville.org",
         services: "Supplying local emergency pantries with nutritious meals and produce."
       },
       {
@@ -238,6 +266,7 @@ const SC_COMMUNITY_RESOURCES = {
         category: "Upstate Public Transit",
         phone: "(864) 467-5000",
         address: "Greenville Transit Center",
+        websiteUrl: "https://greenvillesc.gov/150/Greenlink-Transit",
         services: "Bus transit across downtown, Pelham Rd, Donaldson Center, and Mauldin industrial corridors."
       }
     ]
@@ -254,6 +283,7 @@ const SC_FAIR_CHANCE_EMPLOYERS = [
     roles: ["Forklift Driver", "Order Selector", "Receiving Specialist"],
     payRate: "$18.00 – $22.50 / hr",
     shift: "Day Shift (6:30 AM – 3:00 PM) or Night Shift (+ $1.50 differential)",
+    careersUrl: "https://www.indeed.com/jobs?q=warehouse+logistics&l=Charleston%2C+SC",
     felonyPolicy: "Fair-Chance Employer. Case-by-case review (non-violent / violent over 3 yrs).",
     benefits: "Full Medical/Dental, Paid Time Off, On-site OSHA Forklift Certification",
     immediateContact: "Palmetto Logistics HR Recruiter • (843) 555-0142"
@@ -266,6 +296,7 @@ const SC_FAIR_CHANCE_EMPLOYERS = [
     roles: ["Framing Apprentice", "Jobsite Laborer", "Drywall Helper"],
     payRate: "$19.00 – $25.00 / hr",
     shift: "6:30 AM – 3:00 PM (Overtime available on Saturdays)",
+    careersUrl: "https://www.indeed.com/jobs?q=framing+carpentry&l=Charleston%2C+SC",
     felonyPolicy: "Fair-Chance. Focuses on punctuality, work ethic, and tool proficiency.",
     benefits: "Tool Reimbursement Allowance, Steel-Toe Boot Stipend, Rapid Skill Advancement",
     immediateContact: "Lowcountry Framing Site Supervisor • (843) 555-0199"
@@ -278,6 +309,7 @@ const SC_FAIR_CHANCE_EMPLOYERS = [
     roles: ["MIG Welder Trainee", "Metal Grinder", "Fabrication Helper"],
     payRate: "$20.00 – $26.00 / hr",
     shift: "1st Shift (7:00 AM – 3:30 PM)",
+    careersUrl: "https://www.indeed.com/jobs?q=welder+metal+fabrication&l=Charleston%2C+SC",
     felonyPolicy: "Second-Chance Partner. Practical weld test required; background evaluated fairly.",
     benefits: "Paid AWS Welding Certifications, Full Health Benefits, Safety Gear Provided",
     immediateContact: "Carolina Marine Shop Manager • (843) 555-0168"
@@ -290,6 +322,7 @@ const SC_FAIR_CHANCE_EMPLOYERS = [
     roles: ["Collection Route Helper", "Yard Equipment Operator", "Transfer Station Associate"],
     payRate: "$18.50 – $22.00 / hr",
     shift: "Early Morning Day Shift (6:00 AM – 2:30 PM)",
+    careersUrl: "https://www.indeed.com/jobs?q=waste+route+driver+helper&l=North+Charleston%2C+SC",
     felonyPolicy: "Active Fair-Chance Employer. Focuses on physical stamina and attendance.",
     benefits: "Commercial Driver License (CDL-B) Sponsorship, Full Health/401(k)",
     immediateContact: "Coastal Waste HR Recruiter • (843) 555-0177"
@@ -304,6 +337,7 @@ const SC_FAIR_CHANCE_EMPLOYERS = [
     roles: ["Maintenance Technician Apprentice", "Commercial Cleaner", "Grounds Specialist"],
     payRate: "$16.50 – $19.50 / hr",
     shift: "Day Shift (7:30 AM – 4:00 PM, M–F)",
+    careersUrl: "https://www.indeed.com/jobs?q=maintenance+technician&l=Columbia%2C+SC",
     felonyPolicy: "Background friendly. Hires re-entry candidates with positive references.",
     benefits: "Tools Provided, Paid Training, Overtime Opportunities",
     immediateContact: "Carolina Industrial Recruiter • (803) 555-0188"
@@ -316,6 +350,7 @@ const SC_FAIR_CHANCE_EMPLOYERS = [
     roles: ["Concrete Finisher Helper", "General Laborer", "Traffic Safety Flagger"],
     payRate: "$18.00 – $23.00 / hr",
     shift: "7:00 AM – 3:30 PM",
+    careersUrl: "https://www.indeed.com/jobs?q=concrete+paving+laborer&l=Columbia%2C+SC",
     felonyPolicy: "Second-Chance Employer. Background reviewed individually.",
     benefits: "Weekly direct deposit, safety gear provided, CDL training sponsorship",
     immediateContact: "Midlands Concrete Hiring Office • (803) 555-0211"
@@ -328,6 +363,7 @@ const SC_FAIR_CHANCE_EMPLOYERS = [
     roles: ["Order Selector", "Package Handler", "Inventory Staging Tech"],
     payRate: "$17.50 – $21.50 / hr",
     shift: "1st Shift (7:00 AM – 3:30 PM)",
+    careersUrl: "https://www.indeed.com/jobs?q=warehouse+order+selector&l=West+Columbia%2C+SC",
     felonyPolicy: "Fair-Chance. No background exclusions for completed convictions.",
     benefits: "Weekly pay, climate-controlled facility, employee discount programs",
     immediateContact: "Palmetto Distribution Hiring Desk • (803) 555-0233"
@@ -340,6 +376,7 @@ const SC_FAIR_CHANCE_EMPLOYERS = [
     roles: ["Commercial Groundskeeper", "Mower Operator", "Irrigation Helper"],
     payRate: "$17.00 – $20.50 / hr",
     shift: "7:00 AM – 3:30 PM (M–F)",
+    careersUrl: "https://www.indeed.com/jobs?q=commercial+landscaping&l=Columbia%2C+SC",
     felonyPolicy: "Fair-Chance. Prior experience valued; positive attitude required.",
     benefits: "Overtime in peak season, equipment training, reliable year-round work",
     immediateContact: "Capital City Operations Manager • (803) 555-0244"
@@ -354,6 +391,7 @@ const SC_FAIR_CHANCE_EMPLOYERS = [
     roles: ["CNC Machine Operator Trainee", "Quality Inspector", "Material Handler"],
     payRate: "$18.50 – $23.00 / hr",
     shift: "1st & 2nd Shifts Available",
+    careersUrl: "https://www.indeed.com/jobs?q=manufacturing+machine+operator&l=Greenville%2C+SC",
     felonyPolicy: "Fair-chance partner with local re-entry initiatives.",
     benefits: "401(k) match, medical/vision/dental, on-the-job machine training",
     immediateContact: "Upstate Manufacturing Recruiter • (864) 555-0164"
@@ -366,6 +404,7 @@ const SC_FAIR_CHANCE_EMPLOYERS = [
     roles: ["Stand-Up Forklift Driver", "Receiving Clerk", "Freight Handler"],
     payRate: "$18.00 – $22.50 / hr",
     shift: "Day Shift (6:00 AM – 2:30 PM)",
+    careersUrl: "https://www.indeed.com/jobs?q=forklift+distribution&l=Spartanburg%2C+SC",
     felonyPolicy: "Second-Chance Employer. Drug screen & identity verification required.",
     benefits: "Freezer suits/thermal PPE provided, annual safety bonus",
     immediateContact: "Piedmont Distribution HR • (864) 555-0182"
@@ -378,6 +417,7 @@ const SC_FAIR_CHANCE_EMPLOYERS = [
     roles: ["Welder Apprentice", "Structural Steel Fitter Helper", "Overhead Crane Operator"],
     payRate: "$19.50 – $26.00 / hr",
     shift: "7:00 AM – 3:30 PM (M–F)",
+    careersUrl: "https://www.indeed.com/jobs?q=structural+welder&l=Greenville%2C+SC",
     felonyPolicy: "Fair-Chance. Hires individuals seeking career growth in skilled trades.",
     benefits: "Apprenticeship certification path, tool stipend, comprehensive medical",
     immediateContact: "Foothills Steel Plant Supervisor • (864) 555-0195"

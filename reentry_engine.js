@@ -87,8 +87,8 @@ TASK INSTRUCTIONS:
 4. Build a STAFF-FACING Re-entry Navigation Case Plan (markdown).
 5. Build a PARTICIPANT-FACING Printable Action & Referral Guide (markdown) containing:
    - Positive, respectful framing of their personal fresh start vision.
-   - Specific, localized resource referrals (with names, addresses, and phone numbers from the directory).
-   - Targeted local fair-chance job matches with pay rates, shifts, and why it fits their background. (IMPORTANT: Do NOT suggest Turn90 / First Shift as the employer option since the participant is already engaged with us. Recommend external second-chance employers from the provided directory and spreadsheet).
+   - Specific, localized resource referrals with CLICKABLE markdown web links: [Visit Website](websiteUrl) or [Directions](https://maps.google.com/?q=...), phone numbers, addresses, and next action steps.
+   - Targeted local fair-chance job matches with pay rates, shifts, why it fits their background, and a direct CLICKABLE markdown link: [Apply Online / View Careers Page](careersUrl). Use the exact URL from the directory or spreadsheet. (IMPORTANT: Do NOT suggest Turn90 / First Shift as the employer option since the participant is already engaged with us. Recommend external second-chance employers from the provided directory and spreadsheet).
    - An encouraging 4-week step-by-step milestone checklist.
 
 Return a valid JSON object matching EXACTLY this structure:
@@ -111,6 +111,7 @@ Return a valid JSON object matching EXACTLY this structure:
       "resourceName": "string",
       "category": "Housing" | "Legal / ID" | "Healthcare" | "Recovery" | "Food / Transit",
       "contact": "Phone & Address",
+      "websiteUrl": "https://...",
       "actionStep": "What the participant should do next"
     }
   ],
@@ -120,6 +121,7 @@ Return a valid JSON object matching EXACTLY this structure:
       "role": "string",
       "pay": "string",
       "shift": "string",
+      "careersUrl": "https://...",
       "matchReason": "Why this aligns with their goals and background"
     }
   ]
