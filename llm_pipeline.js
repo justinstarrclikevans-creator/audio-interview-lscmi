@@ -80,11 +80,27 @@ async function runPhase2(transcriptText, clientName, draftScoringForm, feedback,
        - Use the Probation and Parole Treatment Planner & Scoring Manual.
        - Identify the TOP 2-3 Dynamic Criminogenic Need Domains (NEVER choose Criminal History, as it is static).
        - Detail primary stability factors (housing, driver's license, child support, transportation, health/meds).
-    3. "participant_case_plan": A beautiful, encouraging, PRINTABLE case plan written directly for the participant.
-       - Include their Name, Date, and Program Track.
-       - Highlight their Top 2-3 Focus Areas with clear, respectful, plain-English definitions (e.g. "Mindset & Automatic Thoughts", "Managing Triggers & Recovery", "Healthy Communication with Family").
-       - List concrete, actionable weekly goals for Weeks 1 to 4.
-       - Include positive strengths and a motivating closing message.
+    3. "participant_case_plan": A beautiful, empowering, PRINTABLE First Shift Action Plan written directly for the participant.
+       - Header: Participant Name, Date, Location, Program Track (Turn90 First Shift).
+       - CRITICAL REQUIREMENT: DO NOT INCLUDE ANY GOALS. Remove all goal sections entirely.
+       - For each of the TOP 2-3 Dynamic Criminogenic Domains identified for this participant, structure into EXACTLY these 4 sections:
+         * **Domain & Dynamic Need**: (e.g., "Domain: Pro-Criminal Attitudes & Thinking Patterns | Core Need: Rewiring Automatic Assumptions & Hostile Attribution").
+         * **Identified Cognitive / Behavioral Pattern**: (The specific unhelpful thinking trap, defense mechanism, or automatic loop identified from their interview, e.g., "Interpreting workplace feedback as personal disrespect", "Externalizing responsibility when rules are enforced", "Black-and-white thinking when stressed").
+         * **Trigger Situations (High-Risk Traps to Fill In)**:
+           - Provide initial examples from their story PLUS clear structured prompts/fill-in lines for the participant and case manager to complete together:
+             - [ ] Specific People / Past Associations: ___________________________
+             - [ ] High-Risk Environments / Neighborhoods / Places: ___________________________
+             - [ ] Emotional / Physical States (HALT - Hungry, Angry, Lonely, Tired, Stressed): ___________________________
+             - [ ] Specific Workplace / Authority Situations (e.g., unexpected overtime, supervisor correction, coworker friction): ___________________________
+         * **Suggested Tools to Apply from the Turn90 CBT Toolkit**:
+           - Explicitly recommend 2-3 tools tailored to counteract this exact pattern:
+             - **Stop & Think**: The 3-second pause before reacting to an authority figure or stressor.
+             - **Thinking Report**: Writing out Situation -> Thoughts -> Physical Sensations -> Action -> Outcome to expose faulty beliefs.
+             - **Problem Solving 4-Step Method**: 1. Define problem without blame, 2. Brainstorm 3 choices, 3. Weigh costs to freedom/job, 4. Act.
+             - **Decisional Balance**: Immediate impulse payoff vs Long-term freedom & wages.
+             - **Cognitive Restructuring**: Replacing the automatic thinking trap with a grounded, helpful thought.
+             - **Modeling Neutrality**: De-escalating posture and tone, asking open-ended clarifying questions.
+       - Conclude with a strong, motivating closing message recognizing the participant's resilience and strengths.
     4. "csv_row": The exact CSV row for Apricot import mapping to:
        ${csvHeader}
        (Use Apricot_Mapping.txt. If a question was unasked/unanswered, leave blank).

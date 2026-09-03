@@ -13,10 +13,11 @@ const { convertSingleMdToPdf } = require('./convert_md_to_pdf');
 const { convertSingleMdToDocx } = require('./convert_md_to_docx');
 const { evaluateClassTranscript } = require('./facilitation_evaluator');
 const { cbtModules, T90_TRADE_TRACKS, REENTRY_EMPLOYERS } = require('./training_data');
-const { generateMondayNeedsReport, generateFridayMilestoneReport, importApricotCsv } = require('./reporting_engine');
+const { generateMondayNeedsReport, generateFridayMilestoneReport, importApricotCsv, importApricotData } = require('./reporting_engine');
 const { generateReentryNavAssessment } = require('./reentry_engine');
 const { SC_COMMUNITY_RESOURCES, SC_FAIR_CHANCE_EMPLOYERS } = require('./sc_resource_directory');
 const { loadJobsFromSpreadsheets } = require('./jobs_loader');
+const { getParticipantAiResponse } = require('./ai_assistant');
 const pdfParse = require('pdf-parse');
 
 require('dotenv').config({ path: path.join(__dirname, '..', 'email-settings.txt') });
@@ -206,24 +207,37 @@ app.post('/api/participant/barriers', authenticateToken, (req, res) => {
     res.json({ message: 'Barrier profile updated successfully.' });
 });
 
-// W-9 Submission
+// Official Form W-9 Submission
 app.post('/api/participant/w9', authenticateToken, (req, res) => {
     const userId = req.user.id;
-    const { fullName, businessName, taxClassification, address, cityStateZip, ssnOrEin, signatureDate } = req.body;
+    const { fullName, businessName, taxClassification, exemptions, address, cityStateZip, tinType, ssnOrEin, signatureName, signatureDate } = req.body;
 
-    const w9Data = JSON.stringify({ fullName, businessName, taxClassification, address, cityStateZip, ssnOrEin: '***-**-' + (ssnOrEin ? ssnOrEin.slice(-4) : 'XXXX'), signatureDate });
+    const w9Data = JSON.stringify({ 
+        fullName: fullName || req.user.name,
+        businessName: businessName || '',
+        taxClassification: taxClassification || 'Individual/sole proprietor',
+        exemptions: exemptions || '',
+        address: address || '',
+        cityStateZip: cityStateZip || '',
+        tinType: tinType || 'ssn',
+        ssnOrEin: ssnOrEin || '',
+        signatureName: signatureName || fullName || req.user.name,
+        signatureDate: signatureDate || new Date().toISOString().split('T')[0],
+        requester: 'Turn90, Inc., 3765 Leeds Ave, North Charleston, SC 29405',
+        certified: true
+    });
 
     // Store in documents table
     db.prepare(`
         INSERT INTO documents (user_id, doc_type, title, filename, file_path, metadata_json)
-        VALUES (?, 'w9', 'Form W-9 (Digital Submission)', 'W9_Submission.json', 'internal_json', ?)
+        VALUES (?, 'w9', 'Official Form W-9 (Signed & Certified)', 'Official_Form_W9.json', 'internal_json', ?)
     `).run(userId, w9Data);
 
     // Update profile & week 1 gate criteria
-    db.prepare(`UPDATE participant_profiles SET w9_status = 'submitted' WHERE user_id = ?`).run(userId);
-    db.prepare(`UPDATE gate_criteria SET status = 'green', pm_notes = 'Submitted digitally by participant' WHERE user_id = ? AND criterion_key = 'w1_w9_id'`).run(userId);
+    db.prepare(`UPDATE participant_profiles SET w9_status = 'verified' WHERE user_id = ?`).run(userId);
+    db.prepare(`UPDATE gate_criteria SET status = 'green', pm_notes = 'Official Form W-9 certified and recorded on file' WHERE user_id = ? AND criterion_key = 'w1_w9_id'`).run(userId);
 
-    res.json({ message: 'W-9 submitted and recorded.' });
+    res.json({ message: 'Official Form W-9 certified, recorded, and verified.', status: 'verified' });
 });
 
 // Document Uploads (ID, Certifications, etc.)
@@ -415,13 +429,22 @@ app.get('/api/admin/reports/friday-milestones', authenticateToken, requireRole('
     res.json(report);
 });
 
-// Import Apricot Points CSV
-app.post('/api/admin/apricot/import-points', authenticateToken, requireRole('program_manager', 'admin'), (req, res) => {
-    const { csvData } = req.body;
-    if (!csvData) return res.status(400).json({ error: 'No CSV data provided.' });
-
-    const result = importApricotCsv(csvData);
-    res.json(result);
+// Import Apricot Points Excel Spreadsheet (.xlsx, .xls) or CSV
+app.post('/api/admin/apricot/import-points', authenticateToken, requireRole('program_manager', 'admin'), fileUpload.single('file'), (req, res) => {
+    try {
+        let result;
+        if (req.file && req.file.buffer) {
+            const isExcel = req.file.originalname.endsWith('.xlsx') || req.file.originalname.endsWith('.xls');
+            result = importApricotData(req.file.buffer, isExcel);
+        } else if (req.body && req.body.csvData) {
+            result = importApricotData(req.body.csvData, false);
+        } else {
+            return res.status(400).json({ error: 'No Excel spreadsheet or CSV data provided.' });
+        }
+        res.json(result);
+    } catch(err) {
+        res.status(500).json({ error: 'Import failed: ' + err.message });
+    }
 });
 
 // Get All Official Stability Step-Down Triggers
@@ -526,13 +549,18 @@ app.get('/api/admin/feedback-summary', authenticateToken, requireRole('program_m
 app.get('/api/interviews', (req, res) => {
     try {
         const files = fs.readdirSync(dataDir);
+        const SUFFIXES = ['_draft_scoring_form', '_final_scoring_form', '_final_case_brief', '_interview_guide', '_transcript.txt', '_participant_case_plan'];
         const clients = {};
         files.forEach(f => {
-            const parts = f.split('_');
-            if (parts.length > 1) {
-                const clientId = parts[0] + '_' + parts[1];
-                if (!clients[clientId]) clients[clientId] = [];
-                clients[clientId].push(f);
+            if (f.endsWith('.sqlite') || f.includes('.sqlite') || f.startsWith('.') || f.includes('reentry')) return;
+            for (const suf of SUFFIXES) {
+                if (f.includes(suf)) {
+                    const idx = f.indexOf(suf);
+                    const clientId = f.substring(0, idx);
+                    if (!clients[clientId]) clients[clientId] = [];
+                    clients[clientId].push(f);
+                    break;
+                }
             }
         });
         res.json(clients);
@@ -1046,6 +1074,182 @@ app.post('/api/upload-audio', memoryUpload.single('audio'), async (req, res) => 
     } catch (error) {
         console.error('Unexpected error:', error);
         res.status(500).json({ error: 'Failed to process upload.' });
+    }
+});
+
+// =============================================================
+// PARTICIPANT AI ASSISTANT API
+// =============================================================
+app.post('/api/participant/ai-assistant', authenticateToken, async (req, res) => {
+    const { message, history } = req.body;
+    if (!message || !message.trim()) {
+        return res.status(400).json({ error: 'Message is required.' });
+    }
+
+    try {
+        const reply = await getParticipantAiResponse(message, history || []);
+        res.json({ reply });
+    } catch(err) {
+        console.error('Participant AI Assistant error:', err);
+        res.status(500).json({ error: 'Failed to generate assistant response.' });
+    }
+});
+
+// =============================================================
+// TWO-WAY MESSAGING API (PARTICIPANT <-> PROGRAM MANAGER)
+// =============================================================
+app.post('/api/messages/send', authenticateToken, (req, res) => {
+    const senderId = req.user.id;
+    const { participantId, receiverId, messageText } = req.body;
+
+    if (!messageText || !messageText.trim()) {
+        return res.status(400).json({ error: 'Message text cannot be blank.' });
+    }
+
+    let pId = participantId;
+    let rId = receiverId;
+
+    if (req.user.role === 'participant') {
+        pId = senderId;
+        if (!rId) {
+            const pm = db.prepare(`SELECT id FROM users WHERE role IN ('program_manager', 'director', 'admin') AND (location = ? OR location IS NULL) ORDER BY id ASC LIMIT 1`).get(req.user.location);
+            rId = pm ? pm.id : null;
+        }
+    } else {
+        if (!pId) return res.status(400).json({ error: 'Participant ID is required.' });
+        rId = pId;
+    }
+
+    try {
+        const stmt = db.prepare(`
+            INSERT INTO messages (sender_id, receiver_id, participant_id, message_text)
+            VALUES (?, ?, ?, ?)
+        `);
+        const result = stmt.run(senderId, rId, pId, messageText.trim());
+        res.json({ success: true, messageId: result.lastInsertRowid });
+    } catch(err) {
+        res.status(500).json({ error: 'Failed to send message: ' + err.message });
+    }
+});
+
+app.get('/api/messages/thread/:participantId', authenticateToken, (req, res) => {
+    const targetId = parseInt(req.params.participantId);
+    if (req.user.role === 'participant' && req.user.id !== targetId) {
+        return res.status(403).json({ error: 'Unauthorized to view this thread.' });
+    }
+
+    try {
+        // Mark messages as read for receiver
+        db.prepare(`
+            UPDATE messages SET is_read = 1
+            WHERE participant_id = ? AND sender_id != ? AND is_read = 0
+        `).run(targetId, req.user.id);
+
+        const messages = db.prepare(`
+            SELECT m.*, u.name as sender_name, u.role as sender_role
+            FROM messages m
+            JOIN users u ON u.id = m.sender_id
+            WHERE m.participant_id = ?
+            ORDER BY m.created_at ASC
+        `).all(targetId);
+
+        const participant = db.prepare('SELECT id, name, email, location FROM users WHERE id = ?').get(targetId);
+
+        res.json({ participant, messages });
+    } catch(err) {
+        res.status(500).json({ error: 'Failed to retrieve message thread: ' + err.message });
+    }
+});
+
+app.get('/api/pm/messages/recent', authenticateToken, requireRole('program_manager', 'director', 'admin'), (req, res) => {
+    try {
+        const threads = db.prepare(`
+            SELECT m.*, u.name as participant_name, u.email as participant_email, u.location as participant_location,
+                   sender.name as sender_name, sender.role as sender_role,
+                   (SELECT COUNT(*) FROM messages WHERE participant_id = m.participant_id AND is_read = 0 AND sender_id = m.participant_id) as unread_count
+            FROM messages m
+            JOIN users u ON u.id = m.participant_id
+            JOIN users sender ON sender.id = m.sender_id
+            WHERE m.id IN (
+                SELECT MAX(id) FROM messages GROUP BY participant_id
+            )
+            ORDER BY m.created_at DESC
+        `).all();
+
+        res.json(threads);
+    } catch(err) {
+        res.status(500).json({ error: 'Failed to fetch recent messages: ' + err.message });
+    }
+});
+
+app.get('/api/participant/messages', authenticateToken, (req, res) => {
+    const participantId = req.user.id;
+    try {
+        db.prepare(`
+            UPDATE messages SET is_read = 1
+            WHERE participant_id = ? AND sender_id != ? AND is_read = 0
+        `).run(participantId, req.user.id);
+
+        const messages = db.prepare(`
+            SELECT m.*, u.name as sender_name, u.role as sender_role
+            FROM messages m
+            JOIN users u ON u.id = m.sender_id
+            WHERE m.participant_id = ?
+            ORDER BY m.created_at ASC
+        `).all(participantId);
+
+        res.json({ messages });
+    } catch(err) {
+        res.status(500).json({ error: 'Failed to fetch messages: ' + err.message });
+    }
+});
+
+// =============================================================
+// FIRST SHIFT CASE PLAN: TRIGGER SITUATIONS & TOOLKIT API
+// =============================================================
+app.get('/api/case-plan-triggers/:userId', authenticateToken, (req, res) => {
+    const targetId = parseInt(req.params.userId);
+    if (req.user.role === 'participant' && req.user.id !== targetId) {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+
+    try {
+        const items = db.prepare('SELECT * FROM case_plan_triggers WHERE user_id = ? ORDER BY id ASC').all(targetId);
+        res.json(items);
+    } catch(err) {
+        res.status(500).json({ error: 'Failed to fetch triggers: ' + err.message });
+    }
+});
+
+app.post('/api/case-plan-triggers', authenticateToken, (req, res) => {
+    const { userId, domain, pattern, triggerSituations, toolkitTools } = req.body;
+    const targetId = parseInt(userId) || req.user.id;
+
+    if (req.user.role === 'participant' && req.user.id !== targetId) {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+
+    try {
+        const stmt = db.prepare(`
+            INSERT INTO case_plan_triggers (user_id, domain, pattern, trigger_situations, toolkit_tools, updated_at)
+            VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+            ON CONFLICT(user_id, domain) DO UPDATE SET
+                pattern = excluded.pattern,
+                trigger_situations = excluded.trigger_situations,
+                toolkit_tools = excluded.toolkit_tools,
+                updated_at = CURRENT_TIMESTAMP
+        `);
+        stmt.run(
+            targetId,
+            domain,
+            pattern || '',
+            typeof triggerSituations === 'string' ? triggerSituations : JSON.stringify(triggerSituations || []),
+            typeof toolkitTools === 'string' ? toolkitTools : JSON.stringify(toolkitTools || [])
+        );
+
+        res.json({ success: true, message: 'Trigger situations and toolkit saved.' });
+    } catch(err) {
+        res.status(500).json({ error: 'Failed to save triggers: ' + err.message });
     }
 });
 

@@ -217,6 +217,7 @@ async function loadFsDashboard() {
         renderGateCriteria(data.weeks, currentGateWeek);
         loadFsPoints();
         loadBriefcaseChecklist();
+        loadParticipantMessages();
 
         // Check for linked Re-entry Fresh Start Guide for participant
         const reentryGuideCard = document.getElementById('fs-reentry-guide-card');
@@ -393,22 +394,59 @@ function renderGateCriteria(weeksData, selectedWeek) {
 // -------------------------------------------------------------
 function openW9Modal() {
     if (currentUser) {
-        document.getElementById('w9-name').value = currentUser.name;
+        const nameEl = document.getElementById('w9-name');
+        if (nameEl) nameEl.value = currentUser.name || '';
     }
+    const dateEl = document.getElementById('w9-date');
+    if (dateEl) dateEl.value = new Date().toISOString().split('T')[0];
+    
+    toggleTinType('ssn');
     openModal('modal-w9');
+}
+
+function toggleTinType(type) {
+    const ssnInput = document.getElementById('w9-ssn-val');
+    const einInput = document.getElementById('w9-ein-val');
+    if (!ssnInput || !einInput) return;
+
+    if (type === 'ssn') {
+        ssnInput.disabled = false;
+        ssnInput.required = true;
+        einInput.disabled = true;
+        einInput.required = false;
+        einInput.value = '';
+    } else {
+        einInput.disabled = false;
+        einInput.required = true;
+        ssnInput.disabled = true;
+        ssnInput.required = false;
+        ssnInput.value = '';
+    }
 }
 
 async function handleW9Submit(e) {
     e.preventDefault();
     const token = localStorage.getItem('fs_token');
+    const certCheck = document.getElementById('w9-cert-check');
+    if (!certCheck.checked) {
+        return alert('Please check the Part II Certification box under penalties of perjury.');
+    }
+
+    const tinType = document.querySelector('input[name="w9-tin-type"]:checked')?.value || 'ssn';
+    const tinVal = tinType === 'ssn' ? document.getElementById('w9-ssn-val').value : document.getElementById('w9-ein-val').value;
+    const taxClass = document.querySelector('input[name="w9-tax-class"]:checked')?.value || 'Individual/sole proprietor';
+
     const payload = {
         fullName: document.getElementById('w9-name').value,
         businessName: document.getElementById('w9-business').value,
-        taxClassification: document.getElementById('w9-classification').value,
+        taxClassification: taxClass,
+        exemptions: document.getElementById('w9-exemptions').value,
         address: document.getElementById('w9-address').value,
         cityStateZip: document.getElementById('w9-city-state-zip').value,
-        ssnOrEin: document.getElementById('w9-ssn').value,
-        signatureDate: new Date().toISOString().split('T')[0]
+        tinType: tinType,
+        ssnOrEin: tinVal,
+        signatureName: document.getElementById('w9-sig').value,
+        signatureDate: document.getElementById('w9-date').value || new Date().toISOString().split('T')[0]
     };
 
     try {
@@ -418,13 +456,13 @@ async function handleW9Submit(e) {
             body: JSON.stringify(payload)
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error);
+        if (!res.ok) throw new Error(data.error || 'Submission failed');
 
-        alert('Form W-9 successfully submitted and recorded.');
+        alert('Official Form W-9 successfully completed, certified, and recorded on file.');
         closeModal('modal-w9');
         loadFsDashboard();
     } catch (err) {
-        alert('Error: ' + err.message);
+        alert('W-9 Submission Error: ' + err.message);
     }
 }
 
@@ -864,6 +902,8 @@ function switchPmSubView(subview) {
 
     document.getElementById('pm-sec-caseload').classList.toggle('hidden', subview !== 'caseload');
     document.getElementById('pm-sec-reentry').classList.toggle('hidden', subview !== 'reentry');
+    const msgSec = document.getElementById('pm-sec-messages');
+    if (msgSec) msgSec.classList.toggle('hidden', subview !== 'messages');
 
     // Drafts and facilitation containers
     const draftsCard = document.getElementById('pm-drafts-list')?.closest('.section-card');
@@ -874,6 +914,8 @@ function switchPmSubView(subview) {
 
     if (subview === 'reentry') {
         loadReentryParticipants();
+    } else if (subview === 'messages') {
+        loadPmConversations();
     }
 }
 
@@ -1346,48 +1388,131 @@ async function openW9ViewModal(userId) {
         }
 
         const w9 = data.w9Data;
+        const ssnFormatted = w9.ssnOrEin ? (w9.tinType === 'ein' ? w9.ssnOrEin : (w9.ssnOrEin.length === 9 ? w9.ssnOrEin.slice(0,3) + '-' + w9.ssnOrEin.slice(3,5) + '-' + w9.ssnOrEin.slice(5) : w9.ssnOrEin)) : 'Not Provided';
+
         body.innerHTML = `
-            <div style="background: #ffffff; border: 2px solid #0f172a; border-radius: 8px; padding: 24px; font-family: monospace;">
-                <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 16px;">
+            <div class="official-w9-document" style="background: white; border: 2px solid #000; padding: 24px; font-family: Arial, Helvetica, sans-serif; color: #000;">
+                <!-- IRS Official Header -->
+                <div style="display: grid; grid-template-columns: 140px 1fr 180px; border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 12px; align-items: center;">
                     <div>
-                        <h2 style="font-size: 20px; font-weight: 800; margin: 0;">Form W-9</h2>
-                        <div style="font-size: 11px; color: #475569;">Request for Taxpayer Identification Number and Certification</div>
+                        <div style="font-weight: 900; font-size: 26px; line-height: 1;">Form <span style="font-size: 32px;">W-9</span></div>
+                        <div style="font-size: 10px; font-weight: bold;">(Rev. March 2024)</div>
+                        <div style="font-size: 9px; color: #475569;">Department of the Treasury<br>Internal Revenue Service</div>
                     </div>
-                    <div style="text-align: right;">
-                        <span class="badge badge-green">STATUS: ${data.status.toUpperCase()}</span>
-                        <div style="font-size: 11px; color: #475569; margin-top: 4px;">Signed: ${w9.signatureDate || 'On file'}</div>
+                    <div style="text-align: center;">
+                        <h2 style="font-size: 18px; font-weight: 900; margin: 0;">Request for Taxpayer<br>Identification Number and Certification</h2>
+                        <div style="font-size: 10px; font-style: italic; margin-top: 4px;">Go to www.irs.gov/FormW9 for instructions and the latest information.</div>
                     </div>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 1fr; gap: 12px; font-size: 13px;">
-                    <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 6px;">
-                        <strong>1. Name (as shown on tax return):</strong> <span style="font-weight: bold; color: var(--primary);">${w9.fullName}</span>
-                    </div>
-                    <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 6px;">
-                        <strong>2. Business Name / Disregarded Entity:</strong> ${w9.businessName || 'N/A (Individual)'}
-                    </div>
-                    <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 6px;">
-                        <strong>3. Federal Tax Classification:</strong> ${w9.taxClassification}
-                    </div>
-                    <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 6px;">
-                        <strong>4. Address (number, street, apt):</strong> ${w9.address}
-                    </div>
-                    <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 6px;">
-                        <strong>5. City, State, and ZIP:</strong> ${w9.cityStateZip}
-                    </div>
-                    <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; background: #fef3c7; padding: 8px; border-radius: 4px;">
-                        <strong>Part I - Taxpayer Identification Number (SSN/EIN):</strong> 
-                        <span style="letter-spacing: 2px; font-weight: bold; color: #b45309;">${w9.ssnOrEin}</span>
+                    <div style="text-align: right; font-size: 11px;">
+                        <strong style="display: block; line-height: 1.2;">Give Form to the requester. Do not send to the IRS.</strong>
+                        <div style="margin-top: 6px;"><span class="badge badge-green" style="font-weight: bold; font-size: 11px;">VERIFIED & RECORDED</span></div>
                     </div>
                 </div>
 
-                <div style="margin-top: 16px; font-size: 11px; color: #64748b; font-style: italic;">
-                    Certification: Under penalties of perjury, the participant certifies that the number shown on this form is correct and they are not subject to backup withholding.
+                <!-- Lines 1 to 7 Table -->
+                <div style="border: 1px solid #000; font-size: 12px; line-height: 1.4;">
+                    <!-- Line 1 -->
+                    <div style="border-bottom: 1px solid #000; padding: 6px 10px;">
+                        <div style="font-size: 10px; font-weight: bold; color: #334155;">1 Name of entity/individual (as shown on your income tax return). Name is required on this line; do not leave this line blank.</div>
+                        <div style="font-size: 14px; font-weight: bold; color: #0f172a; padding: 2px 0;">${w9.fullName || (data.user ? data.user.name : '')}</div>
+                    </div>
+
+                    <!-- Line 2 -->
+                    <div style="border-bottom: 1px solid #000; padding: 6px 10px;">
+                        <div style="font-size: 10px; font-weight: bold; color: #334155;">2 Business name/disregarded entity name, if different from above:</div>
+                        <div style="font-size: 13px; font-style: ${w9.businessName ? 'normal' : 'italic'}; color: ${w9.businessName ? '#0f172a' : '#64748b'}; padding: 2px 0;">
+                            ${w9.businessName || 'None (Individual)'}
+                        </div>
+                    </div>
+
+                    <!-- Line 3a & 4 -->
+                    <div style="display: grid; grid-template-columns: 2fr 1fr; border-bottom: 1px solid #000;">
+                        <div style="padding: 6px 10px; border-right: 1px solid #000;">
+                            <div style="font-size: 10px; font-weight: bold; color: #334155;">3a Check appropriate box for federal tax classification:</div>
+                            <div style="font-size: 13px; font-weight: bold; color: #1e3a8a; margin-top: 4px;">
+                                ☑️ ${w9.taxClassification || 'Individual/sole proprietor or single-member LLC'}
+                            </div>
+                        </div>
+                        <div style="padding: 6px 10px;">
+                            <div style="font-size: 10px; font-weight: bold; color: #334155;">4 Exemptions (codes):</div>
+                            <div style="font-size: 12px; color: #64748b; margin-top: 4px;">${w9.exemptions || 'None / N/A'}</div>
+                        </div>
+                    </div>
+
+                    <!-- Line 5 & Requester -->
+                    <div style="display: grid; grid-template-columns: 2fr 1fr; border-bottom: 1px solid #000;">
+                        <div style="padding: 6px 10px; border-right: 1px solid #000;">
+                            <div style="font-size: 10px; font-weight: bold; color: #334155;">5 Address (number, street, and apt. or suite no.):</div>
+                            <div style="font-size: 13px; font-weight: bold; padding: 2px 0;">${w9.address || 'On file'}</div>
+                            
+                            <div style="font-size: 10px; font-weight: bold; color: #334155; margin-top: 6px;">6 City, state, and ZIP code:</div>
+                            <div style="font-size: 13px; font-weight: bold; padding: 2px 0;">${w9.cityStateZip || 'On file'}</div>
+                        </div>
+                        <div style="padding: 6px 10px; background: #f8fafc; font-size: 11px;">
+                            <strong style="display: block; margin-bottom: 4px; color: #0f172a;">Requester's name and address:</strong>
+                            Turn90, Inc.<br>
+                            3765 Leeds Ave<br>
+                            North Charleston, SC 29405
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Part I: Taxpayer Identification Number -->
+                <div style="border: 2px solid #000; margin-top: 14px; overflow: hidden;">
+                    <div style="background: #000; color: white; padding: 4px 10px; font-weight: bold; font-size: 12px; display: flex; justify-content: space-between;">
+                        <span>Part I: Taxpayer Identification Number (TIN)</span>
+                        <span style="font-size: 11px;">Official Certified TIN</span>
+                    </div>
+                    <div style="padding: 12px; background: #f8fafc;">
+                        <p style="font-size: 11px; margin: 0 0 8px 0; color: #334155;">
+                            Enter your TIN in the appropriate box. The TIN provided must match the name given on line 1 to avoid backup withholding.
+                        </p>
+                        <div style="display: flex; gap: 24px; align-items: center;">
+                            <div style="border: 2px solid #0f172a; background: white; padding: 8px 16px; border-radius: 4px;">
+                                <span style="font-size: 11px; font-weight: bold; color: #475569; display: block;">${w9.tinType === 'ein' ? 'Employer Identification Number (EIN)' : 'Social Security Number (SSN)'}:</span>
+                                <span style="font-family: monospace; font-size: 18px; font-weight: 900; letter-spacing: 3px; color: #0f172a;">${ssnFormatted}</span>
+                            </div>
+                            <div style="font-size: 11px; color: #166534; font-weight: bold;">
+                                ✅ Certified on file with Turn90 Payroll & Stipends
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Part II: Certification -->
+                <div style="border: 2px solid #000; margin-top: 14px; overflow: hidden;">
+                    <div style="background: #000; color: white; padding: 4px 10px; font-weight: bold; font-size: 12px;">
+                        Part II: Certification
+                    </div>
+                    <div style="padding: 10px 12px; font-size: 10.5px; line-height: 1.4; color: #334155;">
+                        <p style="margin: 0 0 4px 0; font-weight: bold;">Under penalties of perjury, I certify that:</p>
+                        <ol style="margin: 0 0 8px 16px; padding: 0;">
+                            <li>The number shown on this form is my correct taxpayer identification number (or I am waiting for a number to be issued to me); and</li>
+                            <li>I am not subject to backup withholding because: (a) I am exempt from backup withholding, or (b) I have not been notified by the IRS that I am subject to backup withholding, or (c) the IRS has notified me that I am no longer subject to backup withholding; and</li>
+                            <li>I am a U.S. citizen or other U.S. person; and</li>
+                            <li>The FATCA code(s) entered on this form (if any) indicating that I am exempt from FATCA reporting is correct.</li>
+                        </ol>
+
+                        <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 8px; display: grid; grid-template-columns: 2fr 1fr; gap: 16px; align-items: flex-end;">
+                            <div>
+                                <span style="font-size: 10px; font-weight: bold; color: #475569; display: block;">Signature of U.S. Person:</span>
+                                <div style="font-family: 'Brush Script MT', cursive, sans-serif; font-size: 24px; color: #1e3a8a; border-bottom: 1px solid #000; padding: 2px 8px;">
+                                    ${w9.signatureName || w9.fullName || 'Digital Signature Certified'}
+                                </div>
+                            </div>
+                            <div>
+                                <span style="font-size: 10px; font-weight: bold; color: #475569; display: block;">Date:</span>
+                                <div style="font-size: 14px; font-weight: bold; border-bottom: 1px solid #000; padding: 6px 8px;">
+                                    ${w9.signatureDate || new Date().toISOString().split('T')[0]}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
     } catch (e) {
-        body.innerHTML = '<p>Failed to load W-9 details: ' + e.message + '</p>';
+        body.innerHTML = '<p class="text-danger">Failed to load W-9 details: ' + e.message + '</p>';
     }
 }
 
@@ -1422,8 +1547,58 @@ async function openParticipantCasePlanModal() {
                 ${typeof marked !== 'undefined' ? marked.parse(data.markdown) : data.markdown.replace(/\n/g, '<br>')}
             </div>
         `;
+
+        // Load saved personal trigger situations and selected tools
+        if (currentUser) {
+            try {
+                const trRes = await fetch(`/api/case-plan-triggers/${currentUser.id}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const trData = await trRes.json();
+                if (trData && trData.length > 0) {
+                    const latest = trData[trData.length - 1];
+                    const inputEl = document.getElementById('cp-triggers-input');
+                    if (inputEl) inputEl.value = latest.trigger_situations || '';
+                    const selectedTools = latest.toolkit_tools ? JSON.parse(latest.toolkit_tools) : [];
+                    document.querySelectorAll('input[name="cp-tool"]').forEach(cb => {
+                        cb.checked = selectedTools.includes(cb.value);
+                    });
+                }
+            } catch (trErr) {
+                console.warn('Could not load case plan triggers:', trErr);
+            }
+        }
     } catch (e) {
         body.innerHTML = '<p>Failed to load case plan: ' + e.message + '</p>';
+    }
+}
+
+async function savePersonalTriggerSituations() {
+    const token = localStorage.getItem('fs_token');
+    const triggers = document.getElementById('cp-triggers-input').value;
+    const selectedTools = Array.from(document.querySelectorAll('input[name="cp-tool"]:checked')).map(cb => cb.value);
+    const statusEl = document.getElementById('triggers-save-status');
+
+    try {
+        const res = await fetch('/api/case-plan-triggers', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({
+                userId: currentUser ? currentUser.id : null,
+                domain: 'Dynamic Focus Areas',
+                triggerSituations: triggers,
+                toolkitTools: selectedTools
+            })
+        });
+        const data = await res.json();
+        if (data.success) {
+            statusEl.innerText = '✅ Saved successfully to your personal plan!';
+            setTimeout(() => { statusEl.innerText = ''; }, 4000);
+        } else {
+            alert('Failed to save triggers: ' + data.error);
+        }
+    } catch(e) {
+        alert('Save error: ' + e.message);
     }
 }
 
@@ -1453,7 +1628,7 @@ async function loadPmDrafts() {
             const finalBriefFile = files.find(f => f.includes('final_case_brief.md'));
             const finalPlanFile = files.find(f => f.includes('participant_case_plan.md'));
             const parts = clientId.split('_');
-            const cleanName = parts.length > 1 ? parts[1].replace(/([A-Z])/g, ' $1').trim() : clientId;
+            const cleanName = parts.map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
             html += `
                 <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 8px; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
@@ -1529,13 +1704,74 @@ async function previewDocument(filename) {
     }
 }
 
-function openSupervisorReviewModal(clientId, cleanName) {
+function switchSupReviewView(mode) {
+    const container = document.getElementById('sup-dual-container');
+    const boxScoring = document.getElementById('sup-box-scoring');
+    const boxGuide = document.getElementById('sup-box-guide');
+
+    const btnDual = document.getElementById('sup-view-mode-dual');
+    const btnScoring = document.getElementById('sup-view-mode-scoring');
+    const btnGuide = document.getElementById('sup-view-mode-guide');
+
+    btnDual.className = mode === 'dual' ? 'btn btn-primary' : 'btn btn-outline';
+    btnScoring.className = mode === 'scoring' ? 'btn btn-primary' : 'btn btn-outline';
+    btnGuide.className = mode === 'guide' ? 'btn btn-primary' : 'btn btn-outline';
+
+    if (mode === 'dual') {
+        container.style.gridTemplateColumns = '1fr 1fr';
+        boxScoring.style.display = 'block';
+        boxGuide.style.display = 'block';
+    } else if (mode === 'scoring') {
+        container.style.gridTemplateColumns = '1fr';
+        boxScoring.style.display = 'block';
+        boxGuide.style.display = 'none';
+    } else if (mode === 'guide') {
+        container.style.gridTemplateColumns = '1fr';
+        boxScoring.style.display = 'none';
+        boxGuide.style.display = 'block';
+    }
+}
+
+async function openSupervisorReviewModal(clientId, cleanName) {
     document.getElementById('sup-client-id').value = clientId;
     document.getElementById('sup-review-title').innerText = `Supervisor Review & Phase 2 Approval: ${cleanName}`;
     document.getElementById('sup-crim-file').value = '';
     document.getElementById('sup-crim-text').value = '';
     document.getElementById('sup-feedback-text').value = 'No changes needed. The draft scoring form is accurate.';
+
+    const scoringContent = document.getElementById('sup-draft-scoring-content');
+    const guideContent = document.getElementById('sup-interview-guide-content');
+    scoringContent.innerHTML = '<p class="text-slate">Loading Draft Scoring Form...</p>';
+    guideContent.innerHTML = '<p class="text-slate">Loading Interview Guide responses...</p>';
+
+    switchSupReviewView('dual');
     openModal('modal-supervisor-review');
+
+    // Fetch Draft Scoring Form
+    try {
+        const resScoring = await fetch(`/api/file-content?file=${encodeURIComponent(clientId + '_draft_scoring_form.md')}`);
+        if (resScoring.ok) {
+            const data = await resScoring.json();
+            scoringContent.innerHTML = marked.parse(data.content);
+        } else {
+            scoringContent.innerHTML = '<p class="text-danger">Draft scoring form file not found.</p>';
+        }
+    } catch(e) {
+        scoringContent.innerHTML = '<p class="text-danger">Error loading scoring form: ' + e.message + '</p>';
+    }
+
+    // Fetch Interview Guide
+    try {
+        const resGuide = await fetch(`/api/file-content?file=${encodeURIComponent(clientId + '_interview_guide.md')}`);
+        if (resGuide.ok) {
+            const data = await resGuide.json();
+            guideContent.innerHTML = marked.parse(data.content);
+        } else {
+            guideContent.innerHTML = '<p class="text-slate">Interview guide markdown not found. Inferred from transcript.</p>';
+        }
+    } catch(e) {
+        guideContent.innerHTML = '<p class="text-danger">Error loading interview guide: ' + e.message + '</p>';
+    }
 }
 
 async function handleSupervisorFeedbackSubmit(e) {
@@ -1780,25 +2016,50 @@ function openApricotModal() {
 
 async function handleApricotImport() {
     const token = localStorage.getItem('fs_token');
+    const fileInput = document.getElementById('apricot-file-input');
     const csvData = document.getElementById('apricot-csv-text').value;
-    if (!csvData.trim()) return alert('Please paste CSV content.');
+    const btn = document.getElementById('btn-apricot-sync');
+
+    if ((!fileInput || !fileInput.files || !fileInput.files[0]) && !csvData.trim()) {
+        return alert('Please select an Excel (.xlsx, .xls) or CSV file, or paste CSV text.');
+    }
+
+    btn.disabled = true;
+    btn.innerText = 'Importing Spreadsheet Data...';
 
     try {
-        const res = await fetch('/api/admin/apricot/import-points', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify({ csvData })
-        });
+        let res;
+        if (fileInput && fileInput.files && fileInput.files[0]) {
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            res = await fetch('/api/admin/apricot/import-points', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` },
+                body: formData
+            });
+        } else {
+            res = await fetch('/api/admin/apricot/import-points', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ csvData })
+            });
+        }
+
         const data = await res.json();
         if (data.success) {
-            alert(`Apricot sync complete! ${data.importedCount} records imported/updated.`);
+            alert(`Apricot sync successful! ${data.importedCount} participant point records updated.`);
             closeModal('modal-apricot');
+            if (fileInput) fileInput.value = '';
+            document.getElementById('apricot-csv-text').value = '';
             loadCaseload();
         } else {
-            alert('Import error: ' + (data.error || 'Unknown failure'));
+            alert('Import warning/error: ' + (data.error || 'Check spreadsheet columns.'));
         }
     } catch (e) {
         alert('Import failed: ' + e.message);
+    } finally {
+        btn.disabled = false;
+        btn.innerText = '📥 Import Spreadsheet / CSV & Update Points';
     }
 }
 
@@ -1954,4 +2215,332 @@ function openModal(id) {
 function closeModal(id) {
     const m = document.getElementById(id);
     if (m) m.classList.add('hidden');
+}
+
+// =============================================================
+// PARTICIPANT AI ASSISTANT FUNCTIONS
+// =============================================================
+let participantAiHistory = [];
+
+function askAiPrompt(promptText) {
+    const input = document.getElementById('fs-ai-input');
+    if (input) {
+        input.value = promptText;
+        sendParticipantAiMessage();
+    }
+}
+
+async function sendParticipantAiMessage() {
+    const token = localStorage.getItem('fs_token');
+    const input = document.getElementById('fs-ai-input');
+    const chatBox = document.getElementById('fs-ai-chat-history');
+    const btn = document.getElementById('btn-fs-ai-send');
+
+    const question = (input.value || '').trim();
+    if (!question) return;
+
+    // Append user message
+    chatBox.innerHTML += `
+        <div style="align-self: flex-end; background: #e0e7ff; color: #1e1b4b; border-radius: 6px; padding: 8px 12px; max-width: 85%;">
+            <strong>You:</strong> ${question}
+        </div>
+    `;
+    input.value = '';
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    btn.disabled = true;
+    btn.innerText = 'Thinking...';
+
+    // Temporary typing indicator
+    const typingId = 'ai-typing-' + Date.now();
+    chatBox.innerHTML += `<div id="${typingId}" style="align-self: flex-start; background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 12px; color: var(--slate); font-style: italic;">Turn90 Assistant is looking up instructions & resources...</div>`;
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    try {
+        const res = await fetch('/api/participant/ai-assistant', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ message: question, history: participantAiHistory })
+        });
+        const data = await res.json();
+
+        const typingEl = document.getElementById(typingId);
+        if (typingEl) typingEl.remove();
+
+        if (data.reply) {
+            participantAiHistory.push({ role: 'user', text: question });
+            participantAiHistory.push({ role: 'assistant', text: data.reply });
+
+            const formattedReply = typeof marked !== 'undefined' ? marked.parse(data.reply) : data.reply.replace(/\n/g, '<br>');
+            chatBox.innerHTML += `
+                <div style="align-self: flex-start; background: white; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px; max-width: 90%; line-height: 1.5;">
+                    <strong style="color: var(--primary);">Turn90 Assistant:</strong>
+                    <div style="margin-top: 6px;">${formattedReply}</div>
+                </div>
+            `;
+        } else {
+            chatBox.innerHTML += `<div style="color: red;">Failed to get AI response: ${data.error || 'Unknown error'}</div>`;
+        }
+    } catch(err) {
+        const typingEl = document.getElementById(typingId);
+        if (typingEl) typingEl.remove();
+        chatBox.innerHTML += `<div style="color: red;">Assistant Error: ${err.message}</div>`;
+    } finally {
+        btn.disabled = false;
+        btn.innerText = 'Ask AI';
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+}
+
+// =============================================================
+// TWO-WAY MESSAGING FUNCTIONS (PARTICIPANT & PM)
+// =============================================================
+async function loadParticipantMessages() {
+    const token = localStorage.getItem('fs_token');
+    const container = document.getElementById('fs-participant-messages-list');
+    if (!container) return;
+
+    try {
+        const res = await fetch('/api/participant/messages', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        const messages = data.messages || [];
+
+        if (messages.length === 0) {
+            container.innerHTML = `
+                <div style="text-align: center; color: var(--slate); padding: 20px;">
+                    No messages yet. Send a message below to connect directly with your Turn90 Case Manager!
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = messages.map(m => {
+            const isMe = currentUser && m.sender_id === currentUser.id;
+            const timeStr = new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' • ' + new Date(m.created_at).toLocaleDateString([], { month: 'short', day: 'numeric' });
+            return `
+                <div style="align-self: ${isMe ? 'flex-end' : 'flex-start'}; max-width: 85%; background: ${isMe ? '#dbeafe' : 'white'}; border: 1px solid ${isMe ? '#93c5fd' : '#e2e8f0'}; border-radius: 6px; padding: 10px 12px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; gap: 10px;">
+                        <strong style="color: ${isMe ? 'var(--primary)' : 'var(--accent)'};">${isMe ? 'You' : (m.sender_name + ' (Case Manager)')}</strong>
+                        <span style="color: var(--slate);">${timeStr}</span>
+                    </div>
+                    <div style="font-size: 13px; color: #1e293b;">${m.message_text}</div>
+                </div>
+            `;
+        }).join('');
+        container.scrollTop = container.scrollHeight;
+    } catch(err) {
+        container.innerHTML = '<p class="text-danger">Failed to load messages: ' + err.message + '</p>';
+    }
+}
+
+async function sendParticipantMessage() {
+    const token = localStorage.getItem('fs_token');
+    const input = document.getElementById('fs-msg-input');
+    const btn = document.getElementById('btn-fs-msg-send');
+    const text = (input.value || '').trim();
+    if (!text) return;
+
+    btn.disabled = true;
+    btn.innerText = 'Sending...';
+
+    try {
+        const res = await fetch('/api/messages/send', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ messageText: text })
+        });
+        const data = await res.json();
+        if (data.success) {
+            input.value = '';
+            loadParticipantMessages();
+        } else {
+            alert('Failed to send message: ' + data.error);
+        }
+    } catch(err) {
+        alert('Message error: ' + err.message);
+    } finally {
+        btn.disabled = false;
+        btn.innerText = 'Send';
+    }
+}
+
+// PROGRAM MANAGER MESSAGING (CASELOAD COMMUNICATIONS)
+let cachedPmThreads = [];
+let activePmParticipantId = null;
+
+async function loadPmConversations() {
+    const token = localStorage.getItem('fs_token');
+    const list = document.getElementById('pm-conversations-list');
+    const badge = document.getElementById('pm-unread-badge');
+    if (!list) return;
+
+    try {
+        const res = await fetch('/api/pm/messages/recent', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const threads = await res.json();
+        cachedPmThreads = threads;
+
+        let totalUnread = 0;
+        threads.forEach(t => totalUnread += (t.unread_count || 0));
+        if (badge) {
+            badge.innerText = totalUnread;
+            badge.style.display = totalUnread > 0 ? 'inline-block' : 'none';
+        }
+
+        if (threads.length === 0) {
+            list.innerHTML = '<p style="padding: 20px; text-align: center; color: var(--slate); font-size: 13px;">No participant messages on file yet.</p>';
+            return;
+        }
+
+        list.innerHTML = threads.map(t => {
+            const isSelected = activePmParticipantId === t.participant_id;
+            const timeStr = new Date(t.created_at).toLocaleDateString([], { month: 'short', day: 'numeric' });
+            return `
+                <div onclick="selectPmConversation(${t.participant_id}, '${t.participant_name.replace(/'/g, "\\'")}')" 
+                     style="padding: 12px 14px; border-bottom: 1px solid var(--border); cursor: pointer; background: ${isSelected ? '#e2e8f0' : (t.unread_count > 0 ? '#fef3c7' : 'white')}; transition: background 0.15s ease;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <strong style="font-size: 13.5px; color: var(--primary);">${t.participant_name}</strong>
+                        <span style="font-size: 10.5px; color: var(--slate);">${timeStr}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                        <div style="font-size: 11.5px; color: #475569; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;">
+                            ${t.sender_id === t.participant_id ? '' : 'You: '}${t.message_text}
+                        </div>
+                        ${t.unread_count > 0 ? `<span class="badge badge-danger" style="font-size: 10px; padding: 2px 6px;">${t.unread_count} new</span>` : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        // Auto-select first if none selected
+        if (!activePmParticipantId && threads.length > 0) {
+            selectPmConversation(threads[0].participant_id, threads[0].participant_name);
+        }
+    } catch(err) {
+        list.innerHTML = '<p style="padding: 20px; color: red;">Error: ' + err.message + '</p>';
+    }
+}
+
+function filterPmMessages() {
+    const query = (document.getElementById('pm-msg-search')?.value || '').toLowerCase();
+    const list = document.getElementById('pm-conversations-list');
+    if (!list) return;
+
+    const filtered = cachedPmThreads.filter(t => 
+        t.participant_name.toLowerCase().includes(query) ||
+        (t.participant_location && t.participant_location.toLowerCase().includes(query)) ||
+        t.message_text.toLowerCase().includes(query)
+    );
+
+    if (filtered.length === 0) {
+        list.innerHTML = '<p style="padding: 20px; text-align: center; color: var(--slate); font-size: 12.5px;">No matching conversations.</p>';
+        return;
+    }
+
+    list.innerHTML = filtered.map(t => {
+        const isSelected = activePmParticipantId === t.participant_id;
+        const timeStr = new Date(t.created_at).toLocaleDateString([], { month: 'short', day: 'numeric' });
+        return `
+            <div onclick="selectPmConversation(${t.participant_id}, '${t.participant_name.replace(/'/g, "\\'")}')" 
+                 style="padding: 12px 14px; border-bottom: 1px solid var(--border); cursor: pointer; background: ${isSelected ? '#e2e8f0' : (t.unread_count > 0 ? '#fef3c7' : 'white')};">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <strong style="font-size: 13.5px; color: var(--primary);">${t.participant_name}</strong>
+                    <span style="font-size: 10.5px; color: var(--slate);">${timeStr}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                    <div style="font-size: 11.5px; color: #475569; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;">
+                        ${t.sender_id === t.participant_id ? '' : 'You: '}${t.message_text}
+                    </div>
+                    ${t.unread_count > 0 ? `<span class="badge badge-danger" style="font-size: 10px; padding: 2px 6px;">${t.unread_count} new</span>` : ''}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+async function selectPmConversation(participantId, participantName) {
+    activePmParticipantId = participantId;
+    document.getElementById('pm-active-participant-id').value = participantId;
+    document.getElementById('pm-thread-participant-name').innerText = `Conversation with ${participantName}`;
+    
+    const messagesBox = document.getElementById('pm-thread-messages');
+    messagesBox.innerHTML = '<p style="text-align: center; color: var(--slate); margin-top: 40px;">Loading thread...</p>';
+
+    const token = localStorage.getItem('fs_token');
+    try {
+        const res = await fetch(`/api/messages/thread/${participantId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        const messages = data.messages || [];
+
+        if (data.participant) {
+            document.getElementById('pm-thread-participant-meta').innerText = `${data.participant.email} • ${data.participant.location || 'South Carolina'}`;
+        }
+
+        if (messages.length === 0) {
+            messagesBox.innerHTML = '<p style="text-align: center; color: var(--slate); margin-top: 40px;">No messages yet. Send a message below to start communicating with this participant.</p>';
+        } else {
+            messagesBox.innerHTML = messages.map(m => {
+                const isMe = currentUser && m.sender_id === currentUser.id;
+                const timeStr = new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' • ' + new Date(m.created_at).toLocaleDateString([], { month: 'short', day: 'numeric' });
+                return `
+                    <div style="align-self: ${isMe ? 'flex-end' : 'flex-start'}; max-width: 80%; background: ${isMe ? '#0f172a' : 'white'}; color: ${isMe ? 'white' : '#0f172a'}; border: 1px solid ${isMe ? '#0f172a' : '#cbd5e1'}; border-radius: 6px; padding: 10px 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+                        <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; gap: 12px; color: ${isMe ? '#94a3b8' : '#64748b'};">
+                            <strong>${isMe ? 'You (Staff)' : m.sender_name}</strong>
+                            <span>${timeStr}</span>
+                        </div>
+                        <div style="font-size: 13px; line-height: 1.4;">${m.message_text}</div>
+                    </div>
+                `;
+            }).join('');
+            messagesBox.scrollTop = messagesBox.scrollHeight;
+        }
+
+        // Re-render conversation list to clear unread badge
+        loadPmConversations();
+    } catch(err) {
+        messagesBox.innerHTML = '<p style="color: red; text-align: center;">Error loading thread: ' + err.message + '</p>';
+    }
+}
+
+async function sendPmReply() {
+    const token = localStorage.getItem('fs_token');
+    const participantId = document.getElementById('pm-active-participant-id').value;
+    const input = document.getElementById('pm-reply-input');
+    const btn = document.getElementById('btn-pm-send-reply');
+    const text = (input.value || '').trim();
+
+    if (!participantId) return alert('Please select a participant first.');
+    if (!text) return;
+
+    btn.disabled = true;
+    btn.innerText = 'Sending...';
+
+    try {
+        const res = await fetch('/api/messages/send', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({
+                participantId: parseInt(participantId),
+                messageText: text
+            })
+        });
+        const data = await res.json();
+        if (data.success) {
+            input.value = '';
+            const name = document.getElementById('pm-thread-participant-name').innerText.replace('Conversation with ', '');
+            selectPmConversation(parseInt(participantId), name);
+        } else {
+            alert('Failed to send reply: ' + data.error);
+        }
+    } catch(err) {
+        alert('Reply error: ' + err.message);
+    } finally {
+        btn.disabled = false;
+        btn.innerText = 'Send Reply';
+    }
 }

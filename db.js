@@ -191,6 +191,32 @@ CREATE TABLE IF NOT EXISTS reentry_case_plans (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+-- Real-Time Two-Way Messaging Between Participants and Program Managers
+CREATE TABLE IF NOT EXISTS messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sender_id INTEGER NOT NULL,
+    receiver_id INTEGER,
+    participant_id INTEGER NOT NULL,
+    message_text TEXT NOT NULL,
+    is_read INTEGER DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(sender_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY(participant_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- First Shift Case Plan: Interactive Trigger Situations & Toolkit Tools per Domain
+CREATE TABLE IF NOT EXISTS case_plan_triggers (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    domain TEXT NOT NULL,
+    pattern TEXT,
+    trigger_situations TEXT, -- JSON array of string trigger situations
+    toolkit_tools TEXT, -- JSON array of selected CBT tools
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE(user_id, domain)
+);
 `);
 
 // Safe column migrations for existing databases

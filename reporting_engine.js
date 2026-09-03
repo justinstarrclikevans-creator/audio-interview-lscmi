@@ -194,12 +194,31 @@ function generateFridayMilestoneReport(locationFilter = null) {
     return reportData;
 }
 
-// Parse Apricot Points CSV and update database
-function importApricotCsv(csvContent) {
-    const lines = csvContent.trim().split(/\r?\n/);
-    if (lines.length < 2) return { success: false, error: 'CSV is empty or missing headers.' };
+const XLSX = require('xlsx');
 
-    const rows = lines.slice(1);
+// Parse Apricot Points Excel Spreadsheet or CSV and update database
+function importApricotData(input, isBuffer = false) {
+    let rawRows = [];
+
+    if (isBuffer || Buffer.isBuffer(input)) {
+        try {
+            const workbook = XLSX.read(input, { type: 'buffer' });
+            const sheetName = workbook.SheetNames[0];
+            const sheet = workbook.Sheets[sheetName];
+            rawRows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+        } catch(e) {
+            return { success: false, error: 'Failed to parse Excel workbook: ' + e.message };
+        }
+    } else if (typeof input === 'string') {
+        const lines = input.trim().split(/\r?\n/);
+        rawRows = lines.map(l => l.split(',').map(c => c.trim().replace(/^["']|["']$/g, '')));
+    }
+
+    if (!rawRows || rawRows.length < 2) {
+        return { success: false, error: 'Spreadsheet or CSV is empty or missing data rows.' };
+    }
+
+    const rows = rawRows.slice(1);
     let importedCount = 0;
     let errors = [];
 
@@ -219,14 +238,26 @@ function importApricotCsv(csvContent) {
 
     const tx = db.transaction(() => {
         for (let i = 0; i < rows.length; i++) {
-            const cols = rows[i].split(',').map(c => c.trim().replace(/^["']|["']$/g, ''));
-            if (cols.length < 3) continue;
+            const cols = rows[i];
+            if (!cols || cols.length < 3) continue;
 
-            const identifier = cols[0].toLowerCase();
-            const dateStr = cols[1];
+            const identifier = String(cols[0] || '').trim().toLowerCase();
+            if (!identifier) continue;
+
+            let dateVal = cols[1];
+            let dateStr = '';
+            if (dateVal instanceof Date) {
+                dateStr = dateVal.toISOString().split('T')[0];
+            } else if (typeof dateVal === 'number') {
+                const parsedDate = new Date(Math.round((dateVal - 25569) * 86400 * 1000));
+                dateStr = !isNaN(parsedDate.getTime()) ? parsedDate.toISOString().split('T')[0] : String(dateVal);
+            } else {
+                dateStr = String(dateVal || '').trim();
+            }
+
             const points = parseFloat(cols[2]) || 0;
-            const status = (cols[3] || 'present').toLowerCase();
-            const notes = cols[4] || '';
+            const status = String(cols[3] || 'present').trim().toLowerCase();
+            const notes = String(cols[4] || '').trim();
 
             const user = findUserStmt.get(identifier, `%${identifier}%`);
             if (user) {
@@ -242,8 +273,13 @@ function importApricotCsv(csvContent) {
     return { success: true, importedCount, errors };
 }
 
+function importApricotCsv(csvContent) {
+    return importApricotData(csvContent, false);
+}
+
 module.exports = {
     generateMondayNeedsReport,
     generateFridayMilestoneReport,
-    importApricotCsv
+    importApricotCsv,
+    importApricotData
 };
