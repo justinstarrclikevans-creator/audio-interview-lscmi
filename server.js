@@ -18,6 +18,7 @@ const { generateReentryNavAssessment } = require('./reentry_engine');
 const { SC_COMMUNITY_RESOURCES, SC_FAIR_CHANCE_EMPLOYERS } = require('./sc_resource_directory');
 const { loadJobsFromSpreadsheets } = require('./jobs_loader');
 const { getParticipantAiResponse } = require('./ai_assistant');
+const { matchJobsWithAi, generateTailoredResumePoints, generateTurnaroundNarrative } = require('./job_hunting_ai');
 const pdfParse = require('pdf-parse');
 
 require('dotenv').config({ path: path.join(__dirname, '..', 'email-settings.txt') });
@@ -1250,6 +1251,165 @@ app.post('/api/case-plan-triggers', authenticateToken, (req, res) => {
         res.json({ success: true, message: 'Trigger situations and toolkit saved.' });
     } catch(err) {
         res.status(500).json({ error: 'Failed to save triggers: ' + err.message });
+    }
+});
+
+// =============================================================
+// JOB HUNTING AI API ENDPOINTS
+// =============================================================
+
+// 1. Intelligent AI Job Matcher
+app.post('/api/jobs/ai-match', authenticateToken, async (req, res) => {
+    try {
+        const { query, location, skills, minPay, transit, curfew, participantId } = req.body;
+        const targetUserId = participantId || (req.user.role === 'participant' ? req.user.id : null);
+        
+        let profile = {};
+        if (targetUserId) {
+            const pRow = db.prepare('SELECT p.*, u.name, u.location FROM participant_profiles p JOIN users u ON u.id = p.user_id WHERE p.user_id = ?').get(targetUserId);
+            if (pRow) profile = pRow;
+        }
+
+        const criteria = {
+            query: query || '',
+            location: location || profile.location || 'Charleston, SC',
+            skills: skills || '',
+            minPay: minPay || '$18.00 / hr',
+            transit: transit || profile.transportation_status || 'CARTA Bus Line',
+            curfew: curfew || ''
+        };
+
+        const result = await matchJobsWithAi(criteria, profile);
+        res.json(result);
+    } catch(err) {
+        console.error('Job AI matching error:', err);
+        res.status(500).json({ error: 'Failed to match jobs: ' + err.message });
+    }
+});
+
+// 2. AI Resume Bullet Points Tailorer
+app.post('/api/jobs/ai-tailor-resume', authenticateToken, async (req, res) => {
+    try {
+        const { jobTitle, company, userSkills, tradeTrack } = req.body;
+        if (!jobTitle || !company) {
+            return res.status(400).json({ error: 'jobTitle and company are required.' });
+        }
+        const bulletPoints = await generateTailoredResumePoints(jobTitle, company, userSkills, tradeTrack);
+        res.json({ bulletPoints });
+    } catch(err) {
+        res.status(500).json({ error: 'Failed to tailor resume: ' + err.message });
+    }
+});
+
+// 3. AI Turnaround Narrative & Background Explanation Coach
+app.post('/api/jobs/ai-interview-prep', authenticateToken, async (req, res) => {
+    try {
+        const { jobTitle, company, backgroundContext } = req.body;
+        if (!jobTitle || !company) {
+            return res.status(400).json({ error: 'jobTitle and company are required.' });
+        }
+        const turnaroundNarrative = await generateTurnaroundNarrative(jobTitle, company, backgroundContext);
+        res.json({ turnaroundNarrative });
+    } catch(err) {
+        res.status(500).json({ error: 'Failed to generate interview prep: ' + err.message });
+    }
+});
+
+// 4. Saved Jobs Pipeline
+app.get('/api/jobs/saved/:userId', authenticateToken, (req, res) => {
+    const targetId = parseInt(req.params.userId);
+    if (req.user.role === 'participant' && req.user.id !== targetId) {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+
+    try {
+        const jobs = db.prepare('SELECT * FROM saved_job_applications WHERE user_id = ? ORDER BY updated_at DESC').all(targetId);
+        res.json(jobs);
+    } catch(err) {
+        res.status(500).json({ error: 'Failed to fetch saved jobs: ' + err.message });
+    }
+});
+
+app.post('/api/jobs/save-job', authenticateToken, (req, res) => {
+    const { userId, jobTitle, company, location, payRate, careersUrl, status, notes } = req.body;
+    const targetId = parseInt(userId) || req.user.id;
+
+    if (req.user.role === 'participant' && req.user.id !== targetId) {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+
+    try {
+        const existing = db.prepare('SELECT id FROM saved_job_applications WHERE user_id = ? AND LOWER(company) = LOWER(?) AND LOWER(job_title) = LOWER(?)').get(targetId, company, jobTitle);
+
+        if (existing) {
+            db.prepare(`
+                UPDATE saved_job_applications SET
+                    status = COALESCE(?, status),
+                    notes = COALESCE(?, notes),
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE id = ?
+            `).run(status || null, notes || null, existing.id);
+            res.json({ success: true, message: 'Job pipeline status updated.', id: existing.id });
+        } else {
+            const result = db.prepare(`
+                INSERT INTO saved_job_applications (user_id, job_title, company, location, pay_rate, careers_url, status, notes, applied_date)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `).run(
+                targetId,
+                jobTitle,
+                company,
+                location || 'Charleston, SC',
+                payRate || 'Competitive',
+                careersUrl || '',
+                status || 'saved',
+                notes || '',
+                status === 'applied' ? new Date().toISOString().split('T')[0] : null
+            );
+            res.json({ success: true, message: 'Job saved to your pipeline.', id: result.lastInsertRowid });
+        }
+    } catch(err) {
+        res.status(500).json({ error: 'Failed to save job: ' + err.message });
+    }
+});
+
+app.post('/api/jobs/update-job-status', authenticateToken, (req, res) => {
+    const { id, status, notes } = req.body;
+    if (!id || !status) return res.status(400).json({ error: 'id and status required.' });
+
+    try {
+        const app = db.prepare('SELECT user_id FROM saved_job_applications WHERE id = ?').get(id);
+        if (!app) return res.status(404).json({ error: 'Saved job not found' });
+        if (req.user.role === 'participant' && req.user.id !== app.user_id) {
+            return res.status(403).json({ error: 'Unauthorized' });
+        }
+
+        db.prepare(`
+            UPDATE saved_job_applications SET
+                status = ?,
+                notes = COALESCE(?, notes),
+                applied_date = CASE WHEN ? = 'applied' AND applied_date IS NULL THEN CURRENT_DATE ELSE applied_date END,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+        `).run(status, notes || null, status, id);
+
+        res.json({ success: true, message: 'Pipeline status updated.' });
+    } catch(err) {
+        res.status(500).json({ error: 'Failed to update status: ' + err.message });
+    }
+});
+
+app.delete('/api/jobs/saved/:id', authenticateToken, (req, res) => {
+    const id = parseInt(req.params.id);
+    try {
+        const app = db.prepare('SELECT user_id FROM saved_job_applications WHERE id = ?').get(id);
+        if (!app) return res.status(404).json({ error: 'Job not found' });
+        if (req.user.role === 'participant' && req.user.id !== app.user_id) {
+            return res.status(403).json({ error: 'Unauthorized' });
+        }
+        db.prepare('DELETE FROM saved_job_applications WHERE id = ?').run(id);
+        res.json({ success: true, message: 'Job removed from pipeline.' });
+    } catch(err) {
+        res.status(500).json({ error: 'Failed to delete saved job: ' + err.message });
     }
 });
 

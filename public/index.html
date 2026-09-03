@@ -308,6 +308,27 @@
                     </div>
                 </div>
             </div>
+
+            <!-- JOB HUNTING AI BANNER -->
+            <div class="section-card mt-6" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; border-radius: 8px; padding: 22px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                    <div style="max-width: 620px;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+                            <span style="font-size: 26px;">💼</span>
+                            <h2 style="color: white; margin: 0; font-size: 18px;">Turn90 Job Hunting AI</h2>
+                            <span class="badge badge-accent" style="font-weight: 700;">Live Matcher & Placement</span>
+                        </div>
+                        <p style="color: #cbd5e1; font-size: 13px; margin: 0; line-height: 1.5;">
+                            Find matching second-chance job openings across South Carolina, tailor your resume for specific employers, and practice your 60-second Turnaround Narrative to explain your background with confidence.
+                        </p>
+                    </div>
+                    <div>
+                        <button class="btn btn-accent" style="font-size: 14px; padding: 12px 20px; font-weight: 700; box-shadow: 0 2px 6px rgba(0,0,0,0.3);" onclick="openJobHuntingAiModal()">
+                            🚀 Launch Job Hunting AI
+                        </button>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- ========================================================= -->
@@ -319,6 +340,7 @@
                     <h1>Re-entry Navigation Hub</h1>
                     <p class="portal-sub">Access verified fair-chance employers, build your resume, and complete online modules.</p>
                 </div>
+                <button class="btn btn-accent" onclick="openJobHuntingAiModal()">💼 Launch Job Hunting AI</button>
             </div>
 
             <div class="nav-sub-tabs">
@@ -421,9 +443,10 @@
                     <p class="portal-sub">Manage caseloads, re-entry case plans & flag detection, review scoring drafts, and sync Apricot points.</p>
                 </div>
                 <div class="pm-actions-header">
+                    <button class="btn btn-accent" onclick="openJobHuntingAiModal()">💼 Job Hunting AI</button>
                     <button class="btn btn-primary" onclick="generateReport('monday')">📋 Monday Needs Report</button>
-                    <button class="btn btn-accent" onclick="generateReport('friday')">📊 Friday Milestones Report</button>
-                    <button class="btn btn-outline" onclick="openApricotModal()">📥 Sync Apricot CSV</button>
+                    <button class="btn btn-outline" onclick="generateReport('friday')">📊 Friday Milestones Report</button>
+                    <button class="btn btn-outline" onclick="openApricotModal()">📥 Sync Apricot (Excel / CSV)</button>
                 </div>
             </div>
 
@@ -1439,6 +1462,219 @@
                 </div>
                 <button type="submit" class="btn btn-primary btn-block mt-4" id="btn-run-eval">Evaluate Against 20-Item Scoring Rubric</button>
             </form>
+        </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- MODAL: TURN90 JOB HUNTING AI                              -->
+    <!-- ========================================================= -->
+    <div id="modal-job-hunting-ai" class="modal hidden">
+        <div class="modal-content modal-lg" style="max-width: 1020px; max-height: 92vh; display: flex; flex-direction: column; padding: 0; overflow: hidden;">
+            <!-- Modal Header -->
+            <div class="modal-header" style="background: #0f172a; color: white; padding: 16px 24px; border-radius: 8px 8px 0 0;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="background: #f59e0b; color: #0f172a; padding: 6px 10px; font-weight: 900; font-size: 18px; border-radius: 6px;">💼</div>
+                    <div>
+                        <h3 style="margin: 0; color: white; font-size: 18px;">Turn90 Job Hunting AI</h3>
+                        <div style="font-size: 12px; color: #94a3b8;">Second-Chance Job Matcher • Resume Bullet Tailorer • Turnaround Interview Coach</div>
+                    </div>
+                </div>
+                <button class="modal-close" style="color: white;" onclick="closeModal('modal-job-hunting-ai')">&times;</button>
+            </div>
+
+            <!-- Sub Navigation Tabs -->
+            <div style="display: flex; gap: 8px; padding: 12px 24px; background: #f8fafc; border-bottom: 2px solid var(--border); flex-wrap: wrap;">
+                <button id="job-ai-tab-btn-match" class="btn btn-primary" onclick="switchJobAiTab('match')" style="font-size: 12.5px; padding: 6px 14px;">🔍 AI Job Matcher</button>
+                <button id="job-ai-tab-btn-resume" class="btn btn-outline" onclick="switchJobAiTab('resume')" style="font-size: 12.5px; padding: 6px 14px;">📝 AI Resume Tailorer</button>
+                <button id="job-ai-tab-btn-interview" class="btn btn-outline" onclick="switchJobAiTab('interview')" style="font-size: 12.5px; padding: 6px 14px;">🎤 Interview Coach ("Explain My Record")</button>
+                <button id="job-ai-tab-btn-pipeline" class="btn btn-outline" onclick="switchJobAiTab('pipeline')" style="font-size: 12.5px; padding: 6px 14px;">📊 My Job Pipeline (<span id="job-pipeline-count">0</span>)</button>
+            </div>
+
+            <!-- Tab Content Body (Scrollable) -->
+            <div style="padding: 24px; overflow-y: auto; flex: 1;">
+                <!-- SUBTAB 1: AI JOB MATCHER -->
+                <div id="job-ai-sec-match">
+                    <div style="background: #f1f5f9; border: 1px solid var(--border); border-radius: 8px; padding: 18px; margin-bottom: 20px;">
+                        <h4 style="margin: 0 0 10px 0; color: var(--primary); font-size: 15px;">Targeted Second-Chance Opportunity Search</h4>
+                        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px;">
+                            <div>
+                                <label style="font-size: 11.5px; font-weight: 700;">Desired Job / Trade / Keyword:</label>
+                                <input type="text" id="job-ai-search-query" placeholder="e.g. Warehouse, Forklift, Carpentry, CNC Assembly..." style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid var(--border); border-radius: 6px;">
+                            </div>
+                            <div>
+                                <label style="font-size: 11.5px; font-weight: 700;">Location:</label>
+                                <select id="job-ai-search-location" style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid var(--border); border-radius: 6px;">
+                                    <option value="Charleston, SC">Charleston, SC</option>
+                                    <option value="Columbia, SC">Columbia, SC</option>
+                                    <option value="Greenville, SC">Greenville, SC</option>
+                                    <option value="Spartanburg, SC">Spartanburg, SC</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="font-size: 11.5px; font-weight: 700;">Transit Need:</label>
+                                <select id="job-ai-search-transit" style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid var(--border); border-radius: 6px;">
+                                    <option value="CARTA Bus Line Accessible">CARTA / Transit Accessible</option>
+                                    <option value="Any / Has Own Car">Any / Personal Vehicle</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Quick Filter Chips -->
+                        <div style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; align-items: center;">
+                            <span style="font-size: 11.5px; color: var(--slate); font-weight: 600;">Quick Filters:</span>
+                            <button type="button" class="btn btn-outline" style="padding: 3px 10px; font-size: 11.5px; border-radius: 20px;" onclick="applyJobSearchChip('Forklift and Logistics $18+/hr')">📦 Forklift / Logistics ($18+/hr)</button>
+                            <button type="button" class="btn btn-outline" style="padding: 3px 10px; font-size: 11.5px; border-radius: 20px;" onclick="applyJobSearchChip('Carpentry, Welding, and Construction Trades')">🦺 Construction & Trades</button>
+                            <button type="button" class="btn btn-outline" style="padding: 3px 10px; font-size: 11.5px; border-radius: 20px;" onclick="applyJobSearchChip('Day Shift Only, Complies with 8 PM Curfew')">☀️ Day Shift (Curfew Compliant)</button>
+                            <button type="button" class="btn btn-outline" style="padding: 3px 10px; font-size: 11.5px; border-radius: 20px;" onclick="applyJobSearchChip('Verified Fair Chance Second Chance Employers')">🤝 Fair-Chance Verified</button>
+                        </div>
+
+                        <div style="margin-top: 14px; display: flex; justify-content: flex-end;">
+                            <button class="btn btn-primary" onclick="runAiJobMatch()" id="btn-run-job-match" style="padding: 8px 20px; font-size: 13.5px; font-weight: 700;">
+                                ⚡ Find Matching Openings
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- AI Search Summary & Market Analysis -->
+                    <div id="job-ai-summary-box" class="hidden" style="background: #eef2ff; border: 1px solid #c7d2fe; border-radius: 8px; padding: 14px; margin-bottom: 18px;">
+                        <div style="display: flex; gap: 8px; align-items: flex-start;">
+                            <span style="font-size: 20px;">🤖</span>
+                            <div>
+                                <strong id="job-ai-summary-title" style="color: #1e1b4b; font-size: 13.5px; display: block;">Turn90 AI Market Match Analysis:</strong>
+                                <p id="job-ai-summary-text" style="font-size: 12.5px; color: #3730a3; margin: 4px 0 0 0; line-height: 1.5;"></p>
+                                <div id="job-ai-coaching-text" style="font-size: 12px; color: #4338ca; margin-top: 6px; font-style: italic;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Matched Jobs Cards List -->
+                    <div id="job-ai-matches-list" style="display: flex; flex-direction: column; gap: 14px;">
+                        <p style="text-align: center; color: var(--slate); padding: 40px; font-size: 13px;">Click "Find Matching Openings" to scan all live spreadsheet jobs and second-chance employers.</p>
+                    </div>
+                </div>
+
+                <!-- SUBTAB 2: AI RESUME TAILORER -->
+                <div id="job-ai-sec-resume" class="hidden">
+                    <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 18px; margin-bottom: 18px;">
+                        <h4 style="margin: 0 0 6px 0; color: var(--primary);">📝 Tailor Your Resume for a Specific Job</h4>
+                        <p style="font-size: 12.5px; color: var(--slate); margin: 0 0 14px 0;">
+                            The AI tailors your professional bullet points to match the employer's exact job description, highlighting your Turn90 safety certs, punctuality, and trade skills.
+                        </p>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                            <div>
+                                <label style="font-size: 12px; font-weight: 700;">Target Company Name:</label>
+                                <input type="text" id="resume-tailor-company" placeholder="e.g. Mercedes-Benz Vans, Cummins, Brock Cabinets" style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid var(--border); border-radius: 6px;">
+                            </div>
+                            <div>
+                                <label style="font-size: 12px; font-weight: 700;">Target Position / Job Title:</label>
+                                <input type="text" id="resume-tailor-title" placeholder="e.g. Production Team Member, Forklift Specialist" style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid var(--border); border-radius: 6px;">
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 12px;">
+                            <label style="font-size: 12px; font-weight: 700;">Your Primary Trade Track / Verified Skills:</label>
+                            <input type="text" id="resume-tailor-skills" placeholder="OSHA 10, Forklift Certified, Blueprint Reading, Power Tools, Cognitive Restructuring" style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid var(--border); border-radius: 6px;">
+                        </div>
+
+                        <div style="margin-top: 14px; display: flex; justify-content: flex-end;">
+                            <button class="btn btn-primary" onclick="generateResumeBullets()" id="btn-generate-resume-bullets">
+                                ⚡ Generate Tailored Resume Bullets
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Generated Resume Output -->
+                    <div id="resume-tailor-output-box" class="hidden" style="background: white; border: 1px solid var(--border); border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <h4 style="margin: 0; color: var(--primary); font-size: 14px;">✨ Your Tailored Resume Bullets (Ready to Copy):</h4>
+                            <button class="btn btn-outline" style="font-size: 11.5px; padding: 4px 10px;" onclick="copyResumeBullets()">📋 Copy to Clipboard</button>
+                        </div>
+                        <div id="resume-tailor-content" style="font-size: 13px; line-height: 1.7; color: #1e293b;"></div>
+                    </div>
+                </div>
+
+                <!-- SUBTAB 3: INTERVIEW COACH -->
+                <div id="job-ai-sec-interview" class="hidden">
+                    <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 18px; margin-bottom: 18px;">
+                        <h4 style="margin: 0 0 6px 0; color: var(--primary);">🎤 Practice Explaining Your Record ("The Turnaround Narrative")</h4>
+                        <p style="font-size: 12.5px; color: var(--slate); margin: 0 0 14px 0;">
+                            Never let a past conviction or employment gap catch you off guard. The AI generates a 60-second Turn90 Turnaround Narrative: 100% accountability → concrete evidence of change at Turn90 → unmatched work ethic today.
+                        </p>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                            <div>
+                                <label style="font-size: 12px; font-weight: 700;">Target Employer / Interviewer:</label>
+                                <input type="text" id="interview-coach-company" placeholder="e.g. Scout Motors, Palmetto Goodwill, Boeing SC" style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid var(--border); border-radius: 6px;">
+                            </div>
+                            <div>
+                                <label style="font-size: 12px; font-weight: 700;">Target Position:</label>
+                                <input type="text" id="interview-coach-title" placeholder="e.g. Assembly Specialist, Logistics Associate" style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid var(--border); border-radius: 6px;">
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 14px; display: flex; justify-content: flex-end;">
+                            <button class="btn btn-primary" onclick="generateInterviewCoachScript()" id="btn-generate-interview-script">
+                                ⚡ Generate My 60-Second Turnaround Script
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Generated Script Output -->
+                    <div id="interview-coach-output-box" class="hidden" style="background: white; border: 1px solid var(--border); border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                        <div id="interview-coach-content" style="font-size: 13.5px; line-height: 1.6; color: #1e293b;"></div>
+                    </div>
+                </div>
+
+                <!-- SUBTAB 4: MY JOB PIPELINE -->
+                <div id="job-ai-sec-pipeline" class="hidden">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <div>
+                            <h4 style="margin: 0; color: var(--primary); font-size: 15px;">📊 Second-Chance Career Pipeline</h4>
+                            <p style="margin: 2px 0 0 0; font-size: 12px; color: var(--slate);">Track applications from saved leads to interviews and job offers.</p>
+                        </div>
+                        <button class="btn btn-outline" style="font-size: 12px;" onclick="loadSavedJobsPipeline()">🔄 Refresh Pipeline</button>
+                    </div>
+
+                    <div id="job-pipeline-kanban" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px;">
+                        <!-- Saved -->
+                        <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 12px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <strong style="font-size: 12.5px; color: #475569;">⭐ Saved Leads</strong>
+                                <span id="pipeline-count-saved" class="badge badge-outline">0</span>
+                            </div>
+                            <div id="pipeline-col-saved" style="display: flex; flex-direction: column; gap: 8px; min-height: 180px;"></div>
+                        </div>
+
+                        <!-- Applied -->
+                        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 12px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <strong style="font-size: 12.5px; color: #1d4ed8;">📤 Applied</strong>
+                                <span id="pipeline-count-applied" class="badge badge-primary">0</span>
+                            </div>
+                            <div id="pipeline-col-applied" style="display: flex; flex-direction: column; gap: 8px; min-height: 180px;"></div>
+                        </div>
+
+                        <!-- Interviewing -->
+                        <div style="background: #fefce8; border: 1px solid #fef08a; border-radius: 8px; padding: 12px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <strong style="font-size: 12.5px; color: #a16207;">🎤 Interviewing</strong>
+                                <span id="pipeline-count-interviewing" class="badge badge-warning">0</span>
+                            </div>
+                            <div id="pipeline-col-interviewing" style="display: flex; flex-direction: column; gap: 8px; min-height: 180px;"></div>
+                        </div>
+
+                        <!-- Offered / Hired -->
+                        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 12px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <strong style="font-size: 12.5px; color: #15803d;">🎉 Offered / Hired</strong>
+                                <span id="pipeline-count-offered" class="badge badge-success">0</span>
+                            </div>
+                            <div id="pipeline-col-offered" style="display: flex; flex-direction: column; gap: 8px; min-height: 180px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

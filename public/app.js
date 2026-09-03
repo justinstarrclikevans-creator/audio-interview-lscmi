@@ -2544,3 +2544,381 @@ async function sendPmReply() {
         btn.innerText = 'Send Reply';
     }
 }
+
+// =============================================================
+// TURN90 JOB HUNTING AI: CLIENT LOGIC
+// =============================================================
+let cachedMatchedJobs = [];
+
+function openJobHuntingAiModal() {
+    openModal('modal-job-hunting-ai');
+    switchJobAiTab('match');
+
+    // Pre-populate location & transit from profile
+    if (currentUser && currentUser.location) {
+        const locSelect = document.getElementById('job-ai-search-location');
+        if (locSelect) {
+            for (let opt of locSelect.options) {
+                if (opt.value.toLowerCase().includes(currentUser.location.toLowerCase())) {
+                    opt.selected = true;
+                    break;
+                }
+            }
+        }
+    }
+
+    if (currentProfile && currentProfile.transportation_status) {
+        const trSelect = document.getElementById('job-ai-search-transit');
+        if (trSelect && currentProfile.transportation_status.toLowerCase().includes('car')) {
+            trSelect.value = 'Any / Has Own Car';
+        }
+    }
+
+    // Auto-run if first time
+    if (cachedMatchedJobs.length === 0) {
+        runAiJobMatch();
+    }
+    loadSavedJobsPipeline();
+}
+
+function switchJobAiTab(tabName) {
+    ['match', 'resume', 'interview', 'pipeline'].forEach(t => {
+        const btn = document.getElementById(`job-ai-tab-btn-${t}`);
+        const sec = document.getElementById(`job-ai-sec-${t}`);
+        if (btn) {
+            btn.classList.toggle('btn-primary', t === tabName);
+            btn.classList.toggle('btn-outline', t !== tabName);
+        }
+        if (sec) {
+            sec.classList.toggle('hidden', t !== tabName);
+        }
+    });
+
+    if (tabName === 'pipeline') {
+        loadSavedJobsPipeline();
+    }
+}
+
+function applyJobSearchChip(chipText) {
+    const input = document.getElementById('job-ai-search-query');
+    if (input) input.value = chipText;
+    runAiJobMatch();
+}
+
+async function runAiJobMatch() {
+    const token = localStorage.getItem('fs_token');
+    const query = document.getElementById('job-ai-search-query')?.value || '';
+    const location = document.getElementById('job-ai-search-location')?.value || 'Charleston, SC';
+    const transit = document.getElementById('job-ai-search-transit')?.value || 'CARTA Bus Line Accessible';
+
+    const btn = document.getElementById('btn-run-job-match');
+    const list = document.getElementById('job-ai-matches-list');
+    const summaryBox = document.getElementById('job-ai-summary-box');
+
+    if (btn) {
+        btn.disabled = true;
+        btn.innerText = '⚡ Matching Openings...';
+    }
+
+    list.innerHTML = `
+        <div style="text-align: center; padding: 40px; color: var(--slate);">
+            <div style="font-size: 32px; margin-bottom: 8px;">🤖</div>
+            <strong style="color: var(--primary);">AI is evaluating live job spreadsheet openings & verified fair-chance employers...</strong>
+            <p style="font-size: 12px; margin-top: 4px;">Checking trade skills, transit bus accessibility, and curfew constraints...</p>
+        </div>
+    `;
+
+    try {
+        const res = await fetch('/api/jobs/ai-match', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({
+                query,
+                location,
+                transit,
+                participantId: currentUser ? currentUser.id : null
+            })
+        });
+
+        const data = await res.json();
+        cachedMatchedJobs = data.matchedJobs || [];
+
+        // Summary box
+        if (data.aiSearchSummary && summaryBox) {
+            summaryBox.classList.remove('hidden');
+            document.getElementById('job-ai-summary-text').innerText = data.aiSearchSummary;
+            document.getElementById('job-ai-coaching-text').innerText = data.coachingAdvice || '';
+        }
+
+        if (cachedMatchedJobs.length === 0) {
+            list.innerHTML = '<p style="text-align: center; padding: 30px; color: var(--slate);">No direct matches found. Try searching for "warehouse", "forklift", "carpentry", or "assembly".</p>';
+            return;
+        }
+
+        list.innerHTML = cachedMatchedJobs.map((job, idx) => {
+            const reasonsHtml = (job.matchReasons || []).map(r => `<li>${r}</li>`).join('');
+            const escapedComp = (job.company || '').replace(/'/g, "\\'");
+            const escapedTitle = (job.jobTitle || '').replace(/'/g, "\\'");
+
+            return `
+                <div style="background: white; border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 8px; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                                <h3 style="margin: 0; color: var(--primary); font-size: 16px;">${job.jobTitle}</h3>
+                                <span class="badge badge-accent" style="font-size: 11px;">${job.fitScore || 90}% Match</span>
+                                ${job.transitFriendly ? '<span class="badge badge-green" style="font-size: 11px;">🚌 Transit Friendly</span>' : ''}
+                            </div>
+                            <div style="font-size: 13.5px; font-weight: 600; color: #334155; margin-top: 3px;">
+                                🏢 ${job.company} &nbsp;•&nbsp; 📍 ${job.location} &nbsp;•&nbsp; 💵 <span style="color: #166534;">${job.payRate}</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <a href="${job.careersUrl}" target="_blank" class="btn btn-primary" style="font-size: 12px; padding: 6px 14px; text-decoration: none;">
+                                🔗 Apply Online
+                            </a>
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="saveJobToPipeline('${escapedComp}', '${escapedTitle}', '${job.location}', '${job.payRate}', '${job.careersUrl}')">
+                                💾 Save Lead
+                            </button>
+                        </div>
+                    </div>
+
+                    ${reasonsHtml ? `
+                    <div style="margin-top: 10px; background: #f8fafc; border-radius: 6px; padding: 10px 14px;">
+                        <strong style="font-size: 11.5px; color: #475569;">Why You are a Match:</strong>
+                        <ul style="margin: 4px 0 0 18px; padding: 0; font-size: 12px; color: #334155; line-height: 1.5;">
+                            ${reasonsHtml}
+                        </ul>
+                    </div>` : ''}
+
+                    ${job.turnaroundTip ? `
+                    <div style="margin-top: 8px; font-size: 12px; color: #4338ca; display: flex; align-items: center; gap: 6px;">
+                        <span>💡</span>
+                        <span><strong>Turnaround Tip:</strong> ${job.turnaroundTip}</span>
+                    </div>` : ''}
+
+                    <div style="display: flex; gap: 10px; margin-top: 12px; border-top: 1px dashed var(--border); padding-top: 10px;">
+                        <button type="button" class="btn btn-outline" style="font-size: 11.5px; padding: 4px 10px;" onclick="prepareTailorResume('${escapedComp}', '${escapedTitle}')">
+                            📝 Tailor Resume For This Position
+                        </button>
+                        <button type="button" class="btn btn-outline" style="font-size: 11.5px; padding: 4px 10px;" onclick="prepareInterviewCoach('${escapedComp}', '${escapedTitle}')">
+                            🎤 Prepare 60-Sec Interview Script
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+    } catch(err) {
+        list.innerHTML = `<p style="color: red; padding: 20px;">Failed to match jobs: ${err.message}</p>`;
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerText = '⚡ Find Matching Openings';
+        }
+    }
+}
+
+async function saveJobToPipeline(company, jobTitle, location, payRate, careersUrl) {
+    const token = localStorage.getItem('fs_token');
+    try {
+        const res = await fetch('/api/jobs/save-job', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({
+                userId: currentUser ? currentUser.id : null,
+                company,
+                jobTitle,
+                location,
+                payRate,
+                careersUrl,
+                status: 'saved'
+            })
+        });
+        const data = await res.json();
+        if (data.success) {
+            alert(`✅ "${jobTitle}" at ${company} saved to your job pipeline!`);
+            loadSavedJobsPipeline();
+        } else {
+            alert('Could not save job: ' + data.error);
+        }
+    } catch(e) {
+        alert('Save error: ' + e.message);
+    }
+}
+
+function prepareTailorResume(company, jobTitle) {
+    switchJobAiTab('resume');
+    document.getElementById('resume-tailor-company').value = company;
+    document.getElementById('resume-tailor-title').value = jobTitle;
+    generateResumeBullets();
+}
+
+async function generateResumeBullets() {
+    const token = localStorage.getItem('fs_token');
+    const company = document.getElementById('resume-tailor-company')?.value || '';
+    const jobTitle = document.getElementById('resume-tailor-title')?.value || '';
+    const skills = document.getElementById('resume-tailor-skills')?.value || '';
+    const btn = document.getElementById('btn-generate-resume-bullets');
+    const outputBox = document.getElementById('resume-tailor-output-box');
+    const content = document.getElementById('resume-tailor-content');
+
+    if (!company || !jobTitle) {
+        return alert('Please enter both Company Name and Job Title.');
+    }
+
+    btn.disabled = true;
+    btn.innerText = '⚡ Generating Bullets...';
+
+    try {
+        const res = await fetch('/api/jobs/ai-tailor-resume', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ company, jobTitle, userSkills: skills })
+        });
+        const data = await res.json();
+        if (data.bulletPoints) {
+            outputBox.classList.remove('hidden');
+            content.innerHTML = typeof marked !== 'undefined' ? marked.parse(data.bulletPoints) : data.bulletPoints.replace(/\n/g, '<br>');
+        }
+    } catch(e) {
+        alert('Resume generation error: ' + e.message);
+    } finally {
+        btn.disabled = false;
+        btn.innerText = '⚡ Generate Tailored Resume Bullets';
+    }
+}
+
+function copyResumeBullets() {
+    const text = document.getElementById('resume-tailor-content')?.innerText || '';
+    navigator.clipboard.writeText(text).then(() => {
+        alert('📋 Resume bullets copied to clipboard!');
+    }).catch(() => {
+        alert('Copied text: \n\n' + text);
+    });
+}
+
+function prepareInterviewCoach(company, jobTitle) {
+    switchJobAiTab('interview');
+    document.getElementById('interview-coach-company').value = company;
+    document.getElementById('interview-coach-title').value = jobTitle;
+    generateInterviewCoachScript();
+}
+
+async function generateInterviewCoachScript() {
+    const token = localStorage.getItem('fs_token');
+    const company = document.getElementById('interview-coach-company')?.value || '';
+    const jobTitle = document.getElementById('interview-coach-title')?.value || '';
+    const btn = document.getElementById('btn-generate-interview-script');
+    const outputBox = document.getElementById('interview-coach-output-box');
+    const content = document.getElementById('interview-coach-content');
+
+    if (!company || !jobTitle) {
+        return alert('Please enter both Target Employer and Position.');
+    }
+
+    btn.disabled = true;
+    btn.innerText = '⚡ Generating 60-Sec Script...';
+
+    try {
+        const res = await fetch('/api/jobs/ai-interview-prep', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ company, jobTitle })
+        });
+        const data = await res.json();
+        if (data.turnaroundNarrative) {
+            outputBox.classList.remove('hidden');
+            content.innerHTML = typeof marked !== 'undefined' ? marked.parse(data.turnaroundNarrative) : data.turnaroundNarrative.replace(/\n/g, '<br>');
+        }
+    } catch(e) {
+        alert('Script generation error: ' + e.message);
+    } finally {
+        btn.disabled = false;
+        btn.innerText = '⚡ Generate My 60-Second Turnaround Script';
+    }
+}
+
+async function loadSavedJobsPipeline() {
+    const token = localStorage.getItem('fs_token');
+    if (!currentUser) return;
+
+    try {
+        const res = await fetch(`/api/jobs/saved/${currentUser.id}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const jobs = await res.json();
+
+        const countEl = document.getElementById('job-pipeline-count');
+        if (countEl) countEl.innerText = jobs.length;
+
+        const groups = { saved: [], applied: [], interviewing: [], offered: [] };
+        jobs.forEach(j => {
+            const st = (j.status || 'saved').toLowerCase();
+            if (groups[st]) groups[st].push(j);
+            else groups.saved.push(j);
+        });
+
+        ['saved', 'applied', 'interviewing', 'offered'].forEach(col => {
+            const countBadge = document.getElementById(`pipeline-count-${col}`);
+            const colEl = document.getElementById(`pipeline-col-${col}`);
+            if (countBadge) countBadge.innerText = groups[col].length;
+            if (!colEl) return;
+
+            if (groups[col].length === 0) {
+                colEl.innerHTML = `<p style="font-size: 11.5px; color: var(--slate); text-align: center; margin: auto; padding: 20px 0;">No jobs in this stage.</p>`;
+            } else {
+                colEl.innerHTML = groups[col].map(j => `
+                    <div style="background: white; border: 1px solid var(--border); border-radius: 6px; padding: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+                        <strong style="font-size: 12.5px; color: var(--primary); display: block;">${j.job_title}</strong>
+                        <div style="font-size: 11.5px; color: #475569; margin: 2px 0;">🏢 ${j.company}</div>
+                        <div style="font-size: 11px; color: #166534; font-weight: 600;">💵 ${j.pay_rate || 'Competitive'}</div>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; gap: 6px;">
+                            <select onchange="updateJobStatus(${j.id}, this.value)" style="font-size: 10.5px; padding: 3px 6px; border: 1px solid var(--border); border-radius: 4px; background: #f8fafc;">
+                                <option value="saved" ${col==='saved'?'selected':''}>⭐ Saved</option>
+                                <option value="applied" ${col==='applied'?'selected':''}>📤 Applied</option>
+                                <option value="interviewing" ${col==='interviewing'?'selected':''}>🎤 Interview</option>
+                                <option value="offered" ${col==='offered'?'selected':''}>🎉 Offer/Hired</option>
+                            </select>
+                            <div style="display: flex; gap: 4px;">
+                                ${j.careers_url ? `<a href="${j.careers_url}" target="_blank" style="font-size: 11px; text-decoration: none; padding: 2px 6px; background: #e0e7ff; color: #1e1b4b; border-radius: 4px;">🔗 Link</a>` : ''}
+                                <button onclick="deleteSavedJob(${j.id})" style="background: none; border: none; cursor: pointer; font-size: 12px; color: #ef4444;" title="Remove">✕</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        });
+    } catch(e) {
+        console.warn('Pipeline load error:', e);
+    }
+}
+
+async function updateJobStatus(jobId, newStatus) {
+    const token = localStorage.getItem('fs_token');
+    try {
+        await fetch('/api/jobs/update-job-status', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ id: jobId, status: newStatus })
+        });
+        loadSavedJobsPipeline();
+    } catch(e) {
+        alert('Update status error: ' + e.message);
+    }
+}
+
+async function deleteSavedJob(jobId) {
+    if (!confirm('Remove this job from your pipeline?')) return;
+    const token = localStorage.getItem('fs_token');
+    try {
+        await fetch(`/api/jobs/saved/${jobId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        loadSavedJobsPipeline();
+    } catch(e) {
+        alert('Delete error: ' + e.message);
+    }
+}

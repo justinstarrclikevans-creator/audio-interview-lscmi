@@ -217,6 +217,23 @@ CREATE TABLE IF NOT EXISTS case_plan_triggers (
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
     UNIQUE(user_id, domain)
 );
+
+-- Job Hunting AI: Saved & Applied Jobs Pipeline per Participant
+CREATE TABLE IF NOT EXISTS saved_job_applications (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    job_title TEXT NOT NULL,
+    company TEXT NOT NULL,
+    location TEXT DEFAULT 'Charleston, SC',
+    pay_rate TEXT,
+    careers_url TEXT,
+    status TEXT DEFAULT 'saved', -- 'saved', 'applied', 'interviewing', 'offered', 'hired'
+    notes TEXT,
+    applied_date DATE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 `);
 
 // Safe column migrations for existing databases
