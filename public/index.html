@@ -154,6 +154,23 @@
                         <button class="btn btn-outline" onclick="openBarriersModal()">Update Barrier Plan</button>
                     </div>
                 </div>
+
+                <!-- Card 5: Linked Re-entry Action & Referral Guide -->
+                <div id="fs-reentry-guide-card" class="portal-card action-card hidden" style="border-left: 4px solid var(--primary); grid-column: 1 / -1; background: #f0fdf4;">
+                    <div class="card-icon">🧭</div>
+                    <div class="card-body">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                            <div>
+                                <h3 style="color: #166534; margin: 0 0 4px 0;">🎯 My Fresh Start Action & Referral Guide</h3>
+                                <p style="margin: 0; font-size: 13px; color: #334155;">Personalized roadmap: community referrals (Housing, SCDMV Route 66, Welvista), stabilization steps, and fair-chance job matches.</p>
+                            </div>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                <a id="fs-reentry-docx-btn" href="#" download class="btn btn-primary" style="text-decoration: none;">📥 Download Word (.docx)</a>
+                                <a id="fs-reentry-pdf-btn" href="#" target="_blank" class="btn btn-accent" style="text-decoration: none;">🖨️ View / Print PDF</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- PARTICIPANT PRINTABLE CASE PLAN BANNER -->
@@ -341,7 +358,7 @@
             <div class="portal-header">
                 <div>
                     <h1>Program Manager Command Center</h1>
-                    <p class="portal-sub">Manage caseloads, review scoring drafts, generate Monday/Friday reports, and sync Apricot points.</p>
+                    <p class="portal-sub">Manage caseloads, re-entry case plans & flag detection, review scoring drafts, and sync Apricot points.</p>
                 </div>
                 <div class="pm-actions-header">
                     <button class="btn btn-primary" onclick="generateReport('monday')">📋 Monday Needs Report</button>
@@ -350,34 +367,201 @@
                 </div>
             </div>
 
-            <!-- Filter Toolbar -->
-            <div class="filter-toolbar">
-                <select id="pm-filter-location" onchange="loadCaseload()">
-                    <option value="">All Locations</option>
-                    <option value="Charleston">Charleston, SC</option>
-                    <option value="Columbia">Columbia, SC</option>
-                    <option value="Greenville">Greenville, SC</option>
-                    <option value="Spartanburg">Spartanburg, SC</option>
-                </select>
-                <select id="pm-filter-track" onchange="loadCaseload()">
-                    <option value="">All Tracks</option>
-                    <option value="first_shift">First Shift</option>
-                    <option value="reentry_nav">Re-entry Navigation</option>
-                </select>
-                <select id="pm-filter-gate" onchange="loadCaseload()">
-                    <option value="">All Gates</option>
-                    <option value="1">Gate 1 (Week 1)</option>
-                    <option value="2">Gate 2 (Week 2)</option>
-                    <option value="3">Gate 3 (Week 3)</option>
-                    <option value="4">Gate 4 (Week 4)</option>
-                </select>
+            <!-- Sub Navigation Tabs for Program Manager Portal -->
+            <div class="pm-subtabs" style="display: flex; gap: 8px; margin: 16px 0; border-bottom: 2px solid var(--border); padding-bottom: 8px; flex-wrap: wrap;">
+                <button id="pm-tab-btn-caseload" class="btn btn-primary" onclick="switchPmSubView('caseload')">👥 Participant Caseload & Gates</button>
+                <button id="pm-tab-btn-reentry" class="btn btn-outline" onclick="switchPmSubView('reentry')">🧭 Re-entry Navigator & Case Planning</button>
+                <button id="pm-tab-btn-drafts" class="btn btn-outline" onclick="switchPmSubView('drafts')">📝 Scoring Reviews</button>
+                <button id="pm-tab-btn-facilitation" class="btn btn-outline" onclick="switchPmSubView('facilitation')">🎤 Class Evaluations</button>
             </div>
 
-            <!-- Caseload Table -->
-            <div class="section-card mt-4">
-                <h2>Active Participant Caseload</h2>
-                <div class="table-responsive">
-                    <table class="data-table" id="caseload-table">
+            <!-- SUBSECTION 1: CASELOAD TABLE & FILTERS -->
+            <div id="pm-sec-caseload">
+                <!-- Filter Toolbar -->
+                <div class="filter-toolbar">
+                    <select id="pm-filter-location" onchange="loadCaseload()">
+                        <option value="">All Locations</option>
+                        <option value="Charleston">Charleston, SC</option>
+                        <option value="Columbia">Columbia, SC</option>
+                        <option value="Greenville">Greenville, SC</option>
+                        <option value="Spartanburg">Spartanburg, SC</option>
+                    </select>
+                    <select id="pm-filter-track" onchange="loadCaseload()">
+                        <option value="">All Tracks</option>
+                        <option value="first_shift">First Shift</option>
+                        <option value="reentry_nav">Re-entry Navigation</option>
+                    </select>
+                    <select id="pm-filter-gate" onchange="loadCaseload()">
+                        <option value="">All Gates</option>
+                        <option value="1">Gate 1 (Week 1)</option>
+                        <option value="2">Gate 2 (Week 2)</option>
+                        <option value="3">Gate 3 (Week 3)</option>
+                        <option value="4">Gate 4 (Week 4)</option>
+                    </select>
+                </div>
+
+                <!-- Caseload Table -->
+                <div class="section-card mt-4">
+                    <h2>Active Participant Caseload</h2>
+                    <div class="table-responsive">
+                        <table class="data-table" id="caseload-table">
+                            <thead>
+                                <tr>
+                                    <th>Participant</th>
+                                    <th>Location & Track</th>
+                                    <th>Current Gate</th>
+                                    <th>W-9 & ID</th>
+                                    <th>DL / Child Support</th>
+                                    <th>Avg Points</th>
+                                    <th>Re-entry Plan & Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="caseload-tbody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUBSECTION 2: RE-ENTRY NAVIGATOR & CASE PLANNING -->
+            <div id="pm-sec-reentry" class="hidden">
+                <div class="section-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary); padding-bottom: 12px; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+                        <div>
+                            <h2 style="color: var(--primary); margin: 0;">🧭 Re-entry Navigator: Case Planning & Flag Analysis</h2>
+                            <p class="text-slate" style="margin-top: 4px;">Evaluate intake interviews, detect facilitation & stability flags, link plans directly to participant profiles, and match local resources & jobs.</p>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn btn-outline" onclick="loadReentryResourcesTab()">📍 SC Directory & Jobs</button>
+                        </div>
+                    </div>
+
+                    <!-- Intake & Participant Selector Form -->
+                    <form id="form-reentry-assess" onsubmit="handleReentryAssessSubmit(event)">
+                        <div class="form-row" style="background: #f8fafc; padding: 14px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 16px;">
+                            <div class="form-group" style="flex: 2;">
+                                <label style="font-weight: 700; color: var(--primary);">Link to Participant Profile *</label>
+                                <select id="reentry-participant-select" onchange="handleReentryParticipantSelect()" required>
+                                    <option value="">-- Select Active Participant to Link --</option>
+                                    <!-- Populated dynamically -->
+                                </select>
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label>Location</label>
+                                <select id="reentry-location">
+                                    <option value="Charleston">Charleston, SC</option>
+                                    <option value="Columbia">Columbia, SC</option>
+                                    <option value="Greenville">Greenville, SC</option>
+                                    <option value="Spartanburg">Spartanburg, SC</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Participant Full Name</label>
+                                <input type="text" id="reentry-name" required placeholder="Full Name">
+                            </div>
+                            <div class="form-group">
+                                <label>Living / Housing Situation</label>
+                                <select id="reentry-housing">
+                                    <option value="Emergency Shelter (One80 Place / Transitions)">Emergency Shelter (One80 Place / Transitions)</option>
+                                    <option value="Transitional Recovery Program (Star Gospel / Miracle Hill)">Transitional Recovery Program</option>
+                                    <option value="Living with Family / Friends (Unstable < 60 days)">Living with Family / Friends (Unstable)</option>
+                                    <option value="Independent Stable Lease / Home">Independent Stable Lease / Home</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group mt-3">
+                            <label>Primary Goals (Employment, Credentials, Fresh Start Vision)</label>
+                            <input type="text" id="reentry-goals" placeholder="e.g. CDL-B certification, steady day shift manufacturing job ($18+/hr), driver's license restoration, child support modification">
+                        </div>
+
+                        <div class="form-group mt-3">
+                            <label>Legal & Supervision Status</label>
+                            <input type="text" id="reentry-legal" placeholder="e.g. SCDPPPS Active Probation, curfew 9pm, child support arrears $4,200">
+                        </div>
+
+                        <div class="form-group mt-3">
+                            <label>Identified Immediate Needs / Barriers (Select all that apply):</label>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; font-size: 13px; margin-top: 6px;">
+                                <label><input type="checkbox" name="reentry-need" value="Emergency Housing / Rent"> Emergency Housing / Rent</label>
+                                <label><input type="checkbox" name="reentry-need" value="Driver's License Reinstatement (SCDMV)"> SCDMV License Reinstatement</label>
+                                <label><input type="checkbox" name="reentry-need" value="Child Support Court Review / Arrears"> Child Support Court Review</label>
+                                <label><input type="checkbox" name="reentry-need" value="Prescription Medication (Welvista)"> Prescription Meds (Welvista)</label>
+                                <label><input type="checkbox" name="reentry-need" value="Substance Recovery Support / MAT"> Substance Recovery Support</label>
+                                <label><input type="checkbox" name="reentry-need" value="Mental Health / Trauma Counseling"> Mental Health Counseling</label>
+                                <label><input type="checkbox" name="reentry-need" value="Bus Passes / Work Transit"> Bus Passes / Transit</label>
+                                <label><input type="checkbox" name="reentry-need" value="Work Boots & Tools"> Work Boots & Tools</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group mt-4">
+                            <label>Upload Interview Audio, PDF, or Notes File (Optional)</label>
+                            <input type="file" id="reentry-file" accept=".txt,.pdf,.webm,.mp3,.m4a">
+                        </div>
+
+                        <div class="form-group mt-3">
+                            <label>Or Paste Re-entry Navigation Interview Notes / Transcript</label>
+                            <textarea id="reentry-transcript" rows="5" placeholder="Paste dialogue, interview responses, or staff intake notes here..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block mt-4" id="btn-reentry-submit">
+                            ⚡ Analyze Flags, Generate Dual Case Plan & Link to Profile
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Re-entry Results Section -->
+                <div id="reentry-results-container" class="section-card mt-8 hidden">
+                    <!-- Link Confirmation Banner -->
+                    <div id="reentry-link-badge" style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-weight: bold; font-size: 14px;">
+                        <!-- Dynamically filled -->
+                    </div>
+
+                    <!-- Flags Banner -->
+                    <div id="reentry-flags-banner" class="report-summary-box mb-4">
+                        <!-- Dynamically filled -->
+                    </div>
+
+                    <!-- Subtabs for Dual Documents -->
+                    <div style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 2px solid var(--border); padding-bottom: 8px;">
+                        <button class="btn btn-primary" id="btn-subtab-part-guide" onclick="switchReentryDocTab('part')">🎯 Participant Action & Referral Guide</button>
+                        <button class="btn btn-outline" id="btn-subtab-staff-plan" onclick="switchReentryDocTab('staff')">📋 Staff Re-entry Case Plan</button>
+                    </div>
+
+                    <!-- Doc 1: Participant Action Guide -->
+                    <div id="reentry-doc-part-view">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                            <h3 style="color: var(--primary); margin: 0;">🎯 My Fresh Start Action & Referral Guide</h3>
+                            <div style="display: flex; gap: 8px;">
+                                <a id="link-reentry-part-docx" href="#" download class="btn btn-primary" style="text-decoration: none;">📥 Download Editable Word (.docx)</a>
+                                <a id="link-reentry-part-pdf" href="#" target="_blank" class="btn btn-accent" style="text-decoration: none;">🖨️ View / Print PDF</a>
+                            </div>
+                        </div>
+                        <div id="reentry-part-guide-content" class="report-content-body" style="background: white; border: 1px solid var(--border); padding: 20px; border-radius: 8px; max-height: 500px; overflow-y: auto;">
+                            <!-- Markdown rendered here -->
+                        </div>
+                    </div>
+
+                    <!-- Doc 2: Staff Case Plan -->
+                    <div id="reentry-doc-staff-view" class="hidden">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                            <h3 style="color: var(--primary); margin: 0;">📋 Staff Re-entry Navigation Case Plan</h3>
+                            <div style="display: flex; gap: 8px;">
+                                <a id="link-reentry-staff-docx" href="#" download class="btn btn-primary" style="text-decoration: none;">📥 Download Editable Word (.docx)</a>
+                                <a id="link-reentry-staff-pdf" href="#" target="_blank" class="btn btn-outline" style="text-decoration: none;">🖨️ View / Print PDF</a>
+                            </div>
+                        </div>
+                        <div id="reentry-staff-plan-content" class="report-content-body" style="background: white; border: 1px solid var(--border); padding: 20px; border-radius: 8px; max-height: 500px; overflow-y: auto;">
+                            <!-- Markdown rendered here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
                         <thead>
                             <tr>
                                 <th>Participant</th>
@@ -711,8 +895,64 @@
                     </div>
                 </div>
 
+                <!-- Linked Re-entry Case Plan Card -->
+                <div id="cr-linked-reentry-box" class="report-summary-box mt-4 hidden" style="background: #f0fdf4; border: 1px solid #bbf7d0;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <h4 style="color: #166534; margin: 0;">🧭 Linked Re-entry Case Plan & Flags</h4>
+                        <span id="cr-reentry-status-badge" style="font-weight: bold; font-size: 11.5px; padding: 2px 8px; border-radius: 12px; background: #dcfce7; color: #166534;">STABLE</span>
+                    </div>
+                    <div id="cr-reentry-summary-text" style="font-size: 12.5px; color: #1e293b; margin-bottom: 8px;"></div>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <a id="cr-reentry-staff-docx-link" href="#" download class="btn btn-primary" style="padding: 4px 10px; font-size: 12px; text-decoration: none;">📥 Staff Plan Word (.docx)</a>
+                        <a id="cr-reentry-part-docx-link" href="#" download class="btn btn-accent" style="padding: 4px 10px; font-size: 12px; text-decoration: none;">📥 Participant Guide (.docx)</a>
+                        <a id="cr-reentry-part-pdf-link" href="#" target="_blank" class="btn btn-outline" style="padding: 4px 10px; font-size: 12px; text-decoration: none;">🖨️ PDF</a>
+                    </div>
+                </div>
+
                 <button type="submit" class="btn btn-primary btn-block mt-4">Save Weekly Case Review</button>
             </form>
+        </div>
+    </div>
+
+    <!-- Modal for SC Re-entry Directory & Spreadsheet Jobs -->
+    <div id="modal-reentry-resources" class="modal hidden">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3>📍 South Carolina Re-entry Resources & Spreadsheet Jobs</h3>
+                <button class="modal-close" onclick="closeModal('modal-reentry-resources')">&times;</button>
+            </div>
+            <div style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 2px solid var(--border); padding-bottom: 8px;">
+                <button id="res-tab-btn-dir" class="btn btn-primary" onclick="switchResourceTab('dir')">🏢 Community Resource Directory</button>
+                <button id="res-tab-btn-jobs" class="btn btn-outline" onclick="switchResourceTab('jobs')">💼 Live Spreadsheet Jobs (43 Openings)</button>
+            </div>
+            
+            <!-- Directory View -->
+            <div id="res-view-dir">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <select id="modal-dir-region" onchange="loadModalDirectoryResources()" style="font-weight: bold; width: auto;">
+                        <option value="charleston">Charleston Tri-County</option>
+                        <option value="columbia">Columbia Midlands</option>
+                        <option value="greenville">Greenville & Upstate</option>
+                    </select>
+                </div>
+                <div id="modal-dir-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; max-height: 480px; overflow-y: auto;">
+                    <!-- Filled dynamically -->
+                </div>
+            </div>
+
+            <!-- Jobs View -->
+            <div id="res-view-jobs" class="hidden">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                    <input type="text" id="modal-job-search" placeholder="🔍 Search spreadsheet jobs..." oninput="filterModalJobs()" style="padding: 6px 12px; width: 260px; font-size: 13px;">
+                    <label class="btn btn-outline" style="cursor: pointer; padding: 6px 12px; font-size: 13px; margin: 0;">
+                        📥 Upload Jobs Excel (.xlsx)
+                        <input type="file" id="modal-spreadsheet-upload" accept=".xlsx,.csv" style="display: none;" onchange="handleModalSpreadsheetUpload(event)">
+                    </label>
+                </div>
+                <div id="modal-jobs-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; max-height: 480px; overflow-y: auto;">
+                    <!-- Filled dynamically -->
+                </div>
+            </div>
         </div>
     </div>
 

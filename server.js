@@ -14,6 +14,9 @@ const { convertSingleMdToDocx } = require('./convert_md_to_docx');
 const { evaluateClassTranscript } = require('./facilitation_evaluator');
 const { cbtModules, T90_TRADE_TRACKS, REENTRY_EMPLOYERS } = require('./training_data');
 const { generateMondayNeedsReport, generateFridayMilestoneReport, importApricotCsv } = require('./reporting_engine');
+const { generateReentryNavAssessment } = require('./reentry_engine');
+const { SC_COMMUNITY_RESOURCES, SC_FAIR_CHANCE_EMPLOYERS } = require('./sc_resource_directory');
+const { loadJobsFromSpreadsheets } = require('./jobs_loader');
 const pdfParse = require('pdf-parse');
 
 require('dotenv').config({ path: path.join(__dirname, '..', 'email-settings.txt') });
@@ -739,6 +742,258 @@ app.post('/api/submit-feedback', memoryUpload.single('criminalHistoryFile'), asy
         console.error("Phase 2 failed:", err);
         fs.writeFileSync(path.join(dataDir, `${clientId}_error_phase2.txt`), `Failed Phase 2: ${err.message}`);
     }
+});
+
+// ==========================================
+// RE-ENTRY NAVIGATOR DASHBOARD API ENDPOINTS
+// ==========================================
+
+// 1. Get Participants for Re-entry Selector
+app.get('/api/reentry/participants', authenticateToken, requireRole('program_manager', 'director', 'admin'), (req, res) => {
+    try {
+        const rows = db.prepare(`
+            SELECT 
+                u.id, u.name, u.email, u.phone, u.location, u.track,
+                p.current_gate, p.w9_status, p.dl_status, p.child_support_status,
+                p.housing_status, p.overall_status, p.reentry_status, p.has_reentry_plan,
+                r.stability_status AS plan_stability_status,
+                r.staff_plan_docx, r.participant_guide_docx, r.updated_at AS plan_updated_at
+            FROM users u
+            LEFT JOIN participant_profiles p ON u.id = p.user_id
+            LEFT JOIN reentry_case_plans r ON u.id = r.user_id
+            WHERE u.role = 'participant'
+            ORDER BY u.name ASC
+        `).all();
+        res.json(rows);
+    } catch (err) {
+        console.error('Error fetching reentry participants:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// 2. Re-entry Navigation Assessment & Profile Linking
+app.post('/api/reentry/assess', authenticateToken, requireRole('program_manager', 'director', 'admin'), memoryUpload.single('file'), async (req, res) => {
+    try {
+        const {
+            userId,
+            participantName,
+            location,
+            statedGoals,
+            identifiedNeeds,
+            livingSituation,
+            legalStatus,
+            transcriptText
+        } = req.body;
+
+        let fullTranscript = transcriptText || '';
+
+        if (req.file && req.file.buffer) {
+            const ext = path.extname(req.file.originalname).toLowerCase();
+            if (ext === '.pdf') {
+                try {
+                    const parsed = await pdfParse(req.file.buffer);
+                    fullTranscript += '\n\n' + parsed.text;
+                } catch (e) {
+                    console.warn('PDF parse failed:', e.message);
+                }
+            } else if (ext === '.txt') {
+                fullTranscript += '\n\n' + req.file.buffer.toString('utf8');
+            }
+        }
+
+        const assessmentData = {
+            participantName: participantName || 'Re-entry Participant',
+            location: location || 'Charleston',
+            interviewTranscript: fullTranscript,
+            statedGoals: statedGoals || 'Long-term employment and financial stability',
+            identifiedNeeds: typeof identifiedNeeds === 'string' ? JSON.parse(identifiedNeeds || '[]') : (identifiedNeeds || []),
+            livingSituation: livingSituation || 'Transitional Housing',
+            legalStatus: legalStatus || 'Active Supervision'
+        };
+
+        const result = await generateReentryNavAssessment(assessmentData);
+
+        const timestamp = Date.now();
+        const safeName = (participantName || 'Client').replace(/[^a-zA-Z0-9]/g, '_');
+        const filePrefix = `${timestamp}_${safeName}_reentry`;
+
+        const staffPlanPath = path.join(dataDir, `${filePrefix}_staff_case_plan.md`);
+        const participantGuidePath = path.join(dataDir, `${filePrefix}_participant_action_guide.md`);
+        const jsonResultPath = path.join(dataDir, `${filePrefix}_assessment_data.json`);
+
+        fs.writeFileSync(staffPlanPath, result.navigator_case_plan_md);
+        fs.writeFileSync(participantGuidePath, result.participant_guide_md);
+        fs.writeFileSync(jsonResultPath, JSON.stringify({ ...result, assessmentData }, null, 2));
+
+        // Generate PDFs and editable Word (.docx) documents
+        const staffPdfPath = staffPlanPath.replace(/\.md$/, '.pdf');
+        const partPdfPath = participantGuidePath.replace(/\.md$/, '.pdf');
+        const staffDocxPath = staffPlanPath.replace(/\.md$/, '.docx');
+        const partDocxPath = participantGuidePath.replace(/\.md$/, '.docx');
+
+        convertSingleMdToPdf(staffPlanPath, staffPdfPath);
+        convertSingleMdToPdf(participantGuidePath, partPdfPath);
+        await convertSingleMdToDocx(staffPlanPath, staffDocxPath);
+        await convertSingleMdToDocx(participantGuidePath, partDocxPath);
+
+        const staffDocxUrl = `/data/${filePrefix}_staff_case_plan.docx`;
+        const staffPdfUrl = `/data/${filePrefix}_staff_case_plan.pdf`;
+        const partDocxUrl = `/data/${filePrefix}_participant_action_guide.docx`;
+        const partPdfUrl = `/data/${filePrefix}_participant_action_guide.pdf`;
+
+        // Link to existing or resolved User ID
+        let targetUserId = userId ? parseInt(userId) : null;
+        if (!targetUserId && participantName) {
+            const existingUser = db.prepare('SELECT id FROM users WHERE LOWER(name) LIKE ?').get(`%${participantName.toLowerCase().trim()}%`);
+            if (existingUser) targetUserId = existingUser.id;
+        }
+
+        if (targetUserId) {
+            // Upsert into reentry_case_plans
+            const existingPlan = db.prepare('SELECT id FROM reentry_case_plans WHERE user_id = ?').get(targetUserId);
+            if (existingPlan) {
+                db.prepare(`
+                    UPDATE reentry_case_plans SET
+                        participant_name = ?,
+                        location = ?,
+                        stability_status = ?,
+                        stated_goals = ?,
+                        identified_needs = ?,
+                        living_situation = ?,
+                        legal_status = ?,
+                        detected_flags = ?,
+                        top_criminogenic_domains = ?,
+                        staff_case_plan_md = ?,
+                        participant_guide_md = ?,
+                        recommended_referrals = ?,
+                        matched_employers = ?,
+                        staff_plan_docx = ?,
+                        staff_plan_pdf = ?,
+                        participant_guide_docx = ?,
+                        participant_guide_pdf = ?,
+                        updated_at = CURRENT_TIMESTAMP
+                    WHERE user_id = ?
+                `).run(
+                    participantName, location, result.stability_status || 'stable',
+                    statedGoals, JSON.stringify(assessmentData.identifiedNeeds), livingSituation, legalStatus,
+                    JSON.stringify(result.detected_flags || []), JSON.stringify(result.top_criminogenic_domains || []),
+                    result.navigator_case_plan_md, result.participant_guide_md,
+                    JSON.stringify(result.recommended_referrals || []), JSON.stringify(result.matched_employers || []),
+                    staffDocxUrl, staffPdfUrl, partDocxUrl, partPdfUrl,
+                    targetUserId
+                );
+            } else {
+                db.prepare(`
+                    INSERT INTO reentry_case_plans (
+                        user_id, participant_name, location, stability_status,
+                        stated_goals, identified_needs, living_situation, legal_status,
+                        detected_flags, top_criminogenic_domains, staff_case_plan_md, participant_guide_md,
+                        recommended_referrals, matched_employers, staff_plan_docx, staff_plan_pdf,
+                        participant_guide_docx, participant_guide_pdf
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                `).run(
+                    targetUserId, participantName, location, result.stability_status || 'stable',
+                    statedGoals, JSON.stringify(assessmentData.identifiedNeeds), livingSituation, legalStatus,
+                    JSON.stringify(result.detected_flags || []), JSON.stringify(result.top_criminogenic_domains || []),
+                    result.navigator_case_plan_md, result.participant_guide_md,
+                    JSON.stringify(result.recommended_referrals || []), JSON.stringify(result.matched_employers || []),
+                    staffDocxUrl, staffPdfUrl, partDocxUrl, partPdfUrl
+                );
+            }
+
+            // Update participant profile
+            db.prepare(`
+                UPDATE participant_profiles SET
+                    reentry_status = ?,
+                    has_reentry_plan = 1,
+                    stability_red_flags = ?,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE user_id = ?
+            `).run(result.stability_status || 'stable', JSON.stringify(result.detected_flags || []), targetUserId);
+
+            // Record documents
+            db.prepare('INSERT INTO documents (user_id, doc_type, title, filename) VALUES (?, "reentry_plan", "Re-entry Staff Case Plan (Word .docx)", ?)')
+                .run(targetUserId, `${filePrefix}_staff_case_plan.docx`);
+            db.prepare('INSERT INTO documents (user_id, doc_type, title, filename) VALUES (?, "reentry_guide", "Participant Action & Referral Guide (Word .docx)", ?)')
+                .run(targetUserId, `${filePrefix}_participant_action_guide.docx`);
+        }
+
+        res.json({
+            success: true,
+            linkedUserId: targetUserId,
+            filePrefix,
+            result,
+            staffPlanUrl: `/data/${filePrefix}_staff_case_plan.md`,
+            staffPlanPdf: staffPdfUrl,
+            staffPlanDocx: staffDocxUrl,
+            participantGuideUrl: `/data/${filePrefix}_participant_action_guide.md`,
+            participantGuidePdf: partPdfUrl,
+            participantGuideDocx: partDocxUrl
+        });
+    } catch (err) {
+        console.error('Re-entry Assessment Error:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// 3. Get Linked Re-entry Case Plan for a Participant Profile
+app.get('/api/reentry/plan/:userId', authenticateToken, (req, res) => {
+    try {
+        const targetId = parseInt(req.params.userId);
+        if (req.user.role === 'participant' && req.user.id !== targetId) {
+            return res.status(403).json({ error: 'Unauthorized to view other participants plans' });
+        }
+
+        const plan = db.prepare('SELECT * FROM reentry_case_plans WHERE user_id = ?').get(targetId);
+        if (!plan) {
+            return res.json({ found: false, message: 'No Re-entry Case Plan linked yet.' });
+        }
+
+        res.json({
+            found: true,
+            plan: {
+                ...plan,
+                identified_needs: plan.identified_needs ? JSON.parse(plan.identified_needs) : [],
+                detected_flags: plan.detected_flags ? JSON.parse(plan.detected_flags) : [],
+                top_criminogenic_domains: plan.top_criminogenic_domains ? JSON.parse(plan.top_criminogenic_domains) : [],
+                recommended_referrals: plan.recommended_referrals ? JSON.parse(plan.recommended_referrals) : [],
+                matched_employers: plan.matched_employers ? JSON.parse(plan.matched_employers) : []
+            }
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// 4. Directory & Spreadsheet Jobs Query
+app.get('/api/reentry/resources', authenticateToken, (req, res) => {
+    const region = req.query.region || 'charleston';
+    const locKey = region.toLowerCase().includes('columbia') ? 'columbia' : (region.toLowerCase().includes('greenville') ? 'greenville' : 'charleston');
+    
+    const spreadsheetJobs = loadJobsFromSpreadsheets();
+    const directoryEmployers = SC_FAIR_CHANCE_EMPLOYERS.filter(e => e.region === locKey || e.region === 'all');
+
+    res.json({
+        resources: SC_COMMUNITY_RESOURCES[locKey] || SC_COMMUNITY_RESOURCES.charleston,
+        employers: directoryEmployers,
+        spreadsheetJobs: spreadsheetJobs
+    });
+});
+
+// 5. Upload New Jobs Spreadsheet
+app.post('/api/reentry/upload-jobs-spreadsheet', authenticateToken, requireRole('program_manager', 'director', 'admin'), memoryUpload.single('spreadsheet'), (req, res) => {
+    if (!req.file) return res.status(400).json({ error: 'No spreadsheet file uploaded.' });
+    
+    const filename = req.file.originalname || `Jobs_Upload_${Date.now()}.xlsx`;
+    const targetPath = path.join(dataDir, filename);
+    fs.writeFileSync(targetPath, req.file.buffer);
+
+    const jobs = loadJobsFromSpreadsheets();
+    res.json({
+        success: true,
+        message: `Spreadsheet '${filename}' uploaded and parsed successfully into program database.`,
+        totalJobsCount: jobs.length
+    });
 });
 
 app.post('/api/upload-audio', memoryUpload.single('audio'), async (req, res) => {

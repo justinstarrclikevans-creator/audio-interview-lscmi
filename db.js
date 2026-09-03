@@ -166,6 +166,31 @@ CREATE TABLE IF NOT EXISTS resumes (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS reentry_case_plans (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER UNIQUE NOT NULL,
+    participant_name TEXT NOT NULL,
+    location TEXT DEFAULT 'Charleston',
+    stability_status TEXT DEFAULT 'stable', -- 'stable', 'at_risk', 'immediate_triage_needed'
+    stated_goals TEXT,
+    identified_needs TEXT, -- JSON array
+    living_situation TEXT,
+    legal_status TEXT,
+    detected_flags TEXT, -- JSON array
+    top_criminogenic_domains TEXT, -- JSON array
+    staff_case_plan_md TEXT,
+    participant_guide_md TEXT,
+    recommended_referrals TEXT, -- JSON array
+    matched_employers TEXT, -- JSON array
+    staff_plan_docx TEXT,
+    staff_plan_pdf TEXT,
+    participant_guide_docx TEXT,
+    participant_guide_pdf TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 `);
 
 // Safe column migrations for existing databases
@@ -173,6 +198,8 @@ try { db.exec("ALTER TABLE participant_profiles ADD COLUMN stability_red_flags T
 try { db.exec("ALTER TABLE participant_profiles ADD COLUMN director_override INTEGER DEFAULT 0;"); } catch(e) {}
 try { db.exec("ALTER TABLE participant_profiles ADD COLUMN director_override_notes TEXT;"); } catch(e) {}
 try { db.exec("ALTER TABLE participant_profiles ADD COLUMN director_override_by TEXT;"); } catch(e) {}
+try { db.exec("ALTER TABLE participant_profiles ADD COLUMN reentry_status TEXT DEFAULT 'none';"); } catch(e) {}
+try { db.exec("ALTER TABLE participant_profiles ADD COLUMN has_reentry_plan INTEGER DEFAULT 0;"); } catch(e) {}
 
 
 // The Official Briefcase Domains & Checklist Items

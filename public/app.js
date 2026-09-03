@@ -217,6 +217,26 @@ async function loadFsDashboard() {
         renderGateCriteria(data.weeks, currentGateWeek);
         loadFsPoints();
         loadBriefcaseChecklist();
+
+        // Check for linked Re-entry Fresh Start Guide for participant
+        const reentryGuideCard = document.getElementById('fs-reentry-guide-card');
+        if (reentryGuideCard && currentUser) {
+            try {
+                const reRes = await fetch(`/api/reentry/plan/${currentUser.id}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const reData = await reRes.json();
+                if (reData.found && reData.plan) {
+                    reentryGuideCard.classList.remove('hidden');
+                    if (reData.plan.participant_guide_docx) document.getElementById('fs-reentry-docx-btn').href = reData.plan.participant_guide_docx;
+                    if (reData.plan.participant_guide_pdf) document.getElementById('fs-reentry-pdf-btn').href = reData.plan.participant_guide_pdf;
+                } else {
+                    reentryGuideCard.classList.add('hidden');
+                }
+            } catch(e) {
+                reentryGuideCard.classList.add('hidden');
+            }
+        }
     } catch (err) {
         console.error('Failed to load FS dashboard:', err);
     }
@@ -754,8 +774,19 @@ async function loadCaseload() {
                     <strong>${p.avg_points ? Number(p.avg_points).toFixed(1) : '--'}</strong> / 10
                 </td>
                 <td>
-                    <span style="color: var(--success); font-weight: bold;">${p.green_criteria || 0} Met</span> / 
-                    <span style="color: var(--danger); font-weight: bold;">${p.red_criteria || 0} Red</span>
+                    ${p.has_reentry_plan ? `
+                        <span class="badge ${p.reentry_status === 'immediate_triage_needed' ? 'badge-red' : (p.reentry_status === 'at_risk' ? 'badge-pending' : 'badge-green')}">
+                            🧭 ${p.reentry_status ? p.reentry_status.toUpperCase().replace(/_/g, ' ') : 'LINKED'}
+                        </span>
+                        <div style="margin-top: 3px;">
+                            <a href="javascript:void(0)" onclick="openParticipantLinkedReentryPlan(${p.id})" style="font-size: 11px; color: var(--primary); font-weight: 700; text-decoration: underline;">📄 View Case Plan</a>
+                        </div>
+                    ` : `
+                        <span style="font-size: 11px; color: var(--slate);">Not Assessed</span>
+                        <div style="margin-top: 3px;">
+                            <a href="javascript:void(0)" onclick="startReentryAssessmentForUser(${p.id}, '${p.name.replace(/'/g, "\\'")}')" style="font-size: 11px; color: var(--accent); text-decoration: underline;">+ Assess</a>
+                        </div>
+                    `}
                 </td>
                 <td>
                     <div style="display: flex; gap: 4px; flex-wrap: wrap;">
@@ -777,56 +808,372 @@ async function loadCaseload() {
     }
 }
 
-function openCaseReviewModal(userId, name) {
+async function openCaseReviewModal(userId, name) {
     document.getElementById('cr-user-id').value = userId;
     document.getElementById('case-review-modal-title').innerText = `Weekly Case Planning: ${name}`;
+
+    // Check for linked Re-entry Case Plan
+    const token = localStorage.getItem('fs_token');
+    const linkedBox = document.getElementById('cr-linked-reentry-box');
+    try {
+        const res = await fetch(`/api/reentry/plan/${userId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.found && data.plan) {
+            const plan = data.plan;
+            linkedBox.classList.remove('hidden');
+            const statusBadge = document.getElementById('cr-reentry-status-badge');
+            statusBadge.innerText = (plan.stability_status || 'STABLE').toUpperCase();
+            statusBadge.style.background = plan.stability_status === 'immediate_triage_needed' ? '#fee2e2' : '#dcfce7';
+            statusBadge.style.color = plan.stability_status === 'immediate_triage_needed' ? '#991b1b' : '#166534';
+
+            document.getElementById('cr-reentry-summary-text').innerHTML = `
+                <strong>Goals:</strong> ${plan.stated_goals || 'Employment & stability'}<br>
+                <strong>Flags Identified:</strong> ${plan.detected_flags.length} • <strong>Top Domains:</strong> ${(plan.top_criminogenic_domains || []).join(', ') || 'N/A'}
+            `;
+
+            if (plan.staff_plan_docx) document.getElementById('cr-reentry-staff-docx-link').href = plan.staff_plan_docx;
+            if (plan.participant_guide_docx) document.getElementById('cr-reentry-part-docx-link').href = plan.participant_guide_docx;
+            if (plan.participant_guide_pdf) document.getElementById('cr-reentry-part-pdf-link').href = plan.participant_guide_pdf;
+        } else {
+            linkedBox.classList.add('hidden');
+        }
+    } catch (e) {
+        linkedBox.classList.add('hidden');
+    }
+
     openModal('modal-case-review');
 }
 
-function toggleStabilityFields(val) {
-    const box = document.getElementById('cr-stability-details-box');
-    if (box) {
-        if (val === "1") box.style.display = 'block';
-        else box.style.display = 'none';
+// -------------------------------------------------------------
+// RE-ENTRY NAVIGATOR & PROFILE LINKING CONTROLLERS
+// -------------------------------------------------------------
+
+function switchPmSubView(subview) {
+    document.querySelectorAll('.pm-subtabs button').forEach(b => {
+        b.classList.remove('btn-primary');
+        b.classList.add('btn-outline');
+    });
+
+    const activeBtn = document.getElementById(`pm-tab-btn-${subview}`);
+    if (activeBtn) {
+        activeBtn.classList.remove('btn-outline');
+        activeBtn.classList.add('btn-primary');
+    }
+
+    document.getElementById('pm-sec-caseload').classList.toggle('hidden', subview !== 'caseload');
+    document.getElementById('pm-sec-reentry').classList.toggle('hidden', subview !== 'reentry');
+
+    // Drafts and facilitation containers
+    const draftsCard = document.getElementById('pm-drafts-list')?.closest('.section-card');
+    if (draftsCard) draftsCard.classList.toggle('hidden', subview !== 'drafts' && subview !== 'caseload');
+
+    const evalCard = document.getElementById('pm-facilitation-evals-list')?.closest('.section-card');
+    if (evalCard) evalCard.classList.toggle('hidden', subview !== 'facilitation' && subview !== 'caseload');
+
+    if (subview === 'reentry') {
+        loadReentryParticipants();
     }
 }
 
-async function handleCaseReviewSubmit(e) {
-    e.preventDefault();
+let cachedReentryParticipants = [];
+
+async function loadReentryParticipants() {
     const token = localStorage.getItem('fs_token');
-    const payload = {
-        userId: parseInt(document.getElementById('cr-user-id').value),
-        weekNumber: 1,
-        hasStabilityIssues: document.getElementById('cr-has-stability').value === '1',
-        stabilityIssuesDetails: document.getElementById('cr-stability-details').value,
-        canMeetRapidly: document.getElementById('cr-meet-rapidly').value === '1',
-        needsMoreResources: document.getElementById('cr-more-resources').value === '1',
-        attendanceSatisfactory: document.getElementById('cr-attendance').value === '1',
-        abilityLearnQ2: document.getElementById('cr-q2-learning').value === '1',
-        cbtHomeworkCompleted: document.getElementById('cr-cbt-hw').checked,
-        cbtDiscussionActive: document.getElementById('cr-cbt-disc').checked,
-        cbtRoleplayEffort: document.getElementById('cr-cbt-role').checked,
-        transportationViable: document.getElementById('cr-trans-viable').value === '1',
-        noDisqualifyingConvictions: document.getElementById('cr-no-convictions').value === '1',
-        scheduleSupervisionAligned: document.getElementById('cr-supervision-aligned').value === '1',
-        caseDecision: document.getElementById('cr-decision').value,
-        decisionRationale: document.getElementById('cr-rationale').value
-    };
+    const select = document.getElementById('reentry-participant-select');
+    if (!select) return;
 
     try {
-        const res = await fetch('/api/admin/weekly-case-review', {
+        const res = await fetch('/api/reentry/participants', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const participants = await res.json();
+        cachedReentryParticipants = participants;
+
+        select.innerHTML = '<option value="">-- Select Active Participant to Link --</option>' +
+            participants.map(p => `
+                <option value="${p.id}" ${p.has_reentry_plan ? 'data-has-plan="true"' : ''}>
+                    ${p.name} (${p.location} • ${p.has_reentry_plan ? '✅ Plan Linked' : 'No Plan Yet'})
+                </option>
+            `).join('');
+    } catch (e) {
+        console.error('Error loading reentry participants:', e);
+    }
+}
+
+function handleReentryParticipantSelect() {
+    const select = document.getElementById('reentry-participant-select');
+    const userId = parseInt(select.value);
+    if (!userId) return;
+
+    const p = cachedReentryParticipants.find(x => x.id === userId);
+    if (!p) return;
+
+    document.getElementById('reentry-name').value = p.name || '';
+    document.getElementById('reentry-location').value = p.location || 'Charleston';
+
+    // Auto-select checkboxes based on known barrier data
+    document.querySelectorAll('input[name="reentry-need"]').forEach(cb => {
+        cb.checked = false;
+        if (cb.value.includes('License') && p.dl_status && p.dl_status !== 'valid' && p.dl_status !== 'unknown') cb.checked = true;
+        if (cb.value.includes('Child Support') && p.child_support_status && p.child_support_status !== 'current' && p.child_support_status !== 'none' && p.child_support_status !== 'unknown') cb.checked = true;
+        if (cb.value.includes('Housing') && p.housing_status && p.housing_status !== 'stable') cb.checked = true;
+    });
+
+    if (p.has_reentry_plan) {
+        openParticipantLinkedReentryPlan(p.id);
+    }
+}
+
+function startReentryAssessmentForUser(userId, name) {
+    switchPmSubView('reentry');
+    const select = document.getElementById('reentry-participant-select');
+    if (select) {
+        select.value = userId;
+        handleReentryParticipantSelect();
+    }
+}
+
+async function handleReentryAssessSubmit(e) {
+    e.preventDefault();
+    const token = localStorage.getItem('fs_token');
+    const btn = document.getElementById('btn-reentry-submit');
+    btn.disabled = true;
+    btn.innerText = 'Analyzing Interview, Checking Flags & Linking to Profile...';
+
+    const selectedNeeds = Array.from(document.querySelectorAll('input[name="reentry-need"]:checked')).map(cb => cb.value);
+    const fileInput = document.getElementById('reentry-file');
+
+    const formData = new FormData();
+    formData.append('userId', document.getElementById('reentry-participant-select').value);
+    formData.append('participantName', document.getElementById('reentry-name').value);
+    formData.append('location', document.getElementById('reentry-location').value);
+    formData.append('statedGoals', document.getElementById('reentry-goals').value);
+    formData.append('livingSituation', document.getElementById('reentry-housing').value);
+    formData.append('legalStatus', document.getElementById('reentry-legal').value);
+    formData.append('identifiedNeeds', JSON.stringify(selectedNeeds));
+    formData.append('transcriptText', document.getElementById('reentry-transcript').value);
+
+    if (fileInput && fileInput.files[0]) {
+        formData.append('file', fileInput.files[0]);
+    }
+
+    try {
+        const res = await fetch('/api/reentry/assess', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify(payload)
+            headers: { 'Authorization': `Bearer ${token}` },
+            body: formData
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Assessment failed');
+
+        renderReentryAssessmentResults(data);
+        loadCaseload();
+    } catch (err) {
+        alert('Re-entry Assessment Error: ' + err.message);
+    } finally {
+        btn.disabled = false;
+        btn.innerText = '⚡ Analyze Flags, Generate Dual Case Plan & Link to Profile';
+    }
+}
+
+function renderReentryAssessmentResults(data) {
+    const container = document.getElementById('reentry-results-container');
+    container.classList.remove('hidden');
+
+    const name = document.getElementById('reentry-name').value || 'Participant';
+    const result = data.result;
+
+    // Link confirmation badge
+    const linkBadge = document.getElementById('reentry-link-badge');
+    linkBadge.innerHTML = `✅ <strong>Re-entry Case Plan Successfully Linked to ${name}'s Profile</strong> • Stability Status: <strong>${(result.stability_status || 'stable').toUpperCase()}</strong>`;
+
+    // Flags banner
+    const flags = result.detected_flags || [];
+    const flagsBanner = document.getElementById('reentry-flags-banner');
+    flagsBanner.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <div>
+                <strong style="font-size: 15px; color: ${result.stability_status === 'immediate_triage_needed' ? 'var(--danger)' : 'var(--accent)'};">
+                    🛡️ Facilitation & Clinical Flags: ${flags.length} Identified
+                </strong>
+                <div style="font-size: 12px; color: var(--slate); margin-top: 2px;">
+                    Targeted Dynamic Domains: <strong>${(result.top_criminogenic_domains || []).join(', ') || 'Employment & Thinking'}</strong>
+                </div>
+            </div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px;">
+            ${flags.map(f => `
+                <div style="background: white; border: 1px solid var(--border); padding: 8px; border-radius: 6px;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="font-weight: 700; font-size: 12px;">${f.flag}</span>
+                        <span style="font-size: 10px; font-weight: 800; color: ${f.severity === 'high' ? 'red' : 'orange'};">${(f.severity || 'med').toUpperCase()}</span>
+                    </div>
+                    <div style="font-size: 11px; color: var(--slate); margin-top: 3px;"><em>"${f.evidence || ''}"</em></div>
+                    <div style="font-size: 11px; color: var(--primary); margin-top: 4px;"><strong>Tip:</strong> ${f.navigator_recommendation || ''}</div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+
+    // Render markdowns
+    document.getElementById('reentry-part-guide-content').innerHTML = marked.parse(result.participant_guide_md || '');
+    document.getElementById('reentry-staff-plan-content').innerHTML = marked.parse(result.navigator_case_plan_md || '');
+
+    // Set download links
+    if (data.participantGuideDocx) document.getElementById('link-reentry-part-docx').href = data.participantGuideDocx;
+    if (data.participantGuidePdf) document.getElementById('link-reentry-part-pdf').href = data.participantGuidePdf;
+    if (data.staffPlanDocx) document.getElementById('link-reentry-staff-docx').href = data.staffPlanDocx;
+    if (data.staffPlanPdf) document.getElementById('link-reentry-staff-pdf').href = data.staffPlanPdf;
+
+    container.scrollIntoView({ behavior: 'smooth' });
+}
+
+function switchReentryDocTab(tab) {
+    document.getElementById('reentry-doc-part-view').classList.toggle('hidden', tab !== 'part');
+    document.getElementById('reentry-doc-staff-view').classList.toggle('hidden', tab !== 'staff');
+
+    document.getElementById('btn-subtab-part-guide').className = tab === 'part' ? 'btn btn-primary' : 'btn btn-outline';
+    document.getElementById('btn-subtab-staff-plan').className = tab === 'staff' ? 'btn btn-primary' : 'btn btn-outline';
+}
+
+async function openParticipantLinkedReentryPlan(userId) {
+    const token = localStorage.getItem('fs_token');
+    try {
+        const res = await fetch(`/api/reentry/plan/${userId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.found && data.plan) {
+            switchPmSubView('reentry');
+            const select = document.getElementById('reentry-participant-select');
+            if (select) select.value = userId;
+
+            renderReentryAssessmentResults({
+                result: {
+                    stability_status: data.plan.stability_status,
+                    detected_flags: data.plan.detected_flags,
+                    top_criminogenic_domains: data.plan.top_criminogenic_domains,
+                    participant_guide_md: data.plan.participant_guide_md,
+                    navigator_case_plan_md: data.plan.staff_case_plan_md
+                },
+                participantGuideDocx: data.plan.participant_guide_docx,
+                participantGuidePdf: data.plan.participant_guide_pdf,
+                staffPlanDocx: data.plan.staff_plan_docx,
+                staffPlanPdf: data.plan.staff_plan_pdf
+            });
+        }
+    } catch (e) {
+        console.error('Error fetching linked plan:', e);
+    }
+}
+
+function loadReentryResourcesTab() {
+    openModal('modal-reentry-resources');
+    loadModalDirectoryResources();
+}
+
+let cachedModalResources = null;
+
+async function loadModalDirectoryResources() {
+    const token = localStorage.getItem('fs_token');
+    const region = document.getElementById('modal-dir-region').value || 'charleston';
+    const container = document.getElementById('modal-dir-list');
+    container.innerHTML = '<p class="text-slate">Loading verified SC resources...</p>';
+
+    try {
+        const res = await fetch(`/api/reentry/resources?region=${region}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        cachedModalResources = data;
+
+        const resources = data.resources || {};
+        let html = '';
+        Object.keys(resources).forEach(catKey => {
+            const items = resources[catKey];
+            if (Array.isArray(items)) {
+                items.forEach(item => {
+                    html += `
+                        <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; padding: 10px;">
+                            <h4 style="margin: 0 0 4px 0; color: var(--primary); font-size: 13.5px;">${item.name}</h4>
+                            <div style="font-size: 11.5px; color: var(--accent); font-weight: bold;">${item.category}</div>
+                            <div style="font-size: 12px; margin-top: 4px;"><strong>📞 Phone:</strong> ${item.phone}</div>
+                            <div style="font-size: 12px;"><strong>📍 Address:</strong> ${item.address}</div>
+                            <div style="font-size: 11.5px; color: var(--slate); margin-top: 4px;">${item.services}</div>
+                        </div>
+                    `;
+                });
+            }
+        });
+
+        container.innerHTML = html;
+        renderModalJobs(data.spreadsheetJobs || []);
+    } catch (e) {
+        container.innerHTML = '<p>Error loading resources: ' + e.message + '</p>';
+    }
+}
+
+function switchResourceTab(tab) {
+    document.getElementById('res-view-dir').classList.toggle('hidden', tab !== 'dir');
+    document.getElementById('res-view-jobs').classList.toggle('hidden', tab !== 'jobs');
+    document.getElementById('res-tab-btn-dir').className = tab === 'dir' ? 'btn btn-primary' : 'btn btn-outline';
+    document.getElementById('res-tab-btn-jobs').className = tab === 'jobs' ? 'btn btn-primary' : 'btn btn-outline';
+}
+
+function renderModalJobs(jobs) {
+    const container = document.getElementById('modal-jobs-list');
+    if (!jobs || jobs.length === 0) {
+        container.innerHTML = '<p class="text-slate">No spreadsheet jobs loaded.</p>';
+        return;
+    }
+
+    container.innerHTML = jobs.map(j => `
+        <div style="background: white; border: 1px solid var(--border); border-top: 3px solid var(--accent); border-radius: 6px; padding: 10px;">
+            <h4 style="margin: 0; font-size: 13.5px;">${j.jobTitle}</h4>
+            <div style="font-size: 12.5px; font-weight: bold; color: var(--primary);">${j.company}</div>
+            <div style="font-size: 12px; color: var(--success); font-weight: bold;">💵 ${j.payRate}</div>
+            <div style="font-size: 11.5px; color: var(--slate);">📍 ${j.location}</div>
+            ${j.description ? `<div style="font-size: 11px; color: #475569; background: #f8fafc; padding: 6px; border-radius: 4px; margin-top: 4px; max-height: 60px; overflow-y: auto;">${j.description}</div>` : ''}
+            ${j.careersUrl ? `<div style="margin-top: 6px;"><a href="${j.careersUrl}" target="_blank" style="font-size: 11.5px; color: var(--accent); font-weight: bold; text-decoration: underline;">🔗 View Careers / Apply</a></div>` : ''}
+        </div>
+    `).join('');
+}
+
+function filterModalJobs() {
+    const q = (document.getElementById('modal-job-search').value || '').toLowerCase();
+    const jobs = (cachedModalResources && cachedModalResources.spreadsheetJobs) || [];
+    const filtered = jobs.filter(j => 
+        (j.company || '').toLowerCase().includes(q) ||
+        (j.jobTitle || '').toLowerCase().includes(q) ||
+        (j.location || '').toLowerCase().includes(q) ||
+        (j.description || '').toLowerCase().includes(q)
+    );
+    renderModalJobs(filtered);
+}
+
+async function handleModalSpreadsheetUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const token = localStorage.getItem('fs_token');
+    const formData = new FormData();
+    formData.append('spreadsheet', file);
+
+    try {
+        const res = await fetch('/api/reentry/upload-jobs-spreadsheet', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` },
+            body: formData
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error);
 
-        alert('Weekly Case Plan Review recorded.');
-        closeModal('modal-case-review');
-        loadCaseload();
+        alert(data.message);
+        loadModalDirectoryResources();
     } catch (err) {
-        alert('Error: ' + err.message);
+        alert('Upload Error: ' + err.message);
     }
 }
 
