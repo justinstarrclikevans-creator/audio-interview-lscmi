@@ -381,8 +381,99 @@ const SC_FAIR_CHANCE_EMPLOYERS = [
     benefits: "Overtime in peak season, equipment training, reliable year-round work",
     immediateContact: "Capital City Operations Manager • (803) 555-0244"
   },
+  {
+    company: "CMC Steel South Carolina",
+    location: "Cayce & Columbia, SC",
+    region: "columbia",
+    industries: ["Steel Manufacturing", "Industrial Operations", "Material Handling"],
+    roles: ["Mill Operator Trainee", "Material Handler", "Overhead Crane Helper"],
+    payRate: "$19.00 – $24.50 / hr",
+    shift: "Day Shift (7:00 AM – 3:30 PM)",
+    careersUrl: "https://www.cmc.com/en-us/careers",
+    felonyPolicy: "Fair-Chance. Values industrial work ethic, safety compliance, and team reliability.",
+    benefits: "Comprehensive Medical, 401(k), Safety Gear and Steel-Toe Boots Provided",
+    immediateContact: "CMC Steel Midlands HR • (803) 794-0200"
+  },
+  {
+    company: "Schneider Electric Columbia Facility",
+    location: "Columbia & Richland County, SC",
+    region: "columbia",
+    industries: ["Electrical Manufacturing", "Assembly", "Logistics"],
+    roles: ["Electro-Mechanical Assembler", "Warehouse Associate", "Shipping Specialist"],
+    payRate: "$18.50 – $22.50 / hr",
+    shift: "1st Shift (6:30 AM – 3:00 PM)",
+    careersUrl: "https://www.se.com/us/en/about-us/careers/overview.jsp",
+    felonyPolicy: "Equal opportunity and second-chance advocate for motivated workers.",
+    benefits: "Full healthcare from day 1, tuition support, career advancement pathways",
+    immediateContact: "Schneider Columbia Talent Acquisition"
+  },
 
-  // Greenville & Upstate Employers
+  // Spartanburg, Greenville & Upstate Employers
+  {
+    company: "Piedmont Distribution & Cold Storage",
+    location: "Spartanburg & Duncan, SC",
+    region: "spartanburg",
+    industries: ["Logistics", "Cold Storage", "Forklift"],
+    roles: ["Stand-Up Forklift Driver", "Receiving Clerk", "Freight Handler"],
+    payRate: "$18.00 – $22.50 / hr",
+    shift: "Day Shift (6:00 AM – 2:30 PM)",
+    careersUrl: "https://www.indeed.com/jobs?q=forklift+distribution&l=Spartanburg%2C+SC",
+    felonyPolicy: "Second-Chance Employer. Drug screen & identity verification required.",
+    benefits: "Freezer suits/thermal PPE provided, annual safety bonus",
+    immediateContact: "Piedmont Distribution HR • (864) 555-0182"
+  },
+  {
+    company: "Milliken & Company - Spartanburg Plants",
+    location: "Spartanburg, SC",
+    region: "spartanburg",
+    industries: ["Advanced Materials", "Manufacturing", "Textiles"],
+    roles: ["Production Specialist", "Machine Operator", "Material Stager"],
+    payRate: "$18.50 – $23.00 / hr",
+    shift: "Day Shift Available (7:00 AM – 3:30 PM)",
+    careersUrl: "https://milliken.com/careers",
+    felonyPolicy: "Fair-chance supportive employer with local workforce partners.",
+    benefits: "Full health/vision/dental, on-the-job machine certifications, retirement plan",
+    immediateContact: "Milliken Spartanburg Workforce Office"
+  },
+  {
+    company: "Adidas Spartanburg Distribution Campus",
+    location: "Spartanburg & Roebuck, SC",
+    region: "spartanburg",
+    industries: ["Warehousing", "Logistics", "Forklift"],
+    roles: ["Warehouse Associate", "Reach Truck Operator", "Inbound Unloader"],
+    payRate: "$18.00 – $21.50 / hr",
+    shift: "1st Shift (6:30 AM – 3:00 PM)",
+    careersUrl: "https://careers.adidas-group.com",
+    felonyPolicy: "Fair-chance hiring initiatives with case-by-case evaluation.",
+    benefits: "Climate-controlled facility, employee merchandise discounts, safety incentives",
+    immediateContact: "Adidas Logistics Recruiting Desk"
+  },
+  {
+    company: "Contec, Inc. Manufacturing",
+    location: "Spartanburg, SC",
+    region: "spartanburg",
+    industries: ["Cleanroom Manufacturing", "Packaging", "Precision Assembly"],
+    roles: ["Cleanroom Operator", "Packaging Technician", "Inventory Specialist"],
+    payRate: "$17.50 – $21.00 / hr",
+    shift: "Day Shift (7:00 AM – 3:30 PM)",
+    careersUrl: "https://contecinc.com/careers",
+    felonyPolicy: "Values commitment, attention to detail, and accountability.",
+    benefits: "Clean modern work environment, comprehensive benefits package",
+    immediateContact: "Contec Spartanburg HR"
+  },
+  {
+    company: "BMW Tier-1 Automotive Assembly Partners (MAU / Magna)",
+    location: "Spartanburg & Greer, SC",
+    region: "spartanburg",
+    industries: ["Automotive Manufacturing", "Assembly", "Forklift"],
+    roles: ["Automotive Assembly Associate", "Logistics Tugger Driver", "Sub-Assembly Tech"],
+    payRate: "$19.50 – $25.00 / hr",
+    shift: "Day Shift (6:30 AM – 3:00 PM)",
+    careersUrl: "https://www.mau.com/bmw",
+    felonyPolicy: "Fair-chance employer with pathways into permanent automotive manufacturing.",
+    benefits: "Overtime pay, comprehensive medical/dental, paid holidays",
+    immediateContact: "MAU Greer/Spartanburg Recruiting Center • (864) 555-0155"
+  },
   {
     company: "Upstate Precision Manufacturing",
     location: "Greenville & Greer, SC",
@@ -395,19 +486,6 @@ const SC_FAIR_CHANCE_EMPLOYERS = [
     felonyPolicy: "Fair-chance partner with local re-entry initiatives.",
     benefits: "401(k) match, medical/vision/dental, on-the-job machine training",
     immediateContact: "Upstate Manufacturing Recruiter • (864) 555-0164"
-  },
-  {
-    company: "Piedmont Distribution & Cold Storage",
-    location: "Spartanburg & Duncan, SC",
-    region: "greenville",
-    industries: ["Logistics", "Cold Storage", "Forklift"],
-    roles: ["Stand-Up Forklift Driver", "Receiving Clerk", "Freight Handler"],
-    payRate: "$18.00 – $22.50 / hr",
-    shift: "Day Shift (6:00 AM – 2:30 PM)",
-    careersUrl: "https://www.indeed.com/jobs?q=forklift+distribution&l=Spartanburg%2C+SC",
-    felonyPolicy: "Second-Chance Employer. Drug screen & identity verification required.",
-    benefits: "Freezer suits/thermal PPE provided, annual safety bonus",
-    immediateContact: "Piedmont Distribution HR • (864) 555-0182"
   },
   {
     company: "Foothills Structural Steel & Welding",

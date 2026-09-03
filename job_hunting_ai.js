@@ -41,22 +41,49 @@ async function matchJobsWithAi(criteria = {}, participantProfile = {}) {
         }
     });
 
-    // Add verified regional fair-chance employers
+    // Add verified regional fair-chance employers across SC (Charleston, Columbia, Spartanburg/Upstate)
     SC_FAIR_CHANCE_EMPLOYERS.forEach(e => {
         const comp = (e.company || '').trim();
         if (comp.toLowerCase().includes('turn90') || comp.toLowerCase().includes('turn ninety')) return;
-        const key = `${comp.toLowerCase()}_${(e.typicalRoles || '').toLowerCase()}`;
-        if (!seen.has(key)) {
-            seen.add(key);
-            allPool.push({
-                company: comp,
-                jobTitle: e.typicalRoles ? e.typicalRoles.split(',')[0].trim() : 'Team Member',
-                location: e.location || 'Charleston, SC',
-                payRate: e.startingPay || '$17.00 - $22.00 / hr',
-                description: `Second-chance fair employer in ${e.industry || 'Industry'}. Bus accessible: ${e.busAccessible ? 'Yes (CARTA / Regional transit)' : 'Personal transportation recommended'}.`,
-                careersUrl: e.careersUrl || 'https://www.google.com/search?q=' + encodeURIComponent(`${comp} careers`)
-            });
+        const roleList = Array.isArray(e.roles) ? e.roles : (e.typicalRoles ? [e.typicalRoles] : ['Specialist']);
+        
+        roleList.forEach(role => {
+            const key = `${comp.toLowerCase()}_${role.toLowerCase()}`;
+            if (!seen.has(key)) {
+                seen.add(key);
+                allPool.push({
+                    company: comp,
+                    jobTitle: role,
+                    location: e.location || 'South Carolina',
+                    payRate: e.payRate || '$18.00 – $23.00 / hr',
+                    description: `Second-chance fair employer in ${e.industries ? e.industries.join(', ') : 'Industrial Operations'}. Shift: ${e.shift || 'Day Shift'}. ${e.felonyPolicy || ''}`,
+                    careersUrl: e.careersUrl || 'https://www.google.com/search?q=' + encodeURIComponent(`${comp} careers application`)
+                });
+            }
+        });
+    });
+
+    // Sort allPool to prioritize jobs matching the requested location (Columbia, Spartanburg, or Charleston)
+    const targetLoc = (criteria.location || participantProfile.location || '').toLowerCase();
+    allPool.sort((a, b) => {
+        const aLoc = (a.location || '').toLowerCase();
+        const bLoc = (b.location || '').toLowerCase();
+        
+        let aMatch = 0;
+        let bMatch = 0;
+
+        if (targetLoc.includes('columbia') || targetLoc.includes('midlands')) {
+            if (aLoc.includes('columbia') || aLoc.includes('cayce') || aLoc.includes('lexington') || aLoc.includes('midlands')) aMatch = 5;
+            if (bLoc.includes('columbia') || bLoc.includes('cayce') || bLoc.includes('lexington') || bLoc.includes('midlands')) bMatch = 5;
+        } else if (targetLoc.includes('spartanburg') || targetLoc.includes('greenville') || targetLoc.includes('upstate')) {
+            if (aLoc.includes('spartanburg') || aLoc.includes('duncan') || aLoc.includes('greer') || aLoc.includes('greenville') || aLoc.includes('upstate')) aMatch = 5;
+            if (bLoc.includes('spartanburg') || bLoc.includes('duncan') || bLoc.includes('greer') || bLoc.includes('greenville') || bLoc.includes('upstate')) bMatch = 5;
+        } else if (targetLoc.includes('charleston')) {
+            if (aLoc.includes('charleston') || aLoc.includes('summerville') || aLoc.includes('berkeley')) aMatch = 5;
+            if (bLoc.includes('charleston') || bLoc.includes('summerville') || bLoc.includes('berkeley')) bMatch = 5;
         }
+
+        return bMatch - aMatch;
     });
 
     // If Gemini is available, perform intelligent ranking & tailoring
@@ -67,24 +94,29 @@ async function matchJobsWithAi(criteria = {}, participantProfile = {}) {
                 generationConfig: { responseMimeType: "application/json" }
             });
 
-            // Sample top candidate pool up to 30 jobs to fit context
+            // Sample top candidate pool up to 35 jobs (prioritizing target location)
             const candidateList = allPool.slice(0, 35);
 
             const prompt = `
 You are the "Turn90 Job Hunting AI", an expert second-chance workforce specialist and executive career coach for individuals re-entering the workforce in South Carolina.
+You support participants across all Turn90 program hubs: Charleston, Columbia (Midlands), and Spartanburg / Greenville (Upstate).
 
 CRITICAL RULES:
 1. NEVER recommend Turn90 as an employer (participants are already in Turn90; they need outside employer placements).
-2. Prioritize second-chance friendly employers, fair-chance policies, and high-wage trajectory trades (manufacturing, logistics, trade apprenticeships, technical assembly).
-3. If transit constraint is specified (e.g. CARTA bus, no personal car), flag whether jobs are transit accessible.
-4. If a curfew constraint is specified (e.g. 8 PM probation curfew), ensure shift compatibility.
+2. Prioritize jobs located in or near the participant's requested location: "${criteria.location || participantProfile.location || 'South Carolina'}".
+3. Prioritize second-chance friendly employers, fair-chance policies, and high-wage trajectory trades (manufacturing, logistics, trade apprenticeships, technical assembly).
+4. For Transit:
+   - In Charleston: evaluate transit via CARTA bus routes.
+   - In Columbia: evaluate transit via The COMET (Central Midlands Regional Transit) routes.
+   - In Spartanburg / Greenville: evaluate transit via SPARTA (Spartanburg Transit) or Greenlink bus routes.
+5. If a curfew constraint is specified (e.g. 8 PM probation curfew), ensure shift compatibility.
 
 Participant Context:
 - Target Search Query / Interests: "${criteria.query || 'Manufacturing, warehouse, trades, or logistics'}"
-- Location: "${criteria.location || participantProfile.location || 'Charleston, SC'}"
+- Location: "${criteria.location || participantProfile.location || 'South Carolina'}"
 - Trade Skills / Certifications: "${criteria.skills || participantProfile.skills || 'OSHA 10, Forklift Certified, Jobsite Safety, Hand Tools'}"
 - Desired Minimum Pay: "${criteria.minPay || '$18.00 / hr'}"
-- Transportation Status: "${criteria.transit || participantProfile.transportation_status || 'CARTA Bus Line'}"
+- Transportation Status: "${criteria.transit || participantProfile.transportation_status || 'Public Transit Accessible'}"
 - Legal / Curfew Constraints: "${criteria.curfew || 'Standard daytime shift preferred; avoid overnight shifts if probation restricts'}"
 
 Available Openings Pool:
