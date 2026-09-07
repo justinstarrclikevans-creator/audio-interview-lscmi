@@ -1910,6 +1910,23 @@
                 <button class="btn btn-outline" onclick="closeModal('modal-weekly-points')">Close</button>
             </div>
         </div>
+    <!-- Modal: Program Manager CBT Submissions Review -->
+    <div id="modal-cbt-review" class="modal hidden">
+        <div class="modal-content modal-lg" style="max-width: 900px;">
+            <div class="modal-header">
+                <div>
+                    <h3 id="cbt-review-modal-title" style="margin: 0;">🧠 Turn90 CBT Curriculum & Worksheets Review</h3>
+                    <p id="cbt-review-modal-subtitle" style="margin: 3px 0 0 0; font-size: 12px; color: var(--slate);"></p>
+                </div>
+                <button class="modal-close" onclick="closeModal('modal-cbt-review')">&times;</button>
+            </div>
+            <div id="cbt-review-modal-body" style="margin-top: 14px; max-height: 520px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px;">
+                <!-- Populated dynamically -->
+            </div>
+            <div class="modal-footer mt-4">
+                <button class="btn btn-outline" onclick="closeModal('modal-cbt-review')">Close</button>
+            </div>
+        </div>
     </div>
 
     <script src="app.js"></script>

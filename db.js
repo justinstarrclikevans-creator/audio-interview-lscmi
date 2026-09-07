@@ -264,6 +264,20 @@ CREATE TABLE IF NOT EXISTS time_off_requests (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+-- Participant CBT Module Worksheets & Interactive Submissions
+CREATE TABLE IF NOT EXISTS cbt_submissions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    module_number INTEGER NOT NULL,
+    tool_key TEXT NOT NULL,
+    responses_json TEXT NOT NULL,
+    status TEXT DEFAULT 'completed',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE(user_id, module_number, tool_key)
+);
 `);
 
 // Safe column migrations for existing databases

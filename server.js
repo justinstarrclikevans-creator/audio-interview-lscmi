@@ -359,8 +359,54 @@ app.get('/api/training/cbt-modules', (req, res) => {
     res.json(cbtModules);
 });
 
-app.get('/api/training/trades-tracks', (req, res) => {
-    res.json(T90_TRADE_TRACKS);
+// Get Participant CBT Worksheets & Submissions (Self or PM Review)
+app.get('/api/training/cbt-submissions', authenticateToken, (req, res) => {
+    let targetUserId = req.user.id;
+    if (req.query.userId && (req.user.role === 'program_manager' || req.user.role === 'admin')) {
+        targetUserId = parseInt(req.query.userId);
+    }
+
+    const rows = db.prepare('SELECT * FROM cbt_submissions WHERE user_id = ?').all(targetUserId);
+    const submissions = {};
+    rows.forEach(r => {
+        try {
+            submissions[`module_${r.module_number}_${r.tool_key}`] = {
+                id: r.id,
+                moduleNumber: r.module_number,
+                toolKey: r.tool_key,
+                responses: JSON.parse(r.responses_json),
+                status: r.status,
+                updatedAt: r.updated_at
+            };
+        } catch(e) {}
+    });
+    res.json(submissions);
+});
+
+// Save or Update a CBT Worksheet Submission
+app.post('/api/training/cbt-submit', authenticateToken, (req, res) => {
+    const userId = req.user.id;
+    const { moduleNumber, toolKey, responses } = req.body;
+    if (!moduleNumber || !toolKey || !responses) {
+        return res.status(400).json({ error: 'moduleNumber, toolKey, and responses required.' });
+    }
+
+    db.prepare(`
+        INSERT INTO cbt_submissions (user_id, module_number, tool_key, responses_json, status, updated_at)
+        VALUES (?, ?, ?, ?, 'completed', CURRENT_TIMESTAMP)
+        ON CONFLICT(user_id, module_number, tool_key) DO UPDATE SET
+            responses_json = excluded.responses_json,
+            status = 'completed',
+            updated_at = CURRENT_TIMESTAMP
+    `).run(userId, moduleNumber, toolKey, JSON.stringify(responses));
+
+    // Auto-advance Gate 2 criterion for CBT completion if first shift
+    db.prepare(`
+        UPDATE gate_criteria SET status = 'green', pm_notes = 'Completed CBT Worksheet in Portal'
+        WHERE user_id = ? AND criterion_key = 'w2_cbt_mastery'
+    `).run(userId);
+
+    res.json({ message: 'CBT worksheet saved successfully!', moduleNumber, toolKey });
 });
 
 app.get('/api/jobs', (req, res) => {

@@ -680,41 +680,226 @@ async function handleSaveResume(e) {
     }
 }
 
+let cachedCbtModules = [];
+let cachedCbtSubmissions = {};
+
 async function loadCbtModules() {
     const rnContainer = document.getElementById('cbt-accordion-container');
     const fsContainer = document.getElementById('fs-cbt-accordion-container');
     if (!rnContainer && !fsContainer) return;
 
     try {
-        const cbtRes = await fetch('/api/training/cbt-modules');
-        const cbtModules = await cbtRes.json();
+        const token = localStorage.getItem('fs_token');
+        const fetchPromises = [fetch('/api/training/cbt-modules')];
+        if (token) {
+            fetchPromises.push(fetch('/api/training/cbt-submissions', { headers: { 'Authorization': `Bearer ${token}` } }));
+        }
 
-        const html = `
-            <div style="margin-bottom: 20px;">
-                <div style="display: flex; flex-direction: column; gap: 12px;">
-                    ${cbtModules.map((m, idx) => `
-                        <div class="module-card" style="border-left: 4px solid var(--accent); background: white; border-radius: 8px; padding: 16px; border: 1px solid var(--border);">
-                            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
-                                <h3 style="margin: 0; color: var(--primary); font-size: 15px;">🧠 ${m.title}</h3>
-                                <span class="badge badge-pending" style="font-size: 11px;">Module ${idx + 1}</span>
-                            </div>
-                            <p style="color: var(--slate); font-size: 13px; margin: 4px 0 10px 0;">${m.description}</p>
-                            <div style="background: #f8fafc; padding: 10px 12px; border-radius: 6px; border-left: 3px solid var(--primary); font-size: 12.5px;">
-                                <strong style="color: var(--primary);">Key Takeaway:</strong> ${m.keyTakeaway}
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        `;
+        const responses = await Promise.all(fetchPromises);
+        cachedCbtModules = await responses[0].json();
+        if (responses[1]) {
+            cachedCbtSubmissions = await responses[1].json();
+        } else {
+            cachedCbtSubmissions = {};
+        }
 
-        if (rnContainer) rnContainer.innerHTML = html;
-        if (fsContainer) fsContainer.innerHTML = html;
+        if (fsContainer) {
+            renderCbtModulesHtml(fsContainer, 'fs', cachedCbtModules, cachedCbtSubmissions);
+        }
+        if (rnContainer) {
+            renderCbtModulesHtml(rnContainer, 'rn', cachedCbtModules, cachedCbtSubmissions);
+        }
     } catch (e) {
         console.error('Failed to load CBT modules:', e);
         if (rnContainer) rnContainer.innerHTML = '<p class="text-slate">Unable to load CBT modules.</p>';
         if (fsContainer) fsContainer.innerHTML = '<p class="text-slate">Unable to load CBT modules.</p>';
     }
+}
+
+function toggleCbtModule(prefix, moduleNum) {
+    const body = document.getElementById(`${prefix}-cbt-body-${moduleNum}`);
+    const btn = document.getElementById(`${prefix}-cbt-btn-${moduleNum}`);
+    if (!body) return;
+    const isHidden = body.classList.contains('hidden');
+    body.classList.toggle('hidden', !isHidden);
+    if (btn) {
+        btn.innerText = isHidden ? '▲ Close Lesson & Worksheet' : '▼ Open Lesson & Worksheet';
+    }
+}
+
+async function handleSaveCbtWorksheet(prefix, moduleNum, toolKey) {
+    const form = document.getElementById(`${prefix}-cbt-form-${moduleNum}`);
+    const statusEl = document.getElementById(`${prefix}-cbt-status-${moduleNum}`);
+    if (!form) return;
+
+    const token = localStorage.getItem('fs_token');
+    if (!token) return alert('Please log in to save your worksheet.');
+
+    const formData = new FormData(form);
+    const responses = {};
+    for (let [key, val] of formData.entries()) {
+        responses[key] = val;
+    }
+
+    const hasContent = Object.values(responses).some(v => v && v.trim().length > 0);
+    if (!hasContent) {
+        return alert('Please write your responses before saving.');
+    }
+
+    if (statusEl) statusEl.innerHTML = '<span style="color: var(--primary); font-size: 12px;">Saving responses to your Turn90 file...</span>';
+
+    try {
+        const res = await fetch('/api/training/cbt-submit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ moduleNumber: moduleNum, toolKey, responses })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to save worksheet');
+
+        if (statusEl) {
+            statusEl.innerHTML = '<span style="color: var(--success); font-weight: bold; font-size: 12px;">✅ Worksheet saved to your Turn90 file!</span>';
+        }
+
+        const badge = document.getElementById(`${prefix}-cbt-badge-${moduleNum}`);
+        if (badge) {
+            badge.className = 'badge badge-green';
+            badge.innerText = '✅ Worksheet Completed';
+        }
+
+        cachedCbtSubmissions[`module_${moduleNum}_${toolKey}`] = {
+            moduleNumber: moduleNum,
+            toolKey,
+            responses,
+            status: 'completed',
+            updatedAt: new Date().toISOString()
+        };
+
+        alert('Success: Your CBT worksheet responses have been recorded and saved.');
+    } catch(e) {
+        if (statusEl) statusEl.innerHTML = `<span style="color: var(--danger); font-size: 12px;">Error: ${e.message}</span>`;
+        alert('Save Error: ' + e.message);
+    }
+}
+
+function renderCbtModulesHtml(containerEl, prefix, cbtModules, submissions) {
+    if (!containerEl) return;
+
+    containerEl.innerHTML = `
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+            ${cbtModules.map(m => {
+                const subKey = `module_${m.number}_${m.tool ? m.tool.key : ''}`;
+                const sub = submissions[subKey];
+                const isCompleted = sub && sub.responses && Object.values(sub.responses).some(v => v && v.trim().length > 0);
+                const savedResponses = (sub && sub.responses) || {};
+
+                return `
+                    <div class="module-card" style="background: white; border-radius: 8px; border: 1px solid var(--border); border-left: 5px solid var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden;">
+                        <!-- Header Bar (Clickable) -->
+                        <div style="padding: 16px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: #ffffff;" onclick="toggleCbtModule('${prefix}', ${m.number})">
+                            <div style="flex: 1; padding-right: 14px;">
+                                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px;">
+                                    <span class="badge badge-primary" style="font-size: 11px;">Module ${m.number}</span>
+                                    <span class="badge badge-pending" style="font-size: 11px;">${m.badge}</span>
+                                    <span id="${prefix}-cbt-badge-${m.number}" class="badge ${isCompleted ? 'badge-green' : 'badge-outline'}" style="font-size: 11px;">
+                                        ${isCompleted ? '✅ Worksheet Completed' : '📝 Incomplete / Not Started'}
+                                    </span>
+                                </div>
+                                <h3 style="margin: 0; color: var(--primary); font-size: 16px; font-weight: 700;">${m.title}</h3>
+                                <p style="margin: 4px 0 0 0; color: var(--slate); font-size: 13px;">${m.description}</p>
+                            </div>
+                            <div>
+                                <button type="button" id="${prefix}-cbt-btn-${m.number}" class="btn btn-outline" style="font-size: 12px; padding: 6px 14px; white-space: nowrap;">
+                                    ▼ Open Lesson & Worksheet
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Collapsible Body Content -->
+                        <div id="${prefix}-cbt-body-${m.number}" class="hidden" style="border-top: 1px solid var(--border); background: #f8fafc; padding: 20px;">
+                            <!-- Core Principle Box -->
+                            <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-left: 4px solid var(--primary); padding: 12px 16px; border-radius: 6px; margin-bottom: 16px;">
+                                <strong style="color: #1e40af; font-size: 13px;">💡 Core Cognitive Principle:</strong>
+                                <div style="font-size: 13px; color: #1e293b; margin-top: 3px; font-weight: 500;">${m.keyTakeaway}</div>
+                            </div>
+
+                            <!-- Overview / Clinical Context -->
+                            <div style="background: white; border: 1px solid var(--border); border-radius: 6px; padding: 16px; margin-bottom: 16px;">
+                                <h4 style="margin: 0 0 8px 0; color: var(--primary); font-size: 14px;">📘 Module Overview & Purpose</h4>
+                                <p style="margin: 0; font-size: 13px; color: #334155; line-height: 1.5;">${m.overview}</p>
+                            </div>
+
+                            <!-- Lesson Sections -->
+                            <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+                                ${m.lessons.map(l => `
+                                    <div style="background: white; border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px;">
+                                        <h5 style="margin: 0 0 6px 0; color: #0f172a; font-size: 13.5px; font-weight: 700;">${l.title}</h5>
+                                        <div style="font-size: 12.5px; color: #334155; white-space: pre-line; line-height: 1.5;">${l.content}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+
+                            <!-- Interactive Worksheet Tool -->
+                            ${m.tool ? `
+                                <div style="background: white; border: 2px solid var(--accent); border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
+                                    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
+                                        <h4 style="margin: 0; color: var(--primary); font-size: 15px;">✍️ ${m.tool.name}</h4>
+                                        <span class="badge badge-accent" style="font-size: 11px;">Turn90 Interactive Tool</span>
+                                    </div>
+                                    <p style="font-size: 12.5px; color: var(--slate); margin: 0 0 16px 0;">${m.tool.description}</p>
+
+                                    <form id="${prefix}-cbt-form-${m.number}">
+                                        <div style="display: flex; flex-direction: column; gap: 14px;">
+                                            ${m.tool.fields.map(f => {
+                                                const val = savedResponses[f.id] || '';
+                                                if (f.type === 'select') {
+                                                    return `
+                                                        <div class="form-group">
+                                                            <label style="font-size: 12.5px; font-weight: 600; color: #1e293b;">${f.label}</label>
+                                                            <select name="${f.id}" class="form-control" style="font-size: 12.5px; margin-top: 4px;">
+                                                                <option value="">-- Select --</option>
+                                                                ${f.options.map(opt => `<option value="${opt}" ${val === opt ? 'selected' : ''}>${opt}</option>`).join('')}
+                                                            </select>
+                                                        </div>
+                                                    `;
+                                                } else if (f.type === 'textarea') {
+                                                    return `
+                                                        <div class="form-group">
+                                                            <label style="font-size: 12.5px; font-weight: 600; color: #1e293b;">${f.label}</label>
+                                                            <textarea name="${f.id}" rows="3" class="form-control" placeholder="${f.placeholder || ''}" style="font-size: 12.5px; margin-top: 4px;">${val}</textarea>
+                                                        </div>
+                                                    `;
+                                                } else {
+                                                    return `
+                                                        <div class="form-group">
+                                                            <label style="font-size: 12.5px; font-weight: 600; color: #1e293b;">${f.label}</label>
+                                                            <input type="text" name="${f.id}" value="${val.replace(/"/g, '&quot;')}" class="form-control" placeholder="${f.placeholder || ''}" style="font-size: 12.5px; margin-top: 4px;">
+                                                        </div>
+                                                    `;
+                                                }
+                                            }).join('')}
+                                        </div>
+
+                                        <div style="margin-top: 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                                            <button type="button" class="btn btn-primary" style="padding: 8px 18px; font-size: 13px;" onclick="handleSaveCbtWorksheet('${prefix}', ${m.number}, '${m.tool.key}')">
+                                                💾 Save Worksheet Responses
+                                            </button>
+                                            <div id="${prefix}-cbt-status-${m.number}">
+                                                ${isCompleted ? `<span style="color: var(--success); font-size: 12px; font-weight: 600;">✅ Saved to your Turn90 file (${new Date(sub.updatedAt).toLocaleDateString()})</span>` : ''}
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('')}
+        </div>
+    `;
 }
 
 async function loadLockerDocs() {
@@ -862,6 +1047,9 @@ async function loadCaseload() {
                     <div style="display: flex; gap: 4px; flex-wrap: wrap;">
                         <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px;" onclick="openCaseReviewModal(${p.id}, '${p.name.replace(/'/g, "\\'")}')" title="Weekly Case Review">
                             📋 Review
+                        </button>
+                        <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: #4338ca; border-color: #c7d2fe;" onclick="openPmCbtReviewModal(${p.id}, '${p.name.replace(/'/g, "\\'")}')" title="View CBT Worksheets & Tools">
+                            🧠 CBT
                         </button>
                         <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: #4338ca; border-color: #c7d2fe;" onclick="promptSwitchTrack(${p.id}, '${p.name.replace(/'/g, "\\'")}', '${p.track}')" title="Switch Track">
                             🔄 Track
@@ -3315,6 +3503,7 @@ async function openCaseNotesModal(userId, name, email, track) {
         extraEl.innerHTML = `
             <button class="btn btn-outline" style="font-size: 11.5px;" onclick="openParticipantLinkedReentryPlan(${userId})">📄 View Fresh Start Guide</button>
             <button class="btn btn-outline" style="font-size: 11.5px;" onclick="openWeeklyPointsModal(${userId}, '${name.replace(/'/g, "\\'")}')">📊 View Weekly Points</button>
+            <button class="btn btn-outline" style="font-size: 11.5px; color: #4338ca; border-color: #c7d2fe;" onclick="openPmCbtReviewModal(${userId}, '${name.replace(/'/g, "\\'")}')">🧠 View CBT Worksheets</button>
         `;
     }
 
@@ -3683,5 +3872,75 @@ async function openWeeklyPointsModal(userId, name) {
         bodyEl.innerHTML = html;
     } catch (err) {
         bodyEl.innerHTML = `<p style="color: var(--danger);">Error loading weekly points: ${err.message}</p>`;
+    }
+}
+
+// -------------------------------------------------------------
+// PROGRAM MANAGER CBT WORKSHEETS & RESPONSES REVIEW MODAL
+// -------------------------------------------------------------
+async function openPmCbtReviewModal(userId, name) {
+    const titleEl = document.getElementById('cbt-review-modal-title');
+    const subtitleEl = document.getElementById('cbt-review-modal-subtitle');
+    const bodyEl = document.getElementById('cbt-review-modal-body');
+
+    if (titleEl) titleEl.innerText = `🧠 CBT Curriculum & Worksheets: ${name}`;
+    if (subtitleEl) subtitleEl.innerText = `Participant File Review (DMT, STAC, SODAS, Cognitive Triangle, Relapse Prevention)`;
+    if (bodyEl) bodyEl.innerHTML = '<p class="text-slate">Loading participant CBT responses...</p>';
+
+    openModal('modal-cbt-review');
+
+    const token = localStorage.getItem('fs_token');
+    try {
+        const [modulesRes, subsRes] = await Promise.all([
+            fetch('/api/training/cbt-modules'),
+            fetch(`/api/training/cbt-submissions?userId=${userId}`, { headers: { 'Authorization': `Bearer ${token}` } })
+        ]);
+        const modules = await modulesRes.json();
+        const submissions = await subsRes.json();
+
+        let html = '';
+        modules.forEach(m => {
+            const subKey = `module_${m.number}_${m.tool ? m.tool.key : ''}`;
+            const sub = submissions[subKey];
+            const isCompleted = sub && sub.responses && Object.values(sub.responses).some(v => v && v.trim().length > 0);
+
+            html += `
+                <div style="background: white; border: 1px solid var(--border); border-left: 5px solid ${isCompleted ? 'var(--success)' : '#cbd5e1'}; border-radius: 8px; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+                    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; flex-wrap: wrap; gap: 8px;">
+                        <div>
+                            <span class="badge badge-primary" style="font-size: 11px;">Module ${m.number}</span>
+                            <span class="badge badge-pending" style="font-size: 11px; margin-left: 4px;">${m.badge}</span>
+                            <h4 style="margin: 6px 0 0 0; color: var(--primary); font-size: 15px;">${m.title}</h4>
+                        </div>
+                        <span class="badge ${isCompleted ? 'badge-green' : 'badge-outline'}" style="font-size: 11.5px;">
+                            ${isCompleted ? '✅ Completed by Participant' : '📝 No Responses Yet'}
+                        </span>
+                    </div>
+                    <div style="font-size: 12px; color: var(--slate); margin-bottom: 12px;"><strong>Tool:</strong> ${m.tool ? m.tool.name : 'Module Review'}</div>
+
+                    ${isCompleted ? `
+                        <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; padding: 14px;">
+                            ${m.tool.fields.map(f => `
+                                <div style="margin-bottom: 12px;">
+                                    <div style="font-size: 11.5px; font-weight: 700; color: #334155; text-transform: uppercase;">${f.label}</div>
+                                    <div style="font-size: 13px; color: #0f172a; white-space: pre-wrap; background: white; border: 1px solid #e2e8f0; border-radius: 4px; padding: 8px 12px; margin-top: 4px; line-height: 1.4;">${sub.responses[f.id] || '<em style="color: var(--slate);">No response entered</em>'}</div>
+                                </div>
+                            `).join('')}
+                            <div style="font-size: 11px; color: var(--slate); text-align: right; margin-top: 8px; border-top: 1px dashed var(--border); padding-top: 6px;">
+                                Completed on file: ${new Date(sub.updatedAt).toLocaleString()}
+                            </div>
+                        </div>
+                    ` : `
+                        <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 6px; padding: 14px; text-align: center; color: var(--slate); font-size: 12.5px;">
+                            Participant has not yet submitted responses for ${m.tool ? m.tool.name : 'this module'}.
+                        </div>
+                    `}
+                </div>
+            `;
+        });
+
+        bodyEl.innerHTML = html;
+    } catch(e) {
+        bodyEl.innerHTML = `<p style="color: var(--danger);">Error loading CBT worksheets: ${e.message}</p>`;
     }
 }
