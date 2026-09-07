@@ -1378,12 +1378,42 @@ async function openW9ViewModal(userId) {
     openModal('modal-w9-view');
 
     try {
-        const res = await fetch(`/api/participant/w9-details/${userId}`, {
+        const targetId = userId || (currentUser ? currentUser.id : null);
+        if (!targetId) {
+            body.innerHTML = '<p class="text-slate" style="padding: 16px;">Please select a participant to view their Form W-9.</p>';
+            return;
+        }
+
+        const res = await fetch(`/api/participant/w9-details/${targetId}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
+
+        if (!res.ok) {
+            let errMsg = `Server returned status ${res.status}`;
+            try {
+                const errData = await res.json();
+                errMsg = errData.error || errData.message || errMsg;
+            } catch (_) {
+                const text = await res.text();
+                errMsg = text.includes('<!DOCTYPE') ? 'Service endpoint returned HTML instead of JSON. Please ensure the backend server is running.' : (text.slice(0, 100) || errMsg);
+            }
+            throw new Error(errMsg);
+        }
+
         const data = await res.json();
         if (!data.w9Data) {
-            body.innerHTML = `<p class="text-slate">No digital W-9 form on file for ${data.user ? data.user.name : 'this participant'}.</p>`;
+            body.innerHTML = `
+                <div style="text-align: center; padding: 24px;">
+                    <div style="font-size: 36px; margin-bottom: 8px;">📄</div>
+                    <h4>Form W-9 Not Yet Submitted</h4>
+                    <p class="text-slate" style="font-size: 13px; max-width: 420px; margin: 0 auto 16px auto;">
+                        ${data.user ? data.user.name : 'This participant'} has not completed their digital W-9 tax certification yet.
+                    </p>
+                    ${currentUser && currentUser.role === 'participant' ? `
+                        <button class="btn btn-primary" onclick="closeModal('modal-w9-view'); openModal('modal-w9-submit');">Complete W-9 Now</button>
+                    ` : ''}
+                </div>
+            `;
             return;
         }
 
@@ -1644,6 +1674,17 @@ async function loadPmDrafts() {
                         </div>
 
                         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            ${!hasDraft ? `
+                                <button class="btn btn-primary" id="btn-gen-draft-${clientId}" style="font-size: 12px; padding: 6px 14px; background: #0284c7; border-color: #0284c7;" onclick="triggerGenerateAiDraft('${clientId}', '${cleanName}')">
+                                    ⚡ Generate AI Scoring Review
+                                </button>
+                                ${files.some(f => f.includes('transcript.txt')) ? `
+                                    <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="previewDocument('${files.find(f => f.includes('transcript.txt'))}')">
+                                        📝 View Transcript
+                                    </button>
+                                ` : ''}
+                            ` : ''}
+
                             ${draftFile ? `
                                 <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="previewDocument('${draftFile}')">
                                     👁️ View Draft Scoring Form
@@ -1678,6 +1719,86 @@ async function loadPmDrafts() {
         loadFacilitationEvaluations();
     } catch (e) {
         list.innerHTML = '<p>Unable to load drafts: ' + e.message + '</p>';
+    }
+}
+
+async function triggerGenerateAiDraft(clientId, cleanName) {
+    const btn = document.getElementById(`btn-gen-draft-${clientId}`);
+    if (btn) {
+        btn.disabled = true;
+        btn.innerText = '⏳ Generating Phase 1 Scoring with AI...';
+    }
+
+    try {
+        const res = await fetch('/api/interviews/generate-draft', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ clientId, clientName: cleanName })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to generate scoring review.');
+
+        alert(data.message || 'Scoring draft generated successfully!');
+        loadPmDrafts();
+    } catch(err) {
+        alert('AI Scoring Error: ' + err.message);
+        if (btn) {
+            btn.disabled = false;
+            btn.innerText = '⚡ Retry AI Scoring Review';
+        }
+    }
+}
+
+function openManualInterviewModal() {
+    document.getElementById('form-manual-interview').reset();
+    document.getElementById('man-interview-status').innerText = '';
+    const btn = document.getElementById('btn-man-interview-submit');
+    if (btn) {
+        btn.disabled = false;
+        btn.innerText = '🚀 Generate AI Assessment & Scoring';
+    }
+    openModal('modal-manual-interview');
+}
+
+async function handleManualInterviewSubmit(e) {
+    e.preventDefault();
+    const name = document.getElementById('man-interview-name').value.trim();
+    const location = document.getElementById('man-interview-location').value;
+    const audioInput = document.getElementById('man-interview-audio');
+    const transcript = document.getElementById('man-interview-transcript').value.trim();
+    const btn = document.getElementById('btn-man-interview-submit');
+    const statusBox = document.getElementById('man-interview-status');
+
+    if (!name) return alert('Please enter the participant name.');
+
+    const formData = new FormData();
+    formData.append('participantName', name);
+    formData.append('participantLocation', location);
+    formData.append('transcript', transcript);
+    if (audioInput.files && audioInput.files.length > 0) {
+        formData.append('audio', audioInput.files[0]);
+    }
+
+    btn.disabled = true;
+    btn.innerText = '⏳ Processing Interview & Generating AI Scoring...';
+    statusBox.innerText = 'Extracting responses, formatting LS/CMI interview guide, and generating draft scores...';
+
+    try {
+        const res = await fetch('/api/interviews/manual-entry', {
+            method: 'POST',
+            body: formData
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Upload failed.');
+
+        alert(data.message || `Interview saved for ${name}!`);
+        closeModal('modal-manual-interview');
+        loadPmDrafts();
+    } catch(err) {
+        alert('Submission failed: ' + err.message);
+        btn.disabled = false;
+        btn.innerText = '🚀 Retry AI Assessment & Scoring';
+        statusBox.innerText = 'Error: ' + err.message;
     }
 }
 

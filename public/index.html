@@ -692,8 +692,13 @@
 
             <!-- Draft Scoring Reviews Section -->
             <div class="section-card mt-8">
-                <h2>Human-in-the-Loop Scoring Reviews (Phase 1 &rarr; Phase 2)</h2>
-                <p class="mb-4">Review AI-generated draft scoring forms, attach criminal history records, provide supervisor feedback, and produce final clinical briefs & CSV imports.</p>
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 12px;">
+                    <div>
+                        <h2 style="margin: 0;">Human-in-the-Loop Scoring Reviews (Phase 1 &rarr; Phase 2)</h2>
+                        <p style="margin: 4px 0 0 0;">Review AI-generated draft scoring forms, attach criminal history records, provide supervisor feedback, and produce final clinical briefs & CSV imports.</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openManualInterviewModal()">🎙️ + Add / Import Interview</button>
+                </div>
                 <div id="pm-drafts-list">
                     <!-- Loaded dynamically -->
                 </div>
@@ -1371,6 +1376,44 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary btn-block mt-4" id="btn-submit-phase2">Approve & Generate Clinical Documents</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Manual / External Interview Entry Modal (for Lawrence, Isiah, etc.) -->
+    <div id="modal-manual-interview" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🎙️ Add / Import Intake Interview</h3>
+                <button class="modal-close" onclick="closeModal('modal-manual-interview')">&times;</button>
+            </div>
+            <form id="form-manual-interview" onsubmit="handleManualInterviewSubmit(event)">
+                <div class="form-group">
+                    <label>Participant Full Name <span class="text-danger">*</span></label>
+                    <input type="text" id="man-interview-name" required placeholder="e.g. Lawrence or Isaiah Pervue" class="form-control">
+                </div>
+                <div class="form-group mt-3">
+                    <label>Turn90 Center Location</label>
+                    <select id="man-interview-location" class="form-control">
+                        <option value="Charleston">Charleston</option>
+                        <option value="Columbia">Columbia</option>
+                        <option value="Spartanburg">Spartanburg</option>
+                    </select>
+                </div>
+                <div class="form-group mt-3">
+                    <label>Interview Audio Recording (Optional)</label>
+                    <input type="file" id="man-interview-audio" accept="audio/*,.webm,.mp3,.m4a,.wav" class="form-control">
+                    <small class="text-slate" style="display: block; margin-top: 4px; font-size: 11px;">Attach audio recording if available (.webm, .mp3, .m4a, .wav)</small>
+                </div>
+                <div class="form-group mt-3">
+                    <label>Interview Transcript / Notes</label>
+                    <textarea id="man-interview-transcript" rows="6" class="form-control" placeholder="Paste full interview transcript or intake conversation notes here. The AI will automatically extract responses for the 158-question LS/CMI Interview Guide and generate the Phase 1 Draft Scoring Form..."></textarea>
+                </div>
+                <div id="man-interview-status" class="mt-2 text-slate" style="font-size: 12px;"></div>
+                <div class="modal-footer mt-4">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('modal-manual-interview')">Cancel</button>
+                    <button type="submit" id="btn-man-interview-submit" class="btn btn-primary">🚀 Generate AI Assessment & Scoring</button>
+                </div>
             </form>
         </div>
     </div>
