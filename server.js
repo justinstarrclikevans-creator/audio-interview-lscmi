@@ -621,7 +621,7 @@ app.get('/api/participant/w9-details/:userId', authenticateToken, (req, res) => 
     }
 
     try {
-        const doc = db.prepare('SELECT * FROM documents WHERE user_id = ? AND doc_type = "w9" ORDER BY uploaded_at DESC LIMIT 1').get(targetId);
+        const doc = db.prepare("SELECT * FROM documents WHERE user_id = ? AND doc_type = 'w9' ORDER BY uploaded_at DESC LIMIT 1").get(targetId);
         const profile = db.prepare('SELECT w9_status FROM participant_profiles WHERE user_id = ?').get(targetId);
         const user = db.prepare('SELECT name, email, phone, location FROM users WHERE id = ?').get(targetId);
         
