@@ -1686,8 +1686,17 @@ async function loadPmDrafts() {
                             ` : ''}
 
                             ${draftFile ? `
+                                <button class="btn btn-primary" style="font-size: 12px; padding: 6px 14px; background: #4338ca; border-color: #4338ca;" onclick="previewScoringWithGuide('${clientId}', '${cleanName}')">
+                                    ⚖️ Dual Review: Scoring & Interview Guide
+                                </button>
                                 <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="previewDocument('${draftFile}')">
-                                    👁️ View Draft Scoring Form
+                                    📊 Scoring Form
+                                </button>
+                            ` : ''}
+
+                            ${files.some(f => f.includes('interview_guide.md')) ? `
+                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="previewDocument('${files.find(f => f.includes('interview_guide.md'))}')">
+                                    🎙️ Interview Guide
                                 </button>
                             ` : ''}
 
@@ -1805,6 +1814,12 @@ async function handleManualInterviewSubmit(e) {
 async function previewDocument(filename) {
     const title = document.getElementById('draft-viewer-title');
     const body = document.getElementById('draft-viewer-body');
+    const controls = document.getElementById('draft-viewer-controls');
+    const extraActions = document.getElementById('draft-viewer-extra-actions');
+    
+    if (controls) controls.innerHTML = '';
+    if (extraActions) extraActions.innerHTML = '';
+
     title.innerText = `Document Preview: ${filename}`;
     body.innerHTML = '<p>Loading document content...</p>';
     openModal('modal-draft-viewer');
@@ -1825,6 +1840,126 @@ async function previewDocument(filename) {
     }
 }
 
+// DUAL-VIEW PREVIEW FOR DRAFT SCORING & INTERVIEW GUIDE TOGETHER
+async function previewScoringWithGuide(clientId, cleanName) {
+    const title = document.getElementById('draft-viewer-title');
+    const body = document.getElementById('draft-viewer-body');
+    const controls = document.getElementById('draft-viewer-controls');
+    const extraActions = document.getElementById('draft-viewer-extra-actions');
+
+    title.innerText = `Dual Review: Draft Scoring & Interview Guide (${cleanName})`;
+    body.innerHTML = `
+        <div style="display: flex; justify-content: center; align-items: center; padding: 40px; color: var(--slate);">
+            <span>⏳ Loading scoring form and interview responses...</span>
+        </div>
+    `;
+
+    if (controls) {
+        controls.innerHTML = `
+            <button class="btn btn-primary" id="btn-toggle-draft-dual" style="padding: 4px 10px; font-size: 12px;" onclick="setDraftPreviewMode('dual')">⚖️ Side-by-Side</button>
+            <button class="btn btn-outline" id="btn-toggle-draft-scoring" style="padding: 4px 10px; font-size: 12px;" onclick="setDraftPreviewMode('scoring')">📊 Scoring Form</button>
+            <button class="btn btn-outline" id="btn-toggle-draft-guide" style="padding: 4px 10px; font-size: 12px;" onclick="setDraftPreviewMode('guide')">🎙️ Interview Guide</button>
+        `;
+    }
+
+    if (extraActions) {
+        extraActions.innerHTML = `
+            <button class="btn btn-primary" style="padding: 6px 14px; font-size: 12px;" onclick="closeModal('modal-draft-viewer'); openSupervisorReviewModal('${clientId}', '${cleanName}');">
+                ✍️ Proceed to Supervisor Approval (Phase 2)
+            </button>
+        `;
+    }
+
+    openModal('modal-draft-viewer');
+
+    // Retrieve files for this client
+    let scoringMarkdown = '';
+    let guideMarkdown = '';
+
+    const files = (currentInterviewsData && currentInterviewsData[clientId]) || [];
+    const scoringFileName = files.find(f => f.includes('draft_scoring_form.md')) || `${clientId}_draft_scoring_form.md`;
+    const guideFileName = files.find(f => f.includes('interview_guide.md')) || files.find(f => f.includes('transcript.txt')) || `${clientId}_interview_guide.md`;
+
+    try {
+        const [resScoring, resGuide] = await Promise.all([
+            fetch(`/api/file-content?file=${encodeURIComponent(scoringFileName)}`),
+            fetch(`/api/file-content?file=${encodeURIComponent(guideFileName)}`)
+        ]);
+
+        if (resScoring.ok) {
+            const dataS = await resScoring.json();
+            scoringMarkdown = typeof marked !== 'undefined' ? marked.parse(dataS.content) : dataS.content.replace(/\n/g, '<br>');
+        } else {
+            scoringMarkdown = '<p class="text-danger">Draft scoring form not found.</p>';
+        }
+
+        if (resGuide.ok) {
+            const dataG = await resGuide.json();
+            guideMarkdown = typeof marked !== 'undefined' ? marked.parse(dataG.content) : dataG.content.replace(/\n/g, '<br>');
+        } else {
+            guideMarkdown = '<p class="text-slate">Completed interview guide responses not found. You can view the raw transcript if available.</p>';
+        }
+
+        body.innerHTML = `
+            <div id="draft-dual-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; min-height: 60vh;">
+                <!-- Left: Draft Scoring Form -->
+                <div id="draft-box-scoring" style="background: white; border: 1px solid var(--border); border-radius: 8px; padding: 18px; max-height: 68vh; overflow-y: auto;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary); padding-bottom: 6px; margin-bottom: 12px;">
+                        <h4 style="margin: 0; color: var(--primary); font-size: 14px;">📊 Phase 1 Draft Scoring Form</h4>
+                        <span style="font-size: 11px; color: var(--slate);">LS/CMI 8 Domains & Subcomponents</span>
+                    </div>
+                    <div class="markdown-preview" style="font-size: 12.5px; line-height: 1.6; color: #1e293b;">
+                        ${scoringMarkdown}
+                    </div>
+                </div>
+
+                <!-- Right: Interview Guide Responses -->
+                <div id="draft-box-guide" style="background: white; border: 1px solid var(--border); border-radius: 8px; padding: 18px; max-height: 68vh; overflow-y: auto;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #b45309; padding-bottom: 6px; margin-bottom: 12px;">
+                        <h4 style="margin: 0; color: #b45309; font-size: 14px;">🎙️ Interview Guide (Responses & Direct Quotes)</h4>
+                        <span style="font-size: 11px; color: var(--slate);">158 Semi-Structured Responses</span>
+                    </div>
+                    <div class="markdown-preview" style="font-size: 12.5px; line-height: 1.6; color: #1e293b;">
+                        ${guideMarkdown}
+                    </div>
+                </div>
+            </div>
+        `;
+    } catch (err) {
+        body.innerHTML = '<p class="text-danger">Failed to load dual preview documents: ' + err.message + '</p>';
+    }
+}
+
+function setDraftPreviewMode(mode) {
+    const container = document.getElementById('draft-dual-container');
+    const boxScoring = document.getElementById('draft-box-scoring');
+    const boxGuide = document.getElementById('draft-box-guide');
+
+    const btnDual = document.getElementById('btn-toggle-draft-dual');
+    const btnScoring = document.getElementById('btn-toggle-draft-scoring');
+    const btnGuide = document.getElementById('btn-toggle-draft-guide');
+
+    if (btnDual) btnDual.className = mode === 'dual' ? 'btn btn-primary' : 'btn btn-outline';
+    if (btnScoring) btnScoring.className = mode === 'scoring' ? 'btn btn-primary' : 'btn btn-outline';
+    if (btnGuide) btnGuide.className = mode === 'guide' ? 'btn btn-primary' : 'btn btn-outline';
+
+    if (!container || !boxScoring || !boxGuide) return;
+
+    if (mode === 'dual') {
+        container.style.gridTemplateColumns = '1fr 1fr';
+        boxScoring.style.display = 'block';
+        boxGuide.style.display = 'block';
+    } else if (mode === 'scoring') {
+        container.style.gridTemplateColumns = '1fr';
+        boxScoring.style.display = 'block';
+        boxGuide.style.display = 'none';
+    } else if (mode === 'guide') {
+        container.style.gridTemplateColumns = '1fr';
+        boxScoring.style.display = 'none';
+        boxGuide.style.display = 'block';
+    }
+}
+
 function switchSupReviewView(mode) {
     const container = document.getElementById('sup-dual-container');
     const boxScoring = document.getElementById('sup-box-scoring');
@@ -1834,9 +1969,9 @@ function switchSupReviewView(mode) {
     const btnScoring = document.getElementById('sup-view-mode-scoring');
     const btnGuide = document.getElementById('sup-view-mode-guide');
 
-    btnDual.className = mode === 'dual' ? 'btn btn-primary' : 'btn btn-outline';
-    btnScoring.className = mode === 'scoring' ? 'btn btn-primary' : 'btn btn-outline';
-    btnGuide.className = mode === 'guide' ? 'btn btn-primary' : 'btn btn-outline';
+    if (btnDual) btnDual.className = mode === 'dual' ? 'btn btn-primary' : 'btn btn-outline';
+    if (btnScoring) btnScoring.className = mode === 'scoring' ? 'btn btn-primary' : 'btn btn-outline';
+    if (btnGuide) btnGuide.className = mode === 'guide' ? 'btn btn-primary' : 'btn btn-outline';
 
     if (mode === 'dual') {
         container.style.gridTemplateColumns = '1fr 1fr';
@@ -1868,9 +2003,14 @@ async function openSupervisorReviewModal(clientId, cleanName) {
     switchSupReviewView('dual');
     openModal('modal-supervisor-review');
 
+    // Dynamically find filenames for client
+    const files = (currentInterviewsData && currentInterviewsData[clientId]) || [];
+    const scoringFileName = files.find(f => f.includes('draft_scoring_form.md')) || `${clientId}_draft_scoring_form.md`;
+    const guideFileName = files.find(f => f.includes('interview_guide.md')) || files.find(f => f.includes('transcript.txt')) || `${clientId}_interview_guide.md`;
+
     // Fetch Draft Scoring Form
     try {
-        const resScoring = await fetch(`/api/file-content?file=${encodeURIComponent(clientId + '_draft_scoring_form.md')}`);
+        const resScoring = await fetch(`/api/file-content?file=${encodeURIComponent(scoringFileName)}`);
         if (resScoring.ok) {
             const data = await resScoring.json();
             scoringContent.innerHTML = marked.parse(data.content);
@@ -1883,7 +2023,7 @@ async function openSupervisorReviewModal(clientId, cleanName) {
 
     // Fetch Interview Guide
     try {
-        const resGuide = await fetch(`/api/file-content?file=${encodeURIComponent(clientId + '_interview_guide.md')}`);
+        const resGuide = await fetch(`/api/file-content?file=${encodeURIComponent(guideFileName)}`);
         if (resGuide.ok) {
             const data = await resGuide.json();
             guideContent.innerHTML = marked.parse(data.content);

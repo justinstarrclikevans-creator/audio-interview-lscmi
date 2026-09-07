@@ -1299,23 +1299,25 @@
 
     <!-- In-Browser Draft Scoring & Case Brief Markdown/PDF Viewer Modal -->
     <div id="modal-draft-viewer" class="modal hidden">
-        <div class="modal-content modal-lg">
-            <div class="modal-header">
-                <h3 id="draft-viewer-title">Document Preview</h3>
+        <div class="modal-content modal-lg" style="max-width: 1200px; width: 95vw;">
+            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                <h3 id="draft-viewer-title" style="margin: 0;">Document Preview</h3>
+                <div id="draft-viewer-controls" style="display: flex; gap: 6px;"></div>
                 <button class="modal-close" onclick="closeModal('modal-draft-viewer')">&times;</button>
             </div>
-            <div id="draft-viewer-body" class="report-content-body" style="max-height: 550px; overflow-y: auto;">
+            <div id="draft-viewer-body" class="report-content-body" style="max-height: 70vh; overflow-y: auto;">
                 <!-- Loaded dynamically -->
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer" id="draft-viewer-footer" style="display: flex; justify-content: space-between; align-items: center;">
                 <button class="btn btn-outline" onclick="closeModal('modal-draft-viewer')">Close Preview</button>
+                <div id="draft-viewer-extra-actions"></div>
             </div>
         </div>
     </div>
 
     <!-- Supervisor Review & Criminal History PDF Upload Modal (Phase 2) -->
     <div id="modal-supervisor-review" class="modal hidden">
-        <div class="modal-content modal-lg">
+        <div class="modal-content modal-lg" style="max-width: 1240px; width: 96vw;">
             <div class="modal-header">
                 <h3 id="sup-review-title">Supervisor Review & Final Approval (Phase 2)</h3>
                 <button class="modal-close" onclick="closeModal('modal-supervisor-review')">&times;</button>
@@ -1337,19 +1339,19 @@
                         </div>
                     </div>
                     
-                    <div id="sup-dual-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-height: 450px; overflow-y: auto;">
+                    <div id="sup-dual-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-height: 540px; overflow-y: auto;">
                         <!-- Left: Draft Scoring Form -->
-                        <div id="sup-box-scoring" style="background: white; border: 1px solid var(--border); border-radius: 6px; padding: 14px; overflow-y: auto;">
+                        <div id="sup-box-scoring" style="background: white; border: 1px solid var(--border); border-radius: 6px; padding: 16px; max-height: 520px; overflow-y: auto;">
                             <h5 style="margin: 0 0 8px 0; color: var(--primary); font-size: 13px; border-bottom: 2px solid var(--primary); padding-bottom: 4px;">📊 Phase 1 Draft Scoring Form (LS/CMI 8 Domains)</h5>
-                            <div id="sup-draft-scoring-content" style="font-size: 12px; line-height: 1.5; color: #1e293b;">
+                            <div id="sup-draft-scoring-content" style="font-size: 12.5px; line-height: 1.6; color: #1e293b;">
                                 Loading scoring form...
                             </div>
                         </div>
 
                         <!-- Right: Completed Interview Guide -->
-                        <div id="sup-box-guide" style="background: white; border: 1px solid var(--border); border-radius: 6px; padding: 14px; overflow-y: auto;">
+                        <div id="sup-box-guide" style="background: white; border: 1px solid var(--border); border-radius: 6px; padding: 16px; max-height: 520px; overflow-y: auto;">
                             <h5 style="margin: 0 0 8px 0; color: var(--accent); font-size: 13px; border-bottom: 2px solid var(--accent); padding-bottom: 4px;">🎙️ Completed Interview Guide (Participant Quotes & Evidence)</h5>
-                            <div id="sup-interview-guide-content" style="font-size: 12px; line-height: 1.5; color: #1e293b;">
+                            <div id="sup-interview-guide-content" style="font-size: 12.5px; line-height: 1.6; color: #1e293b;">
                                 Loading interview responses...
                             </div>
                         </div>
