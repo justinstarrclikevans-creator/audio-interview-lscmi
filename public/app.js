@@ -711,10 +711,11 @@ async function loadCbtModules() {
         }
     } catch (e) {
         console.error('Failed to load CBT modules:', e);
-        if (rnContainer) rnContainer.innerHTML = '<p class="text-slate">Unable to load CBT modules.</p>';
         if (fsContainer) fsContainer.innerHTML = '<p class="text-slate">Unable to load CBT modules.</p>';
     }
 }
+
+let currentActiveCbtLesson = null; // { moduleNumber, lessonKey, moduleTitle, lesson }
 
 function toggleCbtModule(prefix, moduleNum) {
     const body = document.getElementById(`${prefix}-cbt-body-${moduleNum}`);
@@ -723,13 +724,400 @@ function toggleCbtModule(prefix, moduleNum) {
     const isHidden = body.classList.contains('hidden');
     body.classList.toggle('hidden', !isHidden);
     if (btn) {
-        btn.innerText = isHidden ? '▲ Close Lesson & Worksheet' : '▼ Open Lesson & Worksheet';
+        btn.innerText = isHidden ? '▲ Hide Lessons' : '▼ View Lessons & Worksheets';
     }
 }
 
-async function handleSaveCbtWorksheet(prefix, moduleNum, toolKey) {
-    const form = document.getElementById(`${prefix}-cbt-form-${moduleNum}`);
-    const statusEl = document.getElementById(`${prefix}-cbt-status-${moduleNum}`);
+function renderCbtFieldInput(field, currentVal) {
+    const val = currentVal !== undefined && currentVal !== null ? currentVal : '';
+    const fieldId = field.id;
+
+    switch (field.type) {
+        case 'text':
+            return `
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-size: 13.5px; font-weight: 700; color: #0f172a; margin-bottom: 6px;">${field.label}</label>
+                    <input type="text" name="${fieldId}" value="${String(val).replace(/"/g, '&quot;')}" class="form-control" placeholder="${field.placeholder || 'Type your answer here...'}" style="font-size: 13.5px; width: 100%; padding: 10px 14px; border: 1.5px solid #cbd5e1; border-radius: 6px;">
+                </div>
+            `;
+
+        case 'textarea':
+            return `
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-size: 13.5px; font-weight: 700; color: #0f172a; margin-bottom: 6px;">${field.label}</label>
+                    <textarea name="${fieldId}" rows="3" class="form-control" placeholder="${field.placeholder || 'Type your reflection here...'}" style="font-size: 13.5px; width: 100%; padding: 10px 14px; border: 1.5px solid #cbd5e1; border-radius: 6px; resize: vertical;">${val}</textarea>
+                </div>
+            `;
+
+        case 'select':
+            return `
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-size: 13.5px; font-weight: 700; color: #0f172a; margin-bottom: 6px;">${field.label}</label>
+                    <select name="${fieldId}" class="form-control" style="font-size: 13.5px; width: 100%; padding: 10px 14px; border: 1.5px solid #cbd5e1; border-radius: 6px;">
+                        <option value="">-- Select an option --</option>
+                        ${(field.options || []).map(opt => `<option value="${opt}" ${String(val) === String(opt) ? 'selected' : ''}>${opt}</option>`).join('')}
+                    </select>
+                </div>
+            `;
+
+        case 'scale':
+            const currentNum = String(val);
+            return `
+                <div style="margin-bottom: 18px;">
+                    <label style="display: block; font-size: 13.5px; font-weight: 700; color: #0f172a; margin-bottom: 8px;">${field.label}</label>
+                    <input type="hidden" name="${fieldId}" id="scale-input-${fieldId}" value="${val}">
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        ${[1, 2, 3, 4, 5].map(num => `
+                            <button type="button" class="btn scale-choice-btn" data-field="${fieldId}" data-num="${num}" onclick="selectCbtScale('${fieldId}', ${num})" style="flex: 1; min-width: 48px; max-width: 70px; height: 44px; font-size: 16px; font-weight: 800; border: 2px solid ${currentNum === String(num) ? 'var(--primary)' : '#cbd5e1'}; background: ${currentNum === String(num) ? 'var(--primary)' : '#ffffff'}; color: ${currentNum === String(num) ? '#ffffff' : '#1e293b'}; border-radius: 8px; cursor: pointer;">
+                                ${num}
+                            </button>
+                        `).join('')}
+                    </div>
+                    <div style="display: flex; justify-content: space-between; max-width: 380px; margin-top: 4px; font-size: 11px; font-weight: 700; color: var(--slate); text-transform: uppercase;">
+                        <span>1 = Not at all</span>
+                        <span>5 = Extremely</span>
+                    </div>
+                </div>
+            `;
+
+        case 'checklist':
+            let checkedItems = [];
+            try {
+                checkedItems = Array.isArray(val) ? val : (typeof val === 'string' && val.startsWith('[') ? JSON.parse(val) : (val ? [val] : []));
+            } catch(e) {
+                checkedItems = val ? [val] : [];
+            }
+            return `
+                <div style="margin-bottom: 18px;">
+                    <label style="display: block; font-size: 13.5px; font-weight: 700; color: #0f172a; margin-bottom: 8px;">${field.label}</label>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 8px;">
+                        ${(field.checklistItems || []).map((item, idx) => {
+                            const isChecked = checkedItems.includes(item);
+                            return `
+                                <label style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: ${isChecked ? '#eff6ff' : '#ffffff'}; border: 1.5px solid ${isChecked ? 'var(--accent)' : '#e2e8f0'}; border-radius: 8px; cursor: pointer; transition: all 0.15s ease;">
+                                    <input type="checkbox" name="${fieldId}[]" value="${item.replace(/"/g, '&quot;')}" ${isChecked ? 'checked' : ''} style="width: 18px; height: 18px; accent-color: var(--accent);">
+                                    <span style="font-size: 13px; font-weight: 500; color: #1e293b;">${item}</span>
+                                </label>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+
+        case 'table':
+            const headers = (field.tableConfig && field.tableConfig.headers) || ["Item", "Your Response"];
+            const rowCount = (field.tableConfig && field.tableConfig.rowCount) || 4;
+            const placeholders = (field.tableConfig && field.tableConfig.placeholders) || [];
+            return `
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-size: 13.5px; font-weight: 700; color: #0f172a; margin-bottom: 8px;">${field.label}</label>
+                    <div style="border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; background: #f1f5f9; padding: 10px 14px; font-size: 12.5px; font-weight: 800; color: #334155; border-bottom: 1px solid var(--border);">
+                            <div>${headers[0]}</div>
+                            <div>${headers[1]}</div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; divide-y: 1px solid #f1f5f9;">
+                            ${Array.from({ length: rowCount }).map((_, rIdx) => {
+                                const val0 = val[`${fieldId}_row_${rIdx}_col_0`] || '';
+                                const val1 = val[`${fieldId}_row_${rIdx}_col_1`] || '';
+                                return `
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px 14px; border-bottom: 1px solid #f1f5f9;">
+                                        <input type="text" name="${fieldId}_row_${rIdx}_col_0" value="${val0.replace(/"/g, '&quot;')}" placeholder="${placeholders[0] || `${headers[0]} #${rIdx + 1}`}" style="padding: 8px 12px; font-size: 12.5px; border: 1px solid #cbd5e1; border-radius: 6px; width: 100%;">
+                                        <input type="text" name="${fieldId}_row_${rIdx}_col_1" value="${val1.replace(/"/g, '&quot;')}" placeholder="${placeholders[1] || `${headers[1]} #${rIdx + 1}`}" style="padding: 8px 12px; font-size: 12.5px; border: 1px solid #cbd5e1; border-radius: 6px; width: 100%;">
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+        case 'grid':
+            if (field.gridConfig) {
+                const { rows, columns } = field.gridConfig;
+                return `
+                    <div style="margin-bottom: 22px;">
+                        <label style="display: block; font-size: 14px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">${field.label}</label>
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            ${rows.map((rowName, rIdx) => `
+                                <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 14px;">
+                                    <h4 style="margin: 0 0 10px 0; font-size: 13.5px; font-weight: 800; color: var(--primary); border-bottom: 1px solid #e2e8f0; padding-bottom: 6px;">
+                                        ⏱️ ${rowName}
+                                    </h4>
+                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px;">
+                                        ${columns.map((colName, cIdx) => {
+                                            const cellKey = `${fieldId}_r${rIdx}_c${cIdx}`;
+                                            const cellVal = val[cellKey] || '';
+                                            return `
+                                                <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px;">
+                                                    <label style="display: block; font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 6px;">${colName}</label>
+                                                    <textarea name="${cellKey}" rows="3" placeholder="Enter ${colName.toLowerCase()}..." style="width: 100%; font-size: 12.5px; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; resize: vertical;">${cellVal}</textarea>
+                                                </div>
+                                            `;
+                                        }).join('')}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            } else if (field.cells) {
+                return `
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; font-size: 14px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">${field.label}</label>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px;">
+                            ${field.cells.map((cellLabel, cIdx) => {
+                                const cellKey = `${fieldId}_cell_${cIdx}`;
+                                const cellVal = val[cellKey] || '';
+                                return `
+                                    <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px;">
+                                        <label style="display: block; font-size: 12.5px; font-weight: 700; color: #334155; margin-bottom: 6px;">${cellLabel}</label>
+                                        <textarea name="${cellKey}" rows="3" placeholder="Write responses..." style="width: 100%; font-size: 12.5px; padding: 8px; border: 1px solid #cbd5e1; border-radius: 4px; resize: vertical;">${cellVal}</textarea>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            return '';
+
+        default:
+            return '';
+    }
+}
+
+function selectCbtScale(fieldId, num) {
+    const input = document.getElementById(`scale-input-${fieldId}`);
+    if (input) input.value = num;
+    document.querySelectorAll(`.scale-choice-btn[data-field="${fieldId}"]`).forEach(btn => {
+        const bNum = btn.getAttribute('data-num');
+        if (bNum === String(num)) {
+            btn.style.background = 'var(--primary)';
+            btn.style.color = '#ffffff';
+            btn.style.borderColor = 'var(--primary)';
+        } else {
+            btn.style.background = '#ffffff';
+            btn.style.color = '#1e293b';
+            btn.style.borderColor = '#cbd5e1';
+        }
+    });
+}
+
+function renderCbtModulesHtml(containerEl, prefix, cbtModules, submissions) {
+    if (!containerEl) return;
+
+    // Calculate total completed lessons
+    const totalLessons = cbtModules.reduce((acc, m) => acc + (m.lessons ? m.lessons.length : 0), 0);
+    let completedCount = 0;
+    Object.keys(submissions).forEach(k => {
+        const sub = submissions[k];
+        if (sub && sub.status === 'completed') completedCount++;
+    });
+
+    containerEl.innerHTML = `
+        <div style="margin-bottom: 16px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <div>
+                <strong style="color: #166534; font-size: 14px;">🎓 Authentic Turn90 CBT Curriculum & Facilitation Modules</strong>
+                <div style="font-size: 12.5px; color: #15803d;">8 Authentic Modules • 65 Lessons • Real In-Class Worksheets & Homework</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="badge badge-green" style="font-size: 12px;">Progress: ${completedCount} / ${totalLessons} Lessons Completed</span>
+            </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+            ${cbtModules.map(m => {
+                const modLessons = m.lessons || [];
+                const completedInMod = modLessons.filter(l => {
+                    const sub = submissions[`module_${m.number}_${l.key}`];
+                    return sub && sub.status === 'completed';
+                }).length;
+                const isModAllCompleted = modLessons.length > 0 && completedInMod === modLessons.length;
+
+                return `
+                    <div class="module-card" style="background: white; border-radius: 10px; border: 1px solid var(--border); border-left: 5px solid ${isModAllCompleted ? 'var(--success)' : 'var(--primary)'}; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden;">
+                        <!-- Module Header (Accordion Toggle) -->
+                        <div style="padding: 16px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: #ffffff;" onclick="toggleCbtModule('${prefix}', ${m.number})">
+                            <div style="flex: 1; padding-right: 14px;">
+                                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px;">
+                                    <span class="badge badge-primary" style="font-size: 11px;">Module ${m.number}</span>
+                                    <span class="badge ${isModAllCompleted ? 'badge-green' : 'badge-outline'}" style="font-size: 11px;">
+                                        ${completedInMod} / ${modLessons.length} Lessons Finished
+                                    </span>
+                                </div>
+                                <h3 style="margin: 0; color: var(--primary); font-size: 16px; font-weight: 700;">
+                                    ${m.icon || '🧠'} Module ${m.number}: ${m.title}
+                                </h3>
+                                <p style="margin: 4px 0 0 0; color: var(--slate); font-size: 13px;">${m.description}</p>
+                            </div>
+                            <div>
+                                <button type="button" id="${prefix}-cbt-btn-${m.number}" class="btn btn-outline" style="font-size: 12px; padding: 6px 14px; white-space: nowrap;">
+                                    ▼ View Lessons & Worksheets
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Module Lessons List (Collapsible) -->
+                        <div id="${prefix}-cbt-body-${m.number}" class="hidden" style="border-top: 1px solid var(--border); background: #f8fafc; padding: 18px 20px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                <h4 style="margin: 0; font-size: 13.5px; color: #0f172a; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    Module ${m.number} Lessons (${modLessons.length})
+                                </h4>
+                                <span style="font-size: 12px; color: var(--slate);">Click any lesson to study and complete worksheets</span>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 12px;">
+                                ${modLessons.map(l => {
+                                    const subKey = `module_${m.number}_${l.key}`;
+                                    const sub = submissions[subKey];
+                                    const isDone = sub && sub.status === 'completed';
+
+                                    return `
+                                        <div style="background: white; border: 1.5px solid ${isDone ? '#86efac' : '#e2e8f0'}; border-radius: 8px; padding: 14px 16px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 1px 2px rgba(0,0,0,0.03); transition: border-color 0.2s;">
+                                            <div>
+                                                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+                                                    <span style="font-size: 11px; font-weight: 800; color: var(--accent); background: #e0f2fe; padding: 2px 8px; border-radius: 4px;">
+                                                        LESSON ${l.key.toUpperCase()}
+                                                    </span>
+                                                    <span class="badge ${isDone ? 'badge-green' : 'badge-outline'}" style="font-size: 10.5px;">
+                                                        ${isDone ? '✅ Completed' : '📝 Incomplete'}
+                                                    </span>
+                                                </div>
+                                                <h5 style="margin: 6px 0 4px 0; font-size: 14px; font-weight: 700; color: #0f172a;">${l.title}</h5>
+                                                <p style="margin: 0; font-size: 12px; color: #475569; line-height: 1.4;">${l.description}</p>
+                                                ${l.videoNote ? `<div style="margin-top: 6px; font-size: 11px; color: #b45309; background: #fffbeb; padding: 3px 6px; border-radius: 4px;">📹 ${l.videoNote}</div>` : ''}
+                                            </div>
+
+                                            <div style="margin-top: 14px; display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed #e2e8f0; padding-top: 10px;">
+                                                <div style="font-size: 11.5px; color: var(--slate);">
+                                                    ${(l.sections || []).filter(s => s.type === 'worksheet').length > 0 ? '📝 In-Class Worksheet' : '📖 Guided Reading'}
+                                                    ${l.homework ? ' • 🏠 HW' : ''}
+                                                </div>
+                                                <button type="button" class="btn btn-outline" style="font-size: 12px; padding: 5px 12px; border-color: var(--accent); color: var(--accent);" onclick="openCbtLessonViewer('${prefix}', ${m.number}, '${l.key}')">
+                                                    Open Lesson &rarr;
+                                                </button>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('')}
+        </div>
+    `;
+}
+
+function openCbtLessonViewer(prefix, moduleNumber, lessonKey) {
+    const mod = cachedCbtModules.find(m => m.number === Number(moduleNumber));
+    if (!mod) return alert('Module not found');
+    const lesson = (mod.lessons || []).find(l => l.key === lessonKey);
+    if (!lesson) return alert('Lesson not found');
+
+    currentActiveCbtLesson = {
+        prefix,
+        moduleNumber,
+        lessonKey,
+        moduleTitle: mod.title,
+        lesson
+    };
+
+    const subKey = `module_${moduleNumber}_${lessonKey}`;
+    const sub = cachedCbtSubmissions[subKey];
+    const savedResponses = (sub && sub.responses) || {};
+    const isCompleted = sub && sub.status === 'completed';
+
+    // Populate modal headers
+    const badgeEl = document.getElementById('cbt-lesson-modal-badge');
+    const statusEl = document.getElementById('cbt-lesson-modal-status');
+    const titleEl = document.getElementById('cbt-lesson-modal-title');
+    const descEl = document.getElementById('cbt-lesson-modal-desc');
+    const bodyEl = document.getElementById('cbt-lesson-modal-body');
+    const saveStatusEl = document.getElementById('cbt-lesson-save-status');
+
+    if (badgeEl) badgeEl.innerText = `Module ${moduleNumber}: ${mod.title} • Lesson ${lessonKey.toUpperCase()}`;
+    if (statusEl) {
+        statusEl.className = `badge ${isCompleted ? 'badge-green' : 'badge-outline'}`;
+        statusEl.innerText = isCompleted ? '✅ Completed on File' : '📝 Incomplete / Working';
+    }
+    if (titleEl) titleEl.innerText = `${lesson.key.toUpperCase()} - ${lesson.title}`;
+    if (descEl) descEl.innerText = lesson.description || '';
+    if (saveStatusEl) {
+        saveStatusEl.innerHTML = isCompleted ? `<span style="color: var(--success); font-weight: 600;">✅ Saved to your Turn90 file (${new Date(sub.updatedAt).toLocaleDateString()})</span>` : '<span style="color: var(--slate);">Your entries are saved to your permanent participant record.</span>';
+    }
+
+    // Build modal content with sections & homework
+    let html = `
+        <form id="active-cbt-lesson-form" onsubmit="event.preventDefault();">
+            <!-- Video Note / Notice if present -->
+            ${lesson.videoNote ? `
+                <div style="background: #fef3c7; border: 1px solid #fde68a; border-left: 4px solid #f59e0b; padding: 12px 16px; border-radius: 6px; margin-bottom: 18px; font-size: 13.5px; color: #92400e; font-weight: 600;">
+                    🎬 Lesson Video Note: ${lesson.videoNote}
+                </div>
+            ` : ''}
+
+            <!-- Sections & Worksheets -->
+            <div style="display: flex; flex-direction: column; gap: 18px;">
+                ${(lesson.sections || []).map((sec, sIdx) => `
+                    <div style="background: white; border: 1.5px solid ${sec.type === 'worksheet' ? '#bfdbfe' : '#e2e8f0'}; border-radius: 8px; padding: 18px 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <h4 style="margin: 0; font-size: 16px; font-weight: 800; color: #0f172a;">${sec.title}</h4>
+                            ${sec.type === 'worksheet' ? '<span class="badge badge-accent" style="font-size: 11px;">✍️ Interactive Worksheet</span>' : '<span class="badge badge-outline" style="font-size: 11px;">📖 Core Concept</span>'}
+                        </div>
+
+                        ${sec.content ? `
+                            <div style="font-size: 13.5px; color: #334155; line-height: 1.6; margin-bottom: 14px; white-space: pre-line;">${sec.content}</div>
+                        ` : ''}
+
+                        ${(sec.fields && sec.fields.length > 0) ? `
+                            <div style="margin-top: 16px; border-top: 1px dashed #e2e8f0; padding-top: 16px;">
+                                ${sec.fields.map(f => {
+                                    return renderCbtFieldInput(f, savedResponses[f.id]);
+                                }).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                `).join('')}
+
+                <!-- Homework Assignment -->
+                ${lesson.homework ? `
+                    <div style="background: #eff6ff; border: 2px solid #93c5fd; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <h4 style="margin: 0; font-size: 16px; font-weight: 800; color: #1e3a8a;">
+                                🏠 ${lesson.homework.title || 'Homework Assignment'}
+                            </h4>
+                            <span class="badge badge-primary" style="font-size: 11px;">Out-of-Class Practice</span>
+                        </div>
+
+                        <p style="font-size: 13.5px; color: #1e40af; margin: 0 0 16px 0; line-height: 1.5; font-weight: 500;">
+                            ${lesson.homework.instructions}
+                        </p>
+
+                        ${(lesson.homework.fields && lesson.homework.fields.length > 0) ? `
+                            <div style="background: white; border: 1px solid #bfdbfe; border-radius: 6px; padding: 16px;">
+                                ${lesson.homework.fields.map(hf => {
+                                    return renderCbtFieldInput(hf, savedResponses[hf.id]);
+                                }).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                ` : ''}
+            </div>
+        </form>
+    `;
+
+    if (bodyEl) bodyEl.innerHTML = html;
+    openModal('modal-cbt-lesson');
+}
+
+async function submitCurrentCbtLesson() {
+    if (!currentActiveCbtLesson) return;
+    const { prefix, moduleNumber, lessonKey } = currentActiveCbtLesson;
+    const form = document.getElementById('active-cbt-lesson-form');
+    const statusEl = document.getElementById('cbt-lesson-save-status');
+    const saveBtn = document.getElementById('cbt-lesson-save-btn');
     if (!form) return;
 
     const token = localStorage.getItem('fs_token');
@@ -737,16 +1125,36 @@ async function handleSaveCbtWorksheet(prefix, moduleNum, toolKey) {
 
     const formData = new FormData(form);
     const responses = {};
+
     for (let [key, val] of formData.entries()) {
-        responses[key] = val;
+        if (key.endsWith('[]')) {
+            const cleanKey = key.slice(0, -2);
+            if (!responses[cleanKey]) responses[cleanKey] = [];
+            responses[cleanKey].push(val);
+        } else {
+            responses[key] = val;
+        }
     }
 
-    const hasContent = Object.values(responses).some(v => v && v.trim().length > 0);
-    if (!hasContent) {
-        return alert('Please write your responses before saving.');
+    // Capture scale input values
+    document.querySelectorAll('#active-cbt-lesson-form input[id^="scale-input-"]').forEach(inp => {
+        const fieldName = inp.getAttribute('name');
+        if (fieldName && inp.value) {
+            responses[fieldName] = inp.value;
+        }
+    });
+
+    const hasAnyContent = Object.values(responses).some(v => {
+        if (Array.isArray(v)) return v.length > 0;
+        return v && String(v).trim().length > 0;
+    });
+
+    if (!hasAnyContent) {
+        return alert('Please enter your worksheet answers before saving.');
     }
 
-    if (statusEl) statusEl.innerHTML = '<span style="color: var(--primary); font-size: 12px;">Saving responses to your Turn90 file...</span>';
+    if (statusEl) statusEl.innerHTML = '<span style="color: var(--primary); font-weight: 600;">Saving to your Turn90 file...</span>';
+    if (saveBtn) saveBtn.disabled = true;
 
     try {
         const res = await fetch('/api/training/cbt-submit', {
@@ -755,151 +1163,49 @@ async function handleSaveCbtWorksheet(prefix, moduleNum, toolKey) {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ moduleNumber: moduleNum, toolKey, responses })
+            body: JSON.stringify({
+                moduleNumber,
+                toolKey: lessonKey,
+                responses
+            })
         });
+
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Failed to save worksheet');
 
-        if (statusEl) {
-            statusEl.innerHTML = '<span style="color: var(--success); font-weight: bold; font-size: 12px;">✅ Worksheet saved to your Turn90 file!</span>';
-        }
-
-        const badge = document.getElementById(`${prefix}-cbt-badge-${moduleNum}`);
-        if (badge) {
-            badge.className = 'badge badge-green';
-            badge.innerText = '✅ Worksheet Completed';
-        }
-
-        cachedCbtSubmissions[`module_${moduleNum}_${toolKey}`] = {
-            moduleNumber: moduleNum,
-            toolKey,
+        // Update cached submissions
+        const subKey = `module_${moduleNumber}_${lessonKey}`;
+        cachedCbtSubmissions[subKey] = {
+            moduleNumber,
+            toolKey: lessonKey,
             responses,
             status: 'completed',
             updatedAt: new Date().toISOString()
         };
 
-        alert('Success: Your CBT worksheet responses have been recorded and saved.');
+        if (statusEl) {
+            statusEl.innerHTML = '<span style="color: var(--success); font-weight: 700;">✅ Worksheet & Homework saved to your Turn90 file!</span>';
+        }
+
+        const modalStatus = document.getElementById('cbt-lesson-modal-status');
+        if (modalStatus) {
+            modalStatus.className = 'badge badge-green';
+            modalStatus.innerText = '✅ Completed on File';
+        }
+
+        // Re-render accordions
+        const fsContainer = document.getElementById('fs-cbt-accordion-container');
+        const rnContainer = document.getElementById('cbt-accordion-container');
+        if (fsContainer) renderCbtModulesHtml(fsContainer, 'fs', cachedCbtModules, cachedCbtSubmissions);
+        if (rnContainer) renderCbtModulesHtml(rnContainer, 'rn', cachedCbtModules, cachedCbtSubmissions);
+
+        alert(`Success: Lesson ${lessonKey.toUpperCase()} worksheet & homework saved!`);
     } catch(e) {
-        if (statusEl) statusEl.innerHTML = `<span style="color: var(--danger); font-size: 12px;">Error: ${e.message}</span>`;
+        if (statusEl) statusEl.innerHTML = `<span style="color: var(--danger);">Error: ${e.message}</span>`;
         alert('Save Error: ' + e.message);
+    } finally {
+        if (saveBtn) saveBtn.disabled = false;
     }
-}
-
-function renderCbtModulesHtml(containerEl, prefix, cbtModules, submissions) {
-    if (!containerEl) return;
-
-    containerEl.innerHTML = `
-        <div style="display: flex; flex-direction: column; gap: 16px;">
-            ${cbtModules.map(m => {
-                const subKey = `module_${m.number}_${m.tool ? m.tool.key : ''}`;
-                const sub = submissions[subKey];
-                const isCompleted = sub && sub.responses && Object.values(sub.responses).some(v => v && v.trim().length > 0);
-                const savedResponses = (sub && sub.responses) || {};
-
-                return `
-                    <div class="module-card" style="background: white; border-radius: 8px; border: 1px solid var(--border); border-left: 5px solid var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden;">
-                        <!-- Header Bar (Clickable) -->
-                        <div style="padding: 16px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: #ffffff;" onclick="toggleCbtModule('${prefix}', ${m.number})">
-                            <div style="flex: 1; padding-right: 14px;">
-                                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px;">
-                                    <span class="badge badge-primary" style="font-size: 11px;">Module ${m.number}</span>
-                                    <span class="badge badge-pending" style="font-size: 11px;">${m.badge}</span>
-                                    <span id="${prefix}-cbt-badge-${m.number}" class="badge ${isCompleted ? 'badge-green' : 'badge-outline'}" style="font-size: 11px;">
-                                        ${isCompleted ? '✅ Worksheet Completed' : '📝 Incomplete / Not Started'}
-                                    </span>
-                                </div>
-                                <h3 style="margin: 0; color: var(--primary); font-size: 16px; font-weight: 700;">${m.title}</h3>
-                                <p style="margin: 4px 0 0 0; color: var(--slate); font-size: 13px;">${m.description}</p>
-                            </div>
-                            <div>
-                                <button type="button" id="${prefix}-cbt-btn-${m.number}" class="btn btn-outline" style="font-size: 12px; padding: 6px 14px; white-space: nowrap;">
-                                    ▼ Open Lesson & Worksheet
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Collapsible Body Content -->
-                        <div id="${prefix}-cbt-body-${m.number}" class="hidden" style="border-top: 1px solid var(--border); background: #f8fafc; padding: 20px;">
-                            <!-- Core Principle Box -->
-                            <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-left: 4px solid var(--primary); padding: 12px 16px; border-radius: 6px; margin-bottom: 16px;">
-                                <strong style="color: #1e40af; font-size: 13px;">💡 Core Cognitive Principle:</strong>
-                                <div style="font-size: 13px; color: #1e293b; margin-top: 3px; font-weight: 500;">${m.keyTakeaway}</div>
-                            </div>
-
-                            <!-- Overview / Clinical Context -->
-                            <div style="background: white; border: 1px solid var(--border); border-radius: 6px; padding: 16px; margin-bottom: 16px;">
-                                <h4 style="margin: 0 0 8px 0; color: var(--primary); font-size: 14px;">📘 Module Overview & Purpose</h4>
-                                <p style="margin: 0; font-size: 13px; color: #334155; line-height: 1.5;">${m.overview}</p>
-                            </div>
-
-                            <!-- Lesson Sections -->
-                            <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
-                                ${m.lessons.map(l => `
-                                    <div style="background: white; border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px;">
-                                        <h5 style="margin: 0 0 6px 0; color: #0f172a; font-size: 13.5px; font-weight: 700;">${l.title}</h5>
-                                        <div style="font-size: 12.5px; color: #334155; white-space: pre-line; line-height: 1.5;">${l.content}</div>
-                                    </div>
-                                `).join('')}
-                            </div>
-
-                            <!-- Interactive Worksheet Tool -->
-                            ${m.tool ? `
-                                <div style="background: white; border: 2px solid var(--accent); border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
-                                    <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
-                                        <h4 style="margin: 0; color: var(--primary); font-size: 15px;">✍️ ${m.tool.name}</h4>
-                                        <span class="badge badge-accent" style="font-size: 11px;">Turn90 Interactive Tool</span>
-                                    </div>
-                                    <p style="font-size: 12.5px; color: var(--slate); margin: 0 0 16px 0;">${m.tool.description}</p>
-
-                                    <form id="${prefix}-cbt-form-${m.number}">
-                                        <div style="display: flex; flex-direction: column; gap: 14px;">
-                                            ${m.tool.fields.map(f => {
-                                                const val = savedResponses[f.id] || '';
-                                                if (f.type === 'select') {
-                                                    return `
-                                                        <div class="form-group">
-                                                            <label style="font-size: 12.5px; font-weight: 600; color: #1e293b;">${f.label}</label>
-                                                            <select name="${f.id}" class="form-control" style="font-size: 12.5px; margin-top: 4px;">
-                                                                <option value="">-- Select --</option>
-                                                                ${f.options.map(opt => `<option value="${opt}" ${val === opt ? 'selected' : ''}>${opt}</option>`).join('')}
-                                                            </select>
-                                                        </div>
-                                                    `;
-                                                } else if (f.type === 'textarea') {
-                                                    return `
-                                                        <div class="form-group">
-                                                            <label style="font-size: 12.5px; font-weight: 600; color: #1e293b;">${f.label}</label>
-                                                            <textarea name="${f.id}" rows="3" class="form-control" placeholder="${f.placeholder || ''}" style="font-size: 12.5px; margin-top: 4px;">${val}</textarea>
-                                                        </div>
-                                                    `;
-                                                } else {
-                                                    return `
-                                                        <div class="form-group">
-                                                            <label style="font-size: 12.5px; font-weight: 600; color: #1e293b;">${f.label}</label>
-                                                            <input type="text" name="${f.id}" value="${val.replace(/"/g, '&quot;')}" class="form-control" placeholder="${f.placeholder || ''}" style="font-size: 12.5px; margin-top: 4px;">
-                                                        </div>
-                                                    `;
-                                                }
-                                            }).join('')}
-                                        </div>
-
-                                        <div style="margin-top: 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-                                            <button type="button" class="btn btn-primary" style="padding: 8px 18px; font-size: 13px;" onclick="handleSaveCbtWorksheet('${prefix}', ${m.number}, '${m.tool.key}')">
-                                                💾 Save Worksheet Responses
-                                            </button>
-                                            <div id="${prefix}-cbt-status-${m.number}">
-                                                ${isCompleted ? `<span style="color: var(--success); font-size: 12px; font-weight: 600;">✅ Saved to your Turn90 file (${new Date(sub.updatedAt).toLocaleDateString()})</span>` : ''}
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            ` : ''}
-                        </div>
-                    </div>
-                `;
-            }).join('')}
-        </div>
-    `;
 }
 
 async function loadLockerDocs() {
@@ -3883,9 +4189,9 @@ async function openPmCbtReviewModal(userId, name) {
     const subtitleEl = document.getElementById('cbt-review-modal-subtitle');
     const bodyEl = document.getElementById('cbt-review-modal-body');
 
-    if (titleEl) titleEl.innerText = `🧠 CBT Curriculum & Worksheets: ${name}`;
-    if (subtitleEl) subtitleEl.innerText = `Participant File Review (DMT, STAC, SODAS, Cognitive Triangle, Relapse Prevention)`;
-    if (bodyEl) bodyEl.innerHTML = '<p class="text-slate">Loading participant CBT responses...</p>';
+    if (titleEl) titleEl.innerText = `🧠 Turn90 CBT Curriculum & Worksheets: ${name}`;
+    if (subtitleEl) subtitleEl.innerText = `Participant File Review (8 Authentic Modules • 65 Lessons • In-Class Worksheets & Homework)`;
+    if (bodyEl) bodyEl.innerHTML = '<p class="text-slate">Loading participant CBT responses across curriculum...</p>';
 
     openModal('modal-cbt-review');
 
@@ -3898,41 +4204,83 @@ async function openPmCbtReviewModal(userId, name) {
         const modules = await modulesRes.json();
         const submissions = await subsRes.json();
 
-        let html = '';
+        // Calculate summary
+        const totalLessons = modules.reduce((acc, m) => acc + (m.lessons ? m.lessons.length : 0), 0);
+        let completedCount = 0;
+        Object.keys(submissions).forEach(k => {
+            if (submissions[k] && submissions[k].status === 'completed') completedCount++;
+        });
+
+        let html = `
+            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                <div>
+                    <strong style="color: #166534; font-size: 13.5px;">Curriculum Completion Status:</strong>
+                    <div style="font-size: 12.5px; color: #15803d;">${completedCount} of ${totalLessons} Lessons Finished by ${name}</div>
+                </div>
+                <span class="badge ${completedCount > 0 ? 'badge-green' : 'badge-outline'}" style="font-size: 12px;">
+                    ${Math.round((completedCount / totalLessons) * 100)}% Complete
+                </span>
+            </div>
+        `;
+
         modules.forEach(m => {
-            const subKey = `module_${m.number}_${m.tool ? m.tool.key : ''}`;
-            const sub = submissions[subKey];
-            const isCompleted = sub && sub.responses && Object.values(sub.responses).some(v => v && v.trim().length > 0);
+            const modLessons = m.lessons || [];
+            const completedInMod = modLessons.filter(l => {
+                const sub = submissions[`module_${m.number}_${l.key}`];
+                return sub && sub.status === 'completed';
+            });
 
             html += `
-                <div style="background: white; border: 1px solid var(--border); border-left: 5px solid ${isCompleted ? 'var(--success)' : '#cbd5e1'}; border-radius: 8px; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+                <div style="background: white; border: 1px solid var(--border); border-left: 5px solid ${completedInMod.length > 0 ? 'var(--success)' : '#cbd5e1'}; border-radius: 8px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
                     <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; flex-wrap: wrap; gap: 8px;">
                         <div>
                             <span class="badge badge-primary" style="font-size: 11px;">Module ${m.number}</span>
-                            <span class="badge badge-pending" style="font-size: 11px; margin-left: 4px;">${m.badge}</span>
-                            <h4 style="margin: 6px 0 0 0; color: var(--primary); font-size: 15px;">${m.title}</h4>
+                            <span class="badge ${completedInMod.length === modLessons.length ? 'badge-green' : 'badge-pending'}" style="font-size: 11px; margin-left: 4px;">
+                                ${completedInMod.length} / ${modLessons.length} Lessons Finished
+                            </span>
+                            <h4 style="margin: 6px 0 0 0; color: var(--primary); font-size: 15px;">${m.icon || '🧠'} Module ${m.number}: ${m.title}</h4>
                         </div>
-                        <span class="badge ${isCompleted ? 'badge-green' : 'badge-outline'}" style="font-size: 11.5px;">
-                            ${isCompleted ? '✅ Completed by Participant' : '📝 No Responses Yet'}
-                        </span>
                     </div>
-                    <div style="font-size: 12px; color: var(--slate); margin-bottom: 12px;"><strong>Tool:</strong> ${m.tool ? m.tool.name : 'Module Review'}</div>
+                    <div style="font-size: 12px; color: var(--slate); margin-bottom: 12px;">${m.description}</div>
 
-                    ${isCompleted ? `
-                        <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; padding: 14px;">
-                            ${m.tool.fields.map(f => `
-                                <div style="margin-bottom: 12px;">
-                                    <div style="font-size: 11.5px; font-weight: 700; color: #334155; text-transform: uppercase;">${f.label}</div>
-                                    <div style="font-size: 13px; color: #0f172a; white-space: pre-wrap; background: white; border: 1px solid #e2e8f0; border-radius: 4px; padding: 8px 12px; margin-top: 4px; line-height: 1.4;">${sub.responses[f.id] || '<em style="color: var(--slate);">No response entered</em>'}</div>
-                                </div>
-                            `).join('')}
-                            <div style="font-size: 11px; color: var(--slate); text-align: right; margin-top: 8px; border-top: 1px dashed var(--border); padding-top: 6px;">
-                                Completed on file: ${new Date(sub.updatedAt).toLocaleString()}
-                            </div>
+                    ${completedInMod.length > 0 ? `
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            ${completedInMod.map(l => {
+                                const subKey = `module_${m.number}_${l.key}`;
+                                const sub = submissions[subKey];
+                                const resp = (sub && sub.responses) || {};
+
+                                return `
+                                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 14px;">
+                                        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; border-bottom: 1px dashed #cbd5e1; padding-bottom: 6px;">
+                                            <strong style="font-size: 13px; color: #0f172a;">📝 Lesson ${l.key.toUpperCase()} - ${l.title}</strong>
+                                            <span style="font-size: 11px; color: var(--slate);">Recorded: ${new Date(sub.updatedAt).toLocaleString()}</span>
+                                        </div>
+
+                                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                                            ${Object.keys(resp).map(fieldId => {
+                                                const val = resp[fieldId];
+                                                let displayVal = val;
+                                                if (Array.isArray(val)) {
+                                                    displayVal = val.join(', ');
+                                                } else if (typeof val === 'object' && val !== null) {
+                                                    displayVal = JSON.stringify(val);
+                                                }
+                                                return `
+                                                    <div>
+                                                        <div style="font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase;">${fieldId.replace(/_/g, ' ')}</div>
+                                                        <div style="font-size: 12.5px; color: #0f172a; white-space: pre-wrap; background: white; border: 1px solid #cbd5e1; border-radius: 4px; padding: 6px 10px; margin-top: 3px;">${displayVal || '<em style="color: var(--slate);">No entry</em>'}</div>
+                                                    </div>
+                                                `;
+                                            }).join('')}
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
                         </div>
                     ` : `
-                        <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 6px; padding: 14px; text-align: center; color: var(--slate); font-size: 12.5px;">
-                            Participant has not yet submitted responses for ${m.tool ? m.tool.name : 'this module'}.
+                        <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 6px; padding: 12px; text-align: center; color: var(--slate); font-size: 12px;">
+                            No lesson worksheets completed yet for Module ${m.number}.
                         </div>
                     `}
                 </div>
@@ -3944,3 +4292,4 @@ async function openPmCbtReviewModal(userId, name) {
         bodyEl.innerHTML = `<p style="color: var(--danger);">Error loading CBT worksheets: ${e.message}</p>`;
     }
 }
+

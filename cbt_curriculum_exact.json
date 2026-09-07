@@ -1,0 +1,2847 @@
+[
+  {
+    "number": 1,
+    "title": "Thinking",
+    "description": "Learn how your thinking affects your decisions and actions. Master the Decision Making Tool (DMT), STAC, and belief upgrading to take control of your future.",
+    "icon": "🧠",
+    "lessons": [
+      {
+        "key": "1a",
+        "title": "Decision Making",
+        "description": "Learn the Decision Making Tool (DMT) to weigh short- and long-term consequences before making choices.",
+        "videoNote": "Watch the Decision Making Tool (DMT) lesson video before starting.",
+        "sections": [
+          {
+            "title": "What is the DMT?",
+            "type": "text",
+            "content": "The Decision Making Tool (DMT) helps you weigh out the short and long term positive and negative consequences of different choices. Instead of making decisions based on how you feel in the moment, you learn to think about how your choices will affect your life in the long run (6 months or longer)."
+          },
+          {
+            "title": "1A Decision Making Tool (DMT) Worksheet",
+            "type": "worksheet",
+            "content": "Use the DMT to weigh out a real decision you are facing right now.",
+            "fields": [
+              {
+                "id": "dmt_decision",
+                "label": "What decision are you facing?",
+                "type": "textarea",
+                "placeholder": "Describe the specific choice you need to make (e.g., Work legally vs. fast money, cutting off an old friend)..."
+              },
+              {
+                "id": "dmt_option1",
+                "label": "Option 1 (The choice you are considering):",
+                "type": "text",
+                "placeholder": "Option 1 name..."
+              },
+              {
+                "id": "dmt_option2",
+                "label": "Option 2 (A better or alternative choice):",
+                "type": "text",
+                "placeholder": "Option 2 name..."
+              },
+              {
+                "id": "dmt_grid",
+                "label": "DMT 4-Box Analysis",
+                "type": "grid",
+                "gridConfig": {
+                  "rows": [
+                    "Short-Term (0 to 6 months)",
+                    "Long-Term (6 months or more)"
+                  ],
+                  "columns": [
+                    "Positive (+) Consequences",
+                    "Negative (-) Consequences"
+                  ]
+                }
+              },
+              {
+                "id": "dmt_choice",
+                "label": "Based on your DMT, which option best supports your long-term goals and freedom?",
+                "type": "textarea",
+                "placeholder": "Explain your final choice and what sacrifices you may need to make today..."
+              }
+            ]
+          }
+        ],
+        "homework": {
+          "title": "1A Practice Using the DMT",
+          "instructions": "Apply the Decision Making Tool to a decision you face this week outside of class. Fill in the boxes and decide which choice protects your future.",
+          "fields": [
+            {
+              "id": "hw_dmt_situation",
+              "label": "What decision did you face?",
+              "type": "textarea",
+              "placeholder": "Describe what happened..."
+            },
+            {
+              "id": "hw_dmt_grid",
+              "label": "Your DMT Analysis",
+              "type": "grid",
+              "gridConfig": {
+                "rows": [
+                  "Short-Term (0 to 6 mos)",
+                  "Long-Term (6+ mos)"
+                ],
+                "columns": [
+                  "Positive Consequences",
+                  "Negative Consequences"
+                ]
+              }
+            },
+            {
+              "id": "hw_dmt_outcome",
+              "label": "What responsible action did you choose to take?",
+              "type": "textarea",
+              "placeholder": "What did you choose and why?"
+            }
+          ]
+        }
+      },
+      {
+        "key": "1b",
+        "title": "Beliefs",
+        "description": "Understand how core beliefs shape your thinking, emotions, and choices.",
+        "sections": [
+          {
+            "title": "How Beliefs Guide Us",
+            "type": "text",
+            "content": "Our beliefs are what we accept as true about ourselves, others, and the world. Helpful beliefs push us forward toward success. Harmful or risky beliefs hold us back, make us defensive, or lead to criminal choices."
+          },
+          {
+            "title": "Beliefs Inventory Worksheet",
+            "type": "worksheet",
+            "content": "Identify core beliefs that have influenced your path.",
+            "fields": [
+              {
+                "id": "helpful_beliefs",
+                "label": "List 3 helpful beliefs that have kept you safe, supported your family, or helped you grow:",
+                "type": "textarea",
+                "placeholder": "1. Hard work pays off in the end\n2. My family deserves stability\n3. I have the power to change my future"
+              },
+              {
+                "id": "harmful_beliefs",
+                "label": "List 3 harmful or risky beliefs that led to trouble or legal problems in the past:",
+                "type": "textarea",
+                "placeholder": "1. I have to retaliate if someone disrespects me\n2. The system is rigged so why try\n3. I need fast money to survive"
+              }
+            ]
+          }
+        ],
+        "homework": {
+          "title": "1B Tracking Your Beliefs",
+          "instructions": "Notice a moment this week when a belief pushed you toward a reaction. Reflect on whether that belief was helpful or harmful.",
+          "fields": [
+            {
+              "id": "hw_1b_situation",
+              "label": "What was the situation?",
+              "type": "textarea",
+              "placeholder": "Describe the event..."
+            },
+            {
+              "id": "hw_1b_belief",
+              "label": "What belief came to the surface?",
+              "type": "text",
+              "placeholder": "What belief did you have?"
+            },
+            {
+              "id": "hw_1b_impact",
+              "label": "Did that belief help you or make the situation more risky?",
+              "type": "textarea",
+              "placeholder": "Explain the result..."
+            }
+          ]
+        }
+      },
+      {
+        "key": "1c",
+        "title": "Modifying Beliefs",
+        "description": "Learn to upgrade old, harmful beliefs into constructive ones that support your life goals.",
+        "sections": [
+          {
+            "title": "1D Upgrading Beliefs",
+            "type": "text",
+            "content": "You cannot change the past, but you can upgrade the beliefs that guide your present choices. Upgrading a belief means taking an old, automatic thought and replacing it with a mature, prosocial truth."
+          },
+          {
+            "title": "1D Upgrading Beliefs Worksheet",
+            "type": "worksheet",
+            "content": "List risky beliefs and write replacement beliefs for each one.",
+            "fields": [
+              {
+                "id": "beliefs_table",
+                "label": "Risky Beliefs vs. Upgraded Replacement Beliefs",
+                "type": "table",
+                "tableConfig": {
+                  "headers": [
+                    "Old / Risky Belief",
+                    "Upgraded Replacement Belief"
+                  ],
+                  "rowCount": 4,
+                  "placeholders": [
+                    "e.g. If someone cuts me off, they are disrespecting me",
+                    "e.g. People make mistakes in traffic; it's not personal and not worth my freedom"
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "homework": {
+          "title": "1C Practicing Belief Upgrades",
+          "instructions": "Catch yourself holding onto an old belief this week and write out how you upgraded it in real time.",
+          "fields": [
+            {
+              "id": "hw_1c_trigger",
+              "label": "What triggered the old belief?",
+              "type": "textarea",
+              "placeholder": "Describe the situation..."
+            },
+            {
+              "id": "hw_1c_old",
+              "label": "What was the old belief?",
+              "type": "text",
+              "placeholder": "Old belief..."
+            },
+            {
+              "id": "hw_1c_new",
+              "label": "What new, upgraded belief did you replace it with?",
+              "type": "textarea",
+              "placeholder": "New upgraded belief..."
+            }
+          ]
+        }
+      },
+      {
+        "key": "1d",
+        "title": "Thinking Leads to Action",
+        "description": "See how your thoughts directly cause your actions using the STAC tool.",
+        "sections": [
+          {
+            "title": "The Behavior Chain",
+            "type": "text",
+            "content": "Events don't make you act — your thinking does. The STAC model shows the chain: Situation -> Thinking -> Action -> Consequences."
+          },
+          {
+            "title": "1I Situation Thinking Action Consequences (STAC) Worksheet",
+            "type": "worksheet",
+            "content": "Chart a past situation using STAC to see how your thoughts drove your actions.",
+            "fields": [
+              {
+                "id": "stac_situation",
+                "label": "Situation — What happened? (Be specific, facts only)",
+                "type": "textarea",
+                "placeholder": "What was the situation outside your control?"
+              },
+              {
+                "id": "stac_thinking",
+                "label": "Thinking — What thoughts went through your mind right then?",
+                "type": "textarea",
+                "placeholder": "What were you telling yourself?"
+              },
+              {
+                "id": "stac_action",
+                "label": "Action — What did you do based on those thoughts?",
+                "type": "textarea",
+                "placeholder": "What action did you take?"
+              },
+              {
+                "id": "stac_consequences",
+                "label": "Consequences — What happened as a result? (Legal, personal, financial)",
+                "type": "textarea",
+                "placeholder": "What were the short-term and long-term consequences?"
+              }
+            ]
+          },
+          {
+            "title": "1J Upgraded STAC",
+            "type": "worksheet",
+            "content": "Now rewrite that same situation with Upgraded Thinking and a New Action.",
+            "fields": [
+              {
+                "id": "upgraded_stac_thinking",
+                "label": "New Upgraded Thinking:",
+                "type": "textarea",
+                "placeholder": "What thoughts would have kept you calm and in control?"
+              },
+              {
+                "id": "upgraded_stac_action",
+                "label": "New Responsible Action:",
+                "type": "textarea",
+                "placeholder": "What action would you take based on your new thinking?"
+              },
+              {
+                "id": "upgraded_stac_outcome",
+                "label": "New Positive Consequences:",
+                "type": "textarea",
+                "placeholder": "How would your life be better today with that outcome?"
+              }
+            ]
+          }
+        ],
+        "homework": {
+          "title": "1D STAC Real-Life Practice",
+          "instructions": "Complete a STAC chain for a situation that occurred between classes.",
+          "fields": [
+            {
+              "id": "hw_stac_s",
+              "label": "1. Situation:",
+              "type": "textarea",
+              "placeholder": "Describe what happened..."
+            },
+            {
+              "id": "hw_stac_t",
+              "label": "2. Thinking:",
+              "type": "textarea",
+              "placeholder": "What went through your head?"
+            },
+            {
+              "id": "hw_stac_a",
+              "label": "3. Action:",
+              "type": "textarea",
+              "placeholder": "What did you do?"
+            },
+            {
+              "id": "hw_stac_c",
+              "label": "4. Consequences:",
+              "type": "textarea",
+              "placeholder": "What was the result?"
+            }
+          ]
+        }
+      },
+      {
+        "key": "1e",
+        "title": "Destructive Thinking",
+        "description": "Identify patterns of destructive thinking such as blaming, entitlement, and making excuses.",
+        "sections": [
+          {
+            "title": "1G Thought Tracker",
+            "type": "text",
+            "content": "Destructive thinking includes thoughts that justify harmful decisions. The Thought Tracker helps you trace backwards from an intentional action to find the thoughts and feelings that sparked it."
+          },
+          {
+            "title": "1G Thought Tracker Worksheet",
+            "type": "worksheet",
+            "content": "Fill in the Action first, then work backwards to find the trigger and thoughts.",
+            "fields": [
+              {
+                "id": "tt_action",
+                "label": "1. Action: (A past intentional decision that caused problems)",
+                "type": "textarea",
+                "placeholder": "What did you do?"
+              },
+              {
+                "id": "tt_trigger",
+                "label": "2. Triggering Situation: (The outside event that set it off)",
+                "type": "textarea",
+                "placeholder": "What happened right before?"
+              },
+              {
+                "id": "tt_thoughts",
+                "label": "3. Destructive Thoughts: (List all thoughts you had leading up to the action)",
+                "type": "textarea",
+                "placeholder": "1.\n2.\n3."
+              },
+              {
+                "id": "tt_feelings",
+                "label": "4. Feelings: (What emotions were you experiencing?)",
+                "type": "textarea",
+                "placeholder": "Anger, disrespect, fear, adrenaline, etc."
+              }
+            ]
+          }
+        ],
+        "homework": {
+          "title": "1E Tracking Destructive Thoughts",
+          "instructions": "Catch a destructive thought this week before it turns into an action. Record it below.",
+          "fields": [
+            {
+              "id": "hw_1e_thought",
+              "label": "What was the destructive thought?",
+              "type": "textarea",
+              "placeholder": "Destructive thought..."
+            },
+            {
+              "id": "hw_1e_trap",
+              "label": "What kind of thinking was it? (Blaming, Entitlement, Excuses, Overreacting)",
+              "type": "text",
+              "placeholder": "Type of thinking..."
+            },
+            {
+              "id": "hw_1e_stop",
+              "label": "How did you stop it from turning into an action?",
+              "type": "textarea",
+              "placeholder": "What did you do to pause?"
+            }
+          ]
+        }
+      },
+      {
+        "key": "1f",
+        "title": "Personal Roadmap",
+        "description": "Create a personal roadmap to map your long-term goals and stay focused.",
+        "sections": [
+          {
+            "title": "1B Personal Timeline & Roadmap",
+            "type": "text",
+            "content": "Your roadmap connects where you are today to your 1-year and 5-year vision. It acts as your GPS when challenges arise."
+          },
+          {
+            "title": "Roadmap Worksheet",
+            "type": "worksheet",
+            "content": "Map out your journey step-by-step.",
+            "fields": [
+              {
+                "id": "rm_now",
+                "label": "1. Where am I right now in life? (Honest assessment)",
+                "type": "textarea",
+                "placeholder": "Housing, job status, probation, mindset..."
+              },
+              {
+                "id": "rm_1year",
+                "label": "2. Where do I want to be 1 year from today?",
+                "type": "textarea",
+                "placeholder": "Job, income, living situation, independence..."
+              },
+              {
+                "id": "rm_steps",
+                "label": "3. Three concrete action steps I must take in the next 90 days:",
+                "type": "textarea",
+                "placeholder": "Step 1:\nStep 2:\nStep 3:"
+              },
+              {
+                "id": "rm_obstacles",
+                "label": "4. What obstacles or temptations could derail my progress?",
+                "type": "textarea",
+                "placeholder": "Old friends, fast money, transportation, impatience..."
+              },
+              {
+                "id": "rm_support",
+                "label": "5. Who in my support network will keep me accountable?",
+                "type": "textarea",
+                "placeholder": "Names of positive supporters..."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "1g",
+        "title": "Upgrade Your Thinking",
+        "description": "Put all tools together: recognize risky thoughts and practice full upgrades.",
+        "sections": [
+          {
+            "title": "1H Upgrading Thinking Worksheet",
+            "type": "worksheet",
+            "content": "Fill in the triggering situation and generate 5 new thoughts that support your goals.",
+            "fields": [
+              {
+                "id": "1h_trigger",
+                "label": "Triggering Situation:",
+                "type": "textarea",
+                "placeholder": "Describe the situation..."
+              },
+              {
+                "id": "1h_table",
+                "label": "Risky Thoughts vs. New Goal-Supporting Thoughts",
+                "type": "table",
+                "tableConfig": {
+                  "headers": [
+                    "Risky / Destructive Thought",
+                    "New Upgraded Thought"
+                  ],
+                  "rowCount": 4,
+                  "placeholders": [
+                    "e.g. He thinks I'm soft if I don't say something",
+                    "e.g. Real strength is walking away and staying free for my family"
+                  ]
+                }
+              },
+              {
+                "id": "1h_action",
+                "label": "New Action based on your upgraded thoughts:",
+                "type": "textarea",
+                "placeholder": "What will you do?"
+              }
+            ]
+          }
+        ],
+        "homework": {
+          "title": "10.h Practice Managing a Setback",
+          "instructions": "Think about a real-life setback you experienced or imagine one that could realistically happen (transportation breakdown, unexpected delay, work dispute). Answer the 4 questions.",
+          "fields": [
+            {
+              "id": "hw_setback_1",
+              "label": "1. What is (or could be) the setback? (Be specific. Something outside your control that affects progress)",
+              "type": "textarea",
+              "placeholder": "Describe the setback..."
+            },
+            {
+              "id": "hw_setback_2",
+              "label": "2. What risky thoughts or feelings might come up when this happens? (Anger, hopelessness, wanting to give up)",
+              "type": "textarea",
+              "placeholder": "Risky thoughts or feelings..."
+            },
+            {
+              "id": "hw_setback_3",
+              "label": "3. Which response shows responsibility and supports your goals?",
+              "type": "textarea",
+              "placeholder": "Your responsible response..."
+            },
+            {
+              "id": "hw_setback_4",
+              "label": "4. Who could you talk to in your support network about this situation?",
+              "type": "textarea",
+              "placeholder": "Name and how they can help..."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "number": 2,
+    "title": "Feelings",
+    "description": "Learn to recognize, name, and manage difficult emotions. Master warning signs, thought-feeling cycles, and self-control strategies.",
+    "icon": "❤️",
+    "lessons": [
+      {
+        "key": "2a",
+        "title": "Managing Feelings",
+        "description": "Learn how feelings drive actions and identify your top risky emotions.",
+        "sections": [
+          {
+            "title": "The Feeling & Action Cycle",
+            "type": "text",
+            "content": "Feelings are not right or wrong, but the actions we take when feeling them can change our lives forever. When you learn to catch a feeling before it turns into a reaction, you maintain control."
+          },
+          {
+            "title": "Three Feelings Worksheet",
+            "type": "worksheet",
+            "content": "Identify the top 3 feelings that have caused you the most problems or trouble in the past.",
+            "fields": [
+              {
+                "id": "three_feelings_1",
+                "label": "Risky Feeling #1 (e.g., Anger, Disrespect, Boredom, Fear, Embarrassment):",
+                "type": "text",
+                "placeholder": "Feeling #1..."
+              },
+              {
+                "id": "three_feelings_1_story",
+                "label": "How has Feeling #1 caused trouble for you in the past?",
+                "type": "textarea",
+                "placeholder": "Describe past problems caused by this feeling..."
+              },
+              {
+                "id": "three_feelings_2",
+                "label": "Risky Feeling #2:",
+                "type": "text",
+                "placeholder": "Feeling #2..."
+              },
+              {
+                "id": "three_feelings_2_story",
+                "label": "How has Feeling #2 caused trouble for you in the past?",
+                "type": "textarea",
+                "placeholder": "Describe past problems caused by this feeling..."
+              },
+              {
+                "id": "three_feelings_3",
+                "label": "Risky Feeling #3:",
+                "type": "text",
+                "placeholder": "Feeling #3..."
+              },
+              {
+                "id": "three_feelings_3_story",
+                "label": "How has Feeling #3 caused trouble for you in the past?",
+                "type": "textarea",
+                "placeholder": "Describe past problems caused by this feeling..."
+              }
+            ]
+          }
+        ],
+        "homework": {
+          "title": "2.a Feeling & Action Cycle Homework",
+          "instructions": "Choose one of your top risky feelings. Identify a possible trigger and what risky action you might take, then write a positive alternative.",
+          "fields": [
+            {
+              "id": "hw_2a_trigger",
+              "label": "1. Triggering Situation:",
+              "type": "textarea",
+              "placeholder": "What situation sparks this feeling?"
+            },
+            {
+              "id": "hw_2a_feeling",
+              "label": "2. Risky Feeling:",
+              "type": "text",
+              "placeholder": "The emotion you feel..."
+            },
+            {
+              "id": "hw_2a_risky_action",
+              "label": "3. What is the risky action you would normally take?",
+              "type": "textarea",
+              "placeholder": "The old reaction..."
+            },
+            {
+              "id": "hw_2a_better_action",
+              "label": "4. What is a responsible action that keeps you safe?",
+              "type": "textarea",
+              "placeholder": "The new response..."
+            }
+          ]
+        }
+      },
+      {
+        "key": "2b",
+        "title": "Emotional Goals",
+        "description": "Set clear goals for how you want to handle strong feelings before they happen.",
+        "sections": [
+          {
+            "title": "Setting Emotional Goals",
+            "type": "text",
+            "content": "Just like wage and career goals, you can set emotional goals. An emotional goal gives your brain a planned response when intense feelings strike."
+          },
+          {
+            "title": "Emotional Goals Worksheet",
+            "type": "worksheet",
+            "content": "Complete your personal emotional goal statements.",
+            "fields": [
+              {
+                "id": "em_goal_1",
+                "label": "When I feel ANGRY, my emotional goal is to:",
+                "type": "textarea",
+                "placeholder": "e.g., Take 3 deep breaths, walk into another room, and say nothing for 60 seconds..."
+              },
+              {
+                "id": "em_goal_2",
+                "label": "When I feel DISRESPECTED, my emotional goal is to:",
+                "type": "textarea",
+                "placeholder": "e.g., Remind myself that another person's ignorance doesn't define my worth..."
+              },
+              {
+                "id": "em_goal_3",
+                "label": "When I feel OVERWHELMED or FRUSTRATED, my emotional goal is to:",
+                "type": "textarea",
+                "placeholder": "e.g., Call my case manager or talk to someone in my support network..."
+              }
+            ]
+          }
+        ],
+        "homework": {
+          "title": "2.b Putting Emotional Goals into Action",
+          "instructions": "Notice a moment this week when you felt one of your risky emotions. How did you use your emotional goal?",
+          "fields": [
+            {
+              "id": "hw_2b_feeling",
+              "label": "What emotion came up?",
+              "type": "text",
+              "placeholder": "Feeling..."
+            },
+            {
+              "id": "hw_2b_goal_used",
+              "label": "Did you remember your emotional goal?",
+              "type": "textarea",
+              "placeholder": "Describe how you responded..."
+            },
+            {
+              "id": "hw_2b_result",
+              "label": "What was the outcome?",
+              "type": "textarea",
+              "placeholder": "Result..."
+            }
+          ]
+        }
+      },
+      {
+        "key": "2c",
+        "title": "Knowing Your Warning Signs",
+        "description": "Learn to recognize the physical and mental signs in your body before you lose control.",
+        "sections": [
+          {
+            "title": "Physical Early Warning Signs",
+            "type": "text",
+            "content": "Your body sends physical signals before an emotional explosion. Catching these early gives you precious seconds to use a self-control tool."
+          },
+          {
+            "title": "Warning Signs Checklist Worksheet",
+            "type": "worksheet",
+            "content": "Check all physical warning signs you experience when getting angry or upset:",
+            "fields": [
+              {
+                "id": "warning_signs_list",
+                "label": "Check your personal warning signs:",
+                "type": "checklist",
+                "checklistItems": [
+                  "Heart beating fast / pounding chest",
+                  "Clenched fists or white knuckles",
+                  "Tight jaw or grinding teeth",
+                  "Hot face or sweating",
+                  "Pacing or shaking",
+                  "Tunnel vision (not seeing surroundings)",
+                  "Shortness of breath / rapid breathing",
+                  "Stomach knots or sick feeling",
+                  "Loud voice / cutting people off",
+                  "Urge to hit or break something"
+                ]
+              },
+              {
+                "id": "warning_signs_top3",
+                "label": "Which 2 warning signs appear FIRST for you?",
+                "type": "textarea",
+                "placeholder": "The very first warning signs I notice are..."
+              }
+            ]
+          }
+        ],
+        "homework": {
+          "title": "2.c Tracking Warning Signs",
+          "instructions": "Notice your body's physical warning signs during a moment of stress or conflict this week.",
+          "fields": [
+            {
+              "id": "hw_2c_situation",
+              "label": "What was happening?",
+              "type": "textarea",
+              "placeholder": "Situation..."
+            },
+            {
+              "id": "hw_2c_body",
+              "label": "What exact physical signs did you feel in your body?",
+              "type": "textarea",
+              "placeholder": "Describe the sensations..."
+            },
+            {
+              "id": "hw_2c_response",
+              "label": "What did you do once you recognized the signs?",
+              "type": "textarea",
+              "placeholder": "How did you react?"
+            }
+          ]
+        }
+      },
+      {
+        "key": "2d",
+        "title": "Knowing Your Feelings",
+        "description": "Practice Social Skill #12: Notice sensations, determine the trigger, and name the exact feeling.",
+        "sections": [
+          {
+            "title": "Social Skill #12: Knowing Your Feelings",
+            "type": "text",
+            "content": "Step 1: Pay attention to your physical sensations and body language.\nStep 2: Decide what happened to make you feel that way.\nStep 3: Name the feeling by saying, 'I feel...'"
+          },
+          {
+            "title": "Feelings Vocabulary Worksheet",
+            "type": "worksheet",
+            "content": "Move beyond just 'mad' or 'good.' Practice naming precise emotions.",
+            "fields": [
+              {
+                "id": "feelings_scenario_1",
+                "label": "Scenario 1: You applied for an apartment and the landlord denied your application because of your record. What is the exact feeling?",
+                "type": "text",
+                "placeholder": "e.g., Disappointed, Hopeless, Ashamed, Anxious..."
+              },
+              {
+                "id": "feelings_scenario_2",
+                "label": "Scenario 2: A coworker takes credit for work that you did in front of your supervisor. What is the exact feeling?",
+                "type": "text",
+                "placeholder": "e.g., Betrayed, Cheated, Frustrated, Disrespected..."
+              },
+              {
+                "id": "feelings_naming_power",
+                "label": "Why does accurately naming your feeling give you more power than just saying 'I'm mad'?",
+                "type": "textarea",
+                "placeholder": "Explain in your own words..."
+              }
+            ]
+          }
+        ],
+        "homework": {
+          "title": "2.d Noticing and Naming a Feeling",
+          "instructions": "Between now and our next session, pay attention to a real moment when you experienced an emotion. Follow Social Skill #12.",
+          "fields": [
+            {
+              "id": "hw_2d_1",
+              "label": "1. What was the situation? (Describe what happened)",
+              "type": "textarea",
+              "placeholder": "Describe the situation..."
+            },
+            {
+              "id": "hw_2d_2",
+              "label": "2. What did you notice in your body or physical reactions?",
+              "type": "textarea",
+              "placeholder": "Tense shoulders, heart racing, etc."
+            },
+            {
+              "id": "hw_2d_3",
+              "label": "3. What triggered the feeling?",
+              "type": "textarea",
+              "placeholder": "What happened right before?"
+            },
+            {
+              "id": "hw_2d_4",
+              "label": "4. What feeling did you identify? ('I felt...')",
+              "type": "text",
+              "placeholder": "I felt..."
+            },
+            {
+              "id": "hw_2d_5",
+              "label": "5. If you were able to name the feeling in the moment, how did that help you?",
+              "type": "textarea",
+              "placeholder": "How did naming it help you respond?"
+            }
+          ]
+        }
+      },
+      {
+        "key": "2e",
+        "title": "Expressing Your Feelings",
+        "description": "Master Social Skill #13: Express feelings respectfully using 'I feel...' statements without blowing up or shutting down.",
+        "sections": [
+          {
+            "title": "Social Skill #13: Expressing Your Feelings",
+            "type": "text",
+            "content": "Expressing feelings is not about attacking someone or being weak. It is about speaking truth clearly: 'I feel [emotion] when [trigger] because [reason].'"
+          },
+          {
+            "title": "Practice 'I Feel' Statements Worksheet",
+            "type": "worksheet",
+            "content": "Draft 'I Feel' statements for difficult interactions.",
+            "fields": [
+              {
+                "id": "ifeel_1",
+                "label": "Practice 1: Someone in your house borrows your tools or clothes without asking.",
+                "type": "textarea",
+                "placeholder": "I feel frustrated when you take my tools without asking because I need them for work tomorrow..."
+              },
+              {
+                "id": "ifeel_2",
+                "label": "Practice 2: Your boss changes your shift at the last minute.",
+                "type": "textarea",
+                "placeholder": "I feel anxious when shifts change on short notice because my bus schedule is tight..."
+              }
+            ]
+          }
+        ],
+        "homework": {
+          "title": "2.e Expressing a Feeling Homework",
+          "instructions": "Notice a moment when you felt a strong emotion and expressed it (or could have). Answer the questions.",
+          "fields": [
+            {
+              "id": "hw_2e_1",
+              "label": "1. What was the situation?",
+              "type": "textarea",
+              "placeholder": "Situation..."
+            },
+            {
+              "id": "hw_2e_2",
+              "label": "2. What were you feeling? (Name it clearly)",
+              "type": "text",
+              "placeholder": "Feeling..."
+            },
+            {
+              "id": "hw_2e_3",
+              "label": "3. What did you notice in your body?",
+              "type": "textarea",
+              "placeholder": "Body signs..."
+            },
+            {
+              "id": "hw_2e_4",
+              "label": "4. Did you express the feeling to the person involved? How did you say it?",
+              "type": "textarea",
+              "placeholder": "What words did you use?"
+            },
+            {
+              "id": "hw_2e_5",
+              "label": "5. Looking back, how well did you follow the steps? What would you do differently?",
+              "type": "textarea",
+              "placeholder": "Reflection..."
+            }
+          ]
+        }
+      },
+      {
+        "key": "2f",
+        "title": "Understanding Others' Feelings",
+        "description": "Practice Social Skill #14: Developing empathy by reading body language, tone, and recognizing what others feel.",
+        "sections": [
+          {
+            "title": "Social Skill #14: Understanding Others",
+            "type": "text",
+            "content": "You don't have to agree with someone to understand them. When you can tell when a coworker, boss, or family member is stressed or hurting, you avoid unnecessary friction."
+          },
+          {
+            "title": "Reading Body Language Worksheet",
+            "type": "worksheet",
+            "content": "Match the body language to the underlying emotion.",
+            "fields": [
+              {
+                "id": "bl_table",
+                "label": "Body Language Clues & Likely Emotions",
+                "type": "table",
+                "tableConfig": {
+                  "headers": [
+                    "Body Language Observed",
+                    "What They Might Be Feeling"
+                  ],
+                  "rowCount": 3,
+                  "placeholders": [
+                    "e.g., Arms crossed, avoiding eye contact, short answers",
+                    "e.g., Defensive, embarrassed, or guarded"
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "homework": {
+          "title": "2.f Understanding Someone Else's Feelings",
+          "instructions": "Notice a moment when you interacted with someone and tried to figure out what they were feeling.",
+          "fields": [
+            {
+              "id": "hw_2f_1",
+              "label": "1. What was the situation and who was involved?",
+              "type": "textarea",
+              "placeholder": "Describe the situation..."
+            },
+            {
+              "id": "hw_2f_2",
+              "label": "2. What did you notice in their body language, tone, or words?",
+              "type": "textarea",
+              "placeholder": "What clues did you see/hear?"
+            },
+            {
+              "id": "hw_2f_3",
+              "label": "3. What do you think they were feeling?",
+              "type": "text",
+              "placeholder": "Name the emotion..."
+            },
+            {
+              "id": "hw_2f_4",
+              "label": "4. How did you respond to show understanding?",
+              "type": "textarea",
+              "placeholder": "Your response..."
+            }
+          ]
+        }
+      },
+      {
+        "key": "2g",
+        "title": "Thought-Feeling Cycle",
+        "description": "Break the escalation cycle where negative thoughts fuel intense feelings and vice versa.",
+        "sections": [
+          {
+            "title": "1L Thought / Feeling Cycle",
+            "type": "text",
+            "content": "Thoughts feed feelings, and feelings feed more extreme thoughts. Breaking this cycle early is the key to emotional mastery."
+          },
+          {
+            "title": "Break the Cycle Worksheet",
+            "type": "worksheet",
+            "content": "Chart out an escalating thought-feeling cycle from your past.",
+            "fields": [
+              {
+                "id": "cycle_trigger",
+                "label": "1. Trigger Event:",
+                "type": "textarea",
+                "placeholder": "What sparked it?"
+              },
+              {
+                "id": "cycle_first_thought",
+                "label": "2. First Thought:",
+                "type": "textarea",
+                "placeholder": "The first thought that entered your mind..."
+              },
+              {
+                "id": "cycle_feeling",
+                "label": "3. Feeling Created:",
+                "type": "text",
+                "placeholder": "The feeling that grew..."
+              },
+              {
+                "id": "cycle_escalating_thought",
+                "label": "4. Escalating Thought (The thought that threw gasoline on the fire):",
+                "type": "textarea",
+                "placeholder": "e.g., They think I'm a joke, I gotta show them..."
+              },
+              {
+                "id": "cycle_break",
+                "label": "5. How could you break the cycle at Step 2 with a new thought?",
+                "type": "textarea",
+                "placeholder": "Replacement thought to break the loop..."
+              }
+            ]
+          }
+        ],
+        "homework": {
+          "title": "2.g Thought Stopping Homework",
+          "instructions": "Practice 'Thought Stopping' this week when a stressful or negative thought starts looping.",
+          "fields": [
+            {
+              "id": "hw_2g_stress_thought",
+              "label": "1. Write down the stressful thought you noticed:",
+              "type": "textarea",
+              "placeholder": "The recurring stressful thought..."
+            },
+            {
+              "id": "hw_2g_cue",
+              "label": "2. What physical or mental cue did you use to stop it? ('STOP', snapping a band, deep breath)",
+              "type": "text",
+              "placeholder": "Cue used..."
+            },
+            {
+              "id": "hw_2g_replacement",
+              "label": "3. What productive thought did you replace it with?",
+              "type": "textarea",
+              "placeholder": "Replacement thought..."
+            }
+          ]
+        }
+      },
+      {
+        "key": "2h",
+        "title": "Stop and Think",
+        "description": "Master Social Skill #15: The 5-second pause that separates what happens from how you respond.",
+        "sections": [
+          {
+            "title": "Social Skill #15: Stop & Think",
+            "type": "text",
+            "content": "Step 1: Notice your warning signs.\nStep 2: Tell yourself to STOP.\nStep 3: Take a deep breath and count to 5.\nStep 4: Think of your long-term goals.\nStep 5: Choose a responsible response."
+          },
+          {
+            "title": "Stop & Think Scenarios Worksheet",
+            "type": "worksheet",
+            "content": "Walk through how you would use the 5-second pause.",
+            "fields": [
+              {
+                "id": "st_trigger",
+                "label": "Describe a situation where acting immediately in the past caused a catastrophe:",
+                "type": "textarea",
+                "placeholder": "Describe past event..."
+              },
+              {
+                "id": "st_power",
+                "label": "If you had paused for 5 seconds and taken a deep breath in that moment, how would the outcome have been different?",
+                "type": "textarea",
+                "placeholder": "How would your life be different today?"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "2i",
+        "title": "Self-Control Strategies: Thinking",
+        "description": "Use 4 thinking strategies: Thought Stopping, Visualization, Counting Backwards, and Grounding (5 Senses).",
+        "sections": [
+          {
+            "title": "4 Mental Self-Control Strategies",
+            "type": "text",
+            "content": "1. Thought Stopping (Firm mental 'STOP')\n2. Visualization (Picturing your freedom, your children, or a quiet place)\n3. Counting Backwards from 10 or 20\n4. Grounding: 5 things you see, 4 you feel, 3 you hear, 2 you smell, 1 you taste."
+          },
+          {
+            "title": "Thinking Strategies Worksheet",
+            "type": "worksheet",
+            "content": "Select which mental strategies fit you best.",
+            "fields": [
+              {
+                "id": "thinking_strategies_fav",
+                "label": "Which mental self-control strategy feels most natural for you?",
+                "type": "select",
+                "options": [
+                  "Thought Stopping (saying STOP)",
+                  "Visualization (picturing my goal/freedom)",
+                  "Counting Backwards (10 to 1)",
+                  "5-4-3-2-1 Grounding"
+                ]
+              },
+              {
+                "id": "thinking_strategies_plan",
+                "label": "In what specific situation will you test this strategy this week?",
+                "type": "textarea",
+                "placeholder": "Describe where you will use it..."
+              }
+            ]
+          }
+        ],
+        "homework": {
+          "title": "2.i Practice Using Thinking Strategies",
+          "instructions": "Use one thinking strategy to deal with a real-life situation before our next session.",
+          "fields": [
+            {
+              "id": "hw_2i_situation",
+              "label": "1. What was the stressful situation?",
+              "type": "textarea",
+              "placeholder": "Situation..."
+            },
+            {
+              "id": "hw_2i_strategy",
+              "label": "2. Which thinking strategy did you use?",
+              "type": "text",
+              "placeholder": "Strategy used..."
+            },
+            {
+              "id": "hw_2i_rating",
+              "label": "3. How useful was it in calming you down? (1 = Not useful, 5 = Very useful)",
+              "type": "scale"
+            }
+          ]
+        }
+      },
+      {
+        "key": "2j",
+        "title": "Self-Control Strategies: Action",
+        "description": "Combine physical action strategies (Breathing, Space, Exercise, Calling Support) with thinking strategies.",
+        "sections": [
+          {
+            "title": "Combining Thinking & Action",
+            "type": "text",
+            "content": "Combining a mental strategy with a physical action strategy (e.g. counting backwards WHILE taking deep breaths or stepping outside) is twice as effective as mental strategies alone."
+          },
+          {
+            "title": "Action Strategy Arsenal Worksheet",
+            "type": "worksheet",
+            "content": "Pick your top physical action self-control tools.",
+            "fields": [
+              {
+                "id": "action_strategies_checklist",
+                "label": "Check the action strategies you can realistically use on a job or at home:",
+                "type": "checklist",
+                "checklistItems": [
+                  "Box Breathing (4 sec in, 4 sec hold, 4 sec out, 4 sec hold)",
+                  "Getting physical space (walking away to restroom or outside)",
+                  "Drinking cold water",
+                  "Calling a trusted support person",
+                  "Going for a brisk walk or workout",
+                  "Writing your raw thoughts down on paper then ripping it up"
+                ]
+              }
+            ]
+          }
+        ],
+        "homework": {
+          "title": "2.j Using Thinking & Action Self-Control Strategies",
+          "instructions": "Practice combining one thinking strategy and one action strategy to deal with a difficult emotion before next class.",
+          "fields": [
+            {
+              "id": "hw_2j_type",
+              "label": "1. Did the situation happen in real life or was it a role play?",
+              "type": "text",
+              "placeholder": "Real life or role play..."
+            },
+            {
+              "id": "hw_2j_feeling",
+              "label": "2. What was the risky feeling?",
+              "type": "text",
+              "placeholder": "Feeling..."
+            },
+            {
+              "id": "hw_2j_situation",
+              "label": "3. Situation triggering the feeling:",
+              "type": "textarea",
+              "placeholder": "What happened..."
+            },
+            {
+              "id": "hw_2j_think_strat",
+              "label": "4. Thinking strategy used:",
+              "type": "text",
+              "placeholder": "Thought stopping, counting, visualization..."
+            },
+            {
+              "id": "hw_2j_act_strat",
+              "label": "5. Action strategy used:",
+              "type": "text",
+              "placeholder": "Deep breathing, getting space, calling friend..."
+            },
+            {
+              "id": "hw_2j_useful",
+              "label": "6. How useful was the combination? (1 = Not useful, 5 = Very useful)",
+              "type": "scale"
+            },
+            {
+              "id": "hw_2j_future",
+              "label": "7. How likely are you to use it again?",
+              "type": "scale"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "number": 3,
+    "title": "Thinking Errors",
+    "description": "Identify and dismantle cognitive distortions: ignoring your past, unrealistic expectations, tunnel vision, should thinking, and blaming.",
+    "icon": "⚡",
+    "lessons": [
+      {
+        "key": "3a",
+        "title": "Ignoring Your Past",
+        "description": "Understand why pretending past mistakes never happened guarantees you will repeat them.",
+        "sections": [
+          {
+            "title": "1B Looking at Your Past Timeline",
+            "type": "text",
+            "content": "Ignoring your past doesn't erase it. Examining your history honestly helps you identify dangerous patterns (places, associates, lifestyle habits) so you can build a moat around your future."
+          },
+          {
+            "title": "Past Patterns Worksheet",
+            "type": "worksheet",
+            "content": "Reflect on patterns across your past arrests or setbacks.",
+            "fields": [
+              {
+                "id": "past_patterns_1",
+                "label": "When you look back at past charges or setbacks, what common themes stand out? (e.g. Drugs/alcohol, hanging out late, carrying weapons, fast money)",
+                "type": "textarea",
+                "placeholder": "Describe the common patterns..."
+              },
+              {
+                "id": "past_patterns_people",
+                "label": "Were you usually alone, or was someone else involved when trouble occurred?",
+                "type": "textarea",
+                "placeholder": "Describe who was usually around..."
+              },
+              {
+                "id": "past_patterns_difference",
+                "label": "What is ONE concrete thing in your daily life that must be 100% different now to avoid that pattern?",
+                "type": "textarea",
+                "placeholder": "What must change?"
+              }
+            ]
+          }
+        ],
+        "homework": {
+          "title": "3.a Looking at Your Past Homework",
+          "instructions": "Answer the questions below based on your life patterns.",
+          "fields": [
+            {
+              "id": "hw_3a_pattern",
+              "label": "1. What is the single biggest pattern that led to trouble in your past?",
+              "type": "textarea",
+              "placeholder": "Pattern..."
+            },
+            {
+              "id": "hw_3a_warning",
+              "label": "2. What is an early warning sign that you are slipping back toward that old pattern?",
+              "type": "textarea",
+              "placeholder": "Early sign..."
+            }
+          ]
+        }
+      },
+      {
+        "key": "3b",
+        "title": "Expectations",
+        "description": "Understand how unrealistic expectations set you up for disappointment, anger, and relapse.",
+        "sections": [
+          {
+            "title": "The Trap of Unrealistic Expectations",
+            "type": "text",
+            "content": "When we expect everything to happen instantly, or expect other people to treat us perfectly, we set ourselves up for frustration. Reentry takes patience, consistency, and resilience."
+          },
+          {
+            "title": "Expectations vs. Reality Worksheet",
+            "type": "worksheet",
+            "content": "Examine two expectations that caused frustration.",
+            "fields": [
+              {
+                "id": "exp_1",
+                "label": "Unrealistic Expectation #1: (e.g. 'I'll get a $30/hr job my first week home')",
+                "type": "textarea",
+                "placeholder": "What was the expectation?"
+              },
+              {
+                "id": "exp_1_reality",
+                "label": "What was the reality?",
+                "type": "textarea",
+                "placeholder": "What actually happened?"
+              },
+              {
+                "id": "exp_1_upgrade",
+                "label": "Realistic Upgraded Expectation:",
+                "type": "textarea",
+                "placeholder": "e.g., 'I will take an entry-level job, build trust for 6 months, and work my way up'..."
+              }
+            ]
+          }
+        ],
+        "homework": {
+          "title": "3.b Unrealistic Expectations Homework",
+          "instructions": "List an unrealistic expectation you currently have about your goals, relationships, or employment.",
+          "fields": [
+            {
+              "id": "hw_3b_exp",
+              "label": "1. Unrealistic expectation:",
+              "type": "textarea",
+              "placeholder": "Expectation..."
+            },
+            {
+              "id": "hw_3b_why",
+              "label": "2. Why is this expectation unrealistic?",
+              "type": "textarea",
+              "placeholder": "Why is it unrealistic?"
+            },
+            {
+              "id": "hw_3b_adjusted",
+              "label": "3. What is a grounded, realistic expectation you can replace it with?",
+              "type": "textarea",
+              "placeholder": "Realistic expectation..."
+            }
+          ]
+        }
+      },
+      {
+        "key": "3c",
+        "title": "Managing Expectations",
+        "description": "Practice Social Skill #10: Managing expectations before they turn into anger.",
+        "sections": [
+          {
+            "title": "Social Skill #10: Managing Expectations",
+            "type": "text",
+            "content": "Step 1: Notice when you are feeling frustrated or let down.\nStep 2: Ask yourself, 'Did I have an unrealistic expectation?'\nStep 3: Reality check the situation.\nStep 4: Adjust your expectations to fit reality."
+          },
+          {
+            "title": "Adjusting Expectations Worksheet",
+            "type": "worksheet",
+            "content": "Practice adjusting expectations across daily life areas.",
+            "fields": [
+              {
+                "id": "adj_exp_table",
+                "label": "Expectation Adjustment Table",
+                "type": "table",
+                "tableConfig": {
+                  "headers": [
+                    "Area (Work, Family, Probation)",
+                    "Unrealistic Expectation",
+                    "Grounded Adjustment"
+                  ],
+                  "rowCount": 3,
+                  "placeholders": [
+                    "e.g. Probation Officer",
+                    "e.g. They should trust me immediately",
+                    "e.g. Trust is earned over time through consistent clean drug screens and being on time"
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "3d",
+        "title": "Tunnel Vision",
+        "description": "Recognize when you are hyper-focusing on one negative detail and missing the bigger picture.",
+        "sections": [
+          {
+            "title": "Breaking Out of Tunnel Vision",
+            "type": "text",
+            "content": "Tunnel vision happens when your attention locks onto a single disrespect, obstacle, or negative thought. You lose sight of your children, your freedom, and your long-term goals."
+          },
+          {
+            "title": "Tunnel Vision Tracker Worksheet",
+            "type": "worksheet",
+            "content": "Examine a moment where tunnel vision took over.",
+            "fields": [
+              {
+                "id": "tv_detail",
+                "label": "What was the single negative detail you hyper-focused on?",
+                "type": "textarea",
+                "placeholder": "The narrow focus..."
+              },
+              {
+                "id": "tv_missed",
+                "label": "What was the bigger picture you were completely blind to in that moment?",
+                "type": "textarea",
+                "placeholder": "My freedom, my family, my job, my future..."
+              },
+              {
+                "id": "tv_zoomout",
+                "label": "What mental cue can you use to 'zoom out' next time?",
+                "type": "text",
+                "placeholder": "e.g. Ask myself: 'Will this matter 1 year from now?'"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "3e",
+        "title": "Personal Risk Factors",
+        "description": "Identify the specific triggers, people, places, and situations that put you at highest risk.",
+        "sections": [
+          {
+            "title": "1O Personal Risk Factors Worksheet",
+            "type": "worksheet",
+            "content": "Check all personal risk factors that have contributed to past trouble:",
+            "fields": [
+              {
+                "id": "prf_checklist",
+                "label": "Check your personal risk factors:",
+                "type": "checklist",
+                "checklistItems": [
+                  "Always saying yes to others",
+                  "Using drugs or drinking alcohol",
+                  "Negative attitude toward authority / law enforcement",
+                  "Being used to having fast cash in my pocket",
+                  "Lack of daily structure / bored with nothing to do",
+                  "Associating with old friends from past lifestyle",
+                  "Extreme pride / cannot admit when I'm wrong",
+                  "Carrying a firearm or weapon",
+                  "Feeling disrespected in public",
+                  "Romantic relationship conflict / jealousy"
+                ]
+              },
+              {
+                "id": "prf_top3",
+                "label": "What are your TOP 3 most dangerous risk factors from this list?",
+                "type": "textarea",
+                "placeholder": "My top 3 risk factors are..."
+              }
+            ]
+          }
+        ],
+        "homework": {
+          "title": "3.e Managing My Top Risk Factor",
+          "instructions": "Take your #1 risk factor and create a concrete prevention plan.",
+          "fields": [
+            {
+              "id": "hw_3e_risk",
+              "label": "1. Top Risk Factor:",
+              "type": "text",
+              "placeholder": "Risk factor..."
+            },
+            {
+              "id": "hw_3e_plan",
+              "label": "2. Concrete boundary or rule you will follow to avoid it:",
+              "type": "textarea",
+              "placeholder": "e.g., Delete old numbers, never carry more than $40 cash, be home by 9 PM..."
+            }
+          ]
+        }
+      },
+      {
+        "key": "3f",
+        "title": "Managing Personal Risk Factors",
+        "description": "Build an actionable defense plan for each of your high-risk situations.",
+        "sections": [
+          {
+            "title": "High-Risk Situation Game Plan",
+            "type": "worksheet",
+            "content": "Create an action plan for when you unexpectedly find yourself in a high-risk situation.",
+            "fields": [
+              {
+                "id": "mrf_escape_plan",
+                "label": "If I unexpectedly run into old associates who are engaging in illegal activity, my exit plan is:",
+                "type": "textarea",
+                "placeholder": "What exact words will you say? How will you physically leave the scene?"
+              },
+              {
+                "id": "mrf_support_call",
+                "label": "Who is the first person you will call immediately after walking away?",
+                "type": "text",
+                "placeholder": "Name and phone number..."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "3g",
+        "title": "Should Thinking",
+        "description": "Recognize how demanding that others 'SHOULD' act a certain way creates anger and resentment.",
+        "sections": [
+          {
+            "title": "The Problem with 'Should'",
+            "type": "text",
+            "content": "'Should' thinking is demanding that reality or other people conform to your expectations: 'He SHOULD have known better,' 'They SHOULD respect me.' When they don't, you feel entitled to get angry."
+          },
+          {
+            "title": "Catching Should Thoughts Worksheet",
+            "type": "worksheet",
+            "content": "Identify 3 'Should' demands you frequently place on others or the world.",
+            "fields": [
+              {
+                "id": "should_1",
+                "label": "'Should' thought #1: (e.g., 'People should always show respect')",
+                "type": "text",
+                "placeholder": "Should thought..."
+              },
+              {
+                "id": "should_1_anger",
+                "label": "How does this thought make you feel when someone doesn't follow it?",
+                "type": "textarea",
+                "placeholder": "Feelings produced..."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "3h",
+        "title": "Replacing Should Thinking",
+        "description": "Replace rigid 'should' demands with flexible preferences ('I would prefer...') and acceptance.",
+        "sections": [
+          {
+            "title": "Flexible Thinking Table",
+            "type": "worksheet",
+            "content": "Convert rigid demands into flexible, mature thoughts.",
+            "fields": [
+              {
+                "id": "should_replace_table",
+                "label": "Rigid 'Should' Thought vs. Flexible Preference",
+                "type": "table",
+                "tableConfig": {
+                  "headers": [
+                    "Rigid 'Should' Thought",
+                    "Flexible Upgraded Thought ('I prefer...')"
+                  ],
+                  "rowCount": 3,
+                  "placeholders": [
+                    "e.g. He SHOULD have kept his mouth shut",
+                    "e.g. I would prefer if he didn't talk like that, but I can't control him. I can only control me."
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "3i",
+        "title": "Blaming Thinking",
+        "description": "Stop blaming others, the system, or circumstances and take full ownership of your choices.",
+        "sections": [
+          {
+            "title": "Blaming vs. Ownership Worksheet",
+            "type": "worksheet",
+            "content": "Blaming keeps you powerless. Ownership gives you control.",
+            "fields": [
+              {
+                "id": "blaming_table",
+                "label": "Blaming Thoughts vs. Ownership Thoughts",
+                "type": "table",
+                "tableConfig": {
+                  "headers": [
+                    "Blaming Thought (Victim mindset)",
+                    "Personal Ownership Thought"
+                  ],
+                  "rowCount": 4,
+                  "placeholders": [
+                    "e.g. My friend got me locked up because it was his gun",
+                    "e.g. I chose to get in that car knowing what he does. I take full responsibility for being there."
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "homework": {
+          "title": "3.i Blaming Thinking Homework",
+          "instructions": "Write down 3 blaming thoughts you caught yourself having, then write 3 new thoughts that focus on personal responsibility.",
+          "fields": [
+            {
+              "id": "hw_3i_table",
+              "label": "Blaming Thoughts vs. Personal Responsibility",
+              "type": "table",
+              "tableConfig": {
+                "headers": [
+                  "Blaming Belief",
+                  "Personal Responsibility Belief"
+                ],
+                "rowCount": 3,
+                "placeholders": [
+                  "e.g. My boss is unfair to me",
+                  "e.g. If I'm consistently 10 minutes early and do solid work, my boss won't have an issue."
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "number": 4,
+    "title": "Personality",
+    "description": "Explore personality traits, manage impulsivity with The Domino Effect, and master responding to criticism and authority.",
+    "icon": "🪞",
+    "lessons": [
+      {
+        "key": "4a",
+        "title": "Intro to Personality",
+        "description": "Understand the personality traits that shape your behavioral patterns.",
+        "sections": [
+          {
+            "title": "Personality Traits Assessment Worksheet",
+            "type": "worksheet",
+            "content": "Check the personality traits that you have exhibited in the past.",
+            "fields": [
+              {
+                "id": "personality_checklist",
+                "label": "Check traits that describe your past behavior:",
+                "type": "checklist",
+                "checklistItems": [
+                  "Impulsive (acting before thinking)",
+                  "Entitled (believing rules don't apply to me)",
+                  "Extreme self-focus (only looking out for myself)",
+                  "Quick to anger / aggressive when challenged",
+                  "Defensive when given feedback",
+                  "Patient and methodical",
+                  "Humble and willing to learn",
+                  "Empathetic toward others"
+                ]
+              },
+              {
+                "id": "personality_trait_focus",
+                "label": "Which ONE trait do you most want to change during your time in Turn90?",
+                "type": "textarea",
+                "placeholder": "The trait I want to reshape is..."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "4b",
+        "title": "Personality & Beliefs",
+        "description": "Examine how core beliefs fuel troublesome personality traits.",
+        "sections": [
+          {
+            "title": "Beliefs Behind the Trait Worksheet",
+            "type": "worksheet",
+            "content": "What beliefs drive your selected personality trait?",
+            "fields": [
+              {
+                "id": "trait_beliefs",
+                "label": "What beliefs keep this personality trait alive?",
+                "type": "textarea",
+                "placeholder": "e.g., If my trait is Entitlement, the belief is 'I shouldn't have to start at the bottom'..."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "4c",
+        "title": "Personality & New Beliefs",
+        "description": "Construct new foundational beliefs to build the person you want to become.",
+        "sections": [
+          {
+            "title": "New Identity Beliefs Worksheet",
+            "type": "worksheet",
+            "content": "Create 3 new beliefs that will reshape your character.",
+            "fields": [
+              {
+                "id": "new_identity_beliefs",
+                "label": "3 New Identity Beliefs:",
+                "type": "textarea",
+                "placeholder": "1. Real respect is earned through consistency\n2. Patience creates lasting wealth\n3. Admitting mistakes shows maturity"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "4d",
+        "title": "Impulsivity",
+        "description": "Use Tool 1P: The Domino Effect to connect impulsive actions to cascading consequences.",
+        "sections": [
+          {
+            "title": "1P The Domino Effect Worksheet",
+            "type": "worksheet",
+            "content": "Trace how a single impulsive action knocks over consecutive dominos into disaster.",
+            "fields": [
+              {
+                "id": "domino_action",
+                "label": "Domino 1 — Impulsive Action: (e.g. Taking a drink, cursing out a manager, staying out late)",
+                "type": "textarea",
+                "placeholder": "The impulsive spark..."
+              },
+              {
+                "id": "domino_2",
+                "label": "Domino 2 — Immediate Consequence: (What happens right away?)",
+                "type": "textarea",
+                "placeholder": "Fired from job, failed drug screen, argument..."
+              },
+              {
+                "id": "domino_3",
+                "label": "Domino 3 — Risky Reaction: (How you react to Domino 2)",
+                "type": "textarea",
+                "placeholder": "Give up, go back to old associates, hang out on corner..."
+              },
+              {
+                "id": "domino_4",
+                "label": "Domino 4 — Final Severe Consequence: (The final crash)",
+                "type": "textarea",
+                "placeholder": "Probation violation, prison sentence, lost custody..."
+              }
+            ]
+          }
+        ],
+        "homework": {
+          "title": "4.d The Domino Effect Homework",
+          "instructions": "Identify an impulsive action you were tempted to take this week. Chart what the dominos would have looked like if you had not stopped yourself.",
+          "fields": [
+            {
+              "id": "hw_4d_domino",
+              "label": "Domino Chain (Action -> Consequence -> Reaction -> Final Result):",
+              "type": "textarea",
+              "placeholder": "Chart the domino fall..."
+            }
+          ]
+        }
+      },
+      {
+        "key": "4e",
+        "title": "Entitlement",
+        "description": "Dismantle entitlement and replace it with a willingness to earn your success.",
+        "sections": [
+          {
+            "title": "Entitlement Call & Response Worksheet",
+            "type": "worksheet",
+            "content": "Replace entitled thoughts with humble, realistic truths.",
+            "fields": [
+              {
+                "id": "entitlement_table",
+                "label": "Entitled Thinking vs. Earned Mindset",
+                "type": "table",
+                "tableConfig": {
+                  "headers": [
+                    "Entitled Thought",
+                    "Earned Mindset Replacement"
+                  ],
+                  "rowCount": 3,
+                  "placeholders": [
+                    "e.g. I have experience, I shouldn't have to sweep floors",
+                    "e.g. Sweeping floors with a great attitude proves I'm reliable and opens the door for promotion."
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "4f",
+        "title": "Extreme Self-Focus",
+        "description": "Learn how extreme self-focus damages relationships and isolates you.",
+        "sections": [
+          {
+            "title": "Self-Focus Impact Worksheet",
+            "type": "worksheet",
+            "content": "Examine how looking out only for yourself hurt people who cared about you.",
+            "fields": [
+              {
+                "id": "self_focus_impact",
+                "label": "How did past self-centered choices affect your family, children, or partners?",
+                "type": "textarea",
+                "placeholder": "Describe the impact on loved ones..."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "4g",
+        "title": "Healthy Self Interest",
+        "description": "Balance meeting your own needs while respecting and lifting up others.",
+        "sections": [
+          {
+            "title": "Healthy Balance Worksheet",
+            "type": "worksheet",
+            "content": "Define the difference between healthy self-care and selfish behavior.",
+            "fields": [
+              {
+                "id": "healthy_interest",
+                "label": "How can you stand up for your goals without stepping on others?",
+                "type": "textarea",
+                "placeholder": "Explain your balanced approach..."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "4h",
+        "title": "Aggression",
+        "description": "Understand aggression triggers and build healthy non-violent responses.",
+        "sections": [
+          {
+            "title": "Aggression De-escalation Worksheet",
+            "type": "worksheet",
+            "content": "Analyze an aggression trigger.",
+            "fields": [
+              {
+                "id": "agg_trigger",
+                "label": "What is your biggest trigger for aggression? (e.g. Someone raising their voice, being touched, someone cutting in front)",
+                "type": "textarea",
+                "placeholder": "The trigger..."
+              },
+              {
+                "id": "agg_cost",
+                "label": "What is the true cost of an aggressive response? (Legal, freedom, life)",
+                "type": "textarea",
+                "placeholder": "The consequences..."
+              },
+              {
+                "id": "agg_deescalate",
+                "label": "What is your de-escalation plan when triggered?",
+                "type": "textarea",
+                "placeholder": "How will you de-escalate?"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "4i",
+        "title": "Responding to Criticism",
+        "description": "Practice Social Skill: Listening to correction or criticism without getting defensive or angry.",
+        "sections": [
+          {
+            "title": "4 Steps to Handling Criticism",
+            "type": "text",
+            "content": "Step 1: Look at the person and listen without interrupting.\nStep 2: Stay calm — don't argue or roll your eyes.\nStep 3: Decide if there is truth in what they are saying.\nStep 4: Acknowledge the point or calmly explain your side later."
+          },
+          {
+            "title": "Receiving Feedback Worksheet",
+            "type": "worksheet",
+            "content": "Walk through receiving feedback from a supervisor.",
+            "fields": [
+              {
+                "id": "criticism_scenario",
+                "label": "Your foreman tells you: 'You did this cut wrong, take it apart and do it again.' How do you respond?",
+                "type": "textarea",
+                "placeholder": "Write your exact verbal response..."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "4j",
+        "title": "Responding to Authority",
+        "description": "Build skills for navigating interactions with bosses, probation officers, and police respectfully and safely.",
+        "sections": [
+          {
+            "title": "Working with Authority Figures Worksheet",
+            "type": "worksheet",
+            "content": "Responding respectfully to authority protects your freedom.",
+            "fields": [
+              {
+                "id": "authority_rules",
+                "label": "What are 3 rules for staying safe and in control when dealing with law enforcement or probation?",
+                "type": "textarea",
+                "placeholder": "1. Keep hands visible\n2. Use 'Yes sir / No sir'\n3. Save disagreements for court or case management"
+              }
+            ]
+          }
+        ],
+        "homework": {
+          "title": "4.j Noticing a Moment When You Responded to Authority",
+          "instructions": "Notice a time when someone in authority (PO, boss, officer, staff) gave you a direction or request. Answer the questions below.",
+          "fields": [
+            {
+              "id": "hw_4j_1",
+              "label": "1. What was the situation and who was the authority figure?",
+              "type": "textarea",
+              "placeholder": "Situation..."
+            },
+            {
+              "id": "hw_4j_2",
+              "label": "2. What were the possible consequences of not responding well?",
+              "type": "textarea",
+              "placeholder": "Getting written up, violated, fired..."
+            },
+            {
+              "id": "hw_4j_3",
+              "label": "3. How did you respond? Did you keep your composure?",
+              "type": "textarea",
+              "placeholder": "Your response..."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "number": 5,
+    "title": "Low Frustration",
+    "description": "Build frustration tolerance. Distinguish simple hassles from complex life problems and defeat the Cycle of Avoidance.",
+    "icon": "💪",
+    "lessons": [
+      {
+        "key": "5a",
+        "title": "Intro to Low Frustration",
+        "description": "Understand low frustration tolerance and categorize frustrations into simple vs. complex.",
+        "sections": [
+          {
+            "title": "5.a Five Frustrations Worksheet",
+            "type": "worksheet",
+            "content": "List 5 frustrating situations and categorize each as Simple (everyday hassle) or Complex (major life problem).",
+            "fields": [
+              {
+                "id": "five_frustrations_table",
+                "label": "Five Frustrations Table",
+                "type": "table",
+                "tableConfig": {
+                  "headers": [
+                    "Frustrating Situation",
+                    "Type (Simple Hassle vs. Complex Problem)"
+                  ],
+                  "rowCount": 5,
+                  "placeholders": [
+                    "e.g. Bus was 25 minutes late in the rain",
+                    "Simple Hassle"
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "5b",
+        "title": "Managing Simple Frustrations",
+        "description": "Learn to let go of everyday hassles without letting them ruin your day.",
+        "sections": [
+          {
+            "title": "Letting Go of Small Stuff Worksheet",
+            "type": "worksheet",
+            "content": "Identify small daily hassles and your strategy to shrug them off.",
+            "fields": [
+              {
+                "id": "simple_hassle_plan",
+                "label": "What is an everyday hassle that frequently gets under your skin? What thought will you use to let it go?",
+                "type": "textarea",
+                "placeholder": "Hassle and replacement thought..."
+              }
+            ]
+          }
+        ],
+        "homework": {
+          "title": "5.b Noticing a Moment When You Managed a Small Frustration",
+          "instructions": "Notice a small frustration that happened between classes. Describe how you caught it early and kept it small.",
+          "fields": [
+            {
+              "id": "hw_5b_event",
+              "label": "1. What was the small annoyance?",
+              "type": "textarea",
+              "placeholder": "Event..."
+            },
+            {
+              "id": "hw_5b_handled",
+              "label": "2. How did you handle it? What did you tell yourself?",
+              "type": "textarea",
+              "placeholder": "How you handled it..."
+            }
+          ]
+        }
+      },
+      {
+        "key": "5c",
+        "title": "Managing Complex Frustrations",
+        "description": "Use Tool 1R: Managing a Complex Frustration when facing major life hurdles.",
+        "sections": [
+          {
+            "title": "1R Managing a Complex Frustration Worksheet",
+            "type": "worksheet",
+            "content": "Complex frustrations occur when you are blocked in a major life area: housing, legal, child support, or finances.",
+            "fields": [
+              {
+                "id": "1r_problem",
+                "label": "1. What complex frustration are you facing now or expecting soon?",
+                "type": "textarea",
+                "placeholder": "Describe the major problem..."
+              },
+              {
+                "id": "1r_brainstorm",
+                "label": "2. Brainstorm at least 3 possible choices or courses of action:",
+                "type": "textarea",
+                "placeholder": "Choice A:\nChoice B:\nChoice C:"
+              },
+              {
+                "id": "1r_best",
+                "label": "3. Which choice gives the highest probability of long-term success?",
+                "type": "textarea",
+                "placeholder": "Best choice..."
+              },
+              {
+                "id": "1r_first_step",
+                "label": "4. What is the very first step you will take in the next 48 hours?",
+                "type": "textarea",
+                "placeholder": "First action step..."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "5d",
+        "title": "Practice Complex Frustrations",
+        "description": "Work through real-world scenarios in housing, transportation, and employment.",
+        "sections": [
+          {
+            "title": "Scenario Planning Worksheet",
+            "type": "worksheet",
+            "content": "Solve a complex case study using Step 1: Create a Plan.",
+            "fields": [
+              {
+                "id": "scenario_solve",
+                "label": "Case Study: Your ride to work broke down and you have no backup transportation for tomorrow morning. Walk through your problem-solving steps:",
+                "type": "textarea",
+                "placeholder": "1. Who can you call?\n2. What bus route runs near?\n3. How will you communicate with your employer?"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "5e",
+        "title": "Cycle of Avoidance",
+        "description": "Recognize Tool 1Q: The Cycle of Avoidance where escaping a problem makes it grow bigger.",
+        "sections": [
+          {
+            "title": "1Q Cycle of Avoidance Worksheet",
+            "type": "worksheet",
+            "content": "Problem -> Feel Overwhelmed -> Escape/Avoid -> Problem Gets Worse -> More Overwhelm.",
+            "fields": [
+              {
+                "id": "1q_problem",
+                "label": "1. Problem you avoided in the past: (e.g. paying fine, going to doctor, opening mail)",
+                "type": "textarea",
+                "placeholder": "The problem..."
+              },
+              {
+                "id": "1q_escape",
+                "label": "2. How did you escape or avoid it? (Sleeping, getting high, ignoring calls)",
+                "type": "textarea",
+                "placeholder": "Escape route..."
+              },
+              {
+                "id": "1q_worse",
+                "label": "3. How did avoiding it make the problem 10 times worse?",
+                "type": "textarea",
+                "placeholder": "Warrant issued, eviction notice, penalty fees..."
+              },
+              {
+                "id": "1q_break",
+                "label": "4. How will you face problems immediately when they are still small?",
+                "type": "textarea",
+                "placeholder": "Action plan for tackling issues early..."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "5f",
+        "title": "Increasing Frustration Tolerance",
+        "description": "Strengthen your emotional stamina by upgrading frustrating beliefs into accepting beliefs.",
+        "sections": [
+          {
+            "title": "Frustration & Beliefs Worksheet",
+            "type": "worksheet",
+            "content": "Identify beliefs that increase frustration and replace them with acceptance.",
+            "fields": [
+              {
+                "id": "frust_table",
+                "label": "Frustrating Beliefs vs. Accepting Beliefs",
+                "type": "table",
+                "tableConfig": {
+                  "headers": [
+                    "Frustrating Belief",
+                    "Accepting Belief"
+                  ],
+                  "rowCount": 4,
+                  "placeholders": [
+                    "e.g. I shouldn't have to wait in this long line",
+                    "e.g. Waiting in line is part of life. I will use this time to listen to a podcast or relax."
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "homework": {
+          "title": "5.f Frustration & Beliefs Homework",
+          "instructions": "Identify an area of your life where frustration is high (finances, relationships, job). Write 3 frustrating beliefs and 3 accepting beliefs.",
+          "fields": [
+            {
+              "id": "hw_5f_table",
+              "label": "Frustrating Beliefs vs. Accepting Beliefs",
+              "type": "table",
+              "tableConfig": {
+                "headers": [
+                  "Frustrating Belief",
+                  "Accepting Belief"
+                ],
+                "rowCount": 3,
+                "placeholders": [
+                  "Frustrating belief...",
+                  "Accepting replacement belief..."
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "number": 6,
+    "title": "Control",
+    "description": "Master the Two Circles of Control. Maximize your energy on what you can change and stop fighting what you cannot.",
+    "icon": "🎯",
+    "lessons": [
+      {
+        "key": "6a",
+        "title": "What We Can Control",
+        "description": "Distinguish between what is inside your control and what is outside your control.",
+        "sections": [
+          {
+            "title": "Two Circles of Control Worksheet",
+            "type": "worksheet",
+            "content": "Sort everyday factors into your Control Zone vs. No-Control Zone.",
+            "fields": [
+              {
+                "id": "control_in",
+                "label": "INSIDE My Control (Things you have 100% control over):",
+                "type": "textarea",
+                "placeholder": "My effort, my attitude, my words, when I wake up, who I call, what I eat..."
+              },
+              {
+                "id": "control_out",
+                "label": "OUTSIDE My Control (Things you cannot force or dictate):",
+                "type": "textarea",
+                "placeholder": "Traffic, the weather, other people's opinions, past court decisions, bus delays..."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "6b",
+        "title": "Control and Worries",
+        "description": "Stop spending emotional currency on worries outside your control zone.",
+        "sections": [
+          {
+            "title": "Worry & Control Worksheet",
+            "type": "worksheet",
+            "content": "Turn worries into actionable control steps.",
+            "fields": [
+              {
+                "id": "worry_table",
+                "label": "Worry vs. Action Table",
+                "type": "table",
+                "tableConfig": {
+                  "headers": [
+                    "What I am worrying about",
+                    "Is it in my control?",
+                    "Positive Action I Can Take"
+                  ],
+                  "rowCount": 3,
+                  "placeholders": [
+                    "e.g. Will my background check clear for the job?",
+                    "No (Past record is set)",
+                    "e.g. Be honest upfront, bring my Turn90 reference letter, and perform great in interview"
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "homework": {
+          "title": "6.b Worry & Control Homework",
+          "instructions": "List 3 things you caught yourself worrying about this week and identify the action step.",
+          "fields": [
+            {
+              "id": "hw_6b_worries",
+              "label": "Worries and Actionable Steps:",
+              "type": "textarea",
+              "placeholder": "List worries and your actions..."
+            }
+          ]
+        }
+      },
+      {
+        "key": "6c",
+        "title": "Understanding Our Control",
+        "description": "Recognize that trying to control other people always leads to conflict and frustration.",
+        "sections": [
+          {
+            "title": "Controlling Other People Worksheet",
+            "type": "worksheet",
+            "content": "Reflect on how trying to make someone else do what you want caused problems.",
+            "fields": [
+              {
+                "id": "control_others",
+                "label": "Describe a time when you tried to control someone else's behavior and it backfired:",
+                "type": "textarea",
+                "placeholder": "Describe the situation..."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "6d",
+        "title": "Maximizing Control",
+        "description": "Put 100% effort into your circle of control to produce maximum results.",
+        "sections": [
+          {
+            "title": "Maximizing Your Control Zone Worksheet",
+            "type": "worksheet",
+            "content": "Where can you increase your daily effort to change your outcomes?",
+            "fields": [
+              {
+                "id": "max_control_areas",
+                "label": "3 areas where you will take 100% control starting today:",
+                "type": "textarea",
+                "placeholder": "1. Arriving 15 minutes early to every commitment\n2. Maintaining a daily budget\n3. Attending all CBT classes"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "6e",
+        "title": "Making a Complaint",
+        "description": "Practice Social Skill: How to make a complaint or raise an issue respectfully without getting hostile.",
+        "sections": [
+          {
+            "title": "Social Skill: Making an Effective Complaint",
+            "type": "text",
+            "content": "Step 1: State the issue calmly and clearly without blaming or insults.\nStep 2: Give a specific example of what occurred.\nStep 3: State how it affects you or your work.\nStep 4: Request a reasonable, specific solution."
+          },
+          {
+            "title": "Drafting a Complaint Worksheet",
+            "type": "worksheet",
+            "content": "Practice framing an issue respectfully.",
+            "fields": [
+              {
+                "id": "complaint_script",
+                "label": "Scenario: Your paycheck is missing 4 hours of overtime pay. Write your exact script to your manager:",
+                "type": "textarea",
+                "placeholder": "Write out what you would say..."
+              }
+            ]
+          }
+        ],
+        "homework": {
+          "title": "6.e Practice Making a Complaint",
+          "instructions": "Notice a time when you needed to bring up a concern or complaint. Use the 4 steps of the skill.",
+          "fields": [
+            {
+              "id": "hw_6e_concern",
+              "label": "1. What was the issue?",
+              "type": "textarea",
+              "placeholder": "Issue..."
+            },
+            {
+              "id": "hw_6e_words",
+              "label": "2. Exactly how did you state the problem calmly?",
+              "type": "textarea",
+              "placeholder": "What words did you use?"
+            },
+            {
+              "id": "hw_6e_outcome",
+              "label": "3. What was the outcome?",
+              "type": "textarea",
+              "placeholder": "Outcome..."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "number": 8,
+    "title": "Support Network",
+    "description": "Audit your relationships. Learn to distance yourself from negative influences, set boundaries, and say NO.",
+    "icon": "🤝",
+    "lessons": [
+      {
+        "key": "8a",
+        "title": "Support Network Intro",
+        "description": "Color code your network: Green (prosocial champions), Yellow (neutral), and Red (dangerous/risky).",
+        "sections": [
+          {
+            "title": "Support Network Audit Worksheet",
+            "type": "worksheet",
+            "content": "Categorize the people in your daily phone contacts and life.",
+            "fields": [
+              {
+                "id": "net_green",
+                "label": "GREEN Light People (Support your goals, encourage honesty, keep you free):",
+                "type": "textarea",
+                "placeholder": "Names and relationships..."
+              },
+              {
+                "id": "net_yellow",
+                "label": "YELLOW Light People (Casual acquaintances, need boundaries):",
+                "type": "textarea",
+                "placeholder": "Names..."
+              },
+              {
+                "id": "net_red",
+                "label": "RED Light People (Engage in illegal activity, sell/use drugs, carry weapons, pull you down):",
+                "type": "textarea",
+                "placeholder": "Names..."
+              }
+            ]
+          }
+        ],
+        "homework": {
+          "title": "8.a Support Network Homework",
+          "instructions": "Identify one person from your Green group you can reach out to, and one Red contact you need to block or delete.",
+          "fields": [
+            {
+              "id": "hw_8a_reach",
+              "label": "Green contact I will connect with:",
+              "type": "text",
+              "placeholder": "Name..."
+            },
+            {
+              "id": "hw_8a_cut",
+              "label": "Red contact I must create distance from:",
+              "type": "text",
+              "placeholder": "Name..."
+            }
+          ]
+        }
+      },
+      {
+        "key": "8b",
+        "title": "Cutting People Off",
+        "description": "Learn safe, effective strategies to permanently distance yourself from high-risk associations.",
+        "sections": [
+          {
+            "title": "Cutting Off Risky Associates Worksheet",
+            "type": "worksheet",
+            "content": "Create your boundary plan.",
+            "fields": [
+              {
+                "id": "cut_off_name",
+                "label": "Who is a person that represents immediate danger to your freedom?",
+                "type": "text",
+                "placeholder": "Name..."
+              },
+              {
+                "id": "cut_off_steps",
+                "label": "What concrete steps will you take to remove them from your daily routine? (Change number, delete social media, change route home)",
+                "type": "textarea",
+                "placeholder": "Action steps..."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "8c",
+        "title": "Strengthening Relationships",
+        "description": "Invest time and build trust with positive people who support your new life.",
+        "sections": [
+          {
+            "title": "Rebuilding Trust Worksheet",
+            "type": "worksheet",
+            "content": "Actions speak louder than promises when rebuilding trust with family.",
+            "fields": [
+              {
+                "id": "trust_actions",
+                "label": "What are 3 consistent actions you can do every week to rebuild trust with loved ones?",
+                "type": "textarea",
+                "placeholder": "1. Being where I say I will be on time\n2. Helping around the house without being asked\n3. Being transparent about my schedule"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "8d",
+        "title": "Practice Strengthening Relationships",
+        "description": "Practice effective communication scenarios with supportive family and mentors.",
+        "sections": [
+          {
+            "title": "Communication Scenarios Worksheet",
+            "type": "worksheet",
+            "content": "Write a message of appreciation to someone who supported you while you were away.",
+            "fields": [
+              {
+                "id": "appreciation_msg",
+                "label": "Draft an honest text or letter thanking a support person for sticking by you:",
+                "type": "textarea",
+                "placeholder": "Dear... I want to thank you for..."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "8e",
+        "title": "Setting Boundaries",
+        "description": "Set firm limits on your time, money, space, and peace of mind.",
+        "sections": [
+          {
+            "title": "Boundary Setting Formula Worksheet",
+            "type": "worksheet",
+            "content": "Draft your boundary statements: 'I care about you, but I cannot do [X] because it threatens my freedom.'",
+            "fields": [
+              {
+                "id": "boundary_script_1",
+                "label": "Boundary 1: Someone asks you to hold something for them or give a ride with unknown contents:",
+                "type": "textarea",
+                "placeholder": "Write your exact boundary words..."
+              },
+              {
+                "id": "boundary_script_2",
+                "label": "Boundary 2: An old associate asks to crash on your couch:",
+                "type": "textarea",
+                "placeholder": "Write your exact boundary words..."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "8f",
+        "title": "Practicing Boundaries",
+        "description": "Role-play and reinforce holding your ground when pressured.",
+        "sections": [
+          {
+            "title": "Handling Pushback Worksheet",
+            "type": "worksheet",
+            "content": "When people call you 'changed' or 'acting different,' how do you respond?",
+            "fields": [
+              {
+                "id": "pushback_response",
+                "label": "What will you say when someone says 'You acting different now that you out'?",
+                "type": "textarea",
+                "placeholder": "e.g., 'You're right, I am different. I did my time and I'm not going back.'..."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "8g",
+        "title": "Deciding to Say No",
+        "description": "Practice Social Skill: The power of a clean, confident NO.",
+        "sections": [
+          {
+            "title": "Social Skill: Saying No",
+            "type": "text",
+            "content": "Step 1: Look at the person.\nStep 2: Use a clear, firm tone of voice.\nStep 3: Say 'No' or 'No, I can't do that.'\nStep 4: Give a short, honest reason if appropriate.\nStep 5: Suggest a safe alternative or walk away."
+          },
+          {
+            "title": "Saying No Scenarios Worksheet",
+            "type": "worksheet",
+            "content": "Practice saying no to high-pressure requests.",
+            "fields": [
+              {
+                "id": "sayno_practice",
+                "label": "An old friend asks you to make a quick run with him late at night. What are your exact words?",
+                "type": "textarea",
+                "placeholder": "Write your response..."
+              }
+            ]
+          }
+        ],
+        "homework": {
+          "title": "8.g Practicing Saying No Homework",
+          "instructions": "Think about a situation where someone asked you to do something and it was hard to say no. Answer the questions.",
+          "fields": [
+            {
+              "id": "hw_8g_situation",
+              "label": "1. What was the situation and what did they ask you to do?",
+              "type": "textarea",
+              "placeholder": "Situation..."
+            },
+            {
+              "id": "hw_8g_why_hard",
+              "label": "2. Why was it hard to say no?",
+              "type": "textarea",
+              "placeholder": "Why it was hard..."
+            },
+            {
+              "id": "hw_8g_how_said",
+              "label": "3. How did you say no, and what happened?",
+              "type": "textarea",
+              "placeholder": "How you handled it..."
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "number": 9,
+    "title": "Ideal Self",
+    "description": "Define your future identity, master assertive communication, align daily actions with core values, and ask for help.",
+    "icon": "⭐",
+    "lessons": [
+      {
+        "key": "9a",
+        "title": "Defining Ourselves",
+        "description": "Decide who you are becoming rather than letting past mistakes define you.",
+        "sections": [
+          {
+            "title": "9.a Defining Myself Worksheet",
+            "type": "worksheet",
+            "content": "Who are you becoming in this chapter of your life?",
+            "fields": [
+              {
+                "id": "defining_old",
+                "label": "Who were you in the past? (Traits and reputation that brought trouble):",
+                "type": "textarea",
+                "placeholder": "Past identity..."
+              },
+              {
+                "id": "defining_ideal",
+                "label": "Who is your Ideal Self? (Character, reputation, and legacy you are building today):",
+                "type": "textarea",
+                "placeholder": "My Ideal Self is..."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "9b",
+        "title": "Expanding the Man Box",
+        "description": "Break out of harmful stereotypes of masculinity and discover real strength.",
+        "sections": [
+          {
+            "title": "Redefining Strength Worksheet",
+            "type": "worksheet",
+            "content": "Compare fake toughness vs. genuine strength.",
+            "fields": [
+              {
+                "id": "man_box_table",
+                "label": "Old 'Tough Guy' Stereotype vs. Real Prosocial Strength",
+                "type": "table",
+                "tableConfig": {
+                  "headers": [
+                    "Old 'Tough Guy' Rule",
+                    "Real Prosocial Strength"
+                  ],
+                  "rowCount": 3,
+                  "placeholders": [
+                    "e.g. Never show emotion or admit fear",
+                    "e.g. Being honest about feelings and asking for guidance takes real courage"
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "9c",
+        "title": "Assertive Communication",
+        "description": "Learn the difference between Passive, Aggressive, and Assertive communication.",
+        "sections": [
+          {
+            "title": "The Assertive Formula",
+            "type": "text",
+            "content": "Passive: You don't speak up and build resentment.\nAggressive: You attack and violate others.\nAssertive: You speak up clearly, calmly, and respectfully: 'I feel [emotion] when [event] because [reason]. I would like [request].'"
+          },
+          {
+            "title": "Assertive Formula Practice Worksheet",
+            "type": "worksheet",
+            "content": "Write assertive scripts using the 4-part formula.",
+            "fields": [
+              {
+                "id": "assertive_script",
+                "label": "Draft an assertive statement for a disagreement with a partner, family member, or coworker:",
+                "type": "textarea",
+                "placeholder": "I feel [X] when [Y] because [Z]. I would like [request]..."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "9d",
+        "title": "Practicing Assertive Communication",
+        "description": "Apply assertive communication to real-world job and personal disputes.",
+        "sections": [
+          {
+            "title": "Workplace Assertion Worksheet",
+            "type": "worksheet",
+            "content": "Handle tough job site conversations assertively.",
+            "fields": [
+              {
+                "id": "assert_job",
+                "label": "A coworker tries to push their dirty cleanup duties onto you. How do you handle it assertively?",
+                "type": "textarea",
+                "placeholder": "Your assertive response..."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "9e",
+        "title": "I Don't Want v. I Do Want",
+        "description": "Shift your focus from running away from what you hate to building what you love.",
+        "sections": [
+          {
+            "title": "'I Do Want' Picture Worksheet",
+            "type": "worksheet",
+            "content": "Convert 'I Don't Want' fears into positive 'I Do Want' targets.",
+            "fields": [
+              {
+                "id": "want_table",
+                "label": "Shift from Fear to Positive Target",
+                "type": "table",
+                "tableConfig": {
+                  "headers": [
+                    "What I DON'T Want (Old negative focus)",
+                    "What I DO Want (Positive target)"
+                  ],
+                  "rowCount": 4,
+                  "placeholders": [
+                    "e.g. I don't want to go back to jail",
+                    "e.g. I want to have my own 2-bedroom apartment and be there for every one of my kid's birthdays"
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "9f",
+        "title": "Values & Actions",
+        "description": "Rate your core values and make sure your daily actions reflect what matters most.",
+        "sections": [
+          {
+            "title": "Core Values Audit Worksheet",
+            "type": "worksheet",
+            "content": "Select your top 3 core values (e.g. Family, Freedom, Honesty, Hard Work, Respect, Peace).",
+            "fields": [
+              {
+                "id": "core_values_top3",
+                "label": "My Top 3 Core Values:",
+                "type": "textarea",
+                "placeholder": "1. Freedom\n2. Family\n3. Integrity"
+              },
+              {
+                "id": "values_alignment",
+                "label": "Did your daily actions over the past 48 hours match these values? Explain:",
+                "type": "textarea",
+                "placeholder": "How did your actions reflect your values?"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "9g",
+        "title": "Aspirational Values & Lifestyle",
+        "description": "Bridge the gap between where your habits are and the lifestyle you aspire to live.",
+        "sections": [
+          {
+            "title": "Aspirational Lifestyle Worksheet",
+            "type": "worksheet",
+            "content": "Map out the daily routine of your future ideal self.",
+            "fields": [
+              {
+                "id": "ideal_routine",
+                "label": "What does an ordinary Tuesday look like in your ideal future life? (Wake up, work, evening, family)",
+                "type": "textarea",
+                "placeholder": "Describe your ideal day..."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "9h",
+        "title": "Living Your Values",
+        "description": "Track daily choices that prove you are living by your personal code.",
+        "sections": [
+          {
+            "title": "9.h Tracking My Values Worksheet",
+            "type": "worksheet",
+            "content": "Record a value test you faced today.",
+            "fields": [
+              {
+                "id": "val_test_situation",
+                "label": "Situation where a value was tested:",
+                "type": "textarea",
+                "placeholder": "Situation..."
+              },
+              {
+                "id": "val_test_choice",
+                "label": "What choice did you make to uphold your value?",
+                "type": "textarea",
+                "placeholder": "Your choice..."
+              }
+            ]
+          }
+        ],
+        "homework": {
+          "title": "9.h Homework — Tracking My Values",
+          "instructions": "Log how you lived out your values over the next 48 hours.",
+          "fields": [
+            {
+              "id": "hw_9h_log",
+              "label": "Values in Action Log:",
+              "type": "textarea",
+              "placeholder": "Value upheld and action taken..."
+            }
+          ]
+        }
+      },
+      {
+        "key": "9i",
+        "title": "Dealing With Urges",
+        "description": "Learn 'Urge Surfing': recognize that urges peak like waves and fade if you don't act.",
+        "sections": [
+          {
+            "title": "Urge Surfing Worksheet",
+            "type": "worksheet",
+            "content": "Learn how to ride out strong cravings or urges (drugs, fast money, retaliation).",
+            "fields": [
+              {
+                "id": "urge_type",
+                "label": "What urge is hardest for you to resist?",
+                "type": "text",
+                "placeholder": "The urge..."
+              },
+              {
+                "id": "urge_physical",
+                "label": "What does that urge feel like physically in your body?",
+                "type": "textarea",
+                "placeholder": "Restlessness, adrenaline, dry mouth, pacing..."
+              },
+              {
+                "id": "urge_surf_plan",
+                "label": "What will you do for 15 minutes to ride the wave until it crests and drops?",
+                "type": "textarea",
+                "placeholder": "Take a cold shower, call my mentor, do pushups, walk..."
+              }
+            ]
+          }
+        ],
+        "homework": {
+          "title": "9.i Homework — Tracking An Urge",
+          "instructions": "Notice an urge that came up. Record how you surfed the wave without giving in.",
+          "fields": [
+            {
+              "id": "hw_9i_urge",
+              "label": "1. What was the urge?",
+              "type": "text",
+              "placeholder": "Urge..."
+            },
+            {
+              "id": "hw_9i_surfed",
+              "label": "2. How did you surf the wave?",
+              "type": "textarea",
+              "placeholder": "What did you do during the peak?"
+            }
+          ]
+        }
+      },
+      {
+        "key": "9j",
+        "title": "Deciding To Be Honest",
+        "description": "Build a habit of honesty — especially when the truth is uncomfortable or scary.",
+        "sections": [
+          {
+            "title": "Making a Hard Honesty Decision Worksheet",
+            "type": "worksheet",
+            "content": "Examine a moment when you were tempted to hide the truth.",
+            "fields": [
+              {
+                "id": "honesty_temptation",
+                "label": "Describe a situation where lying or hiding something felt like the easy way out:",
+                "type": "textarea",
+                "placeholder": "Situation..."
+              },
+              {
+                "id": "honesty_choice",
+                "label": "Why does telling the truth build long-term trust and protect your freedom?",
+                "type": "textarea",
+                "placeholder": "Explain the long-term benefits..."
+              }
+            ]
+          }
+        ],
+        "homework": {
+          "title": "9.j Homework — Tracking An Honesty Decision",
+          "instructions": "Notice a moment this week when you chose complete honesty over an easy lie or coverup.",
+          "fields": [
+            {
+              "id": "hw_9j_situation",
+              "label": "1. What was the situation?",
+              "type": "textarea",
+              "placeholder": "Situation..."
+            },
+            {
+              "id": "hw_9j_decision",
+              "label": "2. How did you handle it with 100% honesty?",
+              "type": "textarea",
+              "placeholder": "What did you say?"
+            },
+            {
+              "id": "hw_9j_result",
+              "label": "3. How did you feel afterward?",
+              "type": "textarea",
+              "placeholder": "How did it turn out?"
+            }
+          ]
+        }
+      },
+      {
+        "key": "9k",
+        "title": "Asking For Help",
+        "description": "Overcome the fear of vulnerability and learn that asking for help is an act of wisdom and strength.",
+        "sections": [
+          {
+            "title": "Asking for Help Worksheet",
+            "type": "worksheet",
+            "content": "Nobody rebuilds a life alone. Practice asking for support.",
+            "fields": [
+              {
+                "id": "help_hesitation",
+                "label": "What usually holds you back from asking for help? (Pride, fear of looking weak, fear of being judged)",
+                "type": "textarea",
+                "placeholder": "What makes it hard to ask?"
+              },
+              {
+                "id": "help_current_need",
+                "label": "What is ONE thing in your life right now that you need help with? (Legal, driver's license, budgeting, mental health, tools)",
+                "type": "textarea",
+                "placeholder": "What do you need help with?"
+              },
+              {
+                "id": "help_ask_who",
+                "label": "Who will you ask, and what are the exact words you will say?",
+                "type": "textarea",
+                "placeholder": "Who and what you will ask..."
+              }
+            ]
+          }
+        ],
+        "homework": {
+          "title": "9.k Homework — Noticing a Moment When You Need Help",
+          "instructions": "Identify a moment this week when you needed assistance. Ask for help and write down the experience.",
+          "fields": [
+            {
+              "id": "hw_9k_need",
+              "label": "1. What did you need help with?",
+              "type": "textarea",
+              "placeholder": "Need..."
+            },
+            {
+              "id": "hw_9k_asked",
+              "label": "2. Who did you ask and how did they respond?",
+              "type": "textarea",
+              "placeholder": "Who you asked and the outcome..."
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

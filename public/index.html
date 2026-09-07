@@ -1910,6 +1910,8 @@
                 <button class="btn btn-outline" onclick="closeModal('modal-weekly-points')">Close</button>
             </div>
         </div>
+    </div>
+
     <!-- Modal: Program Manager CBT Submissions Review -->
     <div id="modal-cbt-review" class="modal hidden">
         <div class="modal-content modal-lg" style="max-width: 900px;">
@@ -1925,6 +1927,33 @@
             </div>
             <div class="modal-footer mt-4">
                 <button class="btn btn-outline" onclick="closeModal('modal-cbt-review')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Interactive CBT Lesson & Worksheet Viewer -->
+    <div id="modal-cbt-lesson" class="modal hidden">
+        <div class="modal-content modal-lg" style="max-width: 960px; max-height: 90vh; display: flex; flex-direction: column;">
+            <div class="modal-header" style="flex-shrink: 0;">
+                <div>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                        <span id="cbt-lesson-modal-badge" class="badge badge-primary">Module</span>
+                        <span id="cbt-lesson-modal-status" class="badge badge-outline">Incomplete</span>
+                    </div>
+                    <h3 id="cbt-lesson-modal-title" style="margin: 0; color: var(--primary);">Lesson Title</h3>
+                    <p id="cbt-lesson-modal-desc" style="margin: 3px 0 0 0; font-size: 13px; color: var(--slate);"></p>
+                </div>
+                <button class="modal-close" onclick="closeModal('modal-cbt-lesson')">&times;</button>
+            </div>
+            <div id="cbt-lesson-modal-body" style="margin-top: 14px; overflow-y: auto; flex: 1; padding-right: 6px;">
+                <!-- Populated dynamically with sections, worksheets, tables, grids, homework -->
+            </div>
+            <div class="modal-footer" style="flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 14px; margin-top: 14px;">
+                <div id="cbt-lesson-save-status" style="font-size: 12.5px;"></div>
+                <div style="display: flex; gap: 10px;">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('modal-cbt-lesson')">Close</button>
+                    <button type="button" id="cbt-lesson-save-btn" class="btn btn-primary" onclick="submitCurrentCbtLesson()">💾 Save Worksheet & Homework</button>
+                </div>
             </div>
         </div>
     </div>
