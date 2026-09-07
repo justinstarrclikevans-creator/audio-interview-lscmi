@@ -22,6 +22,23 @@ const { matchJobsWithAi, generateTailoredResumePoints, generateTurnaroundNarrati
 const { runCaseloadMigration } = require('./migrate_and_assign_t90_logins');
 const pdfParse = require('pdf-parse');
 
+async function extractPdfText(buffer) {
+    if (!buffer) return '';
+    try {
+        if (typeof pdfParse === 'function') {
+            const parsed = await pdfParse(buffer);
+            return parsed.text || '';
+        } else if (pdfParse && pdfParse.PDFParse) {
+            const parser = new pdfParse.PDFParse({ data: buffer });
+            const parsed = await parser.getText();
+            return parsed.text || '';
+        }
+    } catch (e) {
+        console.warn('extractPdfText error:', e.message);
+    }
+    return '';
+}
+
 require('dotenv').config({ path: path.join(__dirname, '..', 'email-settings.txt') });
 if (!process.env.GEMINI_API_KEY && fs.existsSync(path.join(__dirname, '.env'))) {
     require('dotenv').config();
@@ -1066,8 +1083,8 @@ app.post('/api/submit-feedback', memoryUpload.single('criminalHistoryFile'), asy
         let crimText = criminalHistoryText || '';
         if (req.file && req.file.buffer) {
             try {
-                const parsed = await pdfParse(req.file.buffer);
-                crimText += '\n\n' + parsed.text;
+                const text = await extractPdfText(req.file.buffer);
+                crimText += '\n\n' + text;
             } catch (e) {
                 console.warn('Could not parse PDF buffer, using raw text:', e.message);
             }
@@ -1218,8 +1235,8 @@ app.post('/api/reentry/assess', authenticateToken, requireRole('program_manager'
             const ext = path.extname(req.file.originalname).toLowerCase();
             if (ext === '.pdf') {
                 try {
-                    const parsed = await pdfParse(req.file.buffer);
-                    fullTranscript += '\n\n' + parsed.text;
+                    const text = await extractPdfText(req.file.buffer);
+                    fullTranscript += '\n\n' + text;
                 } catch (e) {
                     console.warn('PDF parse failed:', e.message);
                 }
