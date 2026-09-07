@@ -244,10 +244,14 @@ async function loadFsDashboard() {
     }
 }
 
-async function loadBriefcaseChecklist() {
+async function loadBriefcaseChecklist(targetContainerId) {
     const token = localStorage.getItem('fs_token');
-    const container = document.getElementById('briefcase-domains-container');
-    if (!container) return;
+    const containerIds = targetContainerId 
+        ? [targetContainerId] 
+        : ['briefcase-domains-container', 'rn-briefcase-domains-container'];
+    
+    const containers = containerIds.map(id => document.getElementById(id)).filter(Boolean);
+    if (containers.length === 0) return;
 
     try {
         const res = await fetch('/api/participant/briefcase', {
@@ -292,7 +296,7 @@ async function loadBriefcaseChecklist() {
         }
 
         html += '</div>';
-        container.innerHTML = html;
+        containers.forEach(c => c.innerHTML = html);
     } catch (e) {
         console.error('Failed to load briefcase checklist:', e);
     }
@@ -548,30 +552,237 @@ async function handleClassFeedback(e) {
 // RE-ENTRY NAVIGATION PORTAL
 // -------------------------------------------------------------
 function switchRnSection(section) {
-    document.querySelectorAll('.sub-tab-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelectorAll('.rn-sub-view').forEach(view => view.classList.add('hidden'));
+    document.querySelectorAll('#view-rn-portal .nav-sub-tabs .sub-tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('#view-rn-portal .rn-sub-view').forEach(view => view.classList.add('hidden'));
 
-    if (section === 'jobs') {
-        document.querySelector('.sub-tab-btn:nth-child(1)').classList.add('active');
-        document.getElementById('rn-section-jobs').classList.remove('hidden');
+    if (section === 'caseplan') {
+        const btn = document.querySelector('#view-rn-portal .sub-tab-btn:nth-child(1)');
+        if (btn) btn.classList.add('active');
+        const view = document.getElementById('rn-section-caseplan');
+        if (view) view.classList.remove('hidden');
+        loadRnCasePlan();
+    } else if (section === 'briefcase') {
+        const btn = document.querySelector('#view-rn-portal .sub-tab-btn:nth-child(2)');
+        if (btn) btn.classList.add('active');
+        const view = document.getElementById('rn-section-briefcase');
+        if (view) view.classList.remove('hidden');
+        loadBriefcaseChecklist('rn-briefcase-domains-container');
+    } else if (section === 'messages') {
+        const btn = document.querySelector('#view-rn-portal .sub-tab-btn:nth-child(3)');
+        if (btn) btn.classList.add('active');
+        const view = document.getElementById('rn-section-messages');
+        if (view) view.classList.remove('hidden');
+        loadParticipantMessages('rn');
+    } else if (section === 'jobs') {
+        const btn = document.querySelector('#view-rn-portal .sub-tab-btn:nth-child(4)');
+        if (btn) btn.classList.add('active');
+        const view = document.getElementById('rn-section-jobs');
+        if (view) view.classList.remove('hidden');
         loadJobs();
-    } else if (section === 'resume') {
-        document.querySelector('.sub-tab-btn:nth-child(2)').classList.add('active');
-        document.getElementById('rn-section-resume').classList.remove('hidden');
-        loadSavedResume();
     } else if (section === 'cbt') {
-        document.querySelector('.sub-tab-btn:nth-child(3)').classList.add('active');
-        document.getElementById('rn-section-cbt').classList.remove('hidden');
+        const btn = document.querySelector('#view-rn-portal .sub-tab-btn:nth-child(5)');
+        if (btn) btn.classList.add('active');
+        const view = document.getElementById('rn-section-cbt');
+        if (view) view.classList.remove('hidden');
         loadCbtModules();
+    } else if (section === 'resume') {
+        const btn = document.querySelector('#view-rn-portal .sub-tab-btn:nth-child(6)');
+        if (btn) btn.classList.add('active');
+        const view = document.getElementById('rn-section-resume');
+        if (view) view.classList.remove('hidden');
+        loadSavedResume();
     } else if (section === 'locker') {
-        document.querySelector('.sub-tab-btn:nth-child(4)').classList.add('active');
-        document.getElementById('rn-section-locker').classList.remove('hidden');
+        const btn = document.querySelector('#view-rn-portal .sub-tab-btn:nth-child(7)');
+        if (btn) btn.classList.add('active');
+        const view = document.getElementById('rn-section-locker');
+        if (view) view.classList.remove('hidden');
         loadLockerDocs();
     }
 }
 
 function loadRnDashboard() {
-    switchRnSection('jobs');
+    switchRnSection('caseplan');
+    loadRnCasePlan();
+    loadBriefcaseChecklist('rn-briefcase-domains-container');
+    loadParticipantMessages('rn');
+}
+
+async function loadRnCasePlan() {
+    const token = localStorage.getItem('fs_token');
+    if (!token) return;
+
+    try {
+        const res = await fetch('/api/participant/case-plan', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+
+        // 1. Stability Badge & Downloads
+        const badgeEl = document.getElementById('rn-plan-stability-badge');
+        const docxBtn = document.getElementById('rn-plan-docx-btn');
+        const pdfBtn = document.getElementById('rn-plan-pdf-btn');
+
+        if (data.found && data.planDetails) {
+            const status = (data.planDetails.stability_status || 'stable').toLowerCase();
+            if (badgeEl) {
+                if (status === 'crisis' || status === 'immediate_triage_needed') {
+                    badgeEl.className = 'badge badge-red';
+                    badgeEl.innerText = 'Status: Immediate Triage / Crisis';
+                } else if (status === 'at_risk' || status === 'needs_stabilization') {
+                    badgeEl.className = 'badge badge-warning';
+                    badgeEl.innerText = 'Status: At-Risk / Needs Stabilization';
+                } else {
+                    badgeEl.className = 'badge badge-green';
+                    badgeEl.innerText = 'Status: Stable / Placement Ready';
+                }
+            }
+
+            if (docxBtn) {
+                if (data.docxUrl) {
+                    docxBtn.href = data.docxUrl;
+                    docxBtn.style.display = 'inline-flex';
+                } else {
+                    docxBtn.style.display = 'none';
+                }
+            }
+            if (pdfBtn) {
+                if (data.pdfUrl) {
+                    pdfBtn.href = data.pdfUrl;
+                    pdfBtn.style.display = 'inline-flex';
+                } else {
+                    pdfBtn.style.display = 'none';
+                }
+            }
+
+            // 2. Stated Goals, Needs, Housing, Legal
+            const goalsEl = document.getElementById('rn-plan-goals');
+            const needsEl = document.getElementById('rn-plan-needs');
+            const livingEl = document.getElementById('rn-plan-living');
+            const legalEl = document.getElementById('rn-plan-legal');
+
+            if (goalsEl) goalsEl.innerText = data.planDetails.stated_goals || 'Baseline employment and life stabilization.';
+            
+            if (needsEl) {
+                const needs = data.planDetails.identified_needs || [];
+                if (needs.length > 0) {
+                    needsEl.innerHTML = `<ul style="margin: 0; padding-left: 18px; line-height: 1.5;">${needs.map(n => `<li>${n}</li>`).join('')}</ul>`;
+                } else {
+                    needsEl.innerText = 'No urgent barrier alerts flagged.';
+                }
+            }
+
+            if (livingEl) livingEl.innerText = data.planDetails.living_situation || 'Transitional Housing / Community Placement';
+            if (legalEl) legalEl.innerText = data.planDetails.legal_status || 'Active Community Supervision';
+
+            // 3. Dynamic Criminogenic Domains & CBT Strategies
+            const domainsContainer = document.getElementById('rn-plan-domains-container');
+            if (domainsContainer) {
+                const domains = data.planDetails.top_criminogenic_domains || [];
+                const flags = data.planDetails.detected_flags || [];
+
+                if (domains.length === 0 && flags.length === 0) {
+                    domainsContainer.innerHTML = '<div style="grid-column: 1 / -1; color: var(--slate); font-size: 13px;">No clinical domain triggers flagged on file.</div>';
+                } else {
+                    let domHtml = '';
+                    domains.forEach((d, idx) => {
+                        domHtml += `
+                            <div style="background: white; border: 1.5px solid #bfdbfe; border-radius: 8px; padding: 14px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                    <span class="badge badge-primary" style="font-size: 10.5px;">Priority Domain ${idx + 1}</span>
+                                    <span style="font-size: 11px; color: var(--accent); font-weight: 700;">Target Focus</span>
+                                </div>
+                                <h4 style="margin: 0 0 6px 0; color: #1e3a8a; font-size: 15px;">${d}</h4>
+                                <p style="margin: 0; font-size: 12.5px; color: #475569; line-height: 1.4;">
+                                    Key intervention target in CBT curriculum and workplace coaching to protect long-term freedom and employment.
+                                </p>
+                            </div>
+                        `;
+                    });
+
+                    flags.forEach(f => {
+                        domHtml += `
+                            <div style="background: white; border: 1.5px solid ${f.severity === 'high' ? '#fca5a5' : '#fde68a'}; border-radius: 8px; padding: 14px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                    <span class="badge ${f.severity === 'high' ? 'badge-red' : 'badge-warning'}" style="font-size: 10.5px;">${f.category || 'Behavioral Flag'}</span>
+                                    <span style="font-size: 11px; color: var(--slate);">${f.severity ? f.severity.toUpperCase() : 'ALERT'}</span>
+                                </div>
+                                <h4 style="margin: 0 0 6px 0; color: #0f172a; font-size: 14.5px;">${f.flag}</h4>
+                                ${f.evidence ? `<div style="font-size: 12px; color: #475569; font-style: italic; margin-bottom: 6px; background: #f8fafc; padding: 6px 8px; border-radius: 4px;">"${f.evidence}"</div>` : ''}
+                                ${f.navigator_recommendation ? `<div style="font-size: 12px; color: #15803d; font-weight: 500;">💡 Strategy: ${f.navigator_recommendation}</div>` : ''}
+                            </div>
+                        `;
+                    });
+
+                    domainsContainer.innerHTML = domHtml;
+                }
+            }
+
+            // 4. Personalized Community Referrals
+            const refContainer = document.getElementById('rn-plan-referrals-container');
+            if (refContainer) {
+                const refs = data.planDetails.recommended_referrals || [];
+                if (refs.length === 0) {
+                    refContainer.innerHTML = '<div style="grid-column: 1 / -1; color: var(--slate); font-size: 13px;">No referrals currently pending. Contact your Re-entry Navigator for custom resources.</div>';
+                } else {
+                    refContainer.innerHTML = refs.map(r => `
+                        <div style="background: white; border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+                            <div>
+                                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+                                    <span class="badge badge-accent" style="font-size: 10.5px;">${r.category || 'Community Resource'}</span>
+                                </div>
+                                <h4 style="margin: 6px 0 4px 0; color: #0f172a; font-size: 15px;">${r.resourceName}</h4>
+                                <div style="font-size: 12px; color: var(--slate); margin-bottom: 8px;">📍 ${r.contact || 'Contact your Navigator'}</div>
+                                <p style="margin: 0; font-size: 12.5px; color: #334155; line-height: 1.4;">${r.actionStep || 'Follow up with staff for direct referral appointment.'}</p>
+                            </div>
+                            <div style="margin-top: 12px; border-top: 1px dashed #e2e8f0; padding-top: 8px;">
+                                ${r.websiteUrl ? `<a href="${r.websiteUrl}" target="_blank" class="btn btn-outline" style="font-size: 11.5px; padding: 4px 10px; width: 100%; text-align: center; text-decoration: none;">Visit Resource Website &rarr;</a>` : ''}
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            // 5. Recent Case Notes
+            const notesContainer = document.getElementById('rn-plan-notes-container');
+            if (notesContainer) {
+                const notes = data.notes || [];
+                if (notes.length === 0) {
+                    notesContainer.innerHTML = '<p style="color: var(--slate); font-size: 13px; margin: 0;">No individual case management notes recorded yet.</p>';
+                } else {
+                    notesContainer.innerHTML = notes.map(n => `
+                        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px 14px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 11.5px; color: var(--slate); margin-bottom: 4px;">
+                                <span><strong style="color: var(--primary);">${n.author_name}</strong> • ${n.note_type} (${n.category || 'Case Management'})</span>
+                                <span>📅 ${n.session_date}</span>
+                            </div>
+                            <div style="font-size: 13px; color: #1e293b; line-height: 1.5; white-space: pre-line;">${n.content}</div>
+                        </div>
+                    `).join('');
+                }
+            }
+
+        } else {
+            // Plan not generated yet
+            const goalsEl = document.getElementById('rn-plan-goals');
+            if (goalsEl) goalsEl.innerText = 'Case plan is being finalized by your Reentry Navigator.';
+            const needsEl = document.getElementById('rn-plan-needs');
+            if (needsEl) needsEl.innerText = 'Pending assessment review.';
+            const notesContainer = document.getElementById('rn-plan-notes-container');
+            if (notesContainer && data.notes && data.notes.length > 0) {
+                notesContainer.innerHTML = data.notes.map(n => `
+                    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px 14px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 11.5px; color: var(--slate); margin-bottom: 4px;">
+                            <span><strong style="color: var(--primary);">${n.author_name}</strong> • ${n.note_type}</span>
+                            <span>📅 ${n.session_date}</span>
+                        </div>
+                        <div style="font-size: 13px; color: #1e293b; line-height: 1.5;">${n.content}</div>
+                    </div>
+                `).join('');
+            }
+        }
+    } catch(err) {
+        console.error('Error loading RN case plan:', err);
+    }
 }
 
 let cachedRnJobs = [];
@@ -3026,6 +3237,14 @@ function askAiPrompt(promptText) {
     }
 }
 
+function askRnAiPrompt(promptText) {
+    const input = document.getElementById('rn-ai-input');
+    if (input) {
+        input.value = promptText;
+        sendRnParticipantAiMessage();
+    }
+}
+
 async function sendParticipantAiMessage() {
     const token = localStorage.getItem('fs_token');
     const input = document.getElementById('fs-ai-input');
@@ -3088,12 +3307,75 @@ async function sendParticipantAiMessage() {
     }
 }
 
+async function sendRnParticipantAiMessage() {
+    const token = localStorage.getItem('fs_token');
+    const input = document.getElementById('rn-ai-input');
+    const chatBox = document.getElementById('rn-ai-chat-history');
+    const btn = document.getElementById('btn-rn-ai-send');
+
+    const question = (input.value || '').trim();
+    if (!question) return;
+
+    // Append user message
+    chatBox.innerHTML += `
+        <div style="align-self: flex-end; background: #e0e7ff; color: #1e1b4b; border-radius: 6px; padding: 8px 12px; max-width: 85%;">
+            <strong>You:</strong> ${question}
+        </div>
+    `;
+    input.value = '';
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    btn.disabled = true;
+    btn.innerText = 'Thinking...';
+
+    // Temporary typing indicator
+    const typingId = 'rn-ai-typing-' + Date.now();
+    chatBox.innerHTML += `<div id="${typingId}" style="align-self: flex-start; background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 12px; color: var(--slate); font-style: italic;">Turn90 Assistant is looking up instructions & resources...</div>`;
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    try {
+        const res = await fetch('/api/participant/ai-assistant', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ message: question, history: participantAiHistory })
+        });
+        const data = await res.json();
+
+        const typingEl = document.getElementById(typingId);
+        if (typingEl) typingEl.remove();
+
+        if (data.reply) {
+            participantAiHistory.push({ role: 'user', text: question });
+            participantAiHistory.push({ role: 'assistant', text: data.reply });
+
+            const formattedReply = typeof marked !== 'undefined' ? marked.parse(data.reply) : data.reply.replace(/\n/g, '<br>');
+            chatBox.innerHTML += `
+                <div style="align-self: flex-start; background: white; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px; max-width: 90%; line-height: 1.5;">
+                    <strong style="color: var(--primary);">Turn90 Assistant:</strong>
+                    <div style="margin-top: 6px;">${formattedReply}</div>
+                </div>
+            `;
+        } else {
+            chatBox.innerHTML += `<div style="color: red;">Failed to get AI response: ${data.error || 'Unknown error'}</div>`;
+        }
+    } catch(err) {
+        const typingEl = document.getElementById(typingId);
+        if (typingEl) typingEl.remove();
+        chatBox.innerHTML += `<div style="color: red;">Assistant Error: ${err.message}</div>`;
+    } finally {
+        btn.disabled = false;
+        btn.innerText = 'Ask AI';
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+}
+
 // =============================================================
 // TWO-WAY MESSAGING FUNCTIONS (PARTICIPANT & PM)
 // =============================================================
-async function loadParticipantMessages() {
+async function loadParticipantMessages(targetPrefix = 'fs') {
     const token = localStorage.getItem('fs_token');
-    const container = document.getElementById('fs-participant-messages-list');
+    const containerId = targetPrefix === 'rn' ? 'rn-participant-messages-list' : 'fs-participant-messages-list';
+    const container = document.getElementById(containerId);
     if (!container) return;
 
     try {
@@ -3150,7 +3432,38 @@ async function sendParticipantMessage() {
         const data = await res.json();
         if (data.success) {
             input.value = '';
-            loadParticipantMessages();
+            loadParticipantMessages('fs');
+        } else {
+            alert('Failed to send message: ' + data.error);
+        }
+    } catch(err) {
+        alert('Message error: ' + err.message);
+    } finally {
+        btn.disabled = false;
+        btn.innerText = 'Send';
+    }
+}
+
+async function sendRnParticipantMessage() {
+    const token = localStorage.getItem('fs_token');
+    const input = document.getElementById('rn-msg-input');
+    const btn = document.getElementById('btn-rn-msg-send');
+    const text = (input.value || '').trim();
+    if (!text) return;
+
+    btn.disabled = true;
+    btn.innerText = 'Sending...';
+
+    try {
+        const res = await fetch('/api/messages/send', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ messageText: text })
+        });
+        const data = await res.json();
+        if (data.success) {
+            input.value = '';
+            loadParticipantMessages('rn');
         } else {
             alert('Failed to send message: ' + data.error);
         }

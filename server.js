@@ -858,25 +858,93 @@ app.get('/api/file-content', (req, res) => {
 // Fetch Participant-Facing Printable Case Plan
 app.get('/api/participant/case-plan', authenticateToken, (req, res) => {
     const userId = req.user.id;
-    const user = db.prepare('SELECT name FROM users WHERE id = ?').get(userId);
+    const user = db.prepare('SELECT id, name, location, track FROM users WHERE id = ?').get(userId);
     if (!user) return res.status(404).json({ error: 'User not found' });
     
-    const safeName = user.name.replace(/[^a-zA-Z0-9]/g, '');
-    const files = fs.readdirSync(dataDir);
-    const planFile = files.find(f => f.toLowerCase().includes(safeName.toLowerCase()) && f.endsWith('_participant_case_plan.md'));
+    // 1. Check database reentry_case_plans
+    const reentryPlan = db.prepare('SELECT * FROM reentry_case_plans WHERE user_id = ?').get(userId);
     
-    if (planFile) {
-        const content = fs.readFileSync(path.join(dataDir, planFile), 'utf8');
-        const pdfFile = planFile.replace(/\.md$/, '.pdf');
+    // 2. Fetch participant barrier profile
+    const profile = db.prepare('SELECT * FROM participant_profiles WHERE user_id = ?').get(userId);
+
+    // 3. Fetch case management session notes
+    const notes = db.prepare(`
+        SELECT id, author_name, session_date, note_type, category, content, created_at 
+        FROM case_notes 
+        WHERE user_id = ? 
+        ORDER BY session_date DESC, id DESC LIMIT 10
+    `).all(userId);
+
+    // 4. Check disk files fallback
+    const safeName = user.name.replace(/[^a-zA-Z0-9]/g, '');
+    const files = fs.existsSync(dataDir) ? fs.readdirSync(dataDir) : [];
+    const planFile = files.find(f => f.toLowerCase().includes(safeName.toLowerCase()) && f.endsWith('_participant_case_plan.md'));
+    const diskContent = planFile ? fs.readFileSync(path.join(dataDir, planFile), 'utf8') : null;
+    const diskPdf = planFile ? planFile.replace(/\.md$/, '.pdf') : null;
+
+    if (reentryPlan || diskContent) {
+        let identifiedNeeds = [];
+        let topDomains = [];
+        let recommendedReferrals = [];
+        let matchedEmployers = [];
+        let detectedFlags = [];
+
+        if (reentryPlan) {
+            try { identifiedNeeds = typeof reentryPlan.identified_needs === 'string' ? JSON.parse(reentryPlan.identified_needs) : (reentryPlan.identified_needs || []); } catch(e){}
+            try { topDomains = typeof reentryPlan.top_criminogenic_domains === 'string' ? JSON.parse(reentryPlan.top_criminogenic_domains) : (reentryPlan.top_criminogenic_domains || []); } catch(e){}
+            try { recommendedReferrals = typeof reentryPlan.recommended_referrals === 'string' ? JSON.parse(reentryPlan.recommended_referrals) : (reentryPlan.recommended_referrals || []); } catch(e){}
+            try { matchedEmployers = typeof reentryPlan.matched_employers === 'string' ? JSON.parse(reentryPlan.matched_employers) : (reentryPlan.matched_employers || []); } catch(e){}
+            try { detectedFlags = typeof reentryPlan.detected_flags === 'string' ? JSON.parse(reentryPlan.detected_flags) : (reentryPlan.detected_flags || []); } catch(e){}
+        }
+
+        const mdText = reentryPlan ? (reentryPlan.participant_guide_md || reentryPlan.staff_case_plan_md) : diskContent;
+        const pdfPath = reentryPlan ? reentryPlan.participant_guide_pdf : (diskPdf && fs.existsSync(path.join(dataDir, diskPdf)) ? `/data/${diskPdf}` : null);
+        const docxPath = reentryPlan ? reentryPlan.participant_guide_docx : null;
+        const staffPdfPath = reentryPlan ? reentryPlan.staff_plan_pdf : null;
+
         return res.json({ 
             found: true, 
-            markdown: content, 
-            filename: planFile,
-            pdfUrl: fs.existsSync(path.join(dataDir, pdfFile)) ? `/data/${pdfFile}` : null
+            participantName: user.name,
+            location: user.location,
+            markdown: mdText, 
+            filename: planFile || (reentryPlan ? `${user.name}_case_plan.md` : null),
+            pdfUrl: pdfPath,
+            docxUrl: docxPath,
+            staffPdfUrl: staffPdfPath,
+            planDetails: {
+                stability_status: (reentryPlan && reentryPlan.stability_status) || (profile && profile.reentry_status) || 'stable',
+                stated_goals: (reentryPlan && reentryPlan.stated_goals) || 'Turn90 graduation, career placement, and personal stability',
+                identified_needs: identifiedNeeds,
+                living_situation: (reentryPlan && reentryPlan.living_situation) || (profile ? profile.housing_status : 'Transitional Housing'),
+                legal_status: (reentryPlan && reentryPlan.legal_status) || 'Active Supervision',
+                top_criminogenic_domains: topDomains,
+                recommended_referrals: recommendedReferrals,
+                matched_employers: matchedEmployers,
+                detected_flags: detectedFlags,
+                profile_barriers: profile || {}
+            },
+            notes: notes
         });
     }
     
-    res.json({ found: false, message: 'Case plan is currently being generated after supervisor review.' });
+    res.json({ 
+        found: false, 
+        message: 'Your Re-entry Case Plan is being finalized by your Case Manager.',
+        profile_barriers: profile || {},
+        notes: notes
+    });
+});
+
+// Fetch Participant's Own Case Management Notes
+app.get('/api/participant/notes', authenticateToken, (req, res) => {
+    const userId = req.user.id;
+    const notes = db.prepare(`
+        SELECT id, author_name, session_date, note_type, category, content, created_at 
+        FROM case_notes 
+        WHERE user_id = ? 
+        ORDER BY session_date DESC, id DESC
+    `).all(userId);
+    res.json(notes);
 });
 
 // Fetch Stored W-9 Details (Hardened & Resilient)

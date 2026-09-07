@@ -361,14 +361,102 @@
             </div>
 
             <div class="nav-sub-tabs">
-                <button class="sub-tab-btn active" onclick="switchRnSection('jobs')">💼 Re-entry Job Board</button>
-                <button class="sub-tab-btn" onclick="switchRnSection('resume')">📄 AI Resume Builder</button>
+                <button class="sub-tab-btn active" onclick="switchRnSection('caseplan')">🎯 My Re-entry Case Plan</button>
+                <button class="sub-tab-btn" onclick="switchRnSection('briefcase')">🧰 Master Briefcase</button>
+                <button class="sub-tab-btn" onclick="switchRnSection('messages')">💬 Message Staff & AI</button>
+                <button class="sub-tab-btn" onclick="switchRnSection('jobs')">💼 Re-entry Job Board</button>
                 <button class="sub-tab-btn" onclick="switchRnSection('cbt')">🧠 Turn90 CBT Modules</button>
+                <button class="sub-tab-btn" onclick="switchRnSection('resume')">📄 AI Resume Builder</button>
                 <button class="sub-tab-btn" onclick="switchRnSection('locker')">📁 Document Locker</button>
             </div>
 
+            <!-- RN Section: My Re-entry Case Plan (Notes & Needs) -->
+            <div id="rn-section-caseplan" class="rn-sub-view">
+                <!-- Banner with Stability & Downloads -->
+                <div class="section-card" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-left: 5px solid var(--success); margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+                                <span style="font-size: 26px;">🎯</span>
+                                <h2 style="color: #166534; margin: 0; font-size: 20px;">My Personalized Re-entry Case Plan</h2>
+                                <span id="rn-plan-stability-badge" class="badge badge-green" style="font-size: 11px;">Status: Active</span>
+                            </div>
+                            <p style="margin: 0; font-size: 13.5px; color: #1e3a8a; line-height: 1.5;">
+                                Built directly from your Turn90 intake notes, self-reported needs, barrier resolutions, and clinical case brief.
+                            </p>
+                        </div>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <a id="rn-plan-docx-btn" href="#" download class="btn btn-primary" style="text-decoration: none; font-size: 12.5px;">📥 Download Word (.docx)</a>
+                            <a id="rn-plan-pdf-btn" href="#" target="_blank" class="btn btn-accent" style="text-decoration: none; font-size: 12.5px;">🖨️ View / Print PDF</a>
+                            <button type="button" class="btn btn-outline" style="font-size: 12.5px;" onclick="openParticipantCasePlanModal()">📄 Read Full Case Plan</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stated Goals & Needs Assessment Card -->
+                <div class="section-card" style="margin-bottom: 20px;">
+                    <div class="section-header" style="margin-bottom: 12px;">
+                        <h3 style="margin: 0; font-size: 16px; color: var(--primary);">📋 Stated Goals & Identified Needs Assessment</h3>
+                        <p style="margin: 2px 0 0 0; font-size: 12.5px; color: var(--slate);">Your core goals and prioritized stabilization needs on file.</p>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+                        <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 14px;">
+                            <div style="font-size: 12px; font-weight: 700; color: var(--slate); text-transform: uppercase; margin-bottom: 4px;">🎯 Stated Goals</div>
+                            <div id="rn-plan-goals" style="font-size: 13.5px; color: #1e293b; font-weight: 600;">Loading stated goals...</div>
+                        </div>
+                        <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 14px;">
+                            <div style="font-size: 12px; font-weight: 700; color: var(--slate); text-transform: uppercase; margin-bottom: 4px;">🚨 Identified Needs & Focus Areas</div>
+                            <div id="rn-plan-needs" style="font-size: 13px; color: #1e293b;">Loading identified needs...</div>
+                        </div>
+                        <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 14px;">
+                            <div style="font-size: 12px; font-weight: 700; color: var(--slate); text-transform: uppercase; margin-bottom: 4px;">🏠 Living Situation</div>
+                            <div id="rn-plan-living" style="font-size: 13.5px; color: #1e293b; font-weight: 600;">Loading housing status...</div>
+                        </div>
+                        <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 14px;">
+                            <div style="font-size: 12px; font-weight: 700; color: var(--slate); text-transform: uppercase; margin-bottom: 4px;">⚖️ Legal & Supervision Status</div>
+                            <div id="rn-plan-legal" style="font-size: 13.5px; color: #1e293b; font-weight: 600;">Loading supervision status...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Case Management Notes & Observations -->
+                <div class="section-card" style="margin-bottom: 20px;">
+                    <div class="section-header" style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h3 style="margin: 0; font-size: 16px; color: var(--primary);">📝 Recent Case Management Notes & Updates</h3>
+                            <p style="margin: 2px 0 0 0; font-size: 12.5px; color: var(--slate);">Notes recorded by your Turn90 Program Manager and Reentry Navigator.</p>
+                        </div>
+                    </div>
+                    <div id="rn-plan-notes-container" style="display: flex; flex-direction: column; gap: 10px;">
+                        <p style="color: var(--slate); font-size: 13px;">Loading your case notes...</p>
+                    </div>
+                </div>
+
+                <!-- Criminogenic Dynamic Domains & High-Risk Triggers -->
+                <div class="section-card" style="margin-bottom: 20px;">
+                    <div class="section-header" style="margin-bottom: 12px;">
+                        <h3 style="margin: 0; font-size: 16px; color: var(--primary);">🧠 Priority Dynamic Focus Domains & CBT Strategies</h3>
+                        <p style="margin: 2px 0 0 0; font-size: 12.5px; color: var(--slate);">Behavioral and thinking patterns targeted during your re-entry coaching.</p>
+                    </div>
+                    <div id="rn-plan-domains-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px;">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Personalized Community Referrals -->
+                <div class="section-card" style="margin-bottom: 20px;">
+                    <div class="section-header" style="margin-bottom: 12px;">
+                        <h3 style="margin: 0; font-size: 16px; color: var(--primary);">🤝 Personalized Community Resource Referrals</h3>
+                        <p style="margin: 2px 0 0 0; font-size: 12.5px; color: var(--slate);">Direct links and next action steps for Housing, SCDMV Route 66, Welvista, and legal aid.</p>
+                    </div>
+                    <div id="rn-plan-referrals-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px;">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </div>
+
             <!-- RN Section: Job Board -->
-            <div id="rn-section-jobs" class="rn-sub-view">
+            <div id="rn-section-jobs" class="rn-sub-view hidden">
                 <div class="section-card">
                     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 12px;">
                         <div>
@@ -458,6 +546,83 @@
                     </form>
                     <div id="locker-docs-list" class="mt-4">
                         <!-- Loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- RN Section: Master Briefcase Checklist (6 Domains) -->
+            <div id="rn-section-briefcase" class="rn-sub-view hidden">
+                <div class="section-card">
+                    <div class="section-header" style="margin-bottom: 16px;">
+                        <div>
+                            <h2 style="margin: 0;">Master Briefcase Checklist (6 Domains)</h2>
+                            <p style="margin: 4px 0 0 0;" class="text-slate">Manage your verified documents, employment readiness tools, trade credentials, health, and financial independence plans.</p>
+                        </div>
+                    </div>
+                    <div id="rn-briefcase-domains-container">
+                        <!-- Loaded dynamically via JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- RN Section: Message Staff & AI Assistant -->
+            <div id="rn-section-messages" class="rn-sub-view hidden">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 20px;">
+                    <!-- Card 1: Fresh Start AI Assistant -->
+                    <div class="section-card" style="display: flex; flex-direction: column; border-top: 4px solid var(--primary);">
+                        <div class="section-header" style="margin-bottom: 12px;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 22px;">🤖</span>
+                                <div>
+                                    <h2 style="font-size: 16px; margin: 0;">Fresh Start AI Assistant</h2>
+                                    <p style="font-size: 12px; margin: 2px 0 0 0;">Guidance for Form I-9, W-9, SCDMV Route 66, Welvista & referrals.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Action Chips -->
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px;">
+                            <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askRnAiPrompt('How do I fill out Form I-9 for my new employer?')">📋 Form I-9 Help</button>
+                            <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askRnAiPrompt('What documents can I use for Form I-9 List B and List C?')">🆔 I-9 Documents</button>
+                            <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askRnAiPrompt('How do I get my license back with SCDMV Route 66?')">🚗 Route 66 License</button>
+                            <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askRnAiPrompt('How do I get free prescription medicines through Welvista?')">💊 Free Welvista Meds</button>
+                            <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askRnAiPrompt('Where can I find emergency housing or shelter in Charleston or Columbia?')">🏠 Housing Referrals</button>
+                        </div>
+
+                        <!-- AI Chat Box -->
+                        <div id="rn-ai-chat-history" style="flex: 1; min-height: 240px; max-height: 340px; overflow-y: auto; background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; padding: 12px; font-size: 12.5px; line-height: 1.5; display: flex; flex-direction: column; gap: 10px;">
+                            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px;">
+                                <strong>Turn90 Assistant:</strong> Hello! Ask me any questions about employer paperwork (like <strong>Form I-9</strong> or <strong>W-9</strong>), fixing your driver's license, free prescriptions with Welvista, or housing resources.
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 8px; margin-top: 10px;">
+                            <input type="text" id="rn-ai-input" placeholder="Ask about Form I-9, W-9, referrals..." style="flex: 1; padding: 8px 12px; font-size: 12.5px; border: 1px solid var(--border); border-radius: 4px;" onkeydown="if(event.key==='Enter') sendRnParticipantAiMessage()">
+                            <button class="btn btn-primary" style="font-size: 12px; padding: 8px 14px;" onclick="sendRnParticipantAiMessage()" id="btn-rn-ai-send">Ask AI</button>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Message My Program Manager / Reentry Navigator -->
+                    <div class="section-card" style="display: flex; flex-direction: column; border-top: 4px solid var(--accent);">
+                        <div class="section-header" style="margin-bottom: 12px;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 22px;">💬</span>
+                                <div>
+                                    <h2 style="font-size: 16px; margin: 0;">Message My Reentry Navigator</h2>
+                                    <p style="font-size: 12px; margin: 2px 0 0 0;">Direct communication with your Turn90 Case Manager for help with schedule, rides, or barriers.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Messages Log -->
+                        <div id="rn-participant-messages-list" style="flex: 1; min-height: 240px; max-height: 340px; overflow-y: auto; background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; padding: 12px; font-size: 12.5px; line-height: 1.5; display: flex; flex-direction: column; gap: 10px;">
+                            <p style="color: var(--slate); text-align: center; margin-top: 40px;">Loading your message history with your Case Manager...</p>
+                        </div>
+
+                        <div style="display: flex; gap: 8px; margin-top: 10px;">
+                            <input type="text" id="rn-msg-input" placeholder="Type a message to your Program Manager..." style="flex: 1; padding: 8px 12px; font-size: 12.5px; border: 1px solid var(--border); border-radius: 4px;" onkeydown="if(event.key==='Enter') sendRnParticipantMessage()">
+                            <button class="btn btn-accent" style="font-size: 12px; padding: 8px 14px;" onclick="sendRnParticipantMessage()" id="btn-rn-msg-send">Send</button>
+                        </div>
                     </div>
                 </div>
             </div>
