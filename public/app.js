@@ -3911,7 +3911,7 @@ async function promptSwitchTrack(userId, name, currentTrack) {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify({ userId, targetTrack })
+            body: JSON.stringify({ userId, newTrack: targetTrack, targetTrack })
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Failed to switch track');

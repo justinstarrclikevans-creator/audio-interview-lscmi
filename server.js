@@ -490,7 +490,8 @@ app.get('/api/admin/caseload', authenticateToken, requireRole('program_manager',
 
 // Switch Participant Track (First Shift <-> Re-entry Nav)
 app.post('/api/pm/switch-track', authenticateToken, requireRole('program_manager', 'admin'), (req, res) => {
-    const { userId, newTrack } = req.body;
+    const userId = req.body.userId;
+    const newTrack = req.body.newTrack || req.body.targetTrack;
     if (!userId || !newTrack) return res.status(400).json({ error: 'userId and newTrack required.' });
 
     if (!['first_shift', 'reentry_nav'].includes(newTrack)) {
