@@ -724,7 +724,7 @@ function toggleCbtModule(prefix, moduleNum) {
     const isHidden = body.classList.contains('hidden');
     body.classList.toggle('hidden', !isHidden);
     if (btn) {
-        btn.innerText = isHidden ? '▲ Hide Lessons' : '▼ View Lessons & Worksheets';
+        btn.innerText = isHidden ? '▲ Hide Worksheets' : '▼ View Worksheets & Exercises';
     }
 }
 
@@ -907,8 +907,8 @@ function selectCbtScale(fieldId, num) {
 function renderCbtModulesHtml(containerEl, prefix, cbtModules, submissions) {
     if (!containerEl) return;
 
-    // Calculate total completed lessons
-    const totalLessons = cbtModules.reduce((acc, m) => acc + (m.lessons ? m.lessons.length : 0), 0);
+    // Calculate total completed worksheets
+    const totalItems = cbtModules.reduce((acc, m) => acc + (m.lessons ? m.lessons.length : 0), 0);
     let completedCount = 0;
     Object.keys(submissions).forEach(k => {
         const sub = submissions[k];
@@ -919,10 +919,10 @@ function renderCbtModulesHtml(containerEl, prefix, cbtModules, submissions) {
         <div style="margin-bottom: 16px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
             <div>
                 <strong style="color: #166534; font-size: 14px;">🎓 Authentic Turn90 CBT Curriculum & Facilitation Modules</strong>
-                <div style="font-size: 12.5px; color: #15803d;">8 Authentic Modules • 65 Lessons • Real In-Class Worksheets & Homework</div>
+                <div style="font-size: 12.5px; color: #15803d;">8 Authentic Modules • In-Class Worksheets & Homework</div>
             </div>
             <div style="display: flex; align-items: center; gap: 8px;">
-                <span class="badge badge-green" style="font-size: 12px;">Progress: ${completedCount} / ${totalLessons} Lessons Completed</span>
+                <span class="badge badge-green" style="font-size: 12px;">Progress: ${completedCount} / ${totalItems} Completed</span>
             </div>
         </div>
 
@@ -943,7 +943,7 @@ function renderCbtModulesHtml(containerEl, prefix, cbtModules, submissions) {
                                 <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px;">
                                     <span class="badge badge-primary" style="font-size: 11px;">Module ${m.number}</span>
                                     <span class="badge ${isModAllCompleted ? 'badge-green' : 'badge-outline'}" style="font-size: 11px;">
-                                        ${completedInMod} / ${modLessons.length} Lessons Finished
+                                        ${completedInMod} / ${modLessons.length} Completed
                                     </span>
                                 </div>
                                 <h3 style="margin: 0; color: var(--primary); font-size: 16px; font-weight: 700;">
@@ -953,18 +953,18 @@ function renderCbtModulesHtml(containerEl, prefix, cbtModules, submissions) {
                             </div>
                             <div>
                                 <button type="button" id="${prefix}-cbt-btn-${m.number}" class="btn btn-outline" style="font-size: 12px; padding: 6px 14px; white-space: nowrap;">
-                                    ▼ View Lessons & Worksheets
+                                    ▼ View Worksheets & Exercises
                                 </button>
                             </div>
                         </div>
 
-                        <!-- Module Lessons List (Collapsible) -->
+                        <!-- Module Worksheets List (Collapsible) -->
                         <div id="${prefix}-cbt-body-${m.number}" class="hidden" style="border-top: 1px solid var(--border); background: #f8fafc; padding: 18px 20px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                                 <h4 style="margin: 0; font-size: 13.5px; color: #0f172a; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
-                                    Module ${m.number} Lessons (${modLessons.length})
+                                    Module ${m.number} Worksheets & Materials (${modLessons.length})
                                 </h4>
-                                <span style="font-size: 12px; color: var(--slate);">Click any lesson to study and complete worksheets</span>
+                                <span style="font-size: 12px; color: var(--slate);">Click any worksheet to study and complete</span>
                             </div>
 
                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 12px;">
@@ -978,7 +978,7 @@ function renderCbtModulesHtml(containerEl, prefix, cbtModules, submissions) {
                                             <div>
                                                 <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
                                                     <span style="font-size: 11px; font-weight: 800; color: var(--accent); background: #e0f2fe; padding: 2px 8px; border-radius: 4px;">
-                                                        LESSON ${l.key.toUpperCase()}
+                                                        WORKSHEET ${l.key.toUpperCase()}
                                                     </span>
                                                     <span class="badge ${isDone ? 'badge-green' : 'badge-outline'}" style="font-size: 10.5px;">
                                                         ${isDone ? '✅ Completed' : '📝 Incomplete'}
@@ -995,7 +995,7 @@ function renderCbtModulesHtml(containerEl, prefix, cbtModules, submissions) {
                                                     ${l.homework ? ' • 🏠 HW' : ''}
                                                 </div>
                                                 <button type="button" class="btn btn-outline" style="font-size: 12px; padding: 5px 12px; border-color: var(--accent); color: var(--accent);" onclick="openCbtLessonViewer('${prefix}', ${m.number}, '${l.key}')">
-                                                    Open Lesson &rarr;
+                                                    Open Worksheet &rarr;
                                                 </button>
                                             </div>
                                         </div>
@@ -1014,7 +1014,7 @@ function openCbtLessonViewer(prefix, moduleNumber, lessonKey) {
     const mod = cachedCbtModules.find(m => m.number === Number(moduleNumber));
     if (!mod) return alert('Module not found');
     const lesson = (mod.lessons || []).find(l => l.key === lessonKey);
-    if (!lesson) return alert('Lesson not found');
+    if (!lesson) return alert('Worksheet not found');
 
     currentActiveCbtLesson = {
         prefix,
@@ -1037,7 +1037,7 @@ function openCbtLessonViewer(prefix, moduleNumber, lessonKey) {
     const bodyEl = document.getElementById('cbt-lesson-modal-body');
     const saveStatusEl = document.getElementById('cbt-lesson-save-status');
 
-    if (badgeEl) badgeEl.innerText = `Module ${moduleNumber}: ${mod.title} • Lesson ${lessonKey.toUpperCase()}`;
+    if (badgeEl) badgeEl.innerText = `Module ${moduleNumber}: ${mod.title} • Part ${lessonKey.toUpperCase()}`;
     if (statusEl) {
         statusEl.className = `badge ${isCompleted ? 'badge-green' : 'badge-outline'}`;
         statusEl.innerText = isCompleted ? '✅ Completed on File' : '📝 Incomplete / Working';
@@ -1054,7 +1054,7 @@ function openCbtLessonViewer(prefix, moduleNumber, lessonKey) {
             <!-- Video Note / Notice if present -->
             ${lesson.videoNote ? `
                 <div style="background: #fef3c7; border: 1px solid #fde68a; border-left: 4px solid #f59e0b; padding: 12px 16px; border-radius: 6px; margin-bottom: 18px; font-size: 13.5px; color: #92400e; font-weight: 600;">
-                    🎬 Lesson Video Note: ${lesson.videoNote}
+                    🎬 Video Note: ${lesson.videoNote}
                 </div>
             ` : ''}
 
@@ -1199,7 +1199,7 @@ async function submitCurrentCbtLesson() {
         if (fsContainer) renderCbtModulesHtml(fsContainer, 'fs', cachedCbtModules, cachedCbtSubmissions);
         if (rnContainer) renderCbtModulesHtml(rnContainer, 'rn', cachedCbtModules, cachedCbtSubmissions);
 
-        alert(`Success: Lesson ${lessonKey.toUpperCase()} worksheet & homework saved!`);
+        alert(`Success: ${lessonKey.toUpperCase()} worksheet & homework saved!`);
     } catch(e) {
         if (statusEl) statusEl.innerHTML = `<span style="color: var(--danger);">Error: ${e.message}</span>`;
         alert('Save Error: ' + e.message);
