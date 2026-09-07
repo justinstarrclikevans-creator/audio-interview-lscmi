@@ -44,7 +44,10 @@
                         <input type="email" id="login-email" required placeholder="name@example.com">
                     </div>
                     <div class="form-group">
-                        <label for="login-password">Password</label>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <label for="login-password">Password</label>
+                            <a href="javascript:void(0)" onclick="openResetPasswordModal()" style="font-size: 11.5px; color: var(--accent); text-decoration: underline;">Forgot Password?</a>
+                        </div>
                         <input type="password" id="login-password" required placeholder="Enter password">
                     </div>
                     <button type="submit" class="btn btn-primary btn-block">Sign In</button>
@@ -132,16 +135,19 @@
                     </div>
                 </div>
 
-                <!-- Card 3: Daily Points & Attendance -->
+                <!-- Card 3: Weekly Points & Attendance -->
                 <div class="portal-card stats-card">
                     <div class="card-icon">⭐</div>
                     <div class="card-body">
-                        <h3>Daily Points & Attendance</h3>
+                        <h3>Points & Attendance</h3>
                         <div class="stat-highlight">
                             <span class="stat-number" id="fs-avg-points">--</span>
-                            <span class="stat-label">Avg Daily Points / 10</span>
+                            <span class="stat-label">Weekly Points / 50</span>
                         </div>
-                        <p id="fs-attendance-summary">Attendance records synced from Apricot.</p>
+                        <p id="fs-attendance-summary">Weekly points benchmark progress & attendance status.</p>
+                        <div style="margin-top: 10px;">
+                            <button class="btn btn-outline" style="font-size: 11.5px; padding: 4px 10px;" onclick="openTimeOffModal()">📅 Request Time Off (48h Notice)</button>
+                        </div>
                     </div>
                 </div>
 
@@ -178,7 +184,7 @@
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
                     <div>
                         <h2 style="color: var(--success); margin-bottom: 4px;">🎯 My First Shift Action Plan</h2>
-                        <p style="font-size: 13px; color: var(--slate);">Review your top 2-3 focus areas, plain-language definitions, and weekly milestones designed to prepare you for job placement.</p>
+                        <p style="font-size: 13px; color: var(--slate);">Review your top two to three focus areas and other briefcase items to prepare you for job placement.</p>
                     </div>
                     <button class="btn btn-primary" onclick="openParticipantCasePlanModal()">📄 View & Print My Action Plan</button>
                 </div>
@@ -213,6 +219,17 @@
                 </div>
                 <div id="briefcase-domains-container">
                     <!-- Loaded dynamically via JavaScript -->
+                </div>
+            </div>
+
+            <!-- CBT TRAINING CURRICULUM (FIRST SHIFT) -->
+            <div class="section-card mt-8">
+                <div class="section-header">
+                    <h2>🧠 Cognitive Behavioral Training (CBT Curriculum)</h2>
+                    <p>Authentic Turn90 modules and worksheets to build emotional regulation, problem-solving, and cognitive awareness.</p>
+                </div>
+                <div class="training-accordion" id="fs-cbt-accordion-container">
+                    <!-- Loaded dynamically -->
                 </div>
             </div>
 
@@ -346,15 +363,27 @@
             <div class="nav-sub-tabs">
                 <button class="sub-tab-btn active" onclick="switchRnSection('jobs')">💼 Re-entry Job Board</button>
                 <button class="sub-tab-btn" onclick="switchRnSection('resume')">📄 AI Resume Builder</button>
-                <button class="sub-tab-btn" onclick="switchRnSection('cbt')">🧠 CBT & Trades Modules</button>
+                <button class="sub-tab-btn" onclick="switchRnSection('cbt')">🧠 Turn90 CBT Modules</button>
                 <button class="sub-tab-btn" onclick="switchRnSection('locker')">📁 Document Locker</button>
             </div>
 
             <!-- RN Section: Job Board -->
             <div id="rn-section-jobs" class="rn-sub-view">
                 <div class="section-card">
-                    <h2>Fair-Chance Re-entry Employers in South Carolina</h2>
-                    <p class="mb-4">Verified partners offering competitive pay, 1st shift schedules, and rapid promotion paths.</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 12px;">
+                        <div>
+                            <h2 style="margin: 0;">Fair-Chance Re-entry Employers in South Carolina</h2>
+                            <p style="margin: 4px 0 0 0;" class="text-slate">Verified partners offering competitive pay, 1st shift schedules, and rapid promotion paths.</p>
+                        </div>
+                        <!-- Location Filter Buttons -->
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                            <button class="btn btn-primary" id="btn-job-loc-all" style="font-size: 11.5px; padding: 4px 10px;" onclick="filterJobsByArea('all')">All Areas</button>
+                            <button class="btn btn-outline" id="btn-job-loc-charleston" style="font-size: 11.5px; padding: 4px 10px;" onclick="filterJobsByArea('Charleston')">📍 Charleston</button>
+                            <button class="btn btn-outline" id="btn-job-loc-columbia" style="font-size: 11.5px; padding: 4px 10px;" onclick="filterJobsByArea('Columbia')">📍 Columbia</button>
+                            <button class="btn btn-outline" id="btn-job-loc-greenville" style="font-size: 11.5px; padding: 4px 10px;" onclick="filterJobsByArea('Greenville')">📍 Greenville</button>
+                            <button class="btn btn-outline" id="btn-job-loc-spartanburg" style="font-size: 11.5px; padding: 4px 10px;" onclick="filterJobsByArea('Spartanburg')">📍 Spartanburg</button>
+                        </div>
+                    </div>
                     <div id="job-listings-grid" class="job-grid">
                         <!-- Loaded dynamically -->
                     </div>
@@ -403,7 +432,8 @@
             <!-- RN Section: CBT Modules -->
             <div id="rn-section-cbt" class="rn-sub-view hidden">
                 <div class="section-card">
-                    <h2>Cognitive Behavioral Training & Trades Curriculum</h2>
+                    <h2>Cognitive Behavioral Training (CBT Curriculum)</h2>
+                    <p class="text-slate" style="margin: 4px 0 16px 0;">Complete authentic in-class modules, worksheets, and exercises (DMT, STAC, SODAS Problem-Solving, and Relapse Prevention).</p>
                     <div class="training-accordion" id="cbt-accordion-container">
                         <!-- Loaded dynamically -->
                     </div>
@@ -444,9 +474,11 @@
                 </div>
                 <div class="pm-actions-header">
                     <button class="btn btn-accent" onclick="openJobHuntingAiModal()">💼 Job Hunting AI</button>
-                    <button class="btn btn-primary" onclick="generateReport('monday')">📋 Monday Needs Report</button>
-                    <button class="btn btn-outline" onclick="generateReport('friday')">📊 Friday Milestones Report</button>
-                    <button class="btn btn-outline" onclick="openApricotModal()">📥 Sync Apricot (Excel / CSV)</button>
+                    <button class="btn btn-primary" onclick="exportApricotNotesModal()">📥 Export Apricot Notes</button>
+                    <button class="btn btn-outline" onclick="openPmTimeOffModal()">📅 Time-Off Requests</button>
+                    <button class="btn btn-outline" onclick="generateReport('monday')">📋 Monday Report</button>
+                    <button class="btn btn-outline" onclick="generateReport('friday')">📊 Friday Report</button>
+                    <button class="btn btn-outline" onclick="openApricotModal()">📥 Sync Apricot Points</button>
                 </div>
             </div>
 
@@ -475,6 +507,10 @@
                         <option value="first_shift">First Shift</option>
                         <option value="reentry_nav">Re-entry Navigation</option>
                     </select>
+                    <select id="pm-filter-status" onchange="loadCaseload()">
+                        <option value="">Active Caseload</option>
+                        <option value="archived">Archived / Removed</option>
+                    </select>
                     <select id="pm-filter-gate" onchange="loadCaseload()">
                         <option value="">All Gates</option>
                         <option value="1">Gate 1 (Week 1)</option>
@@ -496,9 +532,10 @@
                                     <th>Current Gate</th>
                                     <th>W-9 & ID</th>
                                     <th>DL / Child Support</th>
-                                    <th>Avg Points</th>
-                                    <th>Re-entry Plan & Status</th>
-                                    <th>Actions</th>
+                                    <th>Weekly Points (/50)</th>
+                                    <th>Case Notes</th>
+                                    <th>Re-entry Plan</th>
+                                    <th>Caseload Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="caseload-tbody">
@@ -669,24 +706,6 @@
                             <!-- Markdown rendered here -->
                         </div>
                     </div>
-                </div>
-            </div>
-                        <thead>
-                            <tr>
-                                <th>Participant</th>
-                                <th>Location & Track</th>
-                                <th>Current Gate</th>
-                                <th>W-9 & ID</th>
-                                <th>DL / Child Support</th>
-                                <th>Avg Points</th>
-                                <th>Criteria (Green/Red)</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="caseload-tbody">
-                            <!-- Populated dynamically -->
-                        </tbody>
-                    </table>
                 </div>
             </div>
 
@@ -1719,6 +1738,176 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Password Reset (Self-Service or PM Admin) -->
+    <div id="modal-reset-password" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🔑 Reset Password</h3>
+                <button class="modal-close" onclick="closeModal('modal-reset-password')">&times;</button>
+            </div>
+            <form id="form-reset-password" onsubmit="handleResetPasswordSubmit(event)">
+                <input type="hidden" id="reset-user-id">
+                <div class="form-group" id="reset-email-group">
+                    <label>Account Email Address *</label>
+                    <input type="email" id="reset-email" placeholder="name@example.com" class="form-control">
+                </div>
+                <div class="form-group mt-3">
+                    <label>New Password (min 6 characters) *</label>
+                    <input type="password" id="reset-new-password" required minlength="6" placeholder="Enter new secure password" class="form-control">
+                </div>
+                <div class="form-group mt-3">
+                    <label>Confirm New Password *</label>
+                    <input type="password" id="reset-confirm-password" required minlength="6" placeholder="Re-enter new password" class="form-control">
+                </div>
+                <div class="modal-footer mt-4">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('modal-reset-password')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update Password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Participant File Review & Case Notes (Program Manager) -->
+    <div id="modal-case-notes" class="modal hidden">
+        <div class="modal-content modal-lg" style="max-width: 900px;">
+            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h3 id="notes-modal-title" style="margin: 0;">📋 Participant File Review & Case Notes</h3>
+                    <p style="margin: 3px 0 0 0; font-size: 12px; color: var(--slate);" id="notes-modal-subtitle"></p>
+                </div>
+                <button class="modal-close" onclick="closeModal('modal-case-notes')">&times;</button>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 14px;">
+                <!-- Left Column: Add New Note Form -->
+                <div style="background: #f8fafc; border: 1px solid var(--border); padding: 16px; border-radius: 8px;">
+                    <h4 style="margin: 0 0 10px 0; color: var(--primary); font-size: 13.5px;">✍️ Record New Case Note</h4>
+                    <form id="form-add-case-note" onsubmit="handleAddCaseNote(event)">
+                        <input type="hidden" id="note-user-id">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label style="font-size: 11.5px;">Contact / Note Date</label>
+                                <input type="date" id="note-date" required class="form-control" style="padding: 6px; font-size: 12px;">
+                            </div>
+                            <div class="form-group">
+                                <label style="font-size: 11.5px;">Contact Type</label>
+                                <select id="note-type" class="form-control" style="padding: 6px; font-size: 12px;">
+                                    <option value="Individual Session">Individual Session</option>
+                                    <option value="Phone Contact">Phone Contact</option>
+                                    <option value="Court / Probation Update">Court / Probation Update</option>
+                                    <option value="Employer / Job Contact">Employer / Job Contact</option>
+                                    <option value="General Case Note">General Case Note</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group mt-2">
+                            <label style="font-size: 11.5px;">Category / Domain</label>
+                            <select id="note-category" class="form-control" style="padding: 6px; font-size: 12px;">
+                                <option value="Case Management">Case Management & Check-in</option>
+                                <option value="Attendance & Points">Attendance & Points</option>
+                                <option value="Barriers & Stability">Barriers & Stability (DL, Child Support, Housing)</option>
+                                <option value="Job Readiness & Placement">Job Readiness & Placement</option>
+                                <option value="CBT / Attitude & Thinking">CBT / Attitude & Thinking</option>
+                            </select>
+                        </div>
+                        <div class="form-group mt-2">
+                            <label style="font-size: 11.5px;">Clinical Note Content *</label>
+                            <textarea id="note-content" rows="6" required class="form-control" placeholder="Document participant progress, barrier resolution, discussion topics, and next action items..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block mt-3" style="font-size: 12px; padding: 8px;">💾 Save Case Note</button>
+                    </form>
+                </div>
+
+                <!-- Right Column: Case Notes History -->
+                <div style="background: white; border: 1px solid var(--border); padding: 16px; border-radius: 8px; display: flex; flex-direction: column;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h4 style="margin: 0; color: #1e293b; font-size: 13.5px;">📜 Contact Log & Note History</h4>
+                        <button class="btn btn-outline" style="font-size: 11px; padding: 2px 8px;" onclick="exportApricotNotesModal()">📥 Export for Apricot</button>
+                    </div>
+                    <div id="notes-history-list" style="flex: 1; overflow-y: auto; max-height: 380px; display: flex; flex-direction: column; gap: 8px;">
+                        <p class="text-slate" style="font-size: 12px;">Loading notes history...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer mt-4" style="display: flex; justify-content: space-between;">
+                <button class="btn btn-outline" onclick="closeModal('modal-case-notes')">Close File</button>
+                <div id="notes-modal-extra-actions"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Participant Time-Off Request (48-Hour Notice Enforced) -->
+    <div id="modal-time-off-request" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📅 Request Time Off (First Shift)</h3>
+                <button class="modal-close" onclick="closeModal('modal-time-off-request')">&times;</button>
+            </div>
+            <div style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1d4ed8; padding: 10px; border-radius: 6px; font-size: 12px; margin-bottom: 14px;">
+                ℹ️ <strong>First Shift Policy:</strong> All time-off requests require at least <strong>48 hours advance notice</strong> for approval.
+            </div>
+            <form id="form-time-off-request" onsubmit="handleTimeOffRequestSubmit(event)">
+                <div class="form-group">
+                    <label>Requested Date of Absence *</label>
+                    <input type="date" id="tor-date" required class="form-control">
+                </div>
+                <div class="form-group mt-3">
+                    <label>Reason for Absence *</label>
+                    <select id="tor-reason" required class="form-control">
+                        <option value="Court Date / Legal Obligation">Court Date / Legal Obligation</option>
+                        <option value="Probation / Parole Appointment">Probation / Parole Appointment</option>
+                        <option value="Medical / Dental / Vision Appointment">Medical / Dental / Vision Appointment</option>
+                        <option value="Child Support Court Review">Child Support Court Review</option>
+                        <option value="SCDMV License Appointment">SCDMV License Appointment</option>
+                        <option value="Family Emergency">Family Emergency</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group mt-3">
+                    <label>Additional Notes / Documentation Details</label>
+                    <textarea id="tor-notes" rows="3" class="form-control" placeholder="Provide appointment location, time, or confirmation details..."></textarea>
+                </div>
+                <div class="modal-footer mt-4">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('modal-time-off-request')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Submit Request (48h Notice)</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Program Manager Time-Off Review Queue -->
+    <div id="modal-pm-time-off" class="modal hidden">
+        <div class="modal-content modal-lg" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3>📅 Caseload Time-Off Requests Queue</h3>
+                <button class="modal-close" onclick="closeModal('modal-pm-time-off')">&times;</button>
+            </div>
+            <div id="pm-time-off-list" style="max-height: 480px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-top: 12px;">
+                <p class="text-slate">Loading pending time-off requests...</p>
+            </div>
+            <div class="modal-footer mt-4">
+                <button class="btn btn-outline" onclick="closeModal('modal-pm-time-off')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Weekly Points Breakdown (Out of 50) -->
+    <div id="modal-weekly-points" class="modal hidden">
+        <div class="modal-content modal-lg" style="max-width: 750px;">
+            <div class="modal-header">
+                <h3 id="wp-modal-title">Weekly Points & Attendance Progress</h3>
+                <button class="modal-close" onclick="closeModal('modal-weekly-points')">&times;</button>
+            </div>
+            <div id="wp-modal-body" style="margin-top: 14px;">
+                <!-- Populated dynamically -->
+            </div>
+            <div class="modal-footer mt-4">
+                <button class="btn btn-outline" onclick="closeModal('modal-weekly-points')">Close</button>
             </div>
         </div>
     </div>

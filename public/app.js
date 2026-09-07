@@ -218,6 +218,7 @@ async function loadFsDashboard() {
         loadFsPoints();
         loadBriefcaseChecklist();
         loadParticipantMessages();
+        loadCbtModules();
 
         // Check for linked Re-entry Fresh Start Guide for participant
         const reentryGuideCard = document.getElementById('fs-reentry-guide-card');
@@ -335,8 +336,15 @@ async function loadFsPoints() {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
-        if (data.summary && data.summary.avg_points !== null) {
-            document.getElementById('fs-avg-points').innerText = Number(data.summary.avg_points).toFixed(1);
+        if (data.weeklySummary) {
+            const el = document.getElementById('fs-avg-points');
+            if (el) el.innerText = data.weeklySummary.overallWeeklyAverage.toFixed(1);
+            const sumEl = document.getElementById('fs-attendance-summary');
+            if (sumEl) {
+                sumEl.innerText = `Current Week: ${data.weeklySummary.currentWeekPoints} / 50 pts • ${data.summary?.present_days || 0} days present`;
+            }
+        } else if (data.summary && data.summary.avg_points !== null) {
+            document.getElementById('fs-avg-points').innerText = (Number(data.summary.avg_points) * 5).toFixed(1);
             document.getElementById('fs-attendance-summary').innerText = `${data.summary.present_days || 0} days present • ${data.summary.unexcused_days || 0} unexcused absences`;
         }
     } catch (e) {}
@@ -566,24 +574,60 @@ function loadRnDashboard() {
     switchRnSection('jobs');
 }
 
+let cachedRnJobs = [];
+let currentJobAreaFilter = 'all';
+
 async function loadJobs() {
     const grid = document.getElementById('job-listings-grid');
+    if (!grid) return;
     try {
         const res = await fetch('/api/jobs');
-        const jobs = await res.json();
-
-        grid.innerHTML = jobs.map(j => `
-            <div class="job-card">
-                <h3>${j.role}</h3>
-                <div class="job-company">${j.company}</div>
-                <div class="job-meta">📍 ${j.location} • 💰 ${j.pay} • ⏰ ${j.shift}</div>
-                <p class="job-desc">${j.description}</p>
-                <button class="btn btn-outline" style="margin-top: 12px; font-size: 12px;" onclick="alert('Staff will assist you in connecting with ${j.company}!')">Request Employer Match</button>
-            </div>
-        `).join('');
+        cachedRnJobs = await res.json();
+        renderFilteredJobs();
     } catch (e) {
-        grid.innerHTML = '<p>Unable to load job listings.</p>';
+        grid.innerHTML = '<p class="text-slate">Unable to load job listings.</p>';
     }
+}
+
+function filterJobsByArea(location) {
+    currentJobAreaFilter = location || 'all';
+    ['all', 'charleston', 'columbia', 'greenville', 'spartanburg'].forEach(loc => {
+        const btn = document.getElementById(`btn-job-loc-${loc}`);
+        if (btn) {
+            if (loc.toLowerCase() === currentJobAreaFilter.toLowerCase()) {
+                btn.className = 'btn btn-primary';
+            } else {
+                btn.className = 'btn btn-outline';
+            }
+        }
+    });
+    renderFilteredJobs();
+}
+
+function renderFilteredJobs() {
+    const grid = document.getElementById('job-listings-grid');
+    if (!grid) return;
+
+    let filtered = cachedRnJobs || [];
+    if (currentJobAreaFilter && currentJobAreaFilter !== 'all') {
+        const query = currentJobAreaFilter.toLowerCase();
+        filtered = filtered.filter(j => (j.location || '').toLowerCase().includes(query));
+    }
+
+    if (filtered.length === 0) {
+        grid.innerHTML = `<div style="grid-column: 1 / -1; padding: 24px; text-align: center; color: var(--slate);">No fair-chance employer listings found for ${currentJobAreaFilter}. Check back soon or request custom placement.</div>`;
+        return;
+    }
+
+    grid.innerHTML = filtered.map(j => `
+        <div class="job-card">
+            <h3>${j.role}</h3>
+            <div class="job-company">${j.company}</div>
+            <div class="job-meta">📍 ${j.location} • 💰 ${j.pay} • ⏰ ${j.shift}</div>
+            <p class="job-desc">${j.description}</p>
+            <button class="btn btn-outline" style="margin-top: 12px; font-size: 12px;" onclick="alert('Staff will assist you in connecting with ${j.company.replace(/'/g, "\\'")}!')">Request Employer Match</button>
+        </div>
+    `).join('');
 }
 
 async function loadSavedResume() {
@@ -637,55 +681,26 @@ async function handleSaveResume(e) {
 }
 
 async function loadCbtModules() {
-    const container = document.getElementById('cbt-accordion-container');
+    const rnContainer = document.getElementById('cbt-accordion-container');
+    const fsContainer = document.getElementById('fs-cbt-accordion-container');
+    if (!rnContainer && !fsContainer) return;
+
     try {
-        const [cbtRes, tradesRes] = await Promise.all([
-            fetch('/api/training/cbt-modules'),
-            fetch('/api/training/trades-tracks')
-        ]);
+        const cbtRes = await fetch('/api/training/cbt-modules');
         const cbtModules = await cbtRes.json();
-        const tradeTracks = await tradesRes.json();
 
-        let html = `
-            <div style="margin-bottom: 28px;">
-                <h3 style="font-size: 18px; font-weight: 800; color: var(--primary); margin-bottom: 12px;">🧠 Turn90 CBT Modules</h3>
+        const html = `
+            <div style="margin-bottom: 20px;">
                 <div style="display: flex; flex-direction: column; gap: 12px;">
-                    ${cbtModules.map(m => `
-                        <div class="module-card">
-                            <h3>${m.title}</h3>
-                            <p style="color: var(--slate); font-size: 13px; margin-bottom: 8px;">${m.description}</p>
-                            <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid var(--border);">
+                    ${cbtModules.map((m, idx) => `
+                        <div class="module-card" style="border-left: 4px solid var(--accent); background: white; border-radius: 8px; padding: 16px; border: 1px solid var(--border);">
+                            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
+                                <h3 style="margin: 0; color: var(--primary); font-size: 15px;">🧠 ${m.title}</h3>
+                                <span class="badge badge-pending" style="font-size: 11px;">Module ${idx + 1}</span>
+                            </div>
+                            <p style="color: var(--slate); font-size: 13px; margin: 4px 0 10px 0;">${m.description}</p>
+                            <div style="background: #f8fafc; padding: 10px 12px; border-radius: 6px; border-left: 3px solid var(--primary); font-size: 12.5px;">
                                 <strong style="color: var(--primary);">Key Takeaway:</strong> ${m.keyTakeaway}
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-
-            <div>
-                <h3 style="font-size: 18px; font-weight: 800; color: var(--primary); margin-bottom: 12px;">🦺 Turn90 SkillsCommons Trades Tracks</h3>
-                <div style="display: flex; flex-direction: column; gap: 16px;">
-                    ${tradeTracks.map(t => `
-                        <div class="module-card" style="border-left: 4px solid var(--accent);">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                <h3 style="margin-bottom: 0;">${t.icon} ${t.title}</h3>
-                                <span class="badge badge-green">${t.badgeName}</span>
-                            </div>
-                            <p style="color: var(--slate); font-size: 13px; margin-bottom: 12px;">${t.description}</p>
-                            <div style="display: flex; flex-direction: column; gap: 10px;">
-                                ${t.lessons.map((l, lIdx) => `
-                                    <div style="background: white; padding: 14px; border-radius: 6px; border: 1px solid var(--border);">
-                                        <div style="display: flex; justify-content: space-between; align-items: baseline;">
-                                            <strong>Lesson ${lIdx + 1}: ${l.title}</strong>
-                                            ${l.videoUrl ? `<a href="${l.videoUrl}" target="_blank" class="btn btn-outline" style="padding: 2px 8px; font-size: 11px;">▶ Watch Video</a>` : ''}
-                                        </div>
-                                        <p style="font-size: 12px; color: var(--slate); margin: 4px 0 8px 0;">${l.description}</p>
-                                        ${l.safetyTip ? `<div style="font-size: 12px; color: #b45309; background: #fef3c7; padding: 6px 10px; border-radius: 4px; margin-bottom: 6px;"><strong>⚠️ Safety Tip:</strong> ${l.safetyTip}</div>` : ''}
-                                        <ul style="font-size: 12px; color: #334155; padding-left: 18px;">
-                                            ${l.keyTakeaways.map(k => `<li>${k}</li>`).join('')}
-                                        </ul>
-                                    </div>
-                                `).join('')}
                             </div>
                         </div>
                     `).join('')}
@@ -693,10 +708,12 @@ async function loadCbtModules() {
             </div>
         `;
 
-        container.innerHTML = html;
+        if (rnContainer) rnContainer.innerHTML = html;
+        if (fsContainer) fsContainer.innerHTML = html;
     } catch (e) {
-        console.error('Failed to load modules:', e);
-        container.innerHTML = '<p>Unable to load modules.</p>';
+        console.error('Failed to load CBT modules:', e);
+        if (rnContainer) rnContainer.innerHTML = '<p class="text-slate">Unable to load CBT modules.</p>';
+        if (fsContainer) fsContainer.innerHTML = '<p class="text-slate">Unable to load CBT modules.</p>';
     }
 }
 
@@ -765,27 +782,29 @@ async function handleDocUpload(e) {
 // -------------------------------------------------------------
 async function loadCaseload() {
     const token = localStorage.getItem('fs_token');
-    const loc = document.getElementById('pm-filter-location').value;
-    const track = document.getElementById('pm-filter-track').value;
-    const gate = document.getElementById('pm-filter-gate').value;
+    const loc = document.getElementById('pm-filter-location')?.value || '';
+    const track = document.getElementById('pm-filter-track')?.value || '';
+    const status = document.getElementById('pm-filter-status')?.value || '';
+    const gate = document.getElementById('pm-filter-gate')?.value || '';
 
-    let url = `/api/admin/caseload?location=${encodeURIComponent(loc)}&track=${encodeURIComponent(track)}&gate=${encodeURIComponent(gate)}`;
+    let url = `/api/admin/caseload?location=${encodeURIComponent(loc)}&track=${encodeURIComponent(track)}&status=${encodeURIComponent(status)}&gate=${encodeURIComponent(gate)}`;
 
     try {
         const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
         const roster = await res.json();
         const tbody = document.getElementById('caseload-tbody');
 
-        if (roster.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 24px;">No participants match this filter.</td></tr>';
+        if (!roster || roster.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 24px; color: var(--slate);">No participants match this filter.</td></tr>';
             return;
         }
 
         tbody.innerHTML = roster.map(p => `
-            <tr>
+            <tr style="${p.overall_status === 'archived' ? 'opacity: 0.65; background: #f8fafc;' : ''}">
                 <td>
                     <strong>${p.name}</strong>
                     <div style="font-size: 11px; color: var(--slate);">${p.email} • ${p.phone || 'No phone'}</div>
+                    ${p.overall_status === 'archived' ? '<span class="badge badge-red" style="font-size: 10px; margin-top: 3px;">Archived</span>' : ''}
                 </td>
                 <td>
                     <span class="badge ${p.track === 'first_shift' ? 'badge-green' : 'badge-pending'}">
@@ -809,7 +828,20 @@ async function loadCaseload() {
                     </div>
                 </td>
                 <td>
-                    <strong>${p.avg_points ? Number(p.avg_points).toFixed(1) : '--'}</strong> / 10
+                    <div style="font-size: 12px; font-weight: 700; color: var(--primary);">
+                        ${p.weeklyPointsAvg ? Number(p.weeklyPointsAvg).toFixed(1) : '--'} / 50
+                    </div>
+                    <div style="font-size: 11px; color: var(--slate); margin-top: 2px;">
+                        Cur Wk: ${p.currentWeekPoints || 0} pts
+                    </div>
+                    <div style="margin-top: 3px;">
+                        <a href="javascript:void(0)" onclick="openWeeklyPointsModal(${p.id}, '${p.name.replace(/'/g, "\\'")}')" style="font-size: 10.5px; color: var(--accent); text-decoration: underline;">View Weeks &rarr;</a>
+                    </div>
+                </td>
+                <td>
+                    <button class="btn btn-outline" style="padding: 3px 8px; font-size: 11px; color: var(--primary);" onclick="openCaseNotesModal(${p.id}, '${p.name.replace(/'/g, "\\'")}', '${p.email}', '${p.track}')">
+                        📝 Notes
+                    </button>
                 </td>
                 <td>
                     ${p.has_reentry_plan ? `
@@ -817,7 +849,7 @@ async function loadCaseload() {
                             🧭 ${p.reentry_status ? p.reentry_status.toUpperCase().replace(/_/g, ' ') : 'LINKED'}
                         </span>
                         <div style="margin-top: 3px;">
-                            <a href="javascript:void(0)" onclick="openParticipantLinkedReentryPlan(${p.id})" style="font-size: 11px; color: var(--primary); font-weight: 700; text-decoration: underline;">📄 View Case Plan</a>
+                            <a href="javascript:void(0)" onclick="openParticipantLinkedReentryPlan(${p.id})" style="font-size: 11px; color: var(--primary); font-weight: 700; text-decoration: underline;">📄 View Plan</a>
                         </div>
                     ` : `
                         <span style="font-size: 11px; color: var(--slate);">Not Assessed</span>
@@ -828,12 +860,21 @@ async function loadCaseload() {
                 </td>
                 <td>
                     <div style="display: flex; gap: 4px; flex-wrap: wrap;">
-                        <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px;" onclick="openCaseReviewModal(${p.id}, '${p.name.replace(/'/g, "\\'")}')">
-                            📋 Case Plan
+                        <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px;" onclick="openCaseReviewModal(${p.id}, '${p.name.replace(/'/g, "\\'")}')" title="Weekly Case Review">
+                            📋 Review
                         </button>
-                        <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: var(--danger); border-color: #fca5a5;" onclick="openStabilityActionModal(${p.id}, '${p.name.replace(/'/g, "\\'")}')">
-                            🚦 Stability
+                        <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: #4338ca; border-color: #c7d2fe;" onclick="promptSwitchTrack(${p.id}, '${p.name.replace(/'/g, "\\'")}', '${p.track}')" title="Switch Track">
+                            🔄 Track
                         </button>
+                        ${p.overall_status === 'archived' ? `
+                            <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: var(--success); border-color: #86efac;" onclick="toggleArchiveParticipant(${p.id}, '${p.name.replace(/'/g, "\\'")}', 'restore')" title="Restore to Caseload">
+                                ♻️ Restore
+                            </button>
+                        ` : `
+                            <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: var(--danger); border-color: #fca5a5;" onclick="toggleArchiveParticipant(${p.id}, '${p.name.replace(/'/g, "\\'")}', 'archive')" title="Remove / Archive Participant">
+                                🗑️ Remove
+                            </button>
+                        `}
                         <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px;" onclick="advanceParticipantGate(${p.id}, ${(p.current_gate || 1) + 1})">
                             Gate &rarr;
                         </button>
@@ -3181,5 +3222,466 @@ async function deleteSavedJob(jobId) {
         loadSavedJobsPipeline();
     } catch(e) {
         alert('Delete error: ' + e.message);
+    }
+}
+
+// -------------------------------------------------------------
+// PASSWORD RESET (Self-Service or Admin/PM Override)
+// -------------------------------------------------------------
+function openResetPasswordModal(userId = null, email = '') {
+    const userIdInput = document.getElementById('reset-user-id');
+    const emailInput = document.getElementById('reset-email');
+    const emailGroup = document.getElementById('reset-email-group');
+    const newPassInput = document.getElementById('reset-new-password');
+    const confirmPassInput = document.getElementById('reset-confirm-password');
+
+    if (userIdInput) userIdInput.value = userId || '';
+    if (emailInput) {
+        emailInput.value = email || '';
+        emailInput.readOnly = !!userId;
+    }
+    if (emailGroup) {
+        emailGroup.style.display = 'block';
+    }
+    if (newPassInput) newPassInput.value = '';
+    if (confirmPassInput) confirmPassInput.value = '';
+
+    openModal('modal-reset-password');
+}
+
+async function handleResetPasswordSubmit(e) {
+    e.preventDefault();
+    const userId = document.getElementById('reset-user-id')?.value;
+    const email = document.getElementById('reset-email')?.value.trim();
+    const newPassword = document.getElementById('reset-new-password')?.value;
+    const confirmPassword = document.getElementById('reset-confirm-password')?.value;
+
+    if (!newPassword || newPassword.length < 6) {
+        return alert('Password must be at least 6 characters.');
+    }
+    if (newPassword !== confirmPassword) {
+        return alert('Passwords do not match. Please verify and try again.');
+    }
+
+    const payload = {
+        userId: userId ? parseInt(userId) : undefined,
+        email: email || undefined,
+        newPassword
+    };
+
+    try {
+        const token = localStorage.getItem('fs_token');
+        const res = await fetch('/api/auth/reset-password', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+            },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Password reset failed');
+
+        alert(data.message || 'Password successfully updated!');
+        closeModal('modal-reset-password');
+    } catch (err) {
+        alert('Reset Error: ' + err.message);
+    }
+}
+
+// -------------------------------------------------------------
+// CASE NOTES & PARTICIPANT FILE REVIEW
+// -------------------------------------------------------------
+let currentNotesUserId = null;
+
+async function openCaseNotesModal(userId, name, email, track) {
+    currentNotesUserId = userId;
+    const noteUserId = document.getElementById('note-user-id');
+    if (noteUserId) noteUserId.value = userId;
+
+    const titleEl = document.getElementById('notes-modal-title');
+    const subtitleEl = document.getElementById('notes-modal-subtitle');
+    if (titleEl) titleEl.innerText = `📋 Case Notes: ${name}`;
+    if (subtitleEl) subtitleEl.innerText = `${email} • Track: ${track === 'first_shift' ? 'First Shift' : 'Re-entry Nav'}`;
+
+    const dateInput = document.getElementById('note-date');
+    if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
+
+    const contentInput = document.getElementById('note-content');
+    if (contentInput) contentInput.value = '';
+
+    const extraEl = document.getElementById('notes-modal-extra-actions');
+    if (extraEl) {
+        extraEl.innerHTML = `
+            <button class="btn btn-outline" style="font-size: 11.5px;" onclick="openParticipantLinkedReentryPlan(${userId})">📄 View Fresh Start Guide</button>
+            <button class="btn btn-outline" style="font-size: 11.5px;" onclick="openWeeklyPointsModal(${userId}, '${name.replace(/'/g, "\\'")}')">📊 View Weekly Points</button>
+        `;
+    }
+
+    openModal('modal-case-notes');
+    loadCaseNotesList(userId);
+}
+
+async function loadCaseNotesList(userId) {
+    const listContainer = document.getElementById('notes-history-list');
+    if (!listContainer) return;
+    listContainer.innerHTML = '<p class="text-slate" style="font-size: 12px;">Loading notes history...</p>';
+
+    const token = localStorage.getItem('fs_token');
+    try {
+        const res = await fetch(`/api/pm/notes/${userId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const notes = await res.json();
+
+        if (!notes || notes.length === 0) {
+            listContainer.innerHTML = '<p class="text-slate" style="font-size: 12px; text-align: center; padding: 20px;">No clinical case notes recorded yet for this participant.</p>';
+            return;
+        }
+
+        listContainer.innerHTML = notes.map(n => `
+            <div style="background: #f8fafc; border: 1px solid var(--border); border-left: 3px solid var(--primary); border-radius: 6px; padding: 10px;">
+                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+                    <div style="display: flex; gap: 6px; align-items: center;">
+                        <span class="badge badge-green" style="font-size: 10px;">${n.note_type}</span>
+                        <span class="badge badge-pending" style="font-size: 10px;">${n.category}</span>
+                    </div>
+                    <span style="font-size: 11px; color: var(--slate);">${n.session_date}</span>
+                </div>
+                <div style="font-size: 12px; color: #1e293b; white-space: pre-wrap; line-height: 1.4; margin-top: 6px;">${n.content}</div>
+                <div style="font-size: 10.5px; color: var(--slate); margin-top: 6px; text-align: right;">
+                    By: <strong>${n.author_name}</strong> • ${new Date(n.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                </div>
+            </div>
+        `).join('');
+    } catch (err) {
+        listContainer.innerHTML = `<p style="color: var(--danger); font-size: 12px;">Error loading notes: ${err.message}</p>`;
+    }
+}
+
+async function handleAddCaseNote(e) {
+    e.preventDefault();
+    const userId = currentNotesUserId || parseInt(document.getElementById('note-user-id')?.value);
+    const sessionDate = document.getElementById('note-date')?.value;
+    const noteType = document.getElementById('note-type')?.value;
+    const category = document.getElementById('note-category')?.value;
+    const content = document.getElementById('note-content')?.value.trim();
+
+    if (!userId || !sessionDate || !content) {
+        return alert('Please provide the date and note content.');
+    }
+
+    const token = localStorage.getItem('fs_token');
+    try {
+        const res = await fetch('/api/pm/notes', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ userId, sessionDate, noteType, category, content })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to save note');
+
+        document.getElementById('note-content').value = '';
+        loadCaseNotesList(userId);
+    } catch (err) {
+        alert('Save Note Error: ' + err.message);
+    }
+}
+
+function exportApricotNotesModal() {
+    const token = localStorage.getItem('fs_token');
+    const loc = document.getElementById('pm-filter-location')?.value || '';
+    let url = `/api/pm/notes-export?format=xlsx&token=${encodeURIComponent(token)}`;
+    if (loc) url += `&location=${encodeURIComponent(loc)}`;
+    window.location.href = url;
+}
+
+// -------------------------------------------------------------
+// TRACK SWITCHING & ARCHIVING PARTICIPANTS
+// -------------------------------------------------------------
+async function promptSwitchTrack(userId, name, currentTrack) {
+    const targetTrack = currentTrack === 'first_shift' ? 'reentry_nav' : 'first_shift';
+    const targetName = targetTrack === 'first_shift' ? 'First Shift' : 'Re-entry Navigator';
+
+    if (!confirm(`Switch ${name} to ${targetName}?`)) return;
+
+    const token = localStorage.getItem('fs_token');
+    try {
+        const res = await fetch('/api/pm/switch-track', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ userId, targetTrack })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to switch track');
+
+        alert(data.message);
+        loadCaseload();
+    } catch (err) {
+        alert('Switch Track Error: ' + err.message);
+    }
+}
+
+async function toggleArchiveParticipant(userId, name, action) {
+    const token = localStorage.getItem('fs_token');
+    let reason = null;
+
+    if (action === 'archive') {
+        reason = prompt(`Remove / Archive ${name} from active caseload?\nEnter reason (e.g. Services completed, Employment secured, Relocated, Inactive):`);
+        if (reason === null) return; // cancelled
+    } else {
+        if (!confirm(`Restore ${name} to active caseload?`)) return;
+    }
+
+    try {
+        const res = await fetch('/api/pm/archive-participant', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ userId, action, reason })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Action failed');
+
+        alert(data.message);
+        loadCaseload();
+    } catch (err) {
+        alert('Archive Error: ' + err.message);
+    }
+}
+
+// -------------------------------------------------------------
+// TIME-OFF REQUESTS & PM REVIEW QUEUE
+// -------------------------------------------------------------
+function openTimeOffModal() {
+    const dateInput = document.getElementById('tor-date');
+    if (dateInput) {
+        const target = new Date();
+        target.setDate(target.getDate() + 3);
+        dateInput.value = target.toISOString().split('T')[0];
+    }
+    const notesInput = document.getElementById('tor-notes');
+    if (notesInput) notesInput.value = '';
+
+    openModal('modal-time-off-request');
+}
+
+async function handleTimeOffRequestSubmit(e) {
+    e.preventDefault();
+    const requestedDate = document.getElementById('tor-date')?.value;
+    const reason = document.getElementById('tor-reason')?.value;
+    const notes = document.getElementById('tor-notes')?.value.trim();
+
+    if (!requestedDate || !reason) {
+        return alert('Please select a requested date and reason.');
+    }
+
+    const token = localStorage.getItem('fs_token');
+    try {
+        const res = await fetch('/api/participant/time-off', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ requestedDate, reason, notes })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to submit time-off request');
+
+        alert(data.message || 'Time-off request submitted successfully.');
+        closeModal('modal-time-off-request');
+        loadFsPoints();
+    } catch (err) {
+        alert('Time-Off Request Notice: ' + err.message);
+    }
+}
+
+async function openPmTimeOffModal() {
+    openModal('modal-pm-time-off');
+    loadPmTimeOffRequests();
+}
+
+async function loadPmTimeOffRequests() {
+    const container = document.getElementById('pm-time-off-list');
+    if (!container) return;
+    container.innerHTML = '<p class="text-slate">Loading pending time-off requests...</p>';
+
+    const token = localStorage.getItem('fs_token');
+    try {
+        const res = await fetch('/api/pm/time-off-requests', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const requests = await res.json();
+
+        if (!requests || requests.length === 0) {
+            container.innerHTML = '<p class="text-slate" style="text-align: center; padding: 24px;">No time-off requests found in queue.</p>';
+            return;
+        }
+
+        container.innerHTML = requests.map(r => `
+            <div style="background: white; border: 1px solid var(--border); border-left: 4px solid ${r.status === 'approved' ? 'var(--success)' : r.status === 'denied' ? 'var(--danger)' : 'var(--accent)'}; border-radius: 6px; padding: 14px;">
+                <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px;">
+                    <div>
+                        <strong style="font-size: 14px; color: var(--primary);">${r.user_name}</strong>
+                        <span style="font-size: 12px; color: var(--slate); margin-left: 6px;">(${r.user_email} • ${r.user_location})</span>
+                    </div>
+                    <span class="badge ${r.status === 'approved' ? 'badge-green' : r.status === 'denied' ? 'badge-red' : 'badge-pending'}">
+                        ${r.status.toUpperCase()}
+                    </span>
+                </div>
+                <div style="margin-top: 8px; font-size: 13px;">
+                    📅 <strong>Requested Absence Date:</strong> <span style="color: var(--primary); font-weight: 700;">${r.requested_date}</span>
+                </div>
+                <div style="font-size: 12.5px; margin-top: 4px;">
+                    🏷️ <strong>Reason:</strong> ${r.reason}
+                </div>
+                ${r.notes ? `<div style="font-size: 12px; color: #475569; background: #f8fafc; padding: 6px 10px; border-radius: 4px; margin-top: 6px;">📝 ${r.notes}</div>` : ''}
+                <div style="font-size: 11px; color: var(--slate); margin-top: 6px;">
+                    Submitted: ${new Date(r.created_at).toLocaleString()}
+                </div>
+
+                ${r.status === 'pending' ? `
+                    <div style="display: flex; gap: 8px; margin-top: 10px; border-top: 1px dashed var(--border); padding-top: 10px;">
+                        <button class="btn btn-primary" style="font-size: 11.5px; padding: 4px 10px; background: #16a34a;" onclick="handlePmTimeOffAction(${r.id}, 'approved')">
+                            ✅ Approve (Excused Absence)
+                        </button>
+                        <button class="btn btn-outline" style="font-size: 11.5px; padding: 4px 10px; color: var(--danger); border-color: #fca5a5;" onclick="handlePmTimeOffAction(${r.id}, 'denied')">
+                            ❌ Deny Request
+                        </button>
+                    </div>
+                ` : `
+                    <div style="font-size: 11.5px; color: var(--slate); margin-top: 8px; border-top: 1px dashed var(--border); padding-top: 6px;">
+                        Reviewed: ${r.reviewed_at ? new Date(r.reviewed_at).toLocaleDateString() : 'Yes'}
+                        ${r.pm_response_notes ? ` • Note: <em>"${r.pm_response_notes}"</em>` : ''}
+                    </div>
+                `}
+            </div>
+        `).join('');
+    } catch (err) {
+        container.innerHTML = `<p style="color: var(--danger);">Error loading requests: ${err.message}</p>`;
+    }
+}
+
+async function handlePmTimeOffAction(requestId, status) {
+    const notes = prompt(`Provide supervisor review notes for ${status === 'approved' ? 'approving' : 'denying'} this request (optional):`) || '';
+
+    const token = localStorage.getItem('fs_token');
+    try {
+        const res = await fetch('/api/pm/time-off-action', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ requestId, status, responseNotes: notes })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Action failed');
+
+        alert(data.message);
+        loadPmTimeOffRequests();
+        loadCaseload();
+    } catch (err) {
+        alert('Action Error: ' + err.message);
+    }
+}
+
+// -------------------------------------------------------------
+// WEEKLY POINTS BREAKDOWN MODAL (Out of 50 Points)
+// -------------------------------------------------------------
+async function openWeeklyPointsModal(userId, name) {
+    const titleEl = document.getElementById('wp-modal-title');
+    const bodyEl = document.getElementById('wp-modal-body');
+    if (titleEl) titleEl.innerText = `📊 Weekly Points Breakdown: ${name}`;
+    if (bodyEl) bodyEl.innerHTML = '<p class="text-slate">Loading weekly points data...</p>';
+
+    openModal('modal-weekly-points');
+
+    const token = localStorage.getItem('fs_token');
+    try {
+        const res = await fetch(`/api/pm/points-summary/${userId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+
+        let html = `
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px;">
+                <div style="background: #f8fafc; border: 1px solid var(--border); padding: 12px; border-radius: 6px; text-align: center;">
+                    <div style="font-size: 11px; color: var(--slate); font-weight: 600; text-transform: uppercase;">Weekly Average</div>
+                    <div style="font-size: 20px; font-weight: 800; color: var(--primary); margin-top: 4px;">${data.overallWeeklyAverage.toFixed(1)} <span style="font-size: 12px; color: var(--slate); font-weight: normal;">/ 50</span></div>
+                </div>
+                <div style="background: #f8fafc; border: 1px solid var(--border); padding: 12px; border-radius: 6px; text-align: center;">
+                    <div style="font-size: 11px; color: var(--slate); font-weight: 600; text-transform: uppercase;">Current Week</div>
+                    <div style="font-size: 20px; font-weight: 800; color: var(--accent); margin-top: 4px;">${data.currentWeekPoints} <span style="font-size: 12px; color: var(--slate); font-weight: normal;">/ 50</span></div>
+                </div>
+                <div style="background: #f8fafc; border: 1px solid var(--border); padding: 12px; border-radius: 6px; text-align: center;">
+                    <div style="font-size: 11px; color: var(--slate); font-weight: 600; text-transform: uppercase;">Days Present</div>
+                    <div style="font-size: 20px; font-weight: 800; color: #16a34a; margin-top: 4px;">${data.rawAttendanceSummary.present_days || 0}</div>
+                </div>
+                <div style="background: #f8fafc; border: 1px solid var(--border); padding: 12px; border-radius: 6px; text-align: center;">
+                    <div style="font-size: 11px; color: var(--slate); font-weight: 600; text-transform: uppercase;">Absences</div>
+                    <div style="font-size: 13px; font-weight: 700; color: #475569; margin-top: 8px;">
+                        <span style="color: #2563eb;">${data.rawAttendanceSummary.excused_days || 0} Excused</span> • 
+                        <span style="color: #dc2626;">${data.rawAttendanceSummary.unexcused_days || 0} Unexcused</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table class="table" style="width: 100%; font-size: 12.5px;">
+                    <thead>
+                        <tr style="background: #f1f5f9;">
+                            <th style="padding: 8px 12px;">Week Period (Monday Start)</th>
+                            <th style="padding: 8px 12px; text-align: center;">Present</th>
+                            <th style="padding: 8px 12px; text-align: center;">Excused</th>
+                            <th style="padding: 8px 12px; text-align: center;">Unexcused</th>
+                            <th style="padding: 8px 12px; text-align: center;">Weekly Total (/50)</th>
+                            <th style="padding: 8px 12px; text-align: center;">Daily Avg (/10)</th>
+                            <th style="padding: 8px 12px; text-align: center;">Compliance Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+
+        if (!data.weeks || data.weeks.length === 0) {
+            html += `<tr><td colspan="7" style="text-align: center; padding: 20px; color: var(--slate);">No daily points logged yet for this participant.</td></tr>`;
+        } else {
+            data.weeks.forEach(w => {
+                const totalScore = w.totalPoints;
+                const badgeClass = totalScore >= 40 ? 'badge-green' : totalScore >= 30 ? 'badge-pending' : 'badge-red';
+                const statusText = totalScore >= 40 ? '✅ Benchmark Met' : totalScore >= 30 ? '⚠️ In Progress' : '❌ Below Benchmark';
+
+                html += `
+                    <tr>
+                        <td style="padding: 8px 12px; font-weight: 600; color: var(--primary);">${w.weekLabel}</td>
+                        <td style="padding: 8px 12px; text-align: center;">${w.presentDays}</td>
+                        <td style="padding: 8px 12px; text-align: center; color: #2563eb;">${w.excusedDays}</td>
+                        <td style="padding: 8px 12px; text-align: center; color: #dc2626;">${w.unexcusedDays}</td>
+                        <td style="padding: 8px 12px; text-align: center; font-weight: 700; color: var(--primary);">${w.totalPoints} / 50</td>
+                        <td style="padding: 8px 12px; text-align: center;">${w.averageDailyPoints.toFixed(1)} / 10</td>
+                        <td style="padding: 8px 12px; text-align: center;"><span class="badge ${badgeClass}">${statusText}</span></td>
+                    </tr>
+                `;
+            });
+        }
+
+        html += `
+                    </tbody>
+                </table>
+            </div>
+        `;
+
+        bodyEl.innerHTML = html;
+    } catch (err) {
+        bodyEl.innerHTML = `<p style="color: var(--danger);">Error loading weekly points: ${err.message}</p>`;
     }
 }

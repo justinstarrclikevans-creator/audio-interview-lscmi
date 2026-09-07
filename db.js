@@ -234,6 +234,36 @@ CREATE TABLE IF NOT EXISTS saved_job_applications (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+-- Case Notes for Program Managers & Apricot Integration
+CREATE TABLE IF NOT EXISTS case_notes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    author_id INTEGER,
+    author_name TEXT NOT NULL,
+    session_date DATE DEFAULT (DATE('now')),
+    note_type TEXT DEFAULT 'Individual Session', -- 'Individual Session', 'Phone Contact', 'Court Update', 'Employer Contact', 'General Case Note'
+    category TEXT DEFAULT 'Case Management', -- 'Case Management', 'Attendance/Points', 'Barriers & Stability', 'Job Readiness'
+    content TEXT NOT NULL,
+    apricot_exported INTEGER DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Participant Time-Off Requests (48-Hour Notice Policy)
+CREATE TABLE IF NOT EXISTS time_off_requests (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    requested_date DATE NOT NULL,
+    reason TEXT NOT NULL,
+    notes TEXT,
+    status TEXT DEFAULT 'pending', -- 'pending', 'approved', 'denied'
+    pm_response_notes TEXT,
+    reviewed_by TEXT,
+    reviewed_at DATETIME,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 `);
 
 // Safe column migrations for existing databases
@@ -315,7 +345,7 @@ const BRIEFCASE_DOMAINS = {
 // 4-Week Job Readiness Gate Criteria (Must-Haves to Qualify for Weeks 5–8 & Week 9 Placement)
 const DEFAULT_GATE_CRITERIA = {
     1: [
-        { key: 'w1_attendance', title: 'Satisfactory Week 1 Attendance', description: 'Zero unexcused absences and zero NCNS.' },
+        { key: 'w1_attendance', title: 'General Attendance & Points Benchmark', description: 'Maintains required attendance and points system benchmark across Week 1.' },
         { key: 'w1_interview', title: 'LS/CMI Assessment Interview Completed', description: '158-question audio interview recorded and draft scoring generated.' },
         { key: 'w1_w9_id', title: 'Form W-9 & Primary ID Submitted', description: 'Digital W-9 completed and State ID/Birth Certificate/SS card uploaded.' },
         { key: 'w1_goal_email', title: '90-Day Goal & Professional Email Created', description: 'Baseline 90-day motivation worksheet and professional email handle established.' },

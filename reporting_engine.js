@@ -277,9 +277,134 @@ function importApricotCsv(csvContent) {
     return importApricotData(csvContent, false);
 }
 
+// Compute Weekly Points (Out of 50) and Current Week Progress
+function getWeeklyPointsSummary(userId) {
+    const pointsRecords = db.prepare(`
+        SELECT date, points_earned, attendance_status, notes
+        FROM daily_points
+        WHERE user_id = ?
+        ORDER BY date ASC
+    `).all(userId);
+
+    if (pointsRecords.length === 0) {
+        return {
+            overallWeeklyAverage: 0,
+            totalWeeksCounted: 0,
+            currentWeekPoints: 0,
+            currentWeekMax: 50,
+            currentWeekEntries: 0,
+            weeks: []
+        };
+    }
+
+    // Group records by calendar week (Monday to Friday/Sunday)
+    const weeksMap = {};
+
+    pointsRecords.forEach(rec => {
+        const d = new Date(rec.date + 'T12:00:00Z');
+        if (isNaN(d.getTime())) return;
+        
+        // Find Monday of the week
+        const dayOfWeek = d.getUTCDay(); // 0 = Sun, 1 = Mon ...
+        const diff = (dayOfWeek === 0 ? -6 : 1) - dayOfWeek;
+        const monday = new Date(d);
+        monday.setUTCDate(d.getUTCDate() + diff);
+        const weekKey = monday.toISOString().split('T')[0];
+
+        if (!weeksMap[weekKey]) {
+            weeksMap[weekKey] = {
+                weekStartDate: weekKey,
+                totalPoints: 0,
+                daysLogged: 0,
+                records: []
+            };
+        }
+
+        weeksMap[weekKey].totalPoints += Number(rec.points_earned) || 0;
+        weeksMap[weekKey].daysLogged += 1;
+        weeksMap[weekKey].records.push(rec);
+    });
+
+    const sortedWeeks = Object.values(weeksMap).sort((a, b) => b.weekStartDate.localeCompare(a.weekStartDate));
+    
+    // Overall average of weekly totals (scaled out of 50 max points per week)
+    let totalWeeklySum = 0;
+    sortedWeeks.forEach(w => {
+        totalWeeklySum += Math.min(50, w.totalPoints);
+    });
+    const overallWeeklyAverage = sortedWeeks.length > 0 ? (totalWeeklySum / sortedWeeks.length) : 0;
+
+    // Current (most recent) week
+    const currentWeek = sortedWeeks[0] || { totalPoints: 0, daysLogged: 0, records: [] };
+
+    return {
+        overallWeeklyAverage: parseFloat(overallWeeklyAverage.toFixed(1)),
+        totalWeeksCounted: sortedWeeks.length,
+        currentWeekPoints: parseFloat(currentWeek.totalPoints.toFixed(1)),
+        currentWeekMax: 50,
+        currentWeekEntries: currentWeek.daysLogged,
+        weeks: sortedWeeks.map(w => ({
+            weekStartDate: w.weekStartDate,
+            weeklyPoints: parseFloat(w.totalPoints.toFixed(1)),
+            maxPoints: 50,
+            daysLogged: w.daysLogged,
+            records: w.records
+        }))
+    };
+}
+
+// Generate Apricot-Compatible Case Notes & Attendance Export (Excel or CSV)
+function generateApricotCaseNotesExport(asExcel = true, locationFilter = null) {
+    let query = `
+        SELECT cn.id, cn.session_date, cn.note_type, cn.category, cn.content, cn.author_name,
+               u.name as participant_name, u.email as participant_email, u.location, u.track
+        FROM case_notes cn
+        JOIN users u ON cn.user_id = u.id
+    `;
+    const params = [];
+    if (locationFilter) {
+        query += ` WHERE u.location = ?`;
+        params.push(locationFilter);
+    }
+    query += ` ORDER BY cn.session_date DESC, cn.id DESC`;
+
+    const notes = db.prepare(query).all(...params);
+
+    const exportRows = [
+        ['Participant Name', 'Email', 'Location', 'Program Track', 'Date of Contact', 'Contact Type', 'Category / Domain', 'Clinical Case Note', 'Staff / Author']
+    ];
+
+    notes.forEach(n => {
+        exportRows.push([
+            n.participant_name,
+            n.participant_email,
+            n.location,
+            n.track === 'first_shift' ? 'First Shift' : 'Re-entry Navigation',
+            n.session_date,
+            n.note_type,
+            n.category,
+            n.content,
+            n.author_name
+        ]);
+    });
+
+    if (asExcel) {
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.aoa_to_sheet(exportRows);
+        XLSX.utils.book_append_sheet(wb, ws, 'Apricot Case Notes');
+        return XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+    } else {
+        return exportRows.map(row => 
+            row.map(val => `"${String(val || '').replace(/"/g, '""')}"`).join(',')
+        ).join('\n');
+    }
+}
+
 module.exports = {
     generateMondayNeedsReport,
     generateFridayMilestoneReport,
     importApricotCsv,
-    importApricotData
+    importApricotData,
+    getWeeklyPointsSummary,
+    generateApricotCaseNotesExport
 };

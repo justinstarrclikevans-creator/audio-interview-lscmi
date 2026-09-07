@@ -13,7 +13,7 @@ const { convertSingleMdToPdf } = require('./convert_md_to_pdf');
 const { convertSingleMdToDocx } = require('./convert_md_to_docx');
 const { evaluateClassTranscript } = require('./facilitation_evaluator');
 const { cbtModules, T90_TRADE_TRACKS, REENTRY_EMPLOYERS } = require('./training_data');
-const { generateMondayNeedsReport, generateFridayMilestoneReport, importApricotCsv, importApricotData } = require('./reporting_engine');
+const { generateMondayNeedsReport, generateFridayMilestoneReport, importApricotCsv, importApricotData, getWeeklyPointsSummary, generateApricotCaseNotesExport } = require('./reporting_engine');
 const { generateReentryNavAssessment } = require('./reentry_engine');
 const { SC_COMMUNITY_RESOURCES, SC_FAIR_CHANCE_EMPLOYERS } = require('./sc_resource_directory');
 const { loadJobsFromSpreadsheets } = require('./jobs_loader');
@@ -63,7 +63,7 @@ const resend = new Resend(process.env.RESEND_API_KEY || 're_dummy');
 // -------------------------------------------------------------
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
+    const token = (authHeader && authHeader.split(' ')[1]) || req.query.token;
     if (!token) return res.status(401).json({ error: 'Authentication required' });
 
     jwt.verify(token, JWT_SECRET, (err, user) => {
@@ -150,6 +150,35 @@ app.post('/api/auth/login', async (req, res) => {
     } catch (err) {
         console.error('Login error:', err);
         res.status(500).json({ error: 'Login failed.' });
+    }
+});
+
+// Password Reset Route (Self-Service with Email or PM Override)
+app.post('/api/auth/reset-password', async (req, res) => {
+    try {
+        const { email, newPassword, userId } = req.body;
+        if (!newPassword || newPassword.length < 6) {
+            return res.status(400).json({ error: 'New password must be at least 6 characters.' });
+        }
+
+        let user = null;
+        if (userId) {
+            user = db.prepare('SELECT id, email, name FROM users WHERE id = ?').get(userId);
+        } else if (email) {
+            user = db.prepare('SELECT id, email, name FROM users WHERE LOWER(email) = ?').get(email.toLowerCase().trim());
+        }
+
+        if (!user) {
+            return res.status(404).json({ error: 'Participant/User account not found.' });
+        }
+
+        const newHash = await bcrypt.hash(newPassword, 10);
+        db.prepare('UPDATE users SET password_hash = ? WHERE id = ?').run(newHash, user.id);
+
+        res.json({ message: `Password for ${user.name} has been reset successfully.` });
+    } catch(err) {
+        console.error('Password reset error:', err);
+        res.status(500).json({ error: 'Password reset failed: ' + err.message });
     }
 });
 
@@ -263,7 +292,7 @@ app.get('/api/participant/documents', authenticateToken, (req, res) => {
     res.json(docs);
 });
 
-// Get User's Daily Points
+// Get User's Daily & Weekly Points Summary
 app.get('/api/participant/points', authenticateToken, (req, res) => {
     const points = db.prepare('SELECT * FROM daily_points WHERE user_id = ? ORDER BY date DESC').all(req.user.id);
     const summary = db.prepare(`
@@ -274,7 +303,9 @@ app.get('/api/participant/points', authenticateToken, (req, res) => {
         FROM daily_points WHERE user_id = ?
     `).get(req.user.id);
 
-    res.json({ points, summary });
+    const weeklySummary = getWeeklyPointsSummary(req.user.id);
+
+    res.json({ points, summary, weeklySummary });
 });
 
 // Submit Class / Session Feedback
@@ -373,6 +404,7 @@ app.get('/api/admin/caseload', authenticateToken, requireRole('program_manager',
     let query = `
         SELECT u.id, u.name, u.email, u.phone, u.location, u.track, u.created_at,
                p.current_gate, p.overall_status, p.w9_status, p.dl_status, p.child_support_status,
+               p.has_reentry_plan, p.reentry_status,
                (SELECT COUNT(*) FROM gate_criteria WHERE user_id = u.id AND status = 'green') as green_criteria,
                (SELECT COUNT(*) FROM gate_criteria WHERE user_id = u.id AND status = 'red') as red_criteria,
                (SELECT AVG(points_earned) FROM daily_points WHERE user_id = u.id) as avg_points
@@ -384,11 +416,186 @@ app.get('/api/admin/caseload', authenticateToken, requireRole('program_manager',
     if (location) { query += ` AND u.location = ?`; params.push(location); }
     if (track) { query += ` AND u.track = ?`; params.push(track); }
     if (gate) { query += ` AND p.current_gate = ?`; params.push(parseInt(gate)); }
-    if (status) { query += ` AND p.overall_status = ?`; params.push(status); }
+    if (status) {
+        query += ` AND p.overall_status = ?`;
+        params.push(status);
+    } else {
+        // Default to active participants
+        query += ` AND (p.overall_status IS NULL OR p.overall_status != 'archived')`;
+    }
 
     query += ` ORDER BY p.current_gate DESC, u.name ASC`;
     const roster = db.prepare(query).all(...params);
-    res.json(roster);
+
+    // Attach weekly points summary
+    const enhancedRoster = roster.map(p => {
+        const pointsSummary = getWeeklyPointsSummary(p.id);
+        return {
+            ...p,
+            weeklyPointsAvg: pointsSummary.overallWeeklyAverage,
+            currentWeekPoints: pointsSummary.currentWeekPoints,
+            totalWeeksLogged: pointsSummary.totalWeeksCounted
+        };
+    });
+
+    res.json(enhancedRoster);
+});
+
+// Switch Participant Track (First Shift <-> Re-entry Nav)
+app.post('/api/pm/switch-track', authenticateToken, requireRole('program_manager', 'admin'), (req, res) => {
+    const { userId, newTrack } = req.body;
+    if (!userId || !newTrack) return res.status(400).json({ error: 'userId and newTrack required.' });
+
+    if (!['first_shift', 'reentry_nav'].includes(newTrack)) {
+        return res.status(400).json({ error: 'Track must be first_shift or reentry_nav.' });
+    }
+
+    db.prepare('UPDATE users SET track = ? WHERE id = ?').run(newTrack, userId);
+    res.json({ message: `Participant track successfully updated to ${newTrack === 'first_shift' ? 'First Shift' : 'Re-entry Navigation'}.`, track: newTrack });
+});
+
+// Remove / Archive Participant (No Longer Receiving Services)
+app.post('/api/pm/archive-participant', authenticateToken, requireRole('program_manager', 'admin'), (req, res) => {
+    const { userId, reason, action } = req.body; // action: 'archive' or 'restore'
+    if (!userId) return res.status(400).json({ error: 'userId is required.' });
+
+    const newStatus = action === 'restore' ? 'active' : 'archived';
+    const reasonText = reason || (action === 'restore' ? 'Restored to active caseload' : 'No longer receiving services');
+    const termDate = action === 'restore' ? null : new Date().toISOString().split('T')[0];
+
+    db.prepare(`
+        UPDATE participant_profiles SET
+            overall_status = ?,
+            termination_reason = ?,
+            termination_date = ?,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE user_id = ?
+    `).run(newStatus, reasonText, termDate, userId);
+
+    res.json({ message: `Participant has been ${action === 'restore' ? 'restored' : 'archived'} successfully.`, status: newStatus });
+});
+
+// Participant Notes Management (Add & Retrieve)
+app.get('/api/pm/notes/:userId', authenticateToken, requireRole('program_manager', 'admin'), (req, res) => {
+    const userId = req.params.userId;
+    const notes = db.prepare(`
+        SELECT * FROM case_notes WHERE user_id = ? ORDER BY session_date DESC, id DESC
+    `).all(userId);
+    res.json(notes);
+});
+
+app.post('/api/pm/notes', authenticateToken, requireRole('program_manager', 'admin'), (req, res) => {
+    const { userId, noteType, category, content, sessionDate } = req.body;
+    if (!userId || !content) return res.status(400).json({ error: 'userId and content are required.' });
+
+    const authorName = req.user.name || 'Program Manager';
+    const date = sessionDate || new Date().toISOString().split('T')[0];
+
+    db.prepare(`
+        INSERT INTO case_notes (user_id, author_id, author_name, session_date, note_type, category, content)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    `).run(userId, req.user.id, authorName, date, noteType || 'Individual Session', category || 'Case Management', content);
+
+    res.json({ message: 'Case note successfully saved.' });
+});
+
+// Export Case Notes Formatted for Apricot (.xlsx or .csv)
+app.get('/api/pm/notes-export', authenticateToken, requireRole('program_manager', 'admin'), (req, res) => {
+    const format = req.query.format || 'xlsx';
+    const location = req.query.location || null;
+
+    if (format === 'csv') {
+        const csvData = generateApricotCaseNotesExport(false, location);
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', 'attachment; filename="Apricot_Case_Notes_Export.csv"');
+        return res.send(csvData);
+    } else {
+        const buffer = generateApricotCaseNotesExport(true, location);
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', 'attachment; filename="Apricot_Case_Notes_Export.xlsx"');
+        return res.send(buffer);
+    }
+});
+
+// Participant Time-Off Request (Enforcing 48-Hour Advance Notice)
+app.post('/api/participant/time-off', authenticateToken, (req, res) => {
+    const userId = req.user.id;
+    const { requestedDate, reason, notes } = req.body;
+    if (!requestedDate || !reason) return res.status(400).json({ error: 'Requested date and reason are required.' });
+
+    // Validate 48-hour notice
+    const targetDate = new Date(requestedDate + 'T00:00:00');
+    const now = new Date();
+    const hoursDifference = (targetDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+
+    if (hoursDifference < 47) { // 48-hour window allow small leeway for start-of-day
+        return res.status(400).json({
+            error: 'Time-off requests require at least 48 hours advance notice as per First Shift policy.'
+        });
+    }
+
+    db.prepare(`
+        INSERT INTO time_off_requests (user_id, requested_date, reason, notes, status)
+        VALUES (?, ?, ?, ?, 'pending')
+    `).run(userId, requestedDate, reason, notes || '');
+
+    res.json({ message: 'Time-off request submitted for Program Manager review.' });
+});
+
+// List Participant's Own Time-Off Requests
+app.get('/api/participant/time-off', authenticateToken, (req, res) => {
+    const requests = db.prepare(`
+        SELECT * FROM time_off_requests WHERE user_id = ? ORDER BY requested_date DESC
+    `).all(req.user.id);
+    res.json(requests);
+});
+
+// Program Manager Time-Off Review & Action (Approve / Deny)
+app.get('/api/pm/time-off-requests', authenticateToken, requireRole('program_manager', 'admin'), (req, res) => {
+    const requests = db.prepare(`
+        SELECT tor.*, u.name as participant_name, u.name as user_name, u.email as participant_email, u.email as user_email, u.location, u.location as user_location, u.track
+        FROM time_off_requests tor
+        JOIN users u ON tor.user_id = u.id
+        ORDER BY tor.requested_date ASC, tor.id DESC
+    `).all();
+    res.json(requests);
+});
+
+app.post('/api/pm/time-off-action', authenticateToken, requireRole('program_manager', 'admin'), (req, res) => {
+    const { requestId, status, pmNotes, responseNotes } = req.body;
+    if (!requestId || !status) return res.status(400).json({ error: 'requestId and status required.' });
+
+    const notes = pmNotes || responseNotes || '';
+    db.prepare(`
+        UPDATE time_off_requests SET
+            status = ?,
+            pm_response_notes = ?,
+            reviewed_by = ?,
+            reviewed_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+    `).run(status, notes, req.user.name, requestId);
+
+    // If approved, automatically record in daily_points as excused absence
+    if (status === 'approved') {
+        const reqRow = db.prepare('SELECT user_id, requested_date, reason FROM time_off_requests WHERE id = ?').get(requestId);
+        if (reqRow) {
+            db.prepare(`
+                INSERT INTO daily_points (user_id, date, points_earned, max_points, attendance_status, notes)
+                VALUES (?, ?, 10, 10, 'excused', ?)
+                ON CONFLICT(user_id, date) DO UPDATE SET
+                    attendance_status = 'excused',
+                    notes = excluded.notes
+            `).run(reqRow.user_id, reqRow.requested_date, `Approved Time Off (48-hr Notice): ${reqRow.reason}`);
+        }
+    }
+
+    res.json({ message: `Time-off request has been marked as ${status}.` });
+});
+
+// Detailed Weekly Points Breakdown for a Participant
+app.get('/api/pm/points-summary/:userId', authenticateToken, requireRole('program_manager', 'admin'), (req, res) => {
+    const summary = getWeeklyPointsSummary(req.params.userId);
+    res.json(summary);
 });
 
 // Update Participant Gate Criteria Status (Red/Green/Pending)
