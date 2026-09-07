@@ -372,9 +372,14 @@ async function run() {
 
     console.log('✅ Successfully assigned all participants firstnamelastname@t90.com logins and 3765Turn90 password!\n');
     console.table(logList);
+    return logList;
 }
 
-run().catch(err => {
-    console.error('Error:', err);
-    process.exit(1);
-});
+if (require.main === module) {
+    run().catch(err => {
+        console.error('Error:', err);
+        process.exit(1);
+    });
+}
+
+module.exports = { runCaseloadMigration: run };

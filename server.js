@@ -19,6 +19,7 @@ const { SC_COMMUNITY_RESOURCES, SC_FAIR_CHANCE_EMPLOYERS } = require('./sc_resou
 const { loadJobsFromSpreadsheets } = require('./jobs_loader');
 const { getParticipantAiResponse } = require('./ai_assistant');
 const { matchJobsWithAi, generateTailoredResumePoints, generateTurnaroundNarrative } = require('./job_hunting_ai');
+const { runCaseloadMigration } = require('./migrate_and_assign_t90_logins');
 const pdfParse = require('pdf-parse');
 
 require('dotenv').config({ path: path.join(__dirname, '..', 'email-settings.txt') });
@@ -1817,6 +1818,13 @@ app.use((req, res, next) => {
     next();
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
     console.log(`🚀 Unified First Shift & Re-entry App running at http://localhost:${PORT}`);
+    try {
+        console.log('🔄 Checking and auto-syncing Briefcase caseload on startup...');
+        await runCaseloadMigration();
+        console.log('✅ Caseload auto-sync complete.');
+    } catch (e) {
+        console.warn('Caseload auto-sync notice:', e.message);
+    }
 });
