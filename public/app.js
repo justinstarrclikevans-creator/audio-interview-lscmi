@@ -13,6 +13,33 @@ let fullTranscript = '';
 let currentInterviewsData = {};
 
 // -------------------------------------------------------------
+// HELPER: SAFE API RESPONSE PARSER (Gracefully handles HTML/Expired Sessions)
+// -------------------------------------------------------------
+async function safeApiResponse(res) {
+    const text = await res.text();
+    let data;
+    try {
+        data = JSON.parse(text);
+    } catch (e) {
+        if (res.status === 401 || res.status === 403) {
+            alert('Your session has expired or authentication is required. Please sign in again.');
+            handleLogout();
+            throw new Error('Session expired. Please sign in again.');
+        }
+        throw new Error(`Server returned an unexpected response (Status ${res.status}).`);
+    }
+
+    if (!res.ok) {
+        if (res.status === 401 || res.status === 403) {
+            alert(data.error || 'Your session has expired. Please sign in again.');
+            handleLogout();
+        }
+        throw new Error(data.error || `Request failed with status ${res.status}`);
+    }
+    return data;
+}
+
+// -------------------------------------------------------------
 // INITIALIZATION & SESSION RESTORE
 // -------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', async () => {
@@ -1484,6 +1511,7 @@ async function handleDocUpload(e) {
 // -------------------------------------------------------------
 async function loadCaseload() {
     const token = localStorage.getItem('fs_token');
+    if (!token) return;
     const loc = document.getElementById('pm-filter-location')?.value || '';
     const track = document.getElementById('pm-filter-track')?.value || '';
     const status = document.getElementById('pm-filter-status')?.value || '';
@@ -1493,7 +1521,7 @@ async function loadCaseload() {
 
     try {
         const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
-        const roster = await res.json();
+        const roster = await safeApiResponse(res);
         const tbody = document.getElementById('caseload-tbody');
 
         if (!roster || roster.length === 0) {
@@ -2100,13 +2128,18 @@ async function advanceParticipantGate(userId, nextGate) {
     if (!confirm(`Advance this participant to Gate ${nextGate}?`)) return;
 
     const token = localStorage.getItem('fs_token');
+    if (!token) {
+        alert('Please log in as Program Manager.');
+        showView('view-auth');
+        return;
+    }
     try {
         const res = await fetch('/api/admin/advance-gate', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
             body: JSON.stringify({ userId, nextGate })
         });
-        const data = await res.json();
+        const data = await safeApiResponse(res);
         alert(data.message);
         loadCaseload();
     } catch (e) {
@@ -4180,6 +4213,11 @@ async function handleAddCaseNote(e) {
     }
 
     const token = localStorage.getItem('fs_token');
+    if (!token) {
+        alert('Please log in as Program Manager.');
+        showView('view-auth');
+        return;
+    }
     try {
         const res = await fetch('/api/pm/notes', {
             method: 'POST',
@@ -4189,8 +4227,7 @@ async function handleAddCaseNote(e) {
             },
             body: JSON.stringify({ userId, sessionDate, noteType, category, content })
         });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Failed to save note');
+        await safeApiResponse(res);
 
         document.getElementById('note-content').value = '';
         loadCaseNotesList(userId);
@@ -4217,6 +4254,11 @@ async function promptSwitchTrack(userId, name, currentTrack) {
     if (!confirm(`Switch ${name} to ${targetName}?`)) return;
 
     const token = localStorage.getItem('fs_token');
+    if (!token) {
+        alert('Please log in as Program Manager.');
+        showView('view-auth');
+        return;
+    }
     try {
         const res = await fetch('/api/pm/switch-track', {
             method: 'POST',
@@ -4226,8 +4268,7 @@ async function promptSwitchTrack(userId, name, currentTrack) {
             },
             body: JSON.stringify({ userId, newTrack: targetTrack, targetTrack })
         });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Failed to switch track');
+        const data = await safeApiResponse(res);
 
         alert(data.message);
         loadCaseload();
@@ -4238,6 +4279,11 @@ async function promptSwitchTrack(userId, name, currentTrack) {
 
 async function toggleArchiveParticipant(userId, name, action) {
     const token = localStorage.getItem('fs_token');
+    if (!token) {
+        alert('Please log in as Program Manager.');
+        showView('view-auth');
+        return;
+    }
     let reason = null;
 
     if (action === 'archive') {
@@ -4256,8 +4302,7 @@ async function toggleArchiveParticipant(userId, name, action) {
             },
             body: JSON.stringify({ userId, action, reason })
         });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Action failed');
+        const data = await safeApiResponse(res);
 
         alert(data.message);
         loadCaseload();
