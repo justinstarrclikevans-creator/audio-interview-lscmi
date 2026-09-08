@@ -144,7 +144,7 @@ If your SC driver's license is suspended due to unpaid traffic tickets or failur
 3. **Child Support Holds:** If your license has a family court or child support hold, our partner [Father to Father](https://fathertofatherinc.org) (843-747-1688) works directly with child support enforcement to modify arrears and release DMV holds!`;
     }
 
-    if (q.includes('medicine') || q.includes('medication') || q.includes('prescription') || q.includes('welvista')) {
+    if (q.includes('medicine') || q.includes('medication') || q.includes('prescription') || q.includes('welvista') || q.includes('pharmacy') || q.includes('rx') || q.includes('free meds')) {
         return `### 💊 Free Prescription Medications Through Welvista
 
 If you take daily prescription medications for conditions like high blood pressure, asthma, diabetes, or mental health, **[Welvista](https://welvista.org)** provides them completely **FREE OF CHARGE** to uninsured South Carolina residents:
@@ -152,12 +152,12 @@ If you take daily prescription medications for conditions like high blood pressu
 * **How it works:** Medications are mailed directly to your home or shelter in 90-day supplies in discreet packaging.
 * **Cost:** 100% Free. No co-pays, no shipping fees.
 * **Phone:** **1-800-983-3339** or **(803) 933-9183**
-* **Application Link:** [Apply for Welvista](https://welvista.org/patient-services/)
+* **Application Link:** [Apply for Welvista Online](https://welvista.org/patient-services/) | [Download Application PDF](https://welvista.org/wp-content/uploads/2023/10/Welvista-Patient-Application-English-Rev-10.2023.pdf)
 * **What you need:** SC Photo ID, proof of income (Turn90 zero-income affidavit / letter), and a doctor's prescription from a clinic like [Fetter Health Care](https://fetterhealthcare.org) (843-577-7388).
 * You can update your Welvista application status directly under your portal's **State Benefits & Healthcare** tab!`;
     }
 
-    if (q.includes('medicaid') || q.includes('healthy connections') || q.includes('health insurance') || q.includes('medical coverage')) {
+    if (q.includes('medicaid') || q.includes('healthy connections') || q.includes('health insurance') || q.includes('medical coverage') || q.includes('medical') || q.includes('doctor') || q.includes('healthcare') || q.includes('health care') || q.includes('hospital') || q.includes('clinic')) {
         return `### 🩺 South Carolina Healthy Connections Medicaid
 
 **[SC Healthy Connections Medicaid](https://apply.scdhhs.gov)** provides free or low-cost comprehensive healthcare coverage for eligible South Carolinians:

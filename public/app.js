@@ -3545,10 +3545,27 @@ function closeModal(id) {
 let participantAiHistory = [];
 
 function askAiPrompt(promptText) {
+    const modal = document.getElementById('modal-benefits-hub');
+    if (modal && !modal.classList.contains('hidden')) {
+        switchBenefitsModalTab('ai');
+        setTimeout(() => {
+            sendBenefitsAiQuery(promptText);
+        }, 100);
+        return;
+    }
+    const rnView = document.getElementById('view-reentry-navigation');
+    const rnInput = document.getElementById('rn-ai-input');
+    if (rnView && !rnView.classList.contains('hidden') && rnInput) {
+        rnInput.value = promptText;
+        sendRnParticipantAiMessage();
+        rnInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+    }
     const input = document.getElementById('fs-ai-input');
     if (input) {
         input.value = promptText;
         sendParticipantAiMessage();
+        input.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 }
 
@@ -5595,7 +5612,7 @@ function renderBenefitCardHtml(bKey, bData, contextPrefix = 'hub') {
                             📄 Application PDF ↗
                         </a>
                     ` : ''}
-                    <button type="button" class="btn btn-outline" style="font-size: 12px; padding: 6px 10px;" onclick="askAiPrompt('How do I apply for ${bData.name}?')">
+                    <button type="button" class="btn btn-outline" style="font-size: 12px; padding: 6px 10px;" onclick="askBenefitAiPrompt('${bKey}', 'How do I apply for ${bData.name}?')">
                         🤖 Ask AI
                     </button>
                 </div>
@@ -5758,7 +5775,7 @@ function openBenefitsHubModal(initialTab = 'welvista') {
 
 function switchBenefitsModalTab(tab) {
     currentBenefitsModalTab = tab;
-    const tabKeys = ['welvista', 'medicaid', 'snap', 'tanf'];
+    const tabKeys = ['welvista', 'medicaid', 'snap', 'tanf', 'ai'];
     tabKeys.forEach(k => {
         const btn = document.getElementById(`b-tab-btn-${k}`);
         if (btn) {
@@ -5776,6 +5793,11 @@ function renderBenefitsModalTab(tab) {
     const bodyEl = document.getElementById('modal-benefits-body');
     if (!bodyEl) return;
 
+    if (tab === 'ai') {
+        renderBenefitsAiTab(bodyEl);
+        return;
+    }
+
     if (!cachedParticipantBenefits || !cachedParticipantBenefits.benefits) {
         bodyEl.innerHTML = '<p class="text-slate">Loading program details...</p>';
         return;
@@ -5788,6 +5810,138 @@ function renderBenefitsModalTab(tab) {
     }
 
     bodyEl.innerHTML = renderBenefitCardHtml(tab, bData, 'modal');
+}
+
+function renderBenefitsAiTab(container, initialQuestion = '') {
+    container.innerHTML = `
+        <div style="background: white; border: 1px solid var(--border); border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; flex-direction: column; min-height: 440px;">
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">
+                <span style="font-size: 26px;">🤖</span>
+                <div>
+                    <h3 style="margin: 0; color: var(--primary); font-size: 16px;">Turn90 Benefits & Healthcare AI Advisor</h3>
+                    <p style="margin: 2px 0 0 0; font-size: 12px; color: var(--slate);">Instant guidance for Welvista free medications, SC Healthy Connections Medicaid, SNAP, and TANF eligibility.</p>
+                </div>
+            </div>
+
+            <!-- Quick Topic Chips -->
+            <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px;">
+                <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="sendBenefitsAiQuery('How do I apply for free medications through Welvista and what documents do I need?')">💊 Free Welvista Meds</button>
+                <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="sendBenefitsAiQuery('How do I apply for South Carolina Healthy Connections Medicaid?')">🩺 SC Medicaid Application</button>
+                <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="sendBenefitsAiQuery('Can I qualify for SNAP Food Stamps in South Carolina with a criminal record?')">🍎 Food Stamps & Record</button>
+                <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="sendBenefitsAiQuery('How do my Turn90 First Shift hours count toward TANF work requirements?')">💵 TANF Work Hours</button>
+                <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="sendBenefitsAiQuery('Where can I get a doctor prescription or free clinic visit for Welvista?')">🏥 Free Clinics for Rx</button>
+            </div>
+
+            <!-- Chat History -->
+            <div id="modal-benefits-ai-history" style="flex: 1; min-height: 240px; max-height: 340px; overflow-y: auto; background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; padding: 12px; font-size: 12.5px; line-height: 1.5; display: flex; flex-direction: column; gap: 10px;">
+                <div style="background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px;">
+                    <strong style="color: var(--primary);">Turn90 Assistant:</strong> Ask me anything about applying for <strong>Welvista</strong>, <strong>Medicaid</strong>, <strong>SNAP</strong>, or <strong>TANF</strong>! I can explain eligibility, documents needed, and where to submit your application.
+                </div>
+            </div>
+
+            <!-- Input Bar -->
+            <div style="display: flex; gap: 8px; margin-top: 12px;">
+                <input type="text" id="modal-benefits-ai-input" placeholder="Ask about Welvista, Medicaid, SNAP, doctors, prescriptions..." style="flex: 1; padding: 8px 12px; font-size: 12.5px; border: 1px solid var(--border); border-radius: 4px;" onkeydown="if(event.key==='Enter') sendBenefitsAiMessage()">
+                <button class="btn btn-primary" style="font-size: 12px; padding: 8px 16px;" onclick="sendBenefitsAiMessage()" id="btn-modal-benefits-ai-send">Ask AI</button>
+            </div>
+        </div>
+    `;
+
+    if (initialQuestion) {
+        const input = document.getElementById('modal-benefits-ai-input');
+        if (input) input.value = initialQuestion;
+        sendBenefitsAiMessage();
+    }
+}
+
+function askBenefitAiPrompt(bKey, defaultPrompt) {
+    const modal = document.getElementById('modal-benefits-hub');
+    const isModalOpen = modal && !modal.classList.contains('hidden');
+
+    if (isModalOpen) {
+        // Switch to the integrated AI tab inside the open Benefits Hub modal
+        switchBenefitsModalTab('ai');
+        setTimeout(() => {
+            sendBenefitsAiQuery(defaultPrompt);
+        }, 100);
+    } else {
+        // Open the modal directly to the AI tab with this question
+        openBenefitsHubModal('ai');
+        setTimeout(() => {
+            sendBenefitsAiQuery(defaultPrompt);
+        }, 300);
+    }
+}
+
+function sendBenefitsAiQuery(queryText) {
+    const input = document.getElementById('modal-benefits-ai-input');
+    if (input) input.value = queryText;
+    sendBenefitsAiMessage();
+}
+
+async function sendBenefitsAiMessage() {
+    const token = localStorage.getItem('fs_token');
+    const input = document.getElementById('modal-benefits-ai-input');
+    const chatBox = document.getElementById('modal-benefits-ai-history');
+    const btn = document.getElementById('btn-modal-benefits-ai-send');
+    if (!input || !chatBox) return;
+
+    const question = (input.value || '').trim();
+    if (!question) return;
+
+    chatBox.innerHTML += `
+        <div style="align-self: flex-end; background: #e0e7ff; color: #1e1b4b; border-radius: 6px; padding: 8px 12px; max-width: 85%;">
+            <strong>You:</strong> ${question}
+        </div>
+    `;
+    input.value = '';
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    if (btn) {
+        btn.disabled = true;
+        btn.innerText = 'Thinking...';
+    }
+
+    const typingId = 'b-ai-typing-' + Date.now();
+    chatBox.innerHTML += `<div id="${typingId}" style="align-self: flex-start; background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 12px; color: var(--slate); font-style: italic;">Looking up South Carolina program rules & guidelines...</div>`;
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    try {
+        const res = await fetch('/api/participant/ai-assistant', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ message: question, history: participantAiHistory })
+        });
+        const data = await res.json();
+
+        const typingEl = document.getElementById(typingId);
+        if (typingEl) typingEl.remove();
+
+        if (data.reply) {
+            participantAiHistory.push({ role: 'user', text: question });
+            participantAiHistory.push({ role: 'assistant', text: data.reply });
+
+            const formattedReply = typeof marked !== 'undefined' ? marked.parse(data.reply) : data.reply.replace(/\\n/g, '<br>');
+            chatBox.innerHTML += `
+                <div style="align-self: flex-start; background: white; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px; max-width: 90%; line-height: 1.5;">
+                    <strong style="color: var(--primary);">Turn90 Assistant:</strong>
+                    <div style="margin-top: 6px;">${formattedReply}</div>
+                </div>
+            `;
+        } else {
+            chatBox.innerHTML += `<div style="color: red;">Failed to get AI response: ${data.error || 'Unknown error'}</div>`;
+        }
+    } catch(err) {
+        const typingEl = document.getElementById(typingId);
+        if (typingEl) typingEl.remove();
+        chatBox.innerHTML += `<div style="color: red;">Assistant Error: ${err.message}</div>`;
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerText = 'Ask AI';
+        }
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
 }
 
 async function handleSaveBenefitStatus(benefitType, event, contextPrefix = 'hub') {
