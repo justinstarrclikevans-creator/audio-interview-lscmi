@@ -855,85 +855,178 @@ app.get('/api/file-content', (req, res) => {
     res.json({ content, filename });
 });
 
-// Fetch Participant-Facing Printable Case Plan
-app.get('/api/participant/case-plan', authenticateToken, (req, res) => {
-    const userId = req.user.id;
-    const user = db.prepare('SELECT id, name, location, track FROM users WHERE id = ?').get(userId);
+// Helper: Generate structured Individualized Case Plan Markdown on demand
+function generateParticipantCasePlanMarkdown(user, profile, items, notes) {
+    const completedItems = items.filter(i => i.status === 'green');
+    const barrierItems = items.filter(i => i.status === 'red');
+    const pendingItems = items.filter(i => i.status === 'pending');
+
+    const trackLabel = user.track === 'reentry_nav' ? 'Re-entry Navigation' : 'First Shift';
+    const gateLabel = 'Gate ' + (profile.current_gate || 1);
+    const stabilityLabel = (profile.reentry_status && profile.reentry_status !== 'none') ? profile.reentry_status.toUpperCase().replace(/_/g, ' ') : 'STABLE';
+
+    let md = `# TURN90 INDIVIDUALIZED CASE PLAN & ACTION GUIDE\n\n`;
+    md += `### Participant Profile\n`;
+    md += `| Attribute | Details |\n`;
+    md += `| :--- | :--- |\n`;
+    md += `| **Participant Name** | ${user.name} |\n`;
+    md += `| **Program Track** | ${trackLabel} |\n`;
+    md += `| **Current Benchmark** | ${gateLabel} |\n`;
+    md += `| **Location** | ${user.location || 'Charleston'}, SC |\n`;
+    md += `| **Contact Information** | ${user.email || 'N/A'}${user.phone ? ' • ' + user.phone : ''} |\n`;
+    md += `| **Stability Status** | ${stabilityLabel} |\n\n`;
+
+    md += `### 1. Stability & Priority Barriers\n`;
+    md += `- **Driver's License:** ${(profile.dl_status || 'Under Review').toUpperCase()}${profile.dl_notes ? ' (' + profile.dl_notes + ')' : ''}\n`;
+    md += `- **Child Support Status:** ${(profile.child_support_status || 'Under Review').toUpperCase()}${profile.child_support_notes ? ' (' + profile.child_support_notes + ')' : ''}\n`;
+    md += `- **Housing / Living Situation:** ${(profile.housing_status || 'Transitional / Temporary Housing').toUpperCase()}\n`;
+    md += `- **Transportation:** ${(profile.transportation_status || 'Public Transit / Bus').toUpperCase()}\n`;
+    md += `- **W-9 & Identity Verification:** ${(profile.w9_status || 'Pending').toUpperCase()}\n\n`;
+
+    md += `### 2. Stated Goals & Career Focus\n`;
+    md += `- **Primary Goal:** Turn90 Program Graduation, Long-term Freedom, and Sustainable Career Placement.\n`;
+    md += `- **Immediate Milestone:** Advance through ${gateLabel} by maintaining required attendance and points benchmark, active CBT engagement, and zero unexcused absences.\n\n`;
+
+    md += `### 3. Six-Domain Briefcase Progress\n`;
+    md += `**Overall Briefcase Summary:** **${completedItems.length}** Verified Complete | **${barrierItems.length}** High-Priority Barriers | **${pendingItems.length}** In-Progress\n\n`;
+
+    for (const [domKey, domItems] of Object.entries(BRIEFCASE_DOMAINS)) {
+        const domTitle = domKey.replace(/_/g, ' ').toUpperCase();
+        const userDomItems = items.filter(i => i.domain === domKey);
+        const comp = userDomItems.filter(i => i.status === 'green').length;
+        md += `#### ${domTitle} (${comp}/${userDomItems.length} Completed)\n`;
+        for (const it of userDomItems.slice(0, 4)) {
+            const icon = it.status === 'green' ? '✅' : (it.status === 'red' ? '⚠️' : '⏳');
+            md += `- ${icon} **${it.title}**: ${it.notes || (it.status === 'green' ? 'Verified Complete' : (it.status === 'red' ? 'Priority Barrier' : 'Pending Action'))}\n`;
+        }
+        if (userDomItems.length > 4) {
+            const remaining = userDomItems.slice(4);
+            const rComp = remaining.filter(i => i.status === 'green').length;
+            md += `- *Plus ${userDomItems.length - 4} additional domain items (${rComp} completed).*\n`;
+        }
+        md += `\n`;
+    }
+
+    if (notes && notes.length > 0) {
+        md += `### 4. Recent Case Management Notes\n`;
+        for (const n of notes.slice(0, 5)) {
+            md += `- **${n.session_date || 'Recent'} (${n.category || 'General'})** — *${n.author_name || 'Staff'}*: ${n.content}\n`;
+        }
+        md += `\n`;
+    } else {
+        md += `### 4. Recent Case Management Notes\n*No formal case notes logged yet. Use the Caseload Notes button to document sessions and barrier resolutions.*\n\n`;
+    }
+
+    md += `### 5. Recommended Action Steps & Milestones\n`;
+    md += `1. **Attendance & Points:** Maintain points benchmark across daily work and classroom sessions.\n`;
+    md += `2. **Briefcase Progression:** Complete pending checklist items in partnership with Program Manager / Re-entry Navigator.\n`;
+    md += `3. **CBT Integration:** Apply Turn90 cognitive tools (Stop & Think, Thinking Reports, Decisional Balance) in response to high-risk triggers.\n`;
+
+    return md;
+}
+
+// Case plan retrieval handler (used by both participant and staff endpoints)
+function handleGetCasePlan(req, res) {
+    let targetUserId = req.user.id;
+    if ((req.user.role === 'program_manager' || req.user.role === 'admin' || req.user.role === 'director') && (req.query.userId || req.params.userId)) {
+        targetUserId = parseInt(req.query.userId || req.params.userId);
+    }
+
+    const user = db.prepare('SELECT id, name, email, phone, location, track FROM users WHERE id = ?').get(targetUserId);
     if (!user) return res.status(404).json({ error: 'User not found' });
     
+    // Ensure briefcase items initialized for participant
+    initParticipantBriefcase(targetUserId);
+
     // 1. Check database reentry_case_plans
-    const reentryPlan = db.prepare('SELECT * FROM reentry_case_plans WHERE user_id = ?').get(userId);
+    const reentryPlan = db.prepare('SELECT * FROM reentry_case_plans WHERE user_id = ?').get(targetUserId);
     
     // 2. Fetch participant barrier profile
-    const profile = db.prepare('SELECT * FROM participant_profiles WHERE user_id = ?').get(userId);
+    const profile = db.prepare('SELECT * FROM participant_profiles WHERE user_id = ?').get(targetUserId) || {};
 
-    // 3. Fetch case management session notes
+    // 3. Fetch briefcase items
+    const items = db.prepare('SELECT * FROM briefcase_items WHERE user_id = ? ORDER BY id').all(targetUserId);
+
+    // 4. Fetch case management session notes
     const notes = db.prepare(`
         SELECT id, author_name, session_date, note_type, category, content, created_at 
         FROM case_notes 
         WHERE user_id = ? 
-        ORDER BY session_date DESC, id DESC LIMIT 10
-    `).all(userId);
+        ORDER BY session_date DESC, id DESC LIMIT 20
+    `).all(targetUserId);
 
-    // 4. Check disk files fallback
+    // 5. Check disk files fallback
     const safeName = user.name.replace(/[^a-zA-Z0-9]/g, '');
     const files = fs.existsSync(dataDir) ? fs.readdirSync(dataDir) : [];
     const planFile = files.find(f => f.toLowerCase().includes(safeName.toLowerCase()) && f.endsWith('_participant_case_plan.md'));
     const diskContent = planFile ? fs.readFileSync(path.join(dataDir, planFile), 'utf8') : null;
     const diskPdf = planFile ? planFile.replace(/\.md$/, '.pdf') : null;
 
-    if (reentryPlan || diskContent) {
-        let identifiedNeeds = [];
-        let topDomains = [];
-        let recommendedReferrals = [];
-        let matchedEmployers = [];
-        let detectedFlags = [];
+    let identifiedNeeds = [];
+    let topDomains = [];
+    let recommendedReferrals = [];
+    let matchedEmployers = [];
+    let detectedFlags = [];
 
-        if (reentryPlan) {
-            try { identifiedNeeds = typeof reentryPlan.identified_needs === 'string' ? JSON.parse(reentryPlan.identified_needs) : (reentryPlan.identified_needs || []); } catch(e){}
-            try { topDomains = typeof reentryPlan.top_criminogenic_domains === 'string' ? JSON.parse(reentryPlan.top_criminogenic_domains) : (reentryPlan.top_criminogenic_domains || []); } catch(e){}
-            try { recommendedReferrals = typeof reentryPlan.recommended_referrals === 'string' ? JSON.parse(reentryPlan.recommended_referrals) : (reentryPlan.recommended_referrals || []); } catch(e){}
-            try { matchedEmployers = typeof reentryPlan.matched_employers === 'string' ? JSON.parse(reentryPlan.matched_employers) : (reentryPlan.matched_employers || []); } catch(e){}
-            try { detectedFlags = typeof reentryPlan.detected_flags === 'string' ? JSON.parse(reentryPlan.detected_flags) : (reentryPlan.detected_flags || []); } catch(e){}
-        }
-
-        const mdText = reentryPlan ? (reentryPlan.participant_guide_md || reentryPlan.staff_case_plan_md) : diskContent;
-        const pdfPath = reentryPlan ? reentryPlan.participant_guide_pdf : (diskPdf && fs.existsSync(path.join(dataDir, diskPdf)) ? `/data/${diskPdf}` : null);
-        const docxPath = reentryPlan ? reentryPlan.participant_guide_docx : null;
-        const staffPdfPath = reentryPlan ? reentryPlan.staff_plan_pdf : null;
-
-        return res.json({ 
-            found: true, 
-            participantName: user.name,
-            location: user.location,
-            markdown: mdText, 
-            filename: planFile || (reentryPlan ? `${user.name}_case_plan.md` : null),
-            pdfUrl: pdfPath,
-            docxUrl: docxPath,
-            staffPdfUrl: staffPdfPath,
-            planDetails: {
-                stability_status: (reentryPlan && reentryPlan.stability_status) || (profile && profile.reentry_status) || 'stable',
-                stated_goals: (reentryPlan && reentryPlan.stated_goals) || 'Turn90 graduation, career placement, and personal stability',
-                identified_needs: identifiedNeeds,
-                living_situation: (reentryPlan && reentryPlan.living_situation) || (profile ? profile.housing_status : 'Transitional Housing'),
-                legal_status: (reentryPlan && reentryPlan.legal_status) || 'Active Supervision',
-                top_criminogenic_domains: topDomains,
-                recommended_referrals: recommendedReferrals,
-                matched_employers: matchedEmployers,
-                detected_flags: detectedFlags,
-                profile_barriers: profile || {}
-            },
-            notes: notes
-        });
+    if (reentryPlan) {
+        try { identifiedNeeds = typeof reentryPlan.identified_needs === 'string' ? JSON.parse(reentryPlan.identified_needs) : (reentryPlan.identified_needs || []); } catch(e){}
+        try { topDomains = typeof reentryPlan.top_criminogenic_domains === 'string' ? JSON.parse(reentryPlan.top_criminogenic_domains) : (reentryPlan.top_criminogenic_domains || []); } catch(e){}
+        try { recommendedReferrals = typeof reentryPlan.recommended_referrals === 'string' ? JSON.parse(reentryPlan.recommended_referrals) : (reentryPlan.recommended_referrals || []); } catch(e){}
+        try { matchedEmployers = typeof reentryPlan.matched_employers === 'string' ? JSON.parse(reentryPlan.matched_employers) : (reentryPlan.matched_employers || []); } catch(e){}
+        try { detectedFlags = typeof reentryPlan.detected_flags === 'string' ? JSON.parse(reentryPlan.detected_flags) : (reentryPlan.detected_flags || []); } catch(e){}
     }
-    
+
+    const hasStoredDoc = !!(reentryPlan || diskContent);
+    const dynamicMd = generateParticipantCasePlanMarkdown(user, profile, items, notes);
+    const mdText = reentryPlan ? (reentryPlan.participant_guide_md || reentryPlan.staff_case_plan_md || dynamicMd) : (diskContent || dynamicMd);
+    const staffMdText = reentryPlan ? (reentryPlan.staff_case_plan_md || dynamicMd) : dynamicMd;
+    const participantMdText = reentryPlan ? (reentryPlan.participant_guide_md || dynamicMd) : (diskContent || dynamicMd);
+
+    const pdfPath = reentryPlan ? reentryPlan.participant_guide_pdf : (diskPdf && fs.existsSync(path.join(dataDir, diskPdf)) ? `/data/${diskPdf}` : null);
+    const docxPath = reentryPlan ? reentryPlan.participant_guide_docx : null;
+    const staffPdfPath = reentryPlan ? reentryPlan.staff_plan_pdf : null;
+    const staffDocxPath = reentryPlan ? reentryPlan.staff_plan_docx : null;
+
     res.json({ 
-        found: false, 
-        message: 'Your Re-entry Case Plan is being finalized by your Case Manager.',
-        profile_barriers: profile || {},
+        found: true, 
+        userId: user.id,
+        participantName: user.name,
+        track: user.track,
+        location: user.location,
+        gate: profile.current_gate || 1,
+        stabilityStatus: (reentryPlan && reentryPlan.stability_status) || (profile && profile.reentry_status) || 'stable',
+        hasFormalReentryPlan: !!reentryPlan,
+        hasStoredDoc: hasStoredDoc,
+        markdown: req.user.role === 'participant' ? participantMdText : (staffMdText || mdText),
+        staffMarkdown: staffMdText,
+        participantMarkdown: participantMdText,
+        filename: planFile || (reentryPlan ? `${user.name}_case_plan.md` : `${user.name.replace(/\s+/g, '_')}_case_plan.md`),
+        pdfUrl: pdfPath,
+        docxUrl: docxPath,
+        staffPdfUrl: staffPdfPath,
+        staffDocxUrl: staffDocxPath,
+        planDetails: {
+            stability_status: (reentryPlan && reentryPlan.stability_status) || (profile && profile.reentry_status) || 'stable',
+            stated_goals: (reentryPlan && reentryPlan.stated_goals) || 'Turn90 graduation, career placement, and personal stability',
+            identified_needs: identifiedNeeds,
+            living_situation: (reentryPlan && reentryPlan.living_situation) || (profile ? profile.housing_status : 'Transitional Housing'),
+            legal_status: (reentryPlan && reentryPlan.legal_status) || 'Active Supervision',
+            top_criminogenic_domains: topDomains,
+            recommended_referrals: recommendedReferrals,
+            matched_employers: matchedEmployers,
+            detected_flags: detectedFlags,
+            profile_barriers: profile || {}
+        },
+        briefcaseItems: items,
         notes: notes
     });
-});
+}
+
+// Fetch Participant-Facing Printable Case Plan (Supports ?userId=X for Program Managers)
+app.get('/api/participant/case-plan', authenticateToken, handleGetCasePlan);
+
+// Staff Endpoint: Fetch Participant Case Plan directly by userId
+app.get('/api/pm/case-plan/:userId', authenticateToken, handleGetCasePlan);
 
 // Fetch Participant's Own Case Management Notes
 app.get('/api/participant/notes', authenticateToken, (req, res) => {

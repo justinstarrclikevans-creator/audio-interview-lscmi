@@ -6,6 +6,7 @@
     <title>First Shift & Re-entry Navigation Platform</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
     <!-- Top Global Navigation Bar -->
@@ -699,7 +700,7 @@
                                     <th>DL / Child Support</th>
                                     <th>Weekly Points (/50)</th>
                                     <th>Case Notes</th>
-                                    <th>Re-entry Plan</th>
+                                    <th>Case Plan</th>
                                     <th>Caseload Actions</th>
                                 </tr>
                             </thead>
@@ -1230,9 +1231,14 @@
     <!-- Weekly 4-Pillar Case Planning Audit Modal -->
     <div id="modal-case-review" class="modal hidden">
         <div class="modal-content modal-lg">
-            <div class="modal-header">
-                <h3 id="case-review-modal-title">Weekly Case Planning & Progress Audit</h3>
-                <button class="modal-close" onclick="closeModal('modal-case-review')">&times;</button>
+            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 id="case-review-modal-title" style="margin: 0;">Weekly Case Planning & Progress Audit</h3>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <button type="button" class="btn btn-outline" style="padding: 4px 10px; font-size: 11.5px; color: var(--primary); border-color: #93c5fd;" onclick="openStaffCasePlanModal(document.getElementById('cr-user-id').value, document.getElementById('case-review-modal-title').innerText.replace('Weekly Case Planning: ', ''))">
+                        📄 View Full Case Plan
+                    </button>
+                    <button type="button" class="modal-close" onclick="closeModal('modal-case-review')">&times;</button>
+                </div>
             </div>
             <form id="form-case-review" onsubmit="handleCaseReviewSubmit(event)">
                 <input type="hidden" id="cr-user-id">
@@ -1352,7 +1358,8 @@
                     </div>
                     <div id="cr-reentry-summary-text" style="font-size: 12.5px; color: #1e293b; margin-bottom: 8px;"></div>
                     <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                        <a id="cr-reentry-staff-docx-link" href="#" download class="btn btn-primary" style="padding: 4px 10px; font-size: 12px; text-decoration: none;">📥 Staff Plan Word (.docx)</a>
+                        <button type="button" class="btn btn-primary" style="padding: 4px 10px; font-size: 12px;" onclick="openStaffCasePlanModal(document.getElementById('cr-user-id').value, document.getElementById('case-review-modal-title').innerText.replace('Weekly Case Planning: ', ''))">📄 Open Case Plan View</button>
+                        <a id="cr-reentry-staff-docx-link" href="#" download class="btn btn-outline" style="padding: 4px 10px; font-size: 12px; text-decoration: none;">📥 Staff Plan Word (.docx)</a>
                         <a id="cr-reentry-part-docx-link" href="#" download class="btn btn-accent" style="padding: 4px 10px; font-size: 12px; text-decoration: none;">📥 Participant Guide (.docx)</a>
                         <a id="cr-reentry-part-pdf-link" href="#" target="_blank" class="btn btn-outline" style="padding: 4px 10px; font-size: 12px; text-decoration: none;">🖨️ PDF</a>
                     </div>
@@ -2118,6 +2125,63 @@
                 <div style="display: flex; gap: 10px;">
                     <button type="button" class="btn btn-outline" onclick="closeModal('modal-cbt-lesson')">Close</button>
                     <button type="button" id="cbt-lesson-save-btn" class="btn btn-primary" onclick="submitCurrentCbtLesson()">💾 Save Worksheet & Homework</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Staff View: Comprehensive Participant Case Plan Modal -->
+    <div id="modal-staff-case-plan" class="modal hidden">
+        <div class="modal-content modal-lg" style="max-width: 920px; max-height: 90vh; display: flex; flex-direction: column;">
+            <div class="modal-header" style="flex-shrink: 0; display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
+                <div>
+                    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                        <h3 id="staff-cp-modal-title" style="margin: 0; color: var(--primary); font-size: 18px;">📋 Participant Case Plan</h3>
+                        <span id="staff-cp-track-badge" class="badge badge-primary">First Shift</span>
+                        <span id="staff-cp-gate-badge" class="badge badge-pending">Gate 1</span>
+                        <span id="staff-cp-stability-badge" class="badge badge-green">STABLE</span>
+                    </div>
+                    <p id="staff-cp-subtitle" class="text-slate" style="margin: 4px 0 0 0; font-size: 12px;"></p>
+                </div>
+                <button class="modal-close" onclick="closeModal('modal-staff-case-plan')">&times;</button>
+            </div>
+
+            <!-- Subtabs & Action Toolbar -->
+            <div style="flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border); padding: 8px 0; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                    <button id="staff-cp-tab-plan" class="btn btn-primary" style="padding: 4px 10px; font-size: 12px;" onclick="switchStaffCpTab('plan')">📄 Case Plan</button>
+                    <button id="staff-cp-tab-staff-plan" class="btn btn-outline hidden" style="padding: 4px 10px; font-size: 12px;" onclick="switchStaffCpTab('staff-plan')">🧭 Staff Navigator Plan</button>
+                    <button id="staff-cp-tab-briefcase" class="btn btn-outline" style="padding: 4px 10px; font-size: 12px;" onclick="switchStaffCpTab('briefcase')">🗂️ Briefcase (6 Domains)</button>
+                    <button id="staff-cp-tab-notes" class="btn btn-outline" style="padding: 4px 10px; font-size: 12px;" onclick="switchStaffCpTab('notes')">📝 Notes History</button>
+                </div>
+                <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                    <a id="staff-cp-btn-docx" href="#" download class="btn btn-outline hidden" style="padding: 4px 10px; font-size: 12px; text-decoration: none;">📥 Download Word</a>
+                    <button type="button" class="btn btn-primary" style="padding: 4px 10px; font-size: 12px;" onclick="printStaffCasePlan()">🖨️ Print / PDF</button>
+                    <button type="button" class="btn btn-outline" style="padding: 4px 10px; font-size: 12px;" onclick="staffCpOpenNotes()">📝 Add Note</button>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div id="staff-cp-modal-body" style="flex: 1; overflow-y: auto; padding-right: 6px;">
+                <!-- Tab 1: Primary Plan Markdown View -->
+                <div id="staff-cp-view-plan" class="report-content-body">
+                    <div id="staff-cp-markdown-container" class="markdown-preview" style="line-height: 1.7; font-size: 13.5px; color: #1e293b;"></div>
+                </div>
+
+                <!-- Tab 1b: Staff Navigator Plan (if formal assessment exists) -->
+                <div id="staff-cp-view-staff-plan" class="report-content-body hidden">
+                    <div id="staff-cp-staff-markdown-container" class="markdown-preview" style="line-height: 1.7; font-size: 13.5px; color: #1e293b;"></div>
+                </div>
+
+                <!-- Tab 2: 6-Domain Briefcase Progress Breakdown -->
+                <div id="staff-cp-view-briefcase" class="hidden">
+                    <div id="staff-cp-briefcase-summary" style="margin-bottom: 12px; background: #f8fafc; padding: 10px 14px; border-radius: 6px; border: 1px solid var(--border); font-size: 12.5px;"></div>
+                    <div id="staff-cp-briefcase-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 12px;"></div>
+                </div>
+
+                <!-- Tab 3: Case Management Notes History -->
+                <div id="staff-cp-view-notes" class="hidden">
+                    <div id="staff-cp-notes-container"></div>
                 </div>
             </div>
         </div>

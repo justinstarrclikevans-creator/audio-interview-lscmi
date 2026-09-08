@@ -1574,19 +1574,20 @@ async function loadCaseload() {
                     </button>
                 </td>
                 <td>
-                    ${p.has_reentry_plan ? `
-                        <span class="badge ${p.reentry_status === 'immediate_triage_needed' ? 'badge-red' : (p.reentry_status === 'at_risk' ? 'badge-pending' : 'badge-green')}">
-                            🧭 ${p.reentry_status ? p.reentry_status.toUpperCase().replace(/_/g, ' ') : 'LINKED'}
-                        </span>
-                        <div style="margin-top: 3px;">
-                            <a href="javascript:void(0)" onclick="openParticipantLinkedReentryPlan(${p.id})" style="font-size: 11px; color: var(--primary); font-weight: 700; text-decoration: underline;">📄 View Plan</a>
-                        </div>
-                    ` : `
-                        <span style="font-size: 11px; color: var(--slate);">Not Assessed</span>
-                        <div style="margin-top: 3px;">
-                            <a href="javascript:void(0)" onclick="startReentryAssessmentForUser(${p.id}, '${p.name.replace(/'/g, "\\'")}')" style="font-size: 11px; color: var(--accent); text-decoration: underline;">+ Assess</a>
-                        </div>
-                    `}
+                    <div>
+                        <button class="btn btn-outline" style="padding: 3px 8px; font-size: 11px; font-weight: 600; color: var(--primary); border-color: #93c5fd; background: #eff6ff;" onclick="openStaffCasePlanModal(${p.id}, '${p.name.replace(/'/g, "\\'")}')">
+                            📄 Case Plan
+                        </button>
+                    </div>
+                    <div style="margin-top: 4px;">
+                        ${p.has_reentry_plan ? `
+                            <span class="badge ${p.reentry_status === 'immediate_triage_needed' ? 'badge-red' : (p.reentry_status === 'at_risk' ? 'badge-pending' : 'badge-green')}" style="font-size: 10px; padding: 2px 6px;">
+                                🧭 ${p.reentry_status ? p.reentry_status.toUpperCase().replace(/_/g, ' ') : 'ASSESSED'}
+                            </span>
+                        ` : `
+                            <a href="javascript:void(0)" onclick="startReentryAssessmentForUser(${p.id}, '${p.name.replace(/'/g, "\\'")}')" style="font-size: 10.5px; color: var(--accent); text-decoration: underline;">+ Reentry Assess</a>
+                        `}
+                    </div>
                 </td>
                 <td>
                     <div style="display: flex; gap: 4px; flex-wrap: wrap;">
@@ -1917,37 +1918,254 @@ function switchReentryDocTab(tab) {
     document.getElementById('btn-subtab-staff-plan').className = tab === 'staff' ? 'btn btn-primary' : 'btn btn-outline';
 }
 
-async function openParticipantLinkedReentryPlan(userId) {
+let currentStaffCpData = null;
+
+async function openStaffCasePlanModal(userId, name) {
     const token = localStorage.getItem('fs_token');
+    const titleEl = document.getElementById('staff-cp-modal-title');
+    const subtitleEl = document.getElementById('staff-cp-subtitle');
+    const mdContainer = document.getElementById('staff-cp-markdown-container');
+    
+    titleEl.innerText = `📋 Case Plan: ${name || 'Participant'}`;
+    subtitleEl.innerText = 'Loading participant case plan and briefcase checklist...';
+    mdContainer.innerHTML = '<p class="text-slate" style="padding: 28px 0; text-align: center;">⏳ Loading individualized case plan & briefcase progress...</p>';
+    
+    openModal('modal-staff-case-plan');
+    switchStaffCpTab('plan');
+
     try {
-        const res = await fetch(`/api/reentry/plan/${userId}`, {
+        const res = await fetch(`/api/pm/case-plan/${userId}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
-        if (data.found && data.plan) {
-            switchPmSubView('reentry');
-            const select = document.getElementById('reentry-participant-select');
-            if (select) select.value = userId;
-
-            renderReentryAssessmentResults({
-                result: {
-                    stability_status: data.plan.stability_status,
-                    detected_flags: data.plan.detected_flags,
-                    top_criminogenic_domains: data.plan.top_criminogenic_domains,
-                    participant_guide_md: data.plan.participant_guide_md,
-                    navigator_case_plan_md: data.plan.staff_case_plan_md,
-                    recommended_referrals: data.plan.recommended_referrals || [],
-                    matched_employers: data.plan.matched_employers || []
-                },
-                participantGuideDocx: data.plan.participant_guide_docx,
-                participantGuidePdf: data.plan.participant_guide_pdf,
-                staffPlanDocx: data.plan.staff_plan_docx,
-                staffPlanPdf: data.plan.staff_plan_pdf
-            });
+        if (!data.found) {
+            mdContainer.innerHTML = `<p class="text-danger" style="padding: 20px;">Unable to load case plan: ${data.message || 'Not found'}</p>`;
+            return;
         }
+
+        currentStaffCpData = data;
+
+        // Update badges
+        const trackBadge = document.getElementById('staff-cp-track-badge');
+        trackBadge.innerText = data.track === 'reentry_nav' ? '🧭 Re-entry Navigation' : '⚡ First Shift';
+        trackBadge.className = data.track === 'reentry_nav' ? 'badge badge-accent' : 'badge badge-primary';
+
+        const gateBadge = document.getElementById('staff-cp-gate-badge');
+        gateBadge.innerText = `Gate ${data.gate || 1}`;
+
+        const stabBadge = document.getElementById('staff-cp-stability-badge');
+        const st = data.stabilityStatus || 'stable';
+        stabBadge.innerText = st.toUpperCase().replace(/_/g, ' ');
+        stabBadge.className = st === 'immediate_triage_needed' ? 'badge badge-red' : (st === 'at_risk' ? 'badge badge-pending' : 'badge badge-green');
+
+        subtitleEl.innerText = `Participant #${data.userId} • Location: ${data.location || 'Charleston'}, SC • ${data.hasFormalReentryPlan ? 'Formal Re-entry Assessment Linked' : 'Turn90 Action Plan & Briefcase Checklist'}`;
+
+        // Render main markdown
+        const parsedMain = typeof marked !== 'undefined' ? marked.parse(data.markdown) : data.markdown.replace(/\n/g, '<br>');
+        mdContainer.innerHTML = parsedMain;
+
+        // Check if formal staff plan exists
+        const staffTabBtn = document.getElementById('staff-cp-tab-staff-plan');
+        const staffMdContainer = document.getElementById('staff-cp-staff-markdown-container');
+        if (data.staffMarkdown) {
+            staffTabBtn.classList.remove('hidden');
+            staffMdContainer.innerHTML = typeof marked !== 'undefined' ? marked.parse(data.staffMarkdown) : data.staffMarkdown.replace(/\n/g, '<br>');
+        } else {
+            staffTabBtn.classList.add('hidden');
+        }
+
+        // Word docx download button
+        const docxBtn = document.getElementById('staff-cp-btn-docx');
+        if (data.docxUrl || data.staffDocxUrl) {
+            docxBtn.href = data.staffDocxUrl || data.docxUrl;
+            docxBtn.classList.remove('hidden');
+        } else {
+            docxBtn.classList.add('hidden');
+        }
+
+        // Render Briefcase tab
+        renderStaffCpBriefcase(data);
+
+        // Render Notes tab
+        renderStaffCpNotes(data);
+
     } catch (e) {
-        console.error('Error fetching linked plan:', e);
+        mdContainer.innerHTML = `<p class="text-danger" style="padding: 20px;">Error loading case plan: ${e.message}</p>`;
     }
+}
+
+function switchStaffCpTab(tab) {
+    const tabs = ['plan', 'staff-plan', 'briefcase', 'notes'];
+    tabs.forEach(t => {
+        const btn = document.getElementById(`staff-cp-tab-${t}`);
+        const view = document.getElementById(`staff-cp-view-${t}`);
+        if (btn) {
+            btn.className = (t === tab) ? 'btn btn-primary' : 'btn btn-outline';
+        }
+        if (view) {
+            view.classList.toggle('hidden', t !== tab);
+        }
+    });
+}
+
+function renderStaffCpBriefcase(data) {
+    const summaryBox = document.getElementById('staff-cp-briefcase-summary');
+    const container = document.getElementById('staff-cp-briefcase-container');
+    const items = data.briefcaseItems || [];
+
+    const completed = items.filter(i => i.status === 'green').length;
+    const barriers = items.filter(i => i.status === 'red').length;
+    const pending = items.filter(i => i.status === 'pending').length;
+
+    if (summaryBox) {
+        summaryBox.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                <div>
+                    <strong>Briefcase Checklist Progress:</strong> 
+                    <span style="color: #166534; font-weight: 700;">${completed} Verified Complete</span> • 
+                    <span style="color: #991b1b; font-weight: 700;">${barriers} Active Barriers</span> • 
+                    <span style="color: #64748b;">${pending} In-Progress</span>
+                </div>
+                <div style="font-weight: 700; color: var(--primary);">
+                    ${Math.round((completed / (items.length || 1)) * 100)}% Verified
+                </div>
+            </div>
+        `;
+    }
+
+    const domains = {
+        core_stability: '1. Core Stability',
+        employment_readiness: '2. Employment Readiness',
+        credentials: '3. Credentials & Trades',
+        health_wellness: '4. Health & Wellness',
+        financial: '5. Financial Literacy',
+        career_planning: '6. Career Planning'
+    };
+
+    let html = '';
+    for (const [key, title] of Object.entries(domains)) {
+        const dItems = items.filter(i => i.domain === key);
+        const dComp = dItems.filter(i => i.status === 'green').length;
+        html += `
+            <div style="border: 1px solid var(--border); border-radius: 8px; padding: 12px; background: white;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; margin-bottom: 8px;">
+                    <strong style="font-size: 13px; color: var(--primary);">${title}</strong>
+                    <span class="badge ${dComp === dItems.length && dItems.length > 0 ? 'badge-green' : 'badge-pending'}" style="font-size: 10px;">
+                        ${dComp}/${dItems.length} Complete
+                    </span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px; font-size: 12px;">
+                    ${dItems.map(it => `
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; padding: 5px 8px; border-radius: 4px; background: ${it.status === 'green' ? '#f0fdf4' : (it.status === 'red' ? '#fef2f2' : '#f8fafc')};">
+                            <div>
+                                <span style="margin-right: 4px;">${it.status === 'green' ? '✅' : (it.status === 'red' ? '⚠️' : '⏳')}</span>
+                                <span style="font-weight: 600;">${it.title}</span>
+                                ${it.notes ? `<div style="font-size: 11px; color: #64748b; margin-left: 20px;">${it.notes}</div>` : ''}
+                            </div>
+                            <span class="badge ${it.status === 'green' ? 'badge-green' : (it.status === 'red' ? 'badge-red' : 'badge-pending')}" style="font-size: 9.5px; padding: 1px 5px; flex-shrink: 0;">
+                                ${it.status === 'green' ? 'VERIFIED' : (it.status === 'red' ? 'BARRIER' : 'PENDING')}
+                            </span>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+    if (container) container.innerHTML = html;
+}
+
+function renderStaffCpNotes(data) {
+    const container = document.getElementById('staff-cp-notes-container');
+    if (!container) return;
+    const notes = data.notes || [];
+
+    if (notes.length === 0) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 32px 16px; background: #f8fafc; border-radius: 8px; border: 1px dashed var(--border);">
+                <p style="color: var(--slate); font-size: 13px; margin-bottom: 12px;">No formal case management notes logged for this participant yet.</p>
+                <button type="button" class="btn btn-primary" onclick="staffCpOpenNotes()" style="font-size: 12px;">📝 Add First Case Note</button>
+            </div>
+        `;
+        return;
+    }
+
+    let html = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <strong style="font-size: 13px; color: var(--primary);">Case Management Notes (${notes.length})</strong>
+            <button type="button" class="btn btn-outline" style="padding: 3px 8px; font-size: 11px;" onclick="staffCpOpenNotes()">+ Add Note</button>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+    `;
+
+    notes.forEach(n => {
+        html += `
+            <div style="background: white; border: 1px solid var(--border); border-radius: 8px; padding: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 11.5px;">
+                    <div>
+                        <span class="badge badge-primary" style="font-size: 10px; margin-right: 6px;">${n.category || 'General'}</span>
+                        <strong style="color: #1e293b;">${n.author_name || 'Staff'}</strong>
+                        <span class="text-slate">• ${n.note_type || 'Individual Session'}</span>
+                    </div>
+                    <span class="text-slate" style="font-weight: 600;">📅 ${n.session_date || 'Recent'}</span>
+                </div>
+                <div style="font-size: 13px; line-height: 1.5; color: #334155; white-space: pre-wrap;">${n.content}</div>
+            </div>
+        `;
+    });
+
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+function staffCpOpenNotes() {
+    if (!currentStaffCpData) return;
+    openCaseNotesModal(currentStaffCpData.userId, currentStaffCpData.participantName, '', currentStaffCpData.track);
+}
+
+function printStaffCasePlan() {
+    if (!currentStaffCpData) return;
+    const printWindow = window.open('', '_blank');
+    const formattedMd = typeof marked !== 'undefined' ? marked.parse(currentStaffCpData.markdown) : currentStaffCpData.markdown.replace(/\n/g, '<br>');
+    
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Case Plan - ${currentStaffCpData.participantName}</title>
+            <style>
+                body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; padding: 40px; color: #1e293b; line-height: 1.6; }
+                h1, h2, h3, h4 { color: #0f172a; margin-top: 1.2em; }
+                table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
+                th, td { border: 1px solid #cbd5e1; padding: 8px 12px; text-align: left; }
+                th { background: #f1f5f9; font-weight: 700; }
+                ul, ol { padding-left: 24px; }
+                li { margin-bottom: 4px; }
+                .header-meta { border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 24px; }
+                @media print {
+                    body { padding: 0; }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="header-meta">
+                <h2>TURN90 INDIVIDUALIZED PARTICIPANT CASE PLAN</h2>
+                <p><strong>Participant:</strong> ${currentStaffCpData.participantName} | <strong>Track:</strong> ${currentStaffCpData.track === 'reentry_nav' ? 'Re-entry Navigation' : 'First Shift'} | <strong>Location:</strong> ${currentStaffCpData.location || 'Charleston'}, SC | <strong>Printed:</strong> ${new Date().toLocaleDateString()}</p>
+            </div>
+            <div>
+                ${formattedMd}
+            </div>
+            <script>
+                window.onload = function() { window.print(); }
+            </script>
+        </body>
+        </html>
+    `);
+    printWindow.document.close();
+}
+
+async function openParticipantLinkedReentryPlan(userId) {
+    // Open staff case plan modal directly for seamless review
+    openStaffCasePlanModal(userId);
 }
 
 function loadReentryResourcesTab() {
