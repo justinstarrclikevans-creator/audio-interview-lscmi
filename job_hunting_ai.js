@@ -63,28 +63,45 @@ async function matchJobsWithAi(criteria = {}, participantProfile = {}) {
         });
     });
 
-    // Sort allPool to prioritize jobs matching the requested location (Columbia, Spartanburg, or Charleston)
-    const targetLoc = (criteria.location || participantProfile.location || '').toLowerCase();
-    allPool.sort((a, b) => {
-        const aLoc = (a.location || '').toLowerCase();
-        const bLoc = (b.location || '').toLowerCase();
-        
-        let aMatch = 0;
-        let bMatch = 0;
+    // Partition or sort allPool to prioritize jobs matching the requested location (Columbia, Spartanburg, or Charleston)
+    const targetLoc = (criteria.location || participantProfile.location || 'Columbia, SC').toLowerCase();
+    
+    // Check if target matches Columbia/Midlands, Spartanburg/Upstate, or Charleston
+    const isColumbia = targetLoc.includes('columbia') || targetLoc.includes('midlands') || targetLoc.includes('cayce') || targetLoc.includes('lexington');
+    const isSpartanburg = targetLoc.includes('spartanburg') || targetLoc.includes('greenville') || targetLoc.includes('upstate');
+    const isCharleston = targetLoc.includes('charleston') || targetLoc.includes('summerville') || targetLoc.includes('berkeley') || targetLoc.includes('dorchester') || targetLoc.includes('ladson');
 
-        if (targetLoc.includes('columbia') || targetLoc.includes('midlands')) {
-            if (aLoc.includes('columbia') || aLoc.includes('cayce') || aLoc.includes('lexington') || aLoc.includes('midlands')) aMatch = 5;
-            if (bLoc.includes('columbia') || bLoc.includes('cayce') || bLoc.includes('lexington') || bLoc.includes('midlands')) bMatch = 5;
-        } else if (targetLoc.includes('spartanburg') || targetLoc.includes('greenville') || targetLoc.includes('upstate')) {
-            if (aLoc.includes('spartanburg') || aLoc.includes('duncan') || aLoc.includes('greer') || aLoc.includes('greenville') || aLoc.includes('upstate')) aMatch = 5;
-            if (bLoc.includes('spartanburg') || bLoc.includes('duncan') || bLoc.includes('greer') || bLoc.includes('greenville') || bLoc.includes('upstate')) bMatch = 5;
-        } else if (targetLoc.includes('charleston')) {
-            if (aLoc.includes('charleston') || aLoc.includes('summerville') || aLoc.includes('berkeley')) aMatch = 5;
-            if (bLoc.includes('charleston') || bLoc.includes('summerville') || bLoc.includes('berkeley')) bMatch = 5;
+    function matchesTargetLocation(jobLoc) {
+        const jl = (jobLoc || '').toLowerCase();
+        if (isColumbia) {
+            return jl.includes('columbia') || jl.includes('cayce') || jl.includes('lexington') || jl.includes('irmo') || jl.includes('midlands');
         }
+        if (isSpartanburg) {
+            return jl.includes('spartanburg') || jl.includes('duncan') || jl.includes('greer') || jl.includes('greenville') || jl.includes('upstate');
+        }
+        if (isCharleston) {
+            return jl.includes('charleston') || jl.includes('summerville') || jl.includes('berkeley') || jl.includes('ladson') || jl.includes('johns island');
+        }
+        return true;
+    }
 
-        return bMatch - aMatch;
+    // Segregate pool: local matches first, general/statewide second, other cities last
+    const localJobs = [];
+    const statewideJobs = [];
+    const otherJobs = [];
+
+    allPool.forEach(j => {
+        if (matchesTargetLocation(j.location)) {
+            localJobs.push(j);
+        } else if ((j.location || '').toLowerCase().includes('south carolina') || (j.location || '').toLowerCase().includes('statewide')) {
+            statewideJobs.push(j);
+        } else {
+            otherJobs.push(j);
+        }
     });
+
+    // candidatePool sent to Gemini prioritizes local jobs strictly
+    const rankedPool = [...localJobs, ...statewideJobs, ...otherJobs];
 
     // If Gemini is available, perform intelligent ranking & tailoring
     if (genAI) {
@@ -94,29 +111,29 @@ async function matchJobsWithAi(criteria = {}, participantProfile = {}) {
                 generationConfig: { responseMimeType: "application/json" }
             });
 
-            // Sample top candidate pool up to 35 jobs (prioritizing target location)
-            const candidateList = allPool.slice(0, 35);
+            // Sample top candidate pool up to 35 jobs (prioritizing target location strictly)
+            const candidateList = rankedPool.slice(0, 35);
 
             const prompt = `
 You are the "Turn90 Job Hunting AI", an expert second-chance workforce specialist and executive career coach for individuals re-entering the workforce in South Carolina.
-You support participants across all Turn90 program hubs: Charleston, Columbia (Midlands), and Spartanburg / Greenville (Upstate).
+You support participants across Turn90 program hubs: Charleston, Columbia (Midlands), and Spartanburg (Upstate).
 
 CRITICAL RULES:
 1. NEVER recommend Turn90 as an employer (participants are already in Turn90; they need outside employer placements).
-2. Prioritize jobs located in or near the participant's requested location: "${criteria.location || participantProfile.location || 'South Carolina'}".
+2. STRICT LOCATION REQUIREMENT: The user has selected "${criteria.location || 'Columbia, SC'}". ALL matched jobs MUST be located in or immediately adjacent to this target area (${isColumbia ? 'Columbia, West Columbia, Cayce, Lexington, Irmo, Midlands' : (isSpartanburg ? 'Spartanburg, Duncan, Greer' : 'Charleston, North Charleston, Summerville, Ladson')}). DO NOT recommend Charleston jobs if the user selected Columbia, and DO NOT recommend Columbia jobs if the user selected Charleston!
 3. Prioritize second-chance friendly employers, fair-chance policies, and high-wage trajectory trades (manufacturing, logistics, trade apprenticeships, technical assembly).
 4. For Transit:
    - In Charleston: evaluate transit via CARTA bus routes.
-   - In Columbia: evaluate transit via The COMET (Central Midlands Regional Transit) routes.
-   - In Spartanburg / Greenville: evaluate transit via SPARTA (Spartanburg Transit) or Greenlink bus routes.
+   - In Columbia: evaluate transit via The COMET (Central Midlands Regional Transit Authority) routes.
+   - In Spartanburg: evaluate transit via SPARTA (Spartanburg Transit) bus routes.
 5. If a curfew constraint is specified (e.g. 8 PM probation curfew), ensure shift compatibility.
 
 Participant Context:
 - Target Search Query / Interests: "${criteria.query || 'Manufacturing, warehouse, trades, or logistics'}"
-- Location: "${criteria.location || participantProfile.location || 'South Carolina'}"
+- Location: "${criteria.location || participantProfile.location || 'Columbia, SC'}"
 - Trade Skills / Certifications: "${criteria.skills || participantProfile.skills || 'OSHA 10, Forklift Certified, Jobsite Safety, Hand Tools'}"
 - Desired Minimum Pay: "${criteria.minPay || '$18.00 / hr'}"
-- Transportation Status: "${criteria.transit || participantProfile.transportation_status || 'Public Transit Accessible'}"
+- Transportation Status: "${criteria.transit || (isColumbia ? 'The COMET Bus Line Accessible' : 'Public Transit Accessible')}"
 - Legal / Curfew Constraints: "${criteria.curfew || 'Standard daytime shift preferred; avoid overnight shifts if probation restricts'}"
 
 Available Openings Pool:
@@ -124,7 +141,7 @@ ${JSON.stringify(candidateList, null, 2)}
 
 Return a JSON response with this EXACT structure:
 {
-  "aiSearchSummary": "A concise 2-sentence summary of the job market analysis for this participant's skills and location.",
+  "aiSearchSummary": "A concise 2-sentence summary of the job market analysis for this participant's skills in ${criteria.location || 'Columbia, SC'}.",
   "coachingAdvice": "Actionable career advice for the participant on how to stand out during applications.",
   "matchedJobs": [
     {
@@ -138,7 +155,7 @@ Return a JSON response with this EXACT structure:
       "matchReasons": [
         "Concrete reason 1 (e.g. Matches your OSHA 10 and Forklift certifications)",
         "Concrete reason 2 (e.g. Second-chance friendly employer with day shift)",
-        "Concrete reason 3 (e.g. Accessible via CARTA Route 10 bus line)"
+        "Concrete reason 3 (e.g. Accessible via ${isColumbia ? 'The COMET' : 'CARTA'} bus line)"
       ],
       "turnaroundTip": "Specific tip on how to highlight strengths for this specific employer."
     }
@@ -158,30 +175,32 @@ Select the TOP 4 to 6 best matching jobs from the pool.`;
 
     // Fallback deterministic matching
     const q = (criteria.query || '').toLowerCase();
-    const filtered = allPool.filter(j => {
+    const primaryPool = localJobs.length > 0 ? localJobs : rankedPool;
+    const filtered = primaryPool.filter(j => {
         if (!q) return true;
         const text = `${j.company} ${j.jobTitle} ${j.description} ${j.location}`.toLowerCase();
         return q.split(' ').some(word => word.length > 2 && text.includes(word));
     }).slice(0, 5);
 
-    const fallbackMatches = (filtered.length > 0 ? filtered : allPool.slice(0, 5)).map((j, i) => ({
+    const fallbackMatches = (filtered.length > 0 ? filtered : primaryPool.slice(0, 5)).map((j, i) => ({
         company: j.company,
         jobTitle: j.jobTitle,
         location: j.location,
         payRate: j.payRate,
         careersUrl: j.careersUrl,
-        fitScore: 90 - (i * 3),
+        fitScore: 92 - (i * 3),
         transitFriendly: true,
         matchReasons: [
             `Strong alignment with your Turn90 trade and manufacturing training`,
             `Active second-chance hiring partner in ${j.location}`,
-            `Competitive wage structure with advancement potential`
+            `Accessible via ${isColumbia ? 'The COMET' : (isSpartanburg ? 'SPARTA' : 'CARTA')} bus transit corridors`
         ],
         turnaroundTip: `Emphasize your 100% attendance rate and team-first accountability learned at Turn90.`
     }));
 
+    const displayCity = criteria.location || (isColumbia ? 'Columbia, SC' : (isSpartanburg ? 'Spartanburg, SC' : 'Charleston, SC'));
     return {
-        aiSearchSummary: `Matched ${fallbackMatches.length} high-potential second-chance opportunities in ${criteria.location || 'Charleston, SC'} based on your skills and verified employer openings.`,
+        aiSearchSummary: `Matched ${fallbackMatches.length} high-potential second-chance opportunities in ${displayCity} based on your skills and verified employer openings.`,
         coachingAdvice: `Apply online via the direct links below, and practice your 60-second Turnaround Narrative before employer phone screens.`,
         matchedJobs: fallbackMatches
     };

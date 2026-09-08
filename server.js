@@ -1853,7 +1853,7 @@ app.get('/api/reentry/plan/:userId', authenticateToken, (req, res) => {
 // 4. Directory & Spreadsheet Jobs Query
 app.get('/api/reentry/resources', authenticateToken, (req, res) => {
     const region = req.query.region || 'charleston';
-    const locKey = region.toLowerCase().includes('columbia') ? 'columbia' : (region.toLowerCase().includes('greenville') ? 'greenville' : 'charleston');
+    const locKey = region.toLowerCase().includes('columbia') ? 'columbia' : (region.toLowerCase().includes('spartanburg') || region.toLowerCase().includes('greenville') || region.toLowerCase().includes('upstate') ? 'greenville' : 'charleston');
     
     const spreadsheetJobs = loadJobsFromSpreadsheets();
     const directoryEmployers = SC_FAIR_CHANCE_EMPLOYERS.filter(e => e.region === locKey || e.region === 'all');
@@ -2126,12 +2126,25 @@ app.post('/api/jobs/ai-match', authenticateToken, async (req, res) => {
             if (pRow) profile = pRow;
         }
 
+        const userLoc = profile.location ? `${profile.location}, SC` : 'Charleston, SC';
+        const defaultLocation = location || userLoc;
+        let defaultTransit = transit || profile.transportation_status;
+        if (!defaultTransit) {
+            if (defaultLocation.toLowerCase().includes('columbia')) {
+                defaultTransit = 'The COMET Bus Line Accessible';
+            } else if (defaultLocation.toLowerCase().includes('spartanburg')) {
+                defaultTransit = 'SPARTA Bus Line Accessible';
+            } else {
+                defaultTransit = 'CARTA Bus Line Accessible';
+            }
+        }
+
         const criteria = {
             query: query || '',
-            location: location || profile.location || 'Charleston, SC',
+            location: defaultLocation,
             skills: skills || '',
             minPay: minPay || '$18.00 / hr',
-            transit: transit || profile.transportation_status || 'CARTA Bus Line',
+            transit: defaultTransit,
             curfew: curfew || ''
         };
 

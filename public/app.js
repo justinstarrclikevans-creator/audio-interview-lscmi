@@ -811,7 +811,7 @@ async function loadJobs() {
 
 function filterJobsByArea(location) {
     currentJobAreaFilter = location || 'all';
-    ['all', 'charleston', 'columbia', 'greenville', 'spartanburg'].forEach(loc => {
+    ['all', 'charleston', 'columbia', 'spartanburg'].forEach(loc => {
         const btn = document.getElementById(`btn-job-loc-${loc}`);
         if (btn) {
             if (loc.toLowerCase() === currentJobAreaFilter.toLowerCase()) {
@@ -3991,6 +3991,8 @@ function openJobHuntingAiModal() {
         }
     }
 
+    syncJobAiTransitToLocation();
+
     if (currentProfile && currentProfile.transportation_status) {
         const trSelect = document.getElementById('job-ai-search-transit');
         if (trSelect && currentProfile.transportation_status.toLowerCase().includes('car')) {
@@ -4003,6 +4005,31 @@ function openJobHuntingAiModal() {
         runAiJobMatch();
     }
     loadSavedJobsPipeline();
+}
+
+function syncJobAiTransitToLocation() {
+    const locSelect = document.getElementById('job-ai-search-location');
+    const trSelect = document.getElementById('job-ai-search-transit');
+    if (!locSelect || !trSelect) return;
+
+    // If already set to personal vehicle, keep it
+    if (trSelect.value === 'Any / Has Own Car') return;
+
+    const locVal = locSelect.value.toLowerCase();
+    if (locVal.includes('columbia')) {
+        trSelect.value = 'The COMET Bus Line Accessible (Columbia)';
+    } else if (locVal.includes('spartanburg')) {
+        trSelect.value = 'SPARTA Bus Line Accessible (Spartanburg)';
+    } else if (locVal.includes('charleston')) {
+        trSelect.value = 'CARTA Bus Line Accessible (Charleston)';
+    } else {
+        trSelect.value = 'Transit Accessible (CARTA / The COMET / SPARTA)';
+    }
+}
+
+function handleJobAiLocationChange() {
+    syncJobAiTransitToLocation();
+    runAiJobMatch();
 }
 
 function switchJobAiTab(tabName) {
@@ -4032,8 +4059,8 @@ function applyJobSearchChip(chipText) {
 async function runAiJobMatch() {
     const token = localStorage.getItem('fs_token');
     const query = document.getElementById('job-ai-search-query')?.value || '';
-    const location = document.getElementById('job-ai-search-location')?.value || 'Charleston, SC';
-    const transit = document.getElementById('job-ai-search-transit')?.value || 'CARTA Bus Line Accessible';
+    const location = document.getElementById('job-ai-search-location')?.value || (currentUser?.location ? `${currentUser.location}, SC` : 'Columbia, SC');
+    const transit = document.getElementById('job-ai-search-transit')?.value || 'Transit Accessible (CARTA / The COMET / SPARTA)';
 
     const btn = document.getElementById('btn-run-job-match');
     const list = document.getElementById('job-ai-matches-list');

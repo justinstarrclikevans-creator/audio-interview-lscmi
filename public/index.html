@@ -89,7 +89,6 @@
                             <select id="reg-location" required>
                                 <option value="Charleston">Charleston, SC</option>
                                 <option value="Columbia">Columbia, SC</option>
-                                <option value="Greenville">Greenville, SC</option>
                                 <option value="Spartanburg">Spartanburg, SC</option>
                             </select>
                         </div>
@@ -549,7 +548,6 @@
                             <button class="btn btn-primary" id="btn-job-loc-all" style="font-size: 11.5px; padding: 4px 10px;" onclick="filterJobsByArea('all')">All Areas</button>
                             <button class="btn btn-outline" id="btn-job-loc-charleston" style="font-size: 11.5px; padding: 4px 10px;" onclick="filterJobsByArea('Charleston')">📍 Charleston</button>
                             <button class="btn btn-outline" id="btn-job-loc-columbia" style="font-size: 11.5px; padding: 4px 10px;" onclick="filterJobsByArea('Columbia')">📍 Columbia</button>
-                            <button class="btn btn-outline" id="btn-job-loc-greenville" style="font-size: 11.5px; padding: 4px 10px;" onclick="filterJobsByArea('Greenville')">📍 Greenville</button>
                             <button class="btn btn-outline" id="btn-job-loc-spartanburg" style="font-size: 11.5px; padding: 4px 10px;" onclick="filterJobsByArea('Spartanburg')">📍 Spartanburg</button>
                         </div>
                     </div>
@@ -750,7 +748,6 @@
                         <option value="">All Locations</option>
                         <option value="Charleston">Charleston, SC</option>
                         <option value="Columbia">Columbia, SC</option>
-                        <option value="Greenville">Greenville, SC</option>
                         <option value="Spartanburg">Spartanburg, SC</option>
                     </select>
                     <select id="pm-filter-track" onchange="loadCaseload()">
@@ -828,7 +825,6 @@
                                 <select id="reentry-location">
                                     <option value="Charleston">Charleston, SC</option>
                                     <option value="Columbia">Columbia, SC</option>
-                                    <option value="Greenville">Greenville, SC</option>
                                     <option value="Spartanburg">Spartanburg, SC</option>
                                 </select>
                             </div>
@@ -1476,7 +1472,7 @@
                     <select id="modal-dir-region" onchange="loadModalDirectoryResources()" style="font-weight: bold; width: auto;">
                         <option value="charleston">Charleston Tri-County</option>
                         <option value="columbia">Columbia Midlands</option>
-                        <option value="greenville">Greenville & Upstate</option>
+                        <option value="spartanburg">Spartanburg & Upstate</option>
                     </select>
                 </div>
                 <div id="modal-dir-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; max-height: 480px; overflow-y: auto;">
@@ -1763,7 +1759,6 @@
                         <select id="eval-location" required>
                             <option value="Charleston">Charleston, SC</option>
                             <option value="Columbia">Columbia, SC</option>
-                            <option value="Greenville">Greenville, SC</option>
                             <option value="Spartanburg">Spartanburg, SC</option>
                         </select>
                     </div>
@@ -1827,17 +1822,19 @@
                             </div>
                             <div>
                                 <label style="font-size: 11.5px; font-weight: 700;">Location:</label>
-                                <select id="job-ai-search-location" style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid var(--border); border-radius: 6px;">
+                                <select id="job-ai-search-location" onchange="handleJobAiLocationChange()" style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid var(--border); border-radius: 6px;">
                                     <option value="Charleston, SC">Charleston, SC</option>
                                     <option value="Columbia, SC">Columbia, SC</option>
-                                    <option value="Greenville, SC">Greenville, SC</option>
                                     <option value="Spartanburg, SC">Spartanburg, SC</option>
                                 </select>
                             </div>
                             <div>
                                 <label style="font-size: 11.5px; font-weight: 700;">Transit Need:</label>
                                 <select id="job-ai-search-transit" style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid var(--border); border-radius: 6px;">
-                                    <option value="CARTA Bus Line Accessible">CARTA / Transit Accessible</option>
+                                    <option value="Transit Accessible (CARTA / The COMET / SPARTA)">Transit Accessible (CARTA / COMET / SPARTA)</option>
+                                    <option value="The COMET Bus Line Accessible (Columbia)">The COMET Bus Line (Columbia)</option>
+                                    <option value="CARTA Bus Line Accessible (Charleston)">CARTA Bus Line (Charleston)</option>
+                                    <option value="SPARTA Bus Line Accessible (Spartanburg)">SPARTA Bus Line (Spartanburg)</option>
                                     <option value="Any / Has Own Car">Any / Personal Vehicle</option>
                                 </select>
                             </div>
