@@ -92,6 +92,9 @@ function updateNav() {
 function routeUserToPortal() {
     if (!currentUser) return showView('view-auth');
 
+    // Reset AI state & conversation history to ensure prompt isolation between accounts
+    resetParticipantAiState();
+
     if (currentUser.role === 'program_manager' || currentUser.role === 'admin') {
         showView('view-pm-portal');
         loadCaseload();
@@ -187,6 +190,7 @@ function handleLogout() {
     localStorage.removeItem('fs_token');
     currentUser = null;
     currentProfile = null;
+    resetParticipantAiState();
     updateNav();
     showView('view-auth');
 }
@@ -3701,6 +3705,73 @@ async function sendRnParticipantAiMessage() {
     }
 }
 
+function resetParticipantAiState() {
+    participantAiHistory = [];
+    cachedMatchedJobs = [];
+
+    // Reset First Shift AI chat box
+    const fsChatBox = document.getElementById('fs-ai-chat-history');
+    if (fsChatBox) {
+        fsChatBox.innerHTML = `
+            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px;">
+                <strong>Turn90 Assistant:</strong> Hello! Ask me any questions about employer paperwork (like <strong>Form I-9</strong> or <strong>W-9</strong>), fixing your driver's license, free prescriptions with Welvista, or housing resources.
+            </div>
+        `;
+    }
+    const fsInput = document.getElementById('fs-ai-input');
+    if (fsInput) fsInput.value = '';
+
+    // Reset Re-entry Navigation AI chat box
+    const rnChatBox = document.getElementById('rn-ai-chat-history');
+    if (rnChatBox) {
+        rnChatBox.innerHTML = `
+            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px;">
+                <strong>Turn90 Assistant:</strong> Hello! Ask me any questions about employer paperwork (like <strong>Form I-9</strong> or <strong>W-9</strong>), fixing your driver's license, free prescriptions with Welvista, or housing resources.
+            </div>
+        `;
+    }
+    const rnInput = document.getElementById('rn-ai-input');
+    if (rnInput) rnInput.value = '';
+
+    // Reset Benefits Hub Modal AI chat box
+    const bChatBox = document.getElementById('modal-benefits-ai-history');
+    if (bChatBox) {
+        bChatBox.innerHTML = `
+            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px;">
+                <strong style="color: var(--primary);">Turn90 Assistant:</strong> Ask me anything about applying for <strong>Welvista</strong>, <strong>Medicaid</strong>, <strong>SNAP</strong>, or <strong>TANF</strong>! I can explain eligibility, documents needed, and where to submit your application.
+            </div>
+        `;
+    }
+    const bInput = document.getElementById('modal-benefits-ai-input');
+    if (bInput) bInput.value = '';
+
+    // Reset Job Hunting AI form outputs & matches
+    const jobMatchesList = document.getElementById('job-ai-matches-list');
+    if (jobMatchesList) jobMatchesList.innerHTML = '';
+    const jobSummaryBox = document.getElementById('job-ai-summary-box');
+    if (jobSummaryBox) jobSummaryBox.classList.add('hidden');
+    const jobQueryInput = document.getElementById('job-ai-search-query');
+    if (jobQueryInput) jobQueryInput.value = '';
+
+    const resumeOutputBox = document.getElementById('resume-tailor-output-box');
+    if (resumeOutputBox) resumeOutputBox.classList.add('hidden');
+    const resumeContent = document.getElementById('resume-tailor-content');
+    if (resumeContent) resumeContent.innerHTML = '';
+    const resumeComp = document.getElementById('resume-tailor-company');
+    if (resumeComp) resumeComp.value = '';
+    const resumeTitle = document.getElementById('resume-tailor-title');
+    if (resumeTitle) resumeTitle.value = '';
+
+    const interviewOutputBox = document.getElementById('interview-coach-output-box');
+    if (interviewOutputBox) interviewOutputBox.classList.add('hidden');
+    const interviewContent = document.getElementById('interview-coach-content');
+    if (interviewContent) interviewContent.innerHTML = '';
+    const interviewComp = document.getElementById('interview-coach-company');
+    if (interviewComp) interviewComp.value = '';
+    const interviewTitle = document.getElementById('interview-coach-title');
+    if (interviewTitle) interviewTitle.value = '';
+}
+
 // =============================================================
 // TWO-WAY MESSAGING FUNCTIONS (PARTICIPANT & PM)
 // =============================================================
@@ -3999,8 +4070,10 @@ function openJobHuntingAiModal() {
     if (currentUser && currentUser.location) {
         const locSelect = document.getElementById('job-ai-search-location');
         if (locSelect) {
+            const userLocClean = currentUser.location.toLowerCase();
             for (let opt of locSelect.options) {
-                if (opt.value.toLowerCase().includes(currentUser.location.toLowerCase())) {
+                const optValClean = opt.value.toLowerCase();
+                if (optValClean.includes(userLocClean) || (userLocClean.includes('columbia') && optValClean.includes('columbia')) || (userLocClean.includes('charleston') && optValClean.includes('charleston')) || (userLocClean.includes('spartanburg') && optValClean.includes('spartanburg'))) {
                     opt.selected = true;
                     break;
                 }
@@ -4017,7 +4090,7 @@ function openJobHuntingAiModal() {
         }
     }
 
-    // Auto-run if first time
+    // Always run AI job match for the logged-in user if not already populated for this session
     if (cachedMatchedJobs.length === 0) {
         runAiJobMatch();
     }
