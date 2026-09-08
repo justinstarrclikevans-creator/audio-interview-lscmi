@@ -2285,6 +2285,11 @@ async function loadModalDirectoryResources() {
         });
 
         container.innerHTML = html;
+        const totalJobs = (data.spreadsheetJobs || []).length;
+        const jobsBtn = document.getElementById('res-tab-btn-jobs');
+        if (jobsBtn) {
+            jobsBtn.textContent = `💼 Live Spreadsheet Jobs (${totalJobs} Openings)`;
+        }
         renderModalJobs(data.spreadsheetJobs || []);
     } catch (e) {
         container.innerHTML = '<p>Error loading resources: ' + e.message + '</p>';

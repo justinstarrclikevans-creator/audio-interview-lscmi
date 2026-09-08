@@ -193,6 +193,72 @@ const SC_COMMUNITY_RESOURCES = {
         websiteUrl: "https://catchthecometsc.gov",
         services: "Bus routes connecting residential neighborhoods to Shop Rd, Farrow Rd, and Killian industrial hubs."
       }
+    ],
+    employment_and_training: [
+      {
+        name: "SC Works Midlands (Columbia Center)",
+        category: "State Workforce & Job Placement",
+        phone: "(803) 737-5627",
+        address: "700 Taylor St, Columbia, SC 29201",
+        websiteUrl: "http://www.scworksmidlands.org/",
+        services: "Job matching, resume labs, WIOA training grants, federal bonding program for justice-impacted jobseekers."
+      },
+      {
+        name: "Automation Personnel Services - Columbia",
+        category: "Industrial & Manufacturing Staffing",
+        phone: "(803) 798-8841",
+        address: "1350 Bush River Rd Ste. C, Columbia, SC 29210",
+        websiteUrl: "https://apstemps.com/branch-columbia-sc/",
+        services: "Light industrial, manufacturing assembly, warehouse order pulling, and packaging roles."
+      },
+      {
+        name: "Luttrell Staffing Group - Columbia",
+        category: "Light Industrial & Warehouse Staffing",
+        phone: "(803) 626-0311",
+        address: "SOCO BullStreet, 1721 Saunders St Ste 3, Columbia, SC 29201",
+        websiteUrl: "https://www.luttrellstaffing.com/columbia-sc/",
+        services: "Day shift warehouse associate, machine operation, and manufacturing assembly placements."
+      },
+      {
+        name: "ProLogistix / ResourceMFG Midlands",
+        category: "Logistics & Manufacturing Placement",
+        phone: "(803) 798-1700",
+        address: "3740 Fernandina Rd Ste B, Columbia, SC 29210",
+        websiteUrl: "https://www.resourcemfg.com/locations/columbia-sc/",
+        services: "Dedicated logistics staffing, forklift operators, pick/pack, and machine operators."
+      },
+      {
+        name: "Onin Staffing West Columbia",
+        category: "Warehouse & Production Staffing",
+        phone: "(803) 667-4676",
+        address: "950 Sunset Blvd, West Columbia, SC 29169",
+        websiteUrl: "https://www.oninstaffing.com/",
+        services: "Full-time warehouse fulfillment, packaging, order selecting, and light assembly with immediate benefits."
+      },
+      {
+        name: "Spherion Staffing & Recruiting",
+        category: "Industrial & Distribution Staffing",
+        phone: "(803) 772-4915",
+        address: "4727D Sunset Blvd, Lexington, SC 29072",
+        websiteUrl: "https://www.spherion.com/our-offices/columbia_1183/",
+        services: "Distribution center order selectors, assembly technicians, and general manufacturing roles."
+      },
+      {
+        name: "HireQuest Direct of Columbia & West Columbia",
+        category: "Daily Dispatch & Skilled Trades",
+        phone: "(803) 256-3330",
+        address: "2000 Laurel St, Columbia, SC 29204 / 103 N 12th St, West Columbia, SC 29169",
+        websiteUrl: "https://hirequestdirect.com/columbia-sc/",
+        services: "Construction trade helpers, site clean-up, material handling, event logistics, and commercial labor."
+      },
+      {
+        name: "PeopleReady Columbia",
+        category: "On-Demand Industrial & Trade Labor",
+        phone: "(803) 256-5544",
+        address: "2600 Millwood Ave, Columbia, SC 29205",
+        websiteUrl: "https://locations.peopleready.com/columbia-sc-1304",
+        services: "Immediate industrial, warehousing, construction helper, and hospitality logistics dispatch."
+      }
     ]
   },
 
@@ -406,6 +472,123 @@ const SC_FAIR_CHANCE_EMPLOYERS = [
     felonyPolicy: "Equal opportunity and second-chance advocate for motivated workers.",
     benefits: "Full healthcare from day 1, tuition support, career advancement pathways",
     immediateContact: "Schneider Columbia Talent Acquisition"
+  },
+  {
+    company: "ProLogistix / ResourceMFG Midlands",
+    location: "Columbia (Fernandina Rd) & West Columbia, SC",
+    region: "columbia",
+    industries: ["Logistics", "Distribution", "Manufacturing"],
+    roles: ["Forklift Operator", "Order Puller", "Machine Operator"],
+    payRate: "$17.50 – $21.50 / hr",
+    shift: "1st & 2nd Shifts Available (Curfew-friendly schedules)",
+    careersUrl: "https://www.resourcemfg.com/locations/columbia-sc/",
+    felonyPolicy: "Fair-Chance Partner. Matches jobseekers based on skills, reliability, and safety record.",
+    benefits: "Weekly pay, free online skills courses, medical/dental benefits",
+    immediateContact: "ProLogistix Columbia Branch • (803) 798-1700"
+  },
+  {
+    company: "Automation Personnel Services - Columbia",
+    location: "Columbia (Bush River Rd corridor), SC",
+    region: "columbia",
+    industries: ["Light Industrial", "Packaging", "Assembly"],
+    roles: ["Packaging Technician", "Assembly Specialist", "Warehouse Stager"],
+    payRate: "$16.50 – $20.00 / hr",
+    shift: "Day Shift (7:00 AM – 3:30 PM)",
+    careersUrl: "https://apstemps.com/branch-columbia-sc/",
+    felonyPolicy: "Active second-chance staffing partner. Backgrounds evaluated individually.",
+    benefits: "Direct deposit, health benefits, holiday and vacation pay",
+    immediateContact: "Automation Personnel Recruiting Team • (803) 798-8841"
+  },
+  {
+    company: "Luttrell Staffing Group - Columbia",
+    location: "Columbia (SOCO BullStreet) & Cayce, SC",
+    region: "columbia",
+    industries: ["Manufacturing", "Warehouse", "Distribution"],
+    roles: ["Production Assembler", "Shipping/Receiving Clerk", "Material Handler"],
+    payRate: "$17.00 – $21.00 / hr",
+    shift: "1st Shift (Daytime)",
+    careersUrl: "https://www.luttrellstaffing.com/columbia-sc/",
+    felonyPolicy: "Fair-Chance employer. Focuses on punctuality, attitude, and job readiness.",
+    benefits: "Weekly pay, direct deposit, safety recognition awards",
+    immediateContact: "Luttrell Staffing Columbia • (803) 626-0311 • wayala@lstaff.com"
+  },
+  {
+    company: "Onin Staffing West Columbia",
+    location: "West Columbia & Sunset Blvd Industrial Hub, SC",
+    region: "columbia",
+    industries: ["Logistics", "Food Processing", "Assembly"],
+    roles: ["Order Selector", "General Warehouse Teammate", "Machine Feeder"],
+    payRate: "$16.50 – $20.50 / hr",
+    shift: "1st Shift (6:30 AM – 3:00 PM)",
+    careersUrl: "https://www.oninstaffing.com/",
+    felonyPolicy: "The Onin Group Teammate-first philosophy with fair-chance opportunities.",
+    benefits: "$5 copay health plan, dental, vision, free teledoctor, scholarship programs",
+    immediateContact: "Onin Staffing West Columbia • (803) 667-4676"
+  },
+  {
+    company: "Spherion Staffing & Recruiting Midlands",
+    location: "Lexington & Columbia, SC",
+    region: "columbia",
+    industries: ["Distribution", "Packaging", "Light Manufacturing"],
+    roles: ["Distribution Center Associate", "Quality Inspection Helper", "Assembly Worker"],
+    payRate: "$17.50 – $22.00 / hr",
+    shift: "Day Shift (7:00 AM – 3:30 PM)",
+    careersUrl: "https://www.spherion.com/our-offices/columbia_1183/",
+    felonyPolicy: "Second-chance supportive. Individualized evaluations.",
+    benefits: "Weekly pay, training incentives, path to permanent placement",
+    immediateContact: "Spherion Lexington/Columbia Office • (803) 772-4915"
+  },
+  {
+    company: "HireQuest Direct Columbia & West Columbia",
+    location: "Columbia (Laurel St) & West Columbia (12th St), SC",
+    region: "columbia",
+    industries: ["Construction Trades", "General Labor", "Event Logistics"],
+    roles: ["Construction Helper", "Commercial Site Prep Laborer", "Material Mover"],
+    payRate: "$16.00 – $21.00 / hr",
+    shift: "Day Shifts / Early Morning Dispatch (6:00 AM)",
+    careersUrl: "https://hirequestdirect.com/columbia-sc/",
+    felonyPolicy: "Fair-chance dispatch for construction, demolition, and industrial cleanup.",
+    benefits: "Daily or weekly pay options, safety equipment provided",
+    immediateContact: "HireQuest Columbia • (803) 256-3330 • columbiasc@hirequestdirect.com"
+  },
+  {
+    company: "PeopleReady Midlands",
+    location: "Columbia (Millwood Ave), SC",
+    region: "columbia",
+    industries: ["Industrial", "Warehousing", "Skilled Trades"],
+    roles: ["General Laborer", "Warehouse Associate", "Construction Gate Flagger"],
+    payRate: "$16.50 – $20.00 / hr",
+    shift: "Day Shift Dispatch (Flexible days)",
+    careersUrl: "https://locations.peopleready.com/columbia-sc-1304",
+    felonyPolicy: "Fair-Chance. Connects motivated workers to immediate local assignments.",
+    benefits: "JobStack mobile app dispatch, fast pay cards, referral bonuses",
+    immediateContact: "PeopleReady Columbia • (803) 256-5544"
+  },
+  {
+    company: "Condustrial Inc Midlands",
+    location: "West Columbia (Sunset Blvd), SC",
+    region: "columbia",
+    industries: ["Skilled Industrial", "Trades", "Machining"],
+    roles: ["Industrial Assembly Helper", "Carpentry Helper", "Concrete Laborer"],
+    payRate: "$17.50 – $23.00 / hr",
+    shift: "Day Shift (7:00 AM – 3:30 PM)",
+    careersUrl: "http://www.condustrial.com/",
+    felonyPolicy: "Fair-chance employer supporting re-entry trade careers.",
+    benefits: "Safety training, tool programs, high placement retention",
+    immediateContact: "Condustrial Hiring Office • (803) 454-0340 • info@condustrial.com"
+  },
+  {
+    company: "SC Works Midlands Career Center",
+    location: "Columbia (Taylor St), SC",
+    region: "columbia",
+    industries: ["State Workforce", "Apprenticeships", "Direct Placements"],
+    roles: ["Registered Apprenticeship Trainee", "WIOA On-the-Job Training Placements"],
+    payRate: "$17.00 – $24.00 / hr (Varies by employer partner)",
+    shift: "Standard business & industrial shifts",
+    careersUrl: "http://www.scworksmidlands.org/",
+    felonyPolicy: "State workforce agency with specialized justice-impacted workforce navigators & Federal Bonding.",
+    benefits: "No-cost certifications, paid on-the-job training, supportive transit grants",
+    immediateContact: "SC Works Midlands • (803) 737-5627"
   },
 
   // Spartanburg, Greenville & Upstate Employers

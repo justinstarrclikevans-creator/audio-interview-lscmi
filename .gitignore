@@ -5,7 +5,8 @@ email-settings.txt
 *.sqlite
 *.sqlite-wal
 *.sqlite-shm
-data/
+data/*
+!data/*.xlsx
 test_*.js
 rerun_*.js
 
