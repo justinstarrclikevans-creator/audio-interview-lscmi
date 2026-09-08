@@ -1529,12 +1529,75 @@ async function loadCaseload() {
             return;
         }
 
-        tbody.innerHTML = roster.map(p => `
+        tbody.innerHTML = roster.map(p => {
+            const dtYes = p.has_drug_test_this_week;
+            const cmYes = p.has_case_management_this_week;
+            const dtDetail = p.drug_test_details;
+            const cmDetail = p.case_management_details;
+            const escName = p.name.replace(/'/g, "\\'");
+
+            // Format Drug Test Box
+            let dtBadgeHtml = '';
+            if (dtYes) {
+                const resClass = dtDetail && dtDetail.result === 'negative' ? 'background: #dcfce7; color: #15803d; border: 1.5px solid #86efac;' :
+                                 (dtDetail && dtDetail.result === 'positive' ? 'background: #fee2e2; color: #b91c1c; border: 1.5px solid #fca5a5;' : 'background: #fef3c7; color: #b45309; border: 1.5px solid #fcd34d;');
+                const resLabel = dtDetail ? dtDetail.result.toUpperCase() : 'TESTED';
+                const resDate = dtDetail && dtDetail.test_date ? dtDetail.test_date.substring(5) : '';
+                dtBadgeHtml = `
+                    <div style="${resClass} padding: 5px 8px; border-radius: 6px; text-align: center; font-weight: 800; font-size: 11px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.05);" onclick="openLoadProgramFormsModal('drugtest', ${p.id})" title="Click to view/add drug test">
+                        <div>✅ YES</div>
+                        <div style="font-size: 9.5px; font-weight: 700; margin-top: 1px;">${resLabel} ${resDate ? `(${resDate})` : ''}</div>
+                    </div>
+                `;
+            } else {
+                dtBadgeHtml = `
+                    <div style="background: #fef2f2; color: #dc2626; border: 1.5px solid #fecaca; padding: 5px 8px; border-radius: 6px; text-align: center; font-weight: 800; font-size: 11px; cursor: pointer;" onclick="openLoadProgramFormsModal('drugtest', ${p.id})" title="Click to log drug test">
+                        <div>❌ NO</div>
+                        <div style="font-size: 9px; font-weight: 600; margin-top: 1px; color: #ef4444;">+ Log Screen</div>
+                    </div>
+                `;
+            }
+
+            // Format Case Management Box
+            let cmBadgeHtml = '';
+            if (cmYes) {
+                const cmDate = cmDetail && cmDetail.date ? cmDetail.date.substring(5) : '';
+                const totalNotes = p.total_notes_this_week || 1;
+                cmBadgeHtml = `
+                    <div style="background: #dbeafe; color: #1d4ed8; border: 1.5px solid #93c5fd; padding: 5px 8px; border-radius: 6px; text-align: center; font-weight: 800; font-size: 11px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.05);" onclick="openLoadProgramFormsModal('casenotes', ${p.id})" title="Click to view/add session">
+                        <div>✅ YES</div>
+                        <div style="font-size: 9.5px; font-weight: 700; margin-top: 1px;">${totalNotes > 1 ? `${totalNotes} Notes` : '1 Session'} ${cmDate ? `(${cmDate})` : ''}</div>
+                    </div>
+                `;
+            } else {
+                cmBadgeHtml = `
+                    <div style="background: #fff7ed; color: #c2410c; border: 1.5px solid #fed7aa; padding: 5px 8px; border-radius: 6px; text-align: center; font-weight: 800; font-size: 11px; cursor: pointer;" onclick="openLoadProgramFormsModal('casenotes', ${p.id})" title="Click to log 1-on-1 session">
+                        <div>❌ NO</div>
+                        <div style="font-size: 9px; font-weight: 600; margin-top: 1px; color: #ea580c;">+ Log CM</div>
+                    </div>
+                `;
+            }
+
+            return `
             <tr style="${p.overall_status === 'archived' ? 'opacity: 0.65; background: #f8fafc;' : ''}">
                 <td>
-                    <strong>${p.name}</strong>
-                    <div style="font-size: 11px; color: var(--slate);">${p.email} • ${p.phone || 'No phone'}</div>
+                    <div style="display: flex; align-items: baseline; gap: 6px;">
+                        <strong style="font-size: 13px;">${p.name}</strong>
+                        <button class="btn btn-outline" style="padding: 1px 5px; font-size: 10px; border-color: #cbd5e1; color: #475569;" onclick="openCorrectionModal(${p.id}, '${escName}')" title="Correct Information / Type Notes">
+                            ✏️ Fix / Note
+                        </button>
+                    </div>
+                    <div style="font-size: 11px; color: var(--slate); margin-top: 2px;">${p.email} • ${p.phone || 'No phone'}</div>
+                    ${p.correction_notes ? `<div style="margin-top: 4px; font-size: 10.5px; background: #fefce8; border-left: 2px solid #eab308; padding: 2px 6px; border-radius: 3px; color: #713f12; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${p.correction_notes.replace(/"/g, '&quot;')}"><strong>Staff Note:</strong> ${p.correction_notes}</div>` : ''}
                     ${p.overall_status === 'archived' ? '<span class="badge badge-red" style="font-size: 10px; margin-top: 3px;">Archived</span>' : ''}
+                </td>
+                <td>
+                    <div style="font-size: 12.5px; font-weight: 800; color: #1e293b;">
+                        Week ${p.weeks_enrolled || 1}
+                    </div>
+                    <div style="font-size: 10.5px; color: var(--slate); cursor: pointer;" onclick="openCorrectionModal(${p.id}, '${escName}')" title="Click to adjust enrollment start date">
+                        ${p.enrollment_date ? `Since ${p.enrollment_date}` : 'Set Start Date'}
+                    </div>
                 </td>
                 <td>
                     <span class="badge ${p.track === 'first_shift' ? 'badge-green' : 'badge-pending'}">
@@ -1544,6 +1607,25 @@ async function loadCaseload() {
                 </td>
                 <td>
                     <strong>Gate ${p.current_gate || 1}</strong>
+                </td>
+                <td>
+                    <div style="font-size: 12.5px; font-weight: 800; color: var(--primary);">
+                        ${p.currentWeekPoints || 0} <span style="font-size: 11px; font-weight: normal; color: var(--slate);">/ 50 pts</span>
+                    </div>
+                    <div style="font-size: 10.5px; color: var(--slate); margin-top: 2px;">
+                        Avg: ${p.weeklyPointsAvg ? Number(p.weeklyPointsAvg).toFixed(1) : '--'}
+                    </div>
+                    <div style="margin-top: 3px; display: flex; gap: 4px;">
+                        <a href="javascript:void(0)" onclick="openLoadProgramFormsModal('points', ${p.id})" style="font-size: 10px; color: var(--accent); font-weight: 700; text-decoration: underline;">+ Daily Pts</a>
+                        <span style="color: #cbd5e1;">|</span>
+                        <a href="javascript:void(0)" onclick="openWeeklyPointsModal(${p.id}, '${escName}')" style="font-size: 10px; color: var(--slate); text-decoration: underline;">History</a>
+                    </div>
+                </td>
+                <td style="text-align: center; vertical-align: middle;">
+                    ${dtBadgeHtml}
+                </td>
+                <td style="text-align: center; vertical-align: middle;">
+                    ${cmBadgeHtml}
                 </td>
                 <td>
                     <span class="badge ${p.w9_status === 'verified' ? 'badge-green' : (p.w9_status === 'submitted' ? 'badge-pending' : 'badge-red')}">
@@ -1558,24 +1640,18 @@ async function loadCaseload() {
                     </div>
                 </td>
                 <td>
-                    <div style="font-size: 12px; font-weight: 700; color: var(--primary);">
-                        ${p.weeklyPointsAvg ? Number(p.weeklyPointsAvg).toFixed(1) : '--'} / 50
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <button class="btn btn-outline" style="padding: 3px 8px; font-size: 11px; color: var(--primary);" onclick="openCaseNotesModal(${p.id}, '${escName}', '${p.email}', '${p.track}')">
+                            📝 Notes
+                        </button>
+                        <button class="btn btn-outline" style="padding: 2px 6px; font-size: 10px; color: #4338ca; border-color: #c7d2fe;" onclick="openCmBriefcaseAuditModal(${p.id})">
+                            📊 CM Audit
+                        </button>
                     </div>
-                    <div style="font-size: 11px; color: var(--slate); margin-top: 2px;">
-                        Cur Wk: ${p.currentWeekPoints || 0} pts
-                    </div>
-                    <div style="margin-top: 3px;">
-                        <a href="javascript:void(0)" onclick="openWeeklyPointsModal(${p.id}, '${p.name.replace(/'/g, "\\'")}')" style="font-size: 10.5px; color: var(--accent); text-decoration: underline;">View Weeks &rarr;</a>
-                    </div>
-                </td>
-                <td>
-                    <button class="btn btn-outline" style="padding: 3px 8px; font-size: 11px; color: var(--primary);" onclick="openCaseNotesModal(${p.id}, '${p.name.replace(/'/g, "\\'")}', '${p.email}', '${p.track}')">
-                        📝 Notes
-                    </button>
                 </td>
                 <td>
                     <div>
-                        <button class="btn btn-outline" style="padding: 3px 8px; font-size: 11px; font-weight: 600; color: var(--primary); border-color: #93c5fd; background: #eff6ff;" onclick="openStaffCasePlanModal(${p.id}, '${p.name.replace(/'/g, "\\'")}')">
+                        <button class="btn btn-outline" style="padding: 3px 8px; font-size: 11px; font-weight: 600; color: var(--primary); border-color: #93c5fd; background: #eff6ff;" onclick="openStaffCasePlanModal(${p.id}, '${escName}')">
                             📄 Case Plan
                         </button>
                     </div>
@@ -1585,27 +1661,27 @@ async function loadCaseload() {
                                 🧭 ${p.reentry_status ? p.reentry_status.toUpperCase().replace(/_/g, ' ') : 'ASSESSED'}
                             </span>
                         ` : `
-                            <a href="javascript:void(0)" onclick="startReentryAssessmentForUser(${p.id}, '${p.name.replace(/'/g, "\\'")}')" style="font-size: 10.5px; color: var(--accent); text-decoration: underline;">+ Reentry Assess</a>
+                            <a href="javascript:void(0)" onclick="startReentryAssessmentForUser(${p.id}, '${escName}')" style="font-size: 10.5px; color: var(--accent); text-decoration: underline;">+ Reentry Assess</a>
                         `}
                     </div>
                 </td>
                 <td>
                     <div style="display: flex; gap: 4px; flex-wrap: wrap;">
-                        <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px;" onclick="openCaseReviewModal(${p.id}, '${p.name.replace(/'/g, "\\'")}')" title="Weekly Case Review">
+                        <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px;" onclick="openCaseReviewModal(${p.id}, '${escName}')" title="Weekly Case Review">
                             📋 Review
                         </button>
-                        <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: #4338ca; border-color: #c7d2fe;" onclick="openPmCbtReviewModal(${p.id}, '${p.name.replace(/'/g, "\\'")}')" title="View CBT Worksheets & Tools">
+                        <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: #4338ca; border-color: #c7d2fe;" onclick="openPmCbtReviewModal(${p.id}, '${escName}')" title="View CBT Worksheets & Tools">
                             🧠 CBT
                         </button>
-                        <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: #4338ca; border-color: #c7d2fe;" onclick="promptSwitchTrack(${p.id}, '${p.name.replace(/'/g, "\\'")}', '${p.track}')" title="Switch Track">
+                        <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: #4338ca; border-color: #c7d2fe;" onclick="promptSwitchTrack(${p.id}, '${escName}', '${p.track}')" title="Switch Track">
                             🔄 Track
                         </button>
                         ${p.overall_status === 'archived' ? `
-                            <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: var(--success); border-color: #86efac;" onclick="toggleArchiveParticipant(${p.id}, '${p.name.replace(/'/g, "\\'")}', 'restore')" title="Restore to Caseload">
+                            <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: var(--success); border-color: #86efac;" onclick="toggleArchiveParticipant(${p.id}, '${escName}', 'restore')" title="Restore to Caseload">
                                 ♻️ Restore
                             </button>
                         ` : `
-                            <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: var(--danger); border-color: #fca5a5;" onclick="toggleArchiveParticipant(${p.id}, '${p.name.replace(/'/g, "\\'")}', 'archive')" title="Remove / Archive Participant">
+                            <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: var(--danger); border-color: #fca5a5;" onclick="toggleArchiveParticipant(${p.id}, '${escName}', 'archive')" title="Remove / Archive Participant">
                                 🗑️ Remove
                             </button>
                         `}
@@ -1615,7 +1691,8 @@ async function loadCaseload() {
                     </div>
                 </td>
             </tr>
-        `).join('');
+            `;
+        }).join('');
     } catch (e) {
         console.error('Failed to load caseload:', e);
     }
@@ -4868,4 +4945,559 @@ async function openPmCbtReviewModal(userId, name) {
         bodyEl.innerHTML = `<p style="color: var(--danger);">Error loading CBT worksheets: ${e.message}</p>`;
     }
 }
+
+// =========================================================
+// LOAD PROGRAM FORMS (POINTS, DRUG TEST, CASE MANAGEMENT)
+// =========================================================
+
+let currentRosterCache = [];
+
+async function populateParticipantSelectOptions(selectedUserId = null) {
+    const token = localStorage.getItem('fs_token');
+    if (!token) return;
+
+    try {
+        const res = await fetch('/api/admin/caseload', { headers: { 'Authorization': `Bearer ${token}` } });
+        const roster = await safeApiResponse(res);
+        if (Array.isArray(roster)) {
+            currentRosterCache = roster;
+            const selectIds = ['spe-user-id', 'sdt-user-id', 'scn-user-id', 'cm-audit-user-select'];
+            selectIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    const placeholder = id === 'cm-audit-user-select' ? '<option value="">-- Choose a participant to audit --</option>' : '<option value="">Select participant...</option>';
+                    el.innerHTML = placeholder + roster.map(p => `
+                        <option value="${p.id}" ${selectedUserId && String(p.id) === String(selectedUserId) ? 'selected' : ''}>
+                            ${p.name} (${p.track === 'first_shift' ? 'First Shift' : 'Reentry Nav'} • Gate ${p.current_gate || 1})
+                        </option>
+                    `).join('');
+                }
+            });
+        }
+    } catch(e) {
+        console.error('Failed to populate participant options:', e);
+    }
+}
+
+function switchLoadProgramTab(tab) {
+    const tabs = ['points', 'drugtest', 'casenotes'];
+    tabs.forEach(t => {
+        const btn = document.getElementById(`lpf-tab-${t}`);
+        const view = document.getElementById(`lpf-view-${t}`);
+        if (btn && view) {
+            if (t === tab) {
+                btn.className = 'btn btn-primary';
+                view.classList.remove('hidden');
+            } else {
+                btn.className = 'btn btn-outline';
+                view.classList.add('hidden');
+            }
+        }
+    });
+}
+
+async function openLoadProgramFormsModal(tab = 'points', selectedUserId = null) {
+    await populateParticipantSelectOptions(selectedUserId);
+    switchLoadProgramTab(tab);
+
+    const todayStr = new Date().toISOString().split('T')[0];
+    const dateIds = ['spe-date', 'sdt-date', 'scn-date'];
+    dateIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && !el.value) el.value = todayStr;
+    });
+
+    if (selectedUserId) {
+        ['spe-user-id', 'sdt-user-id', 'scn-user-id'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = selectedUserId;
+        });
+    }
+
+    openModal('modal-load-program-forms');
+}
+
+// Handler: Batch upload Daily Points
+async function handlePointsBatchUpload(event) {
+    event.preventDefault();
+    const token = localStorage.getItem('fs_token');
+    const fileInput = document.getElementById('points-file-input');
+    const statusEl = document.getElementById('points-upload-status');
+    const submitBtn = document.getElementById('btn-upload-points-submit');
+
+    if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+        alert('Please choose an Excel or CSV file.');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+
+    try {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Importing Points...';
+        statusEl.innerHTML = '<span style="color: var(--primary);">Reading spreadsheet and syncing daily points...</span>';
+
+        const res = await fetch('/api/admin/apricot/import-points', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` },
+            body: formData
+        });
+        const data = await safeApiResponse(res);
+
+        if (res.ok) {
+            statusEl.innerHTML = `<span style="color: var(--success);">✅ Successfully processed ${data.rowsProcessed || 0} records (${data.matchedUsersCount || 0} participants updated).</span>`;
+            fileInput.value = '';
+            loadCaseload();
+        } else {
+            statusEl.innerHTML = `<span style="color: var(--danger);">❌ Upload failed: ${data.error || 'Server error'}</span>`;
+        }
+    } catch(e) {
+        statusEl.innerHTML = `<span style="color: var(--danger);">❌ Network error: ${e.message}</span>`;
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Upload & Sync Points';
+    }
+}
+
+// Handler: Single Daily Point Submit
+async function handleSinglePointSubmit(event) {
+    event.preventDefault();
+    const token = localStorage.getItem('fs_token');
+    const statusEl = document.getElementById('single-point-status');
+    const userId = document.getElementById('spe-user-id').value;
+    const date = document.getElementById('spe-date').value;
+    const points = document.getElementById('spe-points').value;
+    const attendanceStatus = document.getElementById('spe-status').value;
+    const notes = document.getElementById('spe-notes').value;
+
+    try {
+        statusEl.innerHTML = '<span style="color: var(--primary);">Saving...</span>';
+        const res = await fetch('/api/pm/daily-point', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId, date, points, attendanceStatus, notes })
+        });
+        const data = await safeApiResponse(res);
+
+        if (res.ok) {
+            statusEl.innerHTML = '<span style="color: var(--success);">✅ Daily point logged successfully!</span>';
+            document.getElementById('spe-notes').value = '';
+            loadCaseload();
+            setTimeout(() => { statusEl.innerHTML = ''; }, 3500);
+        } else {
+            statusEl.innerHTML = `<span style="color: var(--danger);">❌ Error: ${data.error || 'Could not save'}</span>`;
+        }
+    } catch(e) {
+        statusEl.innerHTML = `<span style="color: var(--danger);">❌ Network error: ${e.message}</span>`;
+    }
+}
+
+// Handler: Batch upload Drug Tests
+async function handleDrugTestBatchUpload(event) {
+    event.preventDefault();
+    const token = localStorage.getItem('fs_token');
+    const fileInput = document.getElementById('drugtest-file-input');
+    const statusEl = document.getElementById('drugtest-upload-status');
+    const submitBtn = document.getElementById('btn-upload-dt-submit');
+
+    if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+        alert('Please choose an Excel or CSV drug test file.');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+
+    try {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Uploading Drug Tests...';
+        statusEl.innerHTML = '<span style="color: var(--primary);">Importing drug test records...</span>';
+
+        const res = await fetch('/api/pm/import-drug-tests', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` },
+            body: formData
+        });
+        const data = await safeApiResponse(res);
+
+        if (res.ok) {
+            statusEl.innerHTML = `<span style="color: var(--success);">✅ Processed ${data.rowsProcessed || 0} screens (${data.insertedRecords || 0} logged, ${data.matchedUsersCount || 0} participants matched).</span>`;
+            fileInput.value = '';
+            loadCaseload();
+        } else {
+            statusEl.innerHTML = `<span style="color: var(--danger);">❌ Upload failed: ${data.error || 'Server error'}</span>`;
+        }
+    } catch(e) {
+        statusEl.innerHTML = `<span style="color: var(--danger);">❌ Network error: ${e.message}</span>`;
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Upload & Sync Drug Tests';
+    }
+}
+
+// Handler: Single Drug Test Submit
+async function handleSingleDrugTestSubmit(event) {
+    event.preventDefault();
+    const token = localStorage.getItem('fs_token');
+    const statusEl = document.getElementById('single-drugtest-status');
+    const userId = document.getElementById('sdt-user-id').value;
+    const testDate = document.getElementById('sdt-date').value;
+    const result = document.getElementById('sdt-result').value;
+    const substancesDetected = document.getElementById('sdt-substances').value;
+    const notes = document.getElementById('sdt-notes').value;
+
+    try {
+        statusEl.innerHTML = '<span style="color: var(--primary);">Saving screen...</span>';
+        const res = await fetch('/api/pm/drug-test', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId, testDate, result, substancesDetected, notes })
+        });
+        const data = await safeApiResponse(res);
+
+        if (res.ok) {
+            statusEl.innerHTML = '<span style="color: var(--success);">✅ Drug test logged successfully! Compliance updated.</span>';
+            document.getElementById('sdt-substances').value = '';
+            document.getElementById('sdt-notes').value = '';
+            loadCaseload();
+            setTimeout(() => { statusEl.innerHTML = ''; }, 3500);
+        } else {
+            statusEl.innerHTML = `<span style="color: var(--danger);">❌ Error: ${data.error || 'Could not save'}</span>`;
+        }
+    } catch(e) {
+        statusEl.innerHTML = `<span style="color: var(--danger);">❌ Network error: ${e.message}</span>`;
+    }
+}
+
+// Handler: Batch upload Case Management Notes
+async function handleCaseNotesBatchUpload(event) {
+    event.preventDefault();
+    const token = localStorage.getItem('fs_token');
+    const fileInput = document.getElementById('casenotes-file-input');
+    const statusEl = document.getElementById('casenotes-upload-status');
+    const submitBtn = document.getElementById('btn-upload-cn-submit');
+
+    if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+        alert('Please choose an Excel or CSV file.');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+
+    try {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Importing Notes...';
+        statusEl.innerHTML = '<span style="color: var(--primary);">Importing narrative case notes...</span>';
+
+        const res = await fetch('/api/pm/import-case-notes', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` },
+            body: formData
+        });
+        const data = await safeApiResponse(res);
+
+        if (res.ok) {
+            statusEl.innerHTML = `<span style="color: var(--success);">✅ Imported ${data.insertedRecords || 0} case notes across ${data.matchedUsersCount || 0} participants.</span>`;
+            fileInput.value = '';
+            loadCaseload();
+        } else {
+            statusEl.innerHTML = `<span style="color: var(--danger);">❌ Upload failed: ${data.error || 'Server error'}</span>`;
+        }
+    } catch(e) {
+        statusEl.innerHTML = `<span style="color: var(--danger);">❌ Network error: ${e.message}</span>`;
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Upload & Import Case Notes';
+    }
+}
+
+// Handler: Single Case Note Submit
+async function handleSingleCaseNoteSubmit(event) {
+    event.preventDefault();
+    const token = localStorage.getItem('fs_token');
+    const statusEl = document.getElementById('single-casenote-status');
+    const userId = document.getElementById('scn-user-id').value;
+    const sessionDate = document.getElementById('scn-date').value;
+    const category = document.getElementById('scn-category').value;
+    const noteType = document.getElementById('scn-type').value;
+    const content = document.getElementById('scn-content').value;
+
+    try {
+        statusEl.innerHTML = '<span style="color: var(--primary);">Saving session...</span>';
+        const res = await fetch('/api/admin/case-notes', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                userId,
+                category,
+                noteType,
+                content: `[Session Date: ${sessionDate}] ${content}`
+            })
+        });
+        const data = await safeApiResponse(res);
+
+        if (res.ok) {
+            statusEl.innerHTML = '<span style="color: var(--success);">✅ Case management note saved & compliance box updated!</span>';
+            document.getElementById('scn-content').value = '';
+            loadCaseload();
+            setTimeout(() => { statusEl.innerHTML = ''; }, 3500);
+        } else {
+            statusEl.innerHTML = `<span style="color: var(--danger);">❌ Error: ${data.error || 'Could not save'}</span>`;
+        }
+    } catch(e) {
+        statusEl.innerHTML = `<span style="color: var(--danger);">❌ Network error: ${e.message}</span>`;
+    }
+}
+
+// =========================================================
+// PARTICIPANT CORRECTION & FIX NOTES MODAL
+// =========================================================
+
+async function openCorrectionModal(userId, userName) {
+    const token = localStorage.getItem('fs_token');
+    document.getElementById('pc-user-id').value = userId;
+    document.getElementById('pc-modal-subtitle').textContent = `Editing corrections and official status for ${userName}`;
+    document.getElementById('pc-save-status').innerHTML = '';
+
+    // Fetch participant profile to populate current values
+    try {
+        const res = await fetch(`/api/admin/caseload`, { headers: { 'Authorization': `Bearer ${token}` } });
+        const roster = await safeApiResponse(res);
+        const p = Array.isArray(roster) ? roster.find(item => String(item.id) === String(userId)) : null;
+
+        if (p) {
+            document.getElementById('pc-notes').value = p.correction_notes || '';
+            document.getElementById('pc-enrollment-date').value = p.enrollment_date || '';
+            document.getElementById('pc-dl-status').value = p.dl_status || 'unknown';
+            document.getElementById('pc-child-support-status').value = p.child_support_status || 'unknown';
+            document.getElementById('pc-housing-status').value = p.housing_status || 'stable';
+        }
+    } catch(e) {
+        console.error('Failed to pre-fill correction modal:', e);
+    }
+
+    openModal('modal-participant-correction');
+}
+
+async function handleParticipantCorrectionSubmit(event) {
+    event.preventDefault();
+    const token = localStorage.getItem('fs_token');
+    const saveBtn = document.getElementById('btn-save-correction');
+    const statusEl = document.getElementById('pc-save-status');
+
+    const userId = document.getElementById('pc-user-id').value;
+    const correctionNotes = document.getElementById('pc-notes').value;
+    const enrollmentDate = document.getElementById('pc-enrollment-date').value;
+    const dlStatus = document.getElementById('pc-dl-status').value;
+    const childSupportStatus = document.getElementById('pc-child-support-status').value;
+    const housingStatus = document.getElementById('pc-housing-status').value;
+
+    try {
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Saving...';
+        statusEl.innerHTML = '<span style="color: var(--primary);">Updating participant information...</span>';
+
+        const res = await fetch('/api/pm/participant-correction', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                userId,
+                correctionNotes,
+                enrollmentDate,
+                dlStatus,
+                childSupportStatus,
+                housingStatus
+            })
+        });
+        const data = await safeApiResponse(res);
+
+        if (res.ok) {
+            statusEl.innerHTML = '<span style="color: var(--success);">✅ Participant profile and corrections saved successfully!</span>';
+            loadCaseload();
+            setTimeout(() => {
+                closeModal('modal-participant-correction');
+                statusEl.innerHTML = '';
+            }, 1200);
+        } else {
+            statusEl.innerHTML = `<span style="color: var(--danger);">❌ Error: ${data.error || 'Update failed'}</span>`;
+        }
+    } catch(e) {
+        statusEl.innerHTML = `<span style="color: var(--danger);">❌ Network error: ${e.message}</span>`;
+    } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = '💾 Save Corrections';
+    }
+}
+
+// =========================================================
+// CASE MANAGEMENT VS. BRIEFCASE AUDIT REPORT MODAL
+// =========================================================
+
+async function openCmBriefcaseAuditModal(userId = null) {
+    await populateParticipantSelectOptions(userId);
+    const select = document.getElementById('cm-audit-user-select');
+    if (select && userId) {
+        select.value = userId;
+    }
+    openModal('modal-cm-briefcase-report');
+    if (userId) {
+        loadCmAuditForSelectedUser();
+    }
+}
+
+async function loadCmAuditForSelectedUser() {
+    const token = localStorage.getItem('fs_token');
+    const select = document.getElementById('cm-audit-user-select');
+    const bodyEl = document.getElementById('cm-audit-report-body');
+    const userId = select ? select.value : null;
+
+    if (!userId) {
+        bodyEl.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--slate);">Please select a participant from the dropdown above.</div>';
+        return;
+    }
+
+    bodyEl.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--primary);">Analyzing clinical notes against 6-domain briefcase checklist...</div>';
+
+    try {
+        const res = await fetch(`/api/pm/reports/cm-briefcase-audit/${userId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await safeApiResponse(res);
+
+        if (!res.ok) {
+            bodyEl.innerHTML = `<div style="color: var(--danger); padding: 20px;">Error generating audit: ${data.error || 'Server error'}</div>`;
+            return;
+        }
+
+        const audit = data;
+        const discCount = audit.discrepancies ? audit.discrepancies.length : 0;
+        const verCount = audit.verified ? audit.verified.length : 0;
+        const unaddCount = audit.unaddressedBarriers ? audit.unaddressedBarriers.length : 0;
+        const pName = audit.participantName || 'Participant';
+
+        let html = `
+            <!-- Top Summary Cards -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 20px;">
+                <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 14px;">
+                    <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase;">Participant Profile</div>
+                    <div style="font-size: 16px; font-weight: 800; color: #0f172a; margin-top: 4px;">${pName}</div>
+                    <div style="font-size: 12px; color: var(--slate); margin-top: 2px;">
+                        Audited on ${audit.auditDate || 'Today'} • ${audit.totalNotesCount || 0} Total Notes Evaluated
+                    </div>
+                </div>
+
+                <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 14px;">
+                    <div style="font-size: 11px; font-weight: 700; color: #1d4ed8; text-transform: uppercase;">Briefcase Status</div>
+                    <div style="font-size: 18px; font-weight: 800; color: #1e40af; margin-top: 4px;">
+                        ${audit.summary ? audit.summary.completedBriefcaseCount : 0} / ${audit.summary ? audit.summary.totalBriefcaseItems : 0} Done
+                    </div>
+                    <div style="font-size: 11.5px; color: #3b82f6; margin-top: 2px;">
+                        ${audit.summary ? audit.summary.briefcaseCompletionRate : 0}% Briefcase Progress
+                    </div>
+                </div>
+
+                <div style="background: ${discCount > 0 ? '#fef2f2' : '#f0fdf4'}; border: 1px solid ${discCount > 0 ? '#fecaca' : '#bbf7d0'}; border-radius: 8px; padding: 14px;">
+                    <div style="font-size: 11px; font-weight: 700; color: ${discCount > 0 ? '#b91c1c' : '#15803d'}; text-transform: uppercase;">Briefcase Mismatches</div>
+                    <div style="font-size: 18px; font-weight: 800; color: ${discCount > 0 ? '#dc2626' : '#16a34a'}; margin-top: 4px;">
+                        ${discCount} Discrepanc${discCount === 1 ? 'y' : 'ies'}
+                    </div>
+                    <div style="font-size: 11.5px; color: ${discCount > 0 ? '#ef4444' : '#22c55e'}; margin-top: 2px;">
+                        ${discCount > 0 ? 'Notes show item completed but checklist pending' : 'Checklist matches notes'}
+                    </div>
+                </div>
+
+                <div style="background: ${unaddCount > 0 ? '#fff7ed' : '#f8fafc'}; border: 1px solid ${unaddCount > 0 ? '#fed7aa' : '#cbd5e1'}; border-radius: 8px; padding: 14px;">
+                    <div style="font-size: 11px; font-weight: 700; color: ${unaddCount > 0 ? '#c2410c' : '#64748b'}; text-transform: uppercase;">Unaddressed Barriers</div>
+                    <div style="font-size: 18px; font-weight: 800; color: ${unaddCount > 0 ? '#ea580c' : '#334155'}; margin-top: 4px;">
+                        ${unaddCount} Unaddressed
+                    </div>
+                    <div style="font-size: 11.5px; color: ${unaddCount > 0 ? '#f97316' : '#64748b'}; margin-top: 2px;">
+                        Red checklist barriers lacking notes
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 1: DISCREPANCIES (Notes indicate done, Briefcase is pending) -->
+            ${discCount > 0 ? `
+                <div style="background: #fff1f2; border: 1px solid #fecdd3; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+                    <h4 style="margin: 0 0 10px 0; color: #be123c; font-size: 14px; display: flex; align-items: center; gap: 6px;">
+                        ⚠️ Discrepancies Found: Briefcase Update Required (${discCount})
+                    </h4>
+                    <p style="font-size: 12px; color: #9f1239; margin-bottom: 12px;">Case notes indicate the following milestones have been obtained or resolved, but they are still marked as <em>pending</em> in the participant's briefcase:</p>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        ${audit.discrepancies.map(d => `
+                            <div style="background: white; border: 1px solid #fda4af; border-radius: 6px; padding: 12px;">
+                                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+                                    <strong style="color: #9f1239; font-size: 13px;">${d.title}</strong>
+                                    <span class="badge badge-pending" style="font-size: 10.5px;">Current Status: ${(d.currentStatus || 'pending').toUpperCase()}</span>
+                                </div>
+                                <div style="font-size: 12px; color: #4b5563; margin-bottom: 6px;">
+                                    <strong>Finding:</strong> ${d.finding}
+                                </div>
+                                <div style="font-size: 11px; color: #0284c7; font-weight: 600;">
+                                    💡 Recommended Action: Update ${d.title} to Verified/Complete in Master Briefcase.
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            ` : ''}
+
+            <!-- SECTION 2: VERIFIED MILESTONES -->
+            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+                <h4 style="margin: 0 0 10px 0; color: #166534; font-size: 14px;">
+                    ✅ Verified Briefcase Milestones (${verCount})
+                </h4>
+                ${verCount > 0 ? `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px;">
+                        ${audit.verified.map(v => `
+                            <div style="background: white; border: 1px solid #86efac; border-radius: 6px; padding: 10px;">
+                                <strong style="color: #15803d; font-size: 12.5px;">${v.title}</strong>
+                                <div style="font-size: 11px; color: var(--slate); margin-top: 4px;">${v.finding}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : `
+                    <p style="font-size: 12px; color: #166534; margin: 0;">No verified milestones cross-referenced yet in case notes.</p>
+                `}
+            </div>
+
+            <!-- SECTION 3: UNADDRESSED BARRIERS -->
+            ${unaddCount > 0 ? `
+                <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 16px; margin-bottom: 20px;">
+                    <h4 style="margin: 0 0 10px 0; color: #b45309; font-size: 14px;">
+                        🚩 Active Barriers Lacking Case Management Notes (${unaddCount})
+                    </h4>
+                    <p style="font-size: 12px; color: #92400e; margin-bottom: 12px;">These items are flagged as barriers (pending/urgent) in the briefcase but have not been referenced in any recorded case notes:</p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        ${audit.unaddressedBarriers.map(u => `
+                            <div style="background: white; border: 1px solid #fcd34d; border-radius: 6px; padding: 8px 12px; font-size: 12px; color: #78350f;">
+                                <strong>${(u.domain || '').toUpperCase()}:</strong> ${u.title}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            ` : ''}
+
+            <!-- SECTION 4: CLINICAL FEEDBACK & AUDIT NARRATIVE -->
+            <div style="background: white; border: 1px solid var(--border); border-radius: 8px; padding: 18px; margin-bottom: 20px;">
+                <h4 style="margin: 0 0 12px 0; color: var(--primary); font-size: 15px;">📋 Clinical Case Management Feedback Report</h4>
+                <div class="markdown-preview" style="line-height: 1.7; font-size: 13px; color: #1e293b;">
+                    ${audit.feedbackMarkdown ? audit.feedbackMarkdown.replace(/\n/g, '<br>') : 'No narrative generated.'}
+                </div>
+            </div>
+        `;
+
+        bodyEl.innerHTML = html;
+    } catch(e) {
+        bodyEl.innerHTML = `<div style="color: var(--danger); padding: 20px;">Audit error: ${e.message}</div>`;
+    }
+}
+
+function printCmAuditReport() {
+    window.print();
+}
+
 

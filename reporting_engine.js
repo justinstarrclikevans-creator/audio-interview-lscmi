@@ -400,11 +400,371 @@ function generateApricotCaseNotesExport(asExcel = true, locationFilter = null) {
     }
 }
 
+// Helper: Normalize various date formats from Excel/CSV
+function parseDateValue(val) {
+    if (!val) return new Date().toISOString().split('T')[0];
+    if (val instanceof Date) return val.toISOString().split('T')[0];
+    if (typeof val === 'number') {
+        const parsed = new Date(Math.round((val - 25569) * 86400 * 1000));
+        return !isNaN(parsed.getTime()) ? parsed.toISOString().split('T')[0] : String(val);
+    }
+    const str = String(val).trim();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(str)) return str;
+    if (/^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(str)) {
+        const [m, d, y] = str.split('/');
+        const fullY = y.length === 2 ? '20' + y : y;
+        return `${fullY}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+    }
+    return str;
+}
+
+// -------------------------------------------------------------
+// DRUG TEST SPREADSHEET / CSV IMPORTER
+// -------------------------------------------------------------
+function importDrugTestData(input, isBuffer = false) {
+    let rawRows = [];
+    if (isBuffer || Buffer.isBuffer(input)) {
+        try {
+            const workbook = XLSX.read(input, { type: 'buffer' });
+            const sheetName = workbook.SheetNames[0];
+            const sheet = workbook.Sheets[sheetName];
+            rawRows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+        } catch(e) {
+            return { success: false, error: 'Failed to parse Excel workbook: ' + e.message };
+        }
+    } else if (typeof input === 'string') {
+        const lines = input.trim().split(/\r?\n/);
+        rawRows = lines.map(l => l.split(',').map(c => c.trim().replace(/^["']|["']$/g, '')));
+    }
+
+    if (!rawRows || rawRows.length < 2) {
+        return { success: false, error: 'Spreadsheet or CSV is empty or missing data rows.' };
+    }
+
+    const rows = rawRows.slice(1);
+    let importedCount = 0;
+    let errors = [];
+
+    const insertStmt = db.prepare(`
+        INSERT INTO drug_tests (user_id, test_date, result, substances_detected, notes, administered_by)
+        VALUES (?, ?, ?, ?, ?, ?)
+    `);
+
+    const findUserStmt = db.prepare(`
+        SELECT id, name FROM users WHERE role = 'participant' AND (LOWER(email) = ? OR LOWER(name) LIKE ?) LIMIT 1
+    `);
+
+    const tx = db.transaction(() => {
+        for (let i = 0; i < rows.length; i++) {
+            const cols = rows[i];
+            if (!cols || cols.length < 2) continue;
+
+            const identifier = String(cols[0] || '').trim().toLowerCase();
+            if (!identifier) continue;
+
+            const dateStr = parseDateValue(cols[1]);
+            let result = String(cols[2] || 'negative').trim().toLowerCase();
+            if (result.includes('neg') || result.includes('pass') || result.includes('clean')) result = 'negative';
+            else if (result.includes('pos') || result.includes('fail')) result = 'positive';
+            else if (result.includes('dil')) result = 'dilute';
+            else if (result.includes('ref')) result = 'refused';
+
+            const substances = String(cols[3] || '').trim();
+            const notes = String(cols[4] || '').trim();
+            const admin = String(cols[5] || 'Program Staff').trim();
+
+            const user = findUserStmt.get(identifier, `%${identifier}%`);
+            if (user) {
+                insertStmt.run(user.id, dateStr, result, substances, notes, admin);
+                importedCount++;
+            } else {
+                errors.push(`Row ${i + 2}: Participant not found for '${cols[0]}'`);
+            }
+        }
+    });
+
+    tx();
+    return { success: true, importedCount, errors };
+}
+
+// -------------------------------------------------------------
+// CASE MANAGEMENT LOGS / NOTES SPREADSHEET IMPORTER
+// -------------------------------------------------------------
+function importCaseManagementNotesData(input, isBuffer = false) {
+    let rawRows = [];
+    if (isBuffer || Buffer.isBuffer(input)) {
+        try {
+            const workbook = XLSX.read(input, { type: 'buffer' });
+            const sheetName = workbook.SheetNames[0];
+            const sheet = workbook.Sheets[sheetName];
+            rawRows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+        } catch(e) {
+            return { success: false, error: 'Failed to parse Excel workbook: ' + e.message };
+        }
+    } else if (typeof input === 'string') {
+        const lines = input.trim().split(/\r?\n/);
+        rawRows = lines.map(l => l.split(',').map(c => c.trim().replace(/^["']|["']$/g, '')));
+    }
+
+    if (!rawRows || rawRows.length < 2) {
+        return { success: false, error: 'Spreadsheet or CSV is empty or missing data rows.' };
+    }
+
+    const rows = rawRows.slice(1);
+    let importedCount = 0;
+    let errors = [];
+
+    const insertStmt = db.prepare(`
+        INSERT INTO case_notes (user_id, author_id, author_name, session_date, note_type, category, content)
+        VALUES (?, 1, ?, ?, ?, ?, ?)
+    `);
+
+    const findUserStmt = db.prepare(`
+        SELECT id, name FROM users WHERE role = 'participant' AND (LOWER(email) = ? OR LOWER(name) LIKE ?) LIMIT 1
+    `);
+
+    const tx = db.transaction(() => {
+        for (let i = 0; i < rows.length; i++) {
+            const cols = rows[i];
+            if (!cols || cols.length < 3) continue;
+
+            const identifier = String(cols[0] || '').trim().toLowerCase();
+            if (!identifier) continue;
+
+            const dateStr = parseDateValue(cols[1]);
+            const category = String(cols[2] || 'Case Management').trim();
+            const noteType = String(cols[3] || 'Individual Session').trim();
+            const content = String(cols[4] || '').trim();
+            const author = String(cols[5] || 'Program Manager').trim();
+
+            if (!content) continue;
+
+            const user = findUserStmt.get(identifier, `%${identifier}%`);
+            if (user) {
+                insertStmt.run(user.id, author, dateStr, noteType, category, content);
+                importedCount++;
+            } else {
+                errors.push(`Row ${i + 2}: Participant not found for '${cols[0]}'`);
+            }
+        }
+    });
+
+    tx();
+    return { success: true, importedCount, errors };
+}
+
+// -------------------------------------------------------------
+// WEEKLY COMPLIANCE CALCULATOR (POINTS, DRUG TEST, CASE MGMT)
+// -------------------------------------------------------------
+function getWeeklyComplianceSummary(userId, refDate = null) {
+    const d = refDate ? new Date(refDate + 'T12:00:00Z') : new Date();
+    const dayOfWeek = d.getUTCDay(); // 0 = Sun, 1 = Mon ...
+    const diffToMon = (dayOfWeek === 0 ? -6 : 1) - dayOfWeek;
+    const monday = new Date(d);
+    monday.setUTCDate(d.getUTCDate() + diffToMon);
+    const sunday = new Date(monday);
+    sunday.setUTCDate(monday.getUTCDate() + 6);
+
+    const monStr = monday.toISOString().split('T')[0];
+    const sunStr = sunday.toISOString().split('T')[0];
+
+    // 1. Points that week
+    const pointsRows = db.prepare(`
+        SELECT points_earned FROM daily_points
+        WHERE user_id = ? AND date >= ? AND date <= ?
+    `).all(userId, monStr, sunStr);
+    const weekPoints = pointsRows.reduce((acc, r) => acc + (Number(r.points_earned) || 0), 0);
+
+    // 2. Drug test that week
+    const drugTest = db.prepare(`
+        SELECT id, test_date, result, substances_detected, notes 
+        FROM drug_tests
+        WHERE user_id = ? AND test_date >= ? AND test_date <= ?
+        ORDER BY test_date DESC LIMIT 1
+    `).get(userId, monStr, sunStr);
+
+    // 3. Case management session that week
+    const caseNote = db.prepare(`
+        SELECT id, session_date, category, note_type, content, author_name
+        FROM case_notes
+        WHERE user_id = ? AND session_date >= ? AND session_date <= ?
+        ORDER BY session_date DESC LIMIT 1
+    `).get(userId, monStr, sunStr);
+
+    const totalNotesThisWeek = db.prepare(`
+        SELECT COUNT(*) as count FROM case_notes
+        WHERE user_id = ? AND session_date >= ? AND session_date <= ?
+    `).get(userId, monStr, sunStr).count;
+
+    return {
+        weekStart: monStr,
+        weekEnd: sunStr,
+        weekPoints: parseFloat(weekPoints.toFixed(1)),
+        hasDrugTest: !!drugTest,
+        drugTest: drugTest || null,
+        hasCaseManagement: !!caseNote,
+        caseNote: caseNote || null,
+        totalNotesThisWeek
+    };
+}
+
+// -------------------------------------------------------------
+// CASE MANAGEMENT VS. BRIEFCASE CROSS-CHECK AUDIT REPORT
+// -------------------------------------------------------------
+function generateCaseManagementBriefcaseAudit(userId) {
+    const user = db.prepare('SELECT id, name, email, phone, location, track, created_at FROM users WHERE id = ?').get(userId);
+    if (!user) return null;
+    const profile = db.prepare('SELECT * FROM participant_profiles WHERE user_id = ?').get(userId) || {};
+    const notes = db.prepare('SELECT * FROM case_notes WHERE user_id = ? ORDER BY session_date DESC').all(userId);
+    const briefcaseItems = db.prepare('SELECT * FROM briefcase_items WHERE user_id = ? ORDER BY id').all(userId);
+
+    const allNotesText = notes.map(n => `${n.session_date} [${n.category}]: ${n.content}`).join('\n\n').toLowerCase();
+
+    // Mapping of briefcase item keys to regex search patterns in case notes
+    const itemPatterns = {
+        'state_id': { label: 'State ID', regex: /(state id|dmv id|picture id|obtained id|got id|photo id)/i },
+        'ss_card': { label: 'Social Security Card', regex: /(social security|ss card|ssn card|ss administration)/i },
+        'birth_cert': { label: 'Birth Certificate', regex: /(birth cert|vital statistics|birth certificate)/i },
+        'drivers_license': { label: "Driver's License / Route 66", regex: /(driver'?s license|route 66|license reinstat|scdmv|dl reinstat)/i },
+        'reliable_phone': { label: 'Reliable Phone Number', regex: /(phone number|government phone|obama phone|cellular|cell phone)/i },
+        'bank_account': { label: 'Bank Account', regex: /(bank account|checking account|us bank|direct deposit)/i },
+        'child_support_status': { label: 'Child Support Review', regex: /(child support|dss|clerk of court|support payment|modification)/i },
+        'transportation_plan': { label: 'Transportation Plan', regex: /(bus pass|carta|comet|transportation|riding bus|bus ticket)/i },
+        'housing_plan': { label: 'Housing Plan / Stable Address', regex: /(housing|shelter|transitional|apartment|oxford house|lease)/i },
+        'resume_completed': { label: 'Resume Completed', regex: /(resume|completed resume|drafted resume|updated resume)/i },
+        'interview_clothing': { label: 'Interview Clothing', regex: /(interview cloth|suit|clothing voucher|dressed for success)/i },
+        'health_insurance': { label: 'Health Insurance', regex: /(medicaid|health insurance|healthy connections)/i },
+        'welvista_referral': { label: 'Welvista Referral', regex: /(welvista|free prescription|medication assist)/i },
+        'primary_care_visit': { label: 'Primary Care Visit', regex: /(doctor visit|clinic visit|primary care|fetter)/i },
+        'budget_worksheet': { label: 'Budget Worksheet', regex: /(budget worksheet|financial budget|spending plan)/i },
+        'osha_10': { label: 'OSHA-10 Certification', regex: /(osha|osha 10|safety cert)/i },
+        'forklift_cert': { label: 'Forklift Certification', regex: /(forklift|forklift cert)/i }
+    };
+
+    const verified = [];
+    const discrepancies = []; // Mentioned in notes but still pending/red in briefcase
+    const unaddressedBarriers = []; // Marked red in briefcase but never mentioned in notes
+
+    briefcaseItems.forEach(item => {
+        const pattern = itemPatterns[item.item_key];
+        const isMentionedInNotes = pattern && pattern.regex.test(allNotesText);
+
+        if (item.status === 'green') {
+            if (isMentionedInNotes) {
+                verified.push({
+                    key: item.item_key,
+                    title: item.title,
+                    domain: item.domain,
+                    notes: item.notes,
+                    finding: 'Documented in case management notes and verified complete in Briefcase.'
+                });
+            }
+        } else {
+            // Item is pending or red
+            if (isMentionedInNotes) {
+                discrepancies.push({
+                    key: item.item_key,
+                    title: item.title,
+                    domain: item.domain,
+                    currentStatus: item.status,
+                    notes: item.notes,
+                    finding: `Mentioned in case notes as discussed or resolved, but briefcase item is currently marked ${item.status.toUpperCase()}. Needs review / status update.`
+                });
+            }
+        }
+
+        if (item.status === 'red' && !isMentionedInNotes) {
+            unaddressedBarriers.push({
+                key: item.item_key,
+                title: item.title,
+                domain: item.domain,
+                finding: `Marked as an active BARRIER in the Briefcase, but no case management notes have addressed or documented resolution steps for this item.`
+            });
+        }
+    });
+
+    // Generate markdown feedback narrative
+    let md = `# Case Management & Briefcase Alignment Audit: ${user.name}\n\n`;
+    md += `**Participant:** ${user.name} | **Track:** ${user.track === 'reentry_nav' ? 'Re-entry Navigation' : 'First Shift'} | **Location:** ${user.location}, SC\n`;
+    md += `**Audit Date:** ${new Date().toLocaleDateString()} | **Total Case Notes Evaluated:** ${notes.length} | **Briefcase Items Evaluated:** ${briefcaseItems.length}\n\n`;
+
+    md += `### 1. Executive Compliance & Feedback Summary\n`;
+    md += `- **Verified Milestones Aligned:** ${verified.length} items verified in both notes and briefcase checklist.\n`;
+    md += `- **Actionable Discrepancies:** ${discrepancies.length} items referenced in notes that require briefcase status check-offs.\n`;
+    md += `- **Unaddressed Priority Barriers:** ${unaddressedBarriers.length} active red barriers lacking documented case management action plans.\n\n`;
+
+    if (discrepancies.length > 0) {
+        md += `### 2. Discrepancies Requiring Briefcase Updates\n`;
+        discrepancies.forEach(d => {
+            md += `- ⚠️ **${d.title}** (${d.domain.replace(/_/g, ' ').toUpperCase()}): ${d.finding}\n`;
+        });
+        md += `\n`;
+    }
+
+    if (unaddressedBarriers.length > 0) {
+        md += `### 3. Unaddressed Briefcase Barriers\n`;
+        unaddressedBarriers.forEach(u => {
+            md += `- 🔴 **${u.title}** (${u.domain.replace(/_/g, ' ').toUpperCase()}): ${u.finding}\n`;
+        });
+        md += `\n`;
+    }
+
+    md += `### 4. Recommended Case Management Actions\n`;
+    if (discrepancies.length > 0) {
+        md += `1. Review recent clinical notes and update verified briefcase items to **GREEN**.\n`;
+    }
+    if (unaddressedBarriers.length > 0) {
+        md += `2. Schedule an individual session to target unaddressed red barriers (${unaddressedBarriers.map(u => u.title).slice(0, 3).join(', ')}).\n`;
+    }
+    md += `3. Continue weekly documentation of stability, CBT tool application, and employer contact.\n`;
+
+    // Persist audit record in cm_briefcase_audits
+    try {
+        db.prepare(`
+            INSERT INTO cm_briefcase_audits (user_id, audit_date, discrepancies_json, verified_json, unaddressed_json, feedback_markdown)
+            VALUES (?, DATE('now'), ?, ?, ?, ?)
+        `).run(
+            user.id,
+            JSON.stringify(discrepancies),
+            JSON.stringify(verified),
+            JSON.stringify(unaddressedBarriers),
+            md
+        );
+    } catch(e) {}
+
+    const completedBriefcaseCount = briefcaseItems.filter(i => i.status === 'green').length;
+    const totalBriefcaseItems = briefcaseItems.length;
+    const briefcaseCompletionRate = totalBriefcaseItems > 0 ? Math.round((completedBriefcaseCount / totalBriefcaseItems) * 100) : 0;
+
+    return {
+        userId: user.id,
+        participantName: user.name,
+        auditDate: new Date().toISOString().split('T')[0],
+        totalNotesCount: notes.length,
+        summary: {
+            completedBriefcaseCount,
+            totalBriefcaseItems,
+            briefcaseCompletionRate,
+            verifiedCount: verified.length,
+            discrepanciesCount: discrepancies.length,
+            unaddressedCount: unaddressedBarriers.length
+        },
+        verified,
+        discrepancies,
+        unaddressedBarriers,
+        feedbackMarkdown: md
+    };
+}
+
 module.exports = {
     generateMondayNeedsReport,
     generateFridayMilestoneReport,
     importApricotCsv,
     importApricotData,
     getWeeklyPointsSummary,
-    generateApricotCaseNotesExport
+    generateApricotCaseNotesExport,
+    importDrugTestData,
+    importCaseManagementNotesData,
+    getWeeklyComplianceSummary,
+    generateCaseManagementBriefcaseAudit
 };

@@ -278,6 +278,32 @@ CREATE TABLE IF NOT EXISTS cbt_submissions (
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
     UNIQUE(user_id, module_number, tool_key)
 );
+
+-- Drug Screen Compliance & Laboratory Results per Participant
+CREATE TABLE IF NOT EXISTS drug_tests (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    test_date DATE NOT NULL,
+    result TEXT DEFAULT 'negative', -- 'negative', 'positive', 'dilute', 'refused'
+    substances_detected TEXT, -- JSON array or comma-separated detected substances
+    notes TEXT,
+    administered_by TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Case Management vs Briefcase Cross-Check Audit Reports
+CREATE TABLE IF NOT EXISTS cm_briefcase_audits (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    audit_date DATE DEFAULT (DATE('now')),
+    discrepancies_json TEXT,
+    verified_json TEXT,
+    unaddressed_json TEXT,
+    feedback_markdown TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 `);
 
 // Safe column migrations for existing databases
@@ -287,6 +313,8 @@ try { db.exec("ALTER TABLE participant_profiles ADD COLUMN director_override_not
 try { db.exec("ALTER TABLE participant_profiles ADD COLUMN director_override_by TEXT;"); } catch(e) {}
 try { db.exec("ALTER TABLE participant_profiles ADD COLUMN reentry_status TEXT DEFAULT 'none';"); } catch(e) {}
 try { db.exec("ALTER TABLE participant_profiles ADD COLUMN has_reentry_plan INTEGER DEFAULT 0;"); } catch(e) {}
+try { db.exec("ALTER TABLE participant_profiles ADD COLUMN enrollment_date DATE;"); } catch(e) {}
+try { db.exec("ALTER TABLE participant_profiles ADD COLUMN correction_notes TEXT;"); } catch(e) {}
 
 
 // The Official Briefcase Domains & Checklist Items

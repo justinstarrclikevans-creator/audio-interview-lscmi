@@ -12,9 +12,18 @@ const { runPhase1, runPhase2 } = require('./llm_pipeline');
 const { convertSingleMdToPdf } = require('./convert_md_to_pdf');
 const { convertSingleMdToDocx } = require('./convert_md_to_docx');
 const { evaluateClassTranscript } = require('./facilitation_evaluator');
-const { cbtModules, T90_TRADE_TRACKS, REENTRY_EMPLOYERS } = require('./training_data');
-const { generateMondayNeedsReport, generateFridayMilestoneReport, importApricotCsv, importApricotData, getWeeklyPointsSummary, generateApricotCaseNotesExport } = require('./reporting_engine');
-const { generateReentryNavAssessment } = require('./reentry_engine');
+const { 
+    generateMondayNeedsReport, 
+    generateFridayMilestoneReport, 
+    importApricotCsv, 
+    importApricotData, 
+    getWeeklyPointsSummary, 
+    generateApricotCaseNotesExport,
+    importDrugTestData,
+    importCaseManagementNotesData,
+    getWeeklyComplianceSummary,
+    generateCaseManagementBriefcaseAudit
+} = require('./reporting_engine');
 const { SC_COMMUNITY_RESOURCES, SC_FAIR_CHANCE_EMPLOYERS } = require('./sc_resource_directory');
 const { loadJobsFromSpreadsheets } = require('./jobs_loader');
 const { getParticipantAiResponse } = require('./ai_assistant');
@@ -464,11 +473,12 @@ app.get('/api/resume', authenticateToken, (req, res) => {
 
 // Get Full Caseload Roster with Filters
 app.get('/api/admin/caseload', authenticateToken, requireRole('program_manager', 'admin'), (req, res) => {
-    const { location, track, gate, status } = req.query;
+    const { location, track, gate, status, weekDate } = req.query;
     let query = `
         SELECT u.id, u.name, u.email, u.phone, u.location, u.track, u.created_at,
-               p.current_gate, p.overall_status, p.w9_status, p.dl_status, p.child_support_status,
-               p.has_reentry_plan, p.reentry_status,
+               p.current_gate, p.overall_status, p.w9_status, p.dl_status, p.dl_notes, 
+               p.child_support_status, p.child_support_notes, p.housing_status, p.transportation_status,
+               p.has_reentry_plan, p.reentry_status, p.enrollment_date, p.correction_notes,
                (SELECT COUNT(*) FROM gate_criteria WHERE user_id = u.id AND status = 'green') as green_criteria,
                (SELECT COUNT(*) FROM gate_criteria WHERE user_id = u.id AND status = 'red') as red_criteria,
                (SELECT AVG(points_earned) FROM daily_points WHERE user_id = u.id) as avg_points
@@ -491,14 +501,33 @@ app.get('/api/admin/caseload', authenticateToken, requireRole('program_manager',
     query += ` ORDER BY p.current_gate DESC, u.name ASC`;
     const roster = db.prepare(query).all(...params);
 
-    // Attach weekly points summary
+    // Attach weekly points, enrollment calculation, and compliance indicators (Drug Test & Case Management)
     const enhancedRoster = roster.map(p => {
         const pointsSummary = getWeeklyPointsSummary(p.id);
+        const complianceSummary = getWeeklyComplianceSummary(p.id, weekDate || null);
+
+        // Calculate weeks enrolled based on enrollment_date (or created_at)
+        const enrollDateStr = p.enrollment_date || (p.created_at ? p.created_at.split(' ')[0] : '2026-08-01');
+        const enrollDate = new Date(enrollDateStr + 'T00:00:00Z');
+        const now = new Date();
+        const diffMs = Math.max(0, now.getTime() - enrollDate.getTime());
+        const weeksEnrolled = Math.max(1, Math.floor(diffMs / (7 * 24 * 60 * 60 * 1000)) + 1);
+
         return {
             ...p,
+            enrollment_date: enrollDateStr,
+            weeks_enrolled: weeksEnrolled,
             weeklyPointsAvg: pointsSummary.overallWeeklyAverage,
-            currentWeekPoints: pointsSummary.currentWeekPoints,
-            totalWeeksLogged: pointsSummary.totalWeeksCounted
+            currentWeekPoints: complianceSummary.weekPoints,
+            totalWeeksLogged: pointsSummary.totalWeeksCounted,
+            has_drug_test_this_week: complianceSummary.hasDrugTest,
+            drug_test_details: complianceSummary.drugTest,
+            has_case_management_this_week: complianceSummary.hasCaseManagement,
+            case_management_details: complianceSummary.caseNote,
+            total_notes_this_week: complianceSummary.totalNotesThisWeek,
+            week_start: complianceSummary.weekStart,
+            week_end: complianceSummary.weekEnd,
+            correction_notes: p.correction_notes || ''
         };
     });
 
@@ -717,6 +746,152 @@ app.post('/api/admin/apricot/import-points', authenticateToken, requireRole('pro
         res.json(result);
     } catch(err) {
         res.status(500).json({ error: 'Import failed: ' + err.message });
+    }
+});
+
+// Record Single Daily Point Entry manually
+app.post('/api/pm/daily-point', authenticateToken, requireRole('program_manager', 'admin'), (req, res) => {
+    const { userId, date, points, attendanceStatus, notes } = req.body;
+    if (!userId || !date) return res.status(400).json({ error: 'userId and date required.' });
+
+    const pts = parseFloat(points) || 0;
+    const att = attendanceStatus || 'present';
+
+    db.prepare(`
+        INSERT INTO daily_points (user_id, date, points_earned, max_points, attendance_status, notes)
+        VALUES (?, ?, ?, 10, ?, ?)
+        ON CONFLICT(user_id, date) DO UPDATE SET
+            points_earned = excluded.points_earned,
+            attendance_status = excluded.attendance_status,
+            notes = excluded.notes
+    `).run(userId, date, pts, att, notes || '');
+
+    res.json({ message: 'Daily points logged successfully.' });
+});
+
+// Record Single Drug Test Entry
+app.post('/api/pm/drug-test', authenticateToken, requireRole('program_manager', 'admin'), (req, res) => {
+    const { userId, testDate, result, substancesDetected, notes } = req.body;
+    if (!userId) return res.status(400).json({ error: 'userId is required.' });
+
+    const dDate = testDate || new Date().toISOString().split('T')[0];
+    const resVal = (result || 'negative').toLowerCase();
+
+    db.prepare(`
+        INSERT INTO drug_tests (user_id, test_date, result, substances_detected, notes, administered_by)
+        VALUES (?, ?, ?, ?, ?, ?)
+    `).run(userId, dDate, resVal, substancesDetected || '', notes || '', req.user.name || 'Staff');
+
+    res.json({ message: 'Drug screen record logged successfully.' });
+});
+
+// Import Drug Tests Spreadsheet (.xlsx) or CSV
+app.post('/api/pm/import-drug-tests', authenticateToken, requireRole('program_manager', 'admin'), fileUpload.single('file'), (req, res) => {
+    try {
+        let result;
+        if (req.file && req.file.buffer) {
+            const isExcel = req.file.originalname.endsWith('.xlsx') || req.file.originalname.endsWith('.xls');
+            result = importDrugTestData(req.file.buffer, isExcel);
+        } else if (req.body && req.body.csvData) {
+            result = importDrugTestData(req.body.csvData, false);
+        } else {
+            return res.status(400).json({ error: 'No Excel spreadsheet or CSV data provided.' });
+        }
+        res.json(result);
+    } catch(err) {
+        res.status(500).json({ error: 'Drug test import failed: ' + err.message });
+    }
+});
+
+// Fetch Drug Tests for a Participant
+app.get('/api/pm/drug-tests/:userId', authenticateToken, requireRole('program_manager', 'admin'), (req, res) => {
+    const tests = db.prepare(`
+        SELECT * FROM drug_tests WHERE user_id = ? ORDER BY test_date DESC, id DESC
+    `).all(req.params.userId);
+    res.json(tests);
+});
+
+// Import Case Management Notes Spreadsheet (.xlsx) or CSV
+app.post('/api/pm/import-case-notes', authenticateToken, requireRole('program_manager', 'admin'), fileUpload.single('file'), (req, res) => {
+    try {
+        let result;
+        if (req.file && req.file.buffer) {
+            const isExcel = req.file.originalname.endsWith('.xlsx') || req.file.originalname.endsWith('.xls');
+            result = importCaseManagementNotesData(req.file.buffer, isExcel);
+        } else if (req.body && req.body.csvData) {
+            result = importCaseManagementNotesData(req.body.csvData, false);
+        } else {
+            return res.status(400).json({ error: 'No Excel spreadsheet or CSV data provided.' });
+        }
+        res.json(result);
+    } catch(err) {
+        res.status(500).json({ error: 'Case notes import failed: ' + err.message });
+    }
+});
+
+// Participant Information & Correction Notes Update (Fix erroneous information directly)
+app.post('/api/pm/participant-correction', authenticateToken, requireRole('program_manager', 'admin'), (req, res) => {
+    const { 
+        userId, 
+        correctionNotes, 
+        enrollmentDate, 
+        dlStatus, 
+        dlNotes, 
+        childSupportStatus, 
+        childSupportNotes, 
+        housingStatus, 
+        transportationStatus,
+        w9Status 
+    } = req.body;
+    
+    if (!userId) return res.status(400).json({ error: 'userId is required.' });
+
+    // Update participant_profiles
+    db.prepare(`
+        UPDATE participant_profiles SET
+            correction_notes = COALESCE(?, correction_notes),
+            enrollment_date = COALESCE(?, enrollment_date),
+            dl_status = COALESCE(?, dl_status),
+            dl_notes = COALESCE(?, dl_notes),
+            child_support_status = COALESCE(?, child_support_status),
+            child_support_notes = COALESCE(?, child_support_notes),
+            housing_status = COALESCE(?, housing_status),
+            transportation_status = COALESCE(?, transportation_status),
+            w9_status = COALESCE(?, w9_status),
+            updated_at = CURRENT_TIMESTAMP
+        WHERE user_id = ?
+    `).run(
+        correctionNotes !== undefined ? correctionNotes : null,
+        enrollmentDate !== undefined && enrollmentDate !== '' ? enrollmentDate : null,
+        dlStatus !== undefined && dlStatus !== '' ? dlStatus : null,
+        dlNotes !== undefined && dlNotes !== '' ? dlNotes : null,
+        childSupportStatus !== undefined && childSupportStatus !== '' ? childSupportStatus : null,
+        childSupportNotes !== undefined && childSupportNotes !== '' ? childSupportNotes : null,
+        housingStatus !== undefined && housingStatus !== '' ? housingStatus : null,
+        transportationStatus !== undefined && transportationStatus !== '' ? transportationStatus : null,
+        w9Status !== undefined && w9Status !== '' ? w9Status : null,
+        userId
+    );
+
+    // If staff typed in an explicit correction note, also record as a permanent case note
+    if (correctionNotes && correctionNotes.trim()) {
+        db.prepare(`
+            INSERT INTO case_notes (user_id, author_id, author_name, session_date, note_type, category, content)
+            VALUES (?, ?, ?, DATE('now'), 'Record Correction', 'Information Correction', ?)
+        `).run(userId, req.user.id, req.user.name || 'Program Manager', `[Staff Record Correction]: ${correctionNotes}`);
+    }
+
+    res.json({ message: 'Participant record and correction notes updated successfully.' });
+});
+
+// Generate Case Management vs Briefcase Cross-Check Audit & Feedback Report
+app.get('/api/pm/reports/cm-briefcase-audit/:userId', authenticateToken, requireRole('program_manager', 'admin'), (req, res) => {
+    try {
+        const audit = generateCaseManagementBriefcaseAudit(parseInt(req.params.userId));
+        if (!audit) return res.status(404).json({ error: 'Participant not found.' });
+        res.json(audit);
+    } catch(err) {
+        res.status(500).json({ error: 'Audit generation failed: ' + err.message });
     }
 });
 
