@@ -196,8 +196,45 @@ function handleLogout() {
 }
 
 // -------------------------------------------------------------
-// FIRST SHIFT PARTICIPANT DASHBOARD
+// FIRST SHIFT PARTICIPANT DASHBOARD & SUB-TABS
 // -------------------------------------------------------------
+let currentFsSection = 'overview';
+
+function switchFsSection(section) {
+    const validSections = ['overview', 'briefcase', 'benefits', 'cbt', 'support'];
+    if (!validSections.includes(section)) section = 'overview';
+    currentFsSection = section;
+
+    validSections.forEach(s => {
+        const view = document.getElementById(`fs-sec-${s}`);
+        const btn = document.getElementById(`fs-tab-btn-${s}`);
+        if (view) {
+            if (s === section) {
+                view.classList.remove('hidden');
+            } else {
+                view.classList.add('hidden');
+            }
+        }
+        if (btn) {
+            if (s === section) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        }
+    });
+
+    if (section === 'briefcase') {
+        loadBriefcaseChecklist();
+    } else if (section === 'benefits') {
+        loadParticipantBenefits();
+    } else if (section === 'cbt') {
+        loadCbtModules();
+    } else if (section === 'support') {
+        loadParticipantMessages('fs');
+    }
+}
+
 async function loadFsDashboard() {
     const token = localStorage.getItem('fs_token');
     if (!token) return;
@@ -251,6 +288,7 @@ async function loadFsDashboard() {
         loadParticipantBenefits();
         loadParticipantMessages();
         loadCbtModules();
+        switchFsSection(currentFsSection || 'overview');
 
         // Check for linked Re-entry Fresh Start Guide for participant
         const reentryGuideCard = document.getElementById('fs-reentry-guide-card');
@@ -1511,7 +1549,7 @@ async function loadCaseload() {
         const tbody = document.getElementById('caseload-tbody');
 
         if (!roster || roster.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 24px; color: var(--slate);">No participants match this filter.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 24px; color: var(--slate);">No participants match this filter.</td></tr>';
             return;
         }
 
@@ -1530,16 +1568,16 @@ async function loadCaseload() {
                 const resLabel = dtDetail ? dtDetail.result.toUpperCase() : 'TESTED';
                 const resDate = dtDetail && dtDetail.test_date ? dtDetail.test_date.substring(5) : '';
                 dtBadgeHtml = `
-                    <div style="${resClass} padding: 5px 8px; border-radius: 6px; text-align: center; font-weight: 800; font-size: 11px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.05);" onclick="openLoadProgramFormsModal('drugtest', ${p.id})" title="Click to view/add drug test">
+                    <div style="${resClass} padding: 4px 6px; border-radius: 6px; text-align: center; font-weight: 800; font-size: 10.5px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.04);" onclick="openLoadProgramFormsModal('drugtest', ${p.id})" title="Click to view/add drug screen">
                         <div>✅ YES</div>
-                        <div style="font-size: 9.5px; font-weight: 700; margin-top: 1px;">${resLabel} ${resDate ? `(${resDate})` : ''}</div>
+                        <div style="font-size: 9px; font-weight: 700; margin-top: 1px;">${resLabel} ${resDate ? `(${resDate})` : ''}</div>
                     </div>
                 `;
             } else {
                 dtBadgeHtml = `
-                    <div style="background: #fef2f2; color: #dc2626; border: 1.5px solid #fecaca; padding: 5px 8px; border-radius: 6px; text-align: center; font-weight: 800; font-size: 11px; cursor: pointer;" onclick="openLoadProgramFormsModal('drugtest', ${p.id})" title="Click to log drug test">
+                    <div style="background: #fef2f2; color: #dc2626; border: 1.5px solid #fecaca; padding: 4px 6px; border-radius: 6px; text-align: center; font-weight: 800; font-size: 10.5px; cursor: pointer;" onclick="openLoadProgramFormsModal('drugtest', ${p.id})" title="Click to log drug screen">
                         <div>❌ NO</div>
-                        <div style="font-size: 9px; font-weight: 600; margin-top: 1px; color: #ef4444;">+ Log Screen</div>
+                        <div style="font-size: 9px; font-weight: 600; margin-top: 1px; color: #ef4444;">+ Screen</div>
                     </div>
                 `;
             }
@@ -1550,14 +1588,14 @@ async function loadCaseload() {
                 const cmDate = cmDetail && cmDetail.date ? cmDetail.date.substring(5) : '';
                 const totalNotes = p.total_notes_this_week || 1;
                 cmBadgeHtml = `
-                    <div style="background: #dbeafe; color: #1d4ed8; border: 1.5px solid #93c5fd; padding: 5px 8px; border-radius: 6px; text-align: center; font-weight: 800; font-size: 11px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.05);" onclick="openLoadProgramFormsModal('casenotes', ${p.id})" title="Click to view/add session">
+                    <div style="background: #dbeafe; color: #1d4ed8; border: 1.5px solid #93c5fd; padding: 4px 6px; border-radius: 6px; text-align: center; font-weight: 800; font-size: 10.5px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.04);" onclick="openLoadProgramFormsModal('casenotes', ${p.id})" title="Click to view/add 1-on-1 session">
                         <div>✅ YES</div>
-                        <div style="font-size: 9.5px; font-weight: 700; margin-top: 1px;">${totalNotes > 1 ? `${totalNotes} Notes` : '1 Session'} ${cmDate ? `(${cmDate})` : ''}</div>
+                        <div style="font-size: 9px; font-weight: 700; margin-top: 1px;">${totalNotes > 1 ? `${totalNotes} Notes` : '1 Session'} ${cmDate ? `(${cmDate})` : ''}</div>
                     </div>
                 `;
             } else {
                 cmBadgeHtml = `
-                    <div style="background: #fff7ed; color: #c2410c; border: 1.5px solid #fed7aa; padding: 5px 8px; border-radius: 6px; text-align: center; font-weight: 800; font-size: 11px; cursor: pointer;" onclick="openLoadProgramFormsModal('casenotes', ${p.id})" title="Click to log 1-on-1 session">
+                    <div style="background: #fff7ed; color: #c2410c; border: 1.5px solid #fed7aa; padding: 4px 6px; border-radius: 6px; text-align: center; font-weight: 800; font-size: 10.5px; cursor: pointer;" onclick="openLoadProgramFormsModal('casenotes', ${p.id})" title="Click to log 1-on-1 session">
                         <div>❌ NO</div>
                         <div style="font-size: 9px; font-weight: 600; margin-top: 1px; color: #ea580c;">+ Log CM</div>
                     </div>
@@ -1566,93 +1604,110 @@ async function loadCaseload() {
 
             return `
             <tr style="${p.overall_status === 'archived' ? 'opacity: 0.65; background: #f8fafc;' : ''}">
+                <!-- 1. Participant -->
                 <td>
                     <div style="display: flex; align-items: baseline; gap: 6px;">
-                        <strong style="font-size: 13px;">${p.name}</strong>
-                        <button class="btn btn-outline" style="padding: 1px 5px; font-size: 10px; border-color: #cbd5e1; color: #475569;" onclick="openCorrectionModal(${p.id}, '${escName}')" title="Correct Information / Type Notes">
-                            ✏️ Fix / Note
+                        <strong style="font-size: 13.5px; color: #0f172a;">${p.name}</strong>
+                        <button class="btn btn-outline" style="padding: 1px 5px; font-size: 10px; border-color: #cbd5e1; color: #475569;" onclick="openCorrectionModal(${p.id}, '${escName}')" title="Correct Information / Edit Staff Notes">
+                            ✏️ Fix
                         </button>
                     </div>
                     <div style="font-size: 11px; color: var(--slate); margin-top: 2px;">${p.email} • ${p.phone || 'No phone'}</div>
-                    ${p.correction_notes ? `<div style="margin-top: 4px; font-size: 10.5px; background: #fefce8; border-left: 2px solid #eab308; padding: 2px 6px; border-radius: 3px; color: #713f12; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${p.correction_notes.replace(/"/g, '&quot;')}"><strong>Staff Note:</strong> ${p.correction_notes}</div>` : ''}
+                    ${p.correction_notes ? `<div style="margin-top: 4px; font-size: 10.5px; background: #fefce8; border-left: 2px solid #eab308; padding: 2px 6px; border-radius: 3px; color: #713f12; max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${p.correction_notes.replace(/"/g, '&quot;')}"><strong>Staff Note:</strong> ${p.correction_notes}</div>` : ''}
                     ${p.overall_status === 'archived' ? '<span class="badge badge-red" style="font-size: 10px; margin-top: 3px;">Archived</span>' : ''}
                 </td>
+
+                <!-- 2. Track & Cohort -->
                 <td>
-                    <div style="font-size: 12.5px; font-weight: 800; color: #1e293b;">
+                    <div style="font-size: 12px; font-weight: 700; color: #1e293b;">
                         Week ${p.weeks_enrolled || 1}
                     </div>
-                    <div style="font-size: 10.5px; color: var(--slate); cursor: pointer;" onclick="openCorrectionModal(${p.id}, '${escName}')" title="Click to adjust enrollment start date">
+                    <div style="font-size: 10.5px; color: var(--slate); cursor: pointer; margin-bottom: 4px;" onclick="openCorrectionModal(${p.id}, '${escName}')" title="Click to adjust enrollment start date">
                         ${p.enrollment_date ? `Since ${p.enrollment_date}` : 'Set Start Date'}
                     </div>
-                </td>
-                <td>
-                    <span class="badge ${p.track === 'first_shift' ? 'badge-green' : 'badge-pending'}">
+                    <span class="badge ${p.track === 'first_shift' ? 'badge-green' : 'badge-pending'}" style="font-size: 10px;">
                         ${p.track === 'first_shift' ? 'First Shift' : 'Re-entry Nav'}
                     </span>
-                    <div style="font-size: 11px; color: var(--slate); margin-top: 2px;">${p.location}</div>
+                    <div style="font-size: 10.5px; color: var(--slate); margin-top: 2px;">📍 ${p.location}</div>
                 </td>
+
+                <!-- 3. Gate & Points -->
                 <td>
-                    <strong>Gate ${p.current_gate || 1}</strong>
-                </td>
-                <td>
-                    <div style="font-size: 12.5px; font-weight: 800; color: var(--primary);">
-                        ${p.currentWeekPoints || 0} <span style="font-size: 11px; font-weight: normal; color: var(--slate);">/ 50 pts</span>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <span class="badge" style="background: #e0f2fe; color: #0369a1; font-weight: 800; font-size: 11px;">Gate ${p.current_gate || 1}</span>
                     </div>
-                    <div style="font-size: 10.5px; color: var(--slate); margin-top: 2px;">
+                    <div style="font-size: 12.5px; font-weight: 800; color: var(--primary); margin-top: 4px;">
+                        ${p.currentWeekPoints || 0} <span style="font-size: 10.5px; font-weight: normal; color: var(--slate);">/ 50 pts</span>
+                    </div>
+                    <div style="font-size: 10.5px; color: var(--slate);">
                         Avg: ${p.weeklyPointsAvg ? Number(p.weeklyPointsAvg).toFixed(1) : '--'}
                     </div>
-                    <div style="margin-top: 3px; display: flex; gap: 4px;">
-                        <a href="javascript:void(0)" onclick="openLoadProgramFormsModal('points', ${p.id})" style="font-size: 10px; color: var(--accent); font-weight: 700; text-decoration: underline;">+ Daily Pts</a>
+                    <div style="margin-top: 4px; display: flex; gap: 4px;">
+                        <a href="javascript:void(0)" onclick="openLoadProgramFormsModal('points', ${p.id})" style="font-size: 10px; color: var(--accent); font-weight: 700; text-decoration: underline;">+ Pts</a>
                         <span style="color: #cbd5e1;">|</span>
                         <a href="javascript:void(0)" onclick="openWeeklyPointsModal(${p.id}, '${escName}')" style="font-size: 10px; color: var(--slate); text-decoration: underline;">History</a>
                     </div>
                 </td>
-                <td style="text-align: center; vertical-align: middle;">
-                    ${dtBadgeHtml}
-                </td>
-                <td style="text-align: center; vertical-align: middle;">
-                    ${cmBadgeHtml}
-                </td>
-                <td>
-                    <span class="badge ${p.w9_status === 'verified' ? 'badge-green' : (p.w9_status === 'submitted' ? 'badge-pending' : 'badge-red')}">
-                        ${p.w9_status || 'Missing'}
-                    </span>
-                    ${p.w9_status === 'submitted' || p.w9_status === 'verified' ? `<div style="margin-top: 4px;"><a href="javascript:void(0)" onclick="openW9ViewModal(${p.id})" style="font-size: 11px; color: var(--accent); font-weight: 600; text-decoration: underline;">📄 View W-9</a></div>` : ''}
-                </td>
-                <td>
-                    <div style="font-size: 11px;">
-                        <strong>DL:</strong> ${p.dl_status || 'unknown'}<br>
-                        <strong>CS:</strong> ${p.child_support_status || 'unknown'}
+
+                <!-- 4. Weekly Compliance (Drug Screen & Case Mgmt) -->
+                <td style="vertical-align: middle;">
+                    <div style="display: flex; gap: 6px; justify-content: center; align-items: stretch;">
+                        <div style="flex: 1; min-width: 68px;">
+                            <div style="font-size: 9.5px; color: var(--slate); font-weight: 700; text-transform: uppercase; margin-bottom: 2px; text-align: center;">Screen</div>
+                            ${dtBadgeHtml}
+                        </div>
+                        <div style="flex: 1; min-width: 68px;">
+                            <div style="font-size: 9.5px; color: var(--slate); font-weight: 700; text-transform: uppercase; margin-bottom: 2px; text-align: center;">Case Mgmt</div>
+                            ${cmBadgeHtml}
+                        </div>
                     </div>
                 </td>
+
+                <!-- 5. Documents & Legal -->
                 <td>
-                    <div style="display: flex; flex-direction: column; gap: 4px;">
-                        <button class="btn btn-outline" style="padding: 3px 8px; font-size: 11px; color: var(--primary);" onclick="openCaseNotesModal(${p.id}, '${escName}', '${p.email}', '${p.track}')">
+                    <div style="display: flex; align-items: center; gap: 4px;">
+                        <span class="badge ${p.w9_status === 'verified' ? 'badge-green' : (p.w9_status === 'submitted' ? 'badge-pending' : 'badge-red')}" style="font-size: 10.5px;">
+                            W-9: ${p.w9_status || 'Missing'}
+                        </span>
+                        ${p.w9_status === 'submitted' || p.w9_status === 'verified' ? `<a href="javascript:void(0)" onclick="openW9ViewModal(${p.id})" style="font-size: 11px; text-decoration: none;" title="View Form W-9">📄</a>` : ''}
+                    </div>
+                    <div style="font-size: 11px; margin-top: 5px; line-height: 1.4;">
+                        <div><span style="color: var(--slate); font-weight: 600;">DL:</span> <span style="font-weight: 600;">${p.dl_status || 'unknown'}</span></div>
+                        <div><span style="color: var(--slate); font-weight: 600;">CS:</span> <span style="font-weight: 600;">${p.child_support_status || 'unknown'}</span></div>
+                    </div>
+                </td>
+
+                <!-- 6. Notes & Audit -->
+                <td style="text-align: center; vertical-align: middle;">
+                    <div style="display: flex; flex-direction: column; gap: 4px; align-items: center;">
+                        <button class="btn btn-outline" style="padding: 3px 8px; font-size: 11px; color: var(--primary); width: 100%; max-width: 80px;" onclick="openCaseNotesModal(${p.id}, '${escName}', '${p.email}', '${p.track}')">
                             📝 Notes
                         </button>
-                        <button class="btn btn-outline" style="padding: 2px 6px; font-size: 10px; color: #4338ca; border-color: #c7d2fe;" onclick="openCmBriefcaseAuditModal(${p.id})">
-                            📊 CM Audit
+                        <button class="btn btn-outline" style="padding: 2px 6px; font-size: 10px; color: #4338ca; border-color: #c7d2fe; width: 100%; max-width: 80px;" onclick="openCmBriefcaseAuditModal(${p.id})">
+                            📊 Audit
                         </button>
                     </div>
                 </td>
-                <td>
-                    <div>
-                        <button class="btn btn-outline" style="padding: 3px 8px; font-size: 11px; font-weight: 600; color: var(--primary); border-color: #93c5fd; background: #eff6ff;" onclick="openStaffCasePlanModal(${p.id}, '${escName}')">
-                            📄 Case Plan
-                        </button>
-                    </div>
-                    <div style="margin-top: 4px;">
+
+                <!-- 7. Case Plan -->
+                <td style="text-align: center; vertical-align: middle;">
+                    <button class="btn btn-outline" style="padding: 3px 8px; font-size: 11px; font-weight: 600; color: var(--primary); border-color: #93c5fd; background: #eff6ff;" onclick="openStaffCasePlanModal(${p.id}, '${escName}')">
+                        📄 Case Plan
+                    </button>
+                    <div style="margin-top: 5px;">
                         ${p.has_reentry_plan ? `
-                            <span class="badge ${p.reentry_status === 'immediate_triage_needed' ? 'badge-red' : (p.reentry_status === 'at_risk' ? 'badge-pending' : 'badge-green')}" style="font-size: 10px; padding: 2px 6px;">
+                            <span class="badge ${p.reentry_status === 'immediate_triage_needed' ? 'badge-red' : (p.reentry_status === 'at_risk' ? 'badge-pending' : 'badge-green')}" style="font-size: 9.5px; padding: 2px 5px;">
                                 🧭 ${p.reentry_status ? p.reentry_status.toUpperCase().replace(/_/g, ' ') : 'ASSESSED'}
                             </span>
                         ` : `
-                            <a href="javascript:void(0)" onclick="startReentryAssessmentForUser(${p.id}, '${escName}')" style="font-size: 10.5px; color: var(--accent); text-decoration: underline;">+ Reentry Assess</a>
+                            <a href="javascript:void(0)" onclick="startReentryAssessmentForUser(${p.id}, '${escName}')" style="font-size: 10px; color: var(--accent); text-decoration: underline;">+ Reentry Plan</a>
                         `}
                     </div>
                 </td>
-                <td>
-                    <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+
+                <!-- 8. Caseload Actions -->
+                <td style="vertical-align: middle;">
+                    <div style="display: flex; gap: 4px; flex-wrap: wrap; justify-content: center;">
                         <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px;" onclick="openCaseReviewModal(${p.id}, '${escName}')" title="Weekly Case Review">
                             📋 Review
                         </button>
@@ -1662,18 +1717,18 @@ async function loadCaseload() {
                         <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: #4338ca; border-color: #c7d2fe;" onclick="promptSwitchTrack(${p.id}, '${escName}', '${p.track}')" title="Switch Track">
                             🔄 Track
                         </button>
+                        <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: #0284c7; border-color: #bae6fd;" onclick="advanceParticipantGate(${p.id}, ${(p.current_gate || 1) + 1})" title="Advance Gate">
+                            Gate ➔
+                        </button>
                         ${p.overall_status === 'archived' ? `
                             <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: var(--success); border-color: #86efac;" onclick="toggleArchiveParticipant(${p.id}, '${escName}', 'restore')" title="Restore to Caseload">
-                                ♻️ Restore
+                                ♻️
                             </button>
                         ` : `
                             <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: var(--danger); border-color: #fca5a5;" onclick="toggleArchiveParticipant(${p.id}, '${escName}', 'archive')" title="Remove / Archive Participant">
-                                🗑️ Remove
+                                🗑️
                             </button>
                         `}
-                        <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px;" onclick="advanceParticipantGate(${p.id}, ${(p.current_gate || 1) + 1})">
-                            Gate &rarr;
-                        </button>
                     </div>
                 </td>
             </tr>
@@ -6077,10 +6132,17 @@ async function handleSaveBenefitStatus(benefitType, event, contextPrefix = 'hub'
 }
 
 function scrollToBenefitsSection(sectionId) {
-    const el = document.getElementById(sectionId);
-    if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (currentUser && currentUser.track === 'reentry_nav') {
+        switchRnSection('benefits');
+    } else {
+        switchFsSection('benefits');
     }
+    setTimeout(() => {
+        const el = document.getElementById(sectionId) || document.getElementById('fs-benefits-section') || document.getElementById('rn-section-benefits');
+        if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }, 50);
 }
 
 
