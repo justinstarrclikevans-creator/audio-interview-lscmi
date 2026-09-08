@@ -162,7 +162,26 @@
                     </div>
                 </div>
 
-                <!-- Card 5: Linked Re-entry Action & Referral Guide -->
+                <!-- Card 5: State Benefits & Healthcare Access (Welvista, Medicaid, SNAP, TANF) -->
+                <div class="portal-card action-card" style="border-top: 3px solid #0284c7;">
+                    <div class="card-icon">🏥</div>
+                    <div class="card-body">
+                        <h3>State Benefits & Healthcare</h3>
+                        <p id="fs-benefits-card-summary">Official SC applications and status tracking for <strong>Welvista (Free Meds)</strong>, <strong>Medicaid</strong>, <strong>Food Stamps (SNAP)</strong>, and <strong>TANF</strong>.</p>
+                        <div id="fs-benefits-status-pills" style="display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 8px;">
+                            <span class="badge" id="fs-pill-welvista" style="font-size: 10.5px; background: #f1f5f9; color: #334155;">💊 Welvista: ...</span>
+                            <span class="badge" id="fs-pill-medicaid" style="font-size: 10.5px; background: #f1f5f9; color: #334155;">🩺 Medicaid: ...</span>
+                            <span class="badge" id="fs-pill-snap" style="font-size: 10.5px; background: #f1f5f9; color: #334155;">🍎 SNAP: ...</span>
+                            <span class="badge" id="fs-pill-tanf" style="font-size: 10.5px; background: #f1f5f9; color: #334155;">💵 TANF: ...</span>
+                        </div>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <button class="btn btn-primary" style="font-size: 12px; padding: 6px 12px;" onclick="openBenefitsHubModal()">🏛️ Open Benefits & Healthcare Hub</button>
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px;" onclick="scrollToBenefitsSection('fs-benefits-section')">⬇️ View Cards Below</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 6: Linked Re-entry Action & Referral Guide -->
                 <div id="fs-reentry-guide-card" class="portal-card action-card hidden" style="border-left: 4px solid var(--primary); grid-column: 1 / -1; background: #f0fdf4;">
                     <div class="card-icon">🧭</div>
                     <div class="card-body">
@@ -219,6 +238,25 @@
                     <p>Track your verified documents, employment readiness tools, credentials, health, and financial plans.</p>
                 </div>
                 <div id="briefcase-domains-container">
+                    <!-- Loaded dynamically via JavaScript -->
+                </div>
+            </div>
+
+            <!-- STATE BENEFITS & HEALTHCARE SECTION (FIRST SHIFT) -->
+            <div class="section-card mt-8" id="fs-benefits-section" style="border-top: 4px solid #0284c7;">
+                <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 22px;">🏛️</span>
+                            <h2 style="margin: 0;">South Carolina Benefits & Healthcare Access Hub</h2>
+                        </div>
+                        <p style="margin: 4px 0 0 0; color: var(--slate);">Official state applications, eligibility guidance, and status tracking for Welvista, Medicaid, SNAP, and TANF.</p>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-outline" style="font-size: 12px;" onclick="openBenefitsHubModal()">🔍 Open Guided Benefits Modal</button>
+                    </div>
+                </div>
+                <div id="fs-benefits-container">
                     <!-- Loaded dynamically via JavaScript -->
                 </div>
             </div>
@@ -287,6 +325,9 @@
                         <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askAiPrompt('What documents can I use for Form I-9 List B and List C?')">🆔 I-9 Documents</button>
                         <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askAiPrompt('How do I get my license back with SCDMV Route 66?')">🚗 Route 66 License</button>
                         <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askAiPrompt('How do I get free prescription medicines through Welvista?')">💊 Free Welvista Meds</button>
+                        <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askAiPrompt('How do I apply for South Carolina Healthy Connections Medicaid?')">🩺 SC Medicaid</button>
+                        <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askAiPrompt('How do I apply for SNAP Food Stamps in South Carolina and can I qualify with a record?')">🍎 Food Stamps (SNAP)</button>
+                        <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askAiPrompt('Who qualifies for TANF cash assistance in SC and how do Turn90 hours count?')">💵 TANF Assistance</button>
                         <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askAiPrompt('Where can I find emergency housing or shelter in Charleston or Columbia?')">🏠 Housing Referrals</button>
                     </div>
 
@@ -363,6 +404,7 @@
 
             <div class="nav-sub-tabs">
                 <button class="sub-tab-btn active" onclick="switchRnSection('caseplan')">🎯 My Re-entry Case Plan</button>
+                <button class="sub-tab-btn" onclick="switchRnSection('benefits')">🏛️ State Benefits & Healthcare</button>
                 <button class="sub-tab-btn" onclick="switchRnSection('briefcase')">🧰 Master Briefcase</button>
                 <button class="sub-tab-btn" onclick="switchRnSection('messages')">💬 Message Staff & AI</button>
                 <button class="sub-tab-btn" onclick="switchRnSection('jobs')">💼 Re-entry Job Board</button>
@@ -417,6 +459,23 @@
                             <div style="font-size: 12px; font-weight: 700; color: var(--slate); text-transform: uppercase; margin-bottom: 4px;">⚖️ Legal & Supervision Status</div>
                             <div id="rn-plan-legal" style="font-size: 13.5px; color: #1e293b; font-weight: 600;">Loading supervision status...</div>
                         </div>
+                        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 14px; grid-column: 1 / -1;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                                <div>
+                                    <div style="font-size: 12px; font-weight: 700; color: #166534; text-transform: uppercase; margin-bottom: 4px;">🏛️ State Benefits & Healthcare Coverage</div>
+                                    <div id="rn-plan-benefits-summary" style="font-size: 12.5px; color: #166534; display: flex; gap: 6px; flex-wrap: wrap;">
+                                        <span class="badge" id="rn-plan-pill-welvista" style="font-size: 11px; background: #dcfce7; color: #166534;">💊 Welvista: ...</span>
+                                        <span class="badge" id="rn-plan-pill-medicaid" style="font-size: 11px; background: #dcfce7; color: #166534;">🩺 Medicaid: ...</span>
+                                        <span class="badge" id="rn-plan-pill-snap" style="font-size: 11px; background: #dcfce7; color: #166534;">🍎 SNAP: ...</span>
+                                        <span class="badge" id="rn-plan-pill-tanf" style="font-size: 11px; background: #dcfce7; color: #166534;">💵 TANF: ...</span>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 6px;">
+                                    <button class="btn btn-primary" style="font-size: 11.5px; padding: 5px 10px;" onclick="switchRnSection('benefits')">Manage Applications</button>
+                                    <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 10px;" onclick="openBenefitsHubModal()">Guided Modal</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -452,6 +511,27 @@
                     </div>
                     <div id="rn-plan-referrals-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px;">
                         <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- RN Section: State Benefits & Healthcare Hub -->
+            <div id="rn-section-benefits" class="rn-sub-view hidden">
+                <div class="section-card" style="border-top: 4px solid #0284c7; margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 24px;">🏛️</span>
+                                <h2 style="margin: 0; font-size: 19px;">South Carolina State Benefits & Healthcare Access Hub</h2>
+                            </div>
+                            <p style="margin: 4px 0 0 0;" class="text-slate">Direct application links, document checklists, phone hotlines, and real-time status tracking for Welvista, Medicaid, SNAP, and TANF.</p>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn btn-outline" onclick="openBenefitsHubModal()">🔍 Open Guided Modal</button>
+                        </div>
+                    </div>
+                    <div id="rn-benefits-container">
+                        <!-- Loaded dynamically via JavaScript -->
                     </div>
                 </div>
             </div>
@@ -587,6 +667,9 @@
                             <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askRnAiPrompt('What documents can I use for Form I-9 List B and List C?')">🆔 I-9 Documents</button>
                             <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askRnAiPrompt('How do I get my license back with SCDMV Route 66?')">🚗 Route 66 License</button>
                             <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askRnAiPrompt('How do I get free prescription medicines through Welvista?')">💊 Free Welvista Meds</button>
+                            <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askRnAiPrompt('How do I apply for South Carolina Healthy Connections Medicaid?')">🩺 SC Medicaid</button>
+                            <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askRnAiPrompt('How do I apply for SNAP Food Stamps in South Carolina and can I qualify with a record?')">🍎 Food Stamps (SNAP)</button>
+                            <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askRnAiPrompt('Who qualifies for TANF cash assistance in SC and how do Turn90 hours count?')">💵 TANF Assistance</button>
                             <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askRnAiPrompt('Where can I find emergency housing or shelter in Charleston or Columbia?')">🏠 Housing Referrals</button>
                         </div>
 
@@ -2484,6 +2567,39 @@
 
             <div class="modal-footer" style="flex-shrink: 0; display: flex; justify-content: flex-end; border-top: 1px solid var(--border); padding-top: 12px; margin-top: 12px;">
                 <button type="button" class="btn btn-outline" onclick="closeModal('modal-cm-briefcase-report')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- MODAL: STATE BENEFITS & HEALTHCARE ACCESS HUB              -->
+    <!-- ========================================================= -->
+    <div id="modal-benefits-hub" class="modal hidden">
+        <div class="modal-content modal-lg" style="max-width: 980px; max-height: 92vh; display: flex; flex-direction: column;">
+            <div class="modal-header" style="flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
+                <div>
+                    <h3 style="margin: 0; color: var(--primary); font-size: 19px;">🏛️ South Carolina Benefits & Healthcare Access Hub</h3>
+                    <p class="text-slate" style="margin: 4px 0 0 0; font-size: 12.5px;">Official State Applications, Hotlines, Document Checklists & Status Tracking</p>
+                </div>
+                <button class="modal-close" onclick="closeModal('modal-benefits-hub')">&times;</button>
+            </div>
+
+            <!-- Program Selector Tabs -->
+            <div style="flex-shrink: 0; display: flex; gap: 8px; border-bottom: 2px solid var(--border); padding: 12px 0; overflow-x: auto;">
+                <button id="b-tab-btn-welvista" class="btn btn-primary" onclick="switchBenefitsModalTab('welvista')">💊 Welvista (Free Meds)</button>
+                <button id="b-tab-btn-medicaid" class="btn btn-outline" onclick="switchBenefitsModalTab('medicaid')">🩺 SC Medicaid</button>
+                <button id="b-tab-btn-snap" class="btn btn-outline" onclick="switchBenefitsModalTab('snap')">🍎 Food Stamps (SNAP)</button>
+                <button id="b-tab-btn-tanf" class="btn btn-outline" onclick="switchBenefitsModalTab('tanf')">💵 TANF Assistance</button>
+            </div>
+
+            <!-- Modal Content Body -->
+            <div id="modal-benefits-body" style="flex: 1; overflow-y: auto; padding: 16px 4px;">
+                <!-- Populated dynamically via JavaScript with current participant values and official links -->
+            </div>
+
+            <div class="modal-footer" style="flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 12px; margin-top: 12px;">
+                <div style="font-size: 11.5px; color: var(--slate);">💡 Updating an application status here syncs with your Master Briefcase and notifies your Case Manager.</div>
+                <button type="button" class="btn btn-outline" onclick="closeModal('modal-benefits-hub')">Close</button>
             </div>
         </div>
     </div>

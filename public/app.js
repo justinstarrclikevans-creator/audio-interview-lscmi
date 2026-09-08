@@ -244,6 +244,7 @@ async function loadFsDashboard() {
         renderGateCriteria(data.weeks, currentGateWeek);
         loadFsPoints();
         loadBriefcaseChecklist();
+        loadParticipantBenefits();
         loadParticipantMessages();
         loadCbtModules();
 
@@ -582,47 +583,27 @@ function switchRnSection(section) {
     document.querySelectorAll('#view-rn-portal .nav-sub-tabs .sub-tab-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelectorAll('#view-rn-portal .rn-sub-view').forEach(view => view.classList.add('hidden'));
 
+    const btn = document.querySelector(`#view-rn-portal .nav-sub-tabs button[onclick*="'${section}'"]`);
+    if (btn) btn.classList.add('active');
+
+    const view = document.getElementById(`rn-section-${section}`);
+    if (view) view.classList.remove('hidden');
+
     if (section === 'caseplan') {
-        const btn = document.querySelector('#view-rn-portal .sub-tab-btn:nth-child(1)');
-        if (btn) btn.classList.add('active');
-        const view = document.getElementById('rn-section-caseplan');
-        if (view) view.classList.remove('hidden');
         loadRnCasePlan();
+    } else if (section === 'benefits') {
+        loadParticipantBenefits();
     } else if (section === 'briefcase') {
-        const btn = document.querySelector('#view-rn-portal .sub-tab-btn:nth-child(2)');
-        if (btn) btn.classList.add('active');
-        const view = document.getElementById('rn-section-briefcase');
-        if (view) view.classList.remove('hidden');
         loadBriefcaseChecklist('rn-briefcase-domains-container');
     } else if (section === 'messages') {
-        const btn = document.querySelector('#view-rn-portal .sub-tab-btn:nth-child(3)');
-        if (btn) btn.classList.add('active');
-        const view = document.getElementById('rn-section-messages');
-        if (view) view.classList.remove('hidden');
         loadParticipantMessages('rn');
     } else if (section === 'jobs') {
-        const btn = document.querySelector('#view-rn-portal .sub-tab-btn:nth-child(4)');
-        if (btn) btn.classList.add('active');
-        const view = document.getElementById('rn-section-jobs');
-        if (view) view.classList.remove('hidden');
         loadJobs();
     } else if (section === 'cbt') {
-        const btn = document.querySelector('#view-rn-portal .sub-tab-btn:nth-child(5)');
-        if (btn) btn.classList.add('active');
-        const view = document.getElementById('rn-section-cbt');
-        if (view) view.classList.remove('hidden');
         loadCbtModules();
     } else if (section === 'resume') {
-        const btn = document.querySelector('#view-rn-portal .sub-tab-btn:nth-child(6)');
-        if (btn) btn.classList.add('active');
-        const view = document.getElementById('rn-section-resume');
-        if (view) view.classList.remove('hidden');
         loadSavedResume();
     } else if (section === 'locker') {
-        const btn = document.querySelector('#view-rn-portal .sub-tab-btn:nth-child(7)');
-        if (btn) btn.classList.add('active');
-        const view = document.getElementById('rn-section-locker');
-        if (view) view.classList.remove('hidden');
         loadLockerDocs();
     }
 }
@@ -630,6 +611,7 @@ function switchRnSection(section) {
 function loadRnDashboard() {
     switchRnSection('caseplan');
     loadRnCasePlan();
+    loadParticipantBenefits();
     loadBriefcaseChecklist('rn-briefcase-domains-container');
     loadParticipantMessages('rn');
 }
@@ -5504,5 +5486,348 @@ async function loadCmAuditForSelectedUser() {
 function printCmAuditReport() {
     window.print();
 }
+
+// =============================================================
+// STATE BENEFITS & HEALTHCARE ACCESS (WELVISTA, MEDICAID, SNAP, TANF)
+// =============================================================
+let cachedParticipantBenefits = null;
+let currentBenefitsModalTab = 'welvista';
+
+function getBenefitStatusBadge(status) {
+    const s = (status || 'not_started').toLowerCase();
+    if (s === 'approved') {
+        return '<span class="badge badge-green" style="font-weight: 700;">✅ Approved & Active</span>';
+    } else if (s === 'submitted') {
+        return '<span class="badge badge-warning" style="font-weight: 700;">📤 Submitted (Pending Review)</span>';
+    } else if (s === 'in_progress') {
+        return '<span class="badge" style="background: #e0f2fe; color: #0369a1; font-weight: 700;">📝 In Progress</span>';
+    } else if (s === 'not_eligible') {
+        return '<span class="badge" style="background: #f1f5f9; color: #64748b; font-weight: 600;">⚪ Not Eligible / N/A</span>';
+    }
+    return '<span class="badge badge-outline" style="color: #64748b;">⏳ Not Started</span>';
+}
+
+function getBenefitShortPill(status, progKey) {
+    const s = (status || 'not_started').toLowerCase();
+    const icons = { welvista: '💊 Welvista', medicaid: '🩺 Medicaid', snap: '🍎 SNAP', tanf: '💵 TANF' };
+    const label = icons[progKey] || progKey.toUpperCase();
+    if (s === 'approved') {
+        return `<span class="badge badge-green" style="font-size: 11px;">${label}: Active ✅</span>`;
+    } else if (s === 'submitted') {
+        return `<span class="badge badge-warning" style="font-size: 11px;">${label}: Submitted ⏳</span>`;
+    } else if (s === 'in_progress') {
+        return `<span class="badge" style="font-size: 11px; background: #e0f2fe; color: #0369a1;">${label}: In Progress 📝</span>`;
+    } else if (s === 'not_eligible') {
+        return `<span class="badge" style="font-size: 11px; background: #f1f5f9; color: #64748b;">${label}: N/A</span>`;
+    }
+    return `<span class="badge badge-outline" style="font-size: 11px; color: #64748b;">${label}: Not Started</span>`;
+}
+
+function renderBenefitCardHtml(bKey, bData, contextPrefix = 'hub') {
+    const icons = { welvista: '💊', medicaid: '🩺', snap: '🍎', tanf: '💵' };
+    const icon = icons[bKey] || '🏛️';
+    const currentStatus = (bData.status || 'not_started').toLowerCase();
+
+    return `
+        <div class="portal-card" style="display: flex; flex-direction: column; justify-content: space-between; background: white; border: 1px solid var(--border); border-radius: 8px; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <div>
+                <!-- Card Header -->
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 10px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 24px;">${icon}</span>
+                        <div>
+                            <h3 style="margin: 0; font-size: 16px; color: var(--primary);">${bData.name}</h3>
+                            <span style="font-size: 11.5px; color: var(--accent); font-weight: 700;">${bData.category}</span>
+                        </div>
+                    </div>
+                    <div>
+                        ${getBenefitStatusBadge(currentStatus)}
+                    </div>
+                </div>
+
+                <p style="font-size: 12.5px; color: #334155; line-height: 1.5; margin: 0 0 12px 0;">
+                    ${bData.shortDesc}
+                </p>
+
+                <!-- Hotline & Hours -->
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 12px; font-size: 12px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 4px;">
+                    <div><strong>📞 Official Hotline:</strong> <a href="tel:${bData.phone.replace(/[^0-9]/g, '')}" style="color: var(--primary); font-weight: 600;">${bData.phone}</a></div>
+                    <div><strong>ℹ️ Eligibility:</strong> <span style="color: #475569;">${bData.eligibility}</span></div>
+                </div>
+
+                <!-- Direct Action Buttons -->
+                <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px;">
+                    <a href="${bData.applyUrl}" target="_blank" rel="noopener" class="btn btn-primary" style="font-size: 12px; padding: 6px 12px; text-decoration: none; font-weight: 600;">
+                        🌐 Apply Online Now ↗
+                    </a>
+                    <a href="tel:${bData.phone.replace(/[^0-9]/g, '')}" class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; text-decoration: none;">
+                        📞 Call ${bData.phone}
+                    </a>
+                    ${bData.pdfUrl ? `
+                        <a href="${bData.pdfUrl}" target="_blank" rel="noopener" class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; text-decoration: none;">
+                            📄 Application PDF ↗
+                        </a>
+                    ` : ''}
+                    <button type="button" class="btn btn-outline" style="font-size: 12px; padding: 6px 10px;" onclick="askAiPrompt('How do I apply for ${bData.name}?')">
+                        🤖 Ask AI
+                    </button>
+                </div>
+
+                <!-- Required Documents Checklist -->
+                <details style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 12px; font-size: 12px; margin-bottom: 14px;">
+                    <summary style="font-weight: 700; color: #1e293b; cursor: pointer;">📋 Required Documents & Steps to Gather (${(bData.requiredDocs || []).length} items)</summary>
+                    <div style="margin-top: 8px;">
+                        <ul style="margin: 0; padding-left: 18px; line-height: 1.6; color: #334155;">
+                            ${(bData.requiredDocs || []).map(doc => `<li>${doc}</li>`).join('')}
+                        </ul>
+                        <div style="margin-top: 8px; padding-top: 8px; border-top: 1px dashed #cbd5e1;">
+                            <strong style="color: var(--primary);">Application Steps:</strong>
+                            <ol style="margin: 4px 0 0 0; padding-left: 18px; line-height: 1.5; color: #334155;">
+                                ${(bData.steps || []).map(step => `<li>${step}</li>`).join('')}
+                            </ol>
+                        </div>
+                    </div>
+                </details>
+            </div>
+
+            <!-- Participant Status & Tracker Form -->
+            <form onsubmit="handleSaveBenefitStatus('${bKey}', event, '${contextPrefix}')" style="background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px; font-size: 12px;">
+                <div style="font-weight: 700; color: var(--primary); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+                    <span>📝 My Application Status Tracker</span>
+                    <span style="font-size: 11px; font-weight: normal; color: #64748b;">${bData.updated_at ? 'Updated ' + bData.updated_at.split(' ')[0] : 'Not recorded'}</span>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                    <div>
+                        <label style="display: block; font-weight: 600; margin-bottom: 2px;">Status</label>
+                        <select id="${contextPrefix}-status-${bKey}" style="width: 100%; padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; background: white;">
+                            <option value="not_started" ${currentStatus === 'not_started' ? 'selected' : ''}>⏳ Not Started</option>
+                            <option value="in_progress" ${currentStatus === 'in_progress' ? 'selected' : ''}>📝 Application In Progress</option>
+                            <option value="submitted" ${currentStatus === 'submitted' ? 'selected' : ''}>📤 Submitted (Pending Review)</option>
+                            <option value="approved" ${currentStatus === 'approved' ? 'selected' : ''}>✅ Approved & Active</option>
+                            <option value="not_eligible" ${currentStatus === 'not_eligible' ? 'selected' : ''}>⚪ Not Eligible / N/A</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; margin-bottom: 2px;">
+                            ${bKey === 'snap' || bKey === 'tanf' ? 'EBT / Case #' : 'Card / App #'}
+                        </label>
+                        <input type="text" id="${contextPrefix}-appnum-${bKey}" value="${bData.application_number || ''}" placeholder="e.g., 9821450" style="width: 100%; padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; background: white;">
+                    </div>
+                </div>
+
+                ${bKey === 'snap' || bKey === 'tanf' ? `
+                    <div style="margin-bottom: 8px;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 2px;">Monthly Benefit Amount ($)</label>
+                        <input type="text" id="${contextPrefix}-monthly-${bKey}" value="${bData.monthly_amount || ''}" placeholder="e.g., $291 / month" style="width: 100%; padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; background: white;">
+                    </div>
+                ` : `
+                    <div style="margin-bottom: 8px;">
+                        <label style="display: block; font-weight: 600; margin-bottom: 2px;">Renewal / Expiration Date</label>
+                        <input type="date" id="${contextPrefix}-renewal-${bKey}" value="${bData.renewal_date || ''}" style="width: 100%; padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; background: white;">
+                    </div>
+                `}
+
+                <div style="margin-bottom: 8px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 2px;">Caseworker / Clinic Notes</label>
+                    <input type="text" id="${contextPrefix}-notes-${bKey}" value="${bData.notes || ''}" placeholder="${bKey === 'welvista' ? 'e.g., Fetter Health sent Rx for blood pressure meds' : 'e.g., Worker: Ms. Robinson, DSS Charleston'}" style="width: 100%; padding: 5px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; background: white;">
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+                    <span id="${contextPrefix}-feedback-${bKey}" style="font-size: 11px; font-weight: 600;"></span>
+                    <button type="submit" class="btn btn-primary" style="font-size: 11.5px; padding: 5px 12px;">💾 Save Status</button>
+                </div>
+            </form>
+        </div>
+    `;
+}
+
+function renderBenefitsHubHtml(benefitsData, contextPrefix = 'hub') {
+    if (!benefitsData) return '<p class="text-slate">No state benefits information available.</p>';
+    const keys = ['welvista', 'medicaid', 'snap', 'tanf'];
+    let html = '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px;">';
+    keys.forEach(k => {
+        if (benefitsData[k]) {
+            html += renderBenefitCardHtml(k, benefitsData[k], contextPrefix);
+        }
+    });
+    html += '</div>';
+    return html;
+}
+
+async function loadParticipantBenefits(targetUserId) {
+    const token = localStorage.getItem('fs_token');
+    if (!token) return;
+
+    try {
+        const url = targetUserId 
+            ? `/api/participant/benefits?userId=${targetUserId}` 
+            : '/api/participant/benefits';
+        
+        const res = await fetch(url, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        cachedParticipantBenefits = data;
+
+        const benefits = data.benefits || {};
+
+        // 1. Update First Shift Dashboard Pills
+        const fsWelvista = document.getElementById('fs-pill-welvista');
+        const fsMedicaid = document.getElementById('fs-pill-medicaid');
+        const fsSnap = document.getElementById('fs-pill-snap');
+        const fsTanf = document.getElementById('fs-pill-tanf');
+
+        if (fsWelvista && benefits.welvista) fsWelvista.outerHTML = getBenefitShortPill(benefits.welvista.status, 'welvista');
+        if (fsMedicaid && benefits.medicaid) fsMedicaid.outerHTML = getBenefitShortPill(benefits.medicaid.status, 'medicaid');
+        if (fsSnap && benefits.snap) fsSnap.outerHTML = getBenefitShortPill(benefits.snap.status, 'snap');
+        if (fsTanf && benefits.tanf) fsTanf.outerHTML = getBenefitShortPill(benefits.tanf.status, 'tanf');
+
+        // 2. Update Re-entry Case Plan Pills
+        const rnPillWelvista = document.getElementById('rn-plan-pill-welvista');
+        const rnPillMedicaid = document.getElementById('rn-plan-pill-medicaid');
+        const rnPillSnap = document.getElementById('rn-plan-pill-snap');
+        const rnPillTanf = document.getElementById('rn-plan-pill-tanf');
+
+        if (rnPillWelvista && benefits.welvista) rnPillWelvista.outerHTML = getBenefitShortPill(benefits.welvista.status, 'welvista');
+        if (rnPillMedicaid && benefits.medicaid) rnPillMedicaid.outerHTML = getBenefitShortPill(benefits.medicaid.status, 'medicaid');
+        if (rnPillSnap && benefits.snap) rnPillSnap.outerHTML = getBenefitShortPill(benefits.snap.status, 'snap');
+        if (rnPillTanf && benefits.tanf) rnPillTanf.outerHTML = getBenefitShortPill(benefits.tanf.status, 'tanf');
+
+        // 3. Render in First Shift Embedded Section
+        const fsContainer = document.getElementById('fs-benefits-container');
+        if (fsContainer) {
+            fsContainer.innerHTML = renderBenefitsHubHtml(benefits, 'fs');
+        }
+
+        // 4. Render in Re-entry Nav Section
+        const rnContainer = document.getElementById('rn-benefits-container');
+        if (rnContainer) {
+            rnContainer.innerHTML = renderBenefitsHubHtml(benefits, 'rn');
+        }
+
+        // 5. If Modal is currently open, refresh modal body
+        const modal = document.getElementById('modal-benefits-hub');
+        if (modal && !modal.classList.contains('hidden')) {
+            renderBenefitsModalTab(currentBenefitsModalTab);
+        }
+    } catch(err) {
+        console.error('Failed to load participant benefits:', err);
+    }
+}
+
+function openBenefitsHubModal(initialTab = 'welvista') {
+    currentBenefitsModalTab = initialTab;
+    if (!cachedParticipantBenefits) {
+        loadParticipantBenefits().then(() => {
+            renderBenefitsModalTab(initialTab);
+            openModal('modal-benefits-hub');
+        });
+    } else {
+        renderBenefitsModalTab(initialTab);
+        openModal('modal-benefits-hub');
+    }
+}
+
+function switchBenefitsModalTab(tab) {
+    currentBenefitsModalTab = tab;
+    const tabKeys = ['welvista', 'medicaid', 'snap', 'tanf'];
+    tabKeys.forEach(k => {
+        const btn = document.getElementById(`b-tab-btn-${k}`);
+        if (btn) {
+            if (k === tab) {
+                btn.className = 'btn btn-primary';
+            } else {
+                btn.className = 'btn btn-outline';
+            }
+        }
+    });
+    renderBenefitsModalTab(tab);
+}
+
+function renderBenefitsModalTab(tab) {
+    const bodyEl = document.getElementById('modal-benefits-body');
+    if (!bodyEl) return;
+
+    if (!cachedParticipantBenefits || !cachedParticipantBenefits.benefits) {
+        bodyEl.innerHTML = '<p class="text-slate">Loading program details...</p>';
+        return;
+    }
+
+    const bData = cachedParticipantBenefits.benefits[tab];
+    if (!bData) {
+        bodyEl.innerHTML = '<p class="text-slate">Program details not found.</p>';
+        return;
+    }
+
+    bodyEl.innerHTML = renderBenefitCardHtml(tab, bData, 'modal');
+}
+
+async function handleSaveBenefitStatus(benefitType, event, contextPrefix = 'hub') {
+    if (event) event.preventDefault();
+    const token = localStorage.getItem('fs_token');
+    if (!token) return alert('Session expired. Please log in.');
+
+    const statusEl = document.getElementById(`${contextPrefix}-status-${benefitType}`);
+    const appNumEl = document.getElementById(`${contextPrefix}-appnum-${benefitType}`);
+    const monthlyEl = document.getElementById(`${contextPrefix}-monthly-${benefitType}`);
+    const renewalEl = document.getElementById(`${contextPrefix}-renewal-${benefitType}`);
+    const notesEl = document.getElementById(`${contextPrefix}-notes-${benefitType}`);
+    const feedbackEl = document.getElementById(`${contextPrefix}-feedback-${benefitType}`);
+
+    const payload = {
+        benefit_type: benefitType,
+        status: statusEl ? statusEl.value : 'not_started',
+        application_number: appNumEl ? appNumEl.value : '',
+        monthly_amount: monthlyEl ? monthlyEl.value : '',
+        renewal_date: renewalEl ? renewalEl.value : '',
+        notes: notesEl ? notesEl.value : ''
+    };
+
+    if (feedbackEl) {
+        feedbackEl.style.color = 'var(--primary)';
+        feedbackEl.innerText = 'Saving...';
+    }
+
+    try {
+        const res = await fetch('/api/participant/benefits', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to save benefit status');
+
+        if (feedbackEl) {
+            feedbackEl.style.color = 'var(--success)';
+            feedbackEl.innerText = '✅ Saved!';
+            setTimeout(() => { feedbackEl.innerText = ''; }, 3000);
+        }
+
+        // Refresh benefits and briefcase checklist
+        await loadParticipantBenefits();
+        if (typeof loadBriefcaseChecklist === 'function') {
+            loadBriefcaseChecklist();
+        }
+    } catch(err) {
+        if (feedbackEl) {
+            feedbackEl.style.color = 'var(--danger)';
+            feedbackEl.innerText = '❌ ' + err.message;
+        } else {
+            alert('Error: ' + err.message);
+        }
+    }
+}
+
+function scrollToBenefitsSection(sectionId) {
+    const el = document.getElementById(sectionId);
+    if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
 
 

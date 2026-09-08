@@ -61,11 +61,20 @@ const SC_COMMUNITY_RESOURCES = {
       {
         name: "Welvista (Statewide Prescription Assistance)",
         category: "Free Prescription Medications",
-        phone: "(803) 933-9183",
-        address: "Mail-order delivery statewide / SC Office Columbia",
-        websiteUrl: "https://welvista.org",
-        services: "Provides free 30/90-day maintenance prescription medications for uninsured South Carolinians.",
+        phone: "1-800-983-3339",
+        address: "270 Stoneridge Dr, Suite 200, Columbia, SC 29210 (Direct mail delivery to your home/shelter statewide)",
+        websiteUrl: "https://welvista.org/patient-services/",
+        services: "Provides 100% free 90-day maintenance prescription medications for uninsured South Carolinians.",
         eligibility: "Uninsured SC residents with household income at or below 300% Federal Poverty Level."
+      },
+      {
+        name: "South Carolina Healthy Connections Medicaid (SCDHHS)",
+        category: "State Health Insurance",
+        phone: "1-888-549-0820",
+        address: "326 Westinghouse Rd, Charleston, SC 29412 (Local Office) / Online apply.scdhhs.gov",
+        websiteUrl: "https://apply.scdhhs.gov",
+        services: "Comprehensive health insurance covering doctor visits, emergency care, dental, mental health, addiction treatment, and prescriptions.",
+        eligibility: "Low-income SC residents, parents, disabled individuals, or individuals in transitional employment."
       },
       {
         name: "Fetter Health Care Network",
@@ -85,6 +94,24 @@ const SC_COMMUNITY_RESOURCES = {
       }
     ],
     food_and_transit: [
+      {
+        name: "South Carolina SNAP (Food Stamps) - Charleston County DSS",
+        category: "Nutrition & Food Stamps",
+        phone: "1-800-616-1309",
+        address: "3366 Rivers Ave, North Charleston, SC 29405 / Online benefitsportal.dss.sc.gov",
+        websiteUrl: "https://benefitsportal.dss.sc.gov/",
+        services: "Monthly grocery funds loaded onto an EBT card. South Carolina allows individuals with past criminal convictions to qualify for SNAP!",
+        eligibility: "Income-eligible SC households. Expedited SNAP provided within 7 days if monthly income < $150."
+      },
+      {
+        name: "South Carolina TANF Cash Assistance - SC DSS",
+        category: "Family Cash Assistance",
+        phone: "1-800-616-1309",
+        address: "3366 Rivers Ave, North Charleston, SC 29405 / Online benefitsportal.dss.sc.gov",
+        websiteUrl: "https://benefitsportal.dss.sc.gov/",
+        services: "Temporary monthly cash assistance and supportive services for low-income families with dependent children or pregnant individuals. Turn90 hours count toward work requirements!",
+        eligibility: "Low-income families with children under 18 or pregnant women."
+      },
       {
         name: "Lowcountry Food Bank",
         category: "Emergency Food & Nutrition",
@@ -154,10 +181,18 @@ const SC_COMMUNITY_RESOURCES = {
       {
         name: "Welvista Headquarters",
         category: "Free Maintenance Prescriptions",
-        phone: "(803) 933-9183",
-        address: "2700 Middleburg Dr, Suite 105, Columbia, SC 29204",
-        websiteUrl: "https://welvista.org",
-        services: "Full prescription program for chronic conditions (blood pressure, diabetes, asthma, mental health)."
+        phone: "1-800-983-3339",
+        address: "270 Stoneridge Dr, Suite 200, Columbia, SC 29210",
+        websiteUrl: "https://welvista.org/patient-services/",
+        services: "Full prescription program for chronic conditions (blood pressure, diabetes, asthma, mental health) mailed statewide with $0 copays."
+      },
+      {
+        name: "South Carolina Healthy Connections Medicaid (Richland County)",
+        category: "State Health Insurance",
+        phone: "1-888-549-0820",
+        address: "3220 Two Notch Rd, Columbia, SC 29204 / Online apply.scdhhs.gov",
+        websiteUrl: "https://apply.scdhhs.gov",
+        services: "Comprehensive state Medicaid health insurance covering primary care, hospitals, prescriptions, and mental health."
       },
       {
         name: "LRADAC (Lexington/Richland Alcohol and Drug Abuse Council)",
@@ -177,6 +212,22 @@ const SC_COMMUNITY_RESOURCES = {
       }
     ],
     food_and_transit: [
+      {
+        name: "South Carolina SNAP (Food Stamps) - Richland County DSS",
+        category: "Nutrition & Food Stamps",
+        phone: "1-800-616-1309",
+        address: "3220 Two Notch Rd, Columbia, SC 29204 / Online benefitsportal.dss.sc.gov",
+        websiteUrl: "https://benefitsportal.dss.sc.gov/",
+        services: "Monthly food and grocery assistance on an EBT card. Expedited 7-day SNAP available."
+      },
+      {
+        name: "South Carolina TANF Cash Assistance - Richland County DSS",
+        category: "Family Cash Assistance",
+        phone: "1-800-616-1309",
+        address: "3220 Two Notch Rd, Columbia, SC 29204 / Online benefitsportal.dss.sc.gov",
+        websiteUrl: "https://benefitsportal.dss.sc.gov/",
+        services: "Monthly cash assistance for eligible low-income families with minor children or pregnant women."
+      },
       {
         name: "Harvest Hope Food Bank",
         category: "Emergency Food Assistance",

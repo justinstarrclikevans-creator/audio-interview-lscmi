@@ -52,9 +52,13 @@ KEY EXPERTISE AREAS:
    - Driver's License Reinstatement:
      * SCDMV Route 66 Payment Plan: Allows individuals with suspended licenses due to unpaid traffic fines to set up a monthly payment plan and get their physical driver's license reinstated immediately.
      * Legal Assistance: [SC Legal Services](https://sclegal.org) (1-888-346-5592)
-   - Free Medications & Healthcare:
-     * [Welvista](https://welvista.org) (1-800-983-3339): Statewide program delivering free prescription medications directly to the participant's door for uninsured SC residents.
+   - Free Medications & Healthcare (Welvista & Medicaid):
+     * [Welvista](https://welvista.org) (1-800-983-3339): Statewide mail-order pharmacy delivering 100% free prescription maintenance medications (hypertension, asthma, diabetes, depression/mental health) directly to the door of uninsured SC residents (income ≤ 300% FPL).
+     * [South Carolina Healthy Connections Medicaid](https://apply.scdhhs.gov) (1-888-549-0820): State health coverage for doctor visits, emergency care, mental health, addiction treatment, and prescriptions. Apply online at apply.scdhhs.gov.
      * Charleston Healthcare: [Fetter Health Care Network](https://fetterhealthcare.org) (843-577-7388)
+   - Food & Cash Assistance (SNAP & TANF):
+     * [South Carolina SNAP / Food Stamps](https://benefitsportal.dss.sc.gov/) (1-800-616-1309): Monthly grocery funds on an EBT card. South Carolina allows individuals with criminal records or past drug felony convictions to receive SNAP! If monthly income is under $150 and cash is under $100, ask for EXPEDITED SNAP to receive benefits within 7 days.
+     * [South Carolina TANF Cash Assistance](https://benefitsportal.dss.sc.gov/) (1-800-616-1309): Monthly cash assistance for low-income families with dependent children under 18 or pregnant women. Turn90 training hours count towards TANF work activity requirements! Apply at benefitsportal.dss.sc.gov.
    - Child Support Lien Resolution & Driver's License Reinstatement:
      * Charleston / Berkeley / Dorchester: [Father to Father Inc.](https://fathertofatherinc.org) (843-747-1688)
      * Columbia: [Midlands Fatherhood Coalition](https://midlandsfatherhood.com) (803-933-0056)
@@ -145,10 +149,45 @@ If your SC driver's license is suspended due to unpaid traffic tickets or failur
 
 If you take daily prescription medications for conditions like high blood pressure, asthma, diabetes, or mental health, **[Welvista](https://welvista.org)** provides them completely **FREE OF CHARGE** to uninsured South Carolina residents:
 
-* **How it works:** Medications are mailed directly to your home or shelter in discreet packaging.
+* **How it works:** Medications are mailed directly to your home or shelter in 90-day supplies in discreet packaging.
 * **Cost:** 100% Free. No co-pays, no shipping fees.
-* **Phone:** **1-800-983-3339**
-* **Application:** Your Turn90 Case Manager can help you get the 1-page application signed by a provider at [Fetter Health Care](https://fetterhealthcare.org) (843-577-7388).`;
+* **Phone:** **1-800-983-3339** or **(803) 933-9183**
+* **Application Link:** [Apply for Welvista](https://welvista.org/patient-services/)
+* **What you need:** SC Photo ID, proof of income (Turn90 zero-income affidavit / letter), and a doctor's prescription from a clinic like [Fetter Health Care](https://fetterhealthcare.org) (843-577-7388).
+* You can update your Welvista application status directly under your portal's **State Benefits & Healthcare** tab!`;
+    }
+
+    if (q.includes('medicaid') || q.includes('healthy connections') || q.includes('health insurance') || q.includes('medical coverage')) {
+        return `### 🩺 South Carolina Healthy Connections Medicaid
+
+**[SC Healthy Connections Medicaid](https://apply.scdhhs.gov)** provides free or low-cost comprehensive healthcare coverage for eligible South Carolinians:
+
+* **What it covers:** Doctor visits, emergency room care, hospital stays, prescription medicines, mental health therapy, substance recovery treatment, and dental services.
+* **How to Apply:** Apply online at **[apply.scdhhs.gov](https://apply.scdhhs.gov)** (available 24/7) or call **1-888-549-0820** (Monday–Friday 7:30 AM – 6:30 PM).
+* **Documents Needed:** SC Driver's License / State ID, Social Security Number, proof of SC address, and proof of income (last 4 weeks of paystubs or Turn90 stipend verification).
+* **Tip for Turn90 Participants:** If you have zero or low income while in First Shift, you likely qualify for full Medicaid coverage. Track your application status under your portal's **State Benefits & Healthcare** tab!`;
+    }
+
+    if (q.includes('food stamp') || q.includes('snap') || q.includes('ebt') || q.includes('groceries')) {
+        return `### 🍎 South Carolina SNAP (Food Stamps)
+
+The **[Supplemental Nutrition Assistance Program (SNAP)](https://benefitsportal.dss.sc.gov/)** provides monthly funds loaded onto an electronic EBT card to buy healthy groceries and food:
+
+* **How to Apply:** Submit your application online through the **[SC DSS Benefits Portal](https://benefitsportal.dss.sc.gov/)** or call **1-800-616-1309**.
+* **Justice-Involved Eligibility in SC:** Good news! In South Carolina, past criminal convictions—including drug felony convictions—do **NOT** permanently disqualify you from SNAP as long as you comply with probation/parole and any court-ordered treatment.
+* **⚡ Expedited Food Stamps (Within 7 Days):** If your monthly household income is under $150 and you have less than $100 cash on hand, SC DSS is required by law to process **Expedited SNAP within 7 days**!
+* **Documents Needed:** State ID, proof of residence, proof of income or Turn90 stipend letter. You can record your SNAP application number and EBT status right here in your portal.`;
+    }
+
+    if (q.includes('tanf') || q.includes('cash assistance') || q.includes('needy families')) {
+        return `### 💵 South Carolina TANF (Temporary Assistance for Needy Families)
+
+**[SC TANF](https://benefitsportal.dss.sc.gov/)** provides temporary monthly cash assistance to low-income families with dependent children and pregnant individuals:
+
+* **What it provides:** Monthly cash payments on an EBT card or bank account to assist with basic household essentials, clothing, hygiene products, and shelter.
+* **Who Qualifies:** SC residents caring for dependent children under age 18 (or under 19 if still in high school) or individuals who are pregnant, with income within state guidelines.
+* **Turn90 Work Hours Alignment:** TANF requires participating in approved work or job training activities. Your hours in Turn90 First Shift and Re-entry Navigation count directly toward your required TANF weekly work activity hours!
+* **How to Apply:** Apply online at **[benefitsportal.dss.sc.gov](https://benefitsportal.dss.sc.gov/)** (can be applied for on the same application as SNAP) or call **1-800-616-1309**.`;
     }
 
     return `### 👋 Hello from your Turn90 Fresh Start AI Assistant!

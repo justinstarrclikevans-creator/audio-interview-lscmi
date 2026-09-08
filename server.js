@@ -7,7 +7,7 @@ const fs = require('fs');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const { db, BRIEFCASE_DOMAINS, DEFAULT_GATE_CRITERIA, STABILITY_STEP_DOWN_TRIGGERS, initParticipantBriefcase } = require('./db');
+const { db, BRIEFCASE_DOMAINS, DEFAULT_GATE_CRITERIA, STABILITY_STEP_DOWN_TRIGGERS, initParticipantBriefcase, BENEFIT_PROGRAMS, syncBenefitToBriefcase } = require('./db');
 const { runPhase1, runPhase2 } = require('./llm_pipeline');
 const { convertSingleMdToPdf } = require('./convert_md_to_pdf');
 const { convertSingleMdToDocx } = require('./convert_md_to_docx');
@@ -378,6 +378,111 @@ app.post('/api/participant/briefcase-item', authenticateToken, (req, res) => {
 
     res.json({ message: 'Briefcase item updated.' });
 });
+
+// -------------------------------------------------------------
+// STATE BENEFITS & HEALTHCARE ACCESS (WELVISTA, MEDICAID, SNAP, TANF)
+// -------------------------------------------------------------
+app.get('/api/participant/benefits', authenticateToken, (req, res) => {
+    let targetUserId = req.user.id;
+    if (req.query.userId && (req.user.role === 'program_manager' || req.user.role === 'admin' || req.user.role === 'director')) {
+        targetUserId = parseInt(req.query.userId);
+    }
+
+    // Ensure initialized
+    initParticipantBriefcase(targetUserId);
+
+    const rows = db.prepare('SELECT * FROM participant_benefits WHERE user_id = ?').all(targetUserId);
+    const rowMap = {};
+    rows.forEach(r => { rowMap[r.benefit_type] = r; });
+
+    const merged = {};
+    for (const [key, prog] of Object.entries(BENEFIT_PROGRAMS)) {
+        const row = rowMap[key] || { status: 'not_started' };
+        merged[key] = {
+            ...prog,
+            id: row.id,
+            status: row.status || 'not_started',
+            application_number: row.application_number || '',
+            monthly_amount: row.monthly_amount || '',
+            renewal_date: row.renewal_date || '',
+            caseworker_contact: row.caseworker_contact || '',
+            notes: row.notes || '',
+            updated_at: row.updated_at || null
+        };
+    }
+
+    res.json({
+        userId: targetUserId,
+        programs: BENEFIT_PROGRAMS,
+        benefits: merged
+    });
+});
+
+app.post('/api/participant/benefits', authenticateToken, (req, res) => {
+    let targetUserId = req.user.id;
+    if (req.body.targetUserId && (req.user.role === 'program_manager' || req.user.role === 'admin' || req.user.role === 'director')) {
+        targetUserId = parseInt(req.body.targetUserId);
+    }
+
+    const {
+        benefit_type,
+        status,
+        application_number,
+        monthly_amount,
+        renewal_date,
+        caseworker_contact,
+        notes
+    } = req.body;
+
+    if (!benefit_type || !BENEFIT_PROGRAMS[benefit_type]) {
+        return res.status(400).json({ error: 'Valid benefit_type is required (welvista, medicaid, snap, tanf).' });
+    }
+
+    const safeStatus = status || 'not_started';
+    const safeAppNum = application_number ? String(application_number).trim() : null;
+    const safeMonthly = monthly_amount ? String(monthly_amount).trim() : null;
+    const safeRenewal = renewal_date ? String(renewal_date).trim() : null;
+    const safeWorker = caseworker_contact ? String(caseworker_contact).trim() : null;
+    const safeNotes = notes ? String(notes).trim() : null;
+
+    db.prepare(`
+        INSERT INTO participant_benefits (
+            user_id, benefit_type, status, application_number, monthly_amount, renewal_date, caseworker_contact, notes, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+        ON CONFLICT(user_id, benefit_type) DO UPDATE SET
+            status = excluded.status,
+            application_number = COALESCE(excluded.application_number, participant_benefits.application_number),
+            monthly_amount = COALESCE(excluded.monthly_amount, participant_benefits.monthly_amount),
+            renewal_date = COALESCE(excluded.renewal_date, participant_benefits.renewal_date),
+            caseworker_contact = COALESCE(excluded.caseworker_contact, participant_benefits.caseworker_contact),
+            notes = COALESCE(excluded.notes, participant_benefits.notes),
+            updated_at = CURRENT_TIMESTAMP
+    `).run(targetUserId, benefit_type, safeStatus, safeAppNum, safeMonthly, safeRenewal, safeWorker, safeNotes);
+
+    // Sync to Briefcase if marked approved
+    syncBenefitToBriefcase(targetUserId, benefit_type, safeStatus, safeNotes || (safeAppNum ? `Case/App #: ${safeAppNum}` : ''));
+
+    // Optional: Log an automatic case note update
+    try {
+        const progName = BENEFIT_PROGRAMS[benefit_type].name;
+        const noteDetail = `[State Benefits Update] ${progName} status updated to: '${safeStatus.toUpperCase()}'. ${safeAppNum ? 'Case/App #: ' + safeAppNum + '.' : ''} ${safeMonthly ? 'Monthly Benefit: ' + safeMonthly + '.' : ''} ${safeRenewal ? 'Renewal Date: ' + safeRenewal + '.' : ''} ${safeNotes ? 'Notes: ' + safeNotes : ''}`;
+        
+        db.prepare(`
+            INSERT INTO case_notes (user_id, author_name, note_type, category, content)
+            VALUES (?, ?, 'Individual Session', 'Barriers & Stability', ?)
+        `).run(targetUserId, req.user.name || 'Participant Self-Service', noteDetail.trim());
+    } catch(e) {
+        console.error('Failed to log benefit case note:', e);
+    }
+
+    res.json({
+        success: true,
+        message: `${BENEFIT_PROGRAMS[benefit_type].name} status updated successfully.`,
+        benefit_type,
+        status: safeStatus
+    });
+});
+
 
 // -------------------------------------------------------------
 // RE-ENTRY NAVIGATION & TRAINING ROUTES

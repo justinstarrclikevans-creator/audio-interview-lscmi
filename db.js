@@ -304,6 +304,22 @@ CREATE TABLE IF NOT EXISTS cm_briefcase_audits (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+-- Participant State Benefits Applications & Health Access (Welvista, Medicaid, SNAP, TANF)
+CREATE TABLE IF NOT EXISTS participant_benefits (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    benefit_type TEXT NOT NULL, -- 'welvista', 'medicaid', 'snap', 'tanf'
+    status TEXT NOT NULL DEFAULT 'not_started', -- 'not_started', 'in_progress', 'submitted', 'approved', 'not_eligible'
+    application_number TEXT,
+    monthly_amount TEXT,
+    renewal_date DATE,
+    caseworker_contact TEXT,
+    notes TEXT,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE(user_id, benefit_type)
+);
 `);
 
 // Safe column migrations for existing databases
@@ -328,6 +344,8 @@ const BRIEFCASE_DOMAINS = {
         { key: 'prof_email', title: 'Professional Email Address' },
         { key: 'library_card', title: 'Library Card' },
         { key: 'bank_account', title: 'Bank Account' },
+        { key: 'snap_food_stamps', title: 'Food Stamps (SNAP) Enrolled / Verified' },
+        { key: 'tanf_assistance', title: 'TANF Family Assistance (if eligible)' },
         { key: 'child_support_status', title: 'Child Support Contact/Status Reviewed' },
         { key: 'transportation_plan', title: 'Transportation Plan' },
         { key: 'housing_plan', title: 'Housing Plan / Stable Address' }
@@ -357,8 +375,8 @@ const BRIEFCASE_DOMAINS = {
         { key: 'refrigeration_training', title: 'Refrigeration' }
     ],
     health_wellness: [
-        { key: 'health_insurance', title: 'Health Insurance / Coverage Plan' },
-        { key: 'welvista_referral', title: 'Welvista Referral Reviewed' },
+        { key: 'health_insurance', title: 'Health Insurance / Medicaid Coverage' },
+        { key: 'welvista_referral', title: 'Welvista Prescription Assistance' },
         { key: 'primary_care_visit', title: 'Primary Care / Doctor Visit' },
         { key: 'vision_appointment', title: 'Vision Appointment' },
         { key: 'prescription_needs', title: 'Prescription Needs Reviewed' },
@@ -433,7 +451,119 @@ const STABILITY_STEP_DOWN_TRIGGERS = [
     { key: 'physical_health_emergency', title: 'Physical Health Emergency / Strict Rest', description: 'Severe injury or medical procedure limiting mobility.' }
 ];
 
-// Initialize default briefcase items & gate criteria for a new participant
+// Complete Benefit Program Definitions & Official SC Portals
+const BENEFIT_PROGRAMS = {
+    welvista: {
+        key: 'welvista',
+        name: 'Welvista Medication Assistance Program',
+        badgeTitle: 'Free Prescription Meds',
+        category: 'Prescription Assistance',
+        shortDesc: '100% free prescription maintenance medications delivered to your door for uninsured SC residents.',
+        phone: '1-800-983-3339',
+        localPhone: '(803) 933-9183',
+        address: '270 Stoneridge Dr, Suite 200, Columbia, SC 29210 (Statewide mail delivery)',
+        websiteUrl: 'https://welvista.org',
+        applyUrl: 'https://welvista.org/patient-services/',
+        pdfUrl: 'https://welvista.org/wp-content/uploads/2023/10/Welvista-Patient-Application-English-Rev-10.2023.pdf',
+        eligibility: 'Uninsured SC resident, no Medicaid/Medicare Part D prescription coverage, household income ≤ 300% Federal Poverty Level.',
+        requiredDocs: [
+            'Completed & signed Welvista Patient Application Form',
+            'Valid South Carolina Driver\'s License or State ID',
+            'Proof of Income (2 consecutive paystubs, or Turn90 Zero-Income Affidavit / Verification Letter)',
+            'Valid doctor\'s prescription (written paper script or e-script sent by doctor directly to Welvista Pharmacy)'
+        ],
+        steps: [
+            'Complete the 1-page Welvista application form.',
+            'Attach your SC State ID and Turn90 income or zero-income verification letter.',
+            'Have your doctor or clinic (e.g. Fetter Health Care, Free Medical Clinic) send your prescriptions to Welvista Pharmacy.',
+            'Submit by mail, fax (803-933-9184), or online portal. Medications are mailed in 90-day supplies with zero copay!'
+        ],
+        briefcaseSyncKey: 'welvista_referral'
+    },
+    medicaid: {
+        key: 'medicaid',
+        name: 'South Carolina Healthy Connections Medicaid',
+        badgeTitle: 'SC Medicaid Health Insurance',
+        category: 'Comprehensive Health Insurance',
+        shortDesc: 'Full health coverage for doctor visits, hospital care, mental health, dental, and prescription drugs through SCDHHS.',
+        phone: '1-888-549-0820',
+        localPhone: '1-888-549-0820 (TTY: 1-888-842-3620)',
+        address: 'SC Department of Health and Human Services (SCDHHS) / Local County Offices',
+        websiteUrl: 'https://scdhhs.gov',
+        applyUrl: 'https://apply.scdhhs.gov',
+        pdfUrl: 'https://www.scdhhs.gov/getting-started',
+        eligibility: 'South Carolina residents with low household income, parents/caregivers of minors, pregnant women, disabled individuals, or individuals in transitional employment.',
+        requiredDocs: [
+            'Government-issued Photo ID (SC Driver\'s License or State ID)',
+            'Social Security Number',
+            'Proof of SC Residency (lease, utility bill, mail, or shelter letter)',
+            'Proof of Income for the last 4 weeks (paystubs or Turn90 stipend statement)'
+        ],
+        steps: [
+            'Create an account at apply.scdhhs.gov (fastest, available 24/7) or call 1-888-549-0820.',
+            'Enter personal information, household members, and income details.',
+            'Upload or mail copies of your SC ID and proof of income.',
+            'Track your application. Once approved, select a managed care health plan (e.g., First Choice, Absolute Total Care, Molina, Healthy Blue).'
+        ],
+        briefcaseSyncKey: 'health_insurance'
+    },
+    snap: {
+        key: 'snap',
+        name: 'South Carolina SNAP (Food Stamps)',
+        badgeTitle: 'SNAP Food Stamps (EBT)',
+        category: 'Nutrition & Grocery Assistance',
+        shortDesc: 'Monthly funds loaded onto an EBT card to purchase healthy food and groceries across South Carolina.',
+        phone: '1-800-616-1309',
+        localPhone: '1-888-544-7727 (DSS Connect)',
+        address: 'SC Department of Social Services (SCDSS) / Local County Offices',
+        websiteUrl: 'https://dss.sc.gov/assistance-programs/snap/',
+        applyUrl: 'https://benefitsportal.dss.sc.gov/',
+        pdfUrl: 'https://dss.sc.gov/media/2513/dss-form-3800.pdf',
+        eligibility: 'SC residents meeting gross and net income limits. Individuals with prior criminal records or drug convictions ARE ELIGIBLE in South Carolina as long as they comply with supervision and treatment if ordered.',
+        requiredDocs: [
+            'Photo Identification (SC ID, DL, or Mugshot/DOC ID)',
+            'Social Security Numbers for all household applicants',
+            'Proof of Address / Shelter Residence',
+            'Proof of Income (or Turn90 zero-income / stipend verification letter)'
+        ],
+        steps: [
+            'Apply online at benefitsportal.dss.sc.gov or submit Form 3800 at your county DSS office.',
+            'If monthly income is under $150 and cash on hand is under $100, request EXPEDITED SNAP (benefits issued within 7 days!).',
+            'Complete your phone interview with a DSS caseworker when scheduled.',
+            'Receive your SC EBT card in the mail and activate your PIN to purchase groceries.'
+        ],
+        briefcaseSyncKey: 'snap_food_stamps'
+    },
+    tanf: {
+        key: 'tanf',
+        name: 'South Carolina TANF (Cash Assistance)',
+        badgeTitle: 'TANF Family Cash Assistance',
+        category: 'Cash Assistance & Family Support',
+        shortDesc: 'Temporary monthly cash assistance and supportive training funds for low-income families with dependent children.',
+        phone: '1-800-616-1309',
+        localPhone: '1-800-616-1309 (SC DSS Client Special Services)',
+        address: 'SC Department of Social Services (SCDSS)',
+        websiteUrl: 'https://dss.sc.gov/assistance-programs/tanf/',
+        applyUrl: 'https://benefitsportal.dss.sc.gov/',
+        pdfUrl: 'https://dss.sc.gov/media/2513/dss-form-3800.pdf',
+        eligibility: 'Families with dependent children under age 18 (or under 19 if attending secondary school full-time) or pregnant women. Turn90 training hours count toward TANF work participation requirements!',
+        requiredDocs: [
+            'Photo ID for the adult applicant',
+            'Birth Certificates and SSNs for all children in the household',
+            'Proof of Income, child support, or zero income',
+            'Proof of school enrollment for school-age children'
+        ],
+        steps: [
+            'Submit an application online at benefitsportal.dss.sc.gov (can apply for SNAP and TANF together).',
+            'Complete a family intake interview with your county DSS case worker.',
+            'Provide documentation for dependent children and Turn90 training enrollment.',
+            'Monthly cash benefits are deposited to your EBT card or bank account.'
+        ],
+        briefcaseSyncKey: 'tanf_assistance'
+    }
+};
+
+// Initialize default briefcase items, gate criteria, and benefits for a participant
 function initParticipantBriefcase(userId) {
     const insertBriefcase = db.prepare(`
         INSERT OR IGNORE INTO briefcase_items (user_id, domain, item_key, title, status)
@@ -443,6 +573,11 @@ function initParticipantBriefcase(userId) {
     const insertGate = db.prepare(`
         INSERT OR IGNORE INTO gate_criteria (user_id, week_number, criterion_key, title, description, status)
         VALUES (?, ?, ?, ?, ?, 'pending')
+    `);
+
+    const insertBenefit = db.prepare(`
+        INSERT OR IGNORE INTO participant_benefits (user_id, benefit_type, status)
+        VALUES (?, ?, 'not_started')
     `);
 
     const tx = db.transaction(() => {
@@ -458,8 +593,46 @@ function initParticipantBriefcase(userId) {
                 insertGate.run(userId, week, c.key, c.title, c.description);
             }
         }
+        // Seed 4 benefit programs
+        for (const bKey of ['welvista', 'medicaid', 'snap', 'tanf']) {
+            insertBenefit.run(userId, bKey);
+        }
     });
     tx();
+}
+
+function syncBenefitToBriefcase(userId, benefitType, status, notes = '') {
+    try {
+        if (status === 'approved') {
+            if (benefitType === 'welvista') {
+                db.prepare(`
+                    UPDATE briefcase_items 
+                    SET status = 'green', notes = COALESCE(?, notes), updated_at = CURRENT_TIMESTAMP
+                    WHERE user_id = ? AND item_key = 'welvista_referral'
+                `).run(notes || 'Verified Active Welvista Prescription Assistance', userId);
+            } else if (benefitType === 'medicaid') {
+                db.prepare(`
+                    UPDATE briefcase_items 
+                    SET status = 'green', notes = COALESCE(?, notes), updated_at = CURRENT_TIMESTAMP
+                    WHERE user_id = ? AND item_key = 'health_insurance'
+                `).run(notes || 'Verified Active SC Healthy Connections Medicaid', userId);
+            } else if (benefitType === 'snap') {
+                db.prepare(`
+                    UPDATE briefcase_items 
+                    SET status = 'green', notes = COALESCE(?, notes), updated_at = CURRENT_TIMESTAMP
+                    WHERE user_id = ? AND item_key = 'snap_food_stamps'
+                `).run(notes || 'Verified Active SNAP Food Stamps / EBT', userId);
+            } else if (benefitType === 'tanf') {
+                db.prepare(`
+                    UPDATE briefcase_items 
+                    SET status = 'green', notes = COALESCE(?, notes), updated_at = CURRENT_TIMESTAMP
+                    WHERE user_id = ? AND item_key = 'tanf_assistance'
+                `).run(notes || 'Verified Active TANF Family Cash Assistance', userId);
+            }
+        }
+    } catch (e) {
+        console.error('Error syncing benefit to briefcase:', e);
+    }
 }
 
 function seedDefaultAccounts() {
@@ -475,7 +648,7 @@ function seedDefaultAccounts() {
         db.prepare('UPDATE users SET password_hash = ? WHERE email = ?').run(hash, 'staff@turnninety.com');
     }
 
-    // Sync all participants with latest briefcase and gate criteria
+    // Sync all participants with latest briefcase, gate criteria, and benefits
     const participants = db.prepare("SELECT id FROM users WHERE role = 'participant'").all();
     participants.forEach(p => initParticipantBriefcase(p.id));
 }
@@ -486,5 +659,7 @@ module.exports = {
     BRIEFCASE_DOMAINS,
     DEFAULT_GATE_CRITERIA,
     STABILITY_STEP_DOWN_TRIGGERS,
-    initParticipantBriefcase
+    BENEFIT_PROGRAMS,
+    initParticipantBriefcase,
+    syncBenefitToBriefcase
 };
