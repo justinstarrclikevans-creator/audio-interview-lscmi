@@ -37,49 +37,63 @@ async function extractTextFromFile(filePath) {
 
 function findMatchingParticipant(db, filename, text) {
     const participants = db.prepare("SELECT id, name, location, track FROM users WHERE role = 'participant'").all();
-    const cleanWords = path.basename(filename, path.extname(filename)).toLowerCase().replace(/[^a-z0-9]/g, ' ').split(/\s+/).filter(Boolean);
-    const headerSnippet = (text || '').substring(0, 2500).toLowerCase();
+    
+    // Split camelCase and non-alphanumeric
+    const cleanFilename = filename.replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase().replace(/[^a-z0-9]/g, ' ');
+    const filenameWords = cleanFilename.split(/\s+/).filter(Boolean);
+    const textLower = (text || '').toLowerCase();
+    const headerSnippet = textLower.substring(0, 3500);
 
-    // 1. Check exact match of both first and last name in filename words
+    // 1. Both first and last in filename words
     for (const p of participants) {
-        const nameParts = p.name.toLowerCase().trim().split(/\s+/);
-        if (nameParts.length >= 2) {
-            const first = nameParts[0];
-            const last = nameParts[nameParts.length - 1];
-            if (cleanWords.includes(first) && cleanWords.includes(last)) {
-                return p;
+        const parts = p.name.toLowerCase().replace(/[^a-z0-9]/g, ' ').split(/\s+/).filter(Boolean);
+        const first = parts[0];
+        const last = parts[parts.length - 1];
+        if (filenameWords.includes(first) && filenameWords.includes(last)) return p;
+    }
+
+    // 2. Both first and last in text header
+    for (const p of participants) {
+        const parts = p.name.toLowerCase().replace(/[^a-z0-9]/g, ' ').split(/\s+/).filter(Boolean);
+        const first = parts[0];
+        const last = parts[parts.length - 1];
+        if (headerSnippet.includes(first) && headerSnippet.includes(last)) return p;
+    }
+
+    // 3. Known aliases (Christopher -> Chris, etc.)
+    const aliases = {
+        'christopher': 'chris',
+        'chris': 'christopher'
+    };
+    for (const p of participants) {
+        const parts = p.name.toLowerCase().replace(/[^a-z0-9]/g, ' ').split(/\s+/).filter(Boolean);
+        const first = parts[0];
+        const last = parts[parts.length - 1];
+        const altFirst = aliases[first];
+        if ((filenameWords.includes(first) || (altFirst && filenameWords.includes(altFirst))) && 
+            (filenameWords.includes(last) || headerSnippet.includes(last))) {
+            return p;
+        }
+    }
+
+    // 4. Unique first name match in filename
+    for (const p of participants) {
+        const parts = p.name.toLowerCase().replace(/[^a-z0-9]/g, ' ').split(/\s+/).filter(Boolean);
+        const first = parts[0];
+        if (filenameWords.includes(first)) {
+            const matchCount = participants.filter(x => x.name.toLowerCase().split(/\s+/)[0] === first).length;
+            if (matchCount === 1) return p;
+        }
+    }
+
+    // 5. Unique last name match in filename or text
+    for (const p of participants) {
+        const parts = p.name.toLowerCase().replace(/[^a-z0-9]/g, ' ').split(/\s+/).filter(Boolean);
+        for (const pt of parts) {
+            if (pt.length > 3 && (filenameWords.includes(pt) || headerSnippet.includes(pt))) {
+                const matchCount = participants.filter(x => x.name.toLowerCase().includes(pt)).length;
+                if (matchCount === 1) return p;
             }
-        }
-    }
-
-    // 2. Check text content header (first 2500 chars) for both first and last
-    for (const p of participants) {
-        const nameParts = p.name.toLowerCase().trim().split(/\s+/);
-        if (nameParts.length >= 2) {
-            const first = nameParts[0];
-            const last = nameParts[nameParts.length - 1];
-            if (headerSnippet.includes(first) && headerSnippet.includes(last)) {
-                return p;
-            }
-        }
-    }
-
-    // 3. Unique first name match in filename
-    for (const p of participants) {
-        const first = p.name.toLowerCase().trim().split(/\s+/)[0];
-        if (cleanWords.includes(first)) {
-            const matchingCount = participants.filter(x => x.name.toLowerCase().trim().split(/\s+/)[0] === first).length;
-            if (matchingCount === 1) return p;
-        }
-    }
-
-    // 4. Unique last name match in filename or text
-    for (const p of participants) {
-        const nameParts = p.name.toLowerCase().trim().split(/\s+/);
-        const last = nameParts[nameParts.length - 1];
-        if (last.length > 3 && (cleanWords.includes(last) || headerSnippet.includes(last))) {
-            const matchingCount = participants.filter(x => x.name.toLowerCase().trim().split(/\s+/).pop() === last).length;
-            if (matchingCount === 1) return p;
         }
     }
 
