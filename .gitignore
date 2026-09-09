@@ -7,6 +7,12 @@ email-settings.txt
 *.sqlite-shm
 data/*
 !data/*.xlsx
+!data/LS_CMI_Scoring_Guide.md
+!data/LS_CMI_Scoring_Guide.pdf
+!data/LS_CMI_Scoring_Manual_Guide.pdf
+!data/Facilitator_Scoring_Guide.md
+!data/Facilitator_Scoring_Guide.pdf
+!data/Facilitator_Scoring_Guide_2024.xlsx
 test_*.js
 rerun_*.js
 

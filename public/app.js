@@ -2931,7 +2931,7 @@ async function loadPmDrafts() {
                             <div style="font-size: 11px; color: var(--slate); margin-top: 3px;">ID: ${clientId} • Files: ${files.length} documents</div>
                         </div>
 
-                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
                             ${!hasDraft ? `
                                 <button class="btn btn-primary" id="btn-gen-draft-${clientId}" style="font-size: 12px; padding: 6px 14px; background: #0284c7; border-color: #0284c7;" onclick="triggerGenerateAiDraft('${clientId}', '${cleanName}')">
                                     ⚡ Generate AI Scoring Review
@@ -2939,6 +2939,9 @@ async function loadPmDrafts() {
                                 ${files.some(f => f.includes('transcript.txt')) ? `
                                     <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="previewDocument('${files.find(f => f.includes('transcript.txt'))}')">
                                         📝 View Transcript
+                                    </button>
+                                    <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px;" onclick="printActiveDraftDocument('${files.find(f => f.includes('transcript.txt'))}')" title="Print Transcript">
+                                        🖨️ Print
                                     </button>
                                 ` : ''}
                             ` : ''}
@@ -2950,11 +2953,17 @@ async function loadPmDrafts() {
                                 <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="previewDocument('${draftFile}')">
                                     📊 Scoring Form
                                 </button>
+                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px;" onclick="printActiveDraftDocument('${draftFile}')" title="Print Scoring Form">
+                                    🖨️ Print
+                                </button>
                             ` : ''}
 
                             ${files.some(f => f.includes('interview_guide.md')) ? `
                                 <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="previewDocument('${files.find(f => f.includes('interview_guide.md'))}')">
                                     🎙️ Interview Guide
+                                </button>
+                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px;" onclick="printActiveDraftDocument('${files.find(f => f.includes('interview_guide.md'))}')" title="Print Interview Guide">
+                                    🖨️ Print Guide
                                 </button>
                             ` : ''}
 
@@ -2968,11 +2977,17 @@ async function loadPmDrafts() {
                                 <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="previewDocument('${finalBriefFile}')">
                                     📄 View PM Brief
                                 </button>
+                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px;" onclick="printActiveDraftDocument('${finalBriefFile}')" title="Print PM Brief">
+                                    🖨️ Print Brief
+                                </button>
                             ` : ''}
 
                             ${finalPlanFile ? `
                                 <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; color: var(--success); border-color: #86efac;" onclick="previewDocument('${finalPlanFile}')">
                                     🎯 Participant Action Plan
+                                </button>
+                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: var(--success); border-color: #86efac;" onclick="printActiveDraftDocument('${finalPlanFile}')" title="Print Participant Action Plan">
+                                    🖨️ Print Plan
                                 </button>
                             ` : ''}
                         </div>
@@ -2987,6 +3002,47 @@ async function loadPmDrafts() {
     } catch (e) {
         list.innerHTML = '<p>Unable to load drafts: ' + e.message + '</p>';
     }
+}
+
+let currentActiveDraftFile = null;
+
+function printActiveDraftDocument(targetFilename) {
+    const file = targetFilename || currentActiveDraftFile;
+    if (!file) {
+        window.print();
+        return;
+    }
+    const frame = document.getElementById('draft-print-frame');
+    if (frame) {
+        frame.src = `/api/documents/print/${encodeURIComponent(file)}?autoprint=true`;
+    } else {
+        const printWin = window.open(`/api/documents/print/${encodeURIComponent(file)}?autoprint=true`, '_blank');
+        if (printWin) printWin.focus();
+    }
+}
+
+function openActiveDraftPdf(targetFilename) {
+    const file = targetFilename || currentActiveDraftFile;
+    if (!file) return;
+    let pdfFile = file;
+    if (file.endsWith('.md')) {
+        pdfFile = file.replace(/\.md$/, '.pdf');
+    }
+    window.open(`/api/documents/raw/${encodeURIComponent(pdfFile)}`, '_blank');
+}
+
+function openPrintableTab(targetFilename) {
+    const file = targetFilename || currentActiveDraftFile;
+    if (!file) return;
+    window.open(`/api/documents/print/${encodeURIComponent(file)}`, '_blank');
+}
+
+function printSupervisorDraftScoring() {
+    const clientId = document.getElementById('sup-client-id')?.value;
+    if (!clientId) return;
+    const files = (currentInterviewsData && currentInterviewsData[clientId]) || [];
+    const scoringFileName = files.find(f => f.includes('draft_scoring_form.md')) || `${clientId}_draft_scoring_form.md`;
+    printActiveDraftDocument(scoringFileName);
 }
 
 async function triggerGenerateAiDraft(clientId, cleanName) {
@@ -3070,16 +3126,39 @@ async function handleManualInterviewSubmit(e) {
 }
 
 async function previewDocument(filename) {
+    currentActiveDraftFile = filename;
     const title = document.getElementById('draft-viewer-title');
+    const subtitle = document.getElementById('draft-viewer-subtitle');
     const body = document.getElementById('draft-viewer-body');
     const controls = document.getElementById('draft-viewer-controls');
     const extraActions = document.getElementById('draft-viewer-extra-actions');
+    const btnPdf = document.getElementById('btn-draft-pdf-top');
+    const btnPrint = document.getElementById('btn-draft-print-top');
     
     if (controls) controls.innerHTML = '';
     if (extraActions) extraActions.innerHTML = '';
 
-    title.innerText = `Document Preview: ${filename}`;
-    body.innerHTML = '<p>Loading document content...</p>';
+    let displayTitle = `Document Preview: ${filename}`;
+    if (filename === 'LS_CMI_Scoring_Guide.md') {
+        displayTitle = '📖 Level of Service / Case Management Inventory (LS/CMI) Official Scoring Guide';
+        if (subtitle) subtitle.innerText = 'Standardized 43-Item Scoring Criteria, Strength Indicators & Rating Rules';
+    } else if (filename === 'Facilitator_Scoring_Guide.md') {
+        displayTitle = '📋 Turn90 Class Facilitator Scoring Guide';
+        if (subtitle) subtitle.innerText = '20-Item Fidelity & Delivery Scoring Standard';
+    } else {
+        if (subtitle) subtitle.innerText = 'Human-in-the-Loop Document Assessment';
+    }
+
+    if (title) title.innerText = displayTitle;
+    if (btnPdf) {
+        btnPdf.style.display = 'inline-block';
+        btnPdf.onclick = () => openActiveDraftPdf(filename);
+    }
+    if (btnPrint) {
+        btnPrint.onclick = () => printActiveDraftDocument(filename);
+    }
+
+    body.innerHTML = '<p style="padding: 20px; color: var(--slate);">⏳ Loading document content...</p>';
     openModal('modal-draft-viewer');
 
     try {
@@ -3089,7 +3168,7 @@ async function previewDocument(filename) {
 
         // Render Markdown formatted
         body.innerHTML = `
-            <div class="markdown-preview" style="line-height: 1.6; font-size: 13px; color: #1e293b;">
+            <div class="markdown-preview" style="line-height: 1.6; font-size: 13.5px; color: #1e293b;">
                 ${typeof marked !== 'undefined' ? marked.parse(data.content) : data.content.replace(/\n/g, '<br>')}
             </div>
         `;
@@ -3101,11 +3180,26 @@ async function previewDocument(filename) {
 // DUAL-VIEW PREVIEW FOR DRAFT SCORING & INTERVIEW GUIDE TOGETHER
 async function previewScoringWithGuide(clientId, cleanName) {
     const title = document.getElementById('draft-viewer-title');
+    const subtitle = document.getElementById('draft-viewer-subtitle');
     const body = document.getElementById('draft-viewer-body');
     const controls = document.getElementById('draft-viewer-controls');
     const extraActions = document.getElementById('draft-viewer-extra-actions');
+    const btnPdf = document.getElementById('btn-draft-pdf-top');
+
+    const files = (currentInterviewsData && currentInterviewsData[clientId]) || [];
+    const scoringFileName = files.find(f => f.includes('draft_scoring_form.md')) || `${clientId}_draft_scoring_form.md`;
+    const guideFileName = files.find(f => f.includes('interview_guide.md')) || files.find(f => f.includes('transcript.txt')) || `${clientId}_interview_guide.md`;
+
+    currentActiveDraftFile = scoringFileName;
 
     title.innerText = `Dual Review: Draft Scoring & Interview Guide (${cleanName})`;
+    if (subtitle) subtitle.innerText = 'Cross-reference participant interview responses against Section 1 scores';
+
+    if (btnPdf) {
+        btnPdf.style.display = 'inline-block';
+        btnPdf.onclick = () => openActiveDraftPdf(scoringFileName);
+    }
+
     body.innerHTML = `
         <div style="display: flex; justify-content: center; align-items: center; padding: 40px; color: var(--slate);">
             <span>⏳ Loading scoring form and interview responses...</span>
@@ -3117,11 +3211,13 @@ async function previewScoringWithGuide(clientId, cleanName) {
             <button class="btn btn-primary" id="btn-toggle-draft-dual" style="padding: 4px 10px; font-size: 12px;" onclick="setDraftPreviewMode('dual')">⚖️ Side-by-Side</button>
             <button class="btn btn-outline" id="btn-toggle-draft-scoring" style="padding: 4px 10px; font-size: 12px;" onclick="setDraftPreviewMode('scoring')">📊 Scoring Form</button>
             <button class="btn btn-outline" id="btn-toggle-draft-guide" style="padding: 4px 10px; font-size: 12px;" onclick="setDraftPreviewMode('guide')">🎙️ Interview Guide</button>
+            <button class="btn btn-outline" style="padding: 4px 10px; font-size: 12px; background: #f8fafc;" onclick="previewDocument('LS_CMI_Scoring_Guide.md')">📖 Scoring Guide</button>
         `;
     }
 
     if (extraActions) {
         extraActions.innerHTML = `
+            <button class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;" onclick="printActiveDraftDocument('${scoringFileName}')">🖨️ Print Scoring Form</button>
             <button class="btn btn-primary" style="padding: 6px 14px; font-size: 12px;" onclick="closeModal('modal-draft-viewer'); openSupervisorReviewModal('${clientId}', '${cleanName}');">
                 ✍️ Proceed to Supervisor Approval (Phase 2)
             </button>
@@ -3133,10 +3229,6 @@ async function previewScoringWithGuide(clientId, cleanName) {
     // Retrieve files for this client
     let scoringMarkdown = '';
     let guideMarkdown = '';
-
-    const files = (currentInterviewsData && currentInterviewsData[clientId]) || [];
-    const scoringFileName = files.find(f => f.includes('draft_scoring_form.md')) || `${clientId}_draft_scoring_form.md`;
-    const guideFileName = files.find(f => f.includes('interview_guide.md')) || files.find(f => f.includes('transcript.txt')) || `${clientId}_interview_guide.md`;
 
     try {
         const [resScoring, resGuide] = await Promise.all([

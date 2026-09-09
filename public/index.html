@@ -1028,12 +1028,18 @@
 
             <!-- Draft Scoring Reviews Section -->
             <div class="section-card mt-8">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 14px;">
                     <div>
-                        <h2 style="margin: 0;">Human-in-the-Loop Scoring Reviews (Phase 1 &rarr; Phase 2)</h2>
-                        <p style="margin: 4px 0 0 0;">Review AI-generated draft scoring forms, attach criminal history records, provide supervisor feedback, and produce final case briefs & CSV imports.</p>
+                        <h2 style="margin: 0; font-size: 20px; color: var(--dark);">Human-in-the-Loop Scoring Reviews (Phase 1 &rarr; Phase 2)</h2>
+                        <p style="margin: 4px 0 0 0; font-size: 13px;" class="text-slate">Review AI-generated draft scoring forms, cross-reference the official LS/CMI Scoring Guide, provide supervisor feedback, and print assessment documentation.</p>
                     </div>
-                    <button class="btn btn-primary" onclick="openManualInterviewModal()">🎙️ + Add / Import Interview</button>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                        <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; background: white;" onclick="previewDocument('LS_CMI_Scoring_Guide.md')" title="Open LS/CMI Assessment Scoring Guide">📖 LS/CMI Scoring Guide</button>
+                        <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; background: white;" onclick="printActiveDraftDocument('LS_CMI_Scoring_Guide.md')" title="Print LS/CMI Scoring Guide">🖨️ Print Guide</button>
+                        <a href="/api/documents/raw/LS_CMI_Scoring_Manual_Guide.pdf" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; text-decoration: none; background: white;" title="Open Official 37-Page PDF">📄 PDF Manual</a>
+                        <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; background: white;" onclick="previewDocument('Facilitator_Scoring_Guide.md')" title="Open 20-Item Turn90 Facilitator Scoring Guide">📋 Facilitator Guide</button>
+                        <button class="btn btn-primary" style="font-size: 12px; padding: 6px 14px;" onclick="openManualInterviewModal()">🎙️ + Add / Import Interview</button>
+                    </div>
                 </div>
                 <div id="pm-drafts-list">
                     <!-- Loaded dynamically -->
@@ -1643,25 +1649,41 @@
     <div id="modal-draft-viewer" class="modal hidden">
         <div class="modal-content modal-lg" style="max-width: 1200px; width: 95vw;">
             <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                <h3 id="draft-viewer-title" style="margin: 0;">Document Preview</h3>
-                <div id="draft-viewer-controls" style="display: flex; gap: 6px;"></div>
-                <button class="modal-close" onclick="closeModal('modal-draft-viewer')">&times;</button>
+                <div>
+                    <h3 id="draft-viewer-title" style="margin: 0; font-size: 17px; color: var(--primary);">Document Preview</h3>
+                    <span id="draft-viewer-subtitle" style="font-size: 11.5px; color: var(--slate);">Human-in-the-Loop Document Assessment</span>
+                </div>
+                <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                    <div id="draft-viewer-controls" style="display: flex; gap: 6px;"></div>
+                    <button class="btn btn-primary" id="btn-draft-print-top" style="font-size: 12px; padding: 6px 12px;" onclick="printActiveDraftDocument()">🖨️ Print Document</button>
+                    <button class="btn btn-outline" id="btn-draft-pdf-top" style="font-size: 12px; padding: 6px 12px; display: none;" onclick="openActiveDraftPdf()">📄 View PDF</button>
+                    <button class="btn btn-outline" id="btn-draft-print-tab" style="font-size: 12px; padding: 6px 12px;" onclick="openPrintableTab()">🌐 Printable Page</button>
+                    <button class="modal-close" onclick="closeModal('modal-draft-viewer')">&times;</button>
+                </div>
             </div>
-            <div id="draft-viewer-body" class="report-content-body" style="max-height: 70vh; overflow-y: auto;">
+            <div id="draft-viewer-body" class="report-content-body" style="max-height: 70vh; overflow-y: auto; background: #ffffff; padding: 24px;">
                 <!-- Loaded dynamically -->
             </div>
-            <div class="modal-footer" id="draft-viewer-footer" style="display: flex; justify-content: space-between; align-items: center;">
-                <button class="btn btn-outline" onclick="closeModal('modal-draft-viewer')">Close Preview</button>
+            <div class="modal-footer" id="draft-viewer-footer" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <button class="btn btn-outline" onclick="closeModal('modal-draft-viewer')">Close Preview</button>
+                    <button class="btn btn-primary" onclick="printActiveDraftDocument()">🖨️ Print Document</button>
+                </div>
                 <div id="draft-viewer-extra-actions"></div>
             </div>
         </div>
+        <iframe id="draft-print-frame" style="position: absolute; width: 0; height: 0; border: none; visibility: hidden;"></iframe>
     </div>
 
     <!-- Supervisor Review & Criminal History PDF Upload Modal (Phase 2) -->
     <div id="modal-supervisor-review" class="modal hidden">
         <div class="modal-content modal-lg" style="max-width: 1240px; width: 96vw;">
-            <div class="modal-header">
-                <h3 id="sup-review-title">Supervisor Review & Final Approval (Phase 2)</h3>
+            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                    <h3 id="sup-review-title" style="margin: 0;">Supervisor Review & Final Approval (Phase 2)</h3>
+                    <button type="button" class="btn btn-outline" style="font-size: 11.5px; padding: 4px 10px; background: white;" onclick="previewDocument('LS_CMI_Scoring_Guide.md')">📖 View LS/CMI Scoring Guide</button>
+                    <button type="button" class="btn btn-outline" style="font-size: 11.5px; padding: 4px 10px; background: white;" onclick="printSupervisorDraftScoring()">🖨️ Print Scoring Form</button>
+                </div>
                 <button class="modal-close" onclick="closeModal('modal-supervisor-review')">&times;</button>
             </div>
             <form id="form-supervisor-review" onsubmit="handleSupervisorFeedbackSubmit(event)">

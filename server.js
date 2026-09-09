@@ -1227,6 +1227,269 @@ app.get('/api/file-content', (req, res) => {
     res.json({ content, filename });
 });
 
+// Serve raw document files (PDFs, DOCX, XLSX, MD) with correct MIME types
+app.get('/api/documents/raw/:filename', (req, res) => {
+    const filename = req.params.filename;
+    if (!filename || filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
+        return res.status(400).json({ error: 'Invalid filename' });
+    }
+    let filePath = path.join(dataDir, filename);
+    if (!fs.existsSync(filePath)) {
+        filePath = path.join(__dirname, 'manuals', filename);
+    }
+    if (!fs.existsSync(filePath)) {
+        filePath = path.join(__dirname, '..', filename);
+    }
+    if (!fs.existsSync(filePath)) {
+        return res.status(404).json({ error: 'File not found' });
+    }
+
+    let contentType = 'application/octet-stream';
+    if (filename.endsWith('.pdf')) contentType = 'application/pdf';
+    else if (filename.endsWith('.docx')) contentType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+    else if (filename.endsWith('.xlsx')) contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+    else if (filename.endsWith('.md') || filename.endsWith('.txt')) contentType = 'text/plain; charset=utf-8';
+
+    res.setHeader('Content-Type', contentType);
+    res.setHeader('Content-Disposition', `inline; filename="${filename}"`);
+    fs.createReadStream(filePath).pipe(res);
+});
+
+// Dedicated standalone printable HTML view for any document in Human-in-the-Loop
+app.get('/api/documents/print/:filename', (req, res) => {
+    const filename = req.params.filename;
+    if (!filename || filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
+        return res.status(400).send('Invalid filename');
+    }
+    let filePath = path.join(dataDir, filename);
+    if (!fs.existsSync(filePath)) {
+        filePath = path.join(__dirname, 'manuals', filename);
+    }
+    if (!fs.existsSync(filePath)) {
+        return res.status(404).send('Document file not found');
+    }
+
+    if (filename.endsWith('.pdf')) {
+        return res.redirect(`/api/documents/raw/${encodeURIComponent(filename)}`);
+    }
+
+    const content = fs.readFileSync(filePath, 'utf8');
+    const { marked } = require('marked');
+    const renderedHtml = typeof marked !== 'undefined' ? marked.parse(content) : content.replace(/\n/g, '<br>');
+
+    const title = filename.replace(/\.(md|txt)$/i, '').replace(/_/g, ' ');
+
+    const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Print: ${title}</title>
+    <style>
+        @page {
+            size: letter;
+            margin: 0.5in 0.6in 0.5in 0.6in;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-size: 11pt;
+            line-height: 1.5;
+            color: #0f172a;
+            background: #ffffff;
+            margin: 0;
+            padding: 24px;
+        }
+        .print-toolbar {
+            position: sticky;
+            top: 0;
+            background: #1e293b;
+            color: white;
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            z-index: 1000;
+        }
+        .print-btn {
+            background: #0284c7;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .print-btn:hover {
+            background: #0369a1;
+        }
+        .close-btn {
+            background: transparent;
+            color: #94a3b8;
+            border: 1px solid #475569;
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .close-btn:hover {
+            color: white;
+            border-color: #cbd5e1;
+        }
+        .doc-container {
+            max-width: 850px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 18pt;
+            color: #1e3a8a;
+            border-bottom: 2px solid #1e3a8a;
+            padding-bottom: 6px;
+            margin-top: 0;
+            margin-bottom: 12px;
+            page-break-after: avoid;
+        }
+        h2 {
+            font-size: 14pt;
+            color: #0f172a;
+            border-bottom: 1px solid #cbd5e1;
+            padding-bottom: 4px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            page-break-after: avoid;
+        }
+        h3 {
+            font-size: 12pt;
+            color: #0284c7;
+            margin-top: 16px;
+            margin-bottom: 8px;
+            page-break-after: avoid;
+        }
+        h4, h5, h6 {
+            font-size: 11pt;
+            color: #334155;
+            margin-top: 12px;
+            margin-bottom: 6px;
+            page-break-after: avoid;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 14px 0;
+            font-size: 9.5pt;
+            page-break-inside: auto;
+        }
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto;
+        }
+        th, td {
+            border: 1px solid #cbd5e1;
+            padding: 6px 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background-color: #f1f5f9 !important;
+            font-weight: 700;
+            color: #0f172a;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        blockquote {
+            border-left: 3px solid #0284c7;
+            margin: 12px 0;
+            padding: 6px 12px;
+            background: #f8fafc !important;
+            color: #334155;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        ul, ol {
+            padding-left: 24px;
+            margin: 8px 0;
+        }
+        li {
+            margin-bottom: 4px;
+        }
+        hr {
+            border: none;
+            border-top: 1px solid #cbd5e1;
+            margin: 18px 0;
+        }
+        @media print {
+            .print-toolbar {
+                display: none !important;
+            }
+            body {
+                padding: 0 !important;
+                background: white !important;
+            }
+            .doc-container {
+                max-width: 100% !important;
+                width: 100% !important;
+                margin: 0 !important;
+            }
+            th {
+                background-color: #f1f5f9 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            blockquote {
+                background-color: #f8fafc !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            a {
+                text-decoration: none;
+                color: inherit;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="print-toolbar">
+        <div>
+            <strong>Document:</strong> ${title}
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <button class="print-btn" onclick="window.print()">🖨️ Print Document</button>
+            <button class="close-btn" onclick="window.close()">✕ Close Window</button>
+        </div>
+    </div>
+    <div class="doc-container">
+        ${renderedHtml}
+    </div>
+    <script>
+        if (window.location.search.includes('autoprint=true')) {
+            window.addEventListener('load', () => { setTimeout(() => window.print(), 500); });
+        }
+    </script>
+</body>
+</html>`;
+
+    res.send(html);
+});
+
+// List reference scoring guides
+app.get('/api/documents/guides', (req, res) => {
+    res.json({
+        lscmiGuideMd: 'LS_CMI_Scoring_Guide.md',
+        lscmiGuidePdf: 'LS_CMI_Scoring_Guide.pdf',
+        lscmiManualPdf: 'LS_CMI_Scoring_Manual_Guide.pdf',
+        facilitatorGuideMd: 'Facilitator_Scoring_Guide.md',
+        facilitatorGuidePdf: 'Facilitator_Scoring_Guide.pdf',
+        facilitatorGuideXlsx: 'Facilitator_Scoring_Guide_2024.xlsx'
+    });
+});
+
+
 // Helper: Generate structured Individualized Case Plan Markdown on demand
 function generateParticipantCasePlanMarkdown(user, profile, items, notes) {
     const completedItems = items.filter(i => i.status === 'green');
