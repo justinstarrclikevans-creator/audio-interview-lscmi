@@ -1071,6 +1071,13 @@ async function loadCbtModules() {
     const fsContainer = document.getElementById('fs-cbt-accordion-container');
     if (!rnContainer && !fsContainer) return;
 
+    if (fsContainer && (!cachedCbtModules || cachedCbtModules.length === 0)) {
+        fsContainer.innerHTML = '<p class="text-slate" style="padding: 16px 0;">🧠 Loading CBT curriculum & worksheets...</p>';
+    }
+    if (rnContainer && (!cachedCbtModules || cachedCbtModules.length === 0)) {
+        rnContainer.innerHTML = '<p class="text-slate" style="padding: 16px 0;">🧠 Loading CBT curriculum & worksheets...</p>';
+    }
+
     try {
         const token = localStorage.getItem('fs_token');
         const fetchPromises = [fetch('/api/training/cbt-modules')];
@@ -1079,8 +1086,11 @@ async function loadCbtModules() {
         }
 
         const responses = await Promise.all(fetchPromises);
+        if (!responses[0].ok) {
+            throw new Error(`HTTP ${responses[0].status}`);
+        }
         cachedCbtModules = await responses[0].json();
-        if (responses[1]) {
+        if (responses[1] && responses[1].ok) {
             cachedCbtSubmissions = await responses[1].json();
         } else {
             cachedCbtSubmissions = {};
@@ -1094,7 +1104,14 @@ async function loadCbtModules() {
         }
     } catch (e) {
         console.error('Failed to load CBT modules:', e);
-        if (fsContainer) fsContainer.innerHTML = '<p class="text-slate">Unable to load CBT modules.</p>';
+        const errHtml = `
+            <div style="padding: 20px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; color: #991b1b;">
+                <strong>Unable to load CBT modules.</strong>
+                <p style="margin: 6px 0 12px 0; font-size: 13px;">Please check your connection or refresh the page.</p>
+                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="loadCbtModules()">↻ Retry Loading</button>
+            </div>`;
+        if (fsContainer) fsContainer.innerHTML = errHtml;
+        if (rnContainer) rnContainer.innerHTML = errHtml;
     }
 }
 

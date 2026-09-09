@@ -29,6 +29,7 @@ const { loadJobsFromSpreadsheets, getAllReentryJobs, buildGoogleJobsUrl, buildGo
 const { getParticipantAiResponse } = require('./ai_assistant');
 const { matchJobsWithAi, generateTailoredResumePoints, generateTurnaroundNarrative } = require('./job_hunting_ai');
 const { runCaseloadMigration, syncParticipantStateToSupabase } = require('./migrate_and_assign_t90_logins');
+const { cbtModules, T90_TRADE_TRACKS } = require('./training_data');
 const pdfParse = require('pdf-parse');
 
 async function extractPdfText(buffer) {
@@ -488,7 +489,16 @@ app.post('/api/participant/benefits', authenticateToken, (req, res) => {
 // RE-ENTRY NAVIGATION & TRAINING ROUTES
 // -------------------------------------------------------------
 app.get('/api/training/cbt-modules', (req, res) => {
-    res.json(cbtModules);
+    try {
+        if (Array.isArray(cbtModules) && cbtModules.length > 0) {
+            return res.json(cbtModules);
+        }
+        const fallback = require('./cbt_curriculum_exact.json');
+        return res.json(fallback);
+    } catch (e) {
+        console.error('Error serving /api/training/cbt-modules:', e);
+        res.status(500).json({ error: 'Failed to load CBT modules: ' + e.message });
+    }
 });
 
 // Get Participant CBT Worksheets & Submissions (Self or PM Review)
