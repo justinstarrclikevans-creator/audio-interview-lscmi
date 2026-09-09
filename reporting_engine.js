@@ -625,7 +625,7 @@ function generateCaseManagementBriefcaseAudit(userId) {
         'state_id': { label: 'State ID', regex: /(state id|dmv id|picture id|obtained id|got id|photo id)/i },
         'ss_card': { label: 'Social Security Card', regex: /(social security|ss card|ssn card|ss administration)/i },
         'birth_cert': { label: 'Birth Certificate', regex: /(birth cert|vital statistics|birth certificate)/i },
-        'drivers_license': { label: "Driver's License / Route 66", regex: /(driver'?s license|route 66|license reinstat|scdmv|dl reinstat)/i },
+        'drivers_license': { label: "Driver's License / SCDMV Reinstatement", regex: /(driver'?s license|license reinstat|scdmv|dl reinstat)/i },
         'reliable_phone': { label: 'Reliable Phone Number', regex: /(phone number|government phone|obama phone|cellular|cell phone)/i },
         'bank_account': { label: 'Bank Account', regex: /(bank account|checking account|us bank|direct deposit)/i },
         'child_support_status': { label: 'Child Support Review', regex: /(child support|dss|clerk of court|support payment|modification)/i },

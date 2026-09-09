@@ -49,9 +49,9 @@ KEY EXPERTISE AREAS:
      * Charleston: [One80 Place](https://one80place.org) (843-723-9477), Star Gospel Mission (men only, 843-722-2473)
      * Columbia: [Transitions Homeless Center](https://transitionssc.org) (803-708-4861)
      * Greenville: [Miracle Hill Ministries](https://miraclehill.org) (864-268-4357)
-   - Driver's License Reinstatement:
-     * SCDMV Route 66 Payment Plan: Allows individuals with suspended licenses due to unpaid traffic fines to set up a monthly payment plan and get their physical driver's license reinstated immediately.
-     * Legal Assistance: [SC Legal Services](https://sclegal.org) (1-888-346-5592)
+    - Driver's License Reinstatement:
+      * SCDMV Driver's License Reinstatement: Official records, fee payments, and resolving suspensions through SCDMV (scdmvonline.com).
+      * Legal Assistance: [SC Legal Services](https://sclegal.org) (1-888-346-5592)
    - Free Medications & Healthcare (Welvista & Medicaid):
      * [Welvista](https://welvista.org) (1-800-983-3339): Statewide mail-order pharmacy delivering 100% free prescription maintenance medications (hypertension, asthma, diabetes, depression/mental health) directly to the door of uninsured SC residents (income ≤ 300% FPL).
      * [South Carolina Healthy Connections Medicaid](https://apply.scdhhs.gov) (1-888-549-0820): State health coverage for doctor visits, emergency care, mental health, addiction treatment, and prescriptions. Apply online at apply.scdhhs.gov.
@@ -134,14 +134,14 @@ Form W-9 provides your Taxpayer Identification Number to Turn90 for stipends and
 You can complete this directly in your portal under the **"Form W-9"** button!`;
     }
 
-    if (q.includes('license') || q.includes('dmv') || q.includes('suspension') || q.includes('route 66')) {
-        return `### 🚗 Getting Your Driver's License Back in South Carolina
+    if (q.includes('license') || q.includes('dmv') || q.includes('suspension') || q.includes('reinstat')) {
+        return `### 🚗 Getting Your Driver's License Reinstated in South Carolina
 
-If your SC driver's license is suspended due to unpaid traffic tickets or failure to pay fines, you may be eligible for the **SCDMV Route 66 Payment Plan**:
+If your SC driver's license is suspended:
 
-1. **How it works:** Allows eligible South Carolina drivers to set up affordable monthly payment plans for outstanding traffic fines while having their driver's license **reinstated immediately**.
-2. **Free Legal Help:** Contact [SC Legal Services](https://sclegal.org) at **1-888-346-5592** or ask your Turn90 Program Manager to help submit a Route 66 application.
-3. **Child Support Holds:** If your license has a family court or child support hold, our partner [Father to Father](https://fathertofatherinc.org) (843-747-1688) works directly with child support enforcement to modify arrears and release DMV holds!`;
+1. **Check Your Status & Requirements:** Visit [SCDMV Online Driver Services](https://scdmvonline.com/Driver-Services/Reinstatement) or your local SCDMV branch to pull your official driver record and obtain your reinstatement requirements.
+2. **Free Legal Assistance:** Contact [SC Legal Services](https://sclegal.org) at **1-888-346-5592** or ask your Turn90 Program Manager for guidance on resolving traffic court fees or clearing suspensions.
+3. **Child Support Holds:** If your license has a family court or child support hold, our fatherhood partners ([Father to Father](https://fathertofatherinc.org) in Charleston, [Midlands Fatherhood Coalition](https://midlandsfatherhood.com) in Columbia, [Upstate Fatherhood Coalition](https://upstatefathers.org)) work directly with child support enforcement to modify payment agreements and release DMV holds!`;
     }
 
     if (q.includes('medicine') || q.includes('medication') || q.includes('prescription') || q.includes('welvista') || q.includes('pharmacy') || q.includes('rx') || q.includes('free meds')) {
@@ -196,7 +196,7 @@ I am here to help you navigate your journey through Turn90 and into a stable, hi
 
 * **"How do I fill out Form I-9 for my new employer?"**
 * **"What documents do I need to bring on my first day of work?"**
-* **"How do I get my suspended driver's license back with SCDMV Route 66?"**
+* **"How do I get my suspended driver's license reinstated with SCDMV?"**
 * **"How can I get free prescription medications through Welvista?"**
 * **"Where can I find emergency housing or shelter in Charleston, Columbia, or Greenville?"**
 * **"How can Father to Father help me reduce my child support arrears?"**

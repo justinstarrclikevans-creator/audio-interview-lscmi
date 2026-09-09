@@ -54,7 +54,7 @@ const SC_COMMUNITY_RESOURCES = {
         phone: "(803) 896-5000",
         address: "3790 Leeds Ave, North Charleston, SC 29405",
         websiteUrl: "https://scdmvonline.com/Driver-Services/Reinstatement",
-        services: "Official SCDMV driver records, Route 66 reinstatement applications, payment plan setups."
+        services: "Official SCDMV driver records, license reinstatement applications, and fee payment plans."
       }
     ],
     health_and_mental: [
