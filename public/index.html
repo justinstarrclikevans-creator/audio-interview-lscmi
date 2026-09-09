@@ -559,19 +559,43 @@
             <!-- RN Section: Job Board -->
             <div id="rn-section-jobs" class="rn-sub-view hidden">
                 <div class="section-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
                         <div>
-                            <h2 style="margin: 0;">Fair-Chance Re-entry Employers in South Carolina</h2>
-                            <p style="margin: 4px 0 0 0;" class="text-slate">Verified partners offering competitive pay, 1st shift schedules, and rapid promotion paths.</p>
+                            <h2 style="margin: 0; font-size: 20px; font-weight: 700; color: var(--dark);">Fair-Chance Re-entry Employers in South Carolina</h2>
+                            <p style="margin: 4px 0 0 0; font-size: 13.5px;" class="text-slate">Verified partners from Turn90 spreadsheets and regional hiring searches offering competitive pay, 1st shift schedules, and rapid career progression.</p>
                         </div>
                         <!-- Location Filter Buttons -->
-                        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                            <button class="btn btn-primary" id="btn-job-loc-all" style="font-size: 11.5px; padding: 4px 10px;" onclick="filterJobsByArea('all')">All Areas</button>
-                            <button class="btn btn-outline" id="btn-job-loc-charleston" style="font-size: 11.5px; padding: 4px 10px;" onclick="filterJobsByArea('Charleston')">📍 Charleston</button>
-                            <button class="btn btn-outline" id="btn-job-loc-columbia" style="font-size: 11.5px; padding: 4px 10px;" onclick="filterJobsByArea('Columbia')">📍 Columbia</button>
-                            <button class="btn btn-outline" id="btn-job-loc-spartanburg" style="font-size: 11.5px; padding: 4px 10px;" onclick="filterJobsByArea('Spartanburg')">📍 Spartanburg</button>
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap;" id="rn-job-area-buttons">
+                            <button class="btn btn-primary" id="btn-job-loc-all" style="font-size: 12px; padding: 6px 12px;" onclick="filterJobsByArea('all')">All Areas</button>
+                            <button class="btn btn-outline" id="btn-job-loc-charleston" style="font-size: 12px; padding: 6px 12px;" onclick="filterJobsByArea('Charleston')">📍 Charleston</button>
+                            <button class="btn btn-outline" id="btn-job-loc-columbia" style="font-size: 12px; padding: 6px 12px;" onclick="filterJobsByArea('Columbia')">📍 Columbia</button>
+                            <button class="btn btn-outline" id="btn-job-loc-spartanburg" style="font-size: 12px; padding: 6px 12px;" onclick="filterJobsByArea('Spartanburg')">📍 Spartanburg</button>
                         </div>
                     </div>
+
+                    <!-- Live Hiring Search & Google Search Controls -->
+                    <div style="background: #f1f5f9; border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; margin-bottom: 16px;">
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                            <div style="flex: 1; min-width: 240px; position: relative;">
+                                <input type="text" id="input-job-keyword" placeholder="Search by job title, trade skill, or employer (e.g., Forklift, Welder, CDL, Assembly)..." style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px;" onkeyup="handleJobKeywordKeyup(event)">
+                            </div>
+                            <button class="btn btn-primary" style="font-size: 12px; padding: 8px 14px;" onclick="handleJobSearchSubmit()">🔍 Filter Openings</button>
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 8px 14px; background: white;" onclick="launchGoogleJobsSearch()">🌐 Search Live Google Jobs in Area</button>
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 8px 10px; background: white;" onclick="clearJobSearch()" title="Reset Filters">✕ Reset</button>
+                        </div>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 10px; font-size: 12px; color: var(--slate);">
+                            <span style="font-weight: 600; color: var(--dark);">Quick Google Jobs Searches:</span>
+                            <a href="javascript:void(0)" onclick="launchQuickGoogleJobs('Charleston')" class="chip-link" style="color: var(--primary); text-decoration: underline;">📍 Live Charleston Jobs</a> •
+                            <a href="javascript:void(0)" onclick="launchQuickGoogleJobs('Columbia')" class="chip-link" style="color: var(--primary); text-decoration: underline;">📍 Live Columbia Jobs</a> •
+                            <a href="javascript:void(0)" onclick="launchQuickGoogleJobs('Spartanburg')" class="chip-link" style="color: var(--primary); text-decoration: underline;">📍 Live Spartanburg Jobs</a>
+                        </div>
+                    </div>
+
+                    <!-- Status Summary Banner -->
+                    <div id="jobs-status-summary" style="font-size: 13px; color: var(--slate); font-weight: 600; margin-bottom: 14px;">
+                        Loading verified openings...
+                    </div>
+
                     <div id="job-listings-grid" class="job-grid">
                         <!-- Loaded dynamically -->
                     </div>

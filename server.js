@@ -25,7 +25,7 @@ const {
     generateCaseManagementBriefcaseAudit
 } = require('./reporting_engine');
 const { SC_COMMUNITY_RESOURCES, SC_FAIR_CHANCE_EMPLOYERS } = require('./sc_resource_directory');
-const { loadJobsFromSpreadsheets } = require('./jobs_loader');
+const { loadJobsFromSpreadsheets, getAllReentryJobs, buildGoogleJobsUrl, buildGoogleSearchUrl } = require('./jobs_loader');
 const { getParticipantAiResponse } = require('./ai_assistant');
 const { matchJobsWithAi, generateTailoredResumePoints, generateTurnaroundNarrative } = require('./job_hunting_ai');
 const { runCaseloadMigration, syncParticipantStateToSupabase } = require('./migrate_and_assign_t90_logins');
@@ -542,8 +542,60 @@ app.post('/api/training/cbt-submit', authenticateToken, (req, res) => {
 });
 
 app.get('/api/jobs', (req, res) => {
-    res.json(REENTRY_EMPLOYERS);
+    try {
+        const { location, q, limit } = req.query;
+        const jobs = getAllReentryJobs({
+            location: location || 'all',
+            query: q || '',
+            limit: limit ? parseInt(limit, 10) : undefined
+        });
+        res.json(jobs);
+    } catch (err) {
+        console.error('Error serving /api/jobs:', err);
+        try {
+            const fallback = loadJobsFromSpreadsheets().map((j, i) => ({
+                id: `fallback_${i}`,
+                role: j.jobTitle || 'Specialist',
+                jobTitle: j.jobTitle || 'Specialist',
+                company: j.company || 'Local Employer',
+                location: j.location || 'South Carolina',
+                pay: j.payRate || 'Competitive',
+                payRate: j.payRate || 'Competitive',
+                shift: '1st Shift / Full-Time',
+                description: j.description || '',
+                careersUrl: j.careersUrl || 'https://www.google.com'
+            }));
+            res.json(fallback);
+        } catch (fbErr) {
+            res.status(500).json({ error: 'Failed to load jobs: ' + err.message });
+        }
+    }
 });
+
+// Dedicated Live Google Search & Query Generator Endpoint for Fair-Chance Hiring
+app.get('/api/jobs/google-search', (req, res) => {
+    const { q, location } = req.query;
+    const targetLoc = location && location !== 'all' ? `${location.charAt(0).toUpperCase() + location.slice(1)}, SC` : 'South Carolina';
+    const keyword = q || '';
+
+    const googleJobsUrl = buildGoogleJobsUrl(keyword, targetLoc);
+    const googleWebUrl = `https://www.google.com/search?q=${encodeURIComponent('fair chance second chance employers hiring ' + keyword + ' ' + targetLoc)}`;
+
+    const matchedJobs = getAllReentryJobs({
+        location: location || 'all',
+        query: keyword
+    }).slice(0, 10);
+
+    res.json({
+        query: keyword,
+        location: targetLoc,
+        googleJobsUrl,
+        googleWebUrl,
+        matchedCount: matchedJobs.length,
+        results: matchedJobs
+    });
+});
+
 
 // Save Resume Data
 app.post('/api/resume', authenticateToken, (req, res) => {

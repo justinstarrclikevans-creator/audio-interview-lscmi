@@ -838,25 +838,36 @@ async function loadRnCasePlan() {
 
 let cachedRnJobs = [];
 let currentJobAreaFilter = 'all';
+let currentJobKeywordFilter = '';
+
+function safeJobText(str) {
+    return (str || '').toString().replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
 
 async function loadJobs() {
     const grid = document.getElementById('job-listings-grid');
+    const summaryEl = document.getElementById('jobs-status-summary');
     if (!grid) return;
+    if (summaryEl) summaryEl.textContent = 'Loading verified openings from spreadsheets and hiring directories...';
+
     try {
         const res = await fetch('/api/jobs');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         cachedRnJobs = await res.json();
         renderFilteredJobs();
     } catch (e) {
-        grid.innerHTML = '<p class="text-slate">Unable to load job listings.</p>';
+        console.error('Failed to load jobs:', e);
+        if (summaryEl) summaryEl.textContent = 'Error loading job listings. Please check back shortly.';
+        grid.innerHTML = '<div style="grid-column: 1 / -1; padding: 24px; text-align: center; color: var(--slate);">Unable to load job listings. Please refresh or contact staff.</div>';
     }
 }
 
 function filterJobsByArea(location) {
-    currentJobAreaFilter = location || 'all';
+    currentJobAreaFilter = (location || 'all').toLowerCase();
     ['all', 'charleston', 'columbia', 'spartanburg'].forEach(loc => {
         const btn = document.getElementById(`btn-job-loc-${loc}`);
         if (btn) {
-            if (loc.toLowerCase() === currentJobAreaFilter.toLowerCase()) {
+            if (loc === currentJobAreaFilter) {
                 btn.className = 'btn btn-primary';
             } else {
                 btn.className = 'btn btn-outline';
@@ -866,31 +877,141 @@ function filterJobsByArea(location) {
     renderFilteredJobs();
 }
 
+function handleJobSearchSubmit() {
+    const input = document.getElementById('input-job-keyword');
+    if (input) {
+        currentJobKeywordFilter = input.value.trim().toLowerCase();
+    }
+    renderFilteredJobs();
+}
+
+function handleJobKeywordKeyup(e) {
+    if (e.key === 'Enter') {
+        handleJobSearchSubmit();
+    }
+}
+
+function clearJobSearch() {
+    const input = document.getElementById('input-job-keyword');
+    if (input) input.value = '';
+    currentJobKeywordFilter = '';
+    filterJobsByArea('all');
+}
+
+function launchGoogleJobsSearch() {
+    const input = document.getElementById('input-job-keyword');
+    const kw = input ? input.value.trim() : currentJobKeywordFilter;
+    const locName = currentJobAreaFilter === 'all' ? 'South Carolina' : (currentJobAreaFilter.charAt(0).toUpperCase() + currentJobAreaFilter.slice(1) + ', SC');
+    const qParts = [];
+    if (kw) qParts.push(kw);
+    qParts.push('fair chance second chance jobs in');
+    qParts.push(locName);
+    const url = `https://www.google.com/search?ibp=htl;jobs&q=${encodeURIComponent(qParts.join(' '))}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
+}
+
+function launchQuickGoogleJobs(city) {
+    const url = `https://www.google.com/search?ibp=htl;jobs&q=${encodeURIComponent('fair chance second chance jobs in ' + city + ', SC')}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
+}
+
+function requestEmployerMatch(company, role) {
+    alert(`Thank you! Turn90 Re-entry staff will prioritize connecting you with ${company} for the ${role} position.`);
+}
+
 function renderFilteredJobs() {
     const grid = document.getElementById('job-listings-grid');
+    const summaryEl = document.getElementById('jobs-status-summary');
     if (!grid) return;
 
-    let filtered = cachedRnJobs || [];
+    let pool = cachedRnJobs || [];
+
+    // Filter by area
     if (currentJobAreaFilter && currentJobAreaFilter !== 'all') {
-        const query = currentJobAreaFilter.toLowerCase();
-        filtered = filtered.filter(j => (j.location || '').toLowerCase().includes(query));
+        const target = currentJobAreaFilter.toLowerCase();
+        pool = pool.filter(j => {
+            if (j.metro && j.metro.toLowerCase() === target) return true;
+            const loc = (j.location || '').toLowerCase();
+            if (target === 'charleston') {
+                return loc.includes('charleston') || loc.includes('ladson') || loc.includes('summerville') || loc.includes('hanahan') || loc.includes('johns island') || loc.includes('berkeley') || loc.includes('dorchester') || loc.includes('goose creek');
+            }
+            if (target === 'columbia') {
+                return loc.includes('columbia') || loc.includes('cayce') || loc.includes('lexington') || loc.includes('irmo') || loc.includes('forest acres') || loc.includes('midlands') || loc.includes('richland');
+            }
+            if (target === 'spartanburg') {
+                return loc.includes('spartanburg') || loc.includes('duncan') || loc.includes('greer') || loc.includes('roebuck') || loc.includes('lyman') || loc.includes('greenville') || loc.includes('upstate');
+            }
+            return loc.includes(target);
+        });
     }
 
-    if (filtered.length === 0) {
-        grid.innerHTML = `<div style="grid-column: 1 / -1; padding: 24px; text-align: center; color: var(--slate);">No fair-chance employer listings found for ${currentJobAreaFilter}. Check back soon or request custom placement.</div>`;
+    // Filter by keyword
+    if (currentJobKeywordFilter && currentJobKeywordFilter.trim()) {
+        const terms = currentJobKeywordFilter.toLowerCase().split(/\s+/).filter(t => t.length > 0);
+        pool = pool.filter(j => {
+            const haystack = `${j.company || ''} ${j.role || ''} ${j.jobTitle || ''} ${j.location || ''} ${j.description || ''} ${j.pay || ''} ${j.payRate || ''}`.toLowerCase();
+            return terms.every(t => haystack.includes(t));
+        });
+    }
+
+    // Update Status Banner
+    const areaTitle = currentJobAreaFilter === 'all' ? 'All South Carolina Hubs' : (currentJobAreaFilter.charAt(0).toUpperCase() + currentJobAreaFilter.slice(1));
+    if (summaryEl) {
+        summaryEl.innerHTML = `Showing <strong>${pool.length}</strong> fair-chance openings for <strong>${areaTitle}</strong> ${currentJobKeywordFilter ? `matching "<em>${safeJobText(currentJobKeywordFilter)}</em>"` : ''} (from verified spreadsheets & regional hiring searches).`;
+    }
+
+    if (pool.length === 0) {
+        const googleSearchUrl = `https://www.google.com/search?ibp=htl;jobs&q=${encodeURIComponent((currentJobKeywordFilter ? currentJobKeywordFilter + ' ' : '') + 'fair chance jobs in ' + areaTitle + ', SC')}`;
+        grid.innerHTML = `
+            <div style="grid-column: 1 / -1; padding: 36px 20px; text-align: center; background: #f8fafc; border: 1px dashed var(--border); border-radius: 8px;">
+                <h4 style="margin: 0 0 8px 0; color: var(--dark);">No local openings found matching your criteria in ${areaTitle}.</h4>
+                <p style="color: var(--slate); font-size: 13.5px; margin-bottom: 16px;">Try adjusting your keyword filter, switching areas, or launch a live Google search for newly posted openings.</p>
+                <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                    <button class="btn btn-outline" onclick="clearJobSearch()">✕ Reset Filters</button>
+                    <a href="${googleSearchUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="text-decoration: none;">🔎 Search Live Openings on Google Jobs</a>
+                </div>
+            </div>`;
         return;
     }
 
-    grid.innerHTML = filtered.map(j => `
-        <div class="job-card">
-            <h3>${j.role}</h3>
-            <div class="job-company">${j.company}</div>
-            <div class="job-meta">📍 ${j.location} • 💰 ${j.pay} • ⏰ ${j.shift}</div>
-            <p class="job-desc">${j.description}</p>
-            <button class="btn btn-outline" style="margin-top: 12px; font-size: 12px;" onclick="alert('Staff will assist you in connecting with ${j.company.replace(/'/g, "\\'")}!')">Request Employer Match</button>
-        </div>
-    `).join('');
+    grid.innerHTML = pool.map(j => {
+        const role = safeJobText(j.role || j.jobTitle || 'Specialist');
+        const comp = safeJobText(j.company || 'Local Employer');
+        const loc = safeJobText(j.location || 'South Carolina');
+        const pay = safeJobText(j.pay || j.payRate || 'Competitive / Market Rate');
+        const shift = safeJobText(j.shift || '1st Shift / Full-Time');
+        const desc = safeJobText(j.description || 'Verified fair-chance opportunity.');
+        const isSheet = j.sourceType === 'spreadsheet';
+        const sourceBadge = isSheet ? '📊 Spreadsheet' : '🌐 Fair-Chance Partner';
+        const rawComp = (j.company || '').replace(/'/g, "\\'");
+        const rawRole = (j.role || j.jobTitle || 'Specialist').replace(/'/g, "\\'");
+        const applyUrl = j.careersUrl || `https://www.google.com/search?ibp=htl;jobs&q=${encodeURIComponent(comp + ' ' + role + ' in ' + loc)}`;
+        const gSearchUrl = j.googleSearchUrl || `https://www.google.com/search?q=${encodeURIComponent(comp + ' jobs ' + role + ' ' + loc + ' hiring')}`;
+
+        return `
+            <div class="job-card" style="display: flex; flex-direction: column; justify-content: space-between; position: relative; background: #ffffff; border: 1px solid var(--border); border-radius: 8px; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                <div>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 6px;">
+                        <h3 style="margin: 0; font-size: 15.5px; font-weight: 700; color: var(--primary); line-height: 1.3;">${role}</h3>
+                        <span style="font-size: 10.5px; font-weight: 600; padding: 2px 7px; border-radius: 4px; background: ${isSheet ? '#eff6ff' : '#f0fdf4'}; color: ${isSheet ? '#1d4ed8' : '#15803d'}; border: 1px solid ${isSheet ? '#bfdbfe' : '#bbf7d0'}; white-space: nowrap;">${sourceBadge}</span>
+                    </div>
+                    <div class="job-company" style="font-size: 14px; font-weight: 600; color: var(--dark); margin-bottom: 8px;">${comp}</div>
+                    <div class="job-meta" style="font-size: 12.5px; color: var(--slate); margin-bottom: 10px; line-height: 1.5;">
+                        📍 <strong>${loc}</strong> • 💰 <strong>${pay}</strong> • ⏰ ${shift}
+                    </div>
+                    <p class="job-desc" style="font-size: 13px; color: #334155; line-height: 1.45; margin-bottom: 14px;">${desc}</p>
+                    ${j.contact ? `<div style="font-size: 12px; color: var(--primary); margin-bottom: 12px;">📞 ${safeJobText(j.contact)}</div>` : ''}
+                </div>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; padding-top: 10px; border-top: 1px solid #f1f5f9;">
+                    <button class="btn btn-outline" style="flex: 1; min-width: 110px; font-size: 11.5px; padding: 6px 10px;" onclick="requestEmployerMatch('${rawComp}', '${rawRole}')">Request Match</button>
+                    <a href="${applyUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="flex: 1; min-width: 110px; font-size: 11.5px; padding: 6px 10px; text-decoration: none; text-align: center;">🌐 View / Apply</a>
+                    <a href="${gSearchUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="font-size: 11.5px; padding: 6px 10px; text-decoration: none; text-align: center; color: var(--slate);" title="Search Openings on Google">🔎 Google</a>
+                </div>
+            </div>
+        `;
+    }).join('');
 }
+
 
 async function loadSavedResume() {
     const token = localStorage.getItem('fs_token');

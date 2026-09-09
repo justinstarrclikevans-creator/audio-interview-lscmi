@@ -733,8 +733,87 @@ const SC_FAIR_CHANCE_EMPLOYERS = [
     felonyPolicy: "Fair-Chance. Hires individuals seeking career growth in skilled trades.",
     benefits: "Apprenticeship certification path, tool stipend, comprehensive medical",
     immediateContact: "Foothills Steel Plant Supervisor • (864) 555-0195"
+  },
+  {
+    company: "Michelin North America - Spartanburg Facilities",
+    location: "Spartanburg, SC",
+    region: "spartanburg",
+    industries: ["Tire Manufacturing", "Industrial Operations", "Logistics"],
+    roles: ["Tire Manufacturing Technician", "Industrial Material Handler", "Production Operator"],
+    payRate: "$20.00 – $25.50 / hr",
+    shift: "Day Shift Available (7:00 AM – 3:30 PM)",
+    careersUrl: "https://jobs.michelin.com",
+    felonyPolicy: "Fair-chance supportive employer partnering with Upstate workforce programs.",
+    benefits: "Full medical/dental/vision, 401(k) matching, career advancement training",
+    immediateContact: "Michelin Upstate Workforce Desk"
+  },
+  {
+    company: "Draexlmaier Automotive of America",
+    location: "Duncan & Spartanburg, SC",
+    region: "spartanburg",
+    industries: ["Automotive Interior Systems", "Assembly", "Logistics"],
+    roles: ["Automotive Assembly Specialist", "Quality Inspection Tech", "Logistics Tugger Operator"],
+    payRate: "$18.50 – $22.50 / hr",
+    shift: "1st Shift (6:30 AM – 3:00 PM)",
+    careersUrl: "https://www.draexlmaier.com/en/career",
+    felonyPolicy: "Values commitment, reliability, and precision. Structured second-chance pathways.",
+    benefits: "Climate-controlled production plant, paid holidays, comprehensive insurance",
+    immediateContact: "Draexlmaier Duncan Recruiting Office"
+  },
+  {
+    company: "DHL Supply Chain - Spartanburg Logistics Hub",
+    location: "Spartanburg, SC",
+    region: "spartanburg",
+    industries: ["Supply Chain", "Warehousing", "Forklift"],
+    roles: ["Stand-Up Forklift Operator", "Inbound Warehouse Specialist", "Inventory Counter"],
+    payRate: "$18.00 – $22.00 / hr",
+    shift: "1st Shift (7:00 AM – 3:30 PM)",
+    careersUrl: "https://www.dhl.com/us-en/home/careers.html",
+    felonyPolicy: "Second-chance hiring partner committed to expanding opportunity.",
+    benefits: "Quarterly safety incentives, medical coverage, on-site equipment certification",
+    immediateContact: "DHL Spartanburg HR Desk"
+  },
+  {
+    company: "Toray Composite Materials America",
+    location: "Spartanburg & Moore, SC",
+    region: "spartanburg",
+    industries: ["Advanced Materials", "Chemical Processing", "Manufacturing"],
+    roles: ["Carbon Fiber Processing Tech", "Material Stager", "Shipping & Packaging Clerk"],
+    payRate: "$19.00 – $24.00 / hr",
+    shift: "Day Shift (7:00 AM – 3:30 PM)",
+    careersUrl: "https://www.toraycma.com/careers/",
+    felonyPolicy: "Fair-chance hiring initiatives with case-by-case review.",
+    benefits: "Competitive starting pay, full health/dental benefits, tuition reimbursement",
+    immediateContact: "Toray Moore/Spartanburg HR"
+  },
+  {
+    company: "Leigh Fibers Processing Facility",
+    location: "Wellford & Spartanburg, SC",
+    region: "spartanburg",
+    industries: ["Textile Recycling", "Manufacturing", "Heavy Equipment"],
+    roles: ["Fiber Processing Associate", "Baling Machine Operator", "Forklift Material Handler"],
+    payRate: "$17.50 – $21.00 / hr",
+    shift: "1st Shift (6:00 AM – 2:30 PM)",
+    careersUrl: "https://www.leighfibers.com/careers",
+    felonyPolicy: "Fair-chance partner with local workforce development programs.",
+    benefits: "Weekly pay, production bonuses, supportive management",
+    immediateContact: "Leigh Fibers Wellford HR Office"
+  },
+  {
+    company: "Auriga Polymers (Indorama Ventures)",
+    location: "Spartanburg, SC",
+    region: "spartanburg",
+    industries: ["Polymer Manufacturing", "Industrial Operations"],
+    roles: ["Polymer Production Operator", "Warehouse & Shipping Specialist"],
+    payRate: "$19.00 – $23.50 / hr",
+    shift: "Day Shift Available",
+    careersUrl: "https://www.indoramaventures.com/en/careers",
+    felonyPolicy: "Structured re-entry employment opportunities with clear promotion tracks.",
+    benefits: "Full health package, retirement matching, annual performance bonus",
+    immediateContact: "Auriga Polymers Spartanburg HR"
   }
 ];
+
 
 module.exports = {
   SC_COMMUNITY_RESOURCES,
