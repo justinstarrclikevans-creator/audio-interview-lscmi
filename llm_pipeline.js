@@ -41,8 +41,8 @@ async function runPhase1(transcriptText, clientName) {
     if (!process.env.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is missing");
 
     const manuals = loadManuals();
-    const systemPrompt = `You are an expert clinical forensic assessor for First Shift / Turn90.
-    Phase 1 Task: Based on the provided 158-question LS/CMI interview transcript and clinical scoring manuals, complete:
+    const systemPrompt = `You are an expert case manager and assessor for First Shift / Turn90.
+    Phase 1 Task: Based on the provided 158-question LS/CMI interview transcript and assessment scoring manuals, complete:
     1. The comprehensive Interview Guide.
     2. The DRAFT LS/CMI Scoring Form.
     
@@ -72,11 +72,11 @@ async function runPhase2(transcriptText, clientName, draftScoringForm, feedback,
     const manuals = loadManuals();
     const csvHeader = getCsvHeader();
     
-    const systemPrompt = `You are a licensed clinical forensic case manager and assessor for First Shift / Turn90.
+    const systemPrompt = `You are an experienced case manager and assessor for First Shift / Turn90.
     Phase 2 Task: Incorporate Program Manager review feedback and any Criminal History record into the assessment, and produce:
     
     1. "final_scoring_form": The completed, validated LS/CMI Scoring Form.
-    2. "case_brief": The Program Manager Clinical Case Brief.
+    2. "case_brief": The Program Manager Case Brief.
        - Use the Probation and Parole Treatment Planner & Scoring Manual.
        - Identify the TOP 2-3 Dynamic Criminogenic Need Domains (NEVER choose Criminal History, as it is static).
        - Detail primary stability factors (housing, driver's license, child support, transportation, health/meds).

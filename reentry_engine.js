@@ -12,7 +12,7 @@ if (!process.env.GEMINI_API_KEY) {
 }
 
 const FACILITATION_GUIDELINES = `
-Turn90 Facilitation & Clinical Standards (Modeling Neutrality, CBT Workbooks & Treatment Planner):
+Turn90 Facilitation & Case Management Standards (Modeling Neutrality, CBT Workbooks & Case Planner):
 1. Modeling Neutrality (1.5): Never challenge or debate anti-social statements; use neutral curiosity and reflective questions to expose contradictions without escalating resistance.
 2. Managing Resistance & Buy-In (3.2 & 18.0): Acknowledge frustration, avoid power struggles, and link every requirement directly to the participant's self-interest (e.g. steady pay, keeping freedom).
 3. Core Criminogenic Domains (Treatment Planner):
@@ -55,10 +55,10 @@ async function generateReentryNavAssessment(data) {
     const spreadsheetJobs = loadJobsFromSpreadsheets();
 
     const prompt = `
-You are the Lead Re-entry Navigator and Forensic Clinical Specialist for Turn90 / First Shift.
+You are the Lead Re-entry Navigator and Case Management Specialist for Turn90 / First Shift.
 Analyze the following Re-entry Navigation interview transcript, participant background, and goals against our facilitation standards, community directories, and active jobs spreadsheet.
 
-FACILITATION & CLINICAL FRAMEWORK:
+FACILITATION & CASE MANAGEMENT FRAMEWORK:
 ${FACILITATION_GUIDELINES}
 
 LOCAL RESOURCE DIRECTORY FOR ${location.toUpperCase()}:

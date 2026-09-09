@@ -1545,7 +1545,7 @@ app.post('/api/submit-feedback', memoryUpload.single('criminalHistoryFile'), asy
     const { clientId, feedback, criminalHistoryText } = req.body;
     if (!clientId) return res.status(400).json({ error: "Missing clientId" });
 
-    res.status(200).json({ message: "Feedback received. Generating final clinical case brief and participant plan..." });
+    res.status(200).json({ message: "Feedback received. Generating final case brief and participant plan..." });
 
     try {
         const parts = clientId.split('_');
@@ -1647,7 +1647,7 @@ app.post('/api/submit-feedback', memoryUpload.single('criminalHistoryFile'), asy
                 }
 
                 // Auto mark Week 1 Interview gate criteria as green
-                db.prepare(`UPDATE gate_criteria SET status = 'green', pm_notes = 'Interview completed and clinical case brief generated.' WHERE user_id = ? AND criterion_key = 'w1_interview'`).run(uId);
+                db.prepare(`UPDATE gate_criteria SET status = 'green', pm_notes = 'Interview completed and case brief generated.' WHERE user_id = ? AND criterion_key = 'w1_interview'`).run(uId);
             }
         }
 

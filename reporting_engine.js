@@ -371,7 +371,7 @@ function generateApricotCaseNotesExport(asExcel = true, locationFilter = null) {
     const notes = db.prepare(query).all(...params);
 
     const exportRows = [
-        ['Participant Name', 'Email', 'Location', 'Program Track', 'Date of Contact', 'Contact Type', 'Category / Domain', 'Clinical Case Note', 'Staff / Author']
+        ['Participant Name', 'Email', 'Location', 'Program Track', 'Date of Contact', 'Contact Type', 'Category / Domain', 'Case Note Content', 'Staff / Author']
     ];
 
     notes.forEach(n => {
@@ -711,7 +711,7 @@ function generateCaseManagementBriefcaseAudit(userId) {
 
     md += `### 4. Recommended Case Management Actions\n`;
     if (discrepancies.length > 0) {
-        md += `1. Review recent clinical notes and update verified briefcase items to **GREEN**.\n`;
+        md += `1. Review recent case notes and update verified briefcase items to **GREEN**.\n`;
     }
     if (unaddressedBarriers.length > 0) {
         md += `2. Schedule an individual session to target unaddressed red barriers (${unaddressedBarriers.map(u => u.title).slice(0, 3).join(', ')}).\n`;

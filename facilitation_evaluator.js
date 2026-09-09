@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS class_facilitation_evaluations (
     location TEXT NOT NULL,
     session_title TEXT NOT NULL,
     facilitator_name TEXT,
-    evaluator_name TEXT DEFAULT 'AI Clinical Evaluator',
+    evaluator_name TEXT DEFAULT 'AI Quality Evaluator',
     class_date DATE DEFAULT (DATE('now')),
     total_score REAL NOT NULL, -- 0 to 100
     starting_score REAL DEFAULT 100,
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS class_facilitation_evaluations (
 `);
 
 const FACILITATION_RUBRIC_PROMPT = `
-You are the Lead Facilitator Supervisor and Clinical Quality Assurance Director for Turn90 / First Shift.
+You are the Lead Facilitator Supervisor and Quality Assurance Director for Turn90 / First Shift.
 You are evaluating a classroom session transcript using the Turn90 CBT Facilitation Scoring Guide (20-item 100-point rubric):
 
 Evaluation Dimensions (Each rated 1 to 5, total 100 pts max):

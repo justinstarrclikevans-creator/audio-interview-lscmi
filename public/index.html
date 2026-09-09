@@ -128,7 +128,7 @@
                         <div class="card-icon">🎙️</div>
                         <div class="card-body">
                             <h3>1. Intake & LS/CMI Interview</h3>
-                            <p id="fs-intake-desc">Complete the full 158-question LS/CMI intake interview. Your audio is recorded and scored directly for your clinical case brief and Apricot import.</p>
+                            <p id="fs-intake-desc">Complete the full 158-question LS/CMI intake interview. Your audio is recorded and scored directly for your case brief and Apricot import.</p>
                             <button id="fs-intake-btn" class="btn btn-accent" onclick="openInterviewModal()">Start Voice Interview</button>
                         </div>
                     </div>
@@ -445,7 +445,7 @@
                                 <span id="rn-plan-stability-badge" class="badge badge-green" style="font-size: 11px;">Status: Active</span>
                             </div>
                             <p style="margin: 0; font-size: 13.5px; color: #1e3a8a; line-height: 1.5;">
-                                Built directly from your Turn90 intake notes, self-reported needs, barrier resolutions, and clinical case brief.
+                                Built directly from your Turn90 intake notes, self-reported needs, barrier resolutions, and case brief.
                             </p>
                         </div>
                         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
@@ -749,7 +749,7 @@
                         <button class="btn btn-outline" style="border-radius: 0; border: none; border-left: 1px solid var(--border); font-size: 12px; padding: 7px 11px;" onclick="openApricotModal()" title="Sync Apricot Points">
                             🔄 Sync Apricot
                         </button>
-                        <button class="btn btn-outline" style="border-radius: 0; border: none; border-left: 1px solid var(--border); font-size: 12px; padding: 7px 11px;" onclick="exportApricotNotesModal()" title="Export Apricot Clinical Notes">
+                        <button class="btn btn-outline" style="border-radius: 0; border: none; border-left: 1px solid var(--border); font-size: 12px; padding: 7px 11px;" onclick="exportApricotNotesModal()" title="Export Apricot Case Notes">
                             📄 Export Notes
                         </button>
                         <button class="btn btn-outline" style="border-radius: 0; border: none; border-left: 1px solid var(--border); font-size: 12px; padding: 7px 11px;" onclick="openCmBriefcaseAuditModal()" title="CM vs Briefcase Cross-Audit">
@@ -1007,7 +1007,7 @@
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 12px;">
                     <div>
                         <h2 style="margin: 0;">Human-in-the-Loop Scoring Reviews (Phase 1 &rarr; Phase 2)</h2>
-                        <p style="margin: 4px 0 0 0;">Review AI-generated draft scoring forms, attach criminal history records, provide supervisor feedback, and produce final clinical briefs & CSV imports.</p>
+                        <p style="margin: 4px 0 0 0;">Review AI-generated draft scoring forms, attach criminal history records, provide supervisor feedback, and produce final case briefs & CSV imports.</p>
                     </div>
                     <button class="btn btn-primary" onclick="openManualInterviewModal()">🎙️ + Add / Import Interview</button>
                 </div>
@@ -1687,15 +1687,15 @@
                 </div>
 
                 <div class="form-group mt-4">
-                    <label><strong>2. Supervisor Corrections / Clinical Guidance</strong></label>
-                    <textarea id="sup-feedback-text" rows="3" placeholder="Enter clinical corrections (e.g. adjust family score to 2 due to domestic stability, focus case plan on anti-social attitudes and substance recovery)..."></textarea>
+                    <label><strong>2. Supervisor Corrections & Case Guidance</strong></label>
+                    <textarea id="sup-feedback-text" rows="3" placeholder="Enter supervisor corrections (e.g. adjust family score to 2 due to domestic stability, focus case plan on anti-social attitudes and substance recovery)..."></textarea>
                 </div>
 
                 <div class="mt-4" style="background: #eef2ff; padding: 12px; border-radius: 6px; font-size: 13px;">
-                    <strong>Phase 2 Output:</strong> Approving will generate the final LS/CMI scoring form, the PM clinical case brief, the participant-facing printable plan, append to the Apricot CSV, and auto-populate the participant's Briefcase.
+                    <strong>Phase 2 Output:</strong> Approving will generate the final LS/CMI scoring form, the PM case brief, the participant-facing printable plan, append to the Apricot CSV, and auto-populate the participant's Briefcase.
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-block mt-4" id="btn-submit-phase2">Approve & Generate Clinical Documents</button>
+                <button type="submit" class="btn btn-primary btn-block mt-4" id="btn-submit-phase2">Approve & Generate Case Documents</button>
             </form>
         </div>
     </div>
@@ -2115,7 +2115,7 @@
                             </select>
                         </div>
                         <div class="form-group mt-2">
-                            <label style="font-size: 11.5px;">Clinical Note Content *</label>
+                            <label style="font-size: 11.5px;">Case Note Content *</label>
                             <textarea id="note-content" rows="6" required class="form-control" placeholder="Document participant progress, barrier resolution, discussion topics, and next action items..."></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary btn-block mt-3" style="font-size: 12px; padding: 8px;">💾 Save Case Note</button>
@@ -2425,7 +2425,7 @@
                                 <input type="text" id="sdt-substances" placeholder="e.g., THC, Benzodiazepines" style="width: 100%; padding: 7px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12.5px;">
                             </div>
                             <div style="grid-column: 1 / -1;">
-                                <label style="display:block; font-size: 11.5px; font-weight: 700; color: #334155; margin-bottom: 4px;">Notes & Clinical Follow-up</label>
+                                <label style="display:block; font-size: 11.5px; font-weight: 700; color: #334155; margin-bottom: 4px;">Notes & Follow-up</label>
                                 <input type="text" id="sdt-notes" placeholder="e.g., Random screen, 10-panel cup verified negative" style="width: 100%; padding: 7px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12.5px;">
                             </div>
                             <div style="grid-column: 1 / -1; display: flex; justify-content: flex-end;">
@@ -2483,7 +2483,7 @@
                                 </select>
                             </div>
                             <div style="grid-column: 1 / -1;">
-                                <label style="display:block; font-size: 11.5px; font-weight: 700; color: #334155; margin-bottom: 4px;">Clinical Case Notes</label>
+                                <label style="display:block; font-size: 11.5px; font-weight: 700; color: #334155; margin-bottom: 4px;">Case Notes</label>
                                 <textarea id="scn-content" rows="4" required placeholder="Document participant barriers addressed, progress on briefcase items (ID, License, Housing, Meds), and agreed next steps..." style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12.5px;"></textarea>
                             </div>
                             <div style="grid-column: 1 / -1; display: flex; justify-content: flex-end;">
@@ -2581,7 +2581,7 @@
             <div class="modal-header" style="flex-shrink: 0; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
                 <div>
                     <h3 style="margin: 0; color: var(--primary); font-size: 18px;">📊 Case Management vs. Briefcase Audit Report</h3>
-                    <p class="text-slate" style="margin: 4px 0 0 0; font-size: 12.5px;">Cross-checks clinical case management narrative notes against the 6-domain briefcase checklist to spot discrepancies and unaddressed barriers.</p>
+                    <p class="text-slate" style="margin: 4px 0 0 0; font-size: 12.5px;">Cross-checks case management narrative notes against the 6-domain briefcase checklist to spot discrepancies and unaddressed barriers.</p>
                 </div>
                 <button class="modal-close" onclick="closeModal('modal-cm-briefcase-report')">&times;</button>
             </div>

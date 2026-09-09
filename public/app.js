@@ -256,12 +256,12 @@ async function loadFsDashboard() {
         const intakeBtn = document.getElementById('fs-intake-btn');
         
         if (interviewCrit && interviewCrit.status === 'green') {
-            intakeDesc.innerHTML = `<span class="badge badge-green" style="margin-bottom: 6px; display: inline-block;">✅ Assessment Completed (Pending Supervisor Review)</span><p style="font-size: 13px; color: var(--slate); margin-top: 4px;">Your 158-question LS/CMI intake interview has been recorded and submitted for clinical brief generation.</p>`;
+            intakeDesc.innerHTML = `<span class="badge badge-green" style="margin-bottom: 6px; display: inline-block;">✅ Assessment Completed (Pending Supervisor Review)</span><p style="font-size: 13px; color: var(--slate); margin-top: 4px;">Your 158-question LS/CMI intake interview has been recorded and submitted for case brief generation.</p>`;
             intakeBtn.innerText = 'Intake Completed';
             intakeBtn.className = 'btn btn-outline';
             intakeBtn.onclick = () => alert('Your LS/CMI intake interview is already completed and recorded.');
         } else {
-            intakeDesc.innerText = 'Complete the full 158-question LS/CMI intake interview. Your audio is recorded and scored directly for your clinical case brief and Apricot import.';
+            intakeDesc.innerText = 'Complete the full 158-question LS/CMI intake interview. Your audio is recorded and scored directly for your case brief and Apricot import.';
             intakeBtn.innerText = 'Start Voice Interview';
             intakeBtn.className = 'btn btn-accent';
             intakeBtn.onclick = openInterviewModal;
@@ -732,7 +732,7 @@ async function loadRnCasePlan() {
                 const flags = data.planDetails.detected_flags || [];
 
                 if (domains.length === 0 && flags.length === 0) {
-                    domainsContainer.innerHTML = '<div style="grid-column: 1 / -1; color: var(--slate); font-size: 13px;">No clinical domain triggers flagged on file.</div>';
+                    domainsContainer.innerHTML = '<div style="grid-column: 1 / -1; color: var(--slate); font-size: 13px;">No domain triggers flagged on file.</div>';
                 } else {
                     let domHtml = '';
                     domains.forEach((d, idx) => {
@@ -1931,7 +1931,7 @@ function renderReentryAssessmentResults(data) {
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
             <div>
                 <strong style="font-size: 15px; color: ${result.stability_status === 'immediate_triage_needed' ? 'var(--danger)' : 'var(--accent)'};">
-                    🛡️ Facilitation & Clinical Flags: ${flags.length} Identified
+                    🛡️ Facilitation & Case Management Flags: ${flags.length} Identified
                 </strong>
                 <div style="font-size: 12px; color: var(--slate); margin-top: 2px;">
                     Targeted Dynamic Domains: <strong>${(result.top_criminogenic_domains || []).join(', ') || 'Employment & Thinking'}</strong>
@@ -3164,7 +3164,7 @@ async function handleSupervisorFeedbackSubmit(e) {
     const btn = document.getElementById('btn-submit-phase2');
 
     btn.disabled = true;
-    btn.innerText = 'Processing Phase 2 Clinical Documents...';
+    btn.innerText = 'Processing Phase 2 Case Documents...';
 
     const formData = new FormData();
     formData.append('clientId', clientId);
@@ -3180,14 +3180,14 @@ async function handleSupervisorFeedbackSubmit(e) {
             body: formData
         });
         const data = await res.json();
-        alert(data.message || 'Phase 2 in progress. Final clinical brief, participant plan, and Briefcase items are being generated.');
+        alert(data.message || 'Phase 2 in progress. Final case brief, participant plan, and Briefcase items are being generated.');
         closeModal('modal-supervisor-review');
         setTimeout(loadPmDrafts, 3500);
     } catch (err) {
         alert('Phase 2 submission error: ' + err.message);
     } finally {
         btn.disabled = false;
-        btn.innerText = 'Approve & Generate Clinical Documents';
+        btn.innerText = 'Approve & Generate Case Documents';
     }
 }
 
@@ -4630,7 +4630,7 @@ async function loadCaseNotesList(userId) {
         const notes = await res.json();
 
         if (!notes || notes.length === 0) {
-            listContainer.innerHTML = '<p class="text-slate" style="font-size: 12px; text-align: center; padding: 20px;">No clinical case notes recorded yet for this participant.</p>';
+            listContainer.innerHTML = '<p class="text-slate" style="font-size: 12px; text-align: center; padding: 20px;">No case notes recorded yet for this participant.</p>';
             return;
         }
 
@@ -5519,7 +5519,7 @@ async function loadCmAuditForSelectedUser() {
         return;
     }
 
-    bodyEl.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--primary);">Analyzing clinical notes against 6-domain briefcase checklist...</div>';
+    bodyEl.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--primary);">Analyzing case management notes against 6-domain briefcase checklist...</div>';
 
     try {
         const res = await fetch(`/api/pm/reports/cm-briefcase-audit/${userId}`, {
@@ -5642,9 +5642,9 @@ async function loadCmAuditForSelectedUser() {
                 </div>
             ` : ''}
 
-            <!-- SECTION 4: CLINICAL FEEDBACK & AUDIT NARRATIVE -->
+            <!-- SECTION 4: CASE MANAGEMENT FEEDBACK & AUDIT NARRATIVE -->
             <div style="background: white; border: 1px solid var(--border); border-radius: 8px; padding: 18px; margin-bottom: 20px;">
-                <h4 style="margin: 0 0 12px 0; color: var(--primary); font-size: 15px;">📋 Clinical Case Management Feedback Report</h4>
+                <h4 style="margin: 0 0 12px 0; color: var(--primary); font-size: 15px;">📋 Case Management Feedback & Audit Report</h4>
                 <div class="markdown-preview" style="line-height: 1.7; font-size: 13px; color: #1e293b;">
                     ${audit.feedbackMarkdown ? audit.feedbackMarkdown.replace(/\n/g, '<br>') : 'No narrative generated.'}
                 </div>

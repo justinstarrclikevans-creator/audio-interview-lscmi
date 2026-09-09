@@ -157,14 +157,14 @@ async function processBriefsFolder(folderPath) {
             db.prepare(`
                 INSERT INTO documents (user_id, doc_type, title, filename, file_path, file_size, status, metadata_json, uploaded_at)
                 VALUES (?, ?, ?, ?, ?, ?, 'active', ?, CURRENT_TIMESTAMP)
-            `).run(participant.id, 'case_brief', `Clinical Case Brief - ${participant.name}`, storedDocFilename, docUrl, docStat.size, JSON.stringify({ originalName: file }));
+            `).run(participant.id, 'case_brief', `Case Brief - ${participant.name}`, storedDocFilename, docUrl, docStat.size, JSON.stringify({ originalName: file }));
             console.log(`  [✓] Attached source document "${file}" to ${participant.name}'s file.`);
         } catch (e) {
             console.warn(`  [!] Could not save document record:`, e.message);
         }
 
-        // 2. Generate Clinical Case Plan via Reentry Engine
-        console.log(`  [...] Generating Clinical Case Plan and Participant Action Guide for ${participant.name}...`);
+        // 2. Generate Case Plan via Reentry Engine
+        console.log(`  [...] Generating Case Plan and Participant Action Guide for ${participant.name}...`);
         try {
             const assessmentData = {
                 participantName: participant.name,
@@ -268,7 +268,7 @@ async function processBriefsFolder(folderPath) {
             try {
                 db.prepare(`
                     UPDATE gate_criteria 
-                    SET status = 'green', pm_notes = 'Completed via imported Clinical Case Brief', updated_at = CURRENT_TIMESTAMP 
+                    SET status = 'green', pm_notes = 'Completed via imported Case Brief', updated_at = CURRENT_TIMESTAMP 
                     WHERE user_id = ? AND criterion_key = 'w1_interview'
                 `).run(participant.id);
                 console.log(`  [✓] Marked Gate 1 Assessment Interview as green for ${participant.name}`);
