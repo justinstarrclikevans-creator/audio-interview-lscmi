@@ -133,6 +133,13 @@ async function run() {
                 wo_progress: mergedWo
             };
 
+            if (curState.t90_track && !exState.t90_track) {
+                existing.stateData.t90_track = curState.t90_track;
+            }
+            if (curState.t90_overall_status && !exState.t90_overall_status) {
+                existing.stateData.t90_overall_status = curState.t90_overall_status;
+            }
+            if (!existing.supabaseId && row.id) existing.supabaseId = row.id;
             if (!existing.phone && row.phone) existing.phone = row.phone;
         }
     }
@@ -160,6 +167,7 @@ async function run() {
             let user = db.prepare('SELECT * FROM users WHERE LOWER(name) = ?').get(p.fullName.toLowerCase());
 
             let userId;
+            const targetTrack = s.t90_track || null;
             if (user) {
                 userId = user.id;
                 db.prepare(`
@@ -168,13 +176,13 @@ async function run() {
                         password_hash = ?,
                         phone = COALESCE(NULLIF(?, ''), phone),
                         location = ?,
-                        track = 'first_shift',
+                        track = COALESCE(?, track, 'first_shift'),
                         role = 'participant'
                     WHERE id = ?
-                `).run(t90Email, passwordHash, phone, p.location, userId);
+                `).run(t90Email, passwordHash, phone, p.location, targetTrack, userId);
             } else {
                 // If not found by name, check if email is already there
-                const existingEmail = db.prepare('SELECT id FROM users WHERE email = ?').get(t90Email);
+                const existingEmail = db.prepare('SELECT id, track FROM users WHERE email = ?').get(t90Email);
                 if (existingEmail) {
                     userId = existingEmail.id;
                     db.prepare(`
@@ -183,15 +191,15 @@ async function run() {
                             password_hash = ?,
                             phone = ?,
                             location = ?,
-                            track = 'first_shift',
+                            track = COALESCE(?, track, 'first_shift'),
                             role = 'participant'
                         WHERE id = ?
-                    `).run(p.fullName, passwordHash, phone, p.location, userId);
+                    `).run(p.fullName, passwordHash, phone, p.location, targetTrack, userId);
                 } else {
                     const res = db.prepare(`
                         INSERT INTO users (name, email, phone, password_hash, role, track, location)
-                        VALUES (?, ?, ?, ?, 'participant', 'first_shift', ?)
-                    `).run(p.fullName, t90Email, phone, passwordHash, p.location);
+                        VALUES (?, ?, ?, ?, 'participant', ?, ?)
+                    `).run(p.fullName, t90Email, phone, passwordHash, s.t90_track || 'first_shift', p.location);
                     userId = res.lastInsertRowid;
                 }
             }
@@ -206,11 +214,12 @@ async function run() {
 
             // Ensure profile exists
             let profile = db.prepare('SELECT * FROM participant_profiles WHERE user_id = ?').get(userId);
+            const initialStatus = s.t90_overall_status || (profile ? profile.overall_status : null) || 'active';
             if (!profile) {
                 db.prepare(`
-                    INSERT INTO participant_profiles (user_id, current_gate, overall_status)
-                    VALUES (?, 1, 'active')
-                `).run(userId);
+                    INSERT INTO participant_profiles (user_id, current_gate, overall_status, supabase_id)
+                    VALUES (?, 1, ?, ?)
+                `).run(userId, initialStatus, p.supabaseId || null);
             }
 
             initParticipantBriefcase(userId);
@@ -231,10 +240,11 @@ async function run() {
                     child_support_notes = ?,
                     housing_status = ?,
                     transportation_status = ?,
-                    overall_status = 'active',
+                    overall_status = COALESCE(?, overall_status, 'active'),
+                    supabase_id = COALESCE(?, supabase_id),
                     updated_at = CURRENT_TIMESTAMP
                 WHERE user_id = ?
-            `).run(dlStatus, dlNotes, csStatus, csNotes, housingStatus, transportStatus, userId);
+            `).run(dlStatus, dlNotes, csStatus, csNotes, housingStatus, transportStatus, s.t90_overall_status || null, p.supabaseId || null, userId);
 
             // Populate Briefcase Items
             const updateBriefcase = db.prepare(`
@@ -375,6 +385,148 @@ async function run() {
     return logList;
 }
 
+function patchSupabaseParticipant(id, patchBody) {
+    return new Promise((resolve, reject) => {
+        const payload = JSON.stringify(patchBody);
+        const parsed = new URL(`${SUPABASE_URL}/rest/v1/participants?id=eq.${id}`);
+        const req = https.request({
+            hostname: parsed.hostname,
+            port: 443,
+            path: parsed.pathname + parsed.search,
+            method: 'PATCH',
+            headers: {
+                'apikey': SUPABASE_KEY,
+                'Authorization': `Bearer ${SUPABASE_KEY}`,
+                'Content-Type': 'application/json',
+                'Content-Length': Buffer.byteLength(payload),
+                'Prefer': 'return=minimal'
+            }
+        }, (res) => {
+            let data = '';
+            res.on('data', chunk => data += chunk);
+            res.on('end', () => {
+                if (res.statusCode >= 200 && res.statusCode < 300) {
+                    resolve({ success: true, statusCode: res.statusCode });
+                } else {
+                    resolve({ success: false, statusCode: res.statusCode, data });
+                }
+            });
+        });
+        req.on('error', reject);
+        req.write(payload);
+        req.end();
+    });
+}
+
+function fetchSupabaseParticipantById(id) {
+    return new Promise((resolve, reject) => {
+        const url = `${SUPABASE_URL}/rest/v1/participants?id=eq.${id}&select=*`;
+        https.get(url, {
+            headers: {
+                'apikey': SUPABASE_KEY,
+                'Authorization': `Bearer ${SUPABASE_KEY}`
+            }
+        }, (res) => {
+            let data = '';
+            res.on('data', chunk => data += chunk);
+            res.on('end', () => {
+                try {
+                    const list = JSON.parse(data);
+                    resolve(list[0] || null);
+                } catch (e) {
+                    reject(e);
+                }
+            });
+        }).on('error', reject);
+    });
+}
+
+function fetchSupabaseParticipantsByName(firstName, lastName) {
+    return new Promise((resolve, reject) => {
+        const cleanFirst = encodeURIComponent(firstName.trim());
+        const cleanLast = encodeURIComponent(lastName.trim());
+        const url = `${SUPABASE_URL}/rest/v1/participants?first_name=ilike.${cleanFirst}&last_name=ilike.${cleanLast}&select=*`;
+        https.get(url, {
+            headers: {
+                'apikey': SUPABASE_KEY,
+                'Authorization': `Bearer ${SUPABASE_KEY}`
+            }
+        }, (res) => {
+            let data = '';
+            res.on('data', chunk => data += chunk);
+            res.on('end', () => {
+                try {
+                    const list = JSON.parse(data);
+                    resolve(list);
+                } catch (e) {
+                    reject(e);
+                }
+            });
+        }).on('error', reject);
+    });
+}
+
+async function syncParticipantStateToSupabase(userId, partialUpdates) {
+    try {
+        const user = db.prepare(`
+            SELECT u.id, u.name, u.email, p.supabase_id
+            FROM users u
+            LEFT JOIN participant_profiles p ON u.id = p.user_id
+            WHERE u.id = ?
+        `).get(userId);
+
+        if (!user) {
+            console.warn(`[SupabaseSync] User not found for userId: ${userId}`);
+            return false;
+        }
+
+        let targetRows = [];
+        if (user.supabase_id) {
+            const row = await fetchSupabaseParticipantById(user.supabase_id);
+            if (row) targetRows.push(row);
+        }
+
+        // If not found by supabase_id, lookup by first/last name
+        if (targetRows.length === 0 && user.name) {
+            const parts = user.name.trim().split(/\s+/);
+            const first = parts[0] || '';
+            const last = parts.slice(1).join(' ') || '';
+            if (first && last) {
+                targetRows = await fetchSupabaseParticipantsByName(first, last);
+            }
+        }
+
+        if (targetRows.length === 0) {
+            console.warn(`[SupabaseSync] No Supabase participant found matching "${user.name}" (userId: ${userId})`);
+            return false;
+        }
+
+        for (const target of targetRows) {
+            const existingState = target.state_data || {};
+            const mergedState = {
+                ...existingState,
+                ...partialUpdates
+            };
+
+            await patchSupabaseParticipant(target.id, { state_data: mergedState });
+
+            // Persist supabase_id in local SQLite participant_profiles if not yet set
+            db.prepare(`
+                UPDATE participant_profiles
+                SET supabase_id = COALESCE(supabase_id, ?)
+                WHERE user_id = ?
+            `).run(target.id, userId);
+
+            console.log(`[SupabaseSync] Synced participant ${user.name} (${target.id}) with:`, partialUpdates);
+        }
+
+        return true;
+    } catch (err) {
+        console.error('[SupabaseSync] Error syncing to Supabase:', err.message);
+        return false;
+    }
+}
+
 if (require.main === module) {
     run().catch(err => {
         console.error('Error:', err);
@@ -382,4 +534,7 @@ if (require.main === module) {
     });
 }
 
-module.exports = { runCaseloadMigration: run };
+module.exports = { 
+    runCaseloadMigration: run,
+    syncParticipantStateToSupabase
+};

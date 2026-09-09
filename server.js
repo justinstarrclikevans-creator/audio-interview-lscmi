@@ -28,7 +28,7 @@ const { SC_COMMUNITY_RESOURCES, SC_FAIR_CHANCE_EMPLOYERS } = require('./sc_resou
 const { loadJobsFromSpreadsheets } = require('./jobs_loader');
 const { getParticipantAiResponse } = require('./ai_assistant');
 const { matchJobsWithAi, generateTailoredResumePoints, generateTurnaroundNarrative } = require('./job_hunting_ai');
-const { runCaseloadMigration } = require('./migrate_and_assign_t90_logins');
+const { runCaseloadMigration, syncParticipantStateToSupabase } = require('./migrate_and_assign_t90_logins');
 const pdfParse = require('pdf-parse');
 
 async function extractPdfText(buffer) {
@@ -640,7 +640,7 @@ app.get('/api/admin/caseload', authenticateToken, requireRole('program_manager',
 });
 
 // Switch Participant Track (First Shift <-> Re-entry Nav)
-app.post('/api/pm/switch-track', authenticateToken, requireRole('program_manager', 'admin'), (req, res) => {
+app.post('/api/pm/switch-track', authenticateToken, requireRole('program_manager', 'admin'), async (req, res) => {
     const userId = req.body.userId;
     const newTrack = req.body.newTrack || req.body.targetTrack;
     if (!userId || !newTrack) return res.status(400).json({ error: 'userId and newTrack required.' });
@@ -650,11 +650,19 @@ app.post('/api/pm/switch-track', authenticateToken, requireRole('program_manager
     }
 
     db.prepare('UPDATE users SET track = ? WHERE id = ?').run(newTrack, userId);
+
+    // Sync to Supabase in background so changes persist across container reboots/migrations
+    try {
+        await syncParticipantStateToSupabase(userId, { t90_track: newTrack });
+    } catch (syncErr) {
+        console.warn(`[SupabaseSync] Background track sync warning for userId ${userId}:`, syncErr.message);
+    }
+
     res.json({ message: `Participant track successfully updated to ${newTrack === 'first_shift' ? 'First Shift' : 'Re-entry Navigation'}.`, track: newTrack });
 });
 
 // Remove / Archive Participant (No Longer Receiving Services)
-app.post('/api/pm/archive-participant', authenticateToken, requireRole('program_manager', 'admin'), (req, res) => {
+app.post('/api/pm/archive-participant', authenticateToken, requireRole('program_manager', 'admin'), async (req, res) => {
     const { userId, reason, action } = req.body; // action: 'archive' or 'restore'
     if (!userId) return res.status(400).json({ error: 'userId is required.' });
 
@@ -670,6 +678,17 @@ app.post('/api/pm/archive-participant', authenticateToken, requireRole('program_
             updated_at = CURRENT_TIMESTAMP
         WHERE user_id = ?
     `).run(newStatus, reasonText, termDate, userId);
+
+    // Sync to Supabase in background so changes persist across container reboots/migrations
+    try {
+        await syncParticipantStateToSupabase(userId, { 
+            t90_overall_status: newStatus,
+            termination_reason: reasonText,
+            termination_date: termDate
+        });
+    } catch (syncErr) {
+        console.warn(`[SupabaseSync] Background archive sync warning for userId ${userId}:`, syncErr.message);
+    }
 
     res.json({ message: `Participant has been ${action === 'restore' ? 'restored' : 'archived'} successfully.`, status: newStatus });
 });
@@ -1020,6 +1039,12 @@ app.post('/api/admin/stability-action', authenticateToken, requireRole('program_
         `).run(JSON.stringify(triggers || []), userId);
 
         db.prepare(`UPDATE users SET track = 'reentry_nav' WHERE id = ?`).run(userId);
+
+        syncParticipantStateToSupabase(userId, { 
+            t90_track: 'reentry_nav', 
+            t90_overall_status: 'reentry_nav_stabilizing' 
+        }).catch(e => console.warn('[SupabaseSync] resolve-triggers step_down error:', e.message));
+
         return res.json({ message: 'Participant stepped down to Re-entry Navigation for stabilization.' });
     } else if (action === 'director_override') {
         if (!overrideBy || !overrideNotes) return res.status(400).json({ error: 'Director Name and Override Reason required.' });
@@ -1034,6 +1059,11 @@ app.post('/api/admin/stability-action', authenticateToken, requireRole('program_
                 updated_at = CURRENT_TIMESTAMP
             WHERE user_id = ?
         `).run(overrideBy, overrideNotes, JSON.stringify(triggers || []), userId);
+
+        syncParticipantStateToSupabase(userId, { 
+            t90_track: 'first_shift', 
+            t90_overall_status: 'active' 
+        }).catch(e => console.warn('[SupabaseSync] resolve-triggers override error:', e.message));
 
         return res.json({ message: 'Director Override recorded. Participant remains in First Shift.' });
     }
@@ -1636,7 +1666,8 @@ app.post('/api/submit-feedback', memoryUpload.single('criminalHistoryFile'), asy
 // 1. Get Participants for Re-entry Selector
 app.get('/api/reentry/participants', authenticateToken, requireRole('program_manager', 'director', 'admin'), (req, res) => {
     try {
-        const rows = db.prepare(`
+        const includeArchived = req.query.includeArchived === 'true';
+        let query = `
             SELECT 
                 u.id, u.name, u.email, u.phone, u.location, u.track,
                 p.current_gate, p.w9_status, p.dl_status, p.child_support_status,
@@ -1647,8 +1678,12 @@ app.get('/api/reentry/participants', authenticateToken, requireRole('program_man
             LEFT JOIN participant_profiles p ON u.id = p.user_id
             LEFT JOIN reentry_case_plans r ON u.id = r.user_id
             WHERE u.role = 'participant'
-            ORDER BY u.name ASC
-        `).all();
+        `;
+        if (!includeArchived) {
+            query += ` AND (p.overall_status IS NULL OR p.overall_status != 'archived')`;
+        }
+        query += ` ORDER BY u.name ASC`;
+        const rows = db.prepare(query).all();
         res.json(rows);
     } catch (err) {
         console.error('Error fetching reentry participants:', err);

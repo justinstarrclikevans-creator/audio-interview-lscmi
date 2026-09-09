@@ -48,6 +48,7 @@ CREATE TABLE IF NOT EXISTS participant_profiles (
     director_override_by TEXT,
     termination_reason TEXT,
     termination_date DATE,
+    supabase_id TEXT,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );
@@ -331,6 +332,7 @@ try { db.exec("ALTER TABLE participant_profiles ADD COLUMN reentry_status TEXT D
 try { db.exec("ALTER TABLE participant_profiles ADD COLUMN has_reentry_plan INTEGER DEFAULT 0;"); } catch(e) {}
 try { db.exec("ALTER TABLE participant_profiles ADD COLUMN enrollment_date DATE;"); } catch(e) {}
 try { db.exec("ALTER TABLE participant_profiles ADD COLUMN correction_notes TEXT;"); } catch(e) {}
+try { db.exec("ALTER TABLE participant_profiles ADD COLUMN supabase_id TEXT;"); } catch(e) {}
 
 
 // The Official Briefcase Domains & Checklist Items

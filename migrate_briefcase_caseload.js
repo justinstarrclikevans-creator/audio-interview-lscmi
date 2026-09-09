@@ -171,7 +171,7 @@ async function runMigration() {
                         name = ?,
                         phone = COALESCE(NULLIF(?, ''), phone),
                         location = ?,
-                        track = 'first_shift',
+                        track = COALESCE(track, 'first_shift'),
                         role = 'participant'
                     WHERE id = ?
                 `).run(p.fullName, phone, p.location, userId);
@@ -211,7 +211,7 @@ async function runMigration() {
                     child_support_notes = ?,
                     housing_status = ?,
                     transportation_status = ?,
-                    overall_status = 'active',
+                    overall_status = COALESCE(overall_status, 'active'),
                     updated_at = CURRENT_TIMESTAMP
                 WHERE user_id = ?
             `).run(dlStatus, dlNotes, csStatus, csNotes, housingStatus, transportStatus, userId);

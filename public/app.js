@@ -4758,7 +4758,9 @@ async function toggleArchiveParticipant(userId, name, action) {
         });
         const data = await safeApiResponse(res);
 
-        alert(data.message);
+        alert(action === 'archive' 
+            ? `${data.message}\n\nTo view or restore archived participants, choose "Archived / Removed" or "All" from the Caseload status filter.` 
+            : data.message);
         loadCaseload();
     } catch (err) {
         alert('Archive Error: ' + err.message);
