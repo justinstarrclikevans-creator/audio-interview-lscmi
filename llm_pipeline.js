@@ -25,8 +25,10 @@ function loadManuals() {
 // Get the actual CSV header for the LLM
 function getCsvHeader() {
     try {
-        const csvPath = path.join(__dirname, '..', 'FirstShift20IntakeForm.csv');
-        if (fs.existsSync(csvPath)) {
+        const localCsv = path.join(__dirname, 'data', 'FirstShift20IntakeForm.csv');
+        const parentCsv = path.join(__dirname, '..', 'FirstShift20IntakeForm.csv');
+        const csvPath = fs.existsSync(localCsv) ? localCsv : (fs.existsSync(parentCsv) ? parentCsv : null);
+        if (csvPath) {
             const content = fs.readFileSync(csvPath, 'utf8');
             const lines = content.split('\n');
             const headerLine = lines.find(l => l.includes('OR THIS COLUMN!'));
@@ -35,6 +37,58 @@ function getCsvHeader() {
         }
     } catch(e) {}
     return "field_4297_first,field_4297_middle,field_4297_last";
+}
+
+// Safe JSON Parser that handles unescaped control characters inside string literals from LLMs
+function safeJsonParse(jsonStr) {
+    if (!jsonStr || typeof jsonStr !== 'string') return null;
+    let text = jsonStr.trim();
+    if (text.startsWith('```json')) {
+        text = text.replace(/^```json\s*/i, '').replace(/```\s*$/, '').trim();
+    } else if (text.startsWith('```')) {
+        text = text.replace(/^```\s*/, '').replace(/```\s*$/, '').trim();
+    }
+
+    try {
+        return JSON.parse(text);
+    } catch (initialError) {
+        let insideString = false;
+        let isEscaped = false;
+        let result = '';
+
+        for (let i = 0; i < text.length; i++) {
+            const char = text[i];
+            const code = text.charCodeAt(i);
+
+            if (char === '"' && !isEscaped) {
+                insideString = !insideString;
+                result += char;
+            } else if (insideString) {
+                if (isEscaped) {
+                    result += char;
+                    isEscaped = false;
+                } else if (char === '\\') {
+                    isEscaped = true;
+                    result += char;
+                } else if (char === '\n') {
+                    result += '\\n';
+                } else if (char === '\r') {
+                    result += '\\r';
+                } else if (char === '\t') {
+                    result += '\\t';
+                } else if (code < 32) {
+                    result += '\\u' + code.toString(16).padStart(4, '0');
+                } else {
+                    result += char;
+                }
+            } else {
+                result += char;
+                isEscaped = false;
+            }
+        }
+
+        return JSON.parse(result);
+    }
 }
 
 async function runPhase1(transcriptText, clientName) {
@@ -63,7 +117,74 @@ async function runPhase1(transcriptText, clientName) {
 
     const result = await model.generateContent(prompt);
     const responseText = result.response.text();
-    return JSON.parse(responseText);
+    return safeJsonParse(responseText);
+}
+
+// Process Audio Uploads Directly with Gemini Multimodal Processing
+async function runPhase1WithAudio(audioBuffer, mimeType, clientName, location, additionalNotes = "") {
+    if (!process.env.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is missing");
+
+    const manuals = loadManuals();
+    const systemPrompt = `You are an expert case manager and LS/CMI assessor for First Shift / Turn90.
+Phase 1 Audio Task: Listen to the attached audio recording of the intake assessment interview with participant "${clientName}" conducted at the Turn90 ${location} center.
+Using the audio interview and the assessment scoring manuals provided below, complete the following three requirements:
+
+1. "transcript": Provide a high-quality, verbatim text transcript of the audio interview.
+2. "interview_guide": Complete the comprehensive 158-question LS/CMI Interview Guide incorporating the participant's direct quotes and responses.
+3. "draft_scoring_form": Complete the Phase 1 DRAFT LS/CMI Scoring Form strictly following the scoring rules in the manual, evaluating all 8 subcomponents (Criminal History, Education/Employment, Family/Marital, Leisure/Recreation, Companions, Alcohol/Drug Problem, Procriminal Attitude/Orientation, Antisocial Pattern) and identifying clear strengths (rated 0) and high risk/needs (rated 2 or 3).
+
+${additionalNotes && additionalNotes.trim() ? `Additional Intake Notes:\n${additionalNotes}\n\n` : ''}
+
+Reference Manuals:
+${manuals}
+
+You must return a valid JSON object with EXACTLY these three keys:
+{
+  "transcript": "Verbatim transcript of the interview...",
+  "interview_guide": "# Interview Guide\\n...",
+  "draft_scoring_form": "# Draft Scoring Form\\n..."
+}
+
+Format requirements:
+- Follow LS/CMI Scoring Manual rules strictly.
+- Be thorough, evidence-based, and objective.`;
+
+    // Package audio: inline base64 if <= 20MB, or GoogleAIFileManager if > 20MB
+    let audioPart;
+    const { GoogleAIFileManager } = require('@google/generative-ai/server');
+    const fileManager = new GoogleAIFileManager(process.env.GEMINI_API_KEY);
+
+    let tempFilePath = null;
+    try {
+        if (audioBuffer.length > 20 * 1024 * 1024) {
+            tempFilePath = path.join(__dirname, 'data', `temp_audio_${Date.now()}.webm`);
+            fs.writeFileSync(tempFilePath, audioBuffer);
+            const uploadResult = await fileManager.uploadFile(tempFilePath, {
+                mimeType: mimeType || 'audio/webm',
+                displayName: `${clientName}_interview_audio`
+            });
+            audioPart = { fileData: { mimeType: uploadResult.file.mimeType, fileUri: uploadResult.file.uri } };
+        } else {
+            audioPart = {
+                inlineData: {
+                    mimeType: mimeType || 'audio/webm',
+                    data: audioBuffer.toString('base64')
+                }
+            };
+        }
+
+        const result = await model.generateContent([
+            audioPart,
+            { text: systemPrompt }
+        ]);
+
+        const responseText = result.response.text();
+        return safeJsonParse(responseText);
+    } finally {
+        if (tempFilePath && fs.existsSync(tempFilePath)) {
+            try { fs.unlinkSync(tempFilePath); } catch(e) {}
+        }
+    }
 }
 
 async function runPhase2(transcriptText, clientName, draftScoringForm, feedback, criminalHistoryText = "") {
@@ -135,7 +256,7 @@ async function runPhase2(transcriptText, clientName, draftScoringForm, feedback,
 
     const result = await model.generateContent(prompt);
     const responseText = result.response.text();
-    return JSON.parse(responseText);
+    return safeJsonParse(responseText);
 }
 
-module.exports = { runPhase1, runPhase2 };
+module.exports = { runPhase1, runPhase1WithAudio, runPhase2, safeJsonParse };

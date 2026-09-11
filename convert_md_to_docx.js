@@ -2,7 +2,9 @@ const { exec } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
-const PYTHON_CONVERTER = path.join(__dirname, '..', 'convert_md_to_docx.py');
+const PYTHON_CONVERTER = fs.existsSync(path.join(__dirname, 'convert_md_to_docx.py'))
+    ? path.join(__dirname, 'convert_md_to_docx.py')
+    : path.join(__dirname, '..', 'convert_md_to_docx.py');
 
 function convertSingleMdToDocx(mdPath, docxPath) {
     return new Promise((resolve, reject) => {

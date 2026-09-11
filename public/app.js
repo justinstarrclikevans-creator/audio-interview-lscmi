@@ -3102,9 +3102,12 @@ async function handleManualInterviewSubmit(e) {
         formData.append('audio', audioInput.files[0]);
     }
 
+    const hasAudio = audioInput.files && audioInput.files.length > 0;
     btn.disabled = true;
-    btn.innerText = '⏳ Processing Interview & Generating AI Scoring...';
-    statusBox.innerText = 'Extracting responses, formatting LS/CMI interview guide, and generating draft scores...';
+    btn.innerText = hasAudio ? '🎙️ Transcribing Audio & Generating AI Scoring...' : '⏳ Processing Interview & Generating AI Scoring...';
+    statusBox.innerText = hasAudio 
+        ? 'Uploading audio to Gemini, generating verbatim transcript, completing 158-item LS/CMI guide, and calculating draft scores (this may take 25-45 seconds)...' 
+        : 'Extracting responses, formatting LS/CMI interview guide, and generating draft scores...';
 
     try {
         const res = await fetch('/api/interviews/manual-entry', {
@@ -3394,7 +3397,7 @@ async function handleSupervisorFeedbackSubmit(e) {
     const btn = document.getElementById('btn-submit-phase2');
 
     btn.disabled = true;
-    btn.innerText = 'Processing Phase 2 Case Documents...';
+    btn.innerText = '⏳ Generating Phase 2 Case Brief & Participant Plan with AI... (this takes ~15-30s)';
 
     const formData = new FormData();
     formData.append('clientId', clientId);
@@ -3410,11 +3413,13 @@ async function handleSupervisorFeedbackSubmit(e) {
             body: formData
         });
         const data = await res.json();
-        alert(data.message || 'Phase 2 in progress. Final case brief, participant plan, and Briefcase items are being generated.');
+        if (!res.ok) throw new Error(data.error || 'Phase 2 generation failed.');
+
+        alert(data.message || '✅ Phase 2 complete! Final scoring form, case brief, and participant action plan generated.');
         closeModal('modal-supervisor-review');
-        setTimeout(loadPmDrafts, 3500);
+        loadPmDrafts();
     } catch (err) {
-        alert('Phase 2 submission error: ' + err.message);
+        alert('Phase 2 error: ' + err.message);
     } finally {
         btn.disabled = false;
         btn.innerText = 'Approve & Generate Case Documents';

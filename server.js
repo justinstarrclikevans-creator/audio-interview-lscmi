@@ -8,7 +8,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const { db, BRIEFCASE_DOMAINS, DEFAULT_GATE_CRITERIA, STABILITY_STEP_DOWN_TRIGGERS, initParticipantBriefcase, BENEFIT_PROGRAMS, syncBenefitToBriefcase } = require('./db');
-const { runPhase1, runPhase2 } = require('./llm_pipeline');
+const { runPhase1, runPhase1WithAudio, runPhase2, safeJsonParse } = require('./llm_pipeline');
 const { convertSingleMdToPdf } = require('./convert_md_to_pdf');
 const { convertSingleMdToDocx } = require('./convert_md_to_docx');
 const { evaluateClassTranscript } = require('./facilitation_evaluator');
@@ -1745,21 +1745,58 @@ app.post('/api/interviews/manual-entry', memoryUpload.single('audio'), async (re
         const clientId = `${safeName}_${location}`;
 
         // Save audio if attached
-        if (req.file) {
-            fs.writeFileSync(path.join(dataDir, `${clientId}_audio.webm`), req.file.buffer);
+        if (req.file && req.file.buffer) {
+            const ext = path.extname(req.file.originalname) || '.webm';
+            fs.writeFileSync(path.join(dataDir, `${clientId}_audio${ext}`), req.file.buffer);
+            if (ext !== '.webm') {
+                fs.writeFileSync(path.join(dataDir, `${clientId}_audio.webm`), req.file.buffer);
+            }
         }
 
-        // If no transcript was provided, create a placeholder
-        if (!transcriptText || !transcriptText.trim()) {
-            transcriptText = `Assessment interview conducted with ${cleanName} at Turn90 ${location} center. Participant discussed employment history, education, family/support networks, legal background, and personal goals for stability.`;
-        }
-
-        const transcriptPath = path.join(dataDir, `${clientId}_transcript.txt`);
-        fs.writeFileSync(transcriptPath, transcriptText);
-
-        // Run Phase 1 LLM if GEMINI_API_KEY is configured
         let results = null;
-        if (process.env.GEMINI_API_KEY) {
+
+        // If audio recording was uploaded, transcribe and score directly via Gemini Audio LLM
+        if (req.file && req.file.buffer && process.env.GEMINI_API_KEY) {
+            console.log(`Processing uploaded audio interview for ${cleanName} with Gemini...`);
+            try {
+                results = await runPhase1WithAudio(
+                    req.file.buffer, 
+                    req.file.mimetype || 'audio/webm', 
+                    cleanName, 
+                    location, 
+                    transcriptText
+                );
+
+                if (results.transcript && results.transcript.trim()) {
+                    transcriptText = results.transcript;
+                }
+                const transcriptPath = path.join(dataDir, `${clientId}_transcript.txt`);
+                fs.writeFileSync(transcriptPath, transcriptText || `Interview audio recorded for ${cleanName}.`);
+
+                const guidePath = path.join(dataDir, `${clientId}_interview_guide.md`);
+                const draftPath = path.join(dataDir, `${clientId}_draft_scoring_form.md`);
+                
+                fs.writeFileSync(guidePath, results.interview_guide);
+                fs.writeFileSync(draftPath, results.draft_scoring_form);
+
+                convertSingleMdToPdf(guidePath, guidePath.replace(/\.md$/, '.pdf'));
+                convertSingleMdToPdf(draftPath, draftPath.replace(/\.md$/, '.pdf'));
+                convertSingleMdToDocx(guidePath, guidePath.replace(/\.md$/, '.docx'));
+                convertSingleMdToDocx(draftPath, draftPath.replace(/\.md$/, '.docx'));
+            } catch (audioLlmErr) {
+                console.error('Gemini audio interview processing error:', audioLlmErr);
+                fs.writeFileSync(path.join(dataDir, `${clientId}_error.txt`), `Failed: ${audioLlmErr.message}`);
+                throw new Error(`Audio processing error: ${audioLlmErr.message}`);
+            }
+        } else if (process.env.GEMINI_API_KEY) {
+            // Text-only transcript submitted
+            if (!transcriptText || !transcriptText.trim()) {
+                transcriptText = `Assessment interview conducted with ${cleanName} at Turn90 ${location} center. Participant discussed employment history, education, family/support networks, legal background, and personal goals for stability.`;
+            }
+
+            const transcriptPath = path.join(dataDir, `${clientId}_transcript.txt`);
+            fs.writeFileSync(transcriptPath, transcriptText);
+
             try {
                 results = await runPhase1(transcriptText, cleanName);
                 const guidePath = path.join(dataDir, `${clientId}_interview_guide.md`);
@@ -1775,7 +1812,13 @@ app.post('/api/interviews/manual-entry', memoryUpload.single('audio'), async (re
             } catch(llmErr) {
                 console.error('LLM Phase 1 generation failed:', llmErr);
                 fs.writeFileSync(path.join(dataDir, `${clientId}_error.txt`), `Failed: ${llmErr.message}`);
+                throw new Error(`AI Scoring draft generation failed: ${llmErr.message}`);
             }
+        } else {
+            if (!transcriptText || !transcriptText.trim()) {
+                transcriptText = `Assessment interview conducted with ${cleanName} at Turn90 ${location} center.`;
+            }
+            fs.writeFileSync(path.join(dataDir, `${clientId}_transcript.txt`), transcriptText);
         }
 
         res.json({
@@ -1783,7 +1826,9 @@ app.post('/api/interviews/manual-entry', memoryUpload.single('audio'), async (re
             clientId,
             cleanName,
             hasDraft: !!results,
-            message: results ? `Interview and Phase 1 Draft Scoring Form created for ${cleanName}.` : `Interview saved for ${cleanName}. Ready for AI scoring.`
+            message: results 
+                ? `Interview and Phase 1 Draft Scoring Form created for ${cleanName}.` 
+                : `Interview saved for ${cleanName}. Ready for AI scoring.`
         });
     } catch(err) {
         console.error('Manual interview entry error:', err);
@@ -1870,12 +1915,18 @@ app.post('/api/submit-feedback', memoryUpload.single('criminalHistoryFile'), asy
     const { clientId, feedback, criminalHistoryText } = req.body;
     if (!clientId) return res.status(400).json({ error: "Missing clientId" });
 
-    res.status(200).json({ message: "Feedback received. Generating final case brief and participant plan..." });
-
     try {
+        // Robust participant name extraction from any clientId format
         const parts = clientId.split('_');
-        const name = parts[1];
-        
+        if (/^\d{10,}$/.test(parts[0])) {
+            parts.shift(); // remove leading timestamp if present
+        }
+        const lastPart = parts[parts.length - 1].toLowerCase();
+        if (['charleston', 'columbia', 'spartanburg'].includes(lastPart)) {
+            parts.pop();
+        }
+        const participantName = parts.join(' ').trim() || clientId;
+
         let crimText = criminalHistoryText || '';
         if (req.file && req.file.buffer) {
             try {
@@ -1886,44 +1937,79 @@ app.post('/api/submit-feedback', memoryUpload.single('criminalHistoryFile'), asy
             }
         }
 
-        const transcript = fs.readFileSync(path.join(dataDir, `${clientId}_transcript.txt`), 'utf8');
+        // Locate transcript
+        let transcript = '';
+        const transcriptPath = path.join(dataDir, `${clientId}_transcript.txt`);
+        if (fs.existsSync(transcriptPath)) {
+            transcript = fs.readFileSync(transcriptPath, 'utf8');
+        } else {
+            const files = fs.readdirSync(dataDir);
+            const tFile = files.find(f => f.includes(clientId) && f.includes('transcript'));
+            if (tFile) transcript = fs.readFileSync(path.join(dataDir, tFile), 'utf8');
+        }
+        if (!transcript || !transcript.trim()) {
+            const guidePath = path.join(dataDir, `${clientId}_interview_guide.md`);
+            if (fs.existsSync(guidePath)) {
+                transcript = fs.readFileSync(guidePath, 'utf8');
+            } else {
+                transcript = `Assessment interview conducted with ${participantName} at Turn90.`;
+            }
+        }
+
+        // Locate draft scoring form
         const draftPath = path.join(dataDir, `${clientId}_draft_scoring_form.md`);
         let draft = "";
         if (fs.existsSync(draftPath)) {
             draft = fs.readFileSync(draftPath, 'utf8');
+        } else {
+            const files = fs.readdirSync(dataDir);
+            const dFile = files.find(f => f.includes(clientId) && f.includes('draft_scoring_form'));
+            if (dFile) draft = fs.readFileSync(path.join(dataDir, dFile), 'utf8');
         }
 
-        const results = await runPhase2(transcript, name, draft, feedback || 'Approved as drafted', crimText);
+        console.log(`Starting Phase 2 generation for ${participantName} (${clientId})...`);
+        const results = await runPhase2(transcript, participantName, draft, feedback || 'Approved as drafted', crimText);
         
         const finalScoringPath = path.join(dataDir, `${clientId}_final_scoring_form.md`);
         const finalBriefPath = path.join(dataDir, `${clientId}_final_case_brief.md`);
         const participantPlanPath = path.join(dataDir, `${clientId}_participant_case_plan.md`);
 
-        fs.writeFileSync(finalScoringPath, results.final_scoring_form);
-        fs.writeFileSync(finalBriefPath, results.case_brief);
+        if (results.final_scoring_form) {
+            fs.writeFileSync(finalScoringPath, results.final_scoring_form);
+            convertSingleMdToPdf(finalScoringPath, finalScoringPath.replace(/\.md$/, '.pdf'));
+            convertSingleMdToDocx(finalScoringPath, finalScoringPath.replace(/\.md$/, '.docx'));
+        }
+        if (results.case_brief) {
+            fs.writeFileSync(finalBriefPath, results.case_brief);
+            convertSingleMdToPdf(finalBriefPath, finalBriefPath.replace(/\.md$/, '.pdf'));
+            convertSingleMdToDocx(finalBriefPath, finalBriefPath.replace(/\.md$/, '.docx'));
+        }
         if (results.participant_case_plan) {
             fs.writeFileSync(participantPlanPath, results.participant_case_plan);
+            convertSingleMdToPdf(participantPlanPath, participantPlanPath.replace(/\.md$/, '.pdf'));
+            convertSingleMdToDocx(participantPlanPath, participantPlanPath.replace(/\.md$/, '.docx'));
         }
         
         if (results.csv_row) {
             const csvRow = results.csv_row + "\n";
-            fs.appendFileSync(path.join(__dirname, '..', 'FirstShift20IntakeForm.csv'), csvRow);
-        }
-
-        // Convert generated markdowns to PDFs and editable DOCX files asynchronously
-        convertSingleMdToPdf(finalScoringPath, finalScoringPath.replace(/\.md$/, '.pdf'));
-        convertSingleMdToPdf(finalBriefPath, finalBriefPath.replace(/\.md$/, '.pdf'));
-        convertSingleMdToDocx(finalScoringPath, finalScoringPath.replace(/\.md$/, '.docx'));
-        convertSingleMdToDocx(finalBriefPath, finalBriefPath.replace(/\.md$/, '.docx'));
-        if (results.participant_case_plan) {
-            convertSingleMdToPdf(participantPlanPath, participantPlanPath.replace(/\.md$/, '.pdf'));
-            convertSingleMdToDocx(participantPlanPath, participantPlanPath.replace(/\.md$/, '.docx'));
+            const localCsv = path.join(dataDir, 'FirstShift20IntakeForm.csv');
+            const parentCsv = path.join(__dirname, '..', 'FirstShift20IntakeForm.csv');
+            const targetCsv = fs.existsSync(localCsv) ? localCsv : (fs.existsSync(parentCsv) ? parentCsv : localCsv);
+            try {
+                fs.appendFileSync(targetCsv, csvRow);
+            } catch (csvErr) {
+                console.warn("Could not append to CSV file:", csvErr.message);
+            }
         }
 
         // Auto-update Briefcase & Stability Factors in database
         if (results.briefcase_autofill) {
             const autofill = results.briefcase_autofill;
-            const user = db.prepare('SELECT id FROM users WHERE LOWER(name) LIKE ?').get(`%${name.toLowerCase()}%`);
+            const firstName = parts[0] || participantName;
+            const user = db.prepare('SELECT id FROM users WHERE LOWER(name) LIKE ? OR LOWER(name) LIKE ?').get(
+                `%${participantName.toLowerCase()}%`,
+                `%${firstName.toLowerCase()}%`
+            );
             if (user) {
                 const uId = user.id;
                 db.prepare(`
@@ -1976,11 +2062,15 @@ app.post('/api/submit-feedback', memoryUpload.single('criminalHistoryFile'), asy
             }
         }
 
-        if (fs.existsSync(draftPath)) fs.unlinkSync(draftPath);
-        console.log(`Phase 2 complete for ${name}`);
+        console.log(`Phase 2 complete for ${participantName} (${clientId})`);
+        res.status(200).json({
+            success: true,
+            message: `Phase 2 complete! Final scoring form, case brief, and participant action plan generated for ${participantName}.`
+        });
     } catch (err) {
         console.error("Phase 2 failed:", err);
         fs.writeFileSync(path.join(dataDir, `${clientId}_error_phase2.txt`), `Failed Phase 2: ${err.message}`);
+        res.status(500).json({ error: "Phase 2 generation failed: " + err.message });
     }
 });
 

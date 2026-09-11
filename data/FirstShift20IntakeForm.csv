@@ -1,0 +1,121 @@
+"System Header Row
+DO NOT DELETE THIS ROW
+OR THIS COLUMN!",field_4297_first,field_4297_middle,field_4297_last,field_4296,field_4476,field_4477,field_4298,field_4299_line1,field_4299_line2,field_4300,field_4307,field_4308,field_4309,field_4320,field_4327,field_4322,field_4323,field_4324,field_4325,field_4326,field_4333,field_4334,field_4335,field_4336,field_4337,field_4338,field_4339,field_4340,field_4341,field_4342,field_4343,field_4344,field_4345,field_4346,field_4347,field_4348,field_4349,field_4350,field_4352,field_4351,field_4353,field_4354,field_4355,field_4356,field_4357,field_4358,field_4365,field_4366,field_4367,field_4368,field_4369,field_4370,field_4371,field_4372,field_4373,field_4310,field_4311,field_4312,field_4314,field_4313,field_4315,field_4316,field_4317,field_4318,field_4319,field_4328,field_4329,field_4330,field_4331,field_4332,field_4359,field_4360,field_4361,field_4364,field_4362,field_4363,field_4306,field_owner
+"{
+	""actions"":{
+		""validation"":[
+
+		],
+		""reconciliation"":[
+
+		]
+	},
+	""form_history"":""fff511a84854da08c8ee924aaadbf659"",
+	""form_id"":""135"",
+	""form_name"":""First Shift 2.0 Intake Form"",
+	""has_desc"":"""",
+	""import_type"":""data"",
+	""is_tier1_form"":""1"",
+	""link_field_id"":"""",
+	""link_field_label"":"""",
+	""match_type"":""duplicate"",
+	""options"":[
+
+	],
+	""record_action"":""insert"",
+	""required_field_mode"":""allow_incomplete"",
+	""secondary_form_history"":"""",
+	""secondary_form_id"":""0"",
+	""secondary_form_name"":"""",
+	""secondary_is_tier1_form"":"""",
+	""selected_columns"":[
+		""field_4297_first"",
+		""field_4297_middle"",
+		""field_4297_last"",
+		""field_4296"",
+		""field_4476"",
+		""field_4477"",
+		""field_4298"",
+		""field_4299_line1"",
+		""field_4299_line2"",
+		""field_4300"",
+		""field_4307"",
+		""field_4308"",
+		""field_4309"",
+		""field_4320"",
+		""field_4327"",
+		""field_4322"",
+		""field_4323"",
+		""field_4324"",
+		""field_4325"",
+		""field_4326"",
+		""field_4333"",
+		""field_4334"",
+		""field_4335"",
+		""field_4336"",
+		""field_4337"",
+		""field_4338"",
+		""field_4339"",
+		""field_4340"",
+		""field_4341"",
+		""field_4342"",
+		""field_4343"",
+		""field_4344"",
+		""field_4345"",
+		""field_4346"",
+		""field_4347"",
+		""field_4348"",
+		""field_4349"",
+		""field_4350"",
+		""field_4352"",
+		""field_4351"",
+		""field_4353"",
+		""field_4354"",
+		""field_4355"",
+		""field_4356"",
+		""field_4357"",
+		""field_4358"",
+		""field_4365"",
+		""field_4366"",
+		""field_4367"",
+		""field_4368"",
+		""field_4369"",
+		""field_4370"",
+		""field_4371"",
+		""field_4372"",
+		""field_4373"",
+		""field_4310"",
+		""field_4311"",
+		""field_4312"",
+		""field_4314"",
+		""field_4313"",
+		""field_4315"",
+		""field_4316"",
+		""field_4317"",
+		""field_4318"",
+		""field_4319"",
+		""field_4328"",
+		""field_4329"",
+		""field_4330"",
+		""field_4331"",
+		""field_4332"",
+		""field_4359"",
+		""field_4360"",
+		""field_4361"",
+		""field_4364"",
+		""field_4362"",
+		""field_4363"",
+		""field_4306"",
+		""field_owner""
+	],
+	""skip_headers"":"""",
+	""target_match_type"":""""
+}","*First Shift 2.0 Intake Form - Your Name: first","First Shift 2.0 Intake Form - Your Name: middle","*First Shift 2.0 Intake Form - Your Name: last","*Todays Date","Date of Birth","Social Security Number",Race,"Address at intake (where are you currently sleeping): line1","Address at intake (where are you currently sleeping): line2","What is your current housing status?","In the last five years, have you been prescribed medication for a physical or mental health condition?","List the drugs and diagnosis to the best of your knowledge","Emergency needs are things that must be addressed immediately for you to succeed. Let us know if any of the following applies. Do you have any emergency needs? (Check all that apply):","You are involved in the criminal justice system if you are on probation, parole, have pending charges, or are living in a federal BOP halfway house. Are you currently involved in the criminal justice system?","Involvement (check all that apply)","What is your projected release date from the Federal halfway house?","Parole - The release of a person to supervision in the community before completion of their sentence.Are you on parole? Parole - The release of a person to supervision in the community before completion of their sentence. Are you on parole?","When is the projected end date of your parole?","Are you in compliance with the terms of your parole?","Is Turn90 a condition of your parole?","How many months did you have remaining on your prison sentence?","State Supervision-Did you receive a Diverted sentence? – you were facing criminal charges that carried a prison sentence, but was diverted away from prison, remaining in the community to complete Turn90 as part of a plea agreement and a condition of probation.","How many months was your diverted state sentence?","What is the projected end date of your state probation/community supervision?","Are you in compliance with the terms of your state supervision?","What is the projected end date of your federal supervision?","Are you in compliance with the terms of your federal supervision?","Federal-Did you receive a Diverted sentence? – you were facing federal criminal charges that carried a prison sentence, but was diverted away from prison, remaining in the community to complete Turn90 as part of a plea agreement and a condition of probation.","How many months was your diverted federal sentence?","Are your pending charges State of Federal?","List pending charges and county charges are listed:","Are any of the pending charges a felony?","Are any of the charges considered violent by legal standards?","Do you have an official agreement with the government to complete Turn90 in exchange for a lesser sentence or dismissed charges in court?Do you have an official agreement with the government to complete Turn90 in exchange for a lesser sentence or dismissed charges in court?","How old were you when you were arrested for the first time?","How many times have you been arrested?","How many times have you been convicted?","How many times have you been incarcerated (including this most recent time?)","Date of your most recent release from incarceration?","Were you most recently released from jail or prison?","What was the length of your most recent incarceration?","Did your most recent criminal convictions include a violent offense?","Have you ever been charged or convicted of a sex offense?","Did your most recent criminal conviction include drug trafficking?","Did your most recent criminal conviction include possession of a firearm?","Does your mother or father have a criminal record?","Do you have a history of major drug use? Illegal drug use that caused major life disruptions, problems in relationships, and led to criminal actions (stole just to get more drugs or money for more drugs, sold drugs just to be able get high, etc)","Do you have a history of major alcohol use? Alcohol use that caused major life disruptions, problems in relationships, and led to criminal actions (drunk driving offenses, fights while blacked out, etc)","Do you use marijuana but no other drugs?","When was your last drug use?","Obligations to support children. Someone who is on court ordered child support OR has an agreement to pay a set amount to support a child OR reports financially helping out regularly, even without an official agreement, this includes paying for birthday parties, clothes, and school supplies. Do you financially support any biological children?","Are you court ordered to pay child support?","Have you been in contact with child support enforcement to make sure you are current?","Who do you spend most of your time with?","How do you usually respond when someone disrespects you or challenges you?","Have you ever had a payroll job?","How much total work experience do you have?","What is the longest period of time you have stayed at one job?","What types of jobs have you had? (Check all that apply)","Do you have any physical or personal limitations that could affect the type of work you can do?","What work skills do you have? (Check all that apply)","What usually caused jobs to end for you? (Check all that apply)","Do you currently have any certifications or job training?","What certifications do you have?","What certifications are you interested in?","What is the highest level of education you have completed?","Are you currently working on your GED?","Do you have a drivers license in good standing?","Do you have reliable transportation to attend everyday?","What is your reliable transportation?","Do you have any regular obligations that could affect your ability to attend daily or work a full shift? (This could include court obligations, child care, sick family members who need care, your own medical issues)","What might make it hard for you to attend every day?","What are you hoping to get out of this program?","What type of job would you like? (you can be specific if there is a certain company or you can list the types of jobs you'd like)","What are the two most important to you in a job? (select 2)","Is there anything else you'd like us to know?","Assigned Programs",Owner
+"Dylan Alexander Johnson","November 10","5519 Woodbine Avenue","None","State ID","0","1","Assault and Battery 3rd degree","19","Yes","No","Yes","Yes","No","0","2 years","Yes","12th grade","Yes","Yes","Single","Yes","Yes","No","None","Reading Bible, listening to music, working out, watching movies, audiobooks","Yes","0","None","Yes","Yes","Marijuana, Delta 9, Alcohol","Early May 2026","No","Yes","Yes","Yes","Yes","Yes","Yes","Yes","No","No","Yes","No","No","No","No","Transitional house","Yes","No","Yes","No","No","Yes","No","Yes","No","No","No","Yes","No","No","No","Yes","No","Yes","Yes","No","Yes","No","Yes","Mental health","Yes","No","No","Yes","Yes (Hydroxyzine)","No","No","No","No","No","No","No","No","658-09-1607","No","Do not apply","Yes","Unknown","Yes","Yes","2 years","Yes","6 to 9 months YOA","April 28, 2024","Yes","August 6, 2026","Jail","1 month","No","No","No","No","Yes","Yes","Early May 2026","No","No","No","Myself","Anger, yelling, threats","Yes","5 years","2 years","Warehousing, restaurant","No","Cleaning, maintenance, assembly, packaging, unloading","Environment and pay","No","High school diploma","No","No","Walk or bus","No","Transportation","Mental health help, jobs","Warehousing, construction","Money, using skills","No"
+"Jevon Bunnell","12/04/1985","118 Rockingham Way, Moncks Corner, South Carolina 29461","Suspended","State ID, birth certificate, social security card, passport","0","3","DUI","27","Yes","No","No","No","No","1","8 to 9 years","No","College","Yes","No","Good, liked bosses and coworkers","Better opportunity, scheduling issues","Single","Fine being single","Good","Good","No","Methodist men president","At house with family, watching football, friends","Recharge","No","No","Just the DUIs","Yes","Yes","Never used drugs, drinking got DUIs","No","Yes","Fine","Upset","Yes","Yes","Not necessarily fair but deal with consequences","Yes","I guess","No","No","No","No","No","No","None right now, parents help","No","Yes","Yes","No, knows it's low","No","Credit card and student loans","Yes","Problems following right now","Yes","Owns house","Love it","Yes","No","No","Yes","Yes","Yes","No","No","No","No","No","No","No","No","No","No","No","Everybody opinions matter","No","No","No","No","No","Yes","No","No","No","Yes","No","No","No","No","No","No","No","No","No","No","No","Black","No","247-83-1894","No","Does not apply","No","Does not apply","Does not apply","No","Does not apply","Does not apply","Does not apply","2028","Yes","Does not apply","Does not apply","Does not apply","Does not apply","Does not apply","June 1, 2026","Prison","1 year","No","No","No","No","No","Drinking and alcohol responsibly is what got me DUIs","No","Never used drugs","Yes","Yes","Yes","By myself, family, friends","Ignore them","Yes","20 something years","8 to 9 years","Accounting, steel mill, customer service, Navy reserve","No","Adaptable, quick learner, Microsoft Word, Excel, AS400, Oracle","Taking another job","Forklift certification, working on bookkeeping","Forklift, bookkeeping","Not interested","Bachelor's degree","Does not apply","No","Yes","Family","No","My attitude","Assistance with getting structure back","Front office, accounting, manufacturing","Stability and opportunity to grow","No"
+1,1,1,0,1,1,1,1,1,1,1,0,0,1,0,0,0,2,1,1,0,1,0,1,0,1,0,1,1,0,1,1,1,1,0,0,1,1,0,0,1,1,1
+"","Dylan","Alexander","Johnson","","November 10th","658091607","","5519 Woodbine Avenue","","Transitional housing","Yes","Hydroxyzine for anxiety and depression","","Yes","State Probation/Supervision","","No","","","","24","Yes","72","April 28, 2024","Yes","","","","","","","","","","18-24","2-4 times","1 time","2–3 times","August 6, 2026","Jail","Between 1 and 90 days","Yes","No","No","No","No","Yes","Yes","Yes","1-90 days","No","No","No","","I react or confront them","Yes","More than 3 years","More than 1 year","Warehouse / logistics|Food service","No","","Attendance issues|Conflict at work|Low pay","No","","","High school diploma","No","No","Yes","I have reliable public transportation","No","Maybe transportation","Hoping to see life in a different light... seek help to see what's going on with my mental health... why I struggled so much in the past with certain things... gain some experiences about certain jobs.","Warehousing job, maybe construction job","Pay|Opportunity to grow","No","5862","32920"
+"","Jevon","","Bunnell","","1985-12-04","247831894","Black or African American","118 Rockingham Way, Moncks Corner, South Carolina 29461","","","No","","","Yes","State Probation/Supervision","","No","","","No","","","","","Yes","","","","","","","","","","25 or older","2-4 times","2–3 times","1 time","2026-06-01","State Prison","Between 91 and 365 days","No","No","No","No","No","No","Yes","No","Not applicable","Yes","Yes","Yes","People working or in school","I stay calm and walk away","Yes","More than 3 years","More than 1 year","Manufacturing","No","Customer service|Computer skills","I left for a better opportunity|Attendance issues|Incarceration","Yes","Forklift certification","","College degree","No","No","Yes","My family or support person drives me","No","My attitude","Assistance with getting some structure back into my life after being gone for a year unexpectedly.","Something in a front office again dealing with accounting but a manufacturing job is okay as well.","Stability|Opportunity to grow","No","",""
+,Michael,James,Smith,,1995-04-12,,,,Family’s home,,,,Yes,State Probation/Supervision|Pending charges,,No,,,,,,,,No,,,,,,DUI,,No,,Under 16,2-4 times,2–3 times,1 time,,State Prison,Between 366 days and three years,Yes,No,No,No,No,Yes,Yes,No,,,,,,Mostly people not working / involved in illegal activity,I react or confront them,,,6-12 months,Construction,,,Attendance issues,,,,GED,No,No,,,,,,,,,,
+
+"","Michael","James","Smith","","1995-04-12","","","","","Family’s home","No","","","Yes","Pending charges","","","","","","","","","","","","","","","State","DUI","No","No","","Under 16","2-4 times","2–3 times","1 time","","State Prison","Between 366 days and three years","Yes","No","No","No","No","Yes","Yes","No","1-90 days","","","","Mostly people not working / involved in illegal activity","I react or confront them","Yes","Less than 1 year","3-6 months","Construction","No","","Attendance issues|Incarceration","No","","","GED","No","No","No","","","","","","","","",""
