@@ -1308,6 +1308,15 @@ function buildPrintableDocumentHtml(filename, content, isBatch = false) {
     } else if (cleanFilename.toLowerCase().includes('keyzelle')) {
         clientName = 'Keyzelle Thomas';
         location = 'Columbia';
+    } else if (cleanFilename.toLowerCase().includes('countee')) {
+        clientName = 'William Theophilus Countee';
+        location = 'Charleston';
+    } else if (cleanFilename.toLowerCase().includes('pinckney') || cleanFilename.toLowerCase().includes('lawrence')) {
+        clientName = 'Lawrence Pinckney';
+        location = 'Columbia';
+    } else if (cleanFilename.toLowerCase().includes('clyde') || cleanFilename.toLowerCase().includes('williams')) {
+        clientName = 'Clyde Williams';
+        location = 'Columbia';
     } else {
         const nameParts = cleanFilename.split('_');
         if (nameParts.length >= 2) {
