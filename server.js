@@ -1298,19 +1298,31 @@ function buildPrintableDocumentHtml(filename, content, isBatch = false) {
     let clientName = 'Participant';
     let location = 'Turn90 Center';
     const cleanFilename = filename.replace(/\.(md|txt)$/i, '');
-    const nameParts = cleanFilename.split('_');
-    if (nameParts.length >= 2) {
-        if (nameParts.includes('Charleston')) {
-            location = 'Charleston';
-            clientName = nameParts.slice(0, nameParts.indexOf('Charleston')).join(' ');
-        } else if (nameParts.includes('Columbia')) {
-            location = 'Columbia';
-            clientName = nameParts.slice(0, nameParts.indexOf('Columbia')).join(' ');
-        } else if (nameParts.includes('Spartanburg')) {
-            location = 'Spartanburg';
-            clientName = nameParts.slice(0, nameParts.indexOf('Spartanburg')).join(' ');
-        } else {
-            clientName = nameParts.slice(0, 2).join(' ');
+
+    if (cleanFilename.toLowerCase().includes('dillon')) {
+        clientName = 'Dillon Johnson';
+        location = 'Charleston';
+    } else if (cleanFilename.toLowerCase().includes('jovon')) {
+        clientName = 'Jovon Bonneau';
+        location = 'Charleston';
+    } else if (cleanFilename.toLowerCase().includes('keyzelle')) {
+        clientName = 'Keyzelle Thomas';
+        location = 'Columbia';
+    } else {
+        const nameParts = cleanFilename.split('_');
+        if (nameParts.length >= 2) {
+            if (nameParts.includes('Charleston')) {
+                location = 'Charleston';
+                clientName = nameParts.slice(0, nameParts.indexOf('Charleston')).join(' ');
+            } else if (nameParts.includes('Columbia')) {
+                location = 'Columbia';
+                clientName = nameParts.slice(0, nameParts.indexOf('Columbia')).join(' ');
+            } else if (nameParts.includes('Spartanburg')) {
+                location = 'Spartanburg';
+                clientName = nameParts.slice(0, nameParts.indexOf('Spartanburg')).join(' ');
+            } else {
+                clientName = nameParts.slice(0, 2).join(' ');
+            }
         }
     }
     clientName = clientName.replace(/keyzelle limamauel curtis thomas/gi, 'Keyzelle Thomas');
@@ -1318,28 +1330,55 @@ function buildPrintableDocumentHtml(filename, content, isBatch = false) {
     let bodyHtml = '';
 
     if (isScoring) {
-        // Parse Domain Scores from text
-        const ch = (content.match(/CH Score:\s*(\d+)/i) || content.match(/CH:\s*(\d+)/i) || [null, '3'])[1];
-        const ee = (content.match(/EE Score:\s*(\d+)/i) || content.match(/EE:\s*(\d+)/i) || [null, '6'])[1];
-        const fm = (content.match(/FM Score:\s*(\d+)/i) || content.match(/FM:\s*(\d+)/i) || [null, '1'])[1];
-        const lr = (content.match(/LR Score:\s*(\d+)/i) || content.match(/LR:\s*(\d+)/i) || [null, '1'])[1];
-        const co = (content.match(/CO Score:\s*(\d+)/i) || content.match(/CO:\s*(\d+)/i) || [null, '1'])[1];
-        const adp = (content.match(/ADP Score:\s*(\d+)/i) || content.match(/ADP:\s*(\d+)/i) || [null, '5'])[1];
-        const pa = (content.match(/PA Score:\s*(\d+)/i) || content.match(/PA:\s*(\d+)/i) || [null, '2'])[1];
-        const ap = (content.match(/AP Score:\s*(\d+)/i) || content.match(/AP:\s*(\d+)/i) || [null, '1'])[1];
-        
-        let totalScore = (content.match(/Total Score:\s*(\d+)/i) || [null, null])[1];
-        if (!totalScore) {
-            totalScore = (parseInt(ch)||0) + (parseInt(ee)||0) + (parseInt(fm)||0) + (parseInt(lr)||0) + 
-                         (parseInt(co)||0) + (parseInt(adp)||0) + (parseInt(pa)||0) + (parseInt(ap)||0);
+        // Robust regex helpers for domain scores and total scores
+        function extractDomainScore(text, domainCode) {
+            const re = new RegExp(`(?:\\*\\*|\\*|__|_)?${domainCode}\\s*Score:?(?:\\*\\*|\\*|__|_)?\\s*(?:\\*\\*|\\*|__|_)?(\\d+)`, 'i');
+            const m = text.match(re);
+            if (m) return parseInt(m[1], 10);
+            const re2 = new RegExp(`(?:^|[\\s*|])${domainCode}\\s*:\\s*(?:\\*\\*|\\*|__|_)?(\\d+)`, 'im');
+            const m2 = text.match(re2);
+            if (m2) return parseInt(m2[1], 10);
+            return 0;
+        }
+
+        function extractTotalScore(text) {
+            const re = /(?:Total\s*(?:Section\s*1\s*|LS\/CMI\s*)?Score:?)\s*(?:\*\*|\*|__|_)?\s*(\d+)/i;
+            const m = text.match(re);
+            return m ? parseInt(m[1], 10) : null;
+        }
+
+        const ch = extractDomainScore(content, 'CH');
+        const ee = extractDomainScore(content, 'EE');
+        const fm = extractDomainScore(content, 'FM');
+        const lr = extractDomainScore(content, 'LR');
+        const co = extractDomainScore(content, 'CO');
+        const adp = extractDomainScore(content, 'ADP');
+        const pa = extractDomainScore(content, 'PA');
+        const ap = extractDomainScore(content, 'AP');
+
+        let totalScore = extractTotalScore(content);
+        if (totalScore === null || isNaN(totalScore)) {
+            totalScore = ch + ee + fm + lr + co + adp + pa + ap;
         }
 
         const riskLevel = totalScore >= 30 ? 'VERY HIGH' : (totalScore >= 20 ? 'HIGH' : (totalScore >= 11 ? 'MEDIUM' : (totalScore >= 5 ? 'LOW' : 'VERY LOW')));
         const riskColor = totalScore >= 20 ? '#dc2626' : (totalScore >= 11 ? '#d97706' : '#16a34a');
         const riskBg = totalScore >= 20 ? '#fee2e2' : (totalScore >= 11 ? '#fef3c7' : '#dcfce7');
 
+        // Clean markdown content: strip leading title and Section 1 header to avoid duplication with executive top box
+        let cleanedContent = content;
+        cleanedContent = cleanedContent.replace(/^#\s*LS\/?CMI\s*Scoring\s*Form\s*\n+/i, '');
+        cleanedContent = cleanedContent.replace(/^(?:##|\*\*)\s*Section\s*1:\s*General\s*Risk\/Need\s*Factors\s*(?:\*\*)?\s*\n+/im, '');
+        // Standardize subsection headers
+        cleanedContent = cleanedContent.replace(/^[*_]{2}(\d+\.\d+\s+[^*\n]+)[*_]{2}\s*$/gm, '### $1');
+        cleanedContent = cleanedContent.replace(/^[*_]{2}(Section\s+\d+:[^*\n]+)[*_]{2}\s*$/gm, '## $1');
+        // Strip redundant Total Scores block before Section 2
+        cleanedContent = cleanedContent.replace(/(?:###|\*\*)\s*Total\s*Scores.*?(?=(?:\n---|\n##\s*Section\s*2|\n\*\*Section\s*2))/is, '');
+        cleanedContent = cleanedContent.replace(/\n---\s*(?=\n##\s*Section\s*2)/i, '');
+        cleanedContent = cleanedContent.trim();
+
         // Render Markdown content
-        const renderedMarkdown = typeof marked !== 'undefined' ? marked.parse(content) : content.replace(/\n/g, '<br>');
+        const renderedMarkdown = typeof marked !== 'undefined' ? marked.parse(cleanedContent) : cleanedContent.replace(/\n/g, '<br>');
 
         bodyHtml = `
             <div class="scoring-report-container" style="page-break-after: always; margin-bottom: 30px;">
@@ -1477,7 +1516,7 @@ function buildPrintableDocumentHtml(filename, content, isBatch = false) {
                         </div>
                         <div>
                             <div style="border-bottom: 1.5px solid #0f172a; height: 35px; margin-bottom: 6px;"></div>
-                            <div style="font-size: 10pt; font-weight: 700; color: #0f172a;">Program Director / Clinical Supervisor Signature</div>
+                            <div style="font-size: 10pt; font-weight: 700; color: #0f172a;">Program Director / Program Supervisor Signature</div>
                             <div style="font-size: 9pt; color: #64748b; margin-top: 2px;">Printed Name & Title: _____________________________________</div>
                             <div style="font-size: 9pt; color: #64748b; margin-top: 2px;">Date: ________________________</div>
                         </div>
@@ -1536,29 +1575,8 @@ function buildPrintableDocumentHtml(filename, content, isBatch = false) {
     return bodyHtml;
 }
 
-// Dedicated standalone printable HTML view for any document in Human-in-the-Loop
-app.get('/api/documents/print/:filename', (req, res) => {
-    const filename = req.params.filename;
-    if (!filename || filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
-        return res.status(400).send('Invalid filename');
-    }
-    let filePath = path.join(dataDir, filename);
-    if (!fs.existsSync(filePath)) {
-        filePath = path.join(__dirname, 'manuals', filename);
-    }
-    if (!fs.existsSync(filePath)) {
-        return res.status(404).send('Document file not found');
-    }
-
-    if (filename.endsWith('.pdf')) {
-        return res.redirect(`/api/documents/raw/${encodeURIComponent(filename)}`);
-    }
-
-    const content = fs.readFileSync(filePath, 'utf8');
-    const docHtml = buildPrintableDocumentHtml(filename, content);
-    const title = filename.replace(/\.(md|txt)$/i, '').replace(/_/g, ' ');
-
-    const html = `<!DOCTYPE html>
+function buildPrintablePageHtml(title, docHtml, autoprint = false) {
+    return `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -1703,6 +1721,44 @@ app.get('/api/documents/print/:filename', (req, res) => {
             border-top: 1px solid #cbd5e1;
             margin: 16px 0;
         }
+        /* Detailed Scoring Body Styling to match top scorecard */
+        .detailed-scoring-body {
+            font-size: 10pt;
+            line-height: 1.55;
+            color: #1e293b;
+        }
+        .detailed-scoring-body h2 {
+            font-size: 13pt;
+            color: #0f766e;
+            border-bottom: 2px solid #0f766e;
+            padding-bottom: 5px;
+            margin-top: 24px;
+            margin-bottom: 12px;
+            page-break-after: avoid;
+        }
+        .detailed-scoring-body h3 {
+            font-size: 11pt;
+            font-weight: 700;
+            color: #0369a1;
+            background: #f0f9ff;
+            border-left: 4px solid #0284c7;
+            padding: 5px 10px;
+            border-radius: 0 4px 4px 0;
+            margin-top: 16px;
+            margin-bottom: 8px;
+            page-break-after: avoid;
+        }
+        .detailed-scoring-body ol, .detailed-scoring-body ul {
+            padding-left: 20px;
+            margin: 6px 0 12px 0;
+        }
+        .detailed-scoring-body li {
+            margin-bottom: 4px;
+            color: #334155;
+        }
+        .detailed-scoring-body strong {
+            color: #0f172a;
+        }
         @media print {
             .print-toolbar {
                 display: none !important;
@@ -1743,13 +1799,36 @@ app.get('/api/documents/print/:filename', (req, res) => {
         ${docHtml}
     </div>
     <script>
-        if (window.location.search.includes('autoprint=true')) {
+        if (${autoprint} || window.location.search.includes('autoprint=true')) {
             window.addEventListener('load', () => { setTimeout(() => window.print(), 500); });
         }
     </script>
 </body>
 </html>`;
+}
 
+// Dedicated standalone printable HTML view for any document in Human-in-the-Loop
+app.get('/api/documents/print/:filename', (req, res) => {
+    const filename = req.params.filename;
+    if (!filename || filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
+        return res.status(400).send('Invalid filename');
+    }
+    let filePath = path.join(dataDir, filename);
+    if (!fs.existsSync(filePath)) {
+        filePath = path.join(__dirname, 'manuals', filename);
+    }
+    if (!fs.existsSync(filePath)) {
+        return res.status(404).send('Document file not found');
+    }
+
+    if (filename.endsWith('.pdf')) {
+        return res.redirect(`/api/documents/raw/${encodeURIComponent(filename)}`);
+    }
+
+    const content = fs.readFileSync(filePath, 'utf8');
+    const docHtml = buildPrintableDocumentHtml(filename, content);
+    const title = filename.replace(/\.(md|txt)$/i, '').replace(/_/g, ' ');
+    const html = buildPrintablePageHtml(title, docHtml, req.query.autoprint === 'true');
     res.send(html);
 });
 
@@ -1799,6 +1878,12 @@ app.get('/api/documents/print-all-scorings', (req, res) => {
         table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 9.5pt; }
         th, td { border: 1px solid #cbd5e1; padding: 6px 8px; text-align: left; }
         th { background-color: #f1f5f9 !important; font-weight: 700; -webkit-print-color-adjust: exact; }
+        .detailed-scoring-body { font-size: 10pt; line-height: 1.55; color: #1e293b; }
+        .detailed-scoring-body h2 { font-size: 13pt; color: #0f766e; border-bottom: 2px solid #0f766e; padding-bottom: 5px; margin-top: 24px; margin-bottom: 12px; page-break-after: avoid; }
+        .detailed-scoring-body h3 { font-size: 11pt; font-weight: 700; color: #0369a1; background: #f0f9ff; border-left: 4px solid #0284c7; padding: 5px 10px; border-radius: 0 4px 4px 0; margin-top: 16px; margin-bottom: 8px; page-break-after: avoid; }
+        .detailed-scoring-body ol, .detailed-scoring-body ul { padding-left: 20px; margin: 6px 0 12px 0; }
+        .detailed-scoring-body li { margin-bottom: 4px; color: #334155; }
+        .detailed-scoring-body strong { color: #0f172a; }
         @media print {
             .print-toolbar { display: none !important; }
             body { padding: 0 !important; }
@@ -3117,3 +3202,9 @@ app.listen(PORT, async () => {
         console.warn('Caseload auto-sync notice:', e.message);
     }
 });
+
+module.exports = {
+    app,
+    buildPrintableDocumentHtml,
+    buildPrintablePageHtml
+};
