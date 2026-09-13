@@ -17,6 +17,16 @@ if (typeof marked !== 'undefined' && marked.setOptions) {
     marked.setOptions({ breaks: true, gfm: true });
 }
 
+function escapeHtml(str) {
+    if (!str && str !== 0) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
 // -------------------------------------------------------------
 // HELPER: SAFE API RESPONSE PARSER (Gracefully handles HTML/Expired Sessions)
 // -------------------------------------------------------------
