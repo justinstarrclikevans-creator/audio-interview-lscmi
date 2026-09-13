@@ -3298,17 +3298,47 @@ async function previewDocument(filename) {
         btnPrint.onclick = () => printActiveDraftDocument(filename);
     }
 
+    if (!filename || filename === 'undefined' || filename === 'null') {
+        body.innerHTML = `
+            <div style="padding: 30px; text-align: center;">
+                <p class="text-danger" style="font-size: 15px; font-weight: 700; margin-bottom: 8px;">⚠️ Document Not Found</p>
+                <p style="color: var(--slate); font-size: 13px;">No valid document filename was provided for this record.</p>
+            </div>
+        `;
+        return;
+    }
+
     body.innerHTML = '<p style="padding: 20px; color: var(--slate);">⏳ Loading document content...</p>';
     openModal('modal-draft-viewer');
 
     try {
+        let fileContent = '';
         const res = await fetch(`/api/file-content?file=${encodeURIComponent(filename)}`);
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error);
+        const contentType = res.headers.get('content-type') || '';
+        
+        if (res.ok && contentType.includes('application/json')) {
+            const data = await res.json();
+            fileContent = data.content || '';
+        } else {
+            // Fallback: fetch directly from raw documents route
+            const rawRes = await fetch(`/api/documents/raw/${encodeURIComponent(filename)}`);
+            if (rawRes.ok) {
+                fileContent = await rawRes.text();
+            } else {
+                let errorDetail = `Status ${res.status}`;
+                if (contentType.includes('application/json')) {
+                    try {
+                        const errJson = await res.json();
+                        if (errJson.error) errorDetail = errJson.error;
+                    } catch (e) {}
+                }
+                throw new Error(`Could not load "${filename}" (${errorDetail}).`);
+            }
+        }
 
         // Handle Transcripts, Guides, and Markdown documents
         if (filename.endsWith('.txt') || filename.includes('transcript')) {
-            const lines = data.content.split('\n');
+            const lines = fileContent.split('\n');
             let dialogueCount = 0;
             let turnsHtml = '';
             
@@ -3378,18 +3408,28 @@ async function previewDocument(filename) {
                     </div>
                 </div>
                 <div id="guide-content-container" class="markdown-preview" style="line-height: 1.6; font-size: 13.5px; color: #1e293b; max-height: 70vh; overflow-y: auto;">
-                    ${typeof marked !== 'undefined' ? marked.parse(data.content) : data.content.replace(/\n/g, '<br>')}
+                    ${typeof marked !== 'undefined' ? marked.parse(fileContent) : fileContent.replace(/\n/g, '<br>')}
                 </div>
             `;
         } else {
             body.innerHTML = `
                 <div class="markdown-preview" style="line-height: 1.6; font-size: 13.5px; color: #1e293b; max-height: 72vh; overflow-y: auto;">
-                    ${typeof marked !== 'undefined' ? marked.parse(data.content) : data.content.replace(/\n/g, '<br>')}
+                    ${typeof marked !== 'undefined' ? marked.parse(fileContent) : fileContent.replace(/\n/g, '<br>')}
                 </div>
             `;
         }
     } catch (err) {
-        body.innerHTML = '<p class="text-danger">Failed to load document: ' + err.message + '</p>';
+        body.innerHTML = `
+            <div style="padding: 30px; text-align: center;">
+                <div style="font-size: 32px; margin-bottom: 10px;">⚠️</div>
+                <p class="text-danger" style="font-size: 14.5px; font-weight: 700; margin-bottom: 6px;">Failed to load document</p>
+                <p style="color: #475569; font-size: 13px; max-width: 500px; margin: 0 auto 16px auto;">${escapeHtml(err.message)}</p>
+                <div style="display: flex; gap: 8px; justify-content: center;">
+                    <button class="btn btn-outline" style="font-size: 12px; padding: 6px 14px;" onclick="previewDocument('${encodeURIComponent(filename)}')">🔄 Retry</button>
+                    <a class="btn btn-primary" style="font-size: 12px; padding: 6px 14px;" href="/api/documents/raw/${encodeURIComponent(filename)}" target="_blank">📥 View Raw File</a>
+                </div>
+            </div>
+        `;
     }
 }
 
@@ -3454,15 +3494,23 @@ async function previewScoringWithGuide(clientId, cleanName) {
         ]);
 
         if (resScoring.ok) {
-            const dataS = await resScoring.json();
-            scoringMarkdown = typeof marked !== 'undefined' ? marked.parse(dataS.content) : dataS.content.replace(/\n/g, '<br>');
+            try {
+                const dataS = await resScoring.json();
+                scoringMarkdown = typeof marked !== 'undefined' ? marked.parse(dataS.content) : dataS.content.replace(/\n/g, '<br>');
+            } catch(e) {
+                scoringMarkdown = '<p class="text-danger">Draft scoring form could not be parsed.</p>';
+            }
         } else {
             scoringMarkdown = '<p class="text-danger">Draft scoring form not found.</p>';
         }
 
         if (resGuide.ok) {
-            const dataG = await resGuide.json();
-            guideMarkdown = typeof marked !== 'undefined' ? marked.parse(dataG.content) : dataG.content.replace(/\n/g, '<br>');
+            try {
+                const dataG = await resGuide.json();
+                guideMarkdown = typeof marked !== 'undefined' ? marked.parse(dataG.content) : dataG.content.replace(/\n/g, '<br>');
+            } catch(e) {
+                guideMarkdown = '<p class="text-slate">Interview guide response could not be parsed.</p>';
+            }
         } else {
             guideMarkdown = '<p class="text-slate">Completed interview guide responses not found. You can view the raw transcript if available.</p>';
         }
@@ -3582,26 +3630,34 @@ async function openSupervisorReviewModal(clientId, cleanName) {
     try {
         const resScoring = await fetch(`/api/file-content?file=${encodeURIComponent(scoringFileName)}`);
         if (resScoring.ok) {
-            const data = await resScoring.json();
-            scoringContent.innerHTML = marked.parse(data.content);
+            try {
+                const data = await resScoring.json();
+                scoringContent.innerHTML = marked.parse(data.content);
+            } catch (pe) {
+                scoringContent.innerHTML = '<p class="text-danger">Draft scoring form could not be parsed.</p>';
+            }
         } else {
             scoringContent.innerHTML = '<p class="text-danger">Draft scoring form file not found.</p>';
         }
     } catch(e) {
-        scoringContent.innerHTML = '<p class="text-danger">Error loading scoring form: ' + e.message + '</p>';
+        scoringContent.innerHTML = '<p class="text-danger">Error loading scoring form: ' + escapeHtml(e.message) + '</p>';
     }
 
     // Fetch Interview Guide
     try {
         const resGuide = await fetch(`/api/file-content?file=${encodeURIComponent(guideFileName)}`);
         if (resGuide.ok) {
-            const data = await resGuide.json();
-            guideContent.innerHTML = marked.parse(data.content);
+            try {
+                const data = await resGuide.json();
+                guideContent.innerHTML = marked.parse(data.content);
+            } catch (pe) {
+                guideContent.innerHTML = '<p class="text-slate">Interview guide response could not be parsed.</p>';
+            }
         } else {
             guideContent.innerHTML = '<p class="text-slate">Interview guide markdown not found. Inferred from transcript.</p>';
         }
     } catch(e) {
-        guideContent.innerHTML = '<p class="text-danger">Error loading interview guide: ' + e.message + '</p>';
+        guideContent.innerHTML = '<p class="text-danger">Error loading interview guide: ' + escapeHtml(e.message) + '</p>';
     }
 }
 

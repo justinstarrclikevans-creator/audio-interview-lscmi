@@ -1,0 +1,100 @@
+{
+  "detected_flags": [
+    {
+      "category": "Cognitive / Attitude",
+      "flag": "Insistence on Carrying Firearm while on Supervision",
+      "evidence": "Maintains procriminal attitudes, insisting on carrying a firearm for self-protection while on supervision.",
+      "severity": "high",
+      "navigator_recommendation": "Apply Modeling Neutrality (Standard 1.5). Avoid debating the safety concern directly; use reflective questions linking firearm possession directly to supervision revocation risks and loss of personal freedom."
+    },
+    {
+      "category": "Cognitive / Attitude",
+      "flag": "Externalizing Blame and Impulsive Interpersonal Conflict Escalation",
+      "evidence": "Reacts impulsively and aggressively to perceived disrespect, tending to escalate conflicts verbally and physically before attempting to de-escalate.",
+      "severity": "high",
+      "navigator_recommendation": "Use CBT cognitive reframing to slow down reaction time between trigger and response, tying workplace emotional regulation to keeping steady pay."
+    },
+    {
+      "category": "Substance / Health",
+      "flag": "Active Marijuana Use Impacting CDL & Employment Goals",
+      "evidence": "Reports recent marijuana use; recent marijuana use could present barriers to certain employment sectors or his goal of obtaining a CDL.",
+      "severity": "medium",
+      "navigator_recommendation": "Explore self-interest around CDL ambition and drug testing requirements without preaching; connect to community substance/behavioral support if requested."
+    },
+    {
+      "category": "Stability Risk",
+      "flag": "Severe PTSD, Paranoia, and Mental Health Instability",
+      "evidence": "High levels of untreated PTSD and anxiety impacting daily functioning... diagnosed with ADHD, depression, and paranoid schizophrenia.",
+      "severity": "high",
+      "navigator_recommendation": "Facilitate warm handoff to community mental health provider (Fetter Health / Charleston Center) and maintain consistent, predictable one-on-one staff contact."
+    }
+  ],
+  "top_criminogenic_domains": [
+    "Antisocial Pattern (Interpersonal conflict, impulsivity, aggression)",
+    "Procriminal Attitude/Orientation (Firearm insistence, street mindset)"
+  ],
+  "stability_status": "at_risk",
+  "navigator_case_plan_md": "# Re-entry Navigation Case Plan: John Cabrera\n\n## 1. Executive Summary & Assessment Overview\nJohn Cabrera presents with a high risk profile driven primarily by an Antisocial Pattern and Procriminal Attitudes. Key structural strengths include stable housing with his mother and a valid driver's license with reliable transportation. However, significant stability risks exist around untreated PTSD/paranoid schizophrenia, active marijuana use, and non-compliant attitudes regarding firearm possession while on active probation (extending through August 2028).\n\n## 2. Core Criminogenic Target Interventions\n* **Procriminal Attitudes:** Utilize CBT workbooks and neutral curiosity questions to address firearm insistence and hypervigilance without escalating resistance.\n* **Antisocial Pattern & Interpersonal Reactivity:** Role-play supervisor and peer conflict scenarios emphasizing cognitive pause techniques and workplace survival strategies.\n* **Education/Employment Deficits:** Support math GED preparation and route toward fair-chance employers that match his skills (HVAC/trades background).\n\n## 3. Facilitation Strategies & Management Guidelines\n* **Modeling Neutrality (Standard 1.5):** Do not debate anti-social statements or firearm logic directly. Acknowledge the underlying feeling of safety concerns while framing compliance in terms of avoiding prison return.\n* **Managing Resistance (Standard 3.2 & 18.0):** Pair John with familiar, consistent staff to respect his trust boundary (\"circles get you killed\") and build steady rapport.\n* **Substance Use & CDL Pathway:** Explicitly link drug-free status to passing DOT physicals for his long-term CDL and career goals.\n\n## 4. Immediate Action Steps (30–60 Days)\n1. Connect with Charleston Center / Fetter Health Network for voluntary mental health and PTSD trauma support.\n2. Initiate math GED tutoring.\n3. Match with non-CDL entry-level trades/logistics positions that accept fair-chance candidates.",
+  "participant_guide_md": "# My Fresh Start Action & Resource Guide: John Cabrera\n\n## Welcome & Fresh Start Vision\nJohn, welcome to your next chapter. You have demonstrated resilience, solid practical experience in the trades, and a strong drive to build a clean, successful career for yourself while helping mentor younger men away from the streets. With stable housing and a valid driver's license, you already have key foundation blocks in place. This guide outlines local resources and employment options tailored to your goals.\n\n---\n\n## Local Community Resources\n\n### Healthcare & Mental Wellness Support\n* **Fetter Health Care Network**\n  * **Services:** Primary care, behavioral health, and PTSD/trauma management.\n  * **Address:** 51 Nassau St, Charleston, SC 29403\n  * **Phone:** (843) 722-4112\n  * **Web Link:** [Visit Website](https://fetterhealthcare.org) | [Directions](https://maps.google.com/?q=51+Nassau+St,+Charleston,+SC+29403)\n  * **Next Step:** Call to schedule an initial health screening and request behavioral health intake.\n\n* **Charleston Center (DAODAS)**\n  * **Services:** Outpatient substance recovery support, peer counseling, and wellness coaching.\n  * **Address:** 5 Charleston Center Dr, Charleston, SC 29401\n  * **Phone:** (843) 958-3300\n  * **Web Link:** [Visit Website](https://charlestoncounty.org/departments/charleston-center/) | [Directions](https://maps.google.com/?q=5+Charleston+Center+Dr,+Charleston,+SC+29401)\n  * **Next Step:** Contact peer support services to explore voluntary recovery and wellness tools.\n\n### Child Support & Legal Navigation\n* **Center for Fathering / Father to Father Project**\n  * **Services:** Supervision navigation, legal support, and mentoring.\n  * **Address:** 4925 Lacross Rd, North Charleston, SC 29406\n  * **Phone:** (843) 744-2126\n  * **Web Link:** [Visit Website](https://scfathersandfamilies.com) | [Directions](https://maps.google.com/?q=4925+Lacross+Rd,+North+Charleston,+SC+29406)\n  * **Next Step:** Connect for guidance on maintaining full compliance with probation while pursuing career steps.\n\n---\n\n## Recommended Target Job Opportunities\n\n1. **Lowcountry Framing & Carpentry Pros**\n   * **Role:** Jobsite Laborer / Framing Helper\n   * **Pay Rate:** $19.00 – $25.00 / hr\n   * **Shift:** Day Shift (6:30 AM – 3:00 PM)\n   * **Why it fits:** Capitalizes on your mechanical and hands-on skills in a fair-chance environment with rapid skill advancement.\n   * **Apply Online:** [Apply Online / View Careers Page](https://www.indeed.com/jobs?q=framing+carpentry&l=Charleston%2C+SC)\n\n2. **Palmetto Logistics & Distribution Hub**\n   * **Role:** Receiving Specialist / Order Selector\n   * **Pay Rate:** $18.00 – $22.50 / hr\n   * **Shift:** Day Shift (6:30 AM – 3:00 PM)\n   * **Why it fits:** Structured environment offering forklift training and steady hours without customer-facing conflict triggers.\n   * **Apply Online:** [Apply Online / View Careers Page](https://www.indeed.com/jobs?q=warehouse+logistics&l=Charleston%2C+SC)\n\n3. **Carolina Marine & Metal Fabrication**\n   * **Role:** Fabrication Helper / Metal Grinder\n   * **Pay Rate:** $20.00 – $26.00 / hr\n   * **Shift:** 1st Shift (7:00 AM – 3:30 PM)\n   * **Why it fits:** Great option given your technical experience; includes paid certification opportunities.\n   * **Apply Online:** [Apply Online / View Careers Page](https://www.indeed.com/jobs?q=welder+metal+fabrication&l=Charleston%2C+SC)\n\n---\n\n## 4-Week Action Plan\n\n* **Week 1: Foundations & Health Care**\n  * Attend initial Re-entry Navigation session.\n  * Contact Fetter Health Care Network to schedule intake.\n  * Confirm probation meeting schedule.\n* **Week 2: Education & Skills Preparation**\n  * Enroll in math GED practice/tutoring sessions.\n  * Complete resume updates featuring HVAC and mechanical experience.\n* **Week 3: Job Applications & Interviews**\n  * Submit applications to Lowcountry Framing and Palmetto Logistics.\n  * Practice CBT workplace conflict de-escalation scenarios with navigator.\n* **Week 4: Onboarding & Long-Term CDL Pathway**\n  * Review job offer details and work schedule.\n  * Establish a clear 90-day drug-free milestone plan towards future CDL training.",
+  "recommended_referrals": [
+    {
+      "resourceName": "Fetter Health Care Network",
+      "category": "Healthcare",
+      "contact": "(843) 722-4112 | 51 Nassau St, Charleston, SC 29403",
+      "websiteUrl": "https://fetterhealthcare.org",
+      "actionStep": "Schedule primary care and behavioral health intake for PTSD support."
+    },
+    {
+      "resourceName": "Charleston Center (DAODAS)",
+      "category": "Recovery",
+      "contact": "(843) 958-3300 | 5 Charleston Center Dr, Charleston, SC 29401",
+      "websiteUrl": "https://charlestoncounty.org/departments/charleston-center/",
+      "actionStep": "Connect with voluntary outpatient wellness and substance support."
+    },
+    {
+      "resourceName": "Center for Fathering / Father to Father Project",
+      "category": "Legal / ID",
+      "contact": "(843) 744-2126 | 4925 Lacross Rd, North Charleston, SC 29406",
+      "websiteUrl": "https://scfathersandfamilies.com",
+      "actionStep": "Engage for community support, legal guidance, and mentorship opportunities."
+    }
+  ],
+  "matched_employers": [
+    {
+      "company": "Lowcountry Framing & Carpentry Pros",
+      "role": "Jobsite Laborer / Framing Helper",
+      "pay": "$19.00 – $25.00 / hr",
+      "shift": "Day Shift (6:30 AM – 3:00 PM)",
+      "careersUrl": "https://www.indeed.com/jobs?q=framing+carpentry&l=Charleston%2C+SC",
+      "matchReason": "Fair-chance employer utilizing trade/hands-on skill set with strong structure."
+    },
+    {
+      "company": "Palmetto Logistics & Distribution Hub",
+      "role": "Receiving Specialist / Order Selector",
+      "pay": "$18.00 – $22.50 / hr",
+      "shift": "Day Shift (6:30 AM – 3:00 PM)",
+      "careersUrl": "https://www.indeed.com/jobs?q=warehouse+logistics&l=Charleston%2C+SC",
+      "matchReason": "Stable daytime hours, fair-chance background evaluation, and clear promotion pathway."
+    },
+    {
+      "company": "Carolina Marine & Metal Fabrication",
+      "role": "Fabrication Helper / Metal Grinder",
+      "pay": "$20.00 – $26.00 / hr",
+      "shift": "1st Shift (7:00 AM – 3:30 PM)",
+      "careersUrl": "https://www.indeed.com/jobs?q=welder+metal+fabrication&l=Charleston%2C+SC",
+      "matchReason": "High hourly wage matching technical experience, second-chance partner focused on work ethic."
+    }
+  ],
+  "assessmentData": {
+    "participantName": "John Cabrera",
+    "location": "Charleston",
+    "interviewTranscript": "CASE MANAGEMENT BRIEF\nParticipant: John Moses Cabrera, Date Completed: 05/26/2026 Prepared by: Center Director\n1. Risk Profile\nRisk Level: High Primary Domains:\n1. Antisocial Pattern (Main Driver)\n2. Procriminal Attitude/Orientation (Secondary Driver)\n3. Criminal History,\nDomain Indicators:\n● Recent history of assaultive behavior, impulsivity, and poor self-management.\n● Expresses hostility and anger, and frequently makes excuses for his behavior,.\n● Extensive history of justice involvement starting at age 12, with repeated probation\nviolations and violent charges,.\n● Maintains procriminal attitudes, insisting on carrying a firearm for self-protection while on\nsupervision.\n2. Behavioral Indicators\nParticipant exhibits severe hypervigilance, paranoia, and trauma reactivity in public spaces due\nto past street violence, including being shot, stabbed, and clinically dying for 4 seconds,,.\nReacts impulsively and aggressively to perceived disrespect, tending to escalate conflicts\nverbally and physically before attempting to de-escalate,. Maintains a strong street-oriented\nmindset, insisting on the necessity of carrying a firearm for self-protection despite being on\nactive supervision. Has a history of physical altercations with authority figures, specifically\nfighting and assaulting correctional officers,. Reports recent marijuana use; has a history of\nsevere crystal meth use, though he maintains he has been abstinent from meth for nearly three\nyears,.\n3. Pattern Over Time\nFirst justice involvement occurred at age 12 for possession of a firearm and selling crack,. Has\naccrued an estimated 21 to 22 arrests and served three separate prison sentences totaling\napproximately 14 years,,. Displays a pattern of catching new charges and violating conditions\nwhile on community supervision. Historical trajectory shows an escalation into violent offenses,\nincluding convictions for assault and battery first degree, carjacking, and possession of a\nweapon during a violent crime. Periods of employment stability, such as a 5-year stint in HVAC,\nare frequently disrupted by a return to drug trafficking for faster financial gain and to avoid\nconventional work schedules,.\n\n-- 1 of 2 --\n\n4. Acute / Emergency Needs\n● Safety concerns: Participant expresses severe fear of retaliation and being targeted due\nto unresolved street conflicts and unsolved murders,.\n● Mental health instability: High levels of untreated PTSD and anxiety impacting daily\nfunctioning and causing extreme paranoia,.\n● No acute housing or transportation crises identified,,.\n5. Structural Stability Factors\n● Residing with his mother in a stable, quiet neighborhood; his mother is a strong financial\nand prosocial support,,.\n● Possesses a valid driver's license and reports having reliable transportation,.\n● Completed the 11th grade but lacks a GED; he is highly motivated to finish his GED and\nneeds to pass the math portion,.\n● Employment history is heavily interrupted by incarceration, with recent work being under\nthe table,,.\n● Active state probation supervision extending to August 2028.\n● Recent marijuana use could present barriers to certain employment sectors or his goal\nof obtaining a CDL,.\n6. Legal & Placement Constraints\n● Active state probation supervision until 08/01/2028.\n● No Sex Offender Registry requirement.\n● No specific movement restrictions noted beyond standard probation conditions,.\n7. Responsivity & Engagement Profile\n● Diagnosed with ADHD, depression, and paranoid schizophrenia, alongside severe\nPTSD,.\n● High baseline of paranoia; extremely distrustful of new people, noting that \"circles get\nyou killed,\" and prefers a tightly controlled social network,.\n● Responds well to transparent, one-on-one relationships and individuals with whom he\nhas built long-term rapport, requesting familiar staff to handle his scheduling initially,.\n● Exhibits minimization and makes excuses for his behavior, requiring calm but firm\naccountability.\n● Highly motivated by his desire to obtain a CDL, complete his GED, and positively mentor\nyounger associates to keep them out of gang life,,.\n\n-- 2 of 2 --\n\n",
+    "statedGoals": "First Shift graduation, prosocial stabilization, career placement",
+    "identifiedNeeds": [
+      "Prosocial Modeling",
+      "Workplace Stabilization"
+    ],
+    "livingSituation": "Transitional / Community Housing",
+    "legalStatus": "Active Community Supervision"
+  }
+}

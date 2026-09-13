@@ -1,0 +1,130 @@
+{
+  "detected_flags": [
+    {
+      "category": "Cognitive / Attitude",
+      "flag": "Rationalization & Minimization of Firearm Possession",
+      "evidence": "I feel the last case I feel I was defending myself, protecting myself. I was put in a bad situation and I'm protecting myself.",
+      "severity": "high",
+      "navigator_recommendation": "Adhere strictly to Turn90 Modeling Neutrality (Standard 1.5). Avoid debating or challenging the legal definition of self-defense. Use non-confrontational reflective questions and CBT cognitive restructuring (CBT Treatment Planner) to explore how carrying weapons under federal supervision creates an immediate risk to his primary self-interest (maintaining freedom and steady income)."
+    },
+    {
+      "category": "Substance / Health",
+      "flag": "Severe USP Prison Trauma & Hyper-Vigilant PTSD",
+      "evidence": "I do suffer from PTSD due to me being in prison for so long... and in that environment, yes, I do suffer and I am afraid. And I do worry.",
+      "severity": "high",
+      "navigator_recommendation": "Utilize trauma-informed supportive coaching. Avoid authoritative, confrontational, or aggressive delivery styles which trigger USP survival defense mechanisms. Provide clear, predictable structures and involve him collaboratively in co-creating his transition schedule."
+    },
+    {
+      "category": "Stability Risk",
+      "flag": "Severe Housing Transience & Transitional Status",
+      "evidence": "Residing at Federal Halfway House in Columbia, SC; homeless outside institutional placement.",
+      "severity": "high",
+      "navigator_recommendation": "Prioritize long-term post-release housing placement prior to federal discharge (Dec 2026). Coordinate with Transitions Homeless Center and local supportive housing initiatives."
+    },
+    {
+      "category": "Stability Risk",
+      "flag": "Driver's License Suspension & Missing Vital Identification",
+      "evidence": "License SUSPENDED due to Treasury tags debt; lacks birth certificate preventing SCDMV license restoration.",
+      "severity": "high",
+      "navigator_recommendation": "Immediately connect Lokheim with Midlands Fatherhood Coalition and SC Legal Services for vital document retrieval (birth certificate) and SCDMV tag debt repayment/reinstatement counseling. Issue COMET bus passes for all immediate transportation."
+    },
+    {
+      "category": "Stability Risk",
+      "flag": "Acute Unemployment & Unpracticed Workplace Competencies",
+      "evidence": "Currently unemployed; 1 payroll month in the past year (temp shifts via Hire Quest); forced LS/CMI score of 0 on items 15-17.",
+      "severity": "high",
+      "navigator_recommendation": "Engage in CBT workplace role-plays focused on supervisor and coworker interactions. Match with first-shift, second-chance Columbia employers accessible via COMET transit lines."
+    }
+  ],
+  "top_criminogenic_domains": [
+    "School / Work (EE Subscore 7/9 - Acute Unemployment & Unpracticed Workplace Skills)",
+    "Antisocial Cognition (PA Subscore 1/4 - Firearms / Self-Defense Rationalization)",
+    "Leisure / Recreation (LR Subscore 1/2 - Absence of Structured Prosocial Group Activities)"
+  ],
+  "stability_status": "immediate_triage_needed",
+  "navigator_case_plan_md": "# Re-entry Navigation Case Plan: Lokheim Campbell\n\n**Participant Profile:** Lokheim Campbell (Age 35) | **Location:** Columbia, SC  \n**Legal Status:** Federal Supervised Release (Ends Dec 2026) | Federal Halfway House Placement  \n**LS/CMI Risk Level:** Medium Risk (Score 17/43) | **Primary Target Domain:** Education & Employment (7/9)\n\n---\n\n## 1. Clinical Assessment & Forensic Overview\nLokheim presents with significant motivation for success, high natural self-regulation skills, and strong maternal and peer protective factors. However, spending 16 adult years in high-security federal penitentiaries (USP Pollock/Lee) has resulted in severe hyper-vigilance/PTSD and unpracticed workplace relationship competencies. His current status as unemployed elevates his Education/Employment risk score to 7/9.\n\n### Core Criminogenic Dynamic Targets:\n1. **Employment & Education (Dynamic Target):** Address acute unemployment and build daily operational workplace interpersonal skills (coping with supervisor feedback, coworker conflict).\n2. **Antisocial Cognition (Dynamic Target):** Use CBT cognitive restructuring to address the rationalization that weapon-carrying is a viable self-defense strategy under supervision.\n3. **Leisure / Unstructured Time (Dynamic Target):** Channel physical fitness focus into structured prosocial community outlets.\n*Note: Static Criminal History (Subscore 5/8) is excluded from intervention targets per clinical policy.*\n\n---\n\n## 2. Facilitation & Coaching Protocols (Turn90 Standards)\n- **Modeling Neutrality (Standard 1.5):** When Lokheim discusses his 2015 firearm conviction or defensive fears, do not debate or lecture. Use reflective curiosity: *\"How does carrying a weapon fit with your main goal of never going back to a federal facility?\"*\n- **Managing Resistance & Trauma Responsivity:** Adopt a calm, non-confrontational, collaborative coaching stance. Avoid aggressive directive styles that trigger USP survival defenses.\n- **Capitalize on Natural Strengths:** Lokheim actively plans and checks goals. Include him directly in co-authoring weekly schedules and transition tasks.\n\n---\n\n## 3. Stabilization Action Plan\n\n### Step 1: Immediate Triage (Days 1–7)\n- **Identification & License Restoration:** Referral to Midlands Fatherhood Coalition to request out-of-state birth certificate and evaluate Treasury tag debt relief.\n- **Transportation Setup:** Issue 30-day COMET bus passes for transit routes connecting Main St, Shop Rd, and West Columbia.\n- **Basic Needs & Income:** Assist with SNAP benefits application and basic hygiene resources.\n\n### Step 2: CBT & Skills Maintenance (Weeks 2–4)\n- **Workplace Interpersonal Modules:** Complete CBT interactive role-plays covering supervisor communication and workplace frustration tolerance.\n- **Relapse & Weapon Avoidance Planning:** Map high-risk environmental triggers and review safety protocols that preserve his freedom.\n\n### Step 3: Employment Placement & Community Linkage (Weeks 3–6)\n- **Targeted Employer Interviews:** Coordinate transit-accessible interviews with fair-chance partners (e.g., CMC Steel South Carolina, Palmetto State Distribution Center).\n- **Prosocial Integration:** Connect workout routine to formal community fitness groups or YMCA programs.",
+  "participant_guide_md": "# My Fresh Start Action & Resource Guide: Lokheim Campbell\n\n**Welcome to your customized Fresh Start Roadmap, Lokheim!**  \nYou have demonstrated exceptional resilience, strong self-planning habits, and clear dedication to securing your freedom and building a reliable career. This guide maps out direct local resources and job opportunities tailored to your goals in Columbia.\n\n---\n\n## 1. Key Community Resource Network\n\n### 🆔 Legal Aid, Driver's License & Document Restoration\n* **Midlands Fatherhood Coalition**  \n  * **Services:** Assistance obtaining out-of-state birth certificates, SCDMV tag debt counseling, and license reinstatement support.  \n  * **Address:** 1821 Hampton St, Columbia, SC 29201 | **Phone:** (803) 933-0530  \n  * **Links:** [Visit Website](https://midlandsfathers.com) | [Directions](https://maps.google.com/?q=1821+Hampton+St+Columbia+SC+29201)  \n  * **Next Step:** Schedule an intake appointment to initiate your birth certificate request.\n\n* **SC Legal Services - Columbia Office**  \n  * **Services:** Free legal advocacy for record sealing/expungements and administrative support.  \n  * **Address:** 2109 Bull St, Columbia, SC 29201 | **Phone:** (803) 744-9430  \n  * **Links:** [Visit Website](https://sclegal.org) | [Directions](https://maps.google.com/?q=2109+Bull+St+Columbia+SC+29201)\n\n### 🚌 Public Transportation & Access\n* **The COMET Transit System**  \n  * **Services:** Local bus routes connecting residential areas to industrial corridors along Shop Rd, Cayce, and West Columbia.  \n  * **Phone:** (803) 255-7100  \n  * **Links:** [Visit Website](https://catchthecometsc.gov)  \n  * **Next Step:** Pick up your monthly COMET bus pass from your Navigator.\n\n### 🏥 Health & Prescription Management\n* **Welvista Headquarters**  \n  * **Services:** Free prescription programs for ongoing health maintenance.  \n  * **Address:** 2700 Middleburg Dr, Suite 105, Columbia, SC 29204 | **Phone:** (803) 933-9183  \n  * **Links:** [Visit Website](https://welvista.org) | [Directions](https://maps.google.com/?q=2700+Middleburg+Dr+Columbia+SC+29204)\n\n* **LRADAC (Lexington/Richland Alcohol and Drug Abuse Council)**  \n  * **Services:** Outpatient services, recovery peer coaching, and medication assistance support.  \n  * **Address:** 2711 Colonial Dr, Columbia, SC 29203 | **Phone:** (803) 726-9300  \n  * **Links:** [Visit Website](https://lradac.org) | [Directions](https://maps.google.com/?q=2711+Colonial+Dr+Columbia+SC+29203)\n\n---\n\n## 2. Recommended Fair-Chance Employer Matches\n\n### 1. CMC Steel South Carolina\n* **Role:** Mill Operator Trainee / Material Handler  \n* **Pay Rate:** $19.00 – $24.50 / hr  \n* **Shift:** Day Shift (7:00 AM – 3:30 PM)  \n* **Why It Fits:** Excellent match for your physical fitness, team discipline, and focus on steady career advancement. Located directly in the Columbia/Cayce transit area with full safety gear provided.  \n* **Apply:** [Apply Online / View Careers Page](https://www.cmc.com/en-us/careers)\n\n### 2. Palmetto State Distribution Center\n* **Role:** Order Selector / Warehouse Associate  \n* **Pay Rate:** $17.50 – $21.50 / hr  \n* **Shift:** 1st Shift (7:00 AM – 3:30 PM)  \n* **Why It Fits:** Consistent first-shift schedule, weekly pay, fair-chance background policy, accessible via COMET bus lines.  \n* **Apply:** [Apply Online / View Careers Page](https://www.indeed.com/jobs?q=warehouse+order+selector&l=West+Columbia%2C+SC)\n\n### 3. Carolina Industrial Maintenance Group\n* **Role:** Maintenance Technician Apprentice / Commercial Groundskeeper  \n* **Pay Rate:** $16.50 – $19.50 / hr  \n* **Shift:** Day Shift (7:30 AM – 4:00 PM, M–F)  \n* **Why It Fits:** Paid training, background-friendly team environment, steady daytime hours ideal for halfway house reporting.  \n* **Apply:** [Apply Online / View Careers Page](https://www.indeed.com/jobs?q=maintenance+technician&l=Columbia%2C+SC)\n\n---\n\n## 3. Four-Week Action Plan Checklist\n\n- [ ] **Week 1: Document & Transportation Triage**  \n  - [ ] Connect with Midlands Fatherhood Coalition for birth certificate retrieval.  \n  - [ ] Receive monthly COMET transit pass and map out route to target job sites.  \n  - [ ] Complete SNAP / basic needs orientation.\n\n- [ ] **Week 2: Employment Readiness & CBT Role-Play**  \n  - [ ] Complete practice interview role-play with Navigator focusing on supervisor communication.  \n  - [ ] Finalize master employment application and resume draft.  \n  - [ ] Submit online application to CMC Steel and Palmetto State Distribution.\n\n- [ ] **Week 3: Employer Interviews & Health Continuity**  \n  - [ ] Attend scheduled interviews with local fair-chance employers.  \n  - [ ] Confirm Welvista / healthcare prescription access continuity.\n\n- [ ] **Week 4: Onboarding & Prosocial Goal Setting**  \n  - [ ] Confirm job placement and review shift transit schedule.  \n  - [ ] Identify a local community gym or wellness group for structured leisure time.",
+  "recommended_referrals": [
+    {
+      "resourceName": "Midlands Fatherhood Coalition",
+      "category": "Legal / ID",
+      "contact": "(803) 933-0530 | 1821 Hampton St, Columbia, SC 29201",
+      "websiteUrl": "https://midlandsfathers.com",
+      "actionStep": "Schedule intake appointment for birth certificate retrieval and Treasury tag debt counseling."
+    },
+    {
+      "resourceName": "SC Legal Services - Columbia Office",
+      "category": "Legal / ID",
+      "contact": "(803) 744-9430 | 2109 Bull St, Columbia, SC 29201",
+      "websiteUrl": "https://sclegal.org",
+      "actionStep": "Consult regarding legal record relief and administrative driver's license restoration."
+    },
+    {
+      "resourceName": "The COMET (Central Midlands Regional Transit)",
+      "category": "Food / Transit",
+      "contact": "(803) 255-7100 | Columbia, SC",
+      "websiteUrl": "https://catchthecometsc.gov",
+      "actionStep": "Obtain monthly bus pass and familiarize with routes serving Shop Rd and West Columbia."
+    },
+    {
+      "resourceName": "Transitions Homeless Center",
+      "category": "Housing",
+      "contact": "(803) 708-4861 | 2025 Main St, Columbia, SC 29201",
+      "websiteUrl": "https://transitionssc.org",
+      "actionStep": "Initiate housing case management for post-halfway house residential stability."
+    },
+    {
+      "resourceName": "Welvista Headquarters",
+      "category": "Healthcare",
+      "contact": "(803) 933-9183 | 2700 Middleburg Dr, Suite 105, Columbia, SC 29204",
+      "websiteUrl": "https://welvista.org",
+      "actionStep": "Apply for free prescription program to ensure uninterrupted maintenance medications."
+    }
+  ],
+  "matched_employers": [
+    {
+      "company": "CMC Steel South Carolina",
+      "role": "Mill Operator Trainee / Material Handler",
+      "pay": "$19.00 – $24.50 / hr",
+      "shift": "Day Shift (7:00 AM – 3:30 PM)",
+      "careersUrl": "https://www.cmc.com/en-us/careers",
+      "matchReason": "Strong structural fit for physical discipline and high pay potential; fair-chance policy and transit-accessible location in Cayce/Columbia."
+    },
+    {
+      "company": "Palmetto State Distribution Center",
+      "role": "Order Selector / Package Handler",
+      "pay": "$17.50 – $21.50 / hr",
+      "shift": "1st Shift (7:00 AM – 3:30 PM)",
+      "careersUrl": "https://www.indeed.com/jobs?q=warehouse+order+selector&l=West+Columbia%2C+SC",
+      "matchReason": "Immediate 1st shift opening in West Columbia; fair-chance background review and steady weekly direct deposit."
+    },
+    {
+      "company": "Carolina Industrial Maintenance Group",
+      "role": "Maintenance Technician Apprentice",
+      "pay": "$16.50 – $19.50 / hr",
+      "shift": "Day Shift (7:30 AM – 4:00 PM, M–F)",
+      "careersUrl": "https://www.indeed.com/jobs?q=maintenance+technician&l=Columbia%2C+SC",
+      "matchReason": "Provides paid structured training and supportive workplace culture; day shift aligns cleanly with halfway house reporting."
+    },
+    {
+      "company": "Capital City Landscaping & Site Prep",
+      "role": "Commercial Groundskeeper",
+      "pay": "$17.00 – $20.50 / hr",
+      "shift": "7:00 AM – 3:30 PM (M–F)",
+      "careersUrl": "https://www.indeed.com/jobs?q=commercial+landscaping&l=Columbia%2C+SC",
+      "matchReason": "Channels physical stamina into structured outdoor teamwork; background-friendly employer in the Columbia area."
+    }
+  ],
+  "assessmentData": {
+    "participantName": "Lokheim Campbell",
+    "location": "Columbia",
+    "interviewTranscript": "CASE MANAGEMENT REENTRY BRIEF PARTICIPANT: LOKHEIM JERAILLE CAMPBELL\nCONFIDENTIAL n FOR INTRA-AGENCY USE ONLY Page 1 of 2\nCASE MANAGEMENT REENTRY BRIEF\nREVISED REENTRY ROADMAP (HIGH-RISK EDUCATION/EMPLOYMENT UPDATE)\nParticipant Name: Lokheim Campbell (Loe Jerel Campbell) DOB / Age: January 22, 1991 (35)\nCurrent\nPlacement:\nFederal Halfway House, Columbia, SC License Status: SUSPENDED (Treasury tags\ndebt)\nLegal Status: Federal Supervised Release (Ends Dec\n2026)\nAssessment\nScore:\nMEDIUM RISK (Score: 17 / 43)\n1. RISK PROFILE & CRIMINOGENIC DOMAINS\nLokheim Campbell's standardized LS/CMI assessment calculates a Section 1 Total Score of 17 / 43, placing him at\nthe high end of the Medium Risk/Need category. This revised score incorporates a major clinical update: he is now\nscored as Currently Unemployed (YES). Under the diagnostic rules of the LS/CMI Scoring Manual, because he is\ncurrently unemployed in the community and not in school, his work performance, coworker interactions, and\nsupervisor interactions (Items 15, 16, and 17) are forced to a score of 0 (Very Unsatisfactory), representing active,\nacute risk points. Per strict case instructions, his high Criminal History subscore (5/8) is excluded from direct case\nplanning targets, establishing the following prioritized criminogenic focus areas:\n• Primary Domain: School / Work (EE Subscore: 7/9) [ELEVATED]: Although Lokheim holds a high school\ndiploma (graduated Marlboro County High School, 2009), his continuous eleven-year federal incarceration has left\nhim with extremely unpracticed workplace relationship and self-regulation skills in the community. He has worked\nonly 1 payroll month in the last year (temp shifts with Hire Quest) and has no 12-month continuous employment\nhistory. Securing stable employment and resolving his current unemployment is his most critical criminogenic\npriority.\n• Secondary Domain: Leisure / Recreation (LR Subscore: 1/2): Lokheim lacks any current participation in formal\norganized community groups, sports clubs, or teams. While he exercises heavily and enjoys working out, his\nunstructured free time represents a key risk vacuum that must be filled with structured, prosocial activities to\nprevent relapse.\n• Tertiary Domain: Antisocial Cognition (PA Subscore: 1/4): While deeply remorseful for his first crime (2009\narmed robbery), Lokheim exhibits active rationalizations regarding his 2015 firearms conviction, insisting he was\nsolely acting in self-defense after being attacked. He denies the fairness of that sentence. Case managers must\ntarget this justifying cognitive distortion through cognitive restructuring.\n2. BEHAVIORAL INDICATORS & THINKING PATTERNS\nObservation and interview records indicate a cooperative, polite, and patient client who is highly motivated to\nsucceed. However, his long-term incarceration and underlying psychological profile present key behavioral indicators\nthat staff must actively navigate:\n• Justifying / Minimizing (Firearm Possession): Lokheim rationalizes his weapon carrying as a protective\nnecessity, stating: 'I feel the last case I feel I was defending myself, protecting myself. I was put in a bad situation\nand I'm protecting myself.' This cognitive loophole allows him to bypass conventional legal and supervision\nboundaries under stress.\n\n-- 1 of 4 --\n\nCASE MANAGEMENT REENTRY BRIEF PARTICIPANT: LOKHEIM JERAILLE CAMPBELL\nCONFIDENTIAL n FOR INTRA-AGENCY USE ONLY Page 2 of 2\n• Severe PTSD & High-Security Trauma: Having spent over a decade in the highest-security United States\nPenitentiary (USP) prisons (such as USP Pollock and USP Lee), Lokheim suffers from severe PTSD and\nhyper-vigilance: 'I do suffer from PTSD due to me being in prison for so long... and in that environment, yes, I do\nsuffer and I am afraid. And I do worry.' This trauma can easily manifest as extreme defensiveness or fear under\nperceived pressure.\n• Unpracticed Employment Competencies: Because he is currently unemployed, his daily workplace habits, peer\ninteractions, and supervisor interactions are rated as very unsatisfactory. Although he is team-oriented, his lack of\ncurrent stable work makes him highly vulnerable to occupational drift and cognitive frustration.\n• Prosocial Alignment & Strong Motivation: Lokheim has excellent self-regulation: 'I think before I act often. I\nmake goals, plans, and check if I'm following them.' He is fully supportive of supervision ('appropriate and\njustifiable') and highly motivated to succeed: 'Nothing is going to hold me back. I need this program. I'm ready.'\n\n-- 2 of 4 --\n\nCASE MANAGEMENT REENTRY BRIEF PARTICIPANT: LOKHEIM JERAILLE CAMPBELL\nCONFIDENTIAL n FOR INTRA-AGENCY USE ONLY Page 3 of 2\n3. TRAJECTORY & PATTERN OVER TIME\nLokheim's criminal justice trajectory began at age 17 with his first arrest, which led to an Armed Robbery and Weapon\nconviction in 2009, resulting in a 5-year incarceration. Shortly after release, his federal supervised release was\nrevoked in 2015 following an arrest for a shooting, leading to a federal conviction for Felony Possession of a Firearm\n(922G). In total, Lokheim has spent sixteen (16) years of his adult life incarcerated, leaving him with extremely\nunpracticed community living skills. The cycle we are interrupting is chronic institutional dependency, vocational drift,\nand hyper-vigilant weapon-carrying driven by community survival fears.\n4. ACUTE / EMERGENCY NEEDS\nAt intake, Lokheim presents severe housing transience and acute financial deficit. He is currently homeless,\nresiding at the federal halfway house with 0 active income, no bank accounts, and relies entirely on Chime or Cash\nApp. Furthermore, because he is currently unemployed, he has an acute stabilization need to find immediate legal\nemployment. Assistance with basic hygiene products, clothes, public transit passes, and food stamps is urgently\nrequired as he finishes his sentence in December 2026.\n5. STRUCTURAL STABILITY FACTORS\nSeveral critical structural and social stability factors dictate his transitional risk and protective layout:\n• Housing Stability: Unstable. Homeless outside of the federal halfway house; requires rapid transitional housing\nsupport.\n• Employment Status: Unstable (High Risk - EE Score 7/9). Currently unemployed with extremely limited recent\ncommunity work history.\n• Transportation Barrier: High. Suspended license due to unpaid tag debt; lacks a birth certificate, which prevents\nlicense restoration.\n• Substance Abuse Stability (Protective Shield): Extremely Favorable. Lifelong abstainer from alcohol and\nstreet drugs. He is currently on medically managed **Suboxone** (opioid replacement therapy) which his family\nsupports as safe and healthy.\n• Maternal Anchor (Family Strength): Excellent. His mother is a dedicated supporter and provides a safe\nemotional shelter.\n• Prosocial Peer Shield (Companions Strength): Extremely High. Knows many people not in crime and has\nmany anticriminal friends, actively rejecting gang and street lifestyles.\n6. LEGAL & PLACEMENT CONSTRAINTS\nLokheim is under active federal halfway house placement and will transition to active federal supervised release in\nDecember 2026. He has no pending charges. His suspended license severely restricts his physical mobility and\nplacement locations, meaning all placements must be directly accessible via public transit.\n7. RESPONSIVITY & ENGAGEMENT PROFILE\nTo maximize program adherence and reduce recidivism, Turn 90 staff should adapt their delivery to his psychological\nand cognitive profile:\n\n-- 3 of 4 --\n\nCASE MANAGEMENT REENTRY BRIEF PARTICIPANT: LOKHEIM JERAILLE CAMPBELL\nCONFIDENTIAL n FOR INTRA-AGENCY USE ONLY Page 4 of 2\n• Trauma-Informed, Supportive Coaching: Due to his severe PTSD from USP prison environments, case\nmanagers must approach Lokheim with a highly calm, supportive, non-confrontational demeanor. Aggressive or\nhighly directive authority styles will trigger survival-based defensiveness.\n• CBT for Employment and Cognition (EE Subscore 7/9): Integrate interactive, role-play-based CBT to rebuild his\nworkplace peer and authority relationship skills. Use structured cognitive restructuring to challenge his\nrationalization that carrying firearms is a valid or safe self-defense option.\n• Leverage Strategic Planning: Capitalize on Lokheim's strong natural self-regulation, goal-setting, and planning\nhabits. Involve him directly in co-creating his transition milestones and weekly schedules.\n• Active Transition Support: Prioritize assistance in retrieving his birth certificate, resolving his tag debt, and\ntransitioning him from transitional Hire Quest shifts to a permanent, transit-accessible, stable career path through\nTurn 90.\n\n-- 4 of 4 --\n\n",
+    "statedGoals": "First Shift graduation, prosocial stabilization, career placement",
+    "identifiedNeeds": [
+      "Prosocial Modeling",
+      "Workplace Stabilization"
+    ],
+    "livingSituation": "Transitional / Community Housing",
+    "legalStatus": "Active Community Supervision"
+  }
+}

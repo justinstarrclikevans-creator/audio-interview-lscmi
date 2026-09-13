@@ -1,0 +1,107 @@
+{
+  "detected_flags": [
+    {
+      "category": "Cognitive / Attitude",
+      "flag": "Minimization & Procriminal Neutralization",
+      "evidence": "Stated that his offenses were 'only crimes because they are illegal' and neutralizes guilt by categorizing drug distribution strictly as a technical legal violation.",
+      "severity": "medium",
+      "navigator_recommendation": "Utilize Turn90 Modeling Neutrality (1.5). Do not challenge or debate the moral status of the law. Use reflective, neutral questions to link adherence to legal rules directly to his primary personal interests: staying free, supporting his children, and continuing his work as a youth sports coach."
+    },
+    {
+      "category": "Stability Risk",
+      "flag": "Acute Homelessness Risk upon Halfway House Discharge",
+      "evidence": "Currently residing in a federal halfway house with release scheduled for November 17, 2026, and zero permanent housing established.",
+      "severity": "high",
+      "navigator_recommendation": "Initiate immediate housing triage. Connect participant with Transitions Homeless Center and Oliver Gospel Mission long-term housing/transitional programs well before the November discharge date."
+    },
+    {
+      "category": "Substance / Health",
+      "flag": "Untreated Medical Barrier / Sleep Apnea Threatening Job Retention",
+      "evidence": "Terminated from two previous jobs due to inability to stay awake on shift attributed to severe obesity and suspected untreated sleep apnea.",
+      "severity": "high",
+      "navigator_recommendation": "Prioritize medical evaluation at Cooperative Health (Eau Claire) to obtain diagnostic sleep testing and continuous positive airway pressure (CPAP) therapy prior to full-time employment placement."
+    },
+    {
+      "category": "Supervision / Legal",
+      "flag": "Impending Driver's License Suspension from Tag Debt",
+      "evidence": "Owes $300+ in unpaid tag fees to the driver's license division, creating a risk of sudden license suspension.",
+      "severity": "medium",
+      "navigator_recommendation": "Coordinate with Midlands Fatherhood Coalition to establish an manageable SCDMV payment plan or debt relief pathway, preserving legal driving status."
+    }
+  ],
+  "top_criminogenic_domains": [
+    "Education and Employment Deficits",
+    "Procriminal Attitude and Orientation"
+  ],
+  "stability_status": "immediate_triage_needed",
+  "navigator_case_plan_md": "# Re-entry Navigation Case Plan: Keyzelle Thomas\n\n**Staff Contact:** Turn90 Re-entry Team  \n**LS/CMI Score:** 17/43 (Medium Risk/Need)  \n**Primary Focus:** Employment & Dynamic Cognitive Restructuring  \n\n---\n\n## 1. Dynamic Focus Areas & Clinical Targets\n- **Primary Target: School / Work (EE Subscore 5/9):** Zero payroll months in the past year; Associate's degree holder with strong technical ability but disrupted employment history. Goal is placement in a prosocial, fair-chance, first-shift role.\n- **Secondary Target: Procriminal Attitude (PA Subscore 2/4):** Addressing 'technical legal violation' justifications for drug distribution under acute financial stress.\n- **Excluded Target: Criminal History (Static 6/8):** Static factor; excluded from dynamic intervention target selection.\n\n---\n\n## 2. Clinical & Facilitation Strategies\n1. **Modeling Neutrality (Standard 1.5):** Avoid debating past judicial fairness or the legitimacy of drug laws. Ask curiosity-based reflective questions: *'How does carrying that view of the law impact your ability to maintain your freedom and coach your team?'*\n2. **Managing Resistance & Buy-In (Standard 3.2):** Explicitly link every program benchmark to his paternal anchor and youth coaching identity. Frame wage stability as the protection shield for his family.\n3. **Medical Bottleneck Triage:** Prioritize medical clearance for suspected sleep apnea before placing him in high-vigilance or machinery operations to prevent workplace termination.\n\n---\n\n## 3. Stabilization Steps\n- **Housing:** Enroll in transitional housing placement ahead of 11/17/2026 discharge.\n- **SCDMV Debt:** Partner with Midlands Fatherhood Coalition to resolve $300+ tag debt.\n- **Health Care:** Schedule primary care / sleep apnea assessment via Cooperative Health.",
+  "participant_guide_md": "# My Fresh Start Action & Resource Guide: Keyzelle Thomas\n\n**Welcome Keyzelle!**  \nYour associate's degree, strong technical background, dedication as a father, and passion as a youth football coach demonstrate your leadership capacity. This guide outlines local Columbia resources and employment opportunities designed to help you secure housing, protect your driver's license, manage your health, and launch a rewarding career.\n\n---\n\n## Essential Community Resources\n\n### 1. Housing & Transitional Living\n- **Transitions Homeless Center**  \n  *Address:* 2025 Main St, Columbia, SC 29201 | *Phone:* (803) 708-4861  \n  *Services:* Emergency & program housing, case management, daily meals.  \n  *Links:* [Visit Website](https://transitionssc.org) | [Directions](https://maps.google.com/?q=2025+Main+St+Columbia+SC+29201)  \n  *Next Step:* Contact housing case manager 60 days prior to halfway house discharge.\n\n- **Oliver Gospel Mission**  \n  *Address:* 1100 Taylor St, Columbia, SC 29201 | *Phone:* (803) 254-6470  \n  *Services:* Program residency, life skills, transitional housing.  \n  *Links:* [Visit Website](https://olivergospel.org) | [Directions](https://maps.google.com/?q=1100+Taylor+St+Columbia+SC+29201)\n\n### 2. Legal Aid & Driver's License Assistance\n- **Midlands Fatherhood Coalition**  \n  *Address:* 1821 Hampton St, Columbia, SC 29201 | *Phone:* (803) 933-0530  \n  *Services:* SCDMV license reinstatement assistance, child support advocacy, legal guidance.  \n  *Links:* [Visit Website](https://midlandsfathers.com) | [Directions](https://maps.google.com/?q=1821+Hampton+St+Columbia+SC+29201)  \n  *Next Step:* Schedule an appointment to setup an SCDMV tag debt repayment plan.\n\n- **SCDMV Shop Road Branch**  \n  *Address:* 1630 Shop Rd, Columbia, SC 29201 | *Phone:* (803) 896-5000  \n  *Links:* [Visit Website](https://scdmvonline.com/Driver-Services/Reinstatement) | [Directions](https://maps.google.com/?q=1630+Shop+Rd+Columbia+SC+29201)\n\n### 3. Healthcare & Wellness\n- **Cooperative Health (Eau Claire Health Center)**  \n  *Address:* 4605 Monticello Rd, Columbia, SC 29203 | *Phone:* (803) 786-4831  \n  *Services:* Sliding-scale medical care, physicals, diagnostic sleep apnea testing.  \n  *Links:* [Visit Website](https://cooperativehealth.org) | [Directions](https://maps.google.com/?q=4605+Monticello+Rd+Columbia+SC+29203)  \n  *Next Step:* Call to establish primary care and request a sleep study evaluation.\n\n---\n\n## Local Fair-Chance Employment Matches\n\n1. **Palmetto State Distribution Center**  \n   - **Role:** Order Selector / Package Handler  \n   - **Pay Rate:** $17.50 – $21.50 / hr  \n   - **Shift:** 1st Shift (7:00 AM – 3:30 PM)  \n   - **Why It Fits:** Predictable daytime hours align well with sleep/health routine and evening youth sports coaching.  \n   - **Apply:** [Apply Online / View Careers Page](https://www.indeed.com/jobs?q=warehouse+order+selector&l=West+Columbia%2C+SC)\n\n2. **Carolina Industrial Maintenance Group**  \n   - **Role:** Maintenance Technician Apprentice  \n   - **Pay Rate:** $16.50 – $19.50 / hr  \n   - **Shift:** Day Shift (7:30 AM – 4:00 PM, M–F)  \n   - **Why It Fits:** Leverages technical college degree credentials in an active, supportive team environment.  \n   - **Apply:** [Apply Online / View Careers Page](https://www.indeed.com/jobs?q=maintenance+technician&l=Columbia%2C+SC)\n\n3. **Schneider Electric Columbia Facility**  \n   - **Role:** Electro-Mechanical Assembler / Warehouse Associate  \n   - **Pay Rate:** $18.50 – $22.50 / hr  \n   - **Shift:** 1st Shift (6:30 AM – 3:00 PM)  \n   - **Why It Fits:** Great fit for technical skills; supportive second-chance employer with full benefits.  \n   - **Apply:** [Apply Online / View Careers Page](https://www.se.com/us/en/about-us/careers/overview.jsp)\n\n---\n\n## 4-Week Personal Milestone Checklist\n\n- [ ] **Week 1:** Complete medical intake at Cooperative Health for primary wellness & sleep assessment.\n- [ ] **Week 2:** Meet with Midlands Fatherhood Coalition to resolve SCDMV tag debt.\n- [ ] **Week 3:** Submit transitional housing application with Transitions Homeless Center.\n- [ ] **Week 4:** Complete Turn90 job readiness review and submit application to Palmetto State Distribution.",
+  "recommended_referrals": [
+    {
+      "resourceName": "Transitions Homeless Center",
+      "category": "Housing",
+      "contact": "(803) 708-4861 | 2025 Main St, Columbia, SC 29201",
+      "websiteUrl": "https://transitionssc.org",
+      "actionStep": "Contact housing coordinator to initiate intake prior to halfway house release date."
+    },
+    {
+      "resourceName": "Midlands Fatherhood Coalition",
+      "category": "Legal / ID",
+      "contact": "(803) 933-0530 | 1821 Hampton St, Columbia, SC 29201",
+      "websiteUrl": "https://midlandsfathers.com",
+      "actionStep": "Schedule intake for SCDMV tag debt repayment agreement and child support advocacy."
+    },
+    {
+      "resourceName": "Cooperative Health (Eau Claire Health Center)",
+      "category": "Healthcare",
+      "contact": "(803) 786-4831 | 4605 Monticello Rd, Columbia, SC 29203",
+      "websiteUrl": "https://cooperativehealth.org",
+      "actionStep": "Establish primary medical care and request sleep apnea evaluation."
+    },
+    {
+      "resourceName": "SCDMV Headquarters & Shop Road Branch",
+      "category": "Legal / ID",
+      "contact": "(803) 896-5000 | 1630 Shop Rd, Columbia, SC 29201",
+      "websiteUrl": "https://scdmvonline.com/Driver-Services/Reinstatement",
+      "actionStep": "Obtain official driving history record and payment arrangement terms."
+    }
+  ],
+  "matched_employers": [
+    {
+      "company": "Palmetto State Distribution Center",
+      "role": "Order Selector / Package Handler",
+      "pay": "$17.50 – $21.50 / hr",
+      "shift": "1st Shift (7:00 AM – 3:30 PM)",
+      "careersUrl": "https://www.indeed.com/jobs?q=warehouse+order+selector&l=West+Columbia%2C+SC",
+      "matchReason": "First-shift daytime hours fit health stabilization and coaching schedule; fair-chance background friendly."
+    },
+    {
+      "company": "Carolina Industrial Maintenance Group",
+      "role": "Maintenance Technician Apprentice",
+      "pay": "$16.50 – $19.50 / hr",
+      "shift": "Day Shift (7:30 AM – 4:00 PM, M–F)",
+      "careersUrl": "https://www.indeed.com/jobs?q=maintenance+technician&l=Columbia%2C+SC",
+      "matchReason": "Directly utilizes Midlands Tech associate credential; supportive team structure."
+    },
+    {
+      "company": "Schneider Electric Columbia Facility",
+      "role": "Electro-Mechanical Assembler",
+      "pay": "$18.50 – $22.50 / hr",
+      "shift": "1st Shift (6:30 AM – 3:00 PM)",
+      "careersUrl": "https://www.se.com/us/en/about-us/careers/overview.jsp",
+      "matchReason": "Matches participant's technical training and provides competitive wages with benefits."
+    }
+  ],
+  "assessmentData": {
+    "participantName": "Keyzelle Thomas",
+    "location": "Columbia",
+    "interviewTranscript": "Participant: Keyzelle L. C. Thomas | Assessment Portfolio Document: CASE BRIEF | Page 1\nCASE MANAGEMENT REENTRY BRIEF\nPARTICIPANT: KEYZELLE THOMAS (DOB: 12/04/1987)\nAssessment Date: August 27, 2026 | Staff Contact: Turn 90 Reentry Team\n1. RISK PROFILE & CRIMINOGENIC NEED DOMAINS\nKeyzelle Thomas's standardized LS/CMI assessment calculates a Section 1 Total Score of 17 / 43, placing him in the\nMedium Risk/Need category. This indicates that while he possesses deeply ingrained historical risks, he exhibits\nexceptional cognitive, prosocial, and familial protective shields that can be leveraged during his transition. Per strict case\ninstructions, his high Criminal History score (6/8) is excluded from target selections, establishing the following prioritized\ncriminogenic need focus areas:\n• Primary Domain: School / Work (EE Subscore: 5/9): Keyzelle completed high school and holds an Associate's-level\nTechnical College credential from Midlands Technical College. However, due to chronic incarcerations, he has worked 0\npayroll months in the last year, lacks a continuous 12-month employment history, and is currently unemployed. Securing a\nstable, living-wage job with an employer vetted for prosocial conditions is his primary step toward baseline stabilization.\n• Secondary Domain: Procriminal Attitude / Orientation (PA Subscore: 2/4): Keyzelle exhibits active cognitive\njustifications for his offending, stating that his crimes were 'only crimes because they are illegal.' He is highly resentful of\npast judicial sentences, denying their fairness. Case managers must target this neutralizing cognitive distortion to prevent\nrelapse.\n• Tertiary Domain: Substance Abuse (ADP Subscore: 1/8): While currently in stable recovery with no active drug use in\nover 16 months, his historical addiction to marijuana is the direct driver of his property crime and drug distribution career.\nOngoing recovery maintenance is required to prevent relapse under occupational or financial stress.\n2. BEHAVIORAL INDICATORS & THINKING PATTERNS\nObservation and interview records indicate a complex, highly cooperative profile. Keyzelle is polite, patient, and\nrespect-oriented, but exhibits key thinking patterns and physical barriers that staff must actively navigate:\n• Justifying / Minimizing (Attitude Distortion): Keyzelle neutralizes guilt by categorizing drug distribution strictly as a\ntechnical legal violation rather than a moral wrong. This pattern allows him to bypass legal boundaries when facing acute\nfinancial stress.\n• 'Trouble is Expected' Mindset: He views justice involvement as a natural consequence of doing crime rather than a\nlifestyle failure: 'No, because if you're doing crime, you expect to get in trouble.' This matter-of-fact perspective indicates a\nnormalized criminal identity that requires cognitive-behavioral restructuring.\n• Avoidance & High Cooperative Asset: When disrespected or challenged, Keyzelle's default coping strategy is prosocial:\n'I try to leave from that situation.' He got along exceptionally well with past bosses and coworkers, showing high\nteam-oriented potential.\n• Sleep Apnea / Obesity Barrier (Physical Coping): Keyzelle was terminated from two past jobs because he 'couldn't stay\nawake on the job because I was very obese.' This severe physical health barrier directly affects his workplace attendance\nand performance, requiring medical evaluation.\n3. JUSTICE TRAJECTORY & PATTERN OVER TIME\nKeyzelle's justice involvement began at age 17 with his first arrest. In adulthood, he developed a property-offending and\ndrug-distribution pattern, culminating in a federal conviction for Conspiracy to Distribute Marijuana. His community\nsupervision is marked by chronic instability, having his supervised release revoked twice (for 41 days and 21 months) due to\ntechnical and arrest violations. In total, he has spent approximately 3 years of his adult life incarcerated and is finishing his\ncurrent sentence. The cycle we are interrupting is chronic supervision failure and vocational collapse driven by active\nmarijuana distribution and untreated physical health issues.\n\n-- 1 of 2 --\n\nParticipant: Keyzelle L. C. Thomas | Assessment Portfolio Document: CASE BRIEF | Page 2\n4. ACUTE / EMERGENCY NEEDS\nAt intake, Keyzelle presents a severe housing crisis. He is currently completing his sentence in the federal halfway house,\nbut upon his scheduled release on November 17, 2026, he is considered homeless with no permanent housing arranged.\nHe also faces a severe financial crisis, receiving 0 active income, relying entirely on food stamps, and worrying about\noutstanding debts.\n5. STRUCTURAL STABILITY FACTORS\n• Housing Transience: High. Currently at the halfway house, facing homelessness upon release. Requires immediate\ntransitional housing placement.\n• Transportation Barrier: Low. Possesses a valid driver's license and a personal car, but owes the driver's license division\n$300-something dollars in unpaid tag debt, risking sudden suspension.\n• Financial Liabilities: High. In debt to Chime/Cash App, owes child support, and faces creditor calls. Budget compliance\nis high when he has funds, but he currently has 0 income.\n• Maternal/Paternal Anchor: Excellent (Family Strength). Shares an outstanding, close relationship with his highly\nsupportive parents.\n• Prosocial Peer Shield: High (Companions Strength). No close friends are involved in crime. He has successfully\ninsulated himself from negative peers, and has high leadership potential as a youth football coach.\n6. LEGAL & PLACEMENT CONSTRAINTS\nKeyzelle is completing his sentence under active federal halfway house placement, with home confinement eligibility on\nSeptember 14, 2026, and an 'all-the-way-out' date on November 17, 2026. He has no pending charges. He has a history of\nhigh tension with past supervision agents ('very unreasonable and she wasn't fair'), requiring careful, structured case\nmanager advocacy.\n7. RESPONSIVITY & ENGAGEMENT PROFILE\n• Leverage Father / Coach Identity: Keyzelle's primary emotional motivator is his children and his identity as a youth\nsports coach. Staff should actively leverage this strength, treating him as a positive leader and role model to reinforce his\nprosocial self-esteem.\n• Address Health & Sleep Apnea: Reentry plans must prioritize pairing him with medical clinics to evaluate his severe\nobesity and suspected sleep apnea. Resolving his physical fatigue is a critical bottleneck to preventing employment\ntermination.\n• Cognitive Restructuring for Justification: Utilize Cognitive Behavioral Therapy (CBT) to challenge his technical\nrationalizations of crime, helping him connect drug distribution to the real-world harm inflicted on his children, family, and\ncommunity.\n• License & Financial Stabilization: Case management must assist him in paying off his $300+ driver's license division\ndebt to prevent suspension, and set up a manageable repayment plan with child support enforcement once employed.\n\n-- 2 of 2 --\n\n",
+    "statedGoals": "First Shift graduation, prosocial stabilization, career placement",
+    "identifiedNeeds": [
+      "Prosocial Modeling",
+      "Workplace Stabilization"
+    ],
+    "livingSituation": "Transitional / Community Housing",
+    "legalStatus": "Active Community Supervision"
+  }
+}

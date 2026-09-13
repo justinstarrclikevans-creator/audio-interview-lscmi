@@ -1216,15 +1216,42 @@ app.get('/api/interviews', (req, res) => {
 
 // Fetch file content securely for in-browser preview
 app.get('/api/file-content', (req, res) => {
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
     const filename = req.query.file;
-    if (!filename || filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
-        return res.status(400).json({ error: 'Invalid filename' });
+    if (!filename || filename === 'undefined' || filename === 'null' || filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
+        return res.status(400).json({ error: 'Invalid filename requested.' });
     }
-    const filePath = path.join(dataDir, filename);
-    if (!fs.existsSync(filePath)) return res.status(404).json({ error: 'File not found' });
-    
-    const content = fs.readFileSync(filePath, 'utf8');
-    res.json({ content, filename });
+
+    let filePath = path.join(dataDir, filename);
+    if (!fs.existsSync(filePath)) {
+        filePath = path.join(__dirname, 'manuals', filename);
+    }
+    if (!fs.existsSync(filePath)) {
+        filePath = path.join(__dirname, '..', filename);
+    }
+    if (!fs.existsSync(filePath)) {
+        // Case-insensitive lookup fallback for Linux/Render environments
+        const findInsensitive = (dir, target) => {
+            if (!fs.existsSync(dir)) return null;
+            const dirFiles = fs.readdirSync(dir);
+            const match = dirFiles.find(f => f.toLowerCase() === target.toLowerCase());
+            return match ? path.join(dir, match) : null;
+        };
+        filePath = findInsensitive(dataDir, filename) || 
+                   findInsensitive(path.join(__dirname, 'manuals'), filename) ||
+                   findInsensitive(path.join(__dirname, '..'), filename);
+    }
+
+    if (!filePath || !fs.existsSync(filePath)) {
+        return res.status(404).json({ error: `File "${filename}" not found.` });
+    }
+
+    try {
+        const content = fs.readFileSync(filePath, 'utf8');
+        return res.json({ content, filename });
+    } catch(err) {
+        return res.status(500).json({ error: `Failed to read file "${filename}": ${err.message}` });
+    }
 });
 
 // Serve raw document files (PDFs, DOCX, XLSX, MD) with correct MIME types
@@ -3058,12 +3085,26 @@ app.delete('/api/jobs/saved/:id', authenticateToken, (req, res) => {
     }
 });
 
+// Catch-all for undefined API routes - ALWAYS return JSON, NEVER HTML
+app.use('/api', (req, res) => {
+    res.status(404).json({ error: `API endpoint ${req.method} ${req.originalUrl} not found.` });
+});
+
 // Fallback to index.html for SPA / client routes
 app.use((req, res, next) => {
     if (req.method === 'GET' && !req.path.startsWith('/api/') && !req.path.startsWith('/data/')) {
         return res.sendFile(path.join(__dirname, 'public', 'index.html'));
     }
     next();
+});
+
+// Global Express Error Handler - Always return JSON for API requests
+app.use((err, req, res, next) => {
+    console.error('Unhandled server error:', err);
+    if (req.path.startsWith('/api/')) {
+        return res.status(500).json({ error: err.message || 'Internal Server Error' });
+    }
+    res.status(500).send('Internal Server Error');
 });
 
 app.listen(PORT, async () => {

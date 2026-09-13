@@ -1,0 +1,115 @@
+{
+  "detected_flags": [
+    {
+      "category": "Stability Risk",
+      "flag": "'Cut Off' Coping Strategy Under Acute Stress",
+      "evidence": "Interview and brief note that Wesley historically abruptly quit his pizza-delivery job and disengaged from conventional life when facing acute stress and homelessness.",
+      "severity": "medium",
+      "navigator_recommendation": "Utilize CBT problem-solving worksheets (Chain Analysis & Decatastrophizing) to help Wesley recognize early emotional indicators of stress. Practice structured communication so he learns to seek staff support rather than resorting to disengagement."
+    },
+    {
+      "category": "Cognitive / Attitude",
+      "flag": "Impulsivity ('Acting Before Thinking')",
+      "evidence": "Wesley admits that he 'often acts before he thinks' and sometimes gets into trouble 'almost by accident.'",
+      "severity": "medium",
+      "navigator_recommendation": "Engage Wesley in 'Stop, Think, Act' CBT role-play exercises. Reframe workplace instructions as structured step-by-step checklists to slow down his decision-making process."
+    },
+    {
+      "category": "Stability Risk",
+      "flag": "Lack of Driver's License & Transit Dependency",
+      "evidence": "Wesley does not possess a valid driver's license and relies strictly on public transit (CARTA) to travel to Turn90 and check-ins.",
+      "severity": "medium",
+      "navigator_recommendation": "Help Wesley obtain CARTA bus passes and map out direct transit routes to potential employment sites. Connect him with Father to Father Project for driver's license restoration guidance."
+    },
+    {
+      "category": "Substance / Health",
+      "flag": "Early Substance Recovery Maintenance",
+      "evidence": "Wesley has 10 months of continuous methamphetamine sobriety following a history of severe addiction that led to homelessness and burglary charges.",
+      "severity": "medium",
+      "navigator_recommendation": "Reinforce positive sobriety milestones during daily check-ins. Ensure Wesley maintains an active relapse prevention plan and peer recovery contacts through the Charleston Center."
+    }
+  ],
+  "top_criminogenic_domains": [
+    "Education / Employment (EE)",
+    "Leisure / Recreation (LR)"
+  ],
+  "stability_status": "at_risk",
+  "navigator_case_plan_md": "# Re-entry Navigation Case Plan: Wesley Morton\n\n## 1. Executive Summary & Diagnostic Profile\n- **Participant Name:** Wesley Scott Morton\n- **LS/CMI Overall Risk Level:** Medium (Score: 19)\n- **Primary Criminogenic Need Domains:**\n  - **School / Work (EE):** High Risk (7/9) – Currently unemployed, unstable employment history (longest job 6 months), lacks High School Diploma / GED.\n  - **Leisure / Recreation (LR):** High Risk (2/2) – High volume of unstructured idle time without organized prosocial activities.\n  - **Substance Abuse (ADP):** Low Current Risk (1/8) – 10 months continuous methamphetamine sobriety, but historical relapse risk remains a critical maintenance target.\n- **Static Factors:** Criminal history (Burglary 3rd degree conviction, probation violation) is noted as static and excluded from dynamic intervention planning.\n- **Current Residence:** Federal Halfway House (Transitional Housing).\n\n## 2. Behavioral Dynamics & Responsivity Considerations\n- **Prosocial Alignment & Responsivity Strengths:** Wesley demonstrates exceptional prosocial alignment, genuine remorse, acceptance of personal responsibility ('I had a choice'), and strong respect for authority figures. He is highly teachable and responds best to positive reinforcement rather than confrontational styles.\n- **Key Behavioral Vulnerabilities:**\n  - *'Cut Off' Coping Pattern:* Under high stress or feeling overwhelmed, Wesley historically abruptly disengages and quits obligations.\n  - *Impulsivity:* Tendency to act without anticipating consequences.\n- **Mentorship Focus:** Lacks consistent positive paternal modeling (father incarcerated). Navigator should provide strong, consistent, prosocial male mentorship and practical vocational coaching.\n\n## 3. Dynamic Action Plan & Objectives\n\n### Domain 1: Education & Employment (EE)\n- **Objective:** Establish steady, hands-on employment in logistics, manufacturing, or trades while pursuing GED preparation.\n- **Interventions:**\n  - Enroll in forklift or HVAC hands-on vocational certification pathways.\n  - Target second-chance employers with consistent daytime schedules accessible by public transit.\n  - Provide job retention coaching focused on supervisor communication and stress management.\n\n### Domain 2: Leisure & Recreation (LR)\n- **Objective:** Replace unstructured idle time with structured prosocial routines.\n- **Interventions:**\n  - Map weekly schedule integrating work shifts, recovery meetings, and fitness/recreational activities.\n  - Support involvement in structured community service or peer support groups.\n\n### Domain 3: Structural Stability & Relapse Maintenance\n- **Objective:** Maintain 10+ months sobriety and build long-term housing/mobility plan.\n- **Interventions:**\n  - Coordinate with Father to Father Project for driver's license restoration steps.\n  - Connect with Charleston Center for outpatient peer recovery support.\n  - Partner with Origin SC and One80 Place for post-halfway house long-term housing navigation.\n\n## 4. Navigation & Facilitation Protocols\n- **Modeling Neutrality:** Avoid power struggles or lectures. Use open questions when Wesley feels frustrated at work or check-ins.\n- **CBT Skill Application:** Work through 'Decatastrophizing' worksheets when workplace conflict arises to prevent the 'Cut Off' response.",
+  "participant_guide_md": "# My Fresh Start Action & Resource Guide: Wesley Morton\n\nWelcome to your personalized Re-entry Action Guide, Wesley! You have achieved **10 months of sobriety**, shown real strength, and demonstrated a clear commitment to building a solid career and stable future. This guide is built to help you reach your goals in training, steady employment, independent living, and personal growth.\n\n---\n\n## 1. Local Support Resources & Next Steps\n\n### Transportation & Driver's License Restoration\n- **CARTA (Charleston Area Regional Transportation Authority)**\n  - **Services:** Local bus routes connecting Downtown, North Charleston, and industrial parks.\n  - **Contact:** (843) 724-7420 | [Visit Website](https://ridecarta.com) | [Directions to Service Area](https://maps.google.com/?q=Charleston+Area+Regional+Transportation+Authority)\n  - **Next Step:** Obtain monthly bus pass and save route maps to target job sites on your phone.\n\n- **Center for Fathering / Father to Father Project**\n  - **Services:** Driver's license restoration support, legal assistance coordination, and parenting support.\n  - **Contact:** (843) 744-2126 | 4925 Lacross Rd, North Charleston, SC 29406 | [Visit Website](https://scfathersandfamilies.com) | [Directions](https://maps.google.com/?q=4925+Lacross+Rd,+North+Charleston,+SC+29406)\n  - **Next Step:** Schedule an intake appointment to review your driver's record and reinstate your license.\n\n### Housing & Financial Coaching\n- **Origin SC (Family Housing Solutions)**\n  - **Services:** First-time renter coaching, budgeting, credit building, and housing navigation.\n  - **Contact:** (843) 628-3000 | 8084 Rivers Ave, Suite 200, North Charleston, SC 29406 | [Visit Website](https://originsc.org) | [Directions](https://maps.google.com/?q=8084+Rivers+Ave,+Suite+200,+North+Charleston,+SC+29406)\n  - **Next Step:** Attend a financial budgeting workshop to prepare for post-halfway house housing.\n\n- **One80 Place**\n  - **Services:** Transitional housing stabilization, legal clinic, and rapid rehousing support.\n  - **Contact:** (843) 723-9477 | 35 Walnut St, Charleston, SC 29403 | [Visit Website](https://one80place.org) | [Directions](https://maps.google.com/?q=35+Walnut+St,+Charleston,+SC+29403)\n  - **Next Step:** Meet with a re-entry housing specialist to explore long-term apartment options.\n\n### Wellness & Recovery Support\n- **Charleston Center (DAODAS)**\n  - **Services:** Outpatient recovery support, peer recovery mentoring, and wellness coaching.\n  - **Contact:** (843) 958-3300 | 5 Charleston Center Dr, Charleston, SC 29401 | [Visit Website](https://charlestoncounty.org/departments/charleston-center/) | [Directions](https://maps.google.com/?q=5+Charleston+Center+Dr,+Charleston,+SC+29401)\n  - **Next Step:** Connect with a peer recovery coach to reinforce your 10-month sobriety milestone.\n\n---\n\n## 2. Targeted Fair-Chance Career Matches\n\nHere are top second-chance regional opportunities tailored to your interest in hands-on work, logistics, and skilled trades:\n\n1. **Palmetto Logistics & Distribution Hub**\n   - **Role:** Forklift Driver / Order Selector / Receiving Specialist\n   - **Pay & Shift:** $18.00 – $22.50 / hr | Day Shift (6:30 AM – 3:00 PM)\n   - **Why It Fits:** Hands-on warehouse position with on-site OSHA Forklift Certification provided. Active fair-chance employer accessible in North Charleston/Summerville.\n   - **Link:** [Apply Online / View Careers Page](https://www.indeed.com/jobs?q=warehouse+logistics&l=Charleston%2C+SC)\n\n2. **Lowcountry Framing & Carpentry Pros**\n   - **Role:** Framing Apprentice / Jobsite Laborer\n   - **Pay & Shift:** $19.00 – $25.00 / hr | 6:30 AM – 3:00 PM\n   - **Why It Fits:** Great entry point into construction trades with tool allowances and boot stipends. Fair-chance partner focused on work ethic and attendance.\n   - **Link:** [Apply Online / View Careers Page](https://www.indeed.com/jobs?q=framing+carpentry&l=Charleston%2C+SC)\n\n3. **Carolina Marine & Metal Fabrication**\n   - **Role:** MIG Welder Trainee / Metal Grinder / Fabrication Helper\n   - **Pay & Shift:** $20.00 – $26.00 / hr | 1st Shift (7:00 AM – 3:30 PM)\n   - **Why It Fits:** Paid AWS welding certifications offered on the job. Practical weld test entry process with structured daily routines.\n   - **Link:** [Apply Online / View Careers Page](https://www.indeed.com/jobs?q=welder+metal+fabrication&l=Charleston%2C+SC)\n\n4. **Brock Cabinets**\n   - **Role:** Delivery Staff I\n   - **Pay & Shift:** $17.00 – $19.00 / hr | Day Shift (North Charleston, SC)\n   - **Why It Fits:** Practical hands-on warehouse and jobsite delivery role close to public transit routes.\n   - **Link:** [Apply Online / View Careers Page](https://www.brockcabinets.com/)\n\n---\n\n## 3. Four-Week Milestone Checklist\n\n- [ ] **Week 1: Transit & ID Foundation**\n  - Secure CARTA bus pass and practice route timing to First Shift / Turn90.\n  - Contact Father to Father Project to initiate driver's license reinstatement review.\n\n- [ ] **Week 2: Career Readiness & Applications**\n  - Complete initial applications for Palmetto Logistics and Brock Cabinets.\n  - Practice interviewing strategies and CBT stress-management techniques with your Navigator.\n\n- [ ] **Week 3: Financial & Housing Planning**\n  - Attend initial budgeting session with Origin SC.\n  - Establish personal savings goals for future independent housing deposit.\n\n- [ ] **Week 4: Job Placement & Prosocial Routine**\n  - Finalize job interviews and confirm work schedule with your halfway house supervisor.\n  - Set up a weekly prosocial routine incorporating regular exercise and peer recovery check-ins.",
+  "recommended_referrals": [
+    {
+      "resourceName": "Center for Fathering / Father to Father Project",
+      "category": "Legal / ID",
+      "contact": "(843) 744-2126 | 4925 Lacross Rd, North Charleston, SC 29406",
+      "websiteUrl": "https://scfathersandfamilies.com",
+      "actionStep": "Schedule driver's license restoration consultation and review SCDMV status."
+    },
+    {
+      "resourceName": "Origin SC (Family Housing Solutions)",
+      "category": "Housing",
+      "contact": "(843) 628-3000 | 8084 Rivers Ave, Suite 200, North Charleston, SC 29406",
+      "websiteUrl": "https://originsc.org",
+      "actionStep": "Enroll in budget coaching and rental readiness classes for independent housing transition."
+    },
+    {
+      "resourceName": "Charleston Center (DAODAS)",
+      "category": "Recovery",
+      "contact": "(843) 958-3300 | 5 Charleston Center Dr, Charleston, SC 29401",
+      "websiteUrl": "https://charlestoncounty.org/departments/charleston-center/",
+      "actionStep": "Connect with recovery peer specialist to support ongoing methamphetamine sobriety."
+    },
+    {
+      "resourceName": "CARTA (Charleston Area Regional Transportation Authority)",
+      "category": "Food / Transit",
+      "contact": "(843) 724-7420 | Charleston Tri-County Area",
+      "websiteUrl": "https://ridecarta.com",
+      "actionStep": "Purchase pass and identify bus schedules to work and program sites."
+    }
+  ],
+  "matched_employers": [
+    {
+      "company": "Palmetto Logistics & Distribution Hub",
+      "role": "Forklift Driver / Order Selector",
+      "pay": "$18.00 – $22.50 / hr",
+      "shift": "Day Shift (6:30 AM – 3:00 PM)",
+      "careersUrl": "https://www.indeed.com/jobs?q=warehouse+logistics&l=Charleston%2C+SC",
+      "matchReason": "Hands-on warehouse role providing OSHA forklift certification; strong fit for hands-on learning style and daytime schedule."
+    },
+    {
+      "company": "Lowcountry Framing & Carpentry Pros",
+      "role": "Framing Apprentice / Jobsite Laborer",
+      "pay": "$19.00 – $25.00 / hr",
+      "shift": "6:30 AM – 3:00 PM",
+      "careersUrl": "https://www.indeed.com/jobs?q=framing+carpentry&l=Charleston%2C+SC",
+      "matchReason": "Entry-level trade apprenticeship with tool allowance and boot stipend; active second-chance employer."
+    },
+    {
+      "company": "Carolina Marine & Metal Fabrication",
+      "role": "MIG Welder Trainee / Metal Grinder",
+      "pay": "$20.00 – $26.00 / hr",
+      "shift": "1st Shift (7:00 AM – 3:30 PM)",
+      "careersUrl": "https://www.indeed.com/jobs?q=welder+metal+fabrication&l=Charleston%2C+SC",
+      "matchReason": "Structured manufacturing environment with paid AWS welding certifications on the job."
+    },
+    {
+      "company": "Brock Cabinets",
+      "role": "Delivery Staff I",
+      "pay": "$17.00 – $19.00 / hr",
+      "shift": "Day Shift",
+      "careersUrl": "https://www.brockcabinets.com/",
+      "matchReason": "North Charleston location with practical hands-on material handling duties accessible via local transit."
+    }
+  ],
+  "assessmentData": {
+    "participantName": "Wesley Morton",
+    "location": "Charleston",
+    "interviewTranscript": "Page 1\nCASE MANAGEMENT BRIEF\nSubject: Wesley Scott Morton | DOB: 03/29/2004 | Assessment Date: August 7, 2026\nPurpose of the Case Management Brief: This staff-facing document translates raw clinical intake and diagnostic scoring into\nan actionable, longitudinal case plan. This brief bridges the gap between assessment data and real-world program delivery.\nNote: Criminal History has been excluded as a primary criminogenic driver in this plan.\n1. Risk Profile (Source: LS/CMI)\nWesley Morton exhibits an overall Medium risk level (LS/CMI Score: 19). Per user instruction, Criminal History is\nexcluded. The primary drivers of his criminal risk are centered around socioeconomic stability and lifestyle\nmaintenance:\nPrimary Need Domain Risk Level / Score Criminogenic Indicators & Evidence\n1. School / Work (EE) Score: 7 / 9 (High Risk) Currently unemployed with an unstable career history\n(longest job 6 months). Lacks a GED or vocational\ncertifications, leaving him structurally disconnected from\nstable conventional pursuits.\n2. Substance Abuse (ADP) Score: 1 / 8 (Low Risk -\nCurrent)\nWhile his current risk is low due to 10 months of continuous\nsobriety, his severe historical methamphetamine addiction\nwas the direct catalyst for his homelessness, job loss, and\nburglary offense. Recovery maintenance is a primary\ncriminogenic need.\n3. Leisure / Recreation (LR) Score: 2 / 2 (High Risk) Wesley exhibits high unstructured idle time ('doing nothing\nreally'). A lack of organized prosocial activities leaves a\nlifestyle vacuum that historically facilitated substance use\nand delinquency.\n2. Behavioral Indicators\nBehavioral indicators describe how Wesley's risk factors manifest in real-world patterns. These dictate how staff\nshould navigate daily interactions and coaching:\n• 'Cut Off' Pattern (Low Frustration Tolerance): Historically, Wesley exhibits a 'Cut Off' coping strategy when facing\nacute stress. When he became homeless and turned to methamphetamine use, his response was to abruptly quit his\npizza-delivery job and completely disengage from conventional life.\n• Impulsivity ('Acting Before Thinking'): Wesley admits that he 'often acts before he thinks' and sometimes gets into\ntrouble 'almost by accident.' This is a core problem-solving and self-management deficit.\n• Remorse & Prosocial Alignment (Massive Strength): Unlike many justice-involved individuals, Wesley exhibits no\nprocriminal cognition. He strongly accepts responsibility for his actions, expresses genuine remorse ('Yes, they were\nwrong. I had a choice.'), and respects authority figures (supervisors, probation officer). This high teachability is a major\nprotective factor.\n\n-- 1 of 4 --\n\nPage 1\n3. Pattern Over Time (Longitudinal Trajectory)\nWesley's justice system involvement began at age 18 (he has 5-8 lifetime arrests, primarily minor misdemeanors).\nHis trajectory peaked with a conviction for Burglary, Third Degree, which led to a 3.5-month incarceration at Kirkland\nReception & Evaluation Center. Notably, Wesley's trajectory includes a probation violation and revocation—his\nprobation was violated when he committed the burglary. This indicates a clear pattern: when unstabilized in the\ncommunity, his coping mechanism (methamphetamine use) leads to rapid relapse, residential instability\n(homelessness), and criminal offense (burglary). This is the longitudinal cycle that the Turn 90 intervention is\ndesigned to interrupt.\n\n-- 2 of 4 --\n\nPage 1\n4. Acute / Emergency Needs\nPer intake assessment and verbatim records, no active acute or emergency crises (such as safety threats, active\ndrug use, psychiatric crises, or immediate housing displacement) exist. Wesley has achieved 10 months of\ncontinuous methamphetamine sobriety, is physically stable, and has temporary shelter at the federal halfway house.\n5. Structural Stability Factors\nThese structural and socioeconomic factors are not necessarily criminogenic, but they represent significant obstacles\nto successful reintegration that staff must systematically address:\nStability Barrier Current Status Clinical Context & Staff Directions\nHousing Stability Transitional / Temporary Currently residing in a federal halfway house and\nparticipating in the 8-week Turn 90 program. Long-term,\ntraditional housing is a key future need.\nDriver's License Status No License in Good\nStanding\nDoes not have a driver's license. Lacks immediate\nindependent mobility but possesses state ID, birth\ncertificate, and social security card.\nEducational Credentials Grade 10 Completed Lacks a High School Diploma or GED. Lacks formal\nacademic credentials, though he is highly articulate and\nmotivated.\nRecent Substance Use 10 Months Sobriety (Meth) Sober and clean, but in the critical early recovery phase.\nRequires regular support, accountability, and avoidance\nof active drug associates.\n6. Legal & Placement Constraints\nWesley is currently residing in a federal halfway house and is under active federal community supervision (probation).\nHe has mandatory probation visits and halfway house check-ins that restrict his schedule. He relies on public\ntransportation to travel to and from Turn 90 daily. He has no outstanding charges, no pending cases, and no sex\noffender registry requirements. Placement decisions must accommodate his public transit reliance and supervision\nschedule.\n7. Responsivity & Engagement Profile\nResponsivity dictates how staff should communicate and tailor coaching to match Wesley's unique psychological and\ncognitive profile:\n\n-- 3 of 4 --\n\nPage 1\n• High Motivation & Receptivity: Wesley has an exceptionally positive, cooperative attitude. He wants to lead a life\nwithout crime, appreciates Turn 90, and is highly receptive to learning. Avoid confrontational coaching styles; use positive\nreinforcement and goal-tracking.\n• Hands-on, Practical Learning Style: Wesley is interested in concrete vocational certifications (forklift manager, HVAC\ntechnician). He excels in practical, applied settings. Training should focus on hands-on task execution rather than dense,\ntheoretical classroom instruction.\n• Father's Absence/Incarceration Sensitivity: His father has been in prison for four years (in-and-out of his life since\nbirth) and has a criminal record. Reentry staff should recognize this lack of paternal role modeling and provide strong,\nprosocial, male mentorship and conventional guidance.\n\n-- 4 of 4 --\n\n",
+    "statedGoals": "First Shift graduation, prosocial stabilization, career placement",
+    "identifiedNeeds": [
+      "Prosocial Modeling",
+      "Workplace Stabilization"
+    ],
+    "livingSituation": "Transitional / Community Housing",
+    "legalStatus": "Active Community Supervision"
+  }
+}

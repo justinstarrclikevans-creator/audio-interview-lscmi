@@ -5,15 +5,19 @@ email-settings.txt
 *.sqlite
 *.sqlite-wal
 *.sqlite-shm
-data/*
-!data/*.xlsx
-!data/LS_CMI_Scoring_Guide.md
-!data/LS_CMI_Scoring_Guide.pdf
-!data/LS_CMI_Scoring_Manual_Guide.pdf
-!data/Facilitator_Scoring_Guide.md
-!data/Facilitator_Scoring_Guide.pdf
-!data/Facilitator_Scoring_Guide_2024.xlsx
-!data/FirstShift20IntakeForm.csv
+data/*.sqlite*
+data/*error.txt
+data/*_error.txt
 test_*.js
 rerun_*.js
+
+# Preserve all assessment documents, transcripts, guides, and templates
+!data/*.xlsx
+!data/*.csv
+!data/*.md
+!data/*.txt
+!data/*.pdf
+!data/*.docx
+!data/*.json
+
 
