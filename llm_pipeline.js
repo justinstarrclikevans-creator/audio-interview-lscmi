@@ -15,9 +15,17 @@ const manualsDir = path.join(__dirname, 'manuals');
 
 function loadManuals() {
     let manualsText = '';
+    
+    // Prioritize official LS/CMI Scoring Guide & Standards at the top
+    const primaryGuide = path.join(manualsDir, 'LS_CMI_Scoring_Guide.md');
+    if (fs.existsSync(primaryGuide)) {
+        manualsText += `\n\n=== OFFICIAL LS/CMI SCORING GUIDE & ITEM CRITERIA ===\n`;
+        manualsText += fs.readFileSync(primaryGuide, 'utf8');
+    }
+
     const files = fs.readdirSync(manualsDir);
     for (const file of files) {
-        if (file.endsWith('.txt')) {
+        if ((file.endsWith('.txt') || file.endsWith('.md')) && file !== 'LS_CMI_Scoring_Guide.md') {
             manualsText += `\n\n=== MANUAL: ${file} ===\n`;
             manualsText += fs.readFileSync(path.join(manualsDir, file), 'utf8');
         }
