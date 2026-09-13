@@ -5,7 +5,10 @@ const path = require('path');
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'dummy_key');
 const model = genAI.getGenerativeModel({ 
     model: "gemini-3.6-flash", 
-    generationConfig: { responseMimeType: "application/json" } 
+    generationConfig: { 
+        responseMimeType: "application/json",
+        maxOutputTokens: 65536
+    } 
 });
 
 const manualsDir = path.join(__dirname, 'manuals');
@@ -91,63 +94,58 @@ function safeJsonParse(jsonStr) {
     }
 }
 
-async function runPhase1(transcriptText, clientName) {
-    if (!process.env.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is missing");
-
-    const manuals = loadManuals();
-    const systemPrompt = `You are an expert case manager and assessor for First Shift / Turn90.
-    Phase 1 Task: Based on the provided 158-question LS/CMI interview transcript and assessment scoring manuals, complete:
-    1. The comprehensive Interview Guide.
-    2. The DRAFT LS/CMI Scoring Form.
-    
-    Reference Manuals:
-    ${manuals}
-    
-    You must return a valid JSON object with EXACTLY these two keys:
-    {
-      "interview_guide": "# Interview Guide\\n...",
-      "draft_scoring_form": "# Draft Scoring Form\\n..."
-    }
-    
-    Format requirements:
-    - Follow LS/CMI Scoring Manual rules strictly.
-    - Be thorough, evidence-based, and objective.`;
-
-    const prompt = `${systemPrompt}\n\nClient Name: ${clientName}\n\nInterview Transcript:\n${transcriptText}`;
-
-    const result = await model.generateContent(prompt);
-    const responseText = result.response.text();
-    return safeJsonParse(responseText);
-}
-
-// Process Audio Uploads Directly with Gemini Multimodal Processing
-async function runPhase1WithAudio(audioBuffer, mimeType, clientName, location, additionalNotes = "") {
+async function runPhase1(transcriptText, clientName, location = "", additionalNotes = "") {
     if (!process.env.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is missing");
 
     const manuals = loadManuals();
     const systemPrompt = `You are an expert case manager and LS/CMI assessor for First Shift / Turn90.
-Phase 1 Audio Task: Listen to the attached audio recording of the intake assessment interview with participant "${clientName}" conducted at the Turn90 ${location} center.
-Using the audio interview and the assessment scoring manuals provided below, complete the following three requirements:
-
-1. "transcript": Provide a high-quality, verbatim text transcript of the audio interview.
-2. "interview_guide": Complete the comprehensive 158-question LS/CMI Interview Guide incorporating the participant's direct quotes and responses.
-3. "draft_scoring_form": Complete the Phase 1 DRAFT LS/CMI Scoring Form strictly following the scoring rules in the manual, evaluating all 8 subcomponents (Criminal History, Education/Employment, Family/Marital, Leisure/Recreation, Companions, Alcohol/Drug Problem, Procriminal Attitude/Orientation, Antisocial Pattern) and identifying clear strengths (rated 0) and high risk/needs (rated 2 or 3).
+Phase 1 Task: Based on the provided LS/CMI interview transcript and assessment scoring manuals, produce:
+1. "interview_guide": The COMPLETE, UNABBREVIATED 158-question LS/CMI Interview Guide.
+   - You MUST include and answer ALL questions from the standard 158-question Interview Guide covering all domains:
+     * Domain 1: Administrative & Identification
+     * Domain 2: Criminal History
+     * Domain 3: Education / Employment
+     * Domain 4: Family / Marital
+     * Domain 5: Leisure / Recreation
+     * Domain 6: Companions
+     * Domain 7: Alcohol / Substance Problem
+     * Domain 8: Procriminal Attitude / Orientation
+     * Domain 9: Antisocial Pattern
+     * Domain 10: Specific Risk/Need & Personal Barrier Factors
+   - For each question:
+     - Bold the question title.
+     - Provide the participant's direct quotes and evidence from the transcript.
+     - If a question was not explicitly asked, note "Not explicitly discussed in intake interview" or provide the best reasonable inference from context.
+   - DO NOT truncate, skip, or summarize questions. Provide all questions systematically.
+   - Do NOT use the word "clinical". Use "behavioral health", "support", or "assessment" instead.
+   - Do NOT reference Route 66.
+2. "draft_scoring_form": The comprehensive Phase 1 DRAFT LS/CMI Scoring Form evaluating all 8 Section 1 subcomponents (Criminal History, Education/Employment, Family/Marital, Leisure/Recreation, Companions, Alcohol/Drug Problem, Procriminal Attitude/Orientation, Antisocial Pattern) and Section 2-6 factors strictly following the scoring rules in the manual, identifying clear strengths (rated 0) and high risk/needs (rated 2 or 3). Include subcomponent scores, total score, and risk category.
 
 ${additionalNotes && additionalNotes.trim() ? `Additional Intake Notes:\n${additionalNotes}\n\n` : ''}
 
 Reference Manuals:
 ${manuals}
 
-You must return a valid JSON object with EXACTLY these three keys:
+You must return a valid JSON object with EXACTLY these two keys:
 {
-  "transcript": "Verbatim transcript of the interview...",
-  "interview_guide": "# Interview Guide\\n...",
-  "draft_scoring_form": "# Draft Scoring Form\\n..."
+  "interview_guide": "# Turn90 / First Shift: LS/CMI Standardized Assessment Interview Guide\\n...",
+  "draft_scoring_form": "# LS/CMI Draft Scoring Form\\n..."
 }
 
 Format requirements:
 - Follow LS/CMI Scoring Manual rules strictly.
-- Be thorough, evidence-based, and objective.`;
+- Be thorough, evidence-based, objective, and complete.`;
+
+    const prompt = `${systemPrompt}\n\nClient Name: ${clientName}\nLocation: ${location || 'Turn90 Center'}\n\nInterview Transcript:\n${transcriptText}`;
+
+    const result = await model.generateContent(prompt);
+    const responseText = result.response.text();
+    return safeJsonParse(responseText);
+}
+
+// Process Audio Uploads with High-Fidelity 2-Stage Gemini Pipeline
+async function runPhase1WithAudio(audioBuffer, mimeType, clientName, location, additionalNotes = "") {
+    if (!process.env.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is missing");
 
     // Package audio: inline base64 if <= 20MB, or GoogleAIFileManager if > 20MB
     let audioPart;
@@ -173,13 +171,39 @@ Format requirements:
             };
         }
 
-        const result = await model.generateContent([
+        // Stage 1: Full Verbatim Audio Transcription
+        console.log(`[Audio Pipeline] Transcribing complete audio recording for ${clientName}...`);
+        const transcriptionModel = genAI.getGenerativeModel({
+            model: "gemini-3.6-flash",
+            generationConfig: { maxOutputTokens: 65536, temperature: 0.1 }
+        });
+
+        const transcriptionPrompt = `You are an expert intake assessment transcriber for Turn90 / First Shift.
+Listen to the attached audio recording with participant "${clientName}" conducted at the Turn90 ${location} center.
+Provide a complete, high-fidelity, verbatim text transcript of the ENTIRE interview.
+CRITICAL TRANSCRIPTION REQUIREMENTS:
+- Label every single speaker turn clearly as "Interviewer:" or "${clientName}:" (or "Participant:").
+- Include every question asked, all participant dialogue, direct quotes, and explanations.
+- Do NOT summarize, truncate, condense, or omit any section of the conversation.
+- Return ONLY the clean, verbatim dialogue transcript.`;
+
+        const transResult = await transcriptionModel.generateContent([
             audioPart,
-            { text: systemPrompt }
+            { text: transcriptionPrompt }
         ]);
 
-        const responseText = result.response.text();
-        return safeJsonParse(responseText);
+        const transcriptText = transResult.response.text().trim();
+        console.log(`[Audio Pipeline] Transcription complete (${transcriptText.length} characters, ~${transcriptText.split('\\n').length} lines).`);
+
+        // Stage 2: Comprehensive 158-Question Interview Guide & Draft Scoring Form
+        console.log(`[Audio Pipeline] Generating full 158-question Interview Guide and Draft Scoring Form for ${clientName}...`);
+        const phase1Output = await runPhase1(transcriptText, clientName, location, additionalNotes);
+
+        return {
+            transcript: transcriptText,
+            interview_guide: phase1Output.interview_guide,
+            draft_scoring_form: phase1Output.draft_scoring_form
+        };
     } finally {
         if (tempFilePath && fs.existsSync(tempFilePath)) {
             try { fs.unlinkSync(tempFilePath); } catch(e) {}

@@ -12,6 +12,11 @@ let recognition = null;
 let fullTranscript = '';
 let currentInterviewsData = {};
 
+// Configure marked parser for proper GitHub linebreaks and tables
+if (typeof marked !== 'undefined' && marked.setOptions) {
+    marked.setOptions({ breaks: true, gfm: true });
+}
+
 // -------------------------------------------------------------
 // HELPER: SAFE API RESPONSE PARSER (Gracefully handles HTML/Expired Sessions)
 // -------------------------------------------------------------
@@ -1846,6 +1851,9 @@ async function loadCaseload() {
                 <!-- 8. Caseload Actions -->
                 <td style="vertical-align: middle;">
                     <div style="display: flex; gap: 4px; flex-wrap: wrap; justify-content: center;">
+                        <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: #0f766e; border-color: #99f6e4; background: #f0fdfa; font-weight: 700;" onclick="printParticipantScoringByName('${escName}')" title="Print Official LS/CMI Scoring Form">
+                            🖨️ Score
+                        </button>
                         <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px;" onclick="openCaseReviewModal(${p.id}, '${escName}')" title="Weekly Case Review">
                             📋 Review
                         </button>
@@ -2906,13 +2914,33 @@ async function loadPmDrafts() {
             return;
         }
 
-        let html = '<div style="display: flex; flex-direction: column; gap: 12px;">';
+        let html = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; background: #f0fdfa; border: 1.5px solid #99f6e4; padding: 14px 18px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+                <div>
+                    <strong style="color: #0f766e; font-size: 14.5px;">🖨️ Standardized LS/CMI Scoring & Documentation Center</strong>
+                    <div style="font-size: 12px; color: #334155; margin-top: 2px;">Print or inspect completed standardized scorings, comprehensive 158-question interview guides, and complete verbatim transcripts.</div>
+                </div>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                    <button class="btn btn-primary" style="background: #0f766e; border-color: #0f766e; font-size: 12px; padding: 7px 16px; font-weight: 700; box-shadow: 0 1px 2px rgba(0,0,0,0.08);" onclick="window.open('/api/documents/print-all-scorings?autoprint=true', '_blank')">
+                        🖨️ Batch Print All Participant Scorings
+                    </button>
+                    <button class="btn btn-outline" style="font-size: 12px; padding: 7px 12px; background: white;" onclick="previewDocument('LS_CMI_Scoring_Guide.md')">
+                        📖 Scoring Guide
+                    </button>
+                </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+        `;
 
         clientIds.forEach(clientId => {
             const files = clients[clientId];
+            const finalScoringFile = files.find(f => f.includes('final_scoring_form.md'));
+            const draftScoringFile = files.find(f => f.includes('draft_scoring_form.md'));
+            const completedScoringFile = finalScoringFile || draftScoringFile;
+
             const hasDraft = files.some(f => f.includes('draft_scoring_form.md'));
             const hasFinalBrief = files.some(f => f.includes('final_case_brief.md'));
-            const draftFile = files.find(f => f.includes('draft_scoring_form.md'));
+            const draftFile = draftScoringFile;
             const finalBriefFile = files.find(f => f.includes('final_case_brief.md'));
             const finalPlanFile = files.find(f => f.includes('participant_case_plan.md'));
             const parts = clientId.split('_');
@@ -2924,37 +2952,41 @@ async function loadPmDrafts() {
                         <div>
                             <div style="display: flex; align-items: center; gap: 8px;">
                                 <strong style="font-size: 16px; color: var(--primary);">${cleanName}</strong>
-                                <span class="badge ${hasFinalBrief ? 'badge-green' : (hasDraft ? 'badge-pending' : 'badge-slate')}">
-                                    ${hasFinalBrief ? 'Finalized & Case Brief Built' : (hasDraft ? 'Phase 1 Draft Ready for Review' : 'Interview Recorded')}
+                                <span class="badge ${finalScoringFile ? 'badge-green' : (hasDraft ? 'badge-pending' : 'badge-slate')}">
+                                    ${finalScoringFile ? '✅ Scoring Completed & Approved' : (hasDraft ? '⏳ Phase 1 Draft Ready for Review' : 'Interview Recorded')}
                                 </span>
                             </div>
                             <div style="font-size: 11px; color: var(--slate); margin-top: 3px;">ID: ${clientId} • Files: ${files.length} documents</div>
                         </div>
 
                         <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                            ${completedScoringFile ? `
+                                <button class="btn btn-primary" style="font-size: 12px; padding: 6px 14px; background: #0f766e; border-color: #0f766e; font-weight: 700; display: inline-flex; align-items: center; gap: 5px;" onclick="printActiveDraftDocument('${completedScoringFile}')" title="Print Official LS/CMI Scoring Form">
+                                    🖨️ Print Completed Scoring
+                                </button>
+                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; color: #0f766e; border-color: #0f766e;" onclick="previewDocument('${completedScoringFile}')" title="View Scoring Form">
+                                    📊 ${finalScoringFile ? 'Final Scoring' : 'Draft Scoring'}
+                                </button>
+                            ` : ''}
+
                             ${!hasDraft ? `
                                 <button class="btn btn-primary" id="btn-gen-draft-${clientId}" style="font-size: 12px; padding: 6px 14px; background: #0284c7; border-color: #0284c7;" onclick="triggerGenerateAiDraft('${clientId}', '${cleanName}')">
                                     ⚡ Generate AI Scoring Review
                                 </button>
-                                ${files.some(f => f.includes('transcript.txt')) ? `
-                                    <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="previewDocument('${files.find(f => f.includes('transcript.txt'))}')">
-                                        📝 View Transcript
-                                    </button>
-                                    <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px;" onclick="printActiveDraftDocument('${files.find(f => f.includes('transcript.txt'))}')" title="Print Transcript">
-                                        🖨️ Print
-                                    </button>
-                                ` : ''}
+                            ` : ''}
+
+                            ${files.some(f => f.includes('transcript.txt')) ? `
+                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="previewDocument('${files.find(f => f.includes('transcript.txt'))}')">
+                                    📝 View Transcript
+                                </button>
+                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px;" onclick="printActiveDraftDocument('${files.find(f => f.includes('transcript.txt'))}')" title="Print Verbatim Transcript">
+                                    🖨️ Print Transcript
+                                </button>
                             ` : ''}
 
                             ${draftFile ? `
                                 <button class="btn btn-primary" style="font-size: 12px; padding: 6px 14px; background: #4338ca; border-color: #4338ca;" onclick="previewScoringWithGuide('${clientId}', '${cleanName}')">
-                                    ⚖️ Dual Review: Scoring & Interview Guide
-                                </button>
-                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="previewDocument('${draftFile}')">
-                                    📊 Scoring Form
-                                </button>
-                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px;" onclick="printActiveDraftDocument('${draftFile}')" title="Print Scoring Form">
-                                    🖨️ Print
+                                    ⚖️ Dual Review: Scoring & Guide
                                 </button>
                             ` : ''}
 
@@ -2962,12 +2994,12 @@ async function loadPmDrafts() {
                                 <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="previewDocument('${files.find(f => f.includes('interview_guide.md'))}')">
                                     🎙️ Interview Guide
                                 </button>
-                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px;" onclick="printActiveDraftDocument('${files.find(f => f.includes('interview_guide.md'))}')" title="Print Interview Guide">
+                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px;" onclick="printActiveDraftDocument('${files.find(f => f.includes('interview_guide.md'))}')" title="Print Full Interview Guide">
                                     🖨️ Print Guide
                                 </button>
                             ` : ''}
 
-                            ${hasDraft ? `
+                            ${hasDraft && !finalScoringFile ? `
                                 <button class="btn btn-primary" style="font-size: 12px; padding: 6px 14px;" onclick="openSupervisorReviewModal('${clientId}', '${cleanName}')">
                                     ✍️ Review & Approve (Phase 2)
                                 </button>
@@ -2975,7 +3007,7 @@ async function loadPmDrafts() {
 
                             ${finalBriefFile ? `
                                 <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="previewDocument('${finalBriefFile}')">
-                                    📄 View PM Brief
+                                    📄 PM Brief
                                 </button>
                                 <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px;" onclick="printActiveDraftDocument('${finalBriefFile}')" title="Print PM Brief">
                                     🖨️ Print Brief
@@ -2984,7 +3016,7 @@ async function loadPmDrafts() {
 
                             ${finalPlanFile ? `
                                 <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; color: var(--success); border-color: #86efac;" onclick="previewDocument('${finalPlanFile}')">
-                                    🎯 Participant Action Plan
+                                    🎯 Action Plan
                                 </button>
                                 <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: var(--success); border-color: #86efac;" onclick="printActiveDraftDocument('${finalPlanFile}')" title="Print Participant Action Plan">
                                     🖨️ Print Plan
@@ -3041,8 +3073,103 @@ function printSupervisorDraftScoring() {
     const clientId = document.getElementById('sup-client-id')?.value;
     if (!clientId) return;
     const files = (currentInterviewsData && currentInterviewsData[clientId]) || [];
-    const scoringFileName = files.find(f => f.includes('draft_scoring_form.md')) || `${clientId}_draft_scoring_form.md`;
+    const finalScoring = files.find(f => f.includes('final_scoring_form.md'));
+    const draftScoring = files.find(f => f.includes('draft_scoring_form.md'));
+    const scoringFileName = finalScoring || draftScoring || `${clientId}_draft_scoring_form.md`;
     printActiveDraftDocument(scoringFileName);
+}
+
+// 1-Click Print Completed Scoring by Participant Name
+async function printParticipantScoringByName(participantName) {
+    if (!participantName) return;
+    try {
+        let clients = currentInterviewsData;
+        if (!clients || Object.keys(clients).length === 0) {
+            const res = await fetch('/api/interviews');
+            clients = await res.json();
+            currentInterviewsData = clients;
+        }
+
+        const cleanQuery = participantName.toLowerCase().replace(/[^a-z0-9]/g, '');
+        let targetFile = null;
+
+        for (const [clientId, files] of Object.entries(clients)) {
+            const cleanId = clientId.toLowerCase().replace(/[^a-z0-9]/g, '');
+            if (cleanId.includes(cleanQuery) || cleanQuery.includes(cleanId.split('_')[0])) {
+                const finalScoring = files.find(f => f.includes('final_scoring_form.md'));
+                const draftScoring = files.find(f => f.includes('draft_scoring_form.md'));
+                targetFile = finalScoring || draftScoring;
+                if (targetFile) break;
+            }
+        }
+
+        if (targetFile) {
+            printActiveDraftDocument(targetFile);
+        } else {
+            alert(`No completed LS/CMI scoring document on file for ${participantName}. You can record or generate an assessment from the Intake & Assessment tab.`);
+        }
+    } catch(err) {
+        alert('Could not retrieve scoring file: ' + err.message);
+    }
+}
+
+// Real-time filter for transcript dialogue turns
+function filterTranscriptLines(query) {
+    const q = (query || '').toLowerCase().trim();
+    const turns = document.querySelectorAll('#transcript-lines-container .transcript-line');
+    turns.forEach(turn => {
+        if (!q) {
+            turn.style.display = 'block';
+        } else {
+            const text = turn.innerText.toLowerCase();
+            turn.style.display = text.includes(q) ? 'block' : 'none';
+        }
+    });
+}
+
+// Filter transcript by speaker role
+function filterTranscriptSpeaker(speaker) {
+    const turns = document.querySelectorAll('#transcript-lines-container .transcript-line');
+    turns.forEach(turn => {
+        if (speaker === 'all') {
+            turn.style.display = 'block';
+        } else {
+            const s = turn.getAttribute('data-speaker');
+            turn.style.display = s === speaker ? 'block' : 'none';
+        }
+    });
+}
+
+// Real-time filter for interview guide questions
+function filterGuideSections(query) {
+    const q = (query || '').toLowerCase().trim();
+    const container = document.getElementById('guide-content-container');
+    if (!container) return;
+    const elements = container.querySelectorAll('p, h1, h2, h3, h4, ol, ul, li');
+    if (!q) {
+        elements.forEach(el => el.style.display = '');
+        return;
+    }
+    elements.forEach(el => {
+        const text = el.innerText.toLowerCase();
+        el.style.display = text.includes(q) ? '' : 'none';
+    });
+}
+
+// Real-time filter for dual preview interview guide
+function filterDualGuide(query) {
+    const q = (query || '').toLowerCase().trim();
+    const container = document.getElementById('dual-guide-content');
+    if (!container) return;
+    const elements = container.querySelectorAll('p, h1, h2, h3, h4, ol, ul, li');
+    if (!q) {
+        elements.forEach(el => el.style.display = '');
+        return;
+    }
+    elements.forEach(el => {
+        const text = el.innerText.toLowerCase();
+        el.style.display = text.includes(q) ? '' : 'none';
+    });
 }
 
 async function triggerGenerateAiDraft(clientId, cleanName) {
@@ -3169,12 +3296,88 @@ async function previewDocument(filename) {
         const data = await res.json();
         if (!res.ok) throw new Error(data.error);
 
-        // Render Markdown formatted
-        body.innerHTML = `
-            <div class="markdown-preview" style="line-height: 1.6; font-size: 13.5px; color: #1e293b;">
-                ${typeof marked !== 'undefined' ? marked.parse(data.content) : data.content.replace(/\n/g, '<br>')}
-            </div>
-        `;
+        // Handle Transcripts, Guides, and Markdown documents
+        if (filename.endsWith('.txt') || filename.includes('transcript')) {
+            const lines = data.content.split('\n');
+            let dialogueCount = 0;
+            let turnsHtml = '';
+            
+            lines.forEach((line) => {
+                const trimmed = line.trim();
+                if (!trimmed) return;
+                dialogueCount++;
+                if (trimmed.startsWith('Interviewer:')) {
+                    const speech = trimmed.replace(/^Interviewer:\s*/i, '');
+                    turnsHtml += `
+                        <div class="transcript-line transcript-turn-interviewer" data-speaker="interviewer" style="margin-bottom: 10px; padding: 10px 14px; background: #f0f9ff; border-left: 4px solid #0284c7; border-radius: 0 6px 6px 0;">
+                            <div style="font-size: 11px; font-weight: 800; color: #0369a1; text-transform: uppercase; margin-bottom: 3px; display: flex; justify-content: space-between;">
+                                <span>🎙️ Interviewer</span>
+                                <span style="font-size: 10px; font-weight: normal; color: #64748b;">Turn #${dialogueCount}</span>
+                            </div>
+                            <div class="transcript-text" style="font-size: 13px; color: #0f172a; line-height: 1.6;">${escapeHtml(speech)}</div>
+                        </div>
+                    `;
+                } else if (/^[A-Za-z\s]+:/.test(trimmed)) {
+                    const colonIdx = trimmed.indexOf(':');
+                    const speaker = trimmed.substring(0, colonIdx);
+                    const speech = trimmed.substring(colonIdx + 1).trim();
+                    turnsHtml += `
+                        <div class="transcript-line transcript-turn-participant" data-speaker="participant" style="margin-bottom: 12px; padding: 12px 16px; background: #ffffff; border: 1px solid #cbd5e1; border-left: 4px solid #0f766e; border-radius: 0 6px 6px 0; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+                            <div style="font-size: 11px; font-weight: 800; color: #0f766e; text-transform: uppercase; margin-bottom: 3px; display: flex; justify-content: space-between;">
+                                <span>👤 ${escapeHtml(speaker)}</span>
+                                <span style="font-size: 10px; font-weight: normal; color: #64748b;">Turn #${dialogueCount}</span>
+                            </div>
+                            <div class="transcript-text" style="font-size: 13px; color: #1e293b; line-height: 1.6;">${escapeHtml(speech)}</div>
+                        </div>
+                    `;
+                } else {
+                    turnsHtml += `
+                        <div class="transcript-line" data-speaker="note" style="font-size: 12.5px; color: #64748b; font-style: italic; padding: 4px 12px; margin-bottom: 6px;">
+                            ${escapeHtml(trimmed)}
+                        </div>
+                    `;
+                }
+            });
+
+            body.innerHTML = `
+                <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                    <div>
+                        <strong style="color: #0f172a; font-size: 13.5px;">🎙️ Full Verbatim Intake Interview Transcript</strong>
+                        <div style="font-size: 11.5px; color: var(--slate);">Showing complete verbatim conversation (${dialogueCount} total dialogue turns, ${lines.length} lines).</div>
+                    </div>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <input type="text" id="transcript-search-input" placeholder="🔍 Search transcript..." style="font-size: 12px; padding: 5px 10px; border: 1px solid var(--border); border-radius: 4px; width: 180px;" oninput="filterTranscriptLines(this.value)">
+                        <button class="btn btn-outline" style="font-size: 11.5px; padding: 4px 8px;" onclick="filterTranscriptSpeaker('all')">All</button>
+                        <button class="btn btn-outline" style="font-size: 11.5px; padding: 4px 8px; color: #0284c7;" onclick="filterTranscriptSpeaker('interviewer')">Interviewer</button>
+                        <button class="btn btn-outline" style="font-size: 11.5px; padding: 4px 8px; color: #0f766e;" onclick="filterTranscriptSpeaker('participant')">Participant</button>
+                    </div>
+                </div>
+                <div id="transcript-lines-container" style="max-height: 70vh; overflow-y: auto; padding-right: 6px;">
+                    ${turnsHtml}
+                </div>
+            `;
+        } else if (filename.includes('interview_guide')) {
+            body.innerHTML = `
+                <div style="background: #fefce8; border: 1px solid #fef08a; border-radius: 8px; padding: 12px 16px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                    <div>
+                        <strong style="color: #854d0e; font-size: 13.5px;">🎙️ Standardized 158-Question LS/CMI Interview Guide</strong>
+                        <div style="font-size: 11.5px; color: #713f12;">Structured participant responses and verbatim quotes across all criminogenic and responsivity domains.</div>
+                    </div>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <input type="text" id="guide-search-input" placeholder="🔍 Search question or keyword..." style="font-size: 12px; padding: 5px 10px; border: 1px solid #fde047; border-radius: 4px; width: 220px;" oninput="filterGuideSections(this.value)">
+                    </div>
+                </div>
+                <div id="guide-content-container" class="markdown-preview" style="line-height: 1.6; font-size: 13.5px; color: #1e293b; max-height: 70vh; overflow-y: auto;">
+                    ${typeof marked !== 'undefined' ? marked.parse(data.content) : data.content.replace(/\n/g, '<br>')}
+                </div>
+            `;
+        } else {
+            body.innerHTML = `
+                <div class="markdown-preview" style="line-height: 1.6; font-size: 13.5px; color: #1e293b; max-height: 72vh; overflow-y: auto;">
+                    ${typeof marked !== 'undefined' ? marked.parse(data.content) : data.content.replace(/\n/g, '<br>')}
+                </div>
+            `;
+        }
     } catch (err) {
         body.innerHTML = '<p class="text-danger">Failed to load document: ' + err.message + '</p>';
     }
@@ -3220,7 +3423,8 @@ async function previewScoringWithGuide(clientId, cleanName) {
 
     if (extraActions) {
         extraActions.innerHTML = `
-            <button class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;" onclick="printActiveDraftDocument('${scoringFileName}')">🖨️ Print Scoring Form</button>
+            <button class="btn btn-primary" style="padding: 6px 14px; font-size: 12px; background: #0f766e; border-color: #0f766e; font-weight: 700;" onclick="printActiveDraftDocument('${scoringFileName}')">🖨️ Print Completed Scoring</button>
+            <button class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;" onclick="printActiveDraftDocument('${guideFileName}')">🖨️ Print Interview Guide</button>
             <button class="btn btn-primary" style="padding: 6px 14px; font-size: 12px;" onclick="closeModal('modal-draft-viewer'); openSupervisorReviewModal('${clientId}', '${cleanName}');">
                 ✍️ Proceed to Supervisor Approval (Phase 2)
             </button>
@@ -3256,7 +3460,7 @@ async function previewScoringWithGuide(clientId, cleanName) {
         body.innerHTML = `
             <div id="draft-dual-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; min-height: 60vh;">
                 <!-- Left: Draft Scoring Form -->
-                <div id="draft-box-scoring" style="background: white; border: 1px solid var(--border); border-radius: 8px; padding: 18px; max-height: 68vh; overflow-y: auto;">
+                <div id="draft-box-scoring" style="background: white; border: 1px solid var(--border); border-radius: 8px; padding: 18px; max-height: 72vh; overflow-y: auto;">
                     <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary); padding-bottom: 6px; margin-bottom: 12px;">
                         <h4 style="margin: 0; color: var(--primary); font-size: 14px;">📊 Phase 1 Draft Scoring Form</h4>
                         <span style="font-size: 11px; color: var(--slate);">LS/CMI 8 Domains & Subcomponents</span>
@@ -3267,12 +3471,15 @@ async function previewScoringWithGuide(clientId, cleanName) {
                 </div>
 
                 <!-- Right: Interview Guide Responses -->
-                <div id="draft-box-guide" style="background: white; border: 1px solid var(--border); border-radius: 8px; padding: 18px; max-height: 68vh; overflow-y: auto;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #b45309; padding-bottom: 6px; margin-bottom: 12px;">
-                        <h4 style="margin: 0; color: #b45309; font-size: 14px;">🎙️ Interview Guide (Responses & Direct Quotes)</h4>
+                <div id="draft-box-guide" style="background: white; border: 1px solid var(--border); border-radius: 8px; padding: 18px; max-height: 72vh; overflow-y: auto;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #b45309; padding-bottom: 6px; margin-bottom: 8px;">
+                        <h4 style="margin: 0; color: #b45309; font-size: 14px;">🎙️ Interview Guide (Responses & Quotes)</h4>
                         <span style="font-size: 11px; color: var(--slate);">158 Semi-Structured Responses</span>
                     </div>
-                    <div class="markdown-preview" style="font-size: 12.5px; line-height: 1.6; color: #1e293b;">
+                    <div style="margin-bottom: 10px;">
+                        <input type="text" id="dual-guide-search-input" placeholder="🔍 Search question or keyword in guide..." style="width: 100%; padding: 6px 10px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box;" oninput="filterDualGuide(this.value)">
+                    </div>
+                    <div id="dual-guide-content" class="markdown-preview" style="font-size: 12.5px; line-height: 1.6; color: #1e293b;">
                         ${guideMarkdown}
                     </div>
                 </div>

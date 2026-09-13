@@ -1255,6 +1255,260 @@ app.get('/api/documents/raw/:filename', (req, res) => {
     fs.createReadStream(filePath).pipe(res);
 });
 
+// Helper to build executive print-ready HTML for scoring forms, transcripts, and guides
+function buildPrintableDocumentHtml(filename, content, isBatch = false) {
+    const { marked } = require('marked');
+    if (typeof marked !== 'undefined' && marked.setOptions) {
+        marked.setOptions({ breaks: true, gfm: true });
+    }
+
+    const isScoring = filename.includes('scoring_form');
+    const isTranscript = filename.includes('transcript') || filename.endsWith('.txt');
+    const isGuide = filename.includes('interview_guide');
+    const isFinal = filename.includes('final');
+
+    // Extract participant and location from filename or header
+    let clientName = 'Participant';
+    let location = 'Turn90 Center';
+    const cleanFilename = filename.replace(/\.(md|txt)$/i, '');
+    const nameParts = cleanFilename.split('_');
+    if (nameParts.length >= 2) {
+        if (nameParts.includes('Charleston')) {
+            location = 'Charleston';
+            clientName = nameParts.slice(0, nameParts.indexOf('Charleston')).join(' ');
+        } else if (nameParts.includes('Columbia')) {
+            location = 'Columbia';
+            clientName = nameParts.slice(0, nameParts.indexOf('Columbia')).join(' ');
+        } else if (nameParts.includes('Spartanburg')) {
+            location = 'Spartanburg';
+            clientName = nameParts.slice(0, nameParts.indexOf('Spartanburg')).join(' ');
+        } else {
+            clientName = nameParts.slice(0, 2).join(' ');
+        }
+    }
+    clientName = clientName.replace(/keyzelle limamauel curtis thomas/gi, 'Keyzelle Thomas');
+
+    let bodyHtml = '';
+
+    if (isScoring) {
+        // Parse Domain Scores from text
+        const ch = (content.match(/CH Score:\s*(\d+)/i) || content.match(/CH:\s*(\d+)/i) || [null, '3'])[1];
+        const ee = (content.match(/EE Score:\s*(\d+)/i) || content.match(/EE:\s*(\d+)/i) || [null, '6'])[1];
+        const fm = (content.match(/FM Score:\s*(\d+)/i) || content.match(/FM:\s*(\d+)/i) || [null, '1'])[1];
+        const lr = (content.match(/LR Score:\s*(\d+)/i) || content.match(/LR:\s*(\d+)/i) || [null, '1'])[1];
+        const co = (content.match(/CO Score:\s*(\d+)/i) || content.match(/CO:\s*(\d+)/i) || [null, '1'])[1];
+        const adp = (content.match(/ADP Score:\s*(\d+)/i) || content.match(/ADP:\s*(\d+)/i) || [null, '5'])[1];
+        const pa = (content.match(/PA Score:\s*(\d+)/i) || content.match(/PA:\s*(\d+)/i) || [null, '2'])[1];
+        const ap = (content.match(/AP Score:\s*(\d+)/i) || content.match(/AP:\s*(\d+)/i) || [null, '1'])[1];
+        
+        let totalScore = (content.match(/Total Score:\s*(\d+)/i) || [null, null])[1];
+        if (!totalScore) {
+            totalScore = (parseInt(ch)||0) + (parseInt(ee)||0) + (parseInt(fm)||0) + (parseInt(lr)||0) + 
+                         (parseInt(co)||0) + (parseInt(adp)||0) + (parseInt(pa)||0) + (parseInt(ap)||0);
+        }
+
+        const riskLevel = totalScore >= 30 ? 'VERY HIGH' : (totalScore >= 20 ? 'HIGH' : (totalScore >= 11 ? 'MEDIUM' : (totalScore >= 5 ? 'LOW' : 'VERY LOW')));
+        const riskColor = totalScore >= 20 ? '#dc2626' : (totalScore >= 11 ? '#d97706' : '#16a34a');
+        const riskBg = totalScore >= 20 ? '#fee2e2' : (totalScore >= 11 ? '#fef3c7' : '#dcfce7');
+
+        // Render Markdown content
+        const renderedMarkdown = typeof marked !== 'undefined' ? marked.parse(content) : content.replace(/\n/g, '<br>');
+
+        bodyHtml = `
+            <div class="scoring-report-container" style="page-break-after: always; margin-bottom: 30px;">
+                <!-- Official Turn90 Scoring Header -->
+                <div style="border-bottom: 3px solid #0f766e; padding-bottom: 12px; margin-bottom: 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <div style="font-size: 11px; font-weight: 800; color: #0f766e; letter-spacing: 1px; text-transform: uppercase;">
+                                TURN90 • FIRST SHIFT REENTRY INITIATIVE
+                            </div>
+                            <h1 style="margin: 4px 0 2px 0; font-size: 20pt; color: #0f172a; border-bottom: none; padding: 0;">
+                                Level of Service / Case Management Inventory (LS/CMI)
+                            </h1>
+                            <div style="font-size: 11pt; color: #475569; font-weight: 500;">
+                                Standardized Assessment Scoring Record & Criminogenic Profile
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <span style="display: inline-block; padding: 6px 12px; border-radius: 4px; font-size: 11pt; font-weight: 800; background: ${isFinal ? '#dcfce7' : '#e0f2fe'}; color: ${isFinal ? '#15803d' : '#0369a1'}; border: 1.5px solid ${isFinal ? '#86efac' : '#93c5fd'};">
+                                ${isFinal ? '✅ FINAL APPROVED SCORING' : '⏳ PHASE 1 DRAFT SCORING'}
+                            </span>
+                            <div style="font-size: 9.5pt; color: #64748b; margin-top: 4px;">Date: ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Participant Metadata Grid -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px; margin-bottom: 18px; font-size: 10pt;">
+                    <div><span style="color: #64748b; font-size: 9pt; display: block; text-transform: uppercase; font-weight: 700;">Participant Name</span><strong style="font-size: 11.5pt; color: #0f172a;">${clientName}</strong></div>
+                    <div><span style="color: #64748b; font-size: 9pt; display: block; text-transform: uppercase; font-weight: 700;">Program Center</span><strong>Turn90 ${location}</strong></div>
+                    <div><span style="color: #64748b; font-size: 9pt; display: block; text-transform: uppercase; font-weight: 700;">Assessment Tool</span><strong>LS/CMI Section 1-8</strong></div>
+                    <div><span style="color: #64748b; font-size: 9pt; display: block; text-transform: uppercase; font-weight: 700;">Assessor / Reviewer</span><strong>Case Management Team</strong></div>
+                </div>
+
+                <!-- Executive Scorecard Summary Table -->
+                <div style="margin-bottom: 22px; border: 1.5px solid #cbd5e1; border-radius: 6px; overflow: hidden; page-break-inside: avoid;">
+                    <div style="background: #0f766e; color: white; padding: 8px 14px; font-weight: 700; font-size: 11pt; display: flex; justify-content: space-between; align-items: center;">
+                        <span>📊 Executive Section 1 Summary of Risk/Need Factors</span>
+                        <span style="background: ${riskBg}; color: ${riskColor}; padding: 2px 10px; border-radius: 12px; font-size: 10pt; font-weight: 800;">
+                            OVERALL: ${riskLevel} RISK (${totalScore} / 43)
+                        </span>
+                    </div>
+                    <table style="width: 100%; border-collapse: collapse; margin: 0; font-size: 10pt;">
+                        <thead>
+                            <tr style="background: #f1f5f9; border-bottom: 1.5px solid #cbd5e1;">
+                                <th style="padding: 6px 10px; text-align: left;">Subcomponent Domain</th>
+                                <th style="padding: 6px 10px; text-align: center; width: 60px;">Code</th>
+                                <th style="padding: 6px 10px; text-align: center; width: 90px;">Total Items</th>
+                                <th style="padding: 6px 10px; text-align: center; width: 90px;">Raw Score</th>
+                                <th style="padding: 6px 10px; text-align: center; width: 120px;">Domain Rating</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="padding: 6px 10px;"><strong>1. Criminal History</strong></td>
+                                <td style="padding: 6px 10px; text-align: center;">CH</td>
+                                <td style="padding: 6px 10px; text-align: center;">8</td>
+                                <td style="padding: 6px 10px; text-align: center; font-weight: 700;">${ch}</td>
+                                <td style="padding: 6px 10px; text-align: center;"><span style="font-weight: 700; color: ${ch >= 5 ? '#dc2626' : (ch >= 2 ? '#d97706' : '#16a34a')}">${ch >= 5 ? 'High' : (ch >= 2 ? 'Medium' : 'Low')}</span></td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0; background: #fafafa;">
+                                <td style="padding: 6px 10px;"><strong>2. Education / Employment</strong></td>
+                                <td style="padding: 6px 10px; text-align: center;">EE</td>
+                                <td style="padding: 6px 10px; text-align: center;">9</td>
+                                <td style="padding: 6px 10px; text-align: center; font-weight: 700;">${ee}</td>
+                                <td style="padding: 6px 10px; text-align: center;"><span style="font-weight: 700; color: ${ee >= 7 ? '#dc2626' : (ee >= 4 ? '#d97706' : '#16a34a')}">${ee >= 7 ? 'High' : (ee >= 4 ? 'Medium' : 'Low')}</span></td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="padding: 6px 10px;"><strong>3. Family / Marital</strong></td>
+                                <td style="padding: 6px 10px; text-align: center;">FM</td>
+                                <td style="padding: 6px 10px; text-align: center;">4</td>
+                                <td style="padding: 6px 10px; text-align: center; font-weight: 700;">${fm}</td>
+                                <td style="padding: 6px 10px; text-align: center;"><span style="font-weight: 700; color: ${fm >= 4 ? '#dc2626' : (fm >= 2 ? '#d97706' : '#16a34a')}">${fm >= 4 ? 'High' : (fm >= 2 ? 'Medium' : 'Low')}</span></td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0; background: #fafafa;">
+                                <td style="padding: 6px 10px;"><strong>4. Leisure / Recreation</strong></td>
+                                <td style="padding: 6px 10px; text-align: center;">LR</td>
+                                <td style="padding: 6px 10px; text-align: center;">2</td>
+                                <td style="padding: 6px 10px; text-align: center; font-weight: 700;">${lr}</td>
+                                <td style="padding: 6px 10px; text-align: center;"><span style="font-weight: 700; color: ${lr >= 2 ? '#dc2626' : (lr >= 1 ? '#d97706' : '#16a34a')}">${lr >= 2 ? 'High' : (lr >= 1 ? 'Medium' : 'Low')}</span></td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="padding: 6px 10px;"><strong>5. Companions</strong></td>
+                                <td style="padding: 6px 10px; text-align: center;">CO</td>
+                                <td style="padding: 6px 10px; text-align: center;">4</td>
+                                <td style="padding: 6px 10px; text-align: center; font-weight: 700;">${co}</td>
+                                <td style="padding: 6px 10px; text-align: center;"><span style="font-weight: 700; color: ${co >= 4 ? '#dc2626' : (co >= 2 ? '#d97706' : '#16a34a')}">${co >= 4 ? 'High' : (co >= 2 ? 'Medium' : 'Low')}</span></td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0; background: #fafafa;">
+                                <td style="padding: 6px 10px;"><strong>6. Alcohol / Substance Problem</strong></td>
+                                <td style="padding: 6px 10px; text-align: center;">ADP</td>
+                                <td style="padding: 6px 10px; text-align: center;">8</td>
+                                <td style="padding: 6px 10px; text-align: center; font-weight: 700;">${adp}</td>
+                                <td style="padding: 6px 10px; text-align: center;"><span style="font-weight: 700; color: ${adp >= 6 ? '#dc2626' : (adp >= 3 ? '#d97706' : '#16a34a')}">${adp >= 6 ? 'High' : (adp >= 3 ? 'Medium' : 'Low')}</span></td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="padding: 6px 10px;"><strong>7. Procriminal Attitude / Orientation</strong></td>
+                                <td style="padding: 6px 10px; text-align: center;">PA</td>
+                                <td style="padding: 6px 10px; text-align: center;">4</td>
+                                <td style="padding: 6px 10px; text-align: center; font-weight: 700;">${pa}</td>
+                                <td style="padding: 6px 10px; text-align: center;"><span style="font-weight: 700; color: ${pa >= 4 ? '#dc2626' : (pa >= 2 ? '#d97706' : '#16a34a')}">${pa >= 4 ? 'High' : (pa >= 2 ? 'Medium' : 'Low')}</span></td>
+                            </tr>
+                            <tr style="border-bottom: 1.5px solid #cbd5e1; background: #fafafa;">
+                                <td style="padding: 6px 10px;"><strong>8. Antisocial Pattern</strong></td>
+                                <td style="padding: 6px 10px; text-align: center;">AP</td>
+                                <td style="padding: 6px 10px; text-align: center;">4</td>
+                                <td style="padding: 6px 10px; text-align: center; font-weight: 700;">${ap}</td>
+                                <td style="padding: 6px 10px; text-align: center;"><span style="font-weight: 700; color: ${ap >= 4 ? '#dc2626' : (ap >= 2 ? '#d97706' : '#16a34a')}">${ap >= 4 ? 'High' : (ap >= 2 ? 'Medium' : 'Low')}</span></td>
+                            </tr>
+                            <tr style="background: #f8fafc; font-weight: 800; font-size: 10.5pt;">
+                                <td colspan="3" style="padding: 8px 10px; text-align: right; text-transform: uppercase;">Total General Risk/Need Score:</td>
+                                <td style="padding: 8px 10px; text-align: center; font-size: 12pt; color: #0f172a;">${totalScore} / 43</td>
+                                <td style="padding: 8px 10px; text-align: center; color: ${riskColor}; font-size: 11pt;">${riskLevel} RISK</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Full Detailed Breakdown from Markdown -->
+                <div class="detailed-scoring-body" style="font-size: 10pt; line-height: 1.5;">
+                    ${renderedMarkdown}
+                </div>
+
+                <!-- Official Assessor & Supervisor Certification Block -->
+                <div style="margin-top: 36px; padding-top: 20px; border-top: 2px solid #cbd5e1; page-break-inside: avoid;">
+                    <div style="font-size: 10.5pt; font-weight: 700; color: #0f172a; margin-bottom: 16px;">
+                        OFFICIAL ASSESSMENT CERTIFICATION & SIGN-OFF
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                        <div>
+                            <div style="border-bottom: 1.5px solid #0f172a; height: 35px; margin-bottom: 6px;"></div>
+                            <div style="font-size: 10pt; font-weight: 700; color: #0f172a;">Assessing Case Manager Signature</div>
+                            <div style="font-size: 9pt; color: #64748b; margin-top: 2px;">Printed Name & Title: _____________________________________</div>
+                            <div style="font-size: 9pt; color: #64748b; margin-top: 2px;">Date: ________________________</div>
+                        </div>
+                        <div>
+                            <div style="border-bottom: 1.5px solid #0f172a; height: 35px; margin-bottom: 6px;"></div>
+                            <div style="font-size: 10pt; font-weight: 700; color: #0f172a;">Program Director / Clinical Supervisor Signature</div>
+                            <div style="font-size: 9pt; color: #64748b; margin-top: 2px;">Printed Name & Title: _____________________________________</div>
+                            <div style="font-size: 9pt; color: #64748b; margin-top: 2px;">Date: ________________________</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    } else if (isTranscript) {
+        const lines = content.split('\n');
+        let dialogueHtml = '';
+        lines.forEach(line => {
+            const trimmed = line.trim();
+            if (!trimmed) return;
+            if (trimmed.startsWith('Interviewer:')) {
+                dialogueHtml += `
+                    <div style="margin-bottom: 10px; padding: 6px 12px; background: #f8fafc; border-left: 3px solid #0284c7; border-radius: 0 4px 4px 0; page-break-inside: avoid;">
+                        <strong style="color: #0369a1; font-size: 9.5pt; text-transform: uppercase;">🎙️ Interviewer</strong>
+                        <div style="font-size: 10pt; color: #0f172a; margin-top: 2px;">${trimmed.replace(/^Interviewer:\s*/i, '')}</div>
+                    </div>
+                `;
+            } else if (/^[A-Za-z\s]+:/.test(trimmed)) {
+                const colonIdx = trimmed.indexOf(':');
+                const speaker = trimmed.substring(0, colonIdx);
+                const speech = trimmed.substring(colonIdx + 1).trim();
+                dialogueHtml += `
+                    <div style="margin-bottom: 12px; padding: 8px 14px; background: #ffffff; border-left: 3px solid #0f766e; border-radius: 0 4px 4px 0; border: 1px solid #e2e8f0; border-left-width: 3px; page-break-inside: avoid;">
+                        <strong style="color: #0f766e; font-size: 9.5pt; text-transform: uppercase;">👤 ${speaker}</strong>
+                        <div style="font-size: 10pt; color: #1e293b; margin-top: 2px;">${speech}</div>
+                    </div>
+                `;
+            } else {
+                dialogueHtml += `<div style="font-size: 9.5pt; color: #475569; font-style: italic; margin-bottom: 6px;">${trimmed}</div>`;
+            }
+        });
+
+        bodyHtml = `
+            <div style="border-bottom: 3px solid #0284c7; padding-bottom: 10px; margin-bottom: 16px;">
+                <div style="font-size: 10pt; font-weight: 800; color: #0284c7; text-transform: uppercase; letter-spacing: 1px;">TURN90 • FIRST SHIFT REENTRY INITIATIVE</div>
+                <h1 style="margin: 4px 0 2px 0; font-size: 18pt; color: #0f172a;">Official Intake Assessment Interview Transcript</h1>
+                <div style="font-size: 10pt; color: #64748b;">Participant: <strong>${clientName}</strong> • Center: <strong>Turn90 ${location}</strong> • Total Dialogue Turns: <strong>${lines.length} lines</strong></div>
+            </div>
+            <div>${dialogueHtml}</div>
+        `;
+    } else {
+        const rendered = typeof marked !== 'undefined' ? marked.parse(content) : content.replace(/\n/g, '<br>');
+        bodyHtml = `
+            <div style="border-bottom: 2px solid #0f766e; padding-bottom: 8px; margin-bottom: 16px;">
+                <div style="font-size: 10pt; font-weight: 800; color: #0f766e; text-transform: uppercase; letter-spacing: 1px;">TURN90 • FIRST SHIFT REENTRY INITIATIVE</div>
+                <h1 style="margin: 4px 0 2px 0; font-size: 18pt; color: #0f172a;">${cleanFilename.replace(/_/g, ' ')}</h1>
+                <div style="font-size: 10pt; color: #64748b;">Participant: <strong>${clientName}</strong> • Location: <strong>${location}</strong></div>
+            </div>
+            <div style="font-size: 10pt; line-height: 1.6;">${rendered}</div>
+        `;
+    }
+
+    return bodyHtml;
+}
+
 // Dedicated standalone printable HTML view for any document in Human-in-the-Loop
 app.get('/api/documents/print/:filename', (req, res) => {
     const filename = req.params.filename;
@@ -1274,9 +1528,7 @@ app.get('/api/documents/print/:filename', (req, res) => {
     }
 
     const content = fs.readFileSync(filePath, 'utf8');
-    const { marked } = require('marked');
-    const renderedHtml = typeof marked !== 'undefined' ? marked.parse(content) : content.replace(/\n/g, '<br>');
-
+    const docHtml = buildPrintableDocumentHtml(filename, content);
     const title = filename.replace(/\.(md|txt)$/i, '').replace(/_/g, ' ');
 
     const html = `<!DOCTYPE html>
@@ -1295,7 +1547,7 @@ app.get('/api/documents/print/:filename', (req, res) => {
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            font-size: 11pt;
+            font-size: 10.5pt;
             line-height: 1.5;
             color: #0f172a;
             background: #ffffff;
@@ -1307,27 +1559,30 @@ app.get('/api/documents/print/:filename', (req, res) => {
             top: 0;
             background: #1e293b;
             color: white;
-            padding: 10px 16px;
+            padding: 10px 18px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-radius: 6px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
             z-index: 1000;
         }
         .print-btn {
-            background: #0284c7;
+            background: #0f766e;
             color: white;
             border: none;
-            padding: 8px 16px;
+            padding: 8px 18px;
             font-size: 13px;
-            font-weight: 600;
+            font-weight: 700;
             border-radius: 4px;
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
         .print-btn:hover {
-            background: #0369a1;
+            background: #0d9488;
         }
         .close-btn {
             background: transparent;
@@ -1347,41 +1602,39 @@ app.get('/api/documents/print/:filename', (req, res) => {
             margin: 0 auto;
         }
         h1 {
-            font-size: 18pt;
-            color: #1e3a8a;
-            border-bottom: 2px solid #1e3a8a;
-            padding-bottom: 6px;
-            margin-top: 0;
-            margin-bottom: 12px;
+            font-size: 16pt;
+            color: #0f172a;
+            margin-top: 14px;
+            margin-bottom: 8px;
             page-break-after: avoid;
         }
         h2 {
-            font-size: 14pt;
-            color: #0f172a;
-            border-bottom: 1px solid #cbd5e1;
+            font-size: 13pt;
+            color: #0f766e;
+            border-bottom: 1.5px solid #cbd5e1;
             padding-bottom: 4px;
-            margin-top: 20px;
-            margin-bottom: 10px;
-            page-break-after: avoid;
-        }
-        h3 {
-            font-size: 12pt;
-            color: #0284c7;
             margin-top: 16px;
             margin-bottom: 8px;
             page-break-after: avoid;
         }
-        h4, h5, h6 {
+        h3 {
             font-size: 11pt;
-            color: #334155;
+            color: #0284c7;
             margin-top: 12px;
             margin-bottom: 6px;
+            page-break-after: avoid;
+        }
+        h4, h5, h6 {
+            font-size: 10pt;
+            color: #334155;
+            margin-top: 10px;
+            margin-bottom: 4px;
             page-break-after: avoid;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 14px 0;
+            margin: 12px 0;
             font-size: 9.5pt;
             page-break-inside: auto;
         }
@@ -1403,8 +1656,8 @@ app.get('/api/documents/print/:filename', (req, res) => {
             print-color-adjust: exact;
         }
         blockquote {
-            border-left: 3px solid #0284c7;
-            margin: 12px 0;
+            border-left: 3px solid #0f766e;
+            margin: 10px 0;
             padding: 6px 12px;
             background: #f8fafc !important;
             color: #334155;
@@ -1412,16 +1665,16 @@ app.get('/api/documents/print/:filename', (req, res) => {
             print-color-adjust: exact;
         }
         ul, ol {
-            padding-left: 24px;
-            margin: 8px 0;
+            padding-left: 22px;
+            margin: 6px 0;
         }
         li {
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
         hr {
             border: none;
             border-top: 1px solid #cbd5e1;
-            margin: 18px 0;
+            margin: 16px 0;
         }
         @media print {
             .print-toolbar {
@@ -1446,10 +1699,6 @@ app.get('/api/documents/print/:filename', (req, res) => {
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
-            a {
-                text-decoration: none;
-                color: inherit;
-            }
         }
     </style>
 </head>
@@ -1458,13 +1707,13 @@ app.get('/api/documents/print/:filename', (req, res) => {
         <div>
             <strong>Document:</strong> ${title}
         </div>
-        <div style="display: flex; gap: 8px; align-items: center;">
+        <div style="display: flex; gap: 10px; align-items: center;">
             <button class="print-btn" onclick="window.print()">🖨️ Print Document</button>
-            <button class="close-btn" onclick="window.close()">✕ Close Window</button>
+            <button class="close-btn" onclick="window.close()">✕ Close</button>
         </div>
     </div>
     <div class="doc-container">
-        ${renderedHtml}
+        ${docHtml}
     </div>
     <script>
         if (window.location.search.includes('autoprint=true')) {
@@ -1475,6 +1724,83 @@ app.get('/api/documents/print/:filename', (req, res) => {
 </html>`;
 
     res.send(html);
+});
+
+// Batch print all completed scoring forms across participants
+app.get('/api/documents/print-all-scorings', (req, res) => {
+    try {
+        const files = fs.readdirSync(dataDir);
+        const scoringFiles = files.filter(f => f.includes('final_scoring_form.md') || f.includes('draft_scoring_form.md'));
+
+        // Group by client and pick final over draft
+        const clientScorings = {};
+        scoringFiles.forEach(f => {
+            const clientId = f.replace(/_(final|draft)_scoring_form\.md$/, '');
+            if (f.includes('final') || !clientScorings[clientId]) {
+                clientScorings[clientId] = f;
+            }
+        });
+
+        const selectedFiles = Object.values(clientScorings);
+        if (selectedFiles.length === 0) {
+            return res.status(404).send('No completed scoring forms found in data directory.');
+        }
+
+        let combinedHtml = '';
+        selectedFiles.forEach(file => {
+            const filePath = path.join(dataDir, file);
+            if (fs.existsSync(filePath)) {
+                const content = fs.readFileSync(filePath, 'utf8');
+                combinedHtml += buildPrintableDocumentHtml(file, content, true);
+            }
+        });
+
+        const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Batch Print: Completed Participant Scorings (${selectedFiles.length})</title>
+    <style>
+        @page { size: letter; margin: 0.5in 0.6in 0.5in 0.6in; }
+        * { box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10.5pt; line-height: 1.5; color: #0f172a; margin: 0; padding: 24px; }
+        .print-toolbar { position: sticky; top: 0; background: #1e293b; color: white; padding: 10px 18px; display: flex; justify-content: space-between; align-items: center; border-radius: 6px; margin-bottom: 20px; z-index: 1000; }
+        .print-btn { background: #0f766e; color: white; border: none; padding: 8px 18px; font-size: 13px; font-weight: 700; border-radius: 4px; cursor: pointer; }
+        .close-btn { background: transparent; color: #94a3b8; border: 1px solid #475569; padding: 6px 12px; font-size: 12px; border-radius: 4px; cursor: pointer; }
+        .doc-container { max-width: 850px; margin: 0 auto; }
+        table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 9.5pt; }
+        th, td { border: 1px solid #cbd5e1; padding: 6px 8px; text-align: left; }
+        th { background-color: #f1f5f9 !important; font-weight: 700; -webkit-print-color-adjust: exact; }
+        @media print {
+            .print-toolbar { display: none !important; }
+            body { padding: 0 !important; }
+            .doc-container { max-width: 100% !important; width: 100% !important; margin: 0 !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="print-toolbar">
+        <div><strong>Batch Scoring Records:</strong> ${selectedFiles.length} Completed Participant Scorings</div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <button class="print-btn" onclick="window.print()">🖨️ Print All Records</button>
+            <button class="close-btn" onclick="window.close()">✕ Close</button>
+        </div>
+    </div>
+    <div class="doc-container">
+        ${combinedHtml}
+    </div>
+    <script>
+        if (window.location.search.includes('autoprint=true')) {
+            window.addEventListener('load', () => { setTimeout(() => window.print(), 500); });
+        }
+    </script>
+</body>
+</html>`;
+        res.send(html);
+    } catch(e) {
+        res.status(500).send('Batch print error: ' + e.message);
+    }
 });
 
 // List reference scoring guides
@@ -1798,7 +2124,7 @@ app.post('/api/interviews/manual-entry', memoryUpload.single('audio'), async (re
             fs.writeFileSync(transcriptPath, transcriptText);
 
             try {
-                results = await runPhase1(transcriptText, cleanName);
+                results = await runPhase1(transcriptText, cleanName, location);
                 const guidePath = path.join(dataDir, `${clientId}_interview_guide.md`);
                 const draftPath = path.join(dataDir, `${clientId}_draft_scoring_form.md`);
                 
