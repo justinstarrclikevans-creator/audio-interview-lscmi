@@ -128,6 +128,36 @@ ${transcriptText}
     return evaluation;
 }
 
+async function uploadFacilitationResources(fileManager) {
+    const resourcesDir = path.join(__dirname, '..', 'Facilitation Scoring');
+    if (!fs.existsSync(resourcesDir)) return [];
+    
+    const files = fs.readdirSync(resourcesDir);
+    const uploadedResources = [];
+    
+    for (const file of files) {
+        if (file.toLowerCase().endsWith('.pdf') || file.toLowerCase().endsWith('.txt') || file.toLowerCase().endsWith('.md')) {
+            const filePath = path.join(resourcesDir, file);
+            console.log(`[Class Evaluation] Uploading background resource file ${file}...`);
+            try {
+                const uploadResult = await fileManager.uploadFile(filePath, {
+                    mimeType: file.toLowerCase().endsWith('.pdf') ? 'application/pdf' : 'text/plain',
+                    displayName: file.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 40)
+                });
+                uploadedResources.push({
+                    fileUri: uploadResult.file.uri,
+                    mimeType: uploadResult.file.mimeType,
+                    name: uploadResult.file.name // To delete later
+                });
+            } catch (err) {
+                console.error(`[Class Evaluation] Failed to upload resource ${file}:`, err.message);
+            }
+        }
+    }
+    
+    return uploadedResources;
+}
+
 async function evaluateClassMedia(location, sessionTitle, facilitatorName, filePath, mimeType) {
     if (!process.env.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is missing");
 
@@ -139,8 +169,12 @@ async function evaluateClassMedia(location, sessionTitle, facilitatorName, fileP
         mimeType: mimeType || 'video/mp4',
         displayName: `${location}_Class_Evaluation`
     });
+    
+    let uploadedResources = [];
 
     try {
+        uploadedResources = await uploadFacilitationResources(fileManager);
+
         const prompt = `${getFacilitatorScoringContext()}
 
 Location: ${location}
@@ -148,13 +182,19 @@ Session / Module: ${sessionTitle}
 Facilitator: ${facilitatorName}
 
 Please watch/listen to the attached classroom recording and evaluate the facilitator. Pay special attention to their physical presence, tone of voice, pacing, and neutrality.
+
+Use the provided official Turn90 Facilitation PDFs and curriculum documents to ground your feedback exactly in the Turn90 Evidence-Based CBT practices.
 `;
 
         console.log(`[Class Evaluation] Generating evaluation for ${location}...`);
-        const result = await model.generateContent([
-            { fileData: { mimeType: uploadResult.file.mimeType, fileUri: uploadResult.file.uri } },
-            { text: prompt }
-        ]);
+        
+        const contentParts = uploadedResources.map(r => ({
+            fileData: { mimeType: r.mimeType, fileUri: r.fileUri }
+        }));
+        contentParts.push({ fileData: { mimeType: uploadResult.file.mimeType, fileUri: uploadResult.file.uri } });
+        contentParts.push({ text: prompt });
+
+        const result = await model.generateContent(contentParts);
         const responseText = result.response.text();
         
         let evaluation;
@@ -192,11 +232,19 @@ Please watch/listen to the attached classroom recording and evaluate the facilit
 
         return evaluation;
     } finally {
-        console.log(`[Class Evaluation] Deleting temporary file from Gemini...`);
+        console.log(`[Class Evaluation] Deleting temporary files from Gemini...`);
         try {
             await fileManager.deleteFile(uploadResult.file.name);
         } catch (err) {
-            console.error("Failed to delete file from Gemini:", err);
+            console.error("Failed to delete video file from Gemini:", err.message);
+        }
+        
+        for (const res of uploadedResources) {
+            try {
+                await fileManager.deleteFile(res.name);
+            } catch (err) {
+                console.error(`Failed to delete background resource ${res.name} from Gemini:`, err.message);
+            }
         }
     }
 }
