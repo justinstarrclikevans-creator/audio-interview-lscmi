@@ -2953,6 +2953,7 @@ async function loadPmDrafts() {
             const draftFile = draftScoringFile;
             const finalBriefFile = files.find(f => f.includes('final_case_brief.md'));
             const finalPlanFile = files.find(f => f.includes('participant_case_plan.md'));
+            const criminalHistoryFile = files.find(f => f.includes('criminal_history.md'));
             const parts = clientId.split('_');
             const cleanName = parts.map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
@@ -3021,6 +3022,15 @@ async function loadPmDrafts() {
                                 </button>
                                 <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px;" onclick="printActiveDraftDocument('${finalBriefFile}')" title="Print PM Brief">
                                     🖨️ Print Brief
+                                </button>
+                            ` : ''}
+
+                            ${criminalHistoryFile ? `
+                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; color: #1e293b; border-color: #94a3b8; background: #f8fafc; font-weight: 600;" onclick="previewDocument('${criminalHistoryFile}')" title="View Chronological Criminal History">
+                                    ⚖️ Criminal History
+                                </button>
+                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: #1e293b; border-color: #94a3b8; background: #f8fafc;" onclick="printActiveDraftDocument('${criminalHistoryFile}')" title="Print Clean Chronological Criminal History Report">
+                                    🖨️ Print Record
                                 </button>
                             ` : ''}
 

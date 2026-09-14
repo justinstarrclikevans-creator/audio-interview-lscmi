@@ -1194,7 +1194,7 @@ app.get('/api/admin/feedback-summary', authenticateToken, requireRole('program_m
 app.get('/api/interviews', (req, res) => {
     try {
         const files = fs.readdirSync(dataDir);
-        const SUFFIXES = ['_draft_scoring_form', '_final_scoring_form', '_final_case_brief', '_interview_guide', '_transcript.txt', '_participant_case_plan'];
+        const SUFFIXES = ['_draft_scoring_form', '_final_scoring_form', '_final_case_brief', '_interview_guide', '_transcript.txt', '_participant_case_plan', '_criminal_history'];
         const clients = {};
         files.forEach(f => {
             if (f.endsWith('.sqlite') || f.includes('.sqlite') || f.startsWith('.') || f.includes('reentry')) return;
@@ -1292,6 +1292,7 @@ function buildPrintableDocumentHtml(filename, content, isBatch = false) {
     const isScoring = filename.includes('scoring_form');
     const isTranscript = filename.includes('transcript') || filename.endsWith('.txt');
     const isGuide = filename.includes('interview_guide');
+    const isCriminal = filename.includes('criminal_history');
     const isFinal = filename.includes('final');
 
     // Extract participant and location from filename or header
@@ -1314,6 +1315,12 @@ function buildPrintableDocumentHtml(filename, content, isBatch = false) {
     } else if (cleanFilename.toLowerCase().includes('pinckney') || cleanFilename.toLowerCase().includes('lawrence')) {
         clientName = 'Lawrence Pinckney';
         location = 'Columbia';
+    } else if (cleanFilename.toLowerCase().includes('oree') || cleanFilename.toLowerCase().includes('isiah')) {
+        clientName = 'Isiah Jonathan Cade Oree';
+        location = 'Charleston';
+    } else if (cleanFilename.toLowerCase().includes('alston') || cleanFilename.toLowerCase().includes('hakeem')) {
+        clientName = 'Hakeem Markus Alston';
+        location = 'Charleston';
     } else if (cleanFilename.toLowerCase().includes('clyde') || cleanFilename.toLowerCase().includes('williams')) {
         clientName = 'Clyde Williams';
         location = 'Columbia';
@@ -1568,6 +1575,78 @@ function buildPrintableDocumentHtml(filename, content, isBatch = false) {
                 <div style="font-size: 10pt; color: #64748b;">Participant: <strong>${clientName}</strong> • Center: <strong>Turn90 ${location}</strong> • Total Dialogue Turns: <strong>${lines.length} lines</strong></div>
             </div>
             <div>${dialogueHtml}</div>
+        `;
+    } else if (isCriminal) {
+        // Executive formatting for Criminal History Reports
+        let cleanedContent = content;
+        cleanedContent = cleanedContent.replace(/^#\s*Official\s*Criminal\s*History.*?\n+/i, '');
+        cleanedContent = cleanedContent.replace(/^\*\*Turn90 Reentry Initiative.*?\n+/im, '');
+        cleanedContent = cleanedContent.replace(/^\*\*Participant:\*\*.*?\n+/im, '');
+        cleanedContent = cleanedContent.replace(/^\*\*Prepared For:\*\*.*?\n+/im, '');
+        cleanedContent = cleanedContent.replace(/^\*\*Data Sources:\*\*.*?\n+/im, '');
+        cleanedContent = cleanedContent.replace(/^---\s*\n+/m, '');
+
+        const renderedMarkdown = typeof marked !== 'undefined' ? marked.parse(cleanedContent.trim()) : cleanedContent.replace(/\n/g, '<br>');
+
+        bodyHtml = `
+            <div class="criminal-history-report-container" style="page-break-after: always; margin-bottom: 30px;">
+                <!-- Official Turn90 Criminal History Header -->
+                <div style="border-bottom: 3px solid #1e293b; padding-bottom: 12px; margin-bottom: 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <div style="font-size: 11px; font-weight: 800; color: #0f766e; letter-spacing: 1px; text-transform: uppercase;">
+                                TURN90 • FIRST SHIFT REENTRY INITIATIVE
+                            </div>
+                            <h1 style="margin: 4px 0 2px 0; font-size: 20pt; color: #0f172a; border-bottom: none; padding: 0;">
+                                Official Criminal History & Chronological Disposition Record
+                            </h1>
+                            <div style="font-size: 11pt; color: #475569; font-weight: 500;">
+                                Verified Arrest Chronology, Charge Dispositions & Supervision Risk Profile
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <span style="display: inline-block; padding: 6px 12px; border-radius: 4px; font-size: 11pt; font-weight: 800; background: #f1f5f9; color: #0f172a; border: 1.5px solid #cbd5e1;">
+                                ⚖️ OFFICIAL RECORD
+                            </span>
+                            <div style="font-size: 9.5pt; color: #64748b; margin-top: 4px;">Date: ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Participant Metadata Grid -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px; margin-bottom: 18px; font-size: 10pt;">
+                    <div><span style="color: #64748b; font-size: 9pt; display: block; text-transform: uppercase; font-weight: 700;">Participant Name</span><strong style="font-size: 11.5pt; color: #0f172a;">${clientName}</strong></div>
+                    <div><span style="color: #64748b; font-size: 9pt; display: block; text-transform: uppercase; font-weight: 700;">Program Center</span><strong>Turn90 ${location}</strong></div>
+                    <div><span style="color: #64748b; font-size: 9pt; display: block; text-transform: uppercase; font-weight: 700;">Record Classification</span><strong>Judicial & Agency Record</strong></div>
+                    <div><span style="color: #64748b; font-size: 9pt; display: block; text-transform: uppercase; font-weight: 700;">Case Management Team</span><strong>Reentry Navigation</strong></div>
+                </div>
+
+                <!-- Main Content Body -->
+                <div class="detailed-scoring-body" style="font-size: 10pt; line-height: 1.55;">
+                    ${renderedMarkdown}
+                </div>
+
+                <!-- Legal Verification & Certification Block -->
+                <div style="margin-top: 36px; padding-top: 20px; border-top: 2px solid #cbd5e1; page-break-inside: avoid;">
+                    <div style="font-size: 10.5pt; font-weight: 700; color: #0f172a; margin-bottom: 16px;">
+                        CASE MANAGEMENT RECORD REVIEW & VERIFICATION
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                        <div>
+                            <div style="border-bottom: 1.5px solid #0f172a; height: 35px; margin-bottom: 6px;"></div>
+                            <div style="font-size: 10pt; font-weight: 700; color: #0f172a;">Reentry Navigator / Case Manager Signature</div>
+                            <div style="font-size: 9pt; color: #64748b; margin-top: 2px;">Printed Name & Title: _____________________________________</div>
+                            <div style="font-size: 9pt; color: #64748b; margin-top: 2px;">Date: ________________________</div>
+                        </div>
+                        <div>
+                            <div style="border-bottom: 1.5px solid #0f172a; height: 35px; margin-bottom: 6px;"></div>
+                            <div style="font-size: 10pt; font-weight: 700; color: #0f172a;">Program Director / Legal Services Review</div>
+                            <div style="font-size: 9pt; color: #64748b; margin-top: 2px;">Printed Name & Title: _____________________________________</div>
+                            <div style="font-size: 9pt; color: #64748b; margin-top: 2px;">Date: ________________________</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         `;
     } else {
         const rendered = typeof marked !== 'undefined' ? marked.parse(content) : content.replace(/\n/g, '<br>');
