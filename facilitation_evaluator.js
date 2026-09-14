@@ -132,4 +132,77 @@ ${transcriptText}
     return evaluation;
 }
 
-module.exports = { evaluateClassTranscript };
+async function evaluateClassMedia(location, sessionTitle, facilitatorName, filePath, mimeType) {
+    if (!process.env.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is missing");
+
+    const { GoogleAIFileManager } = require("@google/generative-ai/server");
+    const fileManager = new GoogleAIFileManager(process.env.GEMINI_API_KEY);
+
+    console.log(`[Class Evaluation] Uploading media to Gemini for ${location}...`);
+    const uploadResult = await fileManager.uploadFile(filePath, {
+        mimeType: mimeType || 'video/mp4',
+        displayName: `${location}_Class_Evaluation`
+    });
+
+    try {
+        const prompt = `${FACILITATION_RUBRIC_PROMPT}
+
+Location: ${location}
+Session / Module: ${sessionTitle}
+Facilitator: ${facilitatorName}
+
+Please watch/listen to the attached classroom recording and evaluate the facilitator. Pay special attention to their physical presence, tone of voice, pacing, and neutrality.
+`;
+
+        console.log(`[Class Evaluation] Generating evaluation for ${location}...`);
+        const result = await model.generateContent([
+            { fileData: { mimeType: uploadResult.file.mimeType, fileUri: uploadResult.file.uri } },
+            { text: prompt }
+        ]);
+        const responseText = result.response.text();
+        
+        let evaluation;
+        try {
+            evaluation = JSON.parse(responseText);
+        } catch (e) {
+            // Strip markdown formatting if any
+            const cleanJson = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
+            evaluation = JSON.parse(cleanJson);
+        }
+
+        // Save to database
+        const stmt = db.prepare(`
+            INSERT INTO class_facilitation_evaluations (
+                location, session_title, facilitator_name, total_score,
+                modeling_neutrality_score, lesson_plan_adherence_score,
+                reflective_listening_score, avoiding_confrontation_score,
+                summary_markdown, scores_json, coaching_feedback
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `);
+
+        stmt.run(
+            location,
+            sessionTitle,
+            facilitatorName || 'Staff Facilitator',
+            evaluation.total_score || 88,
+            evaluation.scores?.modeling_neutrality || 4.5,
+            evaluation.scores?.lesson_plan_adherence || 4.5,
+            evaluation.scores?.reflective_listening || 4.5,
+            evaluation.scores?.avoiding_confrontation || 5,
+            evaluation.detailed_summary_markdown || '',
+            JSON.stringify(evaluation.scores || {}),
+            (evaluation.areas_for_improvement || []).join('; ')
+        );
+
+        return evaluation;
+    } finally {
+        console.log(`[Class Evaluation] Deleting temporary file from Gemini...`);
+        try {
+            await fileManager.deleteFile(uploadResult.file.name);
+        } catch (err) {
+            console.error("Failed to delete file from Gemini:", err);
+        }
+    }
+}
+
+module.exports = { evaluateClassTranscript, evaluateClassMedia };

@@ -2420,6 +2420,17 @@ app.get('/api/admin/evaluations', authenticateToken, requireRole('program_manage
     res.json(evals);
 });
 
+// 2-Week Average Stats
+app.get('/api/admin/evaluations/stats', authenticateToken, requireRole('program_manager', 'admin'), (req, res) => {
+    const stats = db.prepare(`
+        SELECT location, AVG(total_score) as avg_score, COUNT(*) as eval_count
+        FROM class_facilitation_evaluations
+        WHERE created_at >= date('now', '-14 days')
+        GROUP BY location
+    `).all();
+    res.json(stats);
+});
+
 app.post('/api/admin/evaluate-classes', authenticateToken, requireRole('program_manager', 'admin'), memoryUpload.single('audioOrTranscript'), async (req, res) => {
     try {
         const { location, sessionTitle, facilitatorName, transcriptText } = req.body;
@@ -3281,8 +3292,12 @@ app.listen(PORT, async () => {
         console.log('🔄 Checking and auto-syncing Briefcase caseload on startup...');
         await runCaseloadMigration();
         console.log('✅ Caseload auto-sync complete.');
+        
+        // Initialize Dropbox class evaluation cron jobs
+        const { initCronJobs } = require('./services/dropbox_evaluator');
+        initCronJobs();
     } catch (e) {
-        console.warn('Caseload auto-sync notice:', e.message);
+        console.warn('Startup sync notice:', e.message);
     }
 });
 

@@ -3718,28 +3718,61 @@ async function loadFacilitationEvaluations() {
     if (!container) return;
 
     try {
-        const res = await fetch('/api/admin/evaluations', {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const evals = await res.json();
+        // Fetch both evals and 2-week stats
+        const [evalsRes, statsRes] = await Promise.all([
+            fetch('/api/admin/evaluations', { headers: { 'Authorization': `Bearer ${token}` } }),
+            fetch('/api/admin/evaluations/stats', { headers: { 'Authorization': `Bearer ${token}` } })
+        ]);
+        
+        const evals = await evalsRes.json();
+        const stats = await statsRes.json();
+
+        // Build Stats Dashboard
+        const getStat = (loc) => {
+            const match = stats.find(s => s.location === loc);
+            return match && match.avg_score ? match.avg_score.toFixed(1) : '--';
+        };
+
+        const statsHtml = `
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;">
+                <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 16px; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 13px; color: #166534; font-weight: bold; text-transform: uppercase;">Charleston</div>
+                    <div style="font-size: 28px; font-weight: 900; color: #15803d; margin-top: 4px;">${getStat('Charleston')}</div>
+                    <div style="font-size: 11px; color: #166534; margin-top: 2px;">14-Day Average</div>
+                </div>
+                <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 16px; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 13px; color: #1e3a8a; font-weight: bold; text-transform: uppercase;">Columbia</div>
+                    <div style="font-size: 28px; font-weight: 900; color: #1d4ed8; margin-top: 4px;">${getStat('Columbia')}</div>
+                    <div style="font-size: 11px; color: #1e3a8a; margin-top: 2px;">14-Day Average</div>
+                </div>
+                <div style="background: #fdf4ff; border: 1px solid #fbcfe8; padding: 16px; border-radius: 8px; text-align: center;">
+                    <div style="font-size: 13px; color: #831843; font-weight: bold; text-transform: uppercase;">Spartanburg</div>
+                    <div style="font-size: 28px; font-weight: 900; color: #be185d; margin-top: 4px;">${getStat('Spartanburg')}</div>
+                    <div style="font-size: 11px; color: #831843; margin-top: 2px;">14-Day Average</div>
+                </div>
+            </div>
+        `;
 
         if (evals.length === 0) {
-            container.innerHTML = '<p class="text-slate">No class facilitation evaluations recorded yet. Click "+ Evaluate Class Session" to assess today\'s classroom recordings.</p>';
+            container.innerHTML = statsHtml + '<p class="text-slate">No class facilitation evaluations recorded yet.</p>';
             return;
         }
 
-        container.innerHTML = `
+        container.innerHTML = statsHtml + `
             <div style="display: flex; flex-direction: column; gap: 14px;">
                 ${evals.map(e => `
                     <div style="background: #ffffff; border: 1px solid var(--border); border-left: 4px solid var(--primary); border-radius: 8px; padding: 16px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 10px;">
                             <div>
                                 <strong style="font-size: 15px; color: var(--primary);">${e.session_title}</strong>
                                 <div style="font-size: 12px; color: var(--slate);">📍 Location: <strong>${e.location}</strong> • Facilitator: <strong>${e.facilitator_name}</strong> • Date: ${e.class_date}</div>
                             </div>
-                            <div style="text-align: right;">
-                                <div style="font-size: 22px; font-weight: 800; color: ${e.total_score >= 85 ? 'var(--success)' : 'var(--warning)'};">${Number(e.total_score).toFixed(1)} / 100</div>
-                                <div style="font-size: 11px; color: var(--slate);">Rubric Score</div>
+                            <div style="display: flex; align-items: center; gap: 16px;">
+                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="printClassEvaluation(${e.id})">🖨️ View & Print Full Report</button>
+                                <div style="text-align: right;">
+                                    <div style="font-size: 22px; font-weight: 800; color: ${e.total_score >= 85 ? 'var(--success)' : 'var(--warning)'};">${Number(e.total_score).toFixed(1)} / 100</div>
+                                    <div style="font-size: 11px; color: var(--slate);">Rubric Score</div>
+                                </div>
                             </div>
                         </div>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; background: #f8fafc; padding: 10px; border-radius: 6px; font-size: 12px; margin-bottom: 10px;">
@@ -3751,6 +3784,8 @@ async function loadFacilitationEvaluations() {
                         <div style="font-size: 13px; color: #334155;">
                             <strong>Coaching Feedback:</strong> ${e.coaching_feedback || 'Excellent adherence to lesson structure and neutrality.'}
                         </div>
+                        <!-- Hidden data for printing -->
+                        <div id="eval-markdown-${e.id}" class="hidden">${encodeURIComponent(e.summary_markdown)}</div>
                     </div>
                 `).join('')}
             </div>
@@ -3758,6 +3793,39 @@ async function loadFacilitationEvaluations() {
     } catch (e) {
         container.innerHTML = '<p>Unable to load evaluations.</p>';
     }
+}
+
+function printClassEvaluation(id) {
+    const rawData = document.getElementById(`eval-markdown-${id}`);
+    if (!rawData) return;
+    
+    const markdownText = decodeURIComponent(rawData.innerHTML);
+    const htmlContent = marked.parse(markdownText);
+    
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+        <html>
+        <head>
+            <title>Class Facilitation Evaluation</title>
+            <style>
+                body { font-family: 'Inter', sans-serif; padding: 40px; color: #1e293b; line-height: 1.6; max-width: 800px; margin: auto; }
+                h1, h2, h3 { color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; }
+                .metric-box { background: #f8fafc; border: 1px solid #cbd5e1; padding: 16px; border-radius: 8px; margin-bottom: 20px; }
+                @media print {
+                    @page { margin: 1in; }
+                    body { -webkit-print-color-adjust: exact; padding: 0; }
+                }
+            </style>
+        </head>
+        <body>
+            ${htmlContent}
+            <script>
+                setTimeout(() => { window.print(); window.close(); }, 500);
+            </script>
+        </body>
+        </html>
+    `);
+    printWindow.document.close();
 }
 
 function openFacilitationModal() {
