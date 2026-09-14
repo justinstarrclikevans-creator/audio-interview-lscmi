@@ -33,49 +33,40 @@ CREATE TABLE IF NOT EXISTS class_facilitation_evaluations (
 );
 `);
 
-const FACILITATION_RUBRIC_PROMPT = `
+function getFacilitatorScoringContext() {
+    try {
+        const guidePath = path.join(__dirname, 'data', 'Facilitator_Scoring_Guide.md');
+        const guide = fs.readFileSync(guidePath, 'utf8');
+        
+        const curriculumPath = path.join(__dirname, 'cbt_curriculum_exact.json');
+        const curriculum = fs.readFileSync(curriculumPath, 'utf8');
+
+        return `
 You are the Lead Facilitator Supervisor and Quality Assurance Director for Turn90 / First Shift.
-You are evaluating a classroom session transcript using the Turn90 CBT Facilitation Scoring Guide (20-item 100-point rubric):
+You are evaluating a classroom session using the OFFICIAL Turn90 CBT Facilitation Scoring Guide (provided below).
 
-Evaluation Dimensions (Each rated 1 to 5, total 100 pts max):
-1.0 Classroom Setup & Materials Readiness (5 pts)
-2.0 Preparedness & Content Mastery (5 pts)
-3.0 Follows Lesson Plan & Script Structure (5 pts)
-4.0 Understands Core Concepts (5 pts)
-5.0 Time Management & Pacing (5 pts)
-6.0 Enthusiasm & Dynamic Delivery (5 pts)
-7.0 Homework Review & Point System Utilization (5 pts)
-8.0 Main Activity / Role Plays Executed (5 pts)
-9.0 Models Target Behaviors & Professionalism (5 pts)
-10.0 Group Engagement & Broad Participation (5 pts)
-11.0 Enforces Rules & Expectations Consistently (5 pts)
-12.0 Physical Presence & Space Utilization (5 pts)
-13.0 Effective Use of Praise Statements (5 pts)
-14.0 Effective Use of Positive Affirmations (5 pts)
-15.0 Nonverbal Expressions of Approval (5 pts)
-16.0 Reflective Listening (Simple & Complex Reflections) (5 pts)
-17.0 Questioning Strategy & Open-ended Inquiries (5 pts)
-18.0 Getting Participant Buy-in on Key Takeaways (5 pts)
-19.0 Avoiding Overdirecting (Accepting diverse viewpoints without lecturing) (5 pts)
-20.0 Avoiding Confrontation / Modeling Neutrality (De-escalating resistance, zero power struggles) (5 pts)
+=== OFFICIAL FACILITATOR SCORING GUIDE ===
+${guide}
 
-Trainer Workbooks Reference Standards:
-- Modeling Neutrality (1.5): Never argue with anti-social statements; use neutrality and reflective questioning.
-- Following Lesson Plan (3.2): Clear transitions between Homework -> Intro -> Modeling -> Role Play -> Summary.
+=== CURRICULUM LESSON PLANS (REFERENCE FOR LESSON ADHERENCE) ===
+${curriculum}
 
-Return a valid JSON object matching:
+INSTRUCTIONS:
+Evaluate the facilitator based strictly on the above 20-item Scoring Guide. Reference the curriculum lesson plan to judge if they followed the script and setup correctly for the requested module.
+Provide detailed coaching feedback based on specific timestamps and behaviors observed. 
+
+Return ONLY valid JSON matching this exact structure:
 {
-  "total_score": 92.5,
+  "total_score": 85,
   "scores": {
-    "modeling_neutrality": 5,
-    "lesson_plan_adherence": 4.5,
-    "reflective_listening": 4.5,
-    "avoiding_confrontation": 5,
-    "praise_and_affirmations": 4,
-    "roleplay_execution": 4.5,
-    "time_management": 4.5
+    "modeling_neutrality": 4.5,
+    "lesson_plan_adherence": 3.0,
+    "reflective_listening": 4.0,
+    "avoiding_confrontation": 5.0,
+    "time_management": 4.0,
+    "enthusiasm": 5.0
   },
-  "strengths": [
+  "observed_strengths": [
     "Observed strength 1...",
     "Observed strength 2..."
   ],
@@ -87,11 +78,16 @@ Return a valid JSON object matching:
   "detailed_summary_markdown": "# Facilitation Evaluation Report\\n\\n..."
 }
 `;
+    } catch (e) {
+        console.warn("Could not load official scoring guide or curriculum, using fallback prompt.");
+        return `You are evaluating a classroom session transcript using the Turn90 CBT Facilitation Scoring Guide... (Fallback)`; 
+    }
+}
 
 async function evaluateClassTranscript(location, sessionTitle, facilitatorName, transcriptText) {
     if (!process.env.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is missing");
 
-    const prompt = `${FACILITATION_RUBRIC_PROMPT}
+    const prompt = `${getFacilitatorScoringContext()}
 
 Location: ${location}
 Session / Module: ${sessionTitle}
@@ -145,7 +141,7 @@ async function evaluateClassMedia(location, sessionTitle, facilitatorName, fileP
     });
 
     try {
-        const prompt = `${FACILITATION_RUBRIC_PROMPT}
+        const prompt = `${getFacilitatorScoringContext()}
 
 Location: ${location}
 Session / Module: ${sessionTitle}
