@@ -4026,8 +4026,12 @@ async function toggleRecording() {
     } else {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
-            audioChunks = [];
+            // Use low bitrate (32kbps) to keep file sizes small for long interviews
+            const recorderOptions = { mimeType: 'audio/webm' };
+            try { recorderOptions.audioBitsPerSecond = 32000; } catch(e) { /* browser may not support */ }
+            mediaRecorder = new MediaRecorder(stream, recorderOptions);
+            // Only reset chunks on first start, not on resume
+            if (!audioChunks || audioChunks.length === 0) audioChunks = [];
 
             mediaRecorder.ondataavailable = (e) => {
                 if (e.data.size > 0) audioChunks.push(e.data);
@@ -4076,30 +4080,81 @@ async function finishInterview() {
     if (mediaRecorder.state === 'recording') {
         mediaRecorder.stop();
         if (recognition) recognition.stop();
+        // Wait briefly for final ondataavailable to fire
+        await new Promise(resolve => setTimeout(resolve, 500));
     }
 
     const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-    const formData = new FormData();
-    formData.append('audio', audioBlob, `${currentUser.name}_interview.webm`);
-    formData.append('participantName', currentUser.name);
-    formData.append('participantLocation', currentUser.location || 'Charleston');
-    formData.append('transcript', fullTranscript || 'Audio assessment recorded.');
+    const audioSizeMB = (audioBlob.size / (1024 * 1024)).toFixed(1);
+    
+    const btn = document.getElementById('btn-submit-interview');
+    btn.disabled = true;
 
+    // --- Attempt 1: Upload with audio ---
+    btn.innerText = `Uploading (${audioSizeMB} MB)...`;
+    
     try {
-        const btn = document.getElementById('btn-submit-interview');
-        btn.disabled = true;
-        btn.innerText = 'Uploading & Generating Assessment...';
+        const formData = new FormData();
+        formData.append('audio', audioBlob, `${currentUser.name}_interview.webm`);
+        formData.append('participantName', currentUser.name);
+        formData.append('participantLocation', currentUser.location || 'Charleston');
+        formData.append('transcript', fullTranscript || 'Audio assessment recorded.');
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 55000); // 55s timeout
 
         const res = await fetch('/api/upload-audio', {
             method: 'POST',
-            body: formData
+            body: formData,
+            signal: controller.signal
         });
+        clearTimeout(timeoutId);
         const data = await res.json();
+        
+        if (!res.ok) throw new Error(data.error || 'Upload failed');
+        
         alert('Interview submitted successfully! AI Scoring draft is generating.');
         closeModal('modal-interview');
         loadFsDashboard();
+        return;
     } catch (err) {
-        alert('Submission failed: ' + err.message);
+        // If it was a timeout/network error, try transcript-only fallback
+        if (err.name === 'AbortError' || err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+            console.warn('Audio upload timed out, falling back to transcript-only upload...');
+            btn.innerText = 'Audio too large. Uploading transcript only...';
+        } else {
+            // Non-timeout error — still try transcript fallback
+            console.error('Upload error, trying transcript-only fallback:', err);
+            btn.innerText = 'Retrying without audio...';
+        }
+    }
+
+    // --- Attempt 2: Transcript-only fallback (much smaller payload) ---
+    try {
+        const fallbackData = new FormData();
+        // Create a tiny placeholder audio so server doesn't reject
+        const silentBlob = new Blob([new Uint8Array(100)], { type: 'audio/webm' });
+        fallbackData.append('audio', silentBlob, `${currentUser.name}_interview.webm`);
+        fallbackData.append('participantName', currentUser.name);
+        fallbackData.append('participantLocation', currentUser.location || 'Charleston');
+        fallbackData.append('transcript', fullTranscript || 'Audio assessment recorded.');
+        fallbackData.append('transcriptOnly', 'true');
+
+        const res2 = await fetch('/api/upload-audio', {
+            method: 'POST',
+            body: fallbackData
+        });
+        const data2 = await res2.json();
+        
+        if (!res2.ok) throw new Error(data2.error || 'Fallback upload failed');
+        
+        alert('Interview transcript submitted successfully! The audio file was too large to upload, but the AI assessment will be generated from your transcript.');
+        closeModal('modal-interview');
+        loadFsDashboard();
+    } catch (err2) {
+        btn.disabled = false;
+        btn.innerText = '📤 Submit Interview';
+        alert('Submission failed: ' + err2.message + '\n\nPlease check your internet connection and try again. If the problem persists, ask your Program Manager to import the interview manually.');
     }
 }
 

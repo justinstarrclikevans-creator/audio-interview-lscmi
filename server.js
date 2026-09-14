@@ -2866,22 +2866,29 @@ app.post('/api/upload-audio', memoryUpload.single('audio'), async (req, res) => 
         const name = req.body.participantName || 'Unknown';
         const location = req.body.participantLocation || 'Unknown';
         const transcriptText = req.body.transcript || 'No transcript available.';
+        const isTranscriptOnly = req.body.transcriptOnly === 'true';
         
+        const audioSizeMB = (audioBuffer.length / (1024 * 1024)).toFixed(2);
+        console.log(`Upload received: ${name} (${location}) | Audio: ${audioSizeMB} MB | Transcript-only: ${isTranscriptOnly}`);
+
         const timestamp = Date.now();
         const safeName = name.replace(/[^a-zA-Z0-9]/g, '');
         const filePrefix = `${timestamp}_${safeName}`;
 
-        fs.writeFileSync(path.join(dataDir, `${filePrefix}_audio.webm`), audioBuffer);
+        // Save audio only if it's a real recording (not a placeholder)
+        if (!isTranscriptOnly && audioBuffer.length > 200) {
+            fs.writeFileSync(path.join(dataDir, `${filePrefix}_audio.webm`), audioBuffer);
+        }
         fs.writeFileSync(path.join(dataDir, `${filePrefix}_transcript.txt`), transcriptText);
 
+        // Send email with transcript only (skip audio attachment to avoid size limits)
         const transcriptBuffer = Buffer.from(transcriptText, 'utf8');
         resend.emails.send({
             from: 'Interview App <onboarding@resend.dev>', 
             to: process.env.EMAIL_USER || 'test@example.com', 
             subject: `New Interview Recording: ${name} (${location})`,
-            text: `Please find the attached WebM audio recording and text transcript from the interview app.\n\nParticipant: ${name}\nLocation: ${location}`,
+            text: `Interview transcript from the First Shift portal.\n\nParticipant: ${name}\nLocation: ${location}\nAudio uploaded: ${isTranscriptOnly ? 'No (transcript-only fallback)' : `Yes (${audioSizeMB} MB)`}`,
             attachments: [
-                { filename: originalName, content: audioBuffer },
                 { filename: `${name}_${location}_Transcript.txt`, content: transcriptBuffer }
             ]
         }).catch(err => console.error("Resend error:", err));
