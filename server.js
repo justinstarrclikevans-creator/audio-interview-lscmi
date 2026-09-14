@@ -2880,18 +2880,6 @@ app.post('/api/upload-audio', memoryUpload.single('audio'), async (req, res) => 
             fs.writeFileSync(path.join(dataDir, `${filePrefix}_audio.webm`), audioBuffer);
         }
         fs.writeFileSync(path.join(dataDir, `${filePrefix}_transcript.txt`), transcriptText);
-
-        // Send email with transcript only (skip audio attachment to avoid size limits)
-        const transcriptBuffer = Buffer.from(transcriptText, 'utf8');
-        resend.emails.send({
-            from: 'Interview App <onboarding@resend.dev>', 
-            to: process.env.EMAIL_USER || 'test@example.com', 
-            subject: `New Interview Recording: ${name} (${location})`,
-            text: `Interview transcript from the First Shift portal.\n\nParticipant: ${name}\nLocation: ${location}\nAudio uploaded: ${isTranscriptOnly ? 'No (transcript-only fallback)' : `Yes (${audioSizeMB} MB)`}`,
-            attachments: [
-                { filename: `${name}_${location}_Transcript.txt`, content: transcriptBuffer }
-            ]
-        }).catch(err => console.error("Resend error:", err));
         
         res.status(200).json({ message: 'Audio uploaded successfully. Processing in background...', filePrefix });
 
