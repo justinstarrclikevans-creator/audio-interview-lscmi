@@ -4,7 +4,7 @@ const path = require('path');
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'dummy_key');
 const model = genAI.getGenerativeModel({ 
-    model: "gemini-3.6-flash", 
+    model: "gemini-1.5-pro", 
     generationConfig: { 
         responseMimeType: "application/json",
         maxOutputTokens: 65536
@@ -182,7 +182,7 @@ async function runPhase1WithAudio(audioBuffer, mimeType, clientName, location, a
         // Stage 1: Full Verbatim Audio Transcription
         console.log(`[Audio Pipeline] Transcribing complete audio recording for ${clientName}...`);
         const transcriptionModel = genAI.getGenerativeModel({
-            model: "gemini-3.6-flash",
+            model: "gemini-1.5-pro",
             generationConfig: { maxOutputTokens: 65536, temperature: 0.1 }
         });
 
@@ -193,15 +193,18 @@ CRITICAL TRANSCRIPTION REQUIREMENTS:
 - Label every single speaker turn clearly as "Interviewer:" or "${clientName}:" (or "Participant:").
 - Include every question asked, all participant dialogue, direct quotes, and explanations.
 - Do NOT summarize, truncate, condense, or omit any section of the conversation.
-- Return ONLY the clean, verbatim dialogue transcript.`;
+- If the audio is unclear, make your absolute best phonetic guess and mark it with [unclear].`;
 
-        const transResult = await transcriptionModel.generateContent([
-            audioPart,
-            { text: transcriptionPrompt }
-        ]);
+        const transcriptionResult = await transcriptionModel.generateContent([audioPart, { text: transcriptionPrompt }]);
+        const transcriptText = transcriptionResult.response.text();
+        console.log(`[Audio Pipeline] Transcription complete. Length: ${transcriptText.length} characters.`);
 
-        const transcriptText = transResult.response.text().trim();
-        console.log(`[Audio Pipeline] Transcription complete (${transcriptText.length} characters, ~${transcriptText.split('\\n').length} lines).`);
+        // Stage 2: LS/CMI Information Extraction
+        console.log(`[Audio Pipeline] Extracting LS/CMI scoring data from transcript for ${clientName}...`);
+        const extractionModel = genAI.getGenerativeModel({
+            model: "gemini-1.5-pro",
+            generationConfig: { responseMimeType: "application/json" }
+        });
 
         // Stage 2: Comprehensive 158-Question Interview Guide & Draft Scoring Form
         console.log(`[Audio Pipeline] Generating full 158-question Interview Guide and Draft Scoring Form for ${clientName}...`);

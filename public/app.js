@@ -4117,27 +4117,10 @@ async function toggleRecording() {
 }
 
 function startSpeechRecognition() {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) return;
-
-    recognition = new SpeechRecognition();
-    recognition.continuous = true;
-    recognition.interimResults = true;
-
-    recognition.onresult = (e) => {
-        let interim = '';
-        for (let i = e.resultIndex; i < e.results.length; ++i) {
-            if (e.results[i].isFinal) {
-                fullTranscript += e.results[i][0].transcript + ' ';
-            } else {
-                interim += e.results[i][0].transcript;
-            }
-        }
-        document.getElementById('int-transcript-box').innerText = fullTranscript + (interim ? ` (${interim})` : '');
-    };
-
-    recognition.onerror = () => {};
-    recognition.start();
+    // Live dictation (webkitSpeechRecognition) has been disabled per user request
+    // to avoid confusing, inaccurate text on the screen.
+    // The high-fidelity transcription is handled by Gemini 1.5 Pro on the backend.
+    document.getElementById('int-transcript-box').innerText = "Recording in progress...\n\n(Live on-screen dictation is turned off. A highly accurate final transcript will be generated automatically when you click 'Finish Interview').";
 }
 
 async function finishInterview() {
