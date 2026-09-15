@@ -2431,6 +2431,21 @@ app.get('/api/admin/evaluations/stats', authenticateToken, requireRole('program_
     res.json(stats);
 });
 
+// Force-Sync Dropbox Evaluations (Manual Trigger)
+app.post('/api/admin/evaluations/force-sync', authenticateToken, requireRole('program_manager', 'admin'), async (req, res) => {
+    try {
+        const { runDailyEvaluation } = require('./services/dropbox_evaluator');
+        // Do not await this if it takes a long time, but we should return a success message so it doesn't time out the browser.
+        // Wait, for manual triggers, let's await it so the user knows it finished.
+        // Actually, since it uploads multiple videos, it could take 3-5 minutes and Render proxies timeout at 100 seconds.
+        // We will start it asynchronously and return immediately.
+        runDailyEvaluation().catch(err => console.error("Force sync failed:", err));
+        res.json({ success: true, message: 'Class evaluation background job started. This may take 2-5 minutes.' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 app.post('/api/admin/evaluate-classes', authenticateToken, requireRole('program_manager', 'admin'), memoryUpload.single('audioOrTranscript'), async (req, res) => {
     try {
         const { location, sessionTitle, facilitatorName, transcriptText } = req.body;

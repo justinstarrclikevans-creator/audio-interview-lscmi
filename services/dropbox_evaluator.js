@@ -150,10 +150,13 @@ async function runDailyEvaluation() {
 }
 
 function initCronJobs() {
-    // Run at 11:00 PM (23:00) every weekday (Monday-Friday)
+    // Run at 11:00 PM (23:00) Eastern Time every weekday (Monday-Friday)
     // Format: 'minute hour dayOfMonth month dayOfWeek'
     cron.schedule('0 23 * * 1-5', async () => {
         await runDailyEvaluation();
+    }, {
+        scheduled: true,
+        timezone: "America/New_York"
     });
 
     console.log("[Cron] Scheduled Dropbox daily class evaluation job for 11 PM Mon-Fri.");

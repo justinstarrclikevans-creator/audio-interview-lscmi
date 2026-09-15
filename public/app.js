@@ -3712,6 +3712,34 @@ async function handleSupervisorFeedbackSubmit(e) {
 // -------------------------------------------------------------
 // CLASS FACILITATION EVALUATION LOGIC
 // -------------------------------------------------------------
+async function forceSyncEvaluations() {
+    const token = localStorage.getItem('fs_token');
+    const btn = document.querySelector('button[onclick="forceSyncEvaluations()"]');
+    if(btn) {
+        btn.disabled = true;
+        btn.innerText = '🔄 Syncing... (This may take 5 mins)';
+    }
+    try {
+        const res = await fetch('/api/admin/evaluations/force-sync', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+            alert('Dropbox synchronization started successfully. The server is downloading the videos and grading them in the background. Check back here in 5-10 minutes to see the new evaluations.');
+        } else {
+            alert('Sync failed: ' + data.error);
+        }
+    } catch (e) {
+        alert('Sync error: ' + e.message);
+    } finally {
+        if(btn) {
+            btn.disabled = false;
+            btn.innerText = '🔄 Fetch Missing Dropbox Classes';
+        }
+    }
+}
+
 async function loadFacilitationEvaluations() {
     const token = localStorage.getItem('fs_token');
     const container = document.getElementById('pm-facilitation-evals-list');

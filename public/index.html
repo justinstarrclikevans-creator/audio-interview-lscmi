@@ -1048,12 +1048,15 @@
 
             <!-- Class Facilitation Evaluations Section -->
             <div class="section-card mt-8">
-                <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                     <div>
                         <h2>Class Facilitation Evaluations & Coaching Feedback</h2>
                         <p>Automated QA scoring across the 20-item Turn90 Facilitation Scoring Guide (Modeling Neutrality, Pacing, Roleplays, Engagement).</p>
                     </div>
-                    <button class="btn btn-primary" onclick="openFacilitationModal()">+ Evaluate Class Session</button>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-outline" onclick="forceSyncEvaluations()">🔄 Fetch Missing Dropbox Classes</button>
+                        <button class="btn btn-primary" onclick="openFacilitationModal()">+ Evaluate Class Session</button>
+                    </div>
                 </div>
                 <div id="pm-facilitation-evals-list" class="mt-4">
                     <!-- Loaded dynamically -->
