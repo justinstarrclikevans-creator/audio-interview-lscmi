@@ -6,7 +6,8 @@ const { pipeline } = require('stream/promises');
 const { Readable } = require('stream');
 const { evaluateClassMedia } = require('../facilitation_evaluator');
 
-const TEMP_DIR = path.join(__dirname, '..', 'data', 'temp_dropbox');
+const os = require('os');
+const TEMP_DIR = path.join(os.tmpdir(), 'turn90_temp_dropbox');
 
 // Define the centers and their corresponding Dropbox paths
 const CENTERS = [
@@ -147,12 +148,25 @@ async function runDailyEvaluation() {
 
             const localMediaFiles = [];
             try {
+                const { GoogleAIFileManager } = require("@google/generative-ai/server");
+                const fileManager = new GoogleAIFileManager(process.env.GEMINI_API_KEY);
+
                 for (const file of dateFiles) {
                     const localPath = path.join(TEMP_DIR, `${Date.now()}_${file.name}`);
                     if (global.syncStatus) global.syncStatus.log = `Downloading ${file.name}...`;
                     console.log(`[Dropbox Evaluator] Downloading ${file.name}...`);
                     await downloadLargeFile(dbx, file.path_lower, localPath);
-                    localMediaFiles.push({ path: localPath, mimeType: getMimeType(file.name) });
+                    
+                    if (global.syncStatus) global.syncStatus.log = `Uploading ${file.name} to Gemini...`;
+                    console.log(`[Dropbox Evaluator] Uploading ${file.name} to Gemini to free space...`);
+                    const uploadResult = await fileManager.uploadFile(localPath, { mimeType: getMimeType(file.name) });
+                    localMediaFiles.push(uploadResult);
+                    
+                    // INSTANT CLEANUP to prevent ENOSPC on Render
+                    if (fs.existsSync(localPath)) {
+                        fs.unlinkSync(localPath);
+                        console.log(`[Dropbox Evaluator] Deleted local temp file ${localPath} after upload.`);
+                    }
                 }
 
                 if (global.syncStatus) global.syncStatus.log = `Grading ${sessionTitle}...`;
@@ -165,12 +179,6 @@ async function runDailyEvaluation() {
             } catch (err) {
                 console.error(`[Dropbox Evaluator] Failed to process ${sessionTitle}:`, err);
                 results.errors.push(`${sessionTitle}: ${err.message}`);
-            } finally {
-                for (const mf of localMediaFiles) {
-                    if (fs.existsSync(mf.path)) {
-                        fs.unlinkSync(mf.path);
-                    }
-                }
             }
         }
     }

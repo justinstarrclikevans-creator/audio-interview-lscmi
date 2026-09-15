@@ -171,11 +171,22 @@ async function evaluateClassMedia(location, sessionTitle, facilitatorName, media
     const uploadResults = [];
 
     for (const mf of filesToUpload) {
-        const uploadResult = await fileManager.uploadFile(mf.path, {
-            mimeType: mf.mimeType || 'video/mp4',
-            displayName: `${location}_Class_Evaluation_${Date.now()}`
-        });
-        uploadResults.push(uploadResult);
+        if (mf.file && mf.file.uri) {
+            // Already uploaded to Gemini
+            uploadResults.push(mf);
+        } else {
+            const uploadResult = await fileManager.uploadFile(mf.path, {
+                mimeType: mf.mimeType || 'video/mp4',
+                displayName: `${location}_Class_Evaluation_${Date.now()}`
+            });
+            uploadResults.push(uploadResult);
+            
+            // Immediately delete local file to free disk space
+            const fs = require('fs');
+            if (fs.existsSync(mf.path)) {
+                try { fs.unlinkSync(mf.path); } catch(e) {}
+            }
+        }
     }
     
     let uploadedResources = [];

@@ -161,9 +161,10 @@ async function runPhase1WithAudio(audioBuffer, mimeType, clientName, location, a
     const fileManager = new GoogleAIFileManager(process.env.GEMINI_API_KEY);
 
     let tempFilePath = null;
+    const os = require('os');
     try {
         if (audioBuffer.length > 20 * 1024 * 1024) {
-            tempFilePath = path.join(__dirname, 'data', `temp_audio_${Date.now()}.webm`);
+            tempFilePath = path.join(os.tmpdir(), `temp_audio_${Date.now()}.webm`);
             fs.writeFileSync(tempFilePath, audioBuffer);
             const uploadResult = await fileManager.uploadFile(tempFilePath, {
                 mimeType: mimeType || 'audio/webm',
