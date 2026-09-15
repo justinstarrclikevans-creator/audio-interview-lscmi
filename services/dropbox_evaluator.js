@@ -88,7 +88,7 @@ function getMimeType(filename) {
 async function runDailyEvaluation() {
     if (!process.env.DROPBOX_APP_KEY || !process.env.DROPBOX_APP_SECRET || !process.env.DROPBOX_REFRESH_TOKEN) {
         console.warn("[Dropbox Evaluator] Missing Dropbox credentials in .env. Skipping daily evaluation.");
-        return;
+        return { error: "Missing Dropbox credentials in Render Environment Variables. Please add DROPBOX_APP_KEY, DROPBOX_APP_SECRET, and DROPBOX_REFRESH_TOKEN." };
     }
 
     console.log("[Dropbox Evaluator] Starting daily class facilitation evaluation job...");
@@ -110,6 +110,8 @@ async function runDailyEvaluation() {
     const yesterday = yDate.toISOString().split('T')[0];
 
     const { db } = require('../db');
+    
+    const results = { processed: 0, skipped: 0, errors: [], totalFound: 0 };
 
     for (const center of CENTERS) {
         console.log(`[Dropbox Evaluator] Checking folder for ${center.name} (${center.folderPath}) for dates: ${today}, ${yesterday}`);
@@ -122,6 +124,7 @@ async function runDailyEvaluation() {
         }
 
         console.log(`[Dropbox Evaluator] Found ${filesToProcess.length} recordings for ${center.name}. Processing...`);
+        results.totalFound += filesToProcess.length;
 
         for (const file of filesToProcess) {
             // Format the title nicely based on the filename
@@ -131,6 +134,7 @@ async function runDailyEvaluation() {
             const existingEval = db.prepare('SELECT id FROM class_facilitation_evaluations WHERE session_title = ? AND location = ?').get(sessionTitle, center.name);
             if (existingEval) {
                 console.log(`[Dropbox Evaluator] Skipping ${file.name} - already evaluated.`);
+                results.skipped++;
                 continue;
             }
 
@@ -145,9 +149,11 @@ async function runDailyEvaluation() {
                 // Evaluate
                 await evaluateClassMedia(center.name, sessionTitle, 'Staff Facilitator', localPath, mimeType);
                 console.log(`[Dropbox Evaluator] Successfully evaluated ${file.name} for ${center.name}.`);
+                results.processed++;
 
             } catch (err) {
                 console.error(`[Dropbox Evaluator] Failed to process ${file.name}:`, err);
+                results.errors.push(`${file.name}: ${err.message}`);
             } finally {
                 // Cleanup local temp file
                 if (fs.existsSync(localPath)) {
@@ -158,7 +164,8 @@ async function runDailyEvaluation() {
         }
     }
     
-    console.log("[Dropbox Evaluator] Daily evaluation job completed.");
+    console.log("[Dropbox Evaluator] Daily evaluation job completed.", results);
+    return results;
 }
 
 function initCronJobs() {

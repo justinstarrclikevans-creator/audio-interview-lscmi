@@ -3726,7 +3726,11 @@ async function forceSyncEvaluations() {
         });
         const data = await res.json();
         if (data.success) {
-            alert('Dropbox synchronization started successfully. The server is downloading the videos and grading them in the background. Check back here in 5-10 minutes to see the new evaluations.');
+            let msg = `Sync complete!\nFound: ${data.result?.totalFound || 0}\nProcessed: ${data.result?.processed || 0}\nSkipped: ${data.result?.skipped || 0}`;
+            if (data.result?.error) msg += `\nError: ${data.result.error}`;
+            if (data.result?.errors?.length) msg += `\nErrors: ${data.result.errors.length}`;
+            alert(msg);
+            loadFacilitationEvaluations();
         } else {
             alert('Sync failed: ' + data.error);
         }
