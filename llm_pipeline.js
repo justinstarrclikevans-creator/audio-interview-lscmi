@@ -157,20 +157,27 @@ async function runPhase1WithAudio(audioBuffer, mimeType, clientName, location, a
 
     // Package audio: inline base64 if <= 20MB, or GoogleAIFileManager if > 20MB
     let audioPart;
-    const { GoogleAIFileManager } = require('@google/generative-ai/server');
-    const fileManager = new GoogleAIFileManager(process.env.GEMINI_API_KEY);
-
-    let tempFilePath = null;
-    const os = require('os');
+    let uploadedFileName = null;
     try {
         if (audioBuffer.length > 20 * 1024 * 1024) {
-            tempFilePath = path.join(os.tmpdir(), `temp_audio_${Date.now()}.webm`);
-            fs.writeFileSync(tempFilePath, audioBuffer);
-            const uploadResult = await fileManager.uploadFile(tempFilePath, {
-                mimeType: mimeType || 'audio/webm',
-                displayName: `${clientName}_interview_audio`
+            console.log(`[Audio Pipeline] Audio is > 20MB, uploading via Gemini REST API to bypass disk...`);
+            const url = `https://generativelanguage.googleapis.com/upload/v1beta/files?key=${process.env.GEMINI_API_KEY}`;
+            const res = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-Goog-Upload-Protocol': 'raw',
+                    'X-Goog-Upload-Command': 'start, upload, finalize',
+                    'X-Goog-Upload-Header-Content-Length': audioBuffer.length.toString(),
+                    'X-Goog-Upload-File-Name': `${clientName}_interview_audio_${Date.now()}`,
+                    'Content-Type': mimeType || 'audio/webm'
+                },
+                body: audioBuffer
             });
-            audioPart = { fileData: { mimeType: uploadResult.file.mimeType, fileUri: uploadResult.file.uri } };
+            const data = await res.json();
+            if (data.error) throw new Error(data.error.message);
+            
+            uploadedFileName = data.file.name;
+            audioPart = { fileData: { mimeType: data.file.mimeType, fileUri: data.file.uri } };
         } else {
             audioPart = {
                 inlineData: {
@@ -217,8 +224,14 @@ CRITICAL TRANSCRIPTION REQUIREMENTS:
             draft_scoring_form: phase1Output.draft_scoring_form
         };
     } finally {
-        if (tempFilePath && fs.existsSync(tempFilePath)) {
-            try { fs.unlinkSync(tempFilePath); } catch(e) {}
+        if (uploadedFileName) {
+            try {
+                const deleteUrl = `https://generativelanguage.googleapis.com/v1beta/${uploadedFileName}?key=${process.env.GEMINI_API_KEY}`;
+                await fetch(deleteUrl, { method: 'DELETE' });
+                console.log(`[Audio Pipeline] Deleted temporary audio file from Gemini: ${uploadedFileName}`);
+            } catch(e) {
+                console.error(`[Audio Pipeline] Failed to delete temporary audio file:`, e);
+            }
         }
     }
 }
