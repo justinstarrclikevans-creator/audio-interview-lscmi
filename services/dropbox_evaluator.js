@@ -15,7 +15,7 @@ const CENTERS = [
     { name: 'Charleston', folderPath: '/CHS QuickTime' }
 ];
 
-async function listFilesByDate(dbx, folderPath, dateStr) {
+async function listFilesByDate(dbx, folderPath, dateStrs) {
     const matchedFiles = [];
     try {
         let response = await dbx.filesListFolder({
@@ -38,7 +38,7 @@ async function listFilesByDate(dbx, folderPath, dateStr) {
 
                 // Check date string (YYYY-MM-DD)
                 const fileDateStr = new Date(entry.server_modified).toISOString().split('T')[0];
-                if (fileDateStr === dateStr) {
+                if (dateStrs.includes(fileDateStr)) {
                     matchedFiles.push(entry);
                 }
             }
@@ -103,22 +103,37 @@ async function runDailyEvaluation() {
         refreshToken: process.env.DROPBOX_REFRESH_TOKEN
     });
 
-    // Get today's date in YYYY-MM-DD format
+    // Get today and yesterday's dates
     const today = new Date().toISOString().split('T')[0];
+    const yDate = new Date();
+    yDate.setDate(yDate.getDate() - 1);
+    const yesterday = yDate.toISOString().split('T')[0];
+
+    const { db } = require('../db');
 
     for (const center of CENTERS) {
-        console.log(`[Dropbox Evaluator] Checking folder for ${center.name} (${center.folderPath}) for date: ${today}`);
+        console.log(`[Dropbox Evaluator] Checking folder for ${center.name} (${center.folderPath}) for dates: ${today}, ${yesterday}`);
         
-        const filesToProcess = await listFilesByDate(dbx, center.folderPath, today);
+        const filesToProcess = await listFilesByDate(dbx, center.folderPath, [today, yesterday]);
         
         if (filesToProcess.length === 0) {
-            console.log(`[Dropbox Evaluator] No recordings found today for ${center.name}.`);
+            console.log(`[Dropbox Evaluator] No recordings found for ${center.name}.`);
             continue;
         }
 
         console.log(`[Dropbox Evaluator] Found ${filesToProcess.length} recordings for ${center.name}. Processing...`);
 
         for (const file of filesToProcess) {
+            // Format the title nicely based on the filename
+            const sessionTitle = file.name.replace(/\.[^/.]+$/, "").replace(/_/g, " ");
+
+            // Prevent duplicate processing
+            const existingEval = db.prepare('SELECT id FROM class_facilitation_evaluations WHERE session_title = ? AND location = ?').get(sessionTitle, center.name);
+            if (existingEval) {
+                console.log(`[Dropbox Evaluator] Skipping ${file.name} - already evaluated.`);
+                continue;
+            }
+
             const localPath = path.join(TEMP_DIR, `${Date.now()}_${file.name}`);
             try {
                 console.log(`[Dropbox Evaluator] Downloading ${file.name} to local temp storage...`);
@@ -127,9 +142,6 @@ async function runDailyEvaluation() {
                 console.log(`[Dropbox Evaluator] Sending ${file.name} to Gemini for evaluation...`);
                 const mimeType = getMimeType(file.name);
                 
-                // Format the title nicely based on the filename
-                const sessionTitle = file.name.replace(/\.[^/.]+$/, "").replace(/_/g, " ");
-
                 // Evaluate
                 await evaluateClassMedia(center.name, sessionTitle, 'Staff Facilitator', localPath, mimeType);
                 console.log(`[Dropbox Evaluator] Successfully evaluated ${file.name} for ${center.name}.`);
