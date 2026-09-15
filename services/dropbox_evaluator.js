@@ -127,41 +127,49 @@ async function runDailyEvaluation() {
         console.log(`[Dropbox Evaluator] Found ${filesToProcess.length} recordings for ${center.name}. Processing...`);
         results.totalFound += filesToProcess.length;
 
+        const filesByDate = {};
         for (const file of filesToProcess) {
-            // Format the title nicely based on the filename
-            const sessionTitle = file.name.replace(/\.[^/.]+$/, "").replace(/_/g, " ");
+            const dateStr = new Date(file.server_modified).toISOString().split('T')[0];
+            if (!filesByDate[dateStr]) filesByDate[dateStr] = [];
+            filesByDate[dateStr].push(file);
+        }
 
-            // Prevent duplicate processing
+        for (const dateStr of Object.keys(filesByDate)) {
+            const dateFiles = filesByDate[dateStr];
+            const sessionTitle = `Class Sessions - ${dateStr}`;
+
             const existingEval = db.prepare('SELECT id FROM class_facilitation_evaluations WHERE session_title = ? AND location = ?').get(sessionTitle, center.name);
             if (existingEval) {
-                console.log(`[Dropbox Evaluator] Skipping ${file.name} - already evaluated.`);
-                results.skipped++;
+                console.log(`[Dropbox Evaluator] Skipping ${sessionTitle} - already evaluated.`);
+                results.skipped += dateFiles.length;
                 continue;
             }
 
-            const localPath = path.join(TEMP_DIR, `${Date.now()}_${file.name}`);
+            const localMediaFiles = [];
             try {
-                if (global.syncStatus) global.syncStatus.log = `Downloading ${file.name}...`;
-                console.log(`[Dropbox Evaluator] Downloading ${file.name} to local temp storage...`);
-                await downloadLargeFile(dbx, file.path_lower, localPath);
+                for (const file of dateFiles) {
+                    const localPath = path.join(TEMP_DIR, `${Date.now()}_${file.name}`);
+                    if (global.syncStatus) global.syncStatus.log = `Downloading ${file.name}...`;
+                    console.log(`[Dropbox Evaluator] Downloading ${file.name}...`);
+                    await downloadLargeFile(dbx, file.path_lower, localPath);
+                    localMediaFiles.push({ path: localPath, mimeType: getMimeType(file.name) });
+                }
 
-                if (global.syncStatus) global.syncStatus.log = `Grading ${file.name}...`;
-                console.log(`[Dropbox Evaluator] Sending ${file.name} to Gemini for evaluation...`);
-                const mimeType = getMimeType(file.name);
+                if (global.syncStatus) global.syncStatus.log = `Grading ${sessionTitle}...`;
+                console.log(`[Dropbox Evaluator] Sending ${sessionTitle} (${dateFiles.length} files) to Gemini...`);
                 
-                // Evaluate
-                await evaluateClassMedia(center.name, sessionTitle, 'Staff Facilitator', localPath, mimeType);
-                console.log(`[Dropbox Evaluator] Successfully evaluated ${file.name} for ${center.name}.`);
-                results.processed++;
+                await evaluateClassMedia(center.name, sessionTitle, 'Staff Facilitator', localMediaFiles);
+                console.log(`[Dropbox Evaluator] Successfully evaluated ${sessionTitle}.`);
+                results.processed += dateFiles.length;
 
             } catch (err) {
-                console.error(`[Dropbox Evaluator] Failed to process ${file.name}:`, err);
-                results.errors.push(`${file.name}: ${err.message}`);
+                console.error(`[Dropbox Evaluator] Failed to process ${sessionTitle}:`, err);
+                results.errors.push(`${sessionTitle}: ${err.message}`);
             } finally {
-                // Cleanup local temp file
-                if (fs.existsSync(localPath)) {
-                    fs.unlinkSync(localPath);
-                    console.log(`[Dropbox Evaluator] Deleted local temp file ${localPath}.`);
+                for (const mf of localMediaFiles) {
+                    if (fs.existsSync(mf.path)) {
+                        fs.unlinkSync(mf.path);
+                    }
                 }
             }
         }

@@ -3712,6 +3712,25 @@ async function handleSupervisorFeedbackSubmit(e) {
 // -------------------------------------------------------------
 // CLASS FACILITATION EVALUATION LOGIC
 // -------------------------------------------------------------
+async function deleteClassEvaluation(id) {
+    if (!confirm('Are you sure you want to delete this evaluation?')) return;
+    const token = localStorage.getItem('fs_token');
+    try {
+        const res = await fetch(`/api/admin/evaluations/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+            loadFacilitationEvaluations();
+        } else {
+            alert('Failed to delete: ' + data.error);
+        }
+    } catch (e) {
+        alert('Error deleting evaluation: ' + e.message);
+    }
+}
+
 async function forceSyncEvaluations() {
     const token = localStorage.getItem('fs_token');
     const btn = document.querySelector('button[onclick="forceSyncEvaluations()"]');
@@ -3824,6 +3843,7 @@ async function loadFacilitationEvaluations() {
                             </div>
                             <div style="display: flex; align-items: center; gap: 16px;">
                                 <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="printClassEvaluation(${e.id})">🖨️ View & Print Full Report</button>
+                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; color: #ef4444; border-color: #fca5a5;" onclick="deleteClassEvaluation(${e.id})">🗑️ Delete</button>
                                 <div style="text-align: right;">
                                     <div style="font-size: 22px; font-weight: 800; color: ${e.total_score >= 85 ? 'var(--success)' : 'var(--warning)'};">${Number(e.total_score).toFixed(1)} / 100</div>
                                     <div style="font-size: 11px; color: var(--slate);">Rubric Score</div>

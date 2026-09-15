@@ -158,17 +158,25 @@ async function uploadFacilitationResources(fileManager) {
     return uploadedResources;
 }
 
-async function evaluateClassMedia(location, sessionTitle, facilitatorName, filePath, mimeType) {
+async function evaluateClassMedia(location, sessionTitle, facilitatorName, mediaFiles) {
     if (!process.env.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is missing");
 
     const { GoogleAIFileManager } = require("@google/generative-ai/server");
     const fileManager = new GoogleAIFileManager(process.env.GEMINI_API_KEY);
 
     console.log(`[Class Evaluation] Uploading media to Gemini for ${location}...`);
-    const uploadResult = await fileManager.uploadFile(filePath, {
-        mimeType: mimeType || 'video/mp4',
-        displayName: `${location}_Class_Evaluation`
-    });
+    
+    // Support single object or array
+    const filesToUpload = Array.isArray(mediaFiles) ? mediaFiles : [mediaFiles];
+    const uploadResults = [];
+
+    for (const mf of filesToUpload) {
+        const uploadResult = await fileManager.uploadFile(mf.path, {
+            mimeType: mf.mimeType || 'video/mp4',
+            displayName: `${location}_Class_Evaluation_${Date.now()}`
+        });
+        uploadResults.push(uploadResult);
+    }
     
     let uploadedResources = [];
 
@@ -181,7 +189,7 @@ Location: ${location}
 Session / Module: ${sessionTitle}
 Facilitator: ${facilitatorName}
 
-Please watch/listen to the attached classroom recording and evaluate the facilitator. Pay special attention to their physical presence, tone of voice, pacing, and neutrality.
+Please watch/listen to the attached classroom recording(s) for the day and evaluate the facilitator across the full day of classes. Pay special attention to their physical presence, tone of voice, pacing, and neutrality across all attached sessions.
 
 Use the provided official Turn90 Facilitation PDFs and curriculum documents to ground your feedback exactly in the Turn90 Evidence-Based CBT practices.
 `;
@@ -191,7 +199,10 @@ Use the provided official Turn90 Facilitation PDFs and curriculum documents to g
         const contentParts = uploadedResources.map(r => ({
             fileData: { mimeType: r.mimeType, fileUri: r.fileUri }
         }));
-        contentParts.push({ fileData: { mimeType: uploadResult.file.mimeType, fileUri: uploadResult.file.uri } });
+        
+        for (const res of uploadResults) {
+            contentParts.push({ fileData: { mimeType: res.file.mimeType, fileUri: res.file.uri } });
+        }
         contentParts.push({ text: prompt });
 
         const result = await model.generateContent(contentParts);
@@ -233,10 +244,12 @@ Use the provided official Turn90 Facilitation PDFs and curriculum documents to g
         return evaluation;
     } finally {
         console.log(`[Class Evaluation] Deleting temporary files from Gemini...`);
-        try {
-            await fileManager.deleteFile(uploadResult.file.name);
-        } catch (err) {
-            console.error("Failed to delete video file from Gemini:", err.message);
+        for (const res of uploadResults) {
+            try {
+                await fileManager.deleteFile(res.file.name);
+            } catch (err) {
+                console.error("Failed to delete video file from Gemini:", err.message);
+            }
         }
         
         for (const res of uploadedResources) {

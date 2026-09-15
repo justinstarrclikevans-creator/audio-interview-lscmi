@@ -2420,6 +2420,16 @@ app.get('/api/admin/evaluations', authenticateToken, requireRole('program_manage
     res.json(evals);
 });
 
+app.delete('/api/admin/evaluations/:id', authenticateToken, requireRole('program_manager', 'admin'), (req, res) => {
+    try {
+        const id = req.params.id;
+        db.prepare('DELETE FROM class_facilitation_evaluations WHERE id = ?').run(id);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // 2-Week Average Stats
 app.get('/api/admin/evaluations/stats', authenticateToken, requireRole('program_manager', 'admin'), (req, res) => {
     const stats = db.prepare(`
