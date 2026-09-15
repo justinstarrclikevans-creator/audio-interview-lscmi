@@ -7,7 +7,7 @@ const { db } = require('./db');
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'dummy_key');
 const model = genAI.getGenerativeModel({ 
-    model: "gemini-3.6-flash", 
+    model: "gemini-1.5-pro", 
     generationConfig: { responseMimeType: "application/json" } 
 });
 
