@@ -2431,15 +2431,35 @@ app.get('/api/admin/evaluations/stats', authenticateToken, requireRole('program_
     res.json(stats);
 });
 
-// Force-Sync Dropbox Evaluations (Manual Trigger)
+global.syncStatus = { running: false, log: "Not started", results: null };
+
 app.post('/api/admin/evaluations/force-sync', authenticateToken, requireRole('program_manager', 'admin'), async (req, res) => {
     try {
+        if (global.syncStatus.running) {
+            return res.json({ success: true, message: 'Sync already running.' });
+        }
+        
         const { runDailyEvaluation } = require('./services/dropbox_evaluator');
-        const result = await runDailyEvaluation();
-        res.json({ success: true, message: 'Sync complete.', result });
+        global.syncStatus = { running: true, log: "Starting sync...", results: null };
+        
+        // Fire and forget
+        runDailyEvaluation().then(result => {
+            global.syncStatus.running = false;
+            global.syncStatus.results = result;
+            global.syncStatus.log = "Complete";
+        }).catch(err => {
+            global.syncStatus.running = false;
+            global.syncStatus.log = "Error: " + err.message;
+        });
+        
+        res.json({ success: true, message: 'Sync started.' });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
+});
+
+app.get('/api/admin/evaluations/sync-status', authenticateToken, requireRole('program_manager', 'admin'), (req, res) => {
+    res.json(global.syncStatus);
 });
 
 app.post('/api/admin/evaluate-classes', authenticateToken, requireRole('program_manager', 'admin'), memoryUpload.single('audioOrTranscript'), async (req, res) => {

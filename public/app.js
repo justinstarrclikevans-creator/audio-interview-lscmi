@@ -3726,21 +3726,44 @@ async function forceSyncEvaluations() {
         });
         const data = await res.json();
         if (data.success) {
-            let msg = `Sync complete!\nFound: ${data.result?.totalFound || 0}\nProcessed: ${data.result?.processed || 0}\nSkipped: ${data.result?.skipped || 0}`;
-            if (data.result?.error) msg += `\nError: ${data.result.error}`;
-            if (data.result?.errors?.length) msg += `\nErrors: ${data.result.errors.length}`;
-            alert(msg);
-            loadFacilitationEvaluations();
+            // Poll for status
+            const pollInterval = setInterval(async () => {
+                try {
+                    const statusRes = await fetch('/api/admin/evaluations/sync-status', { headers: { 'Authorization': `Bearer ${token}` } });
+                    const status = await statusRes.json();
+                    
+                    if (status.running) {
+                        btn.innerText = `🔄 Syncing... (${status.log})`;
+                    } else {
+                        clearInterval(pollInterval);
+                        if (status.results) {
+                            let msg = `Sync complete!\nFound: ${status.results.totalFound || 0}\nProcessed: ${status.results.processed || 0}\nSkipped: ${status.results.skipped || 0}`;
+                            if (status.results.error) msg += `\nError: ${status.results.error}`;
+                            if (status.results.errors?.length) msg += `\nErrors: ${status.results.errors.length}`;
+                            alert(msg);
+                        } else {
+                            alert('Sync ended: ' + status.log);
+                        }
+                        btn.disabled = false;
+                        btn.innerText = '🔄 Fetch Missing Dropbox Classes';
+                        loadFacilitationEvaluations();
+                    }
+                } catch(e) {
+                    clearInterval(pollInterval);
+                    btn.disabled = false;
+                    btn.innerText = '🔄 Fetch Missing Dropbox Classes';
+                    alert('Status poll error: ' + e.message);
+                }
+            }, 3000);
         } else {
             alert('Sync failed: ' + data.error);
-        }
-    } catch (e) {
-        alert('Sync error: ' + e.message);
-    } finally {
-        if(btn) {
             btn.disabled = false;
             btn.innerText = '🔄 Fetch Missing Dropbox Classes';
         }
+    } catch (e) {
+        alert('Sync error: ' + e.message);
+        btn.disabled = false;
+        btn.innerText = '🔄 Fetch Missing Dropbox Classes';
     }
 }
 

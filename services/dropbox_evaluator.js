@@ -114,6 +114,7 @@ async function runDailyEvaluation() {
     const results = { processed: 0, skipped: 0, errors: [], totalFound: 0 };
 
     for (const center of CENTERS) {
+        if (global.syncStatus) global.syncStatus.log = `Checking ${center.name}...`;
         console.log(`[Dropbox Evaluator] Checking folder for ${center.name} (${center.folderPath}) for dates: ${today}, ${yesterday}`);
         
         const filesToProcess = await listFilesByDate(dbx, center.folderPath, [today, yesterday]);
@@ -140,9 +141,11 @@ async function runDailyEvaluation() {
 
             const localPath = path.join(TEMP_DIR, `${Date.now()}_${file.name}`);
             try {
+                if (global.syncStatus) global.syncStatus.log = `Downloading ${file.name}...`;
                 console.log(`[Dropbox Evaluator] Downloading ${file.name} to local temp storage...`);
                 await downloadLargeFile(dbx, file.path_lower, localPath);
 
+                if (global.syncStatus) global.syncStatus.log = `Grading ${file.name}...`;
                 console.log(`[Dropbox Evaluator] Sending ${file.name} to Gemini for evaluation...`);
                 const mimeType = getMimeType(file.name);
                 
