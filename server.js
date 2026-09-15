@@ -2750,9 +2750,9 @@ app.post('/api/reentry/assess', authenticateToken, requireRole('program_manager'
         await convertSingleMdToDocx(participantGuidePath, partDocxPath);
 
         const staffDocxUrl = `/data/${filePrefix}_staff_case_plan.docx`;
-        const staffPdfUrl = `/data/${filePrefix}_staff_case_plan.pdf`;
+        const staffPdfUrl = `/api/documents/print/${filePrefix}_staff_case_plan.md`;
         const partDocxUrl = `/data/${filePrefix}_participant_action_guide.docx`;
-        const partPdfUrl = `/data/${filePrefix}_participant_action_guide.pdf`;
+        const partPdfUrl = `/api/documents/print/${filePrefix}_participant_action_guide.md`;
 
         // Link to existing or resolved User ID
         let targetUserId = userId ? parseInt(userId) : null;

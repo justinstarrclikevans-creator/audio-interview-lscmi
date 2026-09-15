@@ -3076,11 +3076,7 @@ function printActiveDraftDocument(targetFilename) {
 function openActiveDraftPdf(targetFilename) {
     const file = targetFilename || currentActiveDraftFile;
     if (!file) return;
-    let pdfFile = file;
-    if (file.endsWith('.md')) {
-        pdfFile = file.replace(/\.md$/, '.pdf');
-    }
-    window.open(`/api/documents/raw/${encodeURIComponent(pdfFile)}`, '_blank');
+    window.open(`/api/documents/print/${encodeURIComponent(file)}`, '_blank');
 }
 
 function openPrintableTab(targetFilename) {
