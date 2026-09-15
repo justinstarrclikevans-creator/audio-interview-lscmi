@@ -2270,14 +2270,8 @@ app.post('/api/interviews/manual-entry', memoryUpload.single('audio'), async (re
         const safeName = cleanName.replace(/[^a-zA-Z0-9]/g, '_');
         const clientId = `${safeName}_${location}`;
 
-        // Save audio if attached
-        if (req.file && req.file.buffer) {
-            const ext = path.extname(req.file.originalname) || '.webm';
-            fs.writeFileSync(path.join(dataDir, `${clientId}_audio${ext}`), req.file.buffer);
-            if (ext !== '.webm') {
-                fs.writeFileSync(path.join(dataDir, `${clientId}_audio.webm`), req.file.buffer);
-            }
-        }
+        // We no longer save the raw audio buffer to disk to prevent ENOSPC disk exhaustion on Render.
+        // It is streamed directly to Gemini in runPhase1WithAudio instead.
 
         let results = null;
 
@@ -2927,9 +2921,9 @@ app.post('/api/upload-audio', memoryUpload.single('audio'), async (req, res) => 
         const safeName = name.replace(/[^a-zA-Z0-9]/g, '');
         const filePrefix = `${timestamp}_${safeName}`;
 
-        // Save audio only if it's a real recording (not a placeholder)
+        // We no longer save audio locally to prevent ENOSPC.
         if (!isTranscriptOnly && audioBuffer.length > 200) {
-            fs.writeFileSync(path.join(dataDir, `${filePrefix}_audio.webm`), audioBuffer);
+            console.log(`Received audio buffer of length ${audioBuffer.length}, skipping disk write.`);
         }
         fs.writeFileSync(path.join(dataDir, `${filePrefix}_transcript.txt`), transcriptText);
         
