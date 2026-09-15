@@ -123,7 +123,8 @@ Phase 1 Task: Based on the provided LS/CMI interview transcript and assessment s
    - For each question:
      - Bold the question title.
      - Provide the participant's direct quotes and evidence from the transcript.
-     - If a question was not explicitly asked, note "Not explicitly discussed in intake interview" or provide the best reasonable inference from context.
+     - CRITICAL: Interviewers rarely read the questions verbatim. They often paraphrase, ask conversational questions, or do rapid-fire Yes/No checklists. You MUST intelligently map their conversational answers to the appropriate LS/CMI questions. 
+     - ONLY say "Not explicitly discussed in intake interview" if the entire topic or domain was completely skipped. If they discussed the topic (e.g., family relationships, school suspensions, drug use) in ANY way, use that context to answer the related questions.
    - DO NOT truncate, skip, or summarize questions. Provide all questions systematically.
    - Do NOT use the word "clinical". Use "behavioral health", "support", or "assessment" instead.
    - Do NOT reference Route 66.
@@ -201,7 +202,8 @@ CRITICAL TRANSCRIPTION REQUIREMENTS:
 - Label every single speaker turn clearly as "Interviewer:" or "${clientName}:" (or "Participant:").
 - Include every question asked, all participant dialogue, direct quotes, and explanations.
 - Do NOT summarize, truncate, condense, or omit any section of the conversation.
-- If the audio is unclear, make your absolute best phonetic guess and mark it with [unclear].`;
+- If the audio is unclear, make your absolute best phonetic guess and mark it with [unclear].
+- CRITICAL: Interviewers often ask questions conversationally or rapidly go through a checklist without reading the full question out loud. Capture all of these conversational cues perfectly, because they will be used to score an assessment later.`;
 
         const transcriptionResult = await transcriptionModel.generateContent([audioPart, { text: transcriptionPrompt }]);
         const transcriptText = transcriptionResult.response.text();
