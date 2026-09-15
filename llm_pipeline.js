@@ -4,7 +4,7 @@ const path = require('path');
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'dummy_key');
 const model = genAI.getGenerativeModel({ 
-    model: "gemini-1.5-pro", 
+    model: "gemini-3.1-pro-preview", 
     generationConfig: { 
         responseMimeType: "application/json",
         maxOutputTokens: 65536
@@ -190,7 +190,7 @@ async function runPhase1WithAudio(audioBuffer, mimeType, clientName, location, a
         // Stage 1: Full Verbatim Audio Transcription
         console.log(`[Audio Pipeline] Transcribing complete audio recording for ${clientName}...`);
         const transcriptionModel = genAI.getGenerativeModel({
-            model: "gemini-1.5-pro",
+            model: "gemini-3.1-pro-preview",
             generationConfig: { maxOutputTokens: 65536, temperature: 0.1 }
         });
 
@@ -210,7 +210,7 @@ CRITICAL TRANSCRIPTION REQUIREMENTS:
         // Stage 2: LS/CMI Information Extraction
         console.log(`[Audio Pipeline] Extracting LS/CMI scoring data from transcript for ${clientName}...`);
         const extractionModel = genAI.getGenerativeModel({
-            model: "gemini-1.5-pro",
+            model: "gemini-3.1-pro-preview",
             generationConfig: { responseMimeType: "application/json" }
         });
 
