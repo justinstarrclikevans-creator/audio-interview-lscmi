@@ -203,7 +203,8 @@ CRITICAL TRANSCRIPTION REQUIREMENTS:
 - Include every question asked, all participant dialogue, direct quotes, and explanations.
 - Do NOT summarize, truncate, condense, or omit any section of the conversation.
 - If the audio is unclear, make your absolute best phonetic guess and mark it with [unclear].
-- CRITICAL: Interviewers often ask questions conversationally or rapidly go through a checklist without reading the full question out loud. Capture all of these conversational cues perfectly, because they will be used to score an assessment later.`;
+- CRITICAL: Interviewers often ask questions conversationally or rapidly go through a checklist without reading the full question out loud. Capture all of these conversational cues perfectly, because they will be used to score an assessment later.
+${additionalNotes && additionalNotes.trim() ? `\nFor context, here is a chronological log of the questions the participant was looking at on the screen while recording this audio. Use this to help identify what they are answering if they just say "Yes" or "No":\n${additionalNotes}` : ''}`;
 
         const transcriptionResult = await transcriptionModel.generateContent([audioPart, { text: transcriptionPrompt }]);
         const transcriptText = transcriptionResult.response.text();

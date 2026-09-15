@@ -4138,10 +4138,18 @@ function displayCurrentQuestion() {
     }
 }
 
+let recordingStartTime = 0;
+
 function nextQuestion() {
     if (currentQuestionIndex < currentQuestions.length - 1) {
         currentQuestionIndex++;
         displayCurrentQuestion();
+        
+        if (mediaRecorder && mediaRecorder.state === 'recording') {
+            const t = Math.round((Date.now() - recordingStartTime) / 1000);
+            const q = currentQuestions[currentQuestionIndex];
+            fullTranscript += `\n\n[At ${t} seconds into the audio, the participant clicked 'Next' and the screen displayed: "${q.text || q.question}"]\n`;
+        }
     }
 }
 
@@ -4149,6 +4157,12 @@ function prevQuestion() {
     if (currentQuestionIndex > 0) {
         currentQuestionIndex--;
         displayCurrentQuestion();
+        
+        if (mediaRecorder && mediaRecorder.state === 'recording') {
+            const t = Math.round((Date.now() - recordingStartTime) / 1000);
+            const q = currentQuestions[currentQuestionIndex];
+            fullTranscript += `\n\n[At ${t} seconds into the audio, the participant clicked 'Previous' and the screen displayed: "${q.text || q.question}"]\n`;
+        }
     }
 }
 
@@ -4159,10 +4173,16 @@ async function toggleRecording() {
     if (mediaRecorder && mediaRecorder.state === 'recording') {
         mediaRecorder.stop();
         if (recognition) recognition.stop();
-        btn.innerText = '🔴 Resume Recording';
+        btn.innerText = '🔴 Start Voice Recording';
         btn.classList.remove('btn-danger');
         indicator.classList.add('hidden');
     } else {
+        audioChunks = [];
+        fullTranscript = '';
+        recordingStartTime = Date.now();
+        
+        const q = currentQuestions[currentQuestionIndex];
+        fullTranscript += `[At 0 seconds (recording started), the screen displayed: "${q.text || q.question}"]\n`;
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             // Use low bitrate (32kbps) to keep file sizes small for long interviews
