@@ -230,13 +230,17 @@ Use the provided official Turn90 Facilitation PDFs and curriculum documents to g
         const result = await model.generateContent(contentParts);
         const responseText = result.response.text();
         
+        const parts = responseText.split('=== SUMMARY ===');
+        const jsonPart = parts[0];
+        const markdownPart = parts[1] ? parts[1].trim() : '';
+
         let evaluation;
         try {
             // First try strict parsing
-            evaluation = JSON.parse(responseText);
+            evaluation = JSON.parse(jsonPart);
         } catch (e) {
             // Fallback: extract substring from first { to last }
-            const match = responseText.match(/\{[\s\S]*\}/);
+            const match = jsonPart.match(/\{[\s\S]*\}/);
             if (match) {
                 try {
                     evaluation = JSON.parse(match[0]);
@@ -245,10 +249,13 @@ Use the provided official Turn90 Facilitation PDFs and curriculum documents to g
                     throw new Error("AI returned invalid JSON syntax.");
                 }
             } else {
-                console.error("[Class Evaluation] No JSON object found in response:", responseText);
+                console.error("[Class Evaluation] No JSON object found in response:", jsonPart);
                 throw new Error("AI did not return a JSON object.");
             }
         }
+
+        // Attach the markdown part back to the evaluation object
+        evaluation.detailed_summary_markdown = markdownPart;
 
         if (evaluation.total_score === undefined || !evaluation.scores) {
             console.error("[Class Evaluation] AI returned an invalid schema or refused the prompt:", responseText);

@@ -3766,8 +3766,9 @@ async function forceSyncEvaluations() {
                         if (status.results) {
                             let msg = `Sync complete!\nFound: ${status.results.totalFound || 0}\nProcessed: ${status.results.processed || 0}\nSkipped: ${status.results.skipped || 0}`;
                             if (status.results.error) msg += `\nError: ${status.results.error}`;
-                            if (status.results.errors?.length) msg += `\nErrors: ${status.results.errors.length}`;
+                            if (status.results.errors?.length) msg += `\nErrors:\n- ${status.results.errors.join('\n- ')}`;
                             alert(msg);
+                            loadFacilitationEvaluations();
                         } else {
                             alert('Sync ended: ' + status.log);
                         }
