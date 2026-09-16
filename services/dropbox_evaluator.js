@@ -153,35 +153,52 @@ async function runDailyEvaluation() {
                 const fileManager = new GoogleAIFileManager(process.env.GEMINI_API_KEY);
 
                 for (const file of dateFiles) {
-                    if (global.syncStatus) global.syncStatus.log = `Streaming ${file.name} directly to Gemini...`;
-                    console.log(`[Dropbox Evaluator] Streaming ${file.name} to Gemini to bypass RAM/Disk...`);
+                    const localPath = path.join(TEMP_DIR, `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9-_\.]/g, '_')}`);
+                    if (global.syncStatus) global.syncStatus.log = `Downloading ${file.name}...`;
+                    console.log(`[Dropbox Evaluator] Downloading ${file.name}...`);
+                    await downloadLargeFile(dbx, file.path_lower, localPath);
                     
-                    const tempLinkRes = await dbx.filesGetTemporaryLink({ path: file.path_lower });
-                    const safeUrl = new URL(tempLinkRes.result.link).toString();
-                    const dropboxRes = await fetch(safeUrl);
-                    if (!dropboxRes.ok) throw new Error(`Failed to download: ${dropboxRes.statusText}`);
+                    if (global.syncStatus) global.syncStatus.log = `Uploading ${file.name} to Gemini...`;
+                    console.log(`[Dropbox Evaluator] Uploading ${file.name} to Gemini in a RAM-safe stream...`);
                     
                     const mimeType = getMimeType(file.name);
-                    const contentLength = dropboxRes.headers.get('content-length');
-                    
-                    const url = `https://generativelanguage.googleapis.com/upload/v1beta/files?key=${process.env.GEMINI_API_KEY}`;
-                    const geminiRes = await fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'X-Goog-Upload-Protocol': 'raw',
-                            'X-Goog-Upload-Command': 'start, upload, finalize',
-                            'X-Goog-Upload-Header-Content-Length': contentLength,
-                            'X-Goog-Upload-File-Name': file.name.replace(/[^a-zA-Z0-9-_\.]/g, '_'),
-                            'Content-Type': mimeType
-                        },
-                        body: dropboxRes.body,
-                        duplex: 'half'
+                    const https = require('https');
+                    const uploadData = await new Promise((resolve, reject) => {
+                        const stats = fs.statSync(localPath);
+                        const options = {
+                            hostname: 'generativelanguage.googleapis.com',
+                            port: 443,
+                            path: `/upload/v1beta/files?key=${process.env.GEMINI_API_KEY}`,
+                            method: 'POST',
+                            headers: {
+                                'X-Goog-Upload-Protocol': 'raw',
+                                'X-Goog-Upload-Command': 'start, upload, finalize',
+                                'X-Goog-Upload-Header-Content-Length': stats.size,
+                                'X-Goog-Upload-File-Name': path.basename(localPath),
+                                'Content-Type': mimeType,
+                                'Content-Length': stats.size
+                            }
+                        };
+                        const req = https.request(options, (res) => {
+                            let data = '';
+                            res.on('data', chunk => data += chunk);
+                            res.on('end', () => {
+                                if (res.statusCode >= 200 && res.statusCode < 300) {
+                                    resolve(JSON.parse(data));
+                                } else {
+                                    reject(new Error(`Upload failed: ${res.statusCode} ${data}`));
+                                }
+                            });
+                        });
+                        req.on('error', reject);
+                        fs.createReadStream(localPath).pipe(req);
                     });
                     
-                    const uploadData = await geminiRes.json();
-                    if (uploadData.error) throw new Error(uploadData.error.message);
-                    
                     localMediaFiles.push({ file: uploadData.file });
+                    
+                    if (fs.existsSync(localPath)) {
+                        fs.unlinkSync(localPath);
+                    }
                     console.log(`[Dropbox Evaluator] Streamed ${file.name} successfully.`);
                 }
 
