@@ -232,11 +232,22 @@ Use the provided official Turn90 Facilitation PDFs and curriculum documents to g
         
         let evaluation;
         try {
+            // First try strict parsing
             evaluation = JSON.parse(responseText);
         } catch (e) {
-            // Strip markdown formatting if any
-            const cleanJson = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
-            evaluation = JSON.parse(cleanJson);
+            // Fallback: extract substring from first { to last }
+            const match = responseText.match(/\{[\s\S]*\}/);
+            if (match) {
+                try {
+                    evaluation = JSON.parse(match[0]);
+                } catch(err) {
+                    console.error("[Class Evaluation] Extracted JSON was still invalid:", err);
+                    throw new Error("AI returned invalid JSON syntax.");
+                }
+            } else {
+                console.error("[Class Evaluation] No JSON object found in response:", responseText);
+                throw new Error("AI did not return a JSON object.");
+            }
         }
 
         if (evaluation.total_score === undefined || !evaluation.scores) {
