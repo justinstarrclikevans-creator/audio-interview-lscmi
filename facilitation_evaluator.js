@@ -54,7 +54,8 @@ INSTRUCTIONS:
 Evaluate the facilitator based strictly on the above 20-item Scoring Guide. Reference the curriculum lesson plan to judge if they followed the script and setup correctly for the requested module.
 Provide detailed coaching feedback based on specific timestamps and behaviors observed. 
 
-Return ONLY valid JSON matching this exact structure:
+You MUST format your entire response EXACTLY according to the following template. DO NOT write any conversational text before the JSON block. Start your response immediately with the \`{\` character.
+
 {
   "total_score": 85,
   "scores": {
@@ -73,9 +74,12 @@ Return ONLY valid JSON matching this exact structure:
     "Coaching recommendation 1...",
     "Coaching recommendation 2..."
   ],
-  "location_specific_notes": "Key observations for this cohort location...",
-  "detailed_summary_markdown": "# Facilitation Evaluation Report\\n\\n..."
+  "location_specific_notes": "Key observations for this cohort location..."
 }
+=== SUMMARY ===
+# Facilitation Evaluation Report
+
+(Write your extensive markdown report here...)
 `;
     } catch (e) {
         console.warn("Could not load official scoring guide or curriculum, using fallback prompt.");
