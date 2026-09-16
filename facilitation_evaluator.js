@@ -7,8 +7,7 @@ const { db } = require('./db');
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'dummy_key');
 const model = genAI.getGenerativeModel({ 
-    model: "gemini-3.1-pro-preview", 
-    generationConfig: { responseMimeType: "application/json" } 
+    model: "gemini-3.1-pro-preview" 
 });
 
 // Ensure class_facilitation_evaluations table exists
@@ -200,7 +199,8 @@ Location: ${location}
 Session / Module: ${sessionTitle}
 Facilitator: ${facilitatorName}
 
-Please watch/listen to the attached classroom recording(s) for the day and evaluate the facilitator across the full day of classes. Pay special attention to their physical presence, tone of voice, pacing, and neutrality across all attached sessions.
+Please listen to the attached classroom audio recording(s) for the day and evaluate the facilitator across the full day of classes. 
+Note: These are AUDIO ONLY recordings. Do not penalize or refuse to score based on a lack of visual "physical presence". Instead, evaluate their presence and engagement purely through their tone of voice, pacing, neutrality, and interactions with participants across all attached sessions.
 
 Use the provided official Turn90 Facilitation PDFs and curriculum documents to ground your feedback exactly in the Turn90 Evidence-Based CBT practices.
 `;
@@ -237,6 +237,11 @@ Use the provided official Turn90 Facilitation PDFs and curriculum documents to g
             // Strip markdown formatting if any
             const cleanJson = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
             evaluation = JSON.parse(cleanJson);
+        }
+
+        if (evaluation.total_score === undefined || !evaluation.scores) {
+            console.error("[Class Evaluation] AI returned an invalid schema or refused the prompt:", responseText);
+            throw new Error("AI returned invalid JSON schema. It may have refused to evaluate the audio.");
         }
 
         // Save to database
