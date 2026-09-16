@@ -249,8 +249,8 @@ Use the provided official Turn90 Facilitation PDFs and curriculum documents to g
                     throw new Error("AI returned invalid JSON syntax.");
                 }
             } else {
-                console.error("[Class Evaluation] No JSON object found in response:", jsonPart);
-                throw new Error("AI did not return a JSON object.");
+                console.error("[Class Evaluation] No JSON object found in response:", responseText);
+                throw new Error("AI did not return a JSON object. Raw output: " + responseText.substring(0, 500));
             }
         }
 
