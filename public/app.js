@@ -3735,20 +3735,32 @@ async function forceSyncEvaluations() {
         btn.innerText = '🔄 Syncing... (This may take 5 mins)';
     }
     try {
+        const cleanToken = token ? token.replace(/[\r\n]/g, '') : '';
         const res = await fetch('/api/admin/evaluations/force-sync', {
             method: 'POST',
-            headers: { 'Authorization': `Bearer ${token}` }
+            headers: { 'Authorization': `Bearer ${cleanToken}` }
         });
         const data = await res.json();
         if (data.success) {
             // Poll for status
             const pollInterval = setInterval(async () => {
                 try {
-                    const statusRes = await fetch('/api/admin/evaluations/sync-status', { headers: { 'Authorization': `Bearer ${token}` } });
-                    const status = await statusRes.json();
+                    const statusRes = await fetch('/api/admin/evaluations/sync-status', { 
+                        headers: { 'Authorization': `Bearer ${cleanToken}` } 
+                    });
                     
+                    // Defensive JSON parse in case of 502 Bad Gateway HTML
+                    const text = await statusRes.text();
+                    let status;
+                    try {
+                        status = JSON.parse(text);
+                    } catch (parseErr) {
+                        throw new Error(`Invalid server response (${statusRes.status}): ${text.slice(0,50)}`);
+                    }
+                    
+                    const currentBtn = document.querySelector('button[onclick="forceSyncEvaluations()"]');
                     if (status.running) {
-                        btn.innerText = `🔄 Syncing... (${status.log})`;
+                        if (currentBtn) currentBtn.innerText = `🔄 Syncing... (${status.log})`;
                     } else {
                         clearInterval(pollInterval);
                         if (status.results) {
@@ -3759,14 +3771,20 @@ async function forceSyncEvaluations() {
                         } else {
                             alert('Sync ended: ' + status.log);
                         }
-                        btn.disabled = false;
-                        btn.innerText = '🔄 Fetch Missing Dropbox Classes';
+                        if (currentBtn) {
+                            currentBtn.disabled = false;
+                            currentBtn.innerText = '🔄 Fetch Missing Dropbox Classes';
+                        }
                         loadFacilitationEvaluations();
                     }
                 } catch(e) {
                     clearInterval(pollInterval);
-                    btn.disabled = false;
-                    btn.innerText = '🔄 Fetch Missing Dropbox Classes';
+                    const currentBtn = document.querySelector('button[onclick="forceSyncEvaluations()"]');
+                    if (currentBtn) {
+                        currentBtn.disabled = false;
+                        currentBtn.innerText = '🔄 Fetch Missing Dropbox Classes';
+                    }
+                    console.error('Status poll error:', e);
                     alert('Status poll error: ' + e.message);
                 }
             }, 3000);

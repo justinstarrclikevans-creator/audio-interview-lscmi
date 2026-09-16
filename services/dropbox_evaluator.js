@@ -61,8 +61,9 @@ async function listFilesByDate(dbx, folderPath, dateStrs) {
 async function downloadLargeFile(dbx, dropboxFilePath, destinationLocalPath) {
     const tempLinkRes = await dbx.filesGetTemporaryLink({ path: dropboxFilePath });
     const downloadUrl = tempLinkRes.result.link;
-
-    const response = await fetch(downloadUrl);
+    // Ensure URL is perfectly valid for Node 18+ fetch to avoid DOMException on spaces
+    const safeUrl = new URL(downloadUrl).toString();
+    const response = await fetch(safeUrl);
     if (!response.ok) {
         throw new Error(`Failed to download: ${response.statusText}`);
     }
