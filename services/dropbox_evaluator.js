@@ -153,21 +153,36 @@ async function runDailyEvaluation() {
                 const fileManager = new GoogleAIFileManager(process.env.GEMINI_API_KEY);
 
                 for (const file of dateFiles) {
-                    const localPath = path.join(TEMP_DIR, `${Date.now()}_${file.name}`);
-                    if (global.syncStatus) global.syncStatus.log = `Downloading ${file.name}...`;
-                    console.log(`[Dropbox Evaluator] Downloading ${file.name}...`);
-                    await downloadLargeFile(dbx, file.path_lower, localPath);
+                    if (global.syncStatus) global.syncStatus.log = `Streaming ${file.name} directly to Gemini...`;
+                    console.log(`[Dropbox Evaluator] Streaming ${file.name} to Gemini to bypass RAM/Disk...`);
                     
-                    if (global.syncStatus) global.syncStatus.log = `Uploading ${file.name} to Gemini...`;
-                    console.log(`[Dropbox Evaluator] Uploading ${file.name} to Gemini to free space...`);
-                    const uploadResult = await fileManager.uploadFile(localPath, { mimeType: getMimeType(file.name) });
-                    localMediaFiles.push(uploadResult);
+                    const tempLinkRes = await dbx.filesGetTemporaryLink({ path: file.path_lower });
+                    const safeUrl = new URL(tempLinkRes.result.link).toString();
+                    const dropboxRes = await fetch(safeUrl);
+                    if (!dropboxRes.ok) throw new Error(`Failed to download: ${dropboxRes.statusText}`);
                     
-                    // INSTANT CLEANUP to prevent ENOSPC on Render
-                    if (fs.existsSync(localPath)) {
-                        fs.unlinkSync(localPath);
-                        console.log(`[Dropbox Evaluator] Deleted local temp file ${localPath} after upload.`);
-                    }
+                    const mimeType = getMimeType(file.name);
+                    const contentLength = dropboxRes.headers.get('content-length');
+                    
+                    const url = `https://generativelanguage.googleapis.com/upload/v1beta/files?key=${process.env.GEMINI_API_KEY}`;
+                    const geminiRes = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'X-Goog-Upload-Protocol': 'raw',
+                            'X-Goog-Upload-Command': 'start, upload, finalize',
+                            'X-Goog-Upload-Header-Content-Length': contentLength,
+                            'X-Goog-Upload-File-Name': file.name.replace(/[^a-zA-Z0-9-_\.]/g, '_'),
+                            'Content-Type': mimeType
+                        },
+                        body: dropboxRes.body,
+                        duplex: 'half'
+                    });
+                    
+                    const uploadData = await geminiRes.json();
+                    if (uploadData.error) throw new Error(uploadData.error.message);
+                    
+                    localMediaFiles.push({ file: uploadData.file });
+                    console.log(`[Dropbox Evaluator] Streamed ${file.name} successfully.`);
                 }
 
                 if (global.syncStatus) global.syncStatus.log = `Grading ${sessionTitle}...`;
