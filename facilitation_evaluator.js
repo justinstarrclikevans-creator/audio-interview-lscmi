@@ -52,34 +52,7 @@ ${curriculum}
 
 INSTRUCTIONS:
 Evaluate the facilitator based strictly on the above 20-item Scoring Guide. Reference the curriculum lesson plan to judge if they followed the script and setup correctly for the requested module.
-Provide detailed coaching feedback based on specific timestamps and behaviors observed. 
-
-You MUST format your entire response EXACTLY according to the following template. DO NOT write any conversational text before the JSON block. Start your response immediately with the \`{\` character.
-
-{
-  "total_score": 85,
-  "scores": {
-    "modeling_neutrality": 4.5,
-    "lesson_plan_adherence": 3.0,
-    "reflective_listening": 4.0,
-    "avoiding_confrontation": 5.0,
-    "time_management": 4.0,
-    "enthusiasm": 5.0
-  },
-  "observed_strengths": [
-    "Observed strength 1...",
-    "Observed strength 2..."
-  ],
-  "areas_for_improvement": [
-    "Coaching recommendation 1...",
-    "Coaching recommendation 2..."
-  ],
-  "location_specific_notes": "Key observations for this cohort location..."
-}
-=== SUMMARY ===
-# Facilitation Evaluation Report
-
-(Write your extensive markdown report here...)
+Provide detailed coaching feedback based on specific timestamps and behaviors observed.
 `;
     } catch (e) {
         console.warn("Could not load official scoring guide or curriculum, using fallback prompt.");
@@ -197,19 +170,73 @@ async function evaluateClassMedia(location, sessionTitle, facilitatorName, media
     try {
         uploadedResources = await uploadFacilitationResources(fileManager);
 
-        const prompt = `${getFacilitatorScoringContext()}
-
+        const prompt = `You are the Lead Facilitator Supervisor and Quality Assurance Director for Turn90 / First Shift.
 Location: ${location}
 Session / Module: ${sessionTitle}
 Facilitator: ${facilitatorName}
+
+${getFacilitatorScoringContext()}
 
 Please listen to the attached classroom audio recording(s) for the day and evaluate the facilitator across the full day of classes. 
 Note: These are AUDIO ONLY recordings. Do not penalize or refuse to score based on a lack of visual "physical presence". Instead, evaluate their presence and engagement purely through their tone of voice, pacing, neutrality, and interactions with participants across all attached sessions.
 
 Use the provided official Turn90 Facilitation PDFs and curriculum documents to ground your feedback exactly in the Turn90 Evidence-Based CBT practices.
+
+CRITICAL OUTPUT REQUIREMENT:
+You MUST provide your response in two distinct parts.
+
+Part 1: The Numerical Data
+Provide a valid JSON code block with the scores and brief notes.
+\`\`\`json
+{
+  "total_score": 85,
+  "scores": {
+    "modeling_neutrality": 4.5,
+    "lesson_plan_adherence": 3.0,
+    "reflective_listening": 4.0,
+    "avoiding_confrontation": 5.0,
+    "time_management": 4.0,
+    "enthusiasm": 5.0
+  },
+  "observed_strengths": [
+    "Observed strength 1...",
+    "Observed strength 2..."
+  ],
+  "areas_for_improvement": [
+    "Coaching recommendation 1...",
+    "Coaching recommendation 2..."
+  ],
+  "location_specific_notes": "Key observations for this cohort location..."
+}
+\`\`\`
+
+Part 2: The Full Report
+After the JSON block, write your detailed, extensive coaching report in standard markdown format (do not put this inside the JSON).
 `;
 
         console.log(`[Class Evaluation] Generating evaluation for ${location}...`);
+        
+        const filesToUpload = Array.isArray(mediaFiles) ? mediaFiles : [mediaFiles];
+        const uploadResults = [];
+
+        for (const mf of filesToUpload) {
+            if (mf.file && mf.file.uri) {
+                // Already uploaded to Gemini
+                uploadResults.push(mf);
+            } else {
+                const uploadResult = await fileManager.uploadFile(mf.path, {
+                    mimeType: mf.mimeType || 'video/mp4',
+                    displayName: `${location}_Class_Evaluation_${Date.now()}`
+                });
+                uploadResults.push(uploadResult);
+                
+                // Immediately delete local file to free disk space
+                const fs = require('fs');
+                if (fs.existsSync(mf.path)) {
+                    try { fs.unlinkSync(mf.path); } catch(e) {}
+                }
+            }
+        }
         
         const contentParts = uploadedResources.map(r => ({
             fileData: { mimeType: r.mimeType, fileUri: r.fileUri }
@@ -234,32 +261,40 @@ Use the provided official Turn90 Facilitation PDFs and curriculum documents to g
         const result = await model.generateContent(contentParts);
         const responseText = result.response.text();
         
-        const parts = responseText.split('=== SUMMARY ===');
-        const jsonPart = parts[0];
-        const markdownPart = parts[1] ? parts[1].trim() : '';
-
         let evaluation;
-        try {
-            // First try strict parsing
-            evaluation = JSON.parse(jsonPart);
-        } catch (e) {
-            // Fallback: extract substring from first { to last }
-            const match = jsonPart.match(/\{[\s\S]*\}/);
-            if (match) {
+        let markdownPart = responseText; // Default to full text if json extraction is weird
+
+        // Extract the JSON block
+        const jsonMatch = responseText.match(/```json\s*([\s\S]*?)\s*```/);
+        
+        if (jsonMatch) {
+            try {
+                evaluation = JSON.parse(jsonMatch[1]);
+                // Remove the json block from the markdown report
+                markdownPart = responseText.replace(/```json\s*[\s\S]*?\s*```/, '').trim();
+            } catch(err) {
+                console.error("[Class Evaluation] Extracted JSON was still invalid:", err);
+                throw new Error("AI returned invalid JSON syntax. Raw: " + jsonMatch[1].substring(0, 500));
+            }
+        } else {
+            // Fallback: try to find any { ... } if they forgot backticks
+            const bracketMatch = responseText.match(/\{[\s\S]*\}/);
+            if (bracketMatch) {
                 try {
-                    evaluation = JSON.parse(match[0]);
+                    evaluation = JSON.parse(bracketMatch[0]);
+                    markdownPart = responseText.replace(/\{[\s\S]*\}/, '').trim();
                 } catch(err) {
-                    console.error("[Class Evaluation] Extracted JSON was still invalid:", err);
-                    throw new Error("AI returned invalid JSON syntax.");
+                    console.error("[Class Evaluation] Extracted bracket JSON was invalid:", err);
+                    throw new Error("AI returned invalid JSON syntax. Raw: " + responseText.substring(0, 500));
                 }
             } else {
                 console.error("[Class Evaluation] No JSON object found in response:", responseText);
                 throw new Error("AI did not return a JSON object. Raw output: " + responseText.substring(0, 500));
             }
         }
-
+        
         // Attach the markdown part back to the evaluation object
-        evaluation.detailed_summary_markdown = markdownPart;
+        evaluation.detailed_summary_markdown = markdownPart || "No detailed summary provided.";
 
         if (evaluation.total_score === undefined || !evaluation.scores) {
             console.error("[Class Evaluation] AI returned an invalid schema or refused the prompt:", responseText);
