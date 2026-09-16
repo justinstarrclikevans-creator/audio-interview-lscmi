@@ -105,8 +105,7 @@ async function runDailyEvaluation() {
         refreshToken: process.env.DROPBOX_REFRESH_TOKEN
     });
 
-    // Get today and yesterday's dates
-    const today = new Date().toISOString().split('T')[0];
+    // Get yesterday's date
     const yDate = new Date();
     yDate.setDate(yDate.getDate() - 1);
     const yesterday = yDate.toISOString().split('T')[0];
@@ -117,9 +116,9 @@ async function runDailyEvaluation() {
 
     for (const center of CENTERS) {
         if (global.syncStatus) global.syncStatus.log = `Checking ${center.name}...`;
-        console.log(`[Dropbox Evaluator] Checking folder for ${center.name} (${center.folderPath}) for dates: ${today}, ${yesterday}`);
+        console.log(`[Dropbox Evaluator] Checking folder for ${center.name} (${center.folderPath}) for date: ${yesterday}`);
         
-        const filesToProcess = await listFilesByDate(dbx, center.folderPath, [today, yesterday]);
+        const filesToProcess = await listFilesByDate(dbx, center.folderPath, [yesterday]);
         
         if (filesToProcess.length === 0) {
             console.log(`[Dropbox Evaluator] No recordings found for ${center.name}.`);
