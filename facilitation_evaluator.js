@@ -7,7 +7,7 @@ const { db } = require('./db');
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'dummy_key');
 const model = genAI.getGenerativeModel({ 
-    model: "gemini-3.6-flash", 
+    model: "gemini-3.1-pro-preview", 
     generationConfig: { responseMimeType: "application/json" } 
 });
 
@@ -212,7 +212,18 @@ Use the provided official Turn90 Facilitation PDFs and curriculum documents to g
         }));
         
         for (const res of uploadResults) {
-            contentParts.push({ fileData: { mimeType: res.file.mimeType, fileUri: res.file.uri } });
+            let fileState = res.file;
+            // Poll if it's a video/audio that needs processing
+            while (fileState.state === 'PROCESSING') {
+                if (global.syncStatus) global.syncStatus.log = `Waiting for Gemini to process video...`;
+                console.log(`[Class Evaluation] Waiting for Gemini to process ${fileState.name}...`);
+                await new Promise(resolve => setTimeout(resolve, 8000));
+                fileState = await fileManager.getFile(fileState.name);
+            }
+            if (fileState.state === 'FAILED') {
+                throw new Error(`Gemini failed to process media file: ${fileState.name}`);
+            }
+            contentParts.push({ fileData: { mimeType: fileState.mimeType, fileUri: fileState.uri } });
         }
         contentParts.push({ text: prompt });
 
