@@ -649,7 +649,8 @@ app.get('/api/admin/caseload', authenticateToken, requireRole('program_manager',
                (SELECT COUNT(*) FROM gate_criteria WHERE user_id = u.id AND status = 'green') as green_criteria,
                (SELECT COUNT(*) FROM gate_criteria WHERE user_id = u.id AND status = 'red') as red_criteria,
                (SELECT AVG(points_earned) FROM daily_points WHERE user_id = u.id) as avg_points,
-               (SELECT notes FROM briefcase_items WHERE user_id = u.id AND (item_key = 'skillcat_progress' OR title LIKE '%SkillCat%') LIMIT 1) as skillcat_notes
+               (SELECT notes FROM briefcase_items WHERE user_id = u.id AND (item_key = 'skillcat_progress' OR title LIKE '%SkillCat%') LIMIT 1) as skillcat_notes,
+               (SELECT COUNT(*) FROM health_wellness_screen WHERE participant_id = u.id) as has_health_screen
         FROM users u
         LEFT JOIN participant_profiles p ON u.id = p.user_id
         WHERE u.role = 'participant'

@@ -134,6 +134,18 @@
             });
             if(res.ok) { alert('Saved!'); e.target.reset(); }
         }
-    </script>
+    
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const uid = urlParams.get('userId');
+            if (uid) {
+                document.getElementById('h_participant_id').value = uid;
+                document.getElementById('s_participant_id').value = uid;
+            }
+            if (urlParams.get('autoFocus') === 'health') {
+                document.getElementById('health-form').scrollIntoView();
+            }
+        };
+</script>
 </body>
 </html>

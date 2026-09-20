@@ -1761,7 +1761,6 @@ async function loadCaseload() {
                 <td>
                     <div style="display: flex; align-items: baseline; gap: 6px;">
                         <strong style="font-size: 13.5px; color: #0f172a;">${p.name}</strong>
-                        ${p.skillcat_notes && p.skillcat_notes.includes('%') ? `<span style="background: #2563eb; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 6px; font-weight: bold;">🛠️ SkillCat: ${p.skillcat_notes.match(/\d+%/)[0]}</span>` : ''}
                         <button class="btn btn-outline" style="padding: 1px 5px; font-size: 10px; border-color: #cbd5e1; color: #475569;" onclick="openCorrectionModal(${p.id}, '${escName}')" title="Correct Information / Edit Staff Notes">
                             ✏️ Fix
                         </button>
@@ -1877,6 +1876,22 @@ async function loadCaseload() {
             </tr>
             `;
         }).join('');
+        
+        // --- Health Screening Pop Up for 3rd Week ---
+        const week3NeedsScreen = roster.filter(p => p.weeks_enrolled >= 3 && p.has_health_screen === 0);
+        const existingWarning = document.getElementById('health-screen-warning');
+        if (existingWarning) existingWarning.remove();
+        
+        if (week3NeedsScreen.length > 0) {
+            const names = week3NeedsScreen.map(p => p.name).join(', ');
+            const firstId = week3NeedsScreen[0].id;
+            const healthWarningHtml = `<div id="health-screen-warning" style="background: #fee2e2; border: 2px solid #ef4444; color: #b91c1c; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px -1px rgba(239,68,68,0.2); animation: pulse 2s infinite;">
+                <div>⚠️ Health Screen Required! The following participants are in Week 3+: ${names}</div>
+                <button onclick="window.open('staff_tools.html?userId=${firstId}&autoFocus=health', 'HealthScreen', 'width=800,height=900')" style="background: #ef4444; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Launch Screen</button>
+            </div>`;
+            document.getElementById('caseload-table').insertAdjacentHTML('beforebegin', healthWarningHtml);
+        }
+
     } catch (e) {
         console.error('Failed to load caseload:', e);
     }
