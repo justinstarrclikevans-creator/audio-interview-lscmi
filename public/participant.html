@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turn90 First Shift - My Portal</title>
+    <style>
+        body { font-family: -apple-system, system-ui, sans-serif; background: #f8fafc; margin: 0; padding: 20px; color: #334155; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        h1 { color: #0f172a; margin-top: 0; }
+        .gate-card { border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+        .gate-title { font-size: 18px; font-weight: bold; margin-bottom: 10px; color: #1e293b; display: flex; justify-content: space-between; }
+        .gate-item { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid #f1f5f9; }
+        .gate-item:last-child { border-bottom: none; }
+        .gate-checkbox { margin-right: 15px; width: 20px; height: 20px; }
+        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        .status-pending { background: #fef08a; color: #854d0e; }
+        .status-green { background: #bbf7d0; color: #166534; }
+        .logout-btn { float: right; padding: 8px 16px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer; }
+        #login-section { text-align: center; margin-top: 100px; }
+        input { padding: 10px; margin: 5px; border-radius: 6px; border: 1px solid #cbd5e1; }
+        button { padding: 10px 20px; border-radius: 6px; border: none; background: #3b82f6; color: white; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div id="login-section" class="container">
+    <img src="https://turnninety.com/wp-content/uploads/2021/04/Turn90-Logo-Black.png" alt="Turn90" style="height: 50px; margin-bottom: 20px;">
+    <h2>Participant Login</h2>
+    <input type="email" id="email" placeholder="Email Address"><br>
+    <input type="password" id="password" placeholder="Password"><br>
+    <button onclick="login()">Login to My Portal</button>
+</div>
+
+<div id="app-section" class="container" style="display: none;">
+    <button class="logout-btn" onclick="logout()">Logout</button>
+    <img src="https://turnninety.com/wp-content/uploads/2021/04/Turn90-Logo-Black.png" alt="Turn90" style="height: 40px; margin-bottom: 20px;">
+    
+    <div style="background: #2563eb; color: white; padding: 20px; border-radius: 12px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h2 style="margin: 0; font-size: 20px;">My SkillCat Progress</h2>
+            <p style="margin: 5px 0 0 0; opacity: 0.9;">HVAC & Trades Training</p>
+        </div>
+        <div style="font-size: 32px; font-weight: 900; background: rgba(255,255,255,0.2); padding: 10px 20px; border-radius: 8px;" id="participant-skillcat-pct">0%</div>
+    </div>
+
+    <h1>My First Shift Checklist</h1>
+    <p>Welcome, <span id="participant-name"></span>. Complete your items below to clear your job placement gates.</p>
+
+    <div id="gates-container">
+        <!-- Rendered by JS -->
+    </div>
+</div>
+
+<script>
+let token = localStorage.getItem('t90_token');
+let user = null;
+
+if (token) {
+    document.getElementById('login-section').style.display = 'none';
+    document.getElementById('app-section').style.display = 'block';
+    loadGates();
+}
+
+async function login() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    if (data.token) {
+        localStorage.setItem('t90_token', data.token);
+        token = data.token;
+        user = data.user;
+        document.getElementById('login-section').style.display = 'none';
+        document.getElementById('app-section').style.display = 'block';
+        loadGates();
+    } else {
+        alert("Login failed");
+    }
+}
+
+function logout() {
+    localStorage.removeItem('t90_token');
+    window.location.reload();
+}
+
+async function loadGates() {
+    const res = await fetch('/api/participant/briefcase', {
+        headers: { 'Authorization': 'Bearer ' + token }
+    });
+    
+    let briefcaseItems = [];
+    if (res.ok) {
+        briefcaseItems = await res.json();
+    }
+    
+    // Extract SkillCat Progress
+    let skillcatPct = "0%";
+    const scItem = briefcaseItems.find(i => i.title.includes('SkillCat Progress'));
+    if (scItem && scItem.notes && scItem.notes.includes('%')) {
+        const match = scItem.notes.match(/\d+%/);
+        if (match) skillcatPct = match[0];
+    }
+    
+    const scWidget = document.getElementById('participant-skillcat-pct');
+    if(scWidget) scWidget.innerText = skillcatPct;
+    
+    const gates = {
+        "Gate 1": [
+            { id: "g1_state_id", label: "State ID or Driver's License" },
+            { id: "g1_ssn", label: "Social Security Card" },
+            { id: "g1_birth_cert", label: "Birth Certificate" },
+            { id: "g1_main_goal", label: "Main Goal Set" },
+            { id: "g1_skillcat_intro", label: "Completed SkillCat Intro" },
+            { id: "g1_skillcat_track", label: "Chose SkillCat Track" }
+        ],
+        "Gate 2": [
+            { id: "g2_child_support", label: "Child Support Plan Made" },
+            { id: "g2_housing", label: "Stable Address / Housing" },
+            { id: "g2_phone", label: "Reliable Phone Number" },
+            { id: "g2_probation_conflicts", label: "Probation / Legal Obligations Handled" },
+            { id: "g2_dmv", label: "DMV License Check" },
+            { id: "g2_email", label: "Professional Email" },
+            { id: "g2_resume", label: "Resume Completed" },
+            { id: "g2_skillcat_progress", label: "Making Progress on SkillCat" }
+        ],
+        "Gate 3": [
+            { id: "g3_bank_account", label: "Bank Account" },
+            { id: "g3_skillcat_progress", label: "Making Progress on SkillCat" }
+        ],
+        "Gate 4": [
+            { id: "g4_work_gear", label: "Work Tools & Clothing" },
+            { id: "g4_transportation", label: "Transportation Plan" },
+            { id: "g4_budget", label: "Budget Completed" },
+            { id: "g4_savings", label: "Savings Goals Established" },
+            { id: "g4_6mo_plan", label: "6-Month Job Plan Created" },
+            { id: "g4_career_goal", label: "Long-Term Career Goal Identified" },
+            { id: "g4_skillcat_progress", label: "Making Progress on SkillCat" }
+        ]
+    };
+
+    let html = '';
+    for (const [gateName, items] of Object.entries(gates)) {
+        html += `<div class="gate-card">
+            <div class="gate-title">${gateName}</div>`;
+        for (const item of items) {
+            // Check if backend has it marked as green
+            const backendItem = briefcaseItems.find(b => b.item_key === item.id);
+            const isCompleted = backendItem && backendItem.status === 'green';
+            const checkedAttr = isCompleted ? 'checked' : '';
+            const badgeClass = isCompleted ? 'status-green' : 'status-pending';
+            const badgeText = isCompleted ? 'Completed' : 'Pending';
+
+            html += `<div class="gate-item">
+                <input type="checkbox" class="gate-checkbox" ${checkedAttr} onchange="toggleItem('${item.id}', this.checked)">
+                <span style="flex:1;">${item.label}</span>
+                <span class="status-badge ${badgeClass}" id="badge-${item.id}">${badgeText}</span>
+            </div>`;
+        }
+        html += `</div>`;
+    }
+    document.getElementById('gates-container').innerHTML = html;
+}
+async function toggleItem(id, isChecked) {
+    const badge = document.getElementById(`badge-${id}`);
+    if (isChecked) {
+        badge.className = "status-badge status-green";
+        badge.innerText = "Completed";
+        // Notify backend
+        await fetch('/api/participant/briefcase-item', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ item_key: id, status: 'green' })
+        });
+    } else {
+        badge.className = "status-badge status-pending";
+        badge.innerText = "Pending";
+        await fetch('/api/participant/briefcase-item', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ item_key: id, status: 'pending' })
+        });
+    }
+}
+</script>
+</body>
+</html>

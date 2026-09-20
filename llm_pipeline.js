@@ -256,16 +256,18 @@ async function runPhase2(transcriptText, clientName, draftScoringForm, feedback,
     3. "participant_case_plan": A beautiful, empowering, PRINTABLE First Shift Action Plan written directly for the participant.
        - Header: Participant Name, Date, Location, Program Track (Turn90 First Shift).
        - CRITICAL REQUIREMENT: DO NOT INCLUDE ANY GOALS. Remove all goal sections entirely.
-       - For each of the TOP 2-3 Dynamic Criminogenic Domains identified for this participant, structure into EXACTLY these 4 sections:
-         * **Domain & Dynamic Need**: (e.g., "Domain: Pro-Criminal Attitudes & Thinking Patterns | Core Need: Rewiring Automatic Assumptions & Hostile Attribution").
-         * **Identified Cognitive / Behavioral Pattern**: (The specific unhelpful thinking trap, defense mechanism, or automatic loop identified from their interview, e.g., "Interpreting workplace feedback as personal disrespect", "Externalizing responsibility when rules are enforced", "Black-and-white thinking when stressed").
-         * **Trigger Situations (High-Risk Traps to Fill In)**:
-           - Provide initial examples from their story PLUS clear structured prompts/fill-in lines for the participant and case manager to complete together:
-             - [ ] Specific People / Past Associations: ___________________________
-             - [ ] High-Risk Environments / Neighborhoods / Places: ___________________________
-             - [ ] Emotional / Physical States (HALT - Hungry, Angry, Lonely, Tired, Stressed): ___________________________
-             - [ ] Specific Workplace / Authority Situations (e.g., unexpected overtime, supervisor correction, coworker friction): ___________________________
-         * **Suggested Tools to Apply from the Turn90 CBT Toolkit**:
+       - Identify EXACTLY the TOP 3 Areas of Focus (these correspond to their criminogenic domains, but use highly accessible, less clinical language). For each of the 3 areas, structure into EXACTLY these 4 sections:
+         * **Area of Focus & Core Goal**: (e.g., "Area of Focus: Handling Frustration & Anger | Core Goal: Staying calm when things don't go your way", rather than using clinical terms like 'Criminogenic Domain' or 'Hostile Attribution').
+         * **Personal Pattern**: (The specific unhelpful thinking trap, defense mechanism, or automatic loop identified from their interview, explained in everyday language, e.g., "Taking workplace feedback as a personal attack" or "Walking away or quitting when feeling overwhelmed").
+         * **Trigger Situations**:
+           - Leave this section entirely empty so the participant and case manager can identify triggers together. Simply provide 5 to 8 numbered blank lines where the participant can write down specific situations that trigger this pattern.
+             1. ___________________________________________________________________________________
+             2. ___________________________________________________________________________________
+             3. ___________________________________________________________________________________
+             4. ___________________________________________________________________________________
+             5. ___________________________________________________________________________________
+             6. ___________________________________________________________________________________
+         * **Suggested Tools from the Turn90 CBT Toolkit**:
            - Explicitly recommend 2-3 tools tailored to counteract this exact pattern:
              - **Stop & Think**: The 3-second pause before reacting to an authority figure or stressor.
              - **Thinking Report**: Writing out Situation -> Thoughts -> Physical Sensations -> Action -> Outcome to expose faulty beliefs.
@@ -273,11 +275,11 @@ async function runPhase2(transcriptText, clientName, draftScoringForm, feedback,
              - **Decisional Balance**: Immediate impulse payoff vs Long-term freedom & wages.
              - **Cognitive Restructuring**: Replacing the automatic thinking trap with a grounded, helpful thought.
              - **Modeling Neutrality**: De-escalating posture and tone, asking open-ended clarifying questions.
-       - Conclude with a strong, motivating closing message recognizing the participant's resilience and strengths.
+       - CRITICAL REQUIREMENT: DO NOT include a closing message. The plan should end immediately after the Suggested Tools for the third Area of Focus.
     4. "csv_row": The exact CSV row for Apricot import mapping to:
        ${csvHeader}
        (Use Apricot_Mapping.txt. If a question was unasked/unanswered, leave blank).
-    5. "briefcase_autofill": A structured JSON object identifying participant barrier statuses to automatically update their profile and briefcase:
+    5. "briefcase_autofill": A structured JSON object identifying participant barrier statuses and evaluating new Gate requirements to automatically update their profile:
        {
          "dl_status": "valid" | "suspended" | "reinstatement_plan",
          "dl_notes": "string",
@@ -288,8 +290,17 @@ async function runPhase2(transcriptText, clientName, draftScoringForm, feedback,
          "welvista_needed": true | false,
          "mental_health_referral": true | false,
          "substance_recovery_plan": true | false,
-         "top_criminogenic_domains": ["string", "string"],
-         "detected_stability_flags": ["array of matching trigger keys if any"]
+         "top_criminogenic_domains": ["string", "string", "string"],
+         "detected_stability_flags": ["array of matching trigger keys if any"],
+         
+         "gates_autocomplete": {
+           "g1_state_id": true | false, // True if they confirmed they have a physical ID/license
+           "g1_ssn": true | false, // True if they have SSN card
+           "g1_birth_cert": true | false, // True if they have birth certificate
+           "g2_housing": true | false, // True if living situation is stable
+           "g2_phone": true | false, // True if they have active phone
+           "g4_transportation": true | false // True if they have reliable verified transportation
+         }
        }
     
     Reference Manuals:

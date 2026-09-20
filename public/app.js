@@ -347,7 +347,7 @@ async function loadBriefcaseChecklist(targetContainerId) {
         const domainLabels = {
             core_stability: '🛡️ Core Stability & Documents',
             employment_readiness: '👔 Employment Readiness',
-            credentials: '🏅 Industry Credentials & Training',
+            
             health_wellness: '🏥 Health & Wellness',
             financial: '💵 Financial & Life Management',
             career_planning: '🚀 Career Planning & Goals'
@@ -1761,6 +1761,7 @@ async function loadCaseload() {
                 <td>
                     <div style="display: flex; align-items: baseline; gap: 6px;">
                         <strong style="font-size: 13.5px; color: #0f172a;">${p.name}</strong>
+                        ${p.skillcat_notes && p.skillcat_notes.includes('%') ? `<span style="background: #2563eb; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 6px; font-weight: bold;">🛠️ SkillCat: ${p.skillcat_notes.match(/\d+%/)[0]}</span>` : ''}
                         <button class="btn btn-outline" style="padding: 1px 5px; font-size: 10px; border-color: #cbd5e1; color: #475569;" onclick="openCorrectionModal(${p.id}, '${escName}')" title="Correct Information / Edit Staff Notes">
                             ✏️ Fix
                         </button>
@@ -2310,7 +2311,7 @@ function renderStaffCpBriefcase(data) {
     const domains = {
         core_stability: '1. Core Stability',
         employment_readiness: '2. Employment Readiness',
-        credentials: '3. Credentials & Trades',
+        
         health_wellness: '4. Health & Wellness',
         financial: '5. Financial Literacy',
         career_planning: '6. Career Planning'

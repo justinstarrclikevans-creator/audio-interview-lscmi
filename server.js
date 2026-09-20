@@ -648,7 +648,8 @@ app.get('/api/admin/caseload', authenticateToken, requireRole('program_manager',
                p.has_reentry_plan, p.reentry_status, p.enrollment_date, p.correction_notes,
                (SELECT COUNT(*) FROM gate_criteria WHERE user_id = u.id AND status = 'green') as green_criteria,
                (SELECT COUNT(*) FROM gate_criteria WHERE user_id = u.id AND status = 'red') as red_criteria,
-               (SELECT AVG(points_earned) FROM daily_points WHERE user_id = u.id) as avg_points
+               (SELECT AVG(points_earned) FROM daily_points WHERE user_id = u.id) as avg_points,
+               (SELECT notes FROM briefcase_items WHERE user_id = u.id AND (item_key = 'skillcat_progress' OR title LIKE '%SkillCat%') LIMIT 1) as skillcat_notes
         FROM users u
         LEFT JOIN participant_profiles p ON u.id = p.user_id
         WHERE u.role = 'participant'
@@ -3320,6 +3321,188 @@ app.use((err, req, res, next) => {
     }
     res.status(500).send('Internal Server Error');
 });
+
+
+
+// ==========================================
+// STAFF ASSESSMENTS (HEALTH & STABILITY)
+// ==========================================
+
+app.post('/api/staff/health-assessment', authenticateToken, (req, res) => {
+    if (req.user.role !== 'program_manager' && req.user.role !== 'admin' && req.user.role !== 'director') {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+    
+    const {
+        participant_id, vision_issues, hearing_issues, mobility_pain, stamina_fatigue,
+        fine_motor_issues, physical_notes, reading_writing_issues, following_instructions_issues,
+        memory_organization_issues, processing_time_issues, cognitive_notes,
+        emotional_regulation_issues, anxiety_panic, social_interactions_issues,
+        baseline_changes, avoidance, mental_health_notes, primary_care_referral,
+        vocational_rehab_referral, mental_health_referral, job_search_adjustment, immediate_next_step
+    } = req.body;
+
+    try {
+        const stmt = db.prepare(`
+            INSERT INTO health_wellness_screen (
+                user_id, assessor_name, vision_issues, hearing_issues, mobility_pain, stamina_fatigue,
+                fine_motor_issues, physical_notes, reading_writing_issues, following_instructions_issues,
+                memory_organization_issues, processing_time_issues, cognitive_notes,
+                emotional_regulation_issues, anxiety_panic, social_interactions_issues,
+                baseline_changes, avoidance, mental_health_notes, primary_care_referral,
+                vocational_rehab_referral, mental_health_referral, job_search_adjustment, immediate_next_step
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `);
+        
+        stmt.run(
+            participant_id, req.user.name, vision_issues||0, hearing_issues||0, mobility_pain||0, stamina_fatigue||0,
+            fine_motor_issues||0, physical_notes, reading_writing_issues||0, following_instructions_issues||0,
+            memory_organization_issues||0, processing_time_issues||0, cognitive_notes,
+            emotional_regulation_issues||0, anxiety_panic||0, social_interactions_issues||0,
+            baseline_changes||0, avoidance||0, mental_health_notes, primary_care_referral||0,
+            vocational_rehab_referral||0, mental_health_referral||0, job_search_adjustment||0, immediate_next_step
+        );
+        
+        res.json({ success: true, message: 'Health assessment saved.' });
+    } catch (error) {
+        console.error('Health assessment error:', error);
+        res.status(500).json({ error: 'Failed to save health assessment.' });
+    }
+});
+
+app.post('/api/staff/stability-check', authenticateToken, (req, res) => {
+    if (req.user.role !== 'program_manager' && req.user.role !== 'admin' && req.user.role !== 'director') {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+    
+    // Using a simplified body extraction for brevity
+    const data = req.body;
+    try {
+        const stmt = db.prepare(`
+            INSERT INTO weekly_stability_checks (
+                user_id, week_number, assessor_name, new_sexual_convictions, permanent_restraining_order,
+                recent_major_drug_use, housing_instability, homeless_or_motel, facing_eviction,
+                failed_drug_test, new_arrest, two_unplanned_absences, no_call_no_show,
+                moving_out_of_area, court_mandate_conflict, childcare_loss, transportation_breakdown,
+                mental_health_crisis, physical_health_emergency, barriers_identified, can_meet_rapidly,
+                needs_more_resources, attendance_satisfactory, ability_learn_q2, removing_barriers,
+                cbt_homework_completed, cbt_discussion_active, cbt_roleplay_effort, transportation_viable,
+                qualified_for_desired_jobs, no_disqualifying_convictions, has_certifications,
+                has_education, can_work_schedule, supervision_allows_schedule, no_psf_overnight,
+                transitional_house_allows_overnight
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `);
+        
+        stmt.run(
+            data.participant_id, data.week_number||1, req.user.name,
+            data.new_sexual_convictions||0, data.permanent_restraining_order||0, data.recent_major_drug_use||0,
+            data.housing_instability||0, data.homeless_or_motel||0, data.facing_eviction||0,
+            data.failed_drug_test||0, data.new_arrest||0, data.two_unplanned_absences||0,
+            data.no_call_no_show||0, data.moving_out_of_area||0, data.court_mandate_conflict||0,
+            data.childcare_loss||0, data.transportation_breakdown||0, data.mental_health_crisis||0,
+            data.physical_health_emergency||0, data.barriers_identified, data.can_meet_rapidly||1,
+            data.needs_more_resources||0, data.attendance_satisfactory||1, data.ability_learn_q2||1,
+            data.removing_barriers||1, data.cbt_homework_completed||1, data.cbt_discussion_active||1,
+            data.cbt_roleplay_effort||1, data.transportation_viable||1, data.qualified_for_desired_jobs||1,
+            data.no_disqualifying_convictions||1, data.has_certifications||1, data.has_education||1,
+            data.can_work_schedule||1, data.supervision_allows_schedule||1, data.no_psf_overnight||1,
+            data.transitional_house_allows_overnight||1
+        );
+        res.json({ success: true, message: 'Stability check saved.' });
+    } catch (error) {
+        console.error('Stability check error:', error);
+        res.status(500).json({ error: 'Failed to save stability check.' });
+    }
+});
+
+// ==========================================
+// APRICOT IMPORT / EXPORT 
+// ==========================================
+
+// Using existing multer instance
+const apricotUpload = multer({ dest: 'uploads/' });
+const fsOptions = require('fs');
+
+app.post('/api/apricot/import', authenticateToken, apricotUpload.single('file'), (req, res) => {
+    if (req.user.role !== 'admin' && req.user.role !== 'director') {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+
+    try {
+        const fileData = fsOptions.readFileSync(req.file.path, 'utf8');
+        const lines = fileData.split('\n');
+        
+        let processed = 0;
+        let flags = 0;
+        
+        // Very basic CSV processing for points and case notes
+        db.transaction(() => {
+            // Assume format: ParticipantName, Date, PointsEarned, CaseNotes
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+                
+                const parts = line.split(',');
+                if (parts.length >= 3) {
+                    const name = parts[0];
+                    const points = parseFloat(parts[2]);
+                    
+                    const user = db.prepare("SELECT id FROM users WHERE name LIKE ?").get('%' + name + '%');
+                    if (user) {
+                        processed++;
+                        // Flag if points < 10
+                        if (points < 10) {
+                            flags++;
+                            db.prepare("INSERT INTO daily_points (user_id, points_earned, notes, imported_from_apricot) VALUES (?, ?, ?, 1)")
+                              .run(user.id, points, 'Flagged: Missing points (stability issue)');
+                        } else {
+                            db.prepare("INSERT INTO daily_points (user_id, points_earned, imported_from_apricot) VALUES (?, ?, 1)")
+                              .run(user.id, points);
+                        }
+                    }
+                }
+            }
+            
+            db.prepare("INSERT INTO apricot_sync_logs (filename, records_processed, flags_generated) VALUES (?, ?, ?)")
+              .run(req.file.originalname, processed, flags);
+        })();
+        
+        res.json({ success: true, processed, flags });
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ error: 'Failed to import Apricot data.' });
+    }
+});
+
+app.get('/api/apricot/export', authenticateToken, (req, res) => {
+    // Generate CSV export of case notes and briefcase status to load back into Apricot
+    try {
+        const notes = db.prepare(`
+            SELECT u.name, c.session_date, c.category, c.content 
+            FROM case_notes c 
+            JOIN users u ON c.user_id = u.id 
+            WHERE c.apricot_exported = 0
+        `).all();
+        
+        let csv = 'ParticipantName,SessionDate,Category,Content\n';
+        notes.forEach(n => {
+            const cleanContent = n.content.replace(/"/g, '""');
+            csv += `"${n.name}","${n.session_date}","${n.category}","${cleanContent}"\n`;
+        });
+        
+        // Mark as exported
+        db.prepare("UPDATE case_notes SET apricot_exported = 1 WHERE apricot_exported = 0").run();
+        
+        res.header('Content-Type', 'text/csv');
+        res.attachment('Apricot_Export.csv');
+        res.send(csv);
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ error: 'Failed to export to Apricot.' });
+    }
+});
+
 
 app.listen(PORT, async () => {
     console.log(`🚀 Unified First Shift & Re-entry App running at http://localhost:${PORT}`);

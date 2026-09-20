@@ -133,14 +133,14 @@
                         </div>
                     </div>
 
-                    <!-- Card 2: Orientation Step 2 - Form W-9 Submission -->
+                    <!-- Card 2: Orientation Step 2 - Digital ID Submission -->
                     <div class="portal-card action-card">
                         <div class="card-icon">📝</div>
                         <div class="card-body">
-                            <h3>2. Digital Form W-9 & ID</h3>
+                            <h3>2. Digital Digital ID & ID</h3>
                             <p id="w9-card-status">Status: Pending Verification. Submit your W-9 and upload your state ID / birth certificate.</p>
                             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                                <button class="btn btn-outline" id="btn-w9-action" onclick="openW9Modal()">Complete Form W-9</button>
+                                <button class="btn btn-outline" id="btn-w9-action" onclick="openW9Modal()">Complete Digital ID</button>
                                 <button class="btn btn-outline hidden" id="btn-w9-view" onclick="openW9ViewModal(currentUser.id)">📄 View W-9</button>
                             </div>
                         </div>
@@ -333,7 +333,7 @@
                                 <span style="font-size: 22px;">🤖</span>
                                 <div>
                                     <h2 style="font-size: 16px; margin: 0;">Fresh Start AI Assistant</h2>
-                                    <p style="font-size: 12px; margin: 2px 0 0 0;">Guidance for Form I-9, Form W-9, SCDMV Driver's License, Welvista & referrals.</p>
+                                    <p style="font-size: 12px; margin: 2px 0 0 0;">Guidance for Form I-9, Digital ID, SCDMV Driver's License, Welvista & referrals.</p>
                                 </div>
                             </div>
                         </div>
@@ -1109,14 +1109,14 @@
     <!-- MODALS: W-9, BARRIERS, APRICOT, REPORTS, INTERVIEW        -->
     <!-- ========================================================= -->
 
-    <!-- Official IRS Form W-9 Modal -->
+    <!-- Official IRS Digital ID Modal -->
     <div id="modal-w9" class="modal hidden">
         <div class="modal-content modal-lg" style="max-width: 820px;">
             <div class="modal-header" style="background: #0f172a; color: white; padding: 14px 20px;">
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <div style="background: white; color: #0f172a; padding: 4px 8px; font-weight: 900; font-size: 16px; border-radius: 4px;">W-9</div>
                     <div>
-                        <h3 style="margin: 0; color: white; font-size: 16px;">Form W-9: Request for Taxpayer Identification Number and Certification</h3>
+                        <h3 style="margin: 0; color: white; font-size: 16px;">Digital ID: Request for Taxpayer Identification Number and Certification</h3>
                         <div style="font-size: 11px; color: #94a3b8;">Department of the Treasury • Internal Revenue Service (IRS Rev. March 2024)</div>
                     </div>
                 </div>
@@ -1248,7 +1248,7 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary btn-block" style="padding: 12px; font-size: 15px; font-weight: 700;" id="btn-w9-submit">
-                    ✍️ Certify & Submit Official Form W-9
+                    ✍️ Certify & Submit Official Digital ID
                 </button>
             </form>
         </div>
@@ -1632,18 +1632,18 @@
         </div>
     </div>
 
-    <!-- Official Form W-9 Summary Viewer Modal -->
+    <!-- Official Digital ID Summary Viewer Modal -->
     <div id="modal-w9-view" class="modal hidden">
         <div class="modal-content modal-lg">
             <div class="modal-header">
-                <h3>📄 Submitted Form W-9 Record</h3>
+                <h3>📄 Submitted Digital ID Record</h3>
                 <button class="modal-close" onclick="closeModal('modal-w9-view')">&times;</button>
             </div>
             <div id="w9-view-body" style="padding: 10px 0;">
                 <!-- Loaded dynamically -->
             </div>
             <div class="modal-footer">
-                <button class="btn btn-outline" onclick="window.print()">🖨️ Print Form W-9</button>
+                <button class="btn btn-outline" onclick="window.print()">🖨️ Print Digital ID</button>
             </div>
         </div>
     </div>

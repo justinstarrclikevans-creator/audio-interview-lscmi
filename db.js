@@ -357,82 +357,76 @@ const BRIEFCASE_DOMAINS = {
         { key: 'career_interest', title: 'Career Interest Discussion' },
         { key: 'prof_email_created', title: 'Professional Email Created' },
         { key: 'resume_completed', title: 'Resume Completed' },
-        { key: 'workplace_references', title: 'Workplace References Identified' },
-        { key: 'interview_practice', title: 'Interview Practice Completed' },
-        { key: 'interview_clothing', title: 'Interview Clothing' },
-        { key: 'work_tools_clothing', title: 'Work Tools / Clothing' },
-        { key: 'job_apps_submitted', title: 'Job Applications Submitted' }
+        { key: 'interview_prep', title: 'Mock Interview Prep Completed' },
+        { key: 'work_clothing', title: 'Work Clothing / Steel Toe Boots Secured' }
     ],
-    credentials: [
-        { key: 'osha_10', title: 'OSHA-10 Certification' },
-        { key: 'forklift_cert', title: 'Forklift Certification' },
-        { key: 'home_depot_pro', title: 'Home Depot Path to Pro' },
-        { key: 'drywall_training', title: 'Drywall' },
-        { key: 'electrical_training', title: 'Electrical' },
-        { key: 'general_construction', title: 'General Construction' },
-        { key: 'hvac_training', title: 'HVAC' },
-        { key: 'paint_training', title: 'Paint' },
-        { key: 'plumbing_training', title: 'Plumbing' },
-        { key: 'welding_training', title: 'Welding' },
-        { key: 'refrigeration_training', title: 'Refrigeration' }
+    skillcat: [
+        { key: 'skillcat_progress', title: 'SkillCat Progress' }
     ],
     health_wellness: [
-        { key: 'health_insurance', title: 'Health Insurance / Medicaid Coverage' },
-        { key: 'welvista_referral', title: 'Welvista Prescription Assistance' },
-        { key: 'primary_care_visit', title: 'Primary Care / Doctor Visit' },
-        { key: 'vision_appointment', title: 'Vision Appointment' },
-        { key: 'prescription_needs', title: 'Prescription Needs Reviewed' },
-        { key: 'mental_health_referral', title: 'Mental Health Referral (if requested)' },
-        { key: 'substance_recovery_plan', title: 'Substance Recovery Support Plan (if applicable)' }
+        { key: 'medical_home', title: 'Primary Care Doctor Identified' },
+        { key: 'vision_screen', title: 'Vision Screener Completed' },
+        { key: 'dental_check', title: 'Dental Referral Made' },
+        { key: 'mental_health_support', title: 'Mental Health / Counseling Established' },
+        { key: 'substance_recovery', title: 'Recovery / MAT Support Active' },
+        { key: 'prescriptions', title: 'Medication/Prescriptions Secured (Welvista)' }
     ],
     financial: [
-        { key: 'bank_account_opened', title: 'Bank Account Opened' },
-        { key: 'budget_worksheet', title: 'Budget Worksheet Completed' },
-        { key: 'paycheck_taxes_understanding', title: 'Understanding of Paychecks & Taxes' },
-        { key: 'savings_goal', title: 'Savings Goal Identified' },
-        { key: 'credit_report', title: 'Credit Report Reviewed' },
-        { key: 'child_support_questions', title: 'Child Support Questions Reviewed' },
-        { key: 'probation_obligations', title: 'Probation Obligations Reviewed' }
+        { key: 'budget_created', title: 'Personal Budget Created' },
+        { key: 'credit_pulled', title: 'Credit Report Pulled & Reviewed' },
+        { key: 'debt_plan', title: 'Debt Reduction Plan Initiated' },
+        { key: 'savings_goal', title: 'Savings Goal Established' }
     ],
     career_planning: [
         { key: 'career_goal', title: 'Career Goal Identified' },
         { key: 'target_industry', title: 'Target Industry Identified' },
         { key: 'entry_job_goal', title: 'Entry-Level Job Goal Identified' },
         { key: 'next_credential_goal', title: 'Next Credential Goal Identified' },
-        { key: 'six_month_goal', title: '6-Month Goal Written' },
-        { key: 'long_term_wage_goal', title: 'Long-Term Wage Goal Identified' }
+        { key: 'education_plan', title: 'Education/Degree Plan (Optional)' }
     ]
 };
 
 // 4-Week Job Readiness Gate Criteria (Must-Haves to Qualify for Weeks 5–8 & Week 9 Placement)
 const DEFAULT_GATE_CRITERIA = {
     1: [
-        { key: 'w1_attendance', title: 'General Attendance & Points Benchmark', description: 'Maintains required attendance and points system benchmark across Week 1.' },
-        { key: 'w1_interview', title: 'LS/CMI Assessment Interview Completed', description: '158-question audio interview recorded and draft scoring generated.' },
-        { key: 'w1_w9_id', title: 'Form W-9 & Primary ID Submitted', description: 'Digital W-9 completed and State ID/Birth Certificate/SS card uploaded.' },
-        { key: 'w1_goal_email', title: '90-Day Goal & Professional Email Created', description: 'Baseline 90-day motivation worksheet and professional email handle established.' },
-        { key: 'w1_stability_screen', title: 'Initial Stability Screen Clear', description: 'No immediate disqualifying sex offenses, PROs, or acute homelessness.' }
+        { key: 'g1_state_id', title: "State ID or Driver's License", description: 'Valid, unexpired ID or DMV appointment booked.' },
+        { key: 'g1_ssn', title: 'Social Security Card', description: 'Physical card, receipt from SSA, or appointment booked.' },
+        { key: 'g1_birth_cert', title: 'Birth Certificate', description: 'Physical copy or appointment booked.' },
+        { key: 'g1_prescriptions', title: 'Fill Needed Prescriptions', description: 'All needed prescriptions filled.' },
+        { key: 'g1_healthcare', title: 'Explore Healthcare Options', description: 'Healthcare options explored and identified.' },
+        { key: 'g1_supervision', title: 'Supervision Information', description: 'County, officer name, report dates documented.' },
+        { key: 'g1_main_goal', title: 'Main Goal Set', description: '90-day vision, improvement goals, and stability goals outlined.' },
+        { key: 'g1_skillcat_intro', title: 'Completed SkillCat Intro', description: 'SkillCat intro module completed.' },
+        { key: 'g1_skillcat_track', title: 'Chose SkillCat Track', description: 'Appropriate job placement track selected based on history and availability.' }
     ],
     2: [
-        { key: 'w2_cbt_homework', title: 'CBT Modules 1-2 & Homework Active', description: 'Active in class discussion, completing worksheets, and effort in role plays.' },
-        { key: 'w2_dl_cs_plan', title: 'Driver\'s License & Child Support Steps Active', description: 'SCDMV fee plan identified or court review paperwork initiated.' },
-        { key: 'w2_health_vision', title: 'Health, Vision & Prescription Screen', description: 'Welvista referral reviewed, vision appointment set, and maintenance meds confirmed.' },
-        { key: 'w2_q2_learning', title: 'Satisfactory Q2 Concept Learning', description: 'Demonstrating ability to learn trades and workplace standards.' },
-        { key: 'w2_attendance', title: 'Zero NCNS Attendance Compliance', description: 'Points meet 85%+ benchmark with zero unexcused no-call-no-shows.' }
+        { key: 'g2_child_support', title: 'Child Support Plan Made', description: 'Cases reviewed and contact made with enforcement if applicable.' },
+        { key: 'g2_housing', title: 'Stable Address / Housing', description: 'Living situation stable enough not to disrupt daily work routine in next 30-60 days.' },
+        { key: 'g2_phone', title: 'Reliable Phone Number', description: 'Active phone with voicemail set up for employer contact.' },
+        { key: 'g2_probation_conflicts', title: 'Probation / Legal Obligations', description: 'No probation meetings, court dates, or hours conflicting with standard work schedule.' },
+        { key: 'g2_dmv', title: 'DMV License Check', description: 'Gone to DMV to find out why license is suspended (if applicable).' },
+        { key: 'g2_email', title: 'Professional Email', description: 'Professional email address established.' },
+        { key: 'g2_resume', title: 'Resume', description: 'Resume completed.' },
+        { key: 'g2_skillcat_progress', title: 'Making Progress on SkillCat Track', description: 'Progress verified in SkillCat.' }
     ],
     3: [
-        { key: 'w3_resume_approved', title: 'Master Resume Completed in Builder', description: 'Approved resume with professional background explanation pitch formatted.' },
-        { key: 'w3_references_interview', title: '2-3 References & Interview Practice Completed', description: 'Workplace references verified and common interview questions practiced out loud.' },
-        { key: 'w3_cbt_conflict', title: 'Workplace Conflict & Communication CBT Passed', description: 'Demonstrated emotional regulation and problem-solving framework.' },
-        { key: 'w3_points_threshold', title: 'Cumulative 85%+ Points Benchmark', description: 'Daily Apricot points threshold sustained.' },
-        { key: 'w3_barrier_resolution', title: 'Active Barrier Removal Progress', description: 'Concrete steps documented on transportation, housing, and court obligations.' }
+        { key: 'g3_undiagnosed_needs', title: 'Undiagnosed Needs / Disabilities Screened', description: 'Health Screen for Staff completed to check for learning/physical/undiagnosed conditions.' },
+        { key: 'g3_primary_care', title: 'Primary Care / Medical', description: 'No untreated illnesses/injuries that make full shifts difficult, or doctor visit scheduled.' },
+        { key: 'g3_vision', title: 'Vision Appointment', description: 'Vision is adequate for job duties or vision appointment scheduled.' },
+        { key: 'g3_prescription_access', title: 'Prescription Needs Access', description: 'Steady access to necessary daily medications.' },
+        { key: 'g3_mental_health', title: 'Mental Health / Substance Recovery Plan', description: 'Support plan in place to ensure stability during work transition.' },
+        { key: 'g3_bank_account', title: 'Bank Account', description: 'Active account for direct deposit or temporary payroll card set up.' },
+        { key: 'g3_skillcat_progress', title: 'Making Progress on SkillCat Track', description: 'Progress verified in SkillCat.' }
     ],
     4: [
-        { key: 'w4_bank_direct_deposit', title: 'Bank Account & Direct Deposit Ready', description: 'Active bank account or payroll card verified for employment direct deposit.' },
-        { key: 'w4_work_gear', title: 'Work Clothing & Boots Verified', description: 'Workplace attire and steel-toe boots/PPE ready for 1st shift job placement.' },
-        { key: 'w4_transport_transit', title: 'Independent Transportation Verified', description: 'Reachable daily to manufacturing job corridors without program rideshare assistance.' },
-        { key: 'w4_drug_compliance', title: 'Substance & Accountability Compliance', description: 'Clean drug/alcohol screen; active recovery engagement if applicable.' },
-        { key: 'w4_gate_triage', title: 'Week 4 Gate Placement Approval', description: 'Final staff triage: Approved for Weeks 5–8 & Week 9 Placement vs. Step-Down.' }
+        { key: 'g4_work_gear', title: 'Work Tools & Clothing', description: 'Required items (steel-toe boots, non-slip shoes, pants, tools) obtained for desired job.' },
+        { key: 'g4_transportation', title: 'Transportation Plan', description: 'Reliable, verified way to get to work daily (car, bus pass, carpool, budget).' },
+        { key: 'g4_budget', title: 'Budget Completed', description: 'Personal budget outlined.' },
+        { key: 'g4_savings', title: 'Savings Goals', description: 'Savings goals established.' },
+        { key: 'g4_credit', title: 'Credit Reviewed', description: 'Credit report reviewed with staff.' },
+        { key: 'g4_6mo_plan', title: '6-Month Job Plan Created', description: 'Short-term employment roadmap.' },
+        { key: 'g4_career_goal', title: 'Long-Term Career Goal Identified', description: 'Long-term career goals mapped out.' },
+        { key: 'g4_skillcat_progress', title: 'Making Progress on SkillCat Track', description: 'Progress verified in SkillCat.' }
     ]
 };
 

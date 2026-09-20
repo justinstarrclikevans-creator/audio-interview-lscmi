@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turn90 - Staff Assessments</title>
+    <style>
+        body { font-family: -apple-system, system-ui, sans-serif; background: #f1f5f9; margin: 0; padding: 20px; color: #334155; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 30px;}
+        h1, h2, h3 { color: #0f172a; }
+        .form-group { margin-bottom: 15px; }
+        label { font-weight: bold; display: block; margin-bottom: 5px; font-size: 14px; }
+        .checkbox-label { font-weight: normal; display: flex; align-items: flex-start; margin-bottom: 8px; font-size: 14px; }
+        .checkbox-label input { margin-right: 10px; margin-top: 3px; }
+        textarea, input[type="text"], select { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; box-sizing: border-box; }
+        button { padding: 10px 20px; border-radius: 6px; border: none; background: #3b82f6; color: white; cursor: pointer; font-weight: bold; }
+        .section-box { border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px; margin-bottom: 20px; background: #f8fafc; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Health & Wellness Observation Screen</h2>
+        <p><em>Staff Instructions: You are not a doctor. Use this tool to note observable behaviors or self-reported struggles.</em></p>
+        <form id="health-form" onsubmit="submitHealthForm(event)">
+            <div class="form-group">
+                <label>Participant ID:</label>
+                <input type="number" id="h_participant_id" required>
+            </div>
+            
+            <div class="section-box">
+                <h3>Section 1: Physical Health & Mobility</h3>
+                <label class="checkbox-label"><input type="checkbox" id="h_vision"> Vision: Squints, holds paperwork close, headaches.</label>
+                <label class="checkbox-label"><input type="checkbox" id="h_hearing"> Hearing: Asks to repeat, speaks loudly.</label>
+                <label class="checkbox-label"><input type="checkbox" id="h_mobility"> Mobility/Pain: Winces, limps, shifts weight.</label>
+                <label class="checkbox-label"><input type="checkbox" id="h_stamina"> Stamina/Fatigue: Excessively tired, sleeps in session.</label>
+                <label class="checkbox-label"><input type="checkbox" id="h_fine_motor"> Fine Motor: Shaking hands, struggles to write.</label>
+                <textarea id="h_physical_notes" placeholder="Staff Notes..."></textarea>
+            </div>
+
+            <div class="section-box">
+                <h3>Section 2: Cognitive, Learning & Executive Functioning</h3>
+                <label class="checkbox-label"><input type="checkbox" id="h_reading"> Reading/Writing: Avoids reading out loud, leaves blank.</label>
+                <label class="checkbox-label"><input type="checkbox" id="h_following"> Following Instructions: Needs tasks broken down.</label>
+                <label class="checkbox-label"><input type="checkbox" id="h_memory"> Memory & Organization: Forgets appointments, loses docs.</label>
+                <label class="checkbox-label"><input type="checkbox" id="h_processing"> Processing Time: Takes long to respond.</label>
+                <textarea id="h_cognitive_notes" placeholder="Staff Notes..."></textarea>
+            </div>
+
+            <div class="section-box">
+                <h3>Section 5: Referral Action Plan</h3>
+                <label class="checkbox-label"><input type="checkbox" id="h_ref_pc"> Primary Care / Welvista Referral</label>
+                <label class="checkbox-label"><input type="checkbox" id="h_ref_vr"> Vocational Rehabilitation Referral</label>
+                <label class="checkbox-label"><input type="checkbox" id="h_ref_mh"> Mental Health / Counseling Referral</label>
+                <label class="checkbox-label"><input type="checkbox" id="h_job_adj"> Job Search Adjustment</label>
+                <textarea id="h_next_step" placeholder="Immediate Next Step / Referral Made"></textarea>
+            </div>
+            
+            <button type="submit">Submit Health Assessment</button>
+        </form>
+    </div>
+
+    <div class="container">
+        <h2>Weekly Stability and Case Planning Checks</h2>
+        <p><em>To be filled out every week for participants.</em></p>
+        <form id="stability-form" onsubmit="submitStabilityForm(event)">
+            <div class="form-group">
+                <label>Participant ID:</label>
+                <input type="number" id="s_participant_id" required>
+            </div>
+            
+            <div class="section-box">
+                <h3>Stability Issues (Exceptions require Director override)</h3>
+                <label class="checkbox-label"><input type="checkbox" id="s_sex_conviction"> New sexual convictions not disclosed</label>
+                <label class="checkbox-label"><input type="checkbox" id="s_drug_use"> Recent major drug use / failed screen</label>
+                <label class="checkbox-label"><input type="checkbox" id="s_housing"> Housing instability (motel, homeless, eviction)</label>
+                <label class="checkbox-label"><input type="checkbox" id="s_ncns"> ANY No Call No Show (NCNS)</label>
+                <label class="checkbox-label"><input type="checkbox" id="s_transportation"> Breakdown of primary vehicle / transportation loss</label>
+            </div>
+
+            <button type="submit">Submit Weekly Stability Check</button>
+        </form>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('t90_token');
+        if(!token) { alert('Please log in through the main staff dashboard first.'); window.location.href='/'; }
+
+        async function submitHealthForm(e) {
+            e.preventDefault();
+            const payload = {
+                participant_id: document.getElementById('h_participant_id').value,
+                vision_issues: document.getElementById('h_vision').checked ? 1 : 0,
+                hearing_issues: document.getElementById('h_hearing').checked ? 1 : 0,
+                mobility_pain: document.getElementById('h_mobility').checked ? 1 : 0,
+                stamina_fatigue: document.getElementById('h_stamina').checked ? 1 : 0,
+                fine_motor_issues: document.getElementById('h_fine_motor').checked ? 1 : 0,
+                physical_notes: document.getElementById('h_physical_notes').value,
+                reading_writing_issues: document.getElementById('h_reading').checked ? 1 : 0,
+                following_instructions_issues: document.getElementById('h_following').checked ? 1 : 0,
+                memory_organization_issues: document.getElementById('h_memory').checked ? 1 : 0,
+                processing_time_issues: document.getElementById('h_processing').checked ? 1 : 0,
+                cognitive_notes: document.getElementById('h_cognitive_notes').value,
+                primary_care_referral: document.getElementById('h_ref_pc').checked ? 1 : 0,
+                vocational_rehab_referral: document.getElementById('h_ref_vr').checked ? 1 : 0,
+                mental_health_referral: document.getElementById('h_ref_mh').checked ? 1 : 0,
+                job_search_adjustment: document.getElementById('h_job_adj').checked ? 1 : 0,
+                immediate_next_step: document.getElementById('h_next_step').value,
+            };
+
+            const res = await fetch('/api/staff/health-assessment', {
+                method: 'POST',
+                headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if(res.ok) { alert('Saved!'); e.target.reset(); }
+        }
+
+        async function submitStabilityForm(e) {
+            e.preventDefault();
+            const payload = {
+                participant_id: document.getElementById('s_participant_id').value,
+                new_sexual_convictions: document.getElementById('s_sex_conviction').checked ? 1 : 0,
+                recent_major_drug_use: document.getElementById('s_drug_use').checked ? 1 : 0,
+                housing_instability: document.getElementById('s_housing').checked ? 1 : 0,
+                no_call_no_show: document.getElementById('s_ncns').checked ? 1 : 0,
+                transportation_breakdown: document.getElementById('s_transportation').checked ? 1 : 0,
+            };
+
+            const res = await fetch('/api/staff/stability-check', {
+                method: 'POST',
+                headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if(res.ok) { alert('Saved!'); e.target.reset(); }
+        }
+    </script>
+</body>
+</html>
