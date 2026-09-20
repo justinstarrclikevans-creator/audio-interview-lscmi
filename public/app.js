@@ -1817,20 +1817,6 @@ async function loadCaseload() {
                     </div>
                 </td>
 
-                <!-- 5. Documents & Legal -->
-                <td>
-                    <div style="display: flex; align-items: center; gap: 4px;">
-                        <span class="badge ${p.w9_status === 'verified' ? 'badge-green' : (p.w9_status === 'submitted' ? 'badge-pending' : 'badge-red')}" style="font-size: 10.5px;">
-                            W-9: ${p.w9_status || 'Missing'}
-                        </span>
-                        ${p.w9_status === 'submitted' || p.w9_status === 'verified' ? `<a href="javascript:void(0)" onclick="openW9ViewModal(${p.id})" style="font-size: 11px; text-decoration: none;" title="View Form W-9">📄</a>` : ''}
-                    </div>
-                    <div style="font-size: 11px; margin-top: 5px; line-height: 1.4;">
-                        <div><span style="color: var(--slate); font-weight: 600;">DL:</span> <span style="font-weight: 600;">${p.dl_status || 'unknown'}</span></div>
-                        <div><span style="color: var(--slate); font-weight: 600;">CS:</span> <span style="font-weight: 600;">${p.child_support_status || 'unknown'}</span></div>
-                    </div>
-                </td>
-
                 <!-- 6. Notes & Audit -->
                 <td style="text-align: center; vertical-align: middle;">
                     <div style="display: flex; flex-direction: column; gap: 4px; align-items: center;">

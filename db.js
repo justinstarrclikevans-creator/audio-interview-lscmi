@@ -410,7 +410,6 @@ const DEFAULT_GATE_CRITERIA = {
         { key: 'g2_skillcat_progress', title: 'Making Progress on SkillCat Track', description: 'Progress verified in SkillCat.' }
     ],
     3: [
-        { key: 'g3_undiagnosed_needs', title: 'Undiagnosed Needs / Disabilities Screened', description: 'Health Screen for Staff completed to check for learning/physical/undiagnosed conditions.' },
         { key: 'g3_primary_care', title: 'Primary Care / Medical', description: 'No untreated illnesses/injuries that make full shifts difficult, or doctor visit scheduled.' },
         { key: 'g3_vision', title: 'Vision Appointment', description: 'Vision is adequate for job duties or vision appointment scheduled.' },
         { key: 'g3_prescription_access', title: 'Prescription Needs Access', description: 'Steady access to necessary daily medications.' },
