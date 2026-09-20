@@ -2976,6 +2976,7 @@ async function loadPmDrafts() {
                         </div>
 
                         <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: var(--danger); border-color: #fca5a5;" onclick="deleteInterviewRecord('${clientId}', '${cleanName}')" title="Delete this person's scoring eval records">🗑️ Delete</button>
                             ${completedScoringFile ? `
                                 <button class="btn btn-primary" style="font-size: 12px; padding: 6px 14px; background: #0f766e; border-color: #0f766e; font-weight: 700; display: inline-flex; align-items: center; gap: 5px;" onclick="printActiveDraftDocument('${completedScoringFile}')" title="Print Official LS/CMI Scoring Form">
                                     🖨️ Print Completed Scoring

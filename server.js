@@ -1200,6 +1200,27 @@ app.get('/api/admin/feedback-summary', authenticateToken, requireRole('program_m
 // -------------------------------------------------------------
 // EXISTING AUDIO INTERVIEW & LLM PIPELINE (PRESERVED IN FULL)
 // -------------------------------------------------------------
+
+app.delete('/api/interviews/:clientId', authenticateToken, requireRole('program_manager', 'admin'), (req, res) => {
+    try {
+        const clientId = req.params.clientId;
+        if (!clientId || clientId.includes('..') || clientId.includes('/')) return res.status(400).json({error: "Invalid client ID"});
+        
+        const files = fs.readdirSync(dataDir);
+        let deletedCount = 0;
+        files.forEach(f => {
+            if (f.startsWith(clientId + '_') && !f.endsWith('.sqlite')) {
+                fs.unlinkSync(path.join(dataDir, f));
+                deletedCount++;
+            }
+        });
+        res.json({ success: true, deleted: deletedCount });
+    } catch (err) {
+        console.error('Delete error:', err);
+        res.status(500).json({ error: 'Failed to delete records.' });
+    }
+});
+
 app.get('/api/interviews', (req, res) => {
     try {
         const files = fs.readdirSync(dataDir);
