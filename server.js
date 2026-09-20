@@ -660,11 +660,15 @@ app.get('/api/admin/caseload', authenticateToken, requireRole('program_manager',
     if (track) { query += ` AND u.track = ?`; params.push(track); }
     if (gate) { query += ` AND p.current_gate = ?`; params.push(parseInt(gate)); }
     if (status) {
-        query += ` AND p.overall_status = ?`;
-        params.push(status);
+        if (status === 'all') {
+            // no filter on status
+        } else {
+            query += ` AND p.overall_status = ?`;
+            params.push(status);
+        }
     } else {
         // Default to active participants
-        query += ` AND (p.overall_status IS NULL OR p.overall_status != 'archived')`;
+        query += ` AND (p.overall_status IS NULL OR p.overall_status = 'active')`;
     }
 
     query += ` ORDER BY p.current_gate DESC, u.name ASC`;
@@ -730,8 +734,11 @@ app.post('/api/pm/archive-participant', authenticateToken, requireRole('program_
     const { userId, reason, action } = req.body; // action: 'archive' or 'restore'
     if (!userId) return res.status(400).json({ error: 'userId is required.' });
 
-    const newStatus = action === 'restore' ? 'active' : 'archived';
-    const reasonText = reason || (action === 'restore' ? 'Restored to active caseload' : 'No longer receiving services');
+    let newStatus = 'active';
+    if (action === 'archive') newStatus = 'archived';
+    if (action === 'job_placed') newStatus = 'job_placed';
+    
+    const reasonText = reason || (action === 'restore' ? 'Restored to active caseload' : (action === 'job_placed' ? 'Employment Secured' : 'No longer receiving services'));
     const termDate = action === 'restore' ? null : new Date().toISOString().split('T')[0];
 
     db.prepare(`

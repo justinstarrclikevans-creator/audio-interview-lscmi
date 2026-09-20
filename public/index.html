@@ -771,12 +771,12 @@
                         <option value="Columbia">Columbia, SC</option>
                         <option value="Spartanburg">Spartanburg, SC</option>
                     </select>
-                    <select id="pm-filter-track" onchange="loadCaseload()">
+                    <select id="pm-filter-track" onchange="loadCaseload()" style="display:none;">
                         <option value="">All Tracks</option>
                         <option value="first_shift">First Shift</option>
                         <option value="reentry_nav">Re-entry Navigation</option>
                     </select>
-                    <select id="pm-filter-status" onchange="loadCaseload()">
+                    <select id="pm-filter-status" onchange="loadCaseload()" style="display:none;">
                         <option value="">Active Caseload</option>
                         <option value="archived">Archived / Removed</option>
                         <option value="all">All (Active & Archived)</option>
@@ -791,8 +791,15 @@
                 </div>
 
                 <!-- Caseload Table -->
+                
+                <div class="tabs" style="margin-bottom: 20px;">
+                    <button class="tab-button active" id="tab-first_shift" onclick="switchCaseloadTab('first_shift')">First Shift</button>
+                    <button class="tab-button" id="tab-reentry_nav" onclick="switchCaseloadTab('reentry_nav')">Reentry Navigation</button>
+                    <button class="tab-button" id="tab-job_placed" onclick="switchCaseloadTab('job_placed')">Job Placed</button>
+                </div>
+
                 <div class="section-card mt-4">
-                    <h2>Active Participant Caseload</h2>
+                    <h2 id="caseload-title">Active Participant Caseload</h2>
                     <div class="table-responsive">
                         <table class="data-table" id="caseload-table">
                             <thead>

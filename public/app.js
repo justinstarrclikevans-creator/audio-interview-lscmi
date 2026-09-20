@@ -112,7 +112,7 @@ function routeUserToPortal() {
 
     if (currentUser.role === 'program_manager' || currentUser.role === 'admin') {
         showView('view-pm-portal');
-        loadCaseload();
+        switchCaseloadTab('first_shift');
         loadPmDrafts();
     } else if (currentUser.track === 'first_shift') {
         showView('view-fs-portal');
@@ -1862,11 +1862,14 @@ async function loadCaseload() {
                         <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: #0284c7; border-color: #bae6fd;" onclick="advanceParticipantGate(${p.id}, ${(p.current_gate || 1) + 1})" title="Advance Gate">
                             Gate ➔
                         </button>
-                        ${p.overall_status === 'archived' ? `
+                        ${p.overall_status === 'archived' || p.overall_status === 'job_placed' ? `
                             <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: var(--success); border-color: #86efac;" onclick="toggleArchiveParticipant(${p.id}, '${escName}', 'restore')" title="Restore to Caseload">
                                 ♻️
                             </button>
                         ` : `
+                            <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: #f59e0b; border-color: #fde68a;" onclick="toggleArchiveParticipant(${p.id}, '${escName}', 'job_placed')" title="Mark as Job Placed">
+                                💼
+                            </button>
                             <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: var(--danger); border-color: #fca5a5;" onclick="toggleArchiveParticipant(${p.id}, '${escName}', 'archive')" title="Remove / Archive Participant">
                                 🗑️
                             </button>
@@ -5477,8 +5480,11 @@ async function toggleArchiveParticipant(userId, name, action) {
     let reason = null;
 
     if (action === 'archive') {
-        reason = prompt(`Remove / Archive ${name} from active caseload?\nEnter reason (e.g. Services completed, Employment secured, Relocated, Inactive):`);
-        if (reason === null) return; // cancelled
+        reason = prompt(`Remove / Archive ${name} from active caseload?\nEnter reason (e.g. Services completed, Relocated, Inactive):`);
+        if (reason === null) return;
+    } else if (action === 'job_placed') {
+        reason = prompt(`Mark ${name} as Job Placed?\nEnter details (e.g. Employer Name, Position, Wage):`);
+        if (reason === null) return;
     } else {
         if (!confirm(`Restore ${name} to active caseload?`)) return;
     }
