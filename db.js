@@ -119,7 +119,11 @@ CREATE TABLE IF NOT EXISTS gate_criteria (
     UNIQUE(user_id, week_number, criterion_key)
 );
 
-CREATE TABLE IF NOT EXISTS daily_points (
+CREATE TABLE IF NOT EXISTS health_wellness_screen (id INTEGER PRIMARY KEY AUTOINCREMENT, participant_id INTEGER, vision_issues INTEGER, hearing_issues INTEGER, mobility_pain INTEGER, stamina_fatigue INTEGER, fine_motor_issues INTEGER, physical_notes TEXT, reading_writing_issues INTEGER, following_instructions_issues INTEGER, memory_organization_issues INTEGER, processing_time_issues INTEGER, cognitive_notes TEXT, primary_care_referral INTEGER, vocational_rehab_referral INTEGER, mental_health_referral INTEGER, job_search_adjustment INTEGER, immediate_next_step TEXT, created_at DATETIME DEFAULT CURRENT_TIMESTAMP);
+
+    CREATE TABLE IF NOT EXISTS weekly_stability_checks (id INTEGER PRIMARY KEY AUTOINCREMENT, participant_id INTEGER, new_sexual_convictions INTEGER, recent_major_drug_use INTEGER, housing_instability INTEGER, no_call_no_show INTEGER, transportation_breakdown INTEGER, created_at DATETIME DEFAULT CURRENT_TIMESTAMP);
+
+    CREATE TABLE IF NOT EXISTS daily_points (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     date DATE NOT NULL,
