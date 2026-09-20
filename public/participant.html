@@ -95,12 +95,19 @@ async function loadGates() {
     
     let briefcaseItems = [];
     if (res.ok) {
-        briefcaseItems = await res.json();
+        const data = await res.json();
+        if (data.items) {
+            for (const key in data.items) {
+                briefcaseItems = briefcaseItems.concat(data.items[key]);
+            }
+        } else if (Array.isArray(data)) {
+            briefcaseItems = data;
+        }
     }
     
     // Extract SkillCat Progress
     let skillcatPct = "0%";
-    const scItem = briefcaseItems.find(i => i.title.includes('SkillCat Progress'));
+    const scItem = briefcaseItems.find(i => i && i.title && i.title.includes('SkillCat Progress'));
     if (scItem && scItem.notes && scItem.notes.includes('%')) {
         const match = scItem.notes.match(/\d+%/);
         if (match) skillcatPct = match[0];
