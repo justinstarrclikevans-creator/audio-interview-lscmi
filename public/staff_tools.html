@@ -60,27 +60,7 @@
         </form>
     </div>
 
-    <div class="container">
-        <h2>Weekly Stability and Case Planning Checks</h2>
-        <p><em>To be filled out every week for participants.</em></p>
-        <form id="stability-form" onsubmit="submitStabilityForm(event)">
-            <div class="form-group">
-                <label>Participant ID:</label>
-                <input type="number" id="s_participant_id" required>
-            </div>
-            
-            <div class="section-box">
-                <h3>Stability Issues (Exceptions require Director override)</h3>
-                <label class="checkbox-label"><input type="checkbox" id="s_sex_conviction"> New sexual convictions not disclosed</label>
-                <label class="checkbox-label"><input type="checkbox" id="s_drug_use"> Recent major drug use / failed screen</label>
-                <label class="checkbox-label"><input type="checkbox" id="s_housing"> Housing instability (motel, homeless, eviction)</label>
-                <label class="checkbox-label"><input type="checkbox" id="s_ncns"> ANY No Call No Show (NCNS)</label>
-                <label class="checkbox-label"><input type="checkbox" id="s_transportation"> Breakdown of primary vehicle / transportation loss</label>
-            </div>
-
-            <button type="submit">Submit Weekly Stability Check</button>
-        </form>
-    </div>
+    
 
     <script>
         const token = localStorage.getItem('fs_token');

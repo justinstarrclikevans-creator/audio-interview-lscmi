@@ -238,9 +238,12 @@ app.get('/api/participant/gate-status', authenticateToken, (req, res) => {
         if (weeks[c.week_number]) weeks[c.week_number].push(c);
     });
 
+
+    const casePlan = db.prepare('SELECT * FROM reentry_case_plans WHERE user_id = ? ORDER BY id DESC LIMIT 1').get(userId);
     res.json({
         currentGate: profile ? profile.current_gate : 1,
         profile,
+        casePlan,
         weeks
     });
 });

@@ -259,6 +259,33 @@ async function loadFsDashboard() {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
+        
+        // 1. Participant Bar Updates (Health Screen & Case Plan)
+        const healthContainer = document.getElementById('fs-health-screen-container');
+        if (healthContainer) {
+            if (data.profile && data.profile.weeks_enrolled >= 3 && data.profile.has_health_screen === 0) {
+                healthContainer.innerHTML = `<button class="btn btn-outline" style="background: #fee2e2; border-color: #ef4444; color: #b91c1c; font-weight: bold; animation: pulse 2s infinite;" onclick="window.open('staff_tools.html?userId=${data.profile.user_id}&autoFocus=health', 'HealthScreen', 'width=800,height=900')">⚠️ Complete Health Screen (Required)</button>`;
+            } else if (data.profile && data.profile.has_health_screen === 1) {
+                healthContainer.innerHTML = `<span class="badge badge-green">🩺 Health Screen Completed</span>`;
+            } else {
+                healthContainer.innerHTML = ''; // Hide if not week 3 yet
+            }
+        }
+        
+        const casePlanBar = document.getElementById('fs-case-plan-bar');
+        const casePlanContent = document.getElementById('fs-case-plan-content');
+        if (casePlanBar && casePlanContent) {
+            if (data.casePlan && data.casePlan.goals_markdown) {
+                // Strip markdown formatting for a clean view, or just render it. We'll render simple HTML.
+                let rawText = data.casePlan.goals_markdown;
+                // Convert basic bullets to HTML for safe display
+                let htmlText = rawText.replace(/\n/g, '<br>').replace(/- \*\*/g, '• <strong>').replace(/\*\*/g, '</strong>');
+                casePlanContent.innerHTML = htmlText;
+                casePlanBar.style.display = 'block';
+            } else {
+                casePlanBar.style.display = 'none';
+            }
+        }
         currentProfile = data.profile;
 
         document.getElementById('fs-welcome-title').innerText = `Welcome, ${currentUser.name}`;
@@ -1884,16 +1911,12 @@ async function loadCaseload() {
                 <td>
                     <div style="display: flex; align-items: center; gap: 6px;">
                         <span class="badge" style="background: #e0f2fe; color: #0369a1; font-weight: 800; font-size: 11px;">Gate ${p.current_gate || 1}</span>
-                        ${p.weeks_enrolled ? `<span class="badge" style="background: #f1f5f9; color: #475569; font-weight: 700; font-size: 10px;">Week ${p.weeks_enrolled}</span>` : ''}
+                        
                     </div>
                     <div style="font-size: 12.5px; font-weight: 800; color: var(--primary); margin-top: 6px;" title="Current Week Points">
                         Points: ${p.currentWeekPoints || 0}
                     </div>
-                    <div style="margin-top: 4px; display: flex; gap: 4px;">
-                        <a href="javascript:void(0)" onclick="openLoadProgramFormsModal('points', ${p.id})" style="font-size: 10px; color: var(--accent); font-weight: 700; text-decoration: underline;">+ Pts</a>
-                        <span style="color: #cbd5e1;">|</span>
-                        <a href="javascript:void(0)" onclick="openWeeklyPointsModal(${p.id}, '${escName}')" style="font-size: 10px; color: var(--slate); text-decoration: underline;">History</a>
-                    </div>
+                    
                 </td>
 
                 <!-- 4. Weekly Compliance (Drug Screen & Case Mgmt) -->
@@ -1910,17 +1933,7 @@ async function loadCaseload() {
                     </div>
                 </td>
 
-                <!-- 6. Notes & Audit -->
-                <td style="text-align: center; vertical-align: middle;">
-                    <div style="display: flex; flex-direction: column; gap: 4px; align-items: center;">
-                        <button class="btn btn-outline" style="padding: 3px 8px; font-size: 11px; color: var(--primary); width: 100%; max-width: 80px;" onclick="openCaseNotesModal(${p.id}, '${escName}', '${p.email}', '${p.track}')">
-                            📝 Notes
-                        </button>
-                        <button class="btn btn-outline" style="padding: 2px 6px; font-size: 10px; color: #4338ca; border-color: #c7d2fe; width: 100%; max-width: 80px;" onclick="openCmBriefcaseAuditModal(${p.id})">
-                            📊 Audit
-                        </button>
-                    </div>
-                </td>
+
 
                 <!-- 7. Case Plan -->
                 <td style="text-align: center; vertical-align: middle;">
@@ -7009,24 +7022,39 @@ window.deleteInterviewRecord = async function(clientId, cleanName) {
 };
 
 window.switchCaseloadTab = function(tab) {
-    document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
-    const btn = document.getElementById('tab-' + tab);
-    if (btn) btn.classList.add('active');
+    // Update top control buttons
+    const btns = ['pm-tab-btn-caseload', 'pm-tab-btn-rn-caseload', 'pm-tab-btn-scoring', 'pm-tab-btn-ai-dashboard', 'pm-tab-btn-gate-report'];
+    btns.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.classList.remove('btn-primary'); el.classList.add('btn-outline'); }
+    });
+    
+    let activeBtnId;
+    if (tab === 'first_shift') activeBtnId = 'pm-tab-btn-caseload';
+    else if (tab === 'reentry_nav') activeBtnId = 'pm-tab-btn-rn-caseload';
+    else if (tab === 'scoring') activeBtnId = 'pm-tab-btn-scoring';
+    else if (tab === 'ai-dashboard') activeBtnId = 'pm-tab-btn-ai-dashboard';
+    else if (tab === 'gate-report') activeBtnId = 'pm-tab-btn-gate-report';
+    
+    if (activeBtnId) {
+        const activeBtn = document.getElementById(activeBtnId);
+        if (activeBtn) { activeBtn.classList.remove('btn-outline'); activeBtn.classList.add('btn-primary'); }
+    }
 
     const caseloadContent = document.getElementById('pm-caseload-content');
     const scoringContent = document.getElementById('pm-scoring-content');
     const gateReportContent = document.getElementById('pm-gate-report-content');
+    const aiContent = document.getElementById('pm-ai-dashboard-content');
 
     if (caseloadContent) caseloadContent.classList.add('hidden');
     if (scoringContent) scoringContent.classList.add('hidden');
     if (gateReportContent) gateReportContent.classList.add('hidden');
+    if (aiContent) aiContent.classList.add('hidden');
 
     if (tab === 'scoring') {
         if (scoringContent) scoringContent.classList.remove('hidden');
         loadPmDrafts();
-    } 
-    if (tab === 'ai-dashboard') {
-        const aiContent = document.getElementById('pm-ai-dashboard-content');
+    } else if (tab === 'ai-dashboard') {
         if (aiContent) aiContent.classList.remove('hidden');
         loadAiCaseloadReport();
     } else if (tab === 'gate-report') {
@@ -7034,6 +7062,16 @@ window.switchCaseloadTab = function(tab) {
         loadGateReport();
     } else {
         if (caseloadContent) caseloadContent.classList.remove('hidden');
+        
+        // Filter caseload based on the tab
+        const statusFilter = document.getElementById('pm-filter-status');
+        if (tab === 'first_shift') {
+            if (statusFilter) statusFilter.value = 'active';
+            document.getElementById('caseload-title').innerText = '🏢 First Shift Caseload';
+        } else if (tab === 'reentry_nav') {
+            if (statusFilter) statusFilter.value = 'reentry_nav_stabilizing';
+            document.getElementById('caseload-title').innerText = '🧭 Re-entry Navigation Caseload';
+        }
         loadCaseload();
     }
 };
@@ -7126,14 +7164,7 @@ async function loadAiCaseloadReport(forceRefresh = false) {
         const data = await res.json();
         
         let html = `
-            <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 16px; border-radius: 6px; margin-bottom: 24px;">
-                <h3 style="color: #1e3a8a; margin: 0 0 10px 0; font-size: 15px; display: flex; align-items: center; gap: 8px;">
-                    📊 Staff Intervention Quality Audit
-                </h3>
-                <p style="font-size: 14px; color: #1e40af; line-height: 1.5; margin: 0;">
-                    ${data.staff_audit}
-                </p>
-            </div>
+            
             
             <h3 style="margin-bottom: 16px; font-size: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Individual Participant Actions</h3>
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px;">

@@ -817,6 +817,14 @@ function importUnifiedRenderReport(buffer) {
                     pointsMap[key] = { userId, dateStr, points: 0 };
                 }
                 pointsMap[key].points += parseFloat(row['Points']) || 0;
+                
+                // Capture enrollment date
+                if (row['Enrollment Start Date:']) {
+                    const enrollDate = parseExcelDate(row['Enrollment Start Date:']);
+                    if (enrollDate && !pointsMap[userId + '_enroll']) {
+                        pointsMap[userId + '_enroll'] = enrollDate;
+                    }
+                }
             }
 
             const insertPoint = db.prepare(`
@@ -825,9 +833,17 @@ function importUnifiedRenderReport(buffer) {
                 ON CONFLICT(user_id, date) DO UPDATE SET points_earned = excluded.points_earned
             `);
 
-            for (const p of Object.values(pointsMap)) {
-                insertPoint.run(p.userId, p.dateStr, p.points);
-                stats.points++;
+            const updateEnrollment = db.prepare(`UPDATE participant_profiles SET enrollment_date = ? WHERE user_id = ?`);
+
+            for (const key of Object.keys(pointsMap)) {
+                if (key.endsWith('_enroll')) {
+                    const userId = parseInt(key.replace('_enroll', ''));
+                    updateEnrollment.run(pointsMap[key], userId);
+                } else {
+                    const p = pointsMap[key];
+                    insertPoint.run(p.userId, p.dateStr, p.points);
+                    stats.points++;
+                }
             }
         }
 
