@@ -7026,6 +7026,10 @@ window.switchCaseloadTab = function(tab) {
     if (tab === 'scoring') {
         if (scoringContent) scoringContent.classList.remove('hidden');
         loadPmDrafts();
+    }\n    if (tab === 'ai-dashboard') {
+        const aiContent = document.getElementById('pm-ai-dashboard-content');
+        if (aiContent) aiContent.classList.remove('hidden');
+        loadAiCaseloadReport();
     } else if (tab === 'gate-report') {
         if (gateReportContent) gateReportContent.classList.remove('hidden');
         loadGateReport();
@@ -7100,5 +7104,71 @@ async function loadGateReport() {
 
     } catch (e) {
         container.innerHTML = `<p style="color: red;">Error: ${e.message}</p>`;
+    }
+}
+
+
+async function loadAiCaseloadReport(forceRefresh = false) {
+    const container = document.getElementById('ai-dashboard-container');
+    if (!container) return;
+    
+    if (!forceRefresh && container.innerHTML.includes('participant-ai-card')) return;
+    
+    container.innerHTML = '<div style="padding: 40px 0; text-align: center; color: var(--primary);"><span style="font-size: 24px; display: inline-block; animation: spin 2s linear infinite;">🔄</span><p style="margin-top: 15px; font-weight: 500;">AI is analyzing case notes, points, gates, and stability checks...</p><p style="font-size: 13px; color: var(--slate);">This usually takes 15-30 seconds.</p></div>';
+
+    try {
+        const token = localStorage.getItem('fs_token');
+        const res = await fetch('/api/staff/ai-caseload-report', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!res.ok) throw new Error('Failed to load AI report');
+        
+        const data = await res.json();
+        
+        let html = `
+            <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 16px; border-radius: 6px; margin-bottom: 24px;">
+                <h3 style="color: #1e3a8a; margin: 0 0 10px 0; font-size: 15px; display: flex; align-items: center; gap: 8px;">
+                    📊 Staff Intervention Quality Audit
+                </h3>
+                <p style="font-size: 14px; color: #1e40af; line-height: 1.5; margin: 0;">
+                    ${data.staff_audit}
+                </p>
+            </div>
+            
+            <h3 style="margin-bottom: 16px; font-size: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Individual Participant Actions</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px;">
+        `;
+        
+        if (data.participant_insights && data.participant_insights.length > 0) {
+            data.participant_insights.forEach(p => {
+                html += `
+                    <div class="participant-ai-card" style="border: 1px solid #e2e8f0; border-radius: 8px; background: white; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                        <div style="background: #f8fafc; padding: 12px 16px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+                            <strong style="font-size: 15px;">${p.name}</strong>
+                            <div style="display: flex; gap: 6px;">
+                                ${p.points_this_week ? `<span style="background: #dcfce7; color: #166534; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600;" title="Points this week">${p.points_this_week} pts</span>` : ''}
+                                ${p.drug_test_flag ? `<span style="background: #fee2e2; color: #991b1b; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600;" title="Recent Drug Test Issue">⚠️ DS</span>` : ''}
+                            </div>
+                        </div>
+                        <div style="padding: 16px;">
+                            <strong style="font-size: 12px; color: var(--slate); text-transform: uppercase; letter-spacing: 0.05em;">Suggested Next Steps</strong>
+                            <ul style="margin: 8px 0 0 0; padding-left: 18px; font-size: 13px; color: #334155; line-height: 1.5;">
+                                ${p.suggested_next_steps.map(step => `<li style="margin-bottom: 6px;">${step}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+            });
+        } else {
+            html += `<div style="grid-column: 1/-1; padding: 20px; text-align: center; color: var(--slate);">No participant insights generated.</div>`;
+        }
+        
+        html += `</div>`;
+        container.innerHTML = html;
+        
+    } catch (err) {
+        console.error(err);
+        container.innerHTML = `<div class="error" style="color: var(--danger); padding: 20px; background: #fee2e2; border-radius: 6px;">Error loading AI Insights: ${err.message}</div>`;
     }
 }

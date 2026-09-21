@@ -3620,6 +3620,125 @@ app.get('/api/apricot/export', authenticateToken, (req, res) => {
 
 
 // ONE-TIME MIGRATION: Map old briefcase data to new interactive gates
+
+// --- AI Caseload Dashboard Endpoint ---
+app.get('/api/staff/ai-caseload-report', authenticateToken, requireRole('program_manager', 'director', 'admin'), async (req, res) => {
+    try {
+        const { GoogleGenerativeAI } = require("@google/generative-ai");
+        if (!process.env.GEMINI_API_KEY) {
+            return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' });
+        }
+        
+        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+        const model = genAI.getGenerativeModel({ 
+            model: "gemini-1.5-pro", 
+            generationConfig: { responseMimeType: "application/json" } 
+        });
+
+        // 1. Gather active participants
+        const participants = db.prepare(`
+            SELECT u.id, u.name, p.current_gate 
+            FROM users u
+            JOIN participant_profiles p ON u.id = p.user_id
+            WHERE u.role = 'participant' AND p.overall_status IN ('active', 'reentry_nav_stabilizing')
+        `).all();
+        
+        if (participants.length === 0) {
+            return res.json({ staff_audit: "No active participants to analyze.", participant_insights: [] });
+        }
+        
+        let bundleData = {
+            context: "Current active participant caseload for Turn90 First Shift / Reentry Navigation.",
+            participants: []
+        };
+        
+        // 2. Gather recent data for each participant
+        for (const p of participants) {
+            // Gates
+            const gates = db.prepare(`
+                SELECT criterion_key, status, participant_notes, pm_notes 
+                FROM gate_criteria 
+                WHERE user_id = ? AND status IN ('pending', 'red')
+            `).all(p.id);
+            
+            // Case Notes (last 30 days)
+            const caseNotes = db.prepare(`
+                SELECT session_date, note_type, content, author_name 
+                FROM case_notes 
+                WHERE user_id = ? AND session_date >= date('now', '-30 days')
+                ORDER BY session_date DESC LIMIT 5
+            `).all(p.id);
+            
+            // Daily Points (last 7 days)
+            const points = db.prepare(`
+                SELECT sum(points_earned) as total_points
+                FROM daily_points 
+                WHERE user_id = ? AND date >= date('now', '-7 days')
+            `).get(p.id);
+            
+            // Weekly Stability Checks (Drug screens / Housing)
+            const checks = db.prepare(`
+                SELECT recent_major_drug_use, housing_instability, no_call_no_show
+                FROM weekly_stability_checks
+                WHERE participant_id = ? 
+                ORDER BY created_at DESC LIMIT 1
+            `).get(p.id);
+            
+            bundleData.participants.push({
+                participant_id: p.id,
+                name: p.name,
+                current_gate: p.current_gate,
+                recent_points: points ? points.total_points : 0,
+                pending_or_blocked_gates: gates,
+                recent_case_notes: caseNotes,
+                latest_stability_check: checks
+            });
+        }
+        
+        // 3. Prompt Gemini
+        const prompt = `
+You are an expert Clinical Program Director analyzing your case management staff's recent work.
+I am providing you with the recent case notes, blocked/pending gates, daily points, and stability checks for active participants.
+
+Perform two tasks:
+1. Analyze the case notes globally across all participants to evaluate the quality of interventions and work the program staff is applying. Are they using Cognitive Behavioral Interventions (CBI)? Are they addressing the actual blocked gates and drug test failures proactively? Provide a constructive 3-4 sentence paragraph.
+2. For each participant, provide 2-3 highly specific, actionable "Suggested Next Steps" for the case manager based on the participant's specific blocked gates, recent case notes, drug test flags, or low points.
+
+Return a JSON object EXACTLY matching this schema:
+{
+  "staff_audit": "A summary paragraph analyzing staff intervention quality...",
+  "participant_insights": [
+    {
+      "participant_id": 123,
+      "name": "John Doe",
+      "points_this_week": 45,
+      "drug_test_flag": true,
+      "suggested_next_steps": [
+        "Schedule a 1-on-1 to discuss the recent positive drug screen.",
+        "Help participant secure their Birth Certificate (Gate 1 blocker)."
+      ]
+    }
+  ]
+}
+
+Input Data:
+${JSON.stringify(bundleData, null, 2)}
+        `;
+        
+        const result = await model.generateContent(prompt);
+        let responseText = result.response.text();
+        // Remove markdown formatting if present
+        responseText = responseText.replace(/\s*```json\s*/g, '').replace(/\s*```\s*$/g, '');
+        
+        res.json(JSON.parse(responseText));
+        
+    } catch (error) {
+        console.error("AI Caseload Report Error:", error);
+        res.status(500).json({ error: "Failed to generate AI report" });
+    }
+});
+
+
 (function runLegacyBriefcaseMigration() {
     const fs = require('fs');
     const path = require('path');
