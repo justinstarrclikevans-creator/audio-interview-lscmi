@@ -393,12 +393,8 @@ const BRIEFCASE_DOMAINS = {
 // 4-Week Job Readiness Gate Criteria (Must-Haves to Qualify for Weeks 5–8 & Week 9 Placement)
 const DEFAULT_GATE_CRITERIA = {
     1: [
-        { key: 'g1_state_id', title: "State ID or Driver's License", description: 'Valid, unexpired ID or DMV appointment booked.' },
         { key: 'g1_ssn', title: 'Social Security Card', description: 'Physical card, receipt from SSA, or appointment booked.' },
         { key: 'g1_birth_cert', title: 'Birth Certificate', description: 'Physical copy or appointment booked.' },
-        { key: 'g1_prescriptions', title: 'Fill Needed Prescriptions', description: 'All needed prescriptions filled.' },
-        { key: 'g1_healthcare', title: 'Explore Healthcare Options', description: 'Healthcare options explored and identified.' },
-        { key: 'g1_supervision', title: 'Supervision Information', description: 'County, officer name, report dates documented.' },
         { key: 'g1_main_goal', title: 'Main Goal Set', description: '90-day vision, improvement goals, and stability goals outlined.' },
         { key: 'g1_skillcat_intro', title: 'Completed SkillCat Intro', description: 'SkillCat intro module completed.' },
         { key: 'g1_skillcat_track', title: 'Chose SkillCat Track', description: 'Appropriate job placement track selected based on history and availability.' }
@@ -414,10 +410,6 @@ const DEFAULT_GATE_CRITERIA = {
         { key: 'g2_skillcat_progress', title: 'Making Progress on SkillCat Track', description: 'Progress verified in SkillCat.' }
     ],
     3: [
-        { key: 'g3_primary_care', title: 'Primary Care / Medical', description: 'No untreated illnesses/injuries that make full shifts difficult, or doctor visit scheduled.' },
-        { key: 'g3_vision', title: 'Vision Appointment', description: 'Vision is adequate for job duties or vision appointment scheduled.' },
-        { key: 'g3_prescription_access', title: 'Prescription Needs Access', description: 'Steady access to necessary daily medications.' },
-        { key: 'g3_mental_health', title: 'Mental Health / Substance Recovery Plan', description: 'Support plan in place to ensure stability during work transition.' },
         { key: 'g3_bank_account', title: 'Bank Account', description: 'Active account for direct deposit or temporary payroll card set up.' },
         { key: 'g3_skillcat_progress', title: 'Making Progress on SkillCat Track', description: 'Progress verified in SkillCat.' }
     ],
@@ -426,7 +418,6 @@ const DEFAULT_GATE_CRITERIA = {
         { key: 'g4_transportation', title: 'Transportation Plan', description: 'Reliable, verified way to get to work daily (car, bus pass, carpool, budget).' },
         { key: 'g4_budget', title: 'Budget Completed', description: 'Personal budget outlined.' },
         { key: 'g4_savings', title: 'Savings Goals', description: 'Savings goals established.' },
-        { key: 'g4_credit', title: 'Credit Reviewed', description: 'Credit report reviewed with staff.' },
         { key: 'g4_6mo_plan', title: '6-Month Job Plan Created', description: 'Short-term employment roadmap.' },
         { key: 'g4_career_goal', title: 'Long-Term Career Goal Identified', description: 'Long-term career goals mapped out.' },
         { key: 'g4_skillcat_progress', title: 'Making Progress on SkillCat Track', description: 'Progress verified in SkillCat.' }

@@ -134,7 +134,7 @@ async function loadGates() {
         // Extract SkillCat Progress
         let skillcatPct = "0%";
         const scItem = briefcaseItems.find(i => i && i.title && i.title.includes('SkillCat Progress'));
-        if (scItem && scItem.notes && scItem.notes.includes('%')) {
+        if (scItem && typeof scItem.notes === 'string' && scItem.notes.includes('%')) {
             const match = scItem.notes.match(/\d+%/);
             if (match) skillcatPct = match[0];
         }
