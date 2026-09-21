@@ -282,19 +282,21 @@ async function loadFsDashboard() {
             intakeBtn.onclick = openInterviewModal;
         }
 
-        // Card 2: W-9 card status & view button
+        // W-9 feature removed as requested. Check if elements exist before modifying.
         const w9Card = document.getElementById('w9-card-status');
         const btnW9View = document.getElementById('btn-w9-view');
         const btnW9Action = document.getElementById('btn-w9-action');
 
-        if (currentProfile && (currentProfile.w9_status === 'submitted' || currentProfile.w9_status === 'verified')) {
-            w9Card.innerHTML = `<span style="color: green; font-weight: bold;">✅ Status: W-9 Recorded (${currentProfile.w9_status})</span>`;
-            btnW9Action.innerText = 'Edit Form W-9';
-            if (btnW9View) btnW9View.classList.remove('hidden');
-        } else {
-            w9Card.innerHTML = `Status: Incomplete. Submit your W-9 for onboarding.`;
-            btnW9Action.innerText = 'Complete Form W-9';
-            if (btnW9View) btnW9View.classList.add('hidden');
+        if (w9Card && btnW9Action) {
+            if (currentProfile && (currentProfile.w9_status === 'submitted' || currentProfile.w9_status === 'verified')) {
+                w9Card.innerHTML = `<span style="color: green; font-weight: bold;">✅ Status: W-9 Recorded (${currentProfile.w9_status})</span>`;
+                btnW9Action.innerText = 'Edit Form W-9';
+                if (btnW9View) btnW9View.classList.remove('hidden');
+            } else {
+                w9Card.innerHTML = `Status: Incomplete. Submit your W-9 for onboarding.`;
+                btnW9Action.innerText = 'Complete Form W-9';
+                if (btnW9View) btnW9View.classList.add('hidden');
+            }
         }
 
         renderGateCriteria(data.weeks, currentGateWeek);
