@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Turn90 First Shift - My Portal</title>
@@ -53,33 +56,51 @@
 </div>
 
 <script>
+
 let token = localStorage.getItem('t90_token');
 let user = null;
+
 
 if (token) {
     document.getElementById('login-section').style.display = 'none';
     document.getElementById('app-section').style.display = 'block';
+    
+    // Fetch user details to populate name
+    fetch('/api/auth/me', { headers: { 'Authorization': 'Bearer ' + token } })
+        .then(res => res.json())
+        .then(data => {
+            if(data.user) {
+                document.getElementById('participant-name').innerText = data.user.name;
+            }
+        });
+        
     loadGates();
 }
 
+
 async function login() {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-    });
-    const data = await res.json();
-    if (data.token) {
-        localStorage.setItem('t90_token', data.token);
-        token = data.token;
-        user = data.user;
-        document.getElementById('login-section').style.display = 'none';
-        document.getElementById('app-section').style.display = 'block';
-        loadGates();
-    } else {
-        alert("Login failed");
+    try {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const res = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (data.token) {
+            localStorage.setItem('t90_token', data.token);
+            token = data.token;
+            user = data.user;
+            if(user) document.getElementById('participant-name').innerText = user.name;
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('app-section').style.display = 'block';
+            loadGates();
+        } else {
+            alert("Login failed: " + (data.error || "Unknown"));
+        }
+    } catch(e) {
+        alert("Login error: " + e.message);
     }
 }
 
@@ -89,98 +110,106 @@ function logout() {
 }
 
 async function loadGates() {
-    const res = await fetch('/api/participant/briefcase', {
-        headers: { 'Authorization': 'Bearer ' + token }
-    });
-    
-    let briefcaseItems = [];
-    if (res.ok) {
-        const data = await res.json();
-        if (data.items) {
-            for (const key in data.items) {
-                briefcaseItems = briefcaseItems.concat(data.items[key]);
+    try {
+        const res = await fetch('/api/participant/briefcase', {
+            headers: { 'Authorization': 'Bearer ' + token }
+        });
+        
+        let briefcaseItems = [];
+        if (res.ok) {
+            const data = await res.json();
+            if (data && data.items && typeof data.items === 'object' && !Array.isArray(data.items)) {
+                for (const key in data.items) {
+                    if (Array.isArray(data.items[key])) {
+                        briefcaseItems = briefcaseItems.concat(data.items[key]);
+                    }
+                }
+            } else if (Array.isArray(data)) {
+                briefcaseItems = data;
+            } else if (data && Array.isArray(data.items)) {
+                briefcaseItems = data.items;
             }
-        } else if (Array.isArray(data)) {
-            briefcaseItems = data;
         }
-    }
-    
-    // Extract SkillCat Progress
-    let skillcatPct = "0%";
-    const scItem = briefcaseItems.find(i => i && i.title && i.title.includes('SkillCat Progress'));
-    if (scItem && scItem.notes && scItem.notes.includes('%')) {
-        const match = scItem.notes.match(/\d+%/);
-        if (match) skillcatPct = match[0];
-    }
-    
-    const scWidget = document.getElementById('participant-skillcat-pct');
-    if(scWidget) scWidget.innerText = skillcatPct;
-    
-    const gates = {
-        "Gate 1": [
-            { id: "g1_ssn", label: "Social Security Card" },
-            { id: "g1_birth_cert", label: "Birth Certificate" },
-            { id: "g1_main_goal", label: "Main Goal Set" },
-            { id: "g1_skillcat_intro", label: "Completed SkillCat Intro" },
-            { id: "g1_skillcat_track", label: "Chose SkillCat Track" }
-        ],
-        "Gate 2": [
-            { id: "g2_child_support", label: "Child Support Plan Made" },
-            { id: "g2_housing", label: "Stable Address / Housing" },
-            { id: "g2_phone", label: "Reliable Phone Number" },
-            { id: "g2_probation_conflicts", label: "Probation / Legal Obligations Handled" },
-            { id: "g2_dmv", label: "DMV License Check" },
-            { id: "g2_email", label: "Professional Email" },
-            { id: "g2_resume", label: "Resume Completed" },
-            { id: "g2_skillcat_progress", label: "Making Progress on SkillCat" }
-        ],
-        "Gate 3": [
-            { id: "g3_bank_account", label: "Bank Account" },
-            { id: "g3_skillcat_progress", label: "Making Progress on SkillCat" }
-        ],
-        "Gate 4": [
-            { id: "g4_work_gear", label: "Work Tools & Clothing" },
-            { id: "g4_transportation", label: "Transportation Plan" },
-            { id: "g4_budget", label: "Budget Completed" },
-            { id: "g4_savings", label: "Savings Goals Established" },
-            { id: "g4_6mo_plan", label: "6-Month Job Plan Created" },
-            { id: "g4_career_goal", label: "Long-Term Career Goal Identified" },
-            { id: "g4_skillcat_progress", label: "Making Progress on SkillCat" }
-        ]
-    };
-
-    let html = '';
-    for (const [gateName, items] of Object.entries(gates)) {
-        html += `<div class="gate-card">
-            <div class="gate-title">${gateName}</div>`;
-        for (const item of items) {
-            // Check if backend has it marked as green
-            const backendItem = briefcaseItems.find(b => b.item_key === item.id);
-            const isCompleted = backendItem && backendItem.status === 'green';
-            const checkedAttr = isCompleted ? 'checked' : '';
-            const badgeClass = isCompleted ? 'status-green' : 'status-pending';
-            const badgeText = isCompleted ? 'Completed' : 'Pending';
-
-            html += `<div class="gate-item">
-                <input type="checkbox" class="gate-checkbox" ${checkedAttr} onchange="toggleItem('${item.id}', this.checked)">
-                <span style="flex:1;">${item.label}</span>
-                <span class="status-badge ${badgeClass}" id="badge-${item.id}">${badgeText}</span>
-            </div>`;
+        
+        // Extract SkillCat Progress
+        let skillcatPct = "0%";
+        const scItem = briefcaseItems.find(i => i && i.title && i.title.includes('SkillCat Progress'));
+        if (scItem && scItem.notes && scItem.notes.includes('%')) {
+            const match = scItem.notes.match(/\d+%/);
+            if (match) skillcatPct = match[0];
         }
-        html += `</div>`;
+        
+        const scWidget = document.getElementById('participant-skillcat-pct');
+        if(scWidget) scWidget.innerText = skillcatPct;
+        
+        const gates = {
+            "Gate 1": [
+                { id: "g1_ssn", label: "Social Security Card" },
+                { id: "g1_birth_cert", label: "Birth Certificate" },
+                { id: "g1_main_goal", label: "Main Goal Set" },
+                { id: "g1_skillcat_intro", label: "Completed SkillCat Intro" },
+                { id: "g1_skillcat_track", label: "Chose SkillCat Track" }
+            ],
+            "Gate 2": [
+                { id: "g2_child_support", label: "Child Support Plan Made" },
+                { id: "g2_housing", label: "Stable Address / Housing" },
+                { id: "g2_phone", label: "Reliable Phone Number" },
+                { id: "g2_probation_conflicts", label: "Probation / Legal Obligations Handled" },
+                { id: "g2_dmv", label: "DMV License Check" },
+                { id: "g2_email", label: "Professional Email" },
+                { id: "g2_resume", label: "Resume Completed" },
+                { id: "g2_skillcat_progress", label: "Making Progress on SkillCat" }
+            ],
+            "Gate 3": [
+                { id: "g3_bank_account", label: "Bank Account" },
+                { id: "g3_skillcat_progress", label: "Making Progress on SkillCat" }
+            ],
+            "Gate 4": [
+                { id: "g4_work_gear", label: "Work Tools & Clothing" },
+                { id: "g4_transportation", label: "Transportation Plan" },
+                { id: "g4_budget", label: "Budget Completed" },
+                { id: "g4_savings", label: "Savings Goals Established" },
+                { id: "g4_6mo_plan", label: "6-Month Job Plan Created" },
+                { id: "g4_career_goal", label: "Long-Term Career Goal Identified" },
+                { id: "g4_skillcat_progress", label: "Making Progress on SkillCat" }
+            ]
+        };
+
+        let html = '';
+        for (const [gateName, items] of Object.entries(gates)) {
+            html += `<div class="gate-card">
+                <div class="gate-title">${gateName}</div>`;
+            for (const item of items) {
+                const backendItem = briefcaseItems.find(b => b && b.item_key === item.id);
+                const isCompleted = backendItem && backendItem.status === 'green';
+                const checkedAttr = isCompleted ? 'checked' : '';
+                const badgeClass = isCompleted ? 'status-green' : 'status-pending';
+                const badgeText = isCompleted ? 'Completed' : 'Pending';
+
+                html += `<div class="gate-item">
+                    <input type="checkbox" class="gate-checkbox" ${checkedAttr} onchange="toggleItem('${item.id}', this.checked)">
+                    <span style="flex:1;">${item.label}</span>
+                    <span class="status-badge ${badgeClass}" id="badge-${item.id}">${badgeText}</span>
+                </div>`;
+            }
+            html += `</div>`;
+        }
+        document.getElementById('gates-container').innerHTML = html;
+        
+    } catch(e) {
+        document.getElementById('gates-container').innerHTML = '<p style="color:red; padding: 20px;">Error loading gates: ' + e.message + '</p>';
     }
-    document.getElementById('gates-container').innerHTML = html;
 }
+
 async function toggleItem(id, isChecked) {
     const badge = document.getElementById(`badge-${id}`);
     if (isChecked) {
         badge.className = "status-badge status-green";
         badge.innerText = "Completed";
-        // Notify backend
         await fetch('/api/participant/briefcase-item', {
             method: 'POST',
             headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ item_key: id, status: 'green' })
+            body: JSON.stringify({ itemKey: id, status: 'green' })
         });
     } else {
         badge.className = "status-badge status-pending";
@@ -188,10 +217,11 @@ async function toggleItem(id, isChecked) {
         await fetch('/api/participant/briefcase-item', {
             method: 'POST',
             headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ item_key: id, status: 'pending' })
+            body: JSON.stringify({ itemKey: id, status: 'pending' })
         });
     }
 }
+
 </script>
 </body>
 </html>
