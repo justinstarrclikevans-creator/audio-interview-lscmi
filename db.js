@@ -393,6 +393,7 @@ const BRIEFCASE_DOMAINS = {
 // 4-Week Job Readiness Gate Criteria (Must-Haves to Qualify for Weeks 5–8 & Week 9 Placement)
 const DEFAULT_GATE_CRITERIA = {
     1: [
+        { key: 'g1_photo_id', title: 'Government Issued Photo ID', description: 'Valid government-issued photo identification.' },
         { key: 'g1_ssn', title: 'Social Security Card', description: 'Physical card, receipt from SSA, or appointment booked.' },
         { key: 'g1_birth_cert', title: 'Birth Certificate', description: 'Physical copy or appointment booked.' },
         { key: 'g1_main_goal', title: 'Main Goal Set', description: '90-day vision, improvement goals, and stability goals outlined.' },
@@ -410,6 +411,10 @@ const DEFAULT_GATE_CRITERIA = {
         { key: 'g2_skillcat_progress', title: 'Making Progress on SkillCat Track', description: 'Progress verified in SkillCat.' }
     ],
     3: [
+        { key: 'g3_primary_care', title: 'Primary Care / Medical', description: 'Are there any untreated illnesses, injuries, or chronic pains that would make standing, lifting, or working full shifts difficult? (If yes, is a doctor visit scheduled?)' },
+        { key: 'g3_vision', title: 'Vision Appointment', description: 'Can they see well enough to safely perform job duties (read instructions, operate machinery, drive)?' },
+        { key: 'g3_prescription_access', title: 'Prescription Needs', description: 'Do they have steady access to necessary daily medications?' },
+        { key: 'g3_mental_health', title: 'Mental Health / Substance Recovery', description: 'Is there a support plan in place for mental health or recovery to ensure they do not become overwhelmed during the transition to working?' },
         { key: 'g3_bank_account', title: 'Bank Account', description: 'Active account for direct deposit or temporary payroll card set up.' },
         { key: 'g3_skillcat_progress', title: 'Making Progress on SkillCat Track', description: 'Progress verified in SkillCat.' }
     ],
