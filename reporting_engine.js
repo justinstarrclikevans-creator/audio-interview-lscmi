@@ -788,8 +788,10 @@ function importUnifiedRenderReport(buffer) {
 
     const resolveUserId = (first, last) => {
         if (!first && !last) return null;
-        const name1 = `%${first.trim().toLowerCase()}%${last.trim().toLowerCase()}%`;
-        const name2 = `%${last.trim().toLowerCase()}%${first.trim().toLowerCase()}%`;
+        first = String(first || '').trim().toLowerCase();
+        last = String(last || '').trim().toLowerCase();
+        const name1 = `%${first}%${last}%`;
+        const name2 = `%${last}%${first}%`;
         const user = findUserStmt.get(name1, name2);
         return user ? user.id : null;
     };
