@@ -754,7 +754,7 @@ app.get('/api/admin/caseload', authenticateToken, requireRole('program_manager',
             enrollment_date: enrollDateStr,
             weeks_enrolled: weeksEnrolled,
             weeklyPointsAvg: pointsSummary.overallWeeklyAverage,
-            currentWeekPoints: complianceSummary.weekPoints,
+            currentWeekPoints: pointsSummary.currentWeekPoints,
             totalWeeksLogged: pointsSummary.totalWeeksCounted,
             has_drug_test_this_week: complianceSummary.hasDrugTest,
             drug_test_details: complianceSummary.drugTest,
@@ -3669,9 +3669,9 @@ app.get('/api/staff/ai-caseload-report', authenticateToken, requireRole('program
                 ORDER BY session_date DESC LIMIT 5
             `).all(p.id);
             
-                        // Points for the current week (Mon-Fri)
-            const complianceSummary = getWeeklyComplianceSummary(p.id);
-            const points = { total_points: complianceSummary.weekPoints };
+                        // Points for the most recently logged week (Mon-Fri)
+            const pointsSummary = getWeeklyPointsSummary(p.id);
+            const points = { total_points: pointsSummary.currentWeekPoints };
             
             // Weekly Stability Checks (Drug screens / Housing)
             const checks = db.prepare(`
