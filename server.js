@@ -3534,6 +3534,28 @@ app.get('/api/apricot/export', authenticateToken, (req, res) => {
 });
 
 
+
+// Temporary Migration: Cleanup old gate criteria that are no longer in DEFAULT_GATE_CRITERIA
+(function runGateCleanup() {
+    try {
+        const { DEFAULT_GATE_CRITERIA } = require('./db');
+        let validKeys = [];
+        for (const week of [1, 2, 3, 4]) {
+            if (DEFAULT_GATE_CRITERIA[week]) {
+                DEFAULT_GATE_CRITERIA[week].forEach(g => validKeys.push(g.key));
+            }
+        }
+        if (validKeys.length > 0) {
+            const placeholders = validKeys.map(() => '?').join(',');
+            const db = require('./db').db;
+            db.prepare(`DELETE FROM gate_criteria WHERE criterion_key NOT IN (${placeholders})`).run(...validKeys);
+            console.log("Migration: Cleaned up old/deprecated gate criteria");
+        }
+    } catch (e) {
+        console.error("Migration failed:", e.message);
+    }
+})();
+
 app.listen(PORT, async () => {
     console.log(`🚀 Unified First Shift & Re-entry App running at http://localhost:${PORT}`);
     try {
