@@ -990,7 +990,7 @@ app.get('/api/admin/reports/friday-milestones', authenticateToken, requireRole('
 });
 
 // Import Apricot Points Excel Spreadsheet (.xlsx, .xls) or CSV
-app.post('/api/admin/apricot/import-points', authenticateToken, requireRole('program_manager', 'admin', 'director'), fileUpload.single('file'), (req, res) => {
+app.post('/api/admin/apricot/import-points', authenticateToken, requireRole('program_manager', 'admin', 'director'), memoryUpload.single('file'), (req, res) => {
     try {
         let result;
         if (req.file && req.file.buffer) {
@@ -1056,7 +1056,7 @@ app.post('/api/pm/drug-test', authenticateToken, requireRole('program_manager', 
 });
 
 // Import Drug Tests Spreadsheet (.xlsx) or CSV
-app.post('/api/pm/import-drug-tests', authenticateToken, requireRole('program_manager', 'admin', 'director'), fileUpload.single('file'), (req, res) => {
+app.post('/api/pm/import-drug-tests', authenticateToken, requireRole('program_manager', 'admin', 'director'), memoryUpload.single('file'), (req, res) => {
     try {
         let result;
         if (req.file && req.file.buffer) {
@@ -1082,7 +1082,7 @@ app.get('/api/pm/drug-tests/:userId', authenticateToken, requireRole('program_ma
 });
 
 // Import Case Management Notes Spreadsheet (.xlsx) or CSV
-app.post('/api/pm/import-case-notes', authenticateToken, requireRole('program_manager', 'admin', 'director'), fileUpload.single('file'), (req, res) => {
+app.post('/api/pm/import-case-notes', authenticateToken, requireRole('program_manager', 'admin', 'director'), memoryUpload.single('file'), (req, res) => {
     try {
         let result;
         if (req.file && req.file.buffer) {
