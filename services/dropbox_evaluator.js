@@ -216,6 +216,7 @@ async function runDailyEvaluation() {
     }
     
     console.log("[Dropbox Evaluator] Daily evaluation job completed.", results);
+    await sendDailyReportEmail(yesterday);
     return results;
 }
 
@@ -233,3 +234,63 @@ function initCronJobs() {
 }
 
 module.exports = { initCronJobs, runDailyEvaluation };
+
+
+async function sendDailyReportEmail(yesterdayStr) {
+    try {
+        const nodemailer = require('nodemailer');
+        const { db } = require('../db');
+        const path = require('path');
+        
+        // Ensure .env is loaded for email credentials
+        require('dotenv').config({ path: path.join(__dirname, '..', '..', 'email-settings.txt') });
+        
+        const user = process.env.EMAIL_USER;
+        const pass = process.env.EMAIL_APP_PASSWORD;
+        
+        if (!user || !pass) {
+            console.log("No email credentials found. Skipping email report.");
+            return;
+        }
+
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: { user, pass }
+        });
+
+        // Get evaluations that were processed today (or for the given session title)
+        const sessionTitle = `Class Sessions - ${yesterdayStr}`;
+        const evaluations = db.prepare('SELECT location, facilitator_name, total_score, summary_markdown, coaching_feedback FROM class_facilitation_evaluations WHERE session_title = ?').all(sessionTitle);
+        
+        if (evaluations.length === 0) {
+            console.log("No evaluations to email for " + yesterdayStr);
+            return;
+        }
+        
+        let htmlContent = `<h2 style="color: #1e3a8a;">Daily Class Facilitation Scores</h2><p>Here are the automated evaluation results for <strong>${sessionTitle}</strong>:</p><hr/>`;
+        
+        evaluations.forEach(e => {
+            htmlContent += `
+                <div style="margin-bottom: 25px; padding: 15px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                    <h3 style="margin-top: 0; color: #0f766e;">${e.location} - ${e.facilitator_name}</h3>
+                    <p style="font-size: 18px; font-weight: bold; color: #15803d;">Total Score: ${e.total_score}</p>
+                    <p><strong>Summary:</strong><br/> ${e.summary_markdown}</p>
+                    <p><strong>Coaching Feedback:</strong><br/> ${e.coaching_feedback}</p>
+                </div>
+            `;
+        });
+        
+        const mailOptions = {
+            from: `"Turn90 Automated Evaluator" <${user}>`,
+            to: user, // Emailing to themselves as requested
+            subject: `Daily Facilitation Scores - ${yesterdayStr}`,
+            html: htmlContent
+        };
+        
+        await transporter.sendMail(mailOptions);
+        console.log(`Successfully emailed daily scores to ${user}`);
+        
+    } catch (e) {
+        console.error("Failed to send daily report email:", e);
+    }
+}
