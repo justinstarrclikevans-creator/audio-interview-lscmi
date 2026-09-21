@@ -756,7 +756,139 @@ function generateCaseManagementBriefcaseAudit(userId) {
     };
 }
 
+
+function parseExcelDate(dateVal) {
+    if (dateVal instanceof Date) {
+        return dateVal.toISOString().split('T')[0];
+    } else if (typeof dateVal === 'number') {
+        const parsedDate = new Date(Math.round((dateVal - 25569) * 86400 * 1000));
+        return !isNaN(parsedDate.getTime()) ? parsedDate.toISOString().split('T')[0] : String(dateVal);
+    } else if (typeof dateVal === 'string') {
+        // e.g. 09/21/2026
+        const parts = dateVal.split('/');
+        if (parts.length === 3) {
+            const y = parts[2].length === 2 ? '20' + parts[2] : parts[2];
+            return `${y}-${parts[0].padStart(2, '0')}-${parts[1].padStart(2, '0')}`;
+        }
+        return dateVal.trim();
+    }
+    return '';
+}
+
+function importUnifiedRenderReport(buffer) {
+    let workbook;
+    try {
+        workbook = XLSX.read(buffer, { type: 'buffer' });
+    } catch(e) {
+        return { success: false, error: 'Failed to parse Excel workbook: ' + e.message };
+    }
+
+    let stats = { points: 0, drugTests: 0, caseNotes: 0 };
+    const findUserStmt = db.prepare(`SELECT id FROM users WHERE LOWER(name) LIKE ? OR LOWER(name) LIKE ? LIMIT 1`);
+
+    const resolveUserId = (first, last) => {
+        if (!first && !last) return null;
+        const name1 = `%${first.trim().toLowerCase()}%${last.trim().toLowerCase()}%`;
+        const name2 = `%${last.trim().toLowerCase()}%${first.trim().toLowerCase()}%`;
+        const user = findUserStmt.get(name1, name2);
+        return user ? user.id : null;
+    };
+
+    db.transaction(() => {
+        // 1. Points
+        if (workbook.SheetNames.includes('Points - Rows')) {
+            const sheet = workbook.Sheets['Points - Rows'];
+            const rows = XLSX.utils.sheet_to_json(sheet);
+            
+            // Group by userId + date to sum points
+            const pointsMap = {};
+            
+            for (const row of rows) {
+                const userId = resolveUserId(row['First'], row['Last']);
+                if (!userId) continue;
+                
+                const dateStr = parseExcelDate(row['Date']);
+                if (!dateStr) continue;
+                
+                const key = `${userId}_${dateStr}`;
+                if (!pointsMap[key]) {
+                    pointsMap[key] = { userId, dateStr, points: 0 };
+                }
+                pointsMap[key].points += parseFloat(row['Points']) || 0;
+            }
+
+            const insertPoint = db.prepare(`
+                INSERT INTO daily_points (user_id, date, points_earned, max_points, attendance_status, notes, imported_from_apricot)
+                VALUES (?, ?, ?, 50, 'present', 'Imported via Render Report', 1)
+                ON CONFLICT(user_id, date) DO UPDATE SET points_earned = excluded.points_earned
+            `);
+
+            for (const p of Object.values(pointsMap)) {
+                insertPoint.run(p.userId, p.dateStr, p.points);
+                stats.points++;
+            }
+        }
+
+        // 2. Drug Tests
+        if (workbook.SheetNames.includes('Drug Test - Rows')) {
+            const sheet = workbook.Sheets['Drug Test - Rows'];
+            const rows = XLSX.utils.sheet_to_json(sheet);
+            
+            const insertDrugTest = db.prepare(`
+                INSERT INTO drug_tests (user_id, test_date, result, notes)
+                SELECT ?, ?, 'negative', 'Imported via Render Report'
+                WHERE NOT EXISTS (SELECT 1 FROM drug_tests WHERE user_id = ? AND test_date = ?)
+            `);
+
+            for (const row of rows) {
+                const userId = resolveUserId(row['First'], row['Last']);
+                if (!userId) continue;
+                
+                const dateStr = parseExcelDate(row['Date of Test']);
+                if (!dateStr) continue;
+                
+                const changes = insertDrugTest.run(userId, dateStr, userId, dateStr).changes;
+                if (changes > 0) stats.drugTests++;
+            }
+        }
+
+        // 3. Case Notes
+        if (workbook.SheetNames.includes('Case Notes - Rows') || workbook.SheetNames.includes('Case Management - Rows')) {
+            const sheetName = workbook.SheetNames.includes('Case Notes - Rows') ? 'Case Notes - Rows' : 'Case Management - Rows';
+            const sheet = workbook.Sheets[sheetName];
+            const rows = XLSX.utils.sheet_to_json(sheet);
+            
+            const insertNote = db.prepare(`
+                INSERT INTO case_notes (user_id, author_name, session_date, note_type, content, category)
+                SELECT ?, 'Apricot Import', ?, '1-on-1', ?, 'Case Management'
+                WHERE NOT EXISTS (SELECT 1 FROM case_notes WHERE user_id = ? AND session_date = ? AND content = ?)
+            `);
+
+            for (const row of rows) {
+                const userId = resolveUserId(row['First'], row['Last']);
+                if (!userId) continue;
+                
+                const dateStr = parseExcelDate(row['Date of activity:']);
+                if (!dateStr) continue;
+                
+                let content = (row['What happened during this interaction'] || '') + '\n' + (row['Notes'] || '');
+                content = content.trim();
+                if (!content) continue;
+                
+                const changes = insertNote.run(userId, dateStr, content, userId, dateStr, content).changes;
+                if (changes > 0) stats.caseNotes++;
+            }
+        }
+    })();
+
+    return { 
+        success: true, 
+        message: `Imported ${stats.points} days of points, ${stats.drugTests} drug tests, and ${stats.caseNotes} case notes.` 
+    };
+}
+
 module.exports = {
+    importUnifiedRenderReport,
     generateMondayNeedsReport,
     generateFridayMilestoneReport,
     importApricotCsv,

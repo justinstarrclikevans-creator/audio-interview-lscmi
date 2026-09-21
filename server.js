@@ -995,7 +995,19 @@ app.post('/api/admin/apricot/import-points', authenticateToken, requireRole('pro
         let result;
         if (req.file && req.file.buffer) {
             const isExcel = req.file.originalname.endsWith('.xlsx') || req.file.originalname.endsWith('.xls');
-            result = importApricotData(req.file.buffer, isExcel);
+            if (isExcel) {
+                // Check if it's the unified Render Report
+                const XLSX = require('xlsx');
+                const wb = XLSX.read(req.file.buffer, { type: 'buffer' });
+                if (wb.SheetNames.includes('Points - Rows') || wb.SheetNames.includes('Drug Test - Rows')) {
+                    const { importUnifiedRenderReport } = require('./reporting_engine');
+                    result = importUnifiedRenderReport(req.file.buffer);
+                } else {
+                    result = importApricotData(req.file.buffer, true);
+                }
+            } else {
+                result = importApricotData(req.file.buffer, false);
+            }
         } else if (req.body && req.body.csvData) {
             result = importApricotData(req.body.csvData, false);
         } else {
