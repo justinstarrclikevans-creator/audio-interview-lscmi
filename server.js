@@ -350,6 +350,68 @@ app.post('/api/participant/feedback', authenticateToken, (req, res) => {
     res.json({ message: 'Thank you! Class feedback submitted.' });
 });
 
+
+// Update Participant Gate Item (Status & Notes)
+app.post('/api/participant/gate-item', authenticateToken, (req, res) => {
+    const userId = req.user.id;
+    const { criterion_key, status, participant_notes } = req.body;
+
+    if (!['green', 'red', 'pending', 'not_applicable'].includes(status)) {
+        return res.status(400).json({ error: 'Invalid status' });
+    }
+
+    try {
+        db.prepare(`
+            UPDATE gate_criteria
+            SET status = ?, participant_notes = ?, updated_at = CURRENT_TIMESTAMP
+            WHERE user_id = ? AND criterion_key = ?
+        `).run(status, participant_notes || '', userId, criterion_key);
+
+        res.json({ message: 'Gate updated successfully' });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Get Gate Report for Staff Dashboard (Blocked / Pending items)
+app.get('/api/staff/gate-report', authenticateToken, (req, res) => {
+    if (req.user.role !== 'program_manager' && req.user.role !== 'director' && req.user.role !== 'admin') {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+
+    try {
+        // Fetch all active participants
+        const users = db.prepare(`
+            SELECT u.id, u.name, u.track, p.current_gate 
+            FROM users u
+            JOIN participant_profiles p ON u.id = p.user_id
+            WHERE u.role = 'participant' AND p.overall_status IN ('active', 'reentry_nav_stabilizing')
+        `).all();
+
+        // Fetch all non-completed gate criteria for these users
+        const criteria = db.prepare(`
+            SELECT g.* 
+            FROM gate_criteria g
+            JOIN participant_profiles p ON g.user_id = p.user_id
+            WHERE p.overall_status IN ('active', 'reentry_nav_stabilizing') 
+              AND g.status IN ('red', 'pending')
+        `).all();
+
+        // Group by user
+        const report = users.map(u => {
+            return {
+                ...u,
+                gates: criteria.filter(c => c.user_id === u.id)
+            };
+        });
+
+        res.json({ report });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+
 // Get Participant Briefcase Checklist Items
 app.get('/api/participant/briefcase', authenticateToken, (req, res) => {
     const userId = req.user.id;

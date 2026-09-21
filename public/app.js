@@ -450,6 +450,7 @@ function switchGateWeek(week) {
     loadFsDashboard();
 }
 
+
 function renderGateCriteria(weeksData, selectedWeek) {
     const container = document.getElementById('gate-criteria-table-container');
     const criteria = weeksData[selectedWeek] || [];
@@ -459,27 +460,73 @@ function renderGateCriteria(weeksData, selectedWeek) {
         return;
     }
 
-    let html = '<div class="gate-criteria-list">';
+    let html = '<div class="gate-criteria-list" style="display: flex; flex-direction: column; gap: 16px;">';
     criteria.forEach(c => {
         let badgeClass = 'badge-pending';
         let badgeText = 'Pending';
-        if (c.status === 'green') {
-            badgeClass = 'badge-green';
-            badgeText = 'Green (Met)';
-        } else if (c.status === 'red') {
-            badgeClass = 'badge-red';
-            badgeText = 'Red (Action Needed)';
+        if (c.status === 'green') { badgeClass = 'badge-green'; badgeText = 'Completed'; }
+        else if (c.status === 'red') { badgeClass = 'badge-red'; badgeText = 'Blocked'; }
+        else if (c.status === 'not_applicable') { badgeClass = 'badge-slate'; badgeText = 'N/A'; }
+
+        const isMentalHealth = c.criterion_key === 'g3_mental_health';
+
+        // Parse existing JSON notes for interactive worksheets if applicable
+        let parsedNotes = c.participant_notes || '';
+        let worksheetHtml = '';
+
+        if (isMentalHealth) {
+            let answers = { support_group: '', schedule: '', triggers: '' };
+            try {
+                if (parsedNotes.startsWith('{')) answers = JSON.parse(parsedNotes);
+            } catch(e) {}
+            
+            worksheetHtml = `
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px; margin-top: 12px;">
+                    <strong style="display: block; margin-bottom: 8px; color: var(--primary); font-size: 13px;">📝 Substance / Recovery Support Worksheet</strong>
+                    <label style="font-size: 12px; font-weight: 600;">Primary Support Group or Plan</label>
+                    <input type="text" id="ws_sg_${c.criterion_key}" class="form-control mb-2" value="${answers.support_group || ''}" placeholder="e.g., AA, NA, Counselor, Family" style="font-size: 13px; padding: 6px 10px;">
+                    <label style="font-size: 12px; font-weight: 600;">Meeting/Check-in Schedule</label>
+                    <input type="text" id="ws_sch_${c.criterion_key}" class="form-control mb-2" value="${answers.schedule || ''}" placeholder="e.g., Weekly on Tuesdays" style="font-size: 13px; padding: 6px 10px;">
+                    <label style="font-size: 12px; font-weight: 600;">Known Triggers to Avoid</label>
+                    <input type="text" id="ws_tr_${c.criterion_key}" class="form-control" value="${answers.triggers || ''}" placeholder="e.g., Old neighborhoods, stress" style="font-size: 13px; padding: 6px 10px;">
+                </div>
+            `;
+        } else {
+            worksheetHtml = `
+                <textarea id="notes_${c.criterion_key}" class="form-control mt-2" rows="2" placeholder="Add your notes or context here..." style="font-size: 13px;">${parsedNotes.startsWith('{') ? '' : parsedNotes}</textarea>
+            `;
         }
 
         html += `
-            <div class="gate-criterion-item">
-                <div class="criterion-info">
-                    <h4>${c.title}</h4>
-                    <p>${c.description || ''}</p>
-                    ${c.pm_notes ? `<div class="criterion-notes"><strong>PM Notes:</strong> ${c.pm_notes}</div>` : ''}
+            <div class="gate-criterion-item" style="background: white; border: 1px solid var(--border); border-radius: 8px; padding: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                    <div>
+                        <h4 style="margin: 0 0 4px 0; color: var(--primary); font-size: 15px;">${c.title}</h4>
+                        <p style="margin: 0; font-size: 13px; color: var(--slate);">${c.description || ''}</p>
+                        ${c.pm_notes ? `<div class="criterion-notes mt-2" style="background: #fffbeb; padding: 8px; border-radius: 4px; border-left: 3px solid #f59e0b; font-size: 12px;"><strong>Staff Note:</strong> ${c.pm_notes}</div>` : ''}
+                    </div>
+                    <div>
+                        <span class="badge ${badgeClass}" id="badge_${c.criterion_key}">${badgeText}</span>
+                    </div>
                 </div>
-                <div class="criterion-badge">
-                    <span class="badge ${badgeClass}">${badgeText}</span>
+
+                <div style="border-top: 1px solid #e2e8f0; padding-top: 12px;">
+                    <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                        <span style="font-size: 12px; font-weight: 600; color: var(--slate);">Your Status:</span>
+                        <select id="status_${c.criterion_key}" class="form-control" style="width: auto; font-size: 13px; padding: 4px 8px;">
+                            <option value="pending" ${c.status === 'pending' ? 'selected' : ''}>Pending</option>
+                            <option value="green" ${c.status === 'green' ? 'selected' : ''}>Completed</option>
+                            <option value="red" ${c.status === 'red' ? 'selected' : ''}>Blocked (Need Help)</option>
+                            <option value="not_applicable" ${c.status === 'not_applicable' ? 'selected' : ''}>Not Applicable</option>
+                        </select>
+                    </div>
+
+                    ${worksheetHtml}
+
+                    <div style="margin-top: 12px; text-align: right;">
+                        <button class="btn btn-primary" style="padding: 6px 14px; font-size: 13px;" onclick="saveGateItem('${c.criterion_key}', ${isWorksheet})">Save Update</button>
+                        <span id="save_feedback_${c.criterion_key}" style="margin-left: 8px; font-size: 12px; color: var(--success);"></span>
+                    </div>
                 </div>
             </div>
         `;
@@ -487,6 +534,53 @@ function renderGateCriteria(weeksData, selectedWeek) {
     html += '</div>';
     container.innerHTML = html;
 }
+
+async function saveGateItem(criterionKey, isWorksheet) {
+    const status = document.getElementById(`status_${criterionKey}`).value;
+    const feedback = document.getElementById(`save_feedback_${criterionKey}`);
+    
+    let notes = '';
+    if (isWorksheet) {
+        notes = JSON.stringify({
+            support_group: document.getElementById(`ws_sg_${criterionKey}`).value,
+            schedule: document.getElementById(`ws_sch_${criterionKey}`).value,
+            triggers: document.getElementById(`ws_tr_${criterionKey}`).value
+        });
+    } else {
+        notes = document.getElementById(`notes_${criterionKey}`).value;
+    }
+
+    try {
+        const token = localStorage.getItem('fs_token');
+        const res = await fetch('/api/participant/gate-item', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ criterion_key: criterionKey, status, participant_notes: notes })
+        });
+        
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+
+        feedback.innerText = '✅ Saved';
+        setTimeout(() => feedback.innerText = '', 3000);
+        
+        // Update badge visually
+        const badge = document.getElementById(`badge_${criterionKey}`);
+        if (badge) {
+            badge.className = 'badge ' + (status === 'green' ? 'badge-green' : status === 'red' ? 'badge-red' : status === 'not_applicable' ? 'badge-slate' : 'badge-pending');
+            badge.innerText = status === 'green' ? 'Completed' : status === 'red' ? 'Blocked' : status === 'not_applicable' ? 'N/A' : 'Pending';
+        }
+        
+    } catch(e) {
+        feedback.style.color = 'var(--danger)';
+        feedback.innerText = '❌ ' + e.message;
+        setTimeout(() => { feedback.style.color = 'var(--success)'; feedback.innerText = ''; }, 3000);
+    }
+}
+
 
 // -------------------------------------------------------------
 // W-9 & BARRIER ACTIONS
@@ -6894,3 +6988,98 @@ function scrollToBenefitsSection(sectionId) {
 
 
 
+
+
+
+window.switchCaseloadTab = function(tab) {
+    document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+    const btn = document.getElementById('tab-' + tab);
+    if (btn) btn.classList.add('active');
+
+    const caseloadContent = document.getElementById('pm-caseload-content');
+    const scoringContent = document.getElementById('pm-scoring-content');
+    const gateReportContent = document.getElementById('pm-gate-report-content');
+
+    if (caseloadContent) caseloadContent.classList.add('hidden');
+    if (scoringContent) scoringContent.classList.add('hidden');
+    if (gateReportContent) gateReportContent.classList.add('hidden');
+
+    if (tab === 'scoring') {
+        if (scoringContent) scoringContent.classList.remove('hidden');
+        loadScoringReviews();
+    } else if (tab === 'gate-report') {
+        if (gateReportContent) gateReportContent.classList.remove('hidden');
+        loadGateReport();
+    } else {
+        if (caseloadContent) caseloadContent.classList.remove('hidden');
+        loadCaseload();
+    }
+};
+
+async function loadGateReport() {
+    const container = document.getElementById('gate-report-container');
+    if (!container) return;
+    container.innerHTML = '<p class="text-slate">Loading gate report...</p>';
+
+    try {
+        const token = localStorage.getItem('fs_token');
+        const res = await fetch('/api/staff/gate-report', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+
+        if (!data.report || data.report.length === 0) {
+            container.innerHTML = '<p class="text-slate">No active participants found.</p>';
+            return;
+        }
+
+        let html = '<div class="gate-report-list" style="display: flex; flex-direction: column; gap: 16px;">';
+        data.report.forEach(user => {
+            const blocked = user.gates.filter(g => g.status === 'red');
+            const pending = user.gates.filter(g => g.status === 'pending');
+            
+            if (blocked.length === 0 && pending.length === 0) return; // Skip if fully clear
+
+            html += `
+                <div style="background: white; border: 1px solid var(--border); border-radius: 8px; padding: 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">
+                        <h3 style="margin: 0; font-size: 16px; color: var(--primary);">${user.name} <span style="font-size: 13px; color: var(--slate); font-weight: normal;">(Gate ${user.current_gate})</span></h3>
+                        <div>
+                            ${blocked.length > 0 ? `<span class="badge badge-red">${blocked.length} Blocked</span>` : ''}
+                            ${pending.length > 0 ? `<span class="badge badge-pending">${pending.length} Pending</span>` : ''}
+                        </div>
+                    </div>
+                    <ul style="margin: 0; padding-left: 20px; font-size: 13px;">
+            `;
+
+            user.gates.forEach(g => {
+                let noteDisplay = g.participant_notes ? `<br><span style="color: var(--slate); font-size: 12px;"><strong>Notes:</strong> ${g.participant_notes}</span>` : '';
+                html += `
+                    <li style="margin-bottom: 6px;">
+                        <strong style="color: ${g.status === 'red' ? '#dc2626' : '#f59e0b'};">${g.title}</strong> (${g.status === 'red' ? 'Blocked' : 'Pending'})
+                        ${noteDisplay}
+                    </li>
+                `;
+            });
+
+            html += `
+                    </ul>
+                    <div style="margin-top: 10px;">
+                        <button class="btn btn-outline" style="padding: 4px 10px; font-size: 12px;" onclick="openSupervisorReviewModal(${user.id}, '${user.name.replace(/'/g, "\\'")}')">Open Profile</button>
+                    </div>
+                </div>
+            `;
+        });
+        
+        if (html === '<div class="gate-report-list" style="display: flex; flex-direction: column; gap: 16px;">') {
+            html += '<div style="padding: 20px; text-align: center; color: var(--success); background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px;">All active participants are fully caught up on their current gates!</div>';
+        }
+        
+        html += '</div>';
+        container.innerHTML = html;
+
+    } catch (e) {
+        container.innerHTML = `<p style="color: red;">Error: ${e.message}</p>`;
+    }
+}

@@ -112,7 +112,8 @@ CREATE TABLE IF NOT EXISTS gate_criteria (
     criterion_key TEXT NOT NULL,
     title TEXT NOT NULL,
     description TEXT,
-    status TEXT DEFAULT 'pending', -- 'green', 'red', 'pending'
+    status TEXT DEFAULT 'pending', -- 'green', 'red', 'pending', 'not_applicable'
+    participant_notes TEXT,
     pm_notes TEXT,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
