@@ -1884,12 +1884,10 @@ async function loadCaseload() {
                 <td>
                     <div style="display: flex; align-items: center; gap: 6px;">
                         <span class="badge" style="background: #e0f2fe; color: #0369a1; font-weight: 800; font-size: 11px;">Gate ${p.current_gate || 1}</span>
+                        ${p.weeks_enrolled ? `<span class="badge" style="background: #f1f5f9; color: #475569; font-weight: 700; font-size: 10px;">Week ${p.weeks_enrolled}</span>` : ''}
                     </div>
-                    <div style="font-size: 12.5px; font-weight: 800; color: var(--primary); margin-top: 4px;">
-                        ${p.currentWeekPoints || 0} <span style="font-size: 10.5px; font-weight: normal; color: var(--slate);">/ 50 pts</span>
-                    </div>
-                    <div style="font-size: 10.5px; color: var(--slate);">
-                        Avg: ${p.weeklyPointsAvg ? Number(p.weeklyPointsAvg).toFixed(1) : '--'}
+                    <div style="font-size: 12.5px; font-weight: 800; color: var(--primary); margin-top: 6px;" title="Current Week Points">
+                        Points: ${p.currentWeekPoints || 0}
                     </div>
                     <div style="margin-top: 4px; display: flex; gap: 4px;">
                         <a href="javascript:void(0)" onclick="openLoadProgramFormsModal('points', ${p.id})" style="font-size: 10px; color: var(--accent); font-weight: 700; text-decoration: underline;">+ Pts</a>
@@ -7026,7 +7024,8 @@ window.switchCaseloadTab = function(tab) {
     if (tab === 'scoring') {
         if (scoringContent) scoringContent.classList.remove('hidden');
         loadPmDrafts();
-    }\n    if (tab === 'ai-dashboard') {
+    } 
+    if (tab === 'ai-dashboard') {
         const aiContent = document.getElementById('pm-ai-dashboard-content');
         if (aiContent) aiContent.classList.remove('hidden');
         loadAiCaseloadReport();

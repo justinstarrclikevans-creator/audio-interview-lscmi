@@ -3669,12 +3669,9 @@ app.get('/api/staff/ai-caseload-report', authenticateToken, requireRole('program
                 ORDER BY session_date DESC LIMIT 5
             `).all(p.id);
             
-            // Daily Points (last 7 days)
-            const points = db.prepare(`
-                SELECT sum(points_earned) as total_points
-                FROM daily_points 
-                WHERE user_id = ? AND date >= date('now', '-7 days')
-            `).get(p.id);
+                        // Points for the current week (Mon-Fri)
+            const complianceSummary = getWeeklyComplianceSummary(p.id);
+            const points = { total_points: complianceSummary.weekPoints };
             
             // Weekly Stability Checks (Drug screens / Housing)
             const checks = db.prepare(`
