@@ -6991,6 +6991,25 @@ function scrollToBenefitsSection(sectionId) {
 
 
 
+window.deleteInterviewRecord = async function(clientId, cleanName) {
+    if (!confirm(`Are you sure you want to permanently delete all scoring records and audio for ${cleanName} (${clientId})?`)) return;
+
+    try {
+        const token = localStorage.getItem('fs_token');
+        const res = await fetch(`/api/interviews/${clientId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to delete');
+        
+        alert('Deleted successfully.');
+        loadPmDrafts();
+    } catch(e) {
+        alert('Error: ' + e.message);
+    }
+};
+
 window.switchCaseloadTab = function(tab) {
     document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
     const btn = document.getElementById('tab-' + tab);
@@ -7006,7 +7025,7 @@ window.switchCaseloadTab = function(tab) {
 
     if (tab === 'scoring') {
         if (scoringContent) scoringContent.classList.remove('hidden');
-        loadScoringReviews();
+        loadPmDrafts();
     } else if (tab === 'gate-report') {
         if (gateReportContent) gateReportContent.classList.remove('hidden');
         loadGateReport();
