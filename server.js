@@ -262,7 +262,7 @@ app.get('/api/participant/gate-status', authenticateToken, (req, res) => {
         weeksEnrolled = Math.max(1, Math.floor(diffMs / (7 * 24 * 60 * 60 * 1000)) + 1);
         profile.weeks_enrolled = weeksEnrolled;
         
-        const healthCheck = db.prepare('SELECT COUNT(*) as c FROM health_wellness_screen WHERE user_id = ?').get(userId);
+        const healthCheck = db.prepare('SELECT COUNT(*) as c FROM health_wellness_screen WHERE participant_id = ?').get(userId);
         profile.has_health_screen = healthCheck ? healthCheck.c : 0;
     }
     res.json({
@@ -744,7 +744,7 @@ app.get('/api/admin/caseload', authenticateToken, requireRole('program_manager',
                (SELECT COUNT(*) FROM gate_criteria WHERE user_id = u.id AND status = 'red') as red_criteria,
                (SELECT AVG(points_earned) FROM daily_points WHERE user_id = u.id) as avg_points,
                (SELECT notes FROM briefcase_items WHERE user_id = u.id AND (item_key = 'skillcat_progress' OR title LIKE '%SkillCat%') LIMIT 1) as skillcat_notes,
-               (SELECT COUNT(*) FROM health_wellness_screen WHERE user_id = u.id) as has_health_screen
+               (SELECT COUNT(*) FROM health_wellness_screen WHERE participant_id = u.id) as has_health_screen
         FROM users u
         LEFT JOIN participant_profiles p ON u.id = p.user_id
         WHERE u.role = 'participant'
