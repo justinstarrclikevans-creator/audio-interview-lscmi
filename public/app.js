@@ -7292,7 +7292,7 @@ function renderGateModalWeek(week) {
     }
     
     const container = document.getElementById('gate-modal-criteria-container');
-    const criteria = currentGateModalWeeks[week] || [];
+    const criteria = (currentGateModalWeeks && currentGateModalWeeks[week]) || [];
 
     if (criteria.length === 0) {
         container.innerHTML = '<p class="text-slate">No criteria defined for this week.</p>';
