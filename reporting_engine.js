@@ -775,6 +775,7 @@ function parseExcelDate(dateVal) {
     return '';
 }
 
+
 function importUnifiedRenderReport(buffer) {
     let workbook;
     try {
@@ -797,14 +798,31 @@ function importUnifiedRenderReport(buffer) {
     };
 
     db.transaction(() => {
+        // 0. Enrollment Start Dates
+        const enrollmentSheetName = workbook.SheetNames.find(n => n.includes('Current 1st Shift') || n.includes('Enrolled'));
+        if (enrollmentSheetName) {
+            const sheet = workbook.Sheets[enrollmentSheetName];
+            const rows = XLSX.utils.sheet_to_json(sheet);
+            const updateEnrollment = db.prepare(`UPDATE participant_profiles SET enrollment_date = ? WHERE user_id = ?`);
+            for (const row of rows) {
+                const userId = resolveUserId(row['First'], row['Last']);
+                if (!userId) continue;
+                if (row['Enrollment Start Date:']) {
+                    const enrollDate = parseExcelDate(row['Enrollment Start Date:']);
+                    if (enrollDate) {
+                        updateEnrollment.run(enrollDate, userId);
+                    }
+                }
+            }
+        }
+
         // 1. Points
-        if (workbook.SheetNames.includes('Points - Rows')) {
-            const sheet = workbook.Sheets['Points - Rows'];
+        const pointsSheetName = workbook.SheetNames.find(n => n.includes('Points - Rows'));
+        if (pointsSheetName) {
+            const sheet = workbook.Sheets[pointsSheetName];
             const rows = XLSX.utils.sheet_to_json(sheet);
             
-            // Group by userId + date to sum points
             const pointsMap = {};
-            
             for (const row of rows) {
                 const userId = resolveUserId(row['First'], row['Last']);
                 if (!userId) continue;
@@ -817,14 +835,6 @@ function importUnifiedRenderReport(buffer) {
                     pointsMap[key] = { userId, dateStr, points: 0 };
                 }
                 pointsMap[key].points += parseFloat(row['Points']) || 0;
-                
-                // Capture enrollment date
-                if (row['Enrollment Start Date:']) {
-                    const enrollDate = parseExcelDate(row['Enrollment Start Date:']);
-                    if (enrollDate && !pointsMap[userId + '_enroll']) {
-                        pointsMap[userId + '_enroll'] = enrollDate;
-                    }
-                }
             }
 
             const insertPoint = db.prepare(`
@@ -833,23 +843,17 @@ function importUnifiedRenderReport(buffer) {
                 ON CONFLICT(user_id, date) DO UPDATE SET points_earned = excluded.points_earned
             `);
 
-            const updateEnrollment = db.prepare(`UPDATE participant_profiles SET enrollment_date = ? WHERE user_id = ?`);
-
             for (const key of Object.keys(pointsMap)) {
-                if (key.endsWith('_enroll')) {
-                    const userId = parseInt(key.replace('_enroll', ''));
-                    updateEnrollment.run(pointsMap[key], userId);
-                } else {
-                    const p = pointsMap[key];
-                    insertPoint.run(p.userId, p.dateStr, p.points);
-                    stats.points++;
-                }
+                const p = pointsMap[key];
+                insertPoint.run(p.userId, p.dateStr, p.points);
+                stats.points++;
             }
         }
 
         // 2. Drug Tests
-        if (workbook.SheetNames.includes('Drug Test - Rows')) {
-            const sheet = workbook.Sheets['Drug Test - Rows'];
+        const dtSheetName = workbook.SheetNames.find(n => n.includes('Drug Test - Rows'));
+        if (dtSheetName) {
+            const sheet = workbook.Sheets[dtSheetName];
             const rows = XLSX.utils.sheet_to_json(sheet);
             
             const insertDrugTest = db.prepare(`
@@ -871,9 +875,9 @@ function importUnifiedRenderReport(buffer) {
         }
 
         // 3. Case Notes
-        if (workbook.SheetNames.includes('Case Notes - Rows') || workbook.SheetNames.includes('Case Management - Rows')) {
-            const sheetName = workbook.SheetNames.includes('Case Notes - Rows') ? 'Case Notes - Rows' : 'Case Management - Rows';
-            const sheet = workbook.Sheets[sheetName];
+        const cmSheetName = workbook.SheetNames.find(n => n.includes('Case Notes - Rows') || n.includes('Case Management - Rows'));
+        if (cmSheetName) {
+            const sheet = workbook.Sheets[cmSheetName];
             const rows = XLSX.utils.sheet_to_json(sheet);
             
             const insertNote = db.prepare(`
@@ -899,10 +903,7 @@ function importUnifiedRenderReport(buffer) {
         }
     })();
 
-    return { 
-        success: true, 
-        message: `Imported ${stats.points} days of points, ${stats.drugTests} drug tests, and ${stats.caseNotes} case notes.` 
-    };
+    return { success: true, message: `Imported ${stats.points} days of points, ${stats.drugTests} drug tests, and ${stats.caseNotes} case notes.` };
 }
 
 module.exports = {

@@ -1878,113 +1878,162 @@ async function loadCaseload() {
                 `;
             }
 
-            return `
-            <tr style="${p.overall_status === 'archived' ? 'opacity: 0.65; background: #f8fafc;' : ''}">
-                <!-- 1. Participant -->
-                <td>
-                    <div style="display: flex; align-items: baseline; gap: 6px;">
-                        <strong style="font-size: 13.5px; color: #0f172a;">${p.name}</strong>
-                        <button class="btn btn-outline" style="padding: 1px 5px; font-size: 10px; border-color: #cbd5e1; color: #475569;" onclick="openCorrectionModal(${p.id}, '${escName}')" title="Correct Information / Edit Staff Notes">
-                            ✏️ Fix
-                        </button>
-                    </div>
-                    <div style="font-size: 11px; color: var(--slate); margin-top: 2px;">${p.email} • ${p.phone || 'No phone'}</div>
-                    ${p.correction_notes ? `<div style="margin-top: 4px; font-size: 10.5px; background: #fefce8; border-left: 2px solid #eab308; padding: 2px 6px; border-radius: 3px; color: #713f12; max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${p.correction_notes.replace(/"/g, '&quot;')}"><strong>Staff Note:</strong> ${p.correction_notes}</div>` : ''}
-                    ${p.overall_status === 'archived' ? '<span class="badge badge-red" style="font-size: 10px; margin-top: 3px;">Archived</span>' : ''}
-                </td>
+            
+            // Extract the active tab
+            const isFirstShift = window.activeCaseloadTab === 'first_shift';
 
-                <!-- 2. Track & Cohort -->
-                <td>
-                    <div style="font-size: 12px; font-weight: 700; color: #1e293b;">
-                        Week ${p.weeks_enrolled || 1}
-                    </div>
-                    <div style="font-size: 10.5px; color: var(--slate); cursor: pointer; margin-bottom: 4px;" onclick="openCorrectionModal(${p.id}, '${escName}')" title="Click to adjust enrollment start date">
-                        ${p.enrollment_date ? `Since ${p.enrollment_date}` : 'Set Start Date'}
-                    </div>
-                    <span class="badge ${p.track === 'first_shift' ? 'badge-green' : 'badge-pending'}" style="font-size: 10px;">
-                        ${p.track === 'first_shift' ? 'First Shift' : 'Re-entry Nav'}
-                    </span>
-                    <div style="font-size: 10.5px; color: var(--slate); margin-top: 2px;">📍 ${p.location}</div>
-                </td>
+            if (isFirstShift) {
+                // First Shift Formatting
+                let healthScreenHtml = p.has_health_screen > 0 
+                    ? '<div style="color: #15803d; font-weight: bold; font-size: 11px; background: #dcfce7; padding: 4px; border-radius: 4px;">✅ Completed</div>' 
+                    : `<button onclick="window.open('staff_tools.html?userId=${p.id}&autoFocus=health', 'HealthScreen', 'width=800,height=900')" class="btn btn-outline" style="font-size: 10px; padding: 3px 6px; color: #b91c1c; border-color: #fca5a5; background: #fee2e2;">⚠️ Complete Screen</button>`;
+                
+                let skillcatHtml = p.skillcat_notes 
+                    ? `<div style="font-size: 10.5px; color: #475569; background: #f1f5f9; padding: 4px; border-radius: 4px; max-height: 45px; overflow-y: auto;">${p.skillcat_notes}</div>` 
+                    : '<div style="font-size: 10.5px; color: #94a3b8; font-style: italic;">No SkillCat update</div>';
 
-                <!-- 3. Gate & Points -->
-                <td>
-                    <div style="display: flex; align-items: center; gap: 6px;">
-                        <span class="badge" style="background: #e0f2fe; color: #0369a1; font-weight: 800; font-size: 11px;">Gate ${p.current_gate || 1}</span>
-                        
-                    </div>
-                    <div style="font-size: 12.5px; font-weight: 800; color: var(--primary); margin-top: 6px;" title="Current Week Points">
-                        Points: ${p.currentWeekPoints || 0}
-                    </div>
-                    
-                </td>
+                let feedbackHtml = `<div style="font-size: 10px;">
+                    <div style="font-weight: bold; color: #0369a1; margin-bottom: 2px;">Gate ${p.current_gate || 1}</div>
+                    <div style="color: #15803d;">✅ ${p.green_criteria || 0} Met</div>
+                    <div style="color: #b91c1c; margin-bottom: 4px;">❌ ${p.red_criteria || 0} Needs Work</div>
+                    <button class="btn btn-outline" style="padding: 2px 4px; font-size: 9px;" onclick="openCaseReviewModal(${p.id}, '${escName}')">View Feedback</button>
+                </div>`;
 
-                <!-- 4. Weekly Compliance (Drug Screen & Case Mgmt) -->
-                <td style="vertical-align: middle;">
-                    <div style="display: flex; gap: 6px; justify-content: center; align-items: stretch;">
-                        <div style="flex: 1; min-width: 68px;">
-                            <div style="font-size: 9.5px; color: var(--slate); font-weight: 700; text-transform: uppercase; margin-bottom: 2px; text-align: center;">Screen</div>
-                            ${dtBadgeHtml}
+                return `
+                <tr style="${p.overall_status === 'archived' ? 'opacity: 0.65; background: #f8fafc;' : ''}">
+                    <td>
+                        <div style="display: flex; align-items: baseline; gap: 6px;">
+                            <strong style="font-size: 13.5px; color: #0f172a;">${p.name}</strong>
+                            <button class="btn btn-outline" style="padding: 1px 5px; font-size: 10px; border-color: #cbd5e1; color: #475569;" onclick="openCorrectionModal(${p.id}, '${escName}')">✏️ Fix</button>
                         </div>
-                        <div style="flex: 1; min-width: 68px;">
-                            <div style="font-size: 9.5px; color: var(--slate); font-weight: 700; text-transform: uppercase; margin-bottom: 2px; text-align: center;">Case Mgmt</div>
-                            ${cmBadgeHtml}
+                        <div style="font-size: 11px; color: var(--slate); margin-top: 2px;">📍 ${p.location}</div>
+                        ${p.overall_status === 'archived' ? '<span class="badge badge-red" style="font-size: 10px; margin-top: 3px;">Archived</span>' : ''}
+                    </td>
+                    <td style="text-align: center;">
+                        <div style="font-size: 13px; font-weight: bold; color: #1e293b;">${p.weeks_enrolled || 1}</div>
+                        <div style="font-size: 10px; color: var(--slate); margin-top: 2px;">Since ${p.enrollment_date || 'N/A'}</div>
+                    </td>
+                    <td style="text-align: center;">
+                        <div style="font-size: 14px; font-weight: 800; color: var(--primary);">${p.currentWeekPoints || 0}</div>
+                    </td>
+                    <td style="vertical-align: middle;">
+                        <div style="display: flex; gap: 6px; justify-content: center;">
+                            <div style="flex: 1; min-width: 60px;">${dtBadgeHtml}</div>
+                            <div style="flex: 1; min-width: 60px;">${cmBadgeHtml}</div>
                         </div>
-                    </div>
-                </td>
-
-
-
-                <!-- 7. Case Plan -->
-                <td style="text-align: center; vertical-align: middle;">
-                    <button class="btn btn-outline" style="padding: 3px 8px; font-size: 11px; font-weight: 600; color: var(--primary); border-color: #93c5fd; background: #eff6ff;" onclick="openStaffCasePlanModal(${p.id}, '${escName}')">
-                        📄 Case Plan
-                    </button>
-                    <div style="margin-top: 5px;">
-                        ${p.has_reentry_plan ? `
-                            <span class="badge ${p.reentry_status === 'immediate_triage_needed' ? 'badge-red' : (p.reentry_status === 'at_risk' ? 'badge-pending' : 'badge-green')}" style="font-size: 9.5px; padding: 2px 5px;">
-                                🧭 ${p.reentry_status ? p.reentry_status.toUpperCase().replace(/_/g, ' ') : 'ASSESSED'}
-                            </span>
-                        ` : `
-                            <a href="javascript:void(0)" onclick="startReentryAssessmentForUser(${p.id}, '${escName}')" style="font-size: 10px; color: var(--accent); text-decoration: underline;">+ Reentry Plan</a>
-                        `}
-                    </div>
-                </td>
-
-                <!-- 8. Caseload Actions -->
-                <td style="vertical-align: middle;">
-                    <div style="display: flex; gap: 4px; flex-wrap: wrap; justify-content: center;">
-                        <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: #0f766e; border-color: #99f6e4; background: #f0fdfa; font-weight: 700;" onclick="printParticipantScoringByName('${escName}')" title="Print Official LS/CMI Scoring Form">
-                            🖨️ Score
-                        </button>
-                        <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px;" onclick="openCaseReviewModal(${p.id}, '${escName}')" title="Weekly Case Review">
-                            📋 Review
-                        </button>
-                        <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: #4338ca; border-color: #c7d2fe;" onclick="openPmCbtReviewModal(${p.id}, '${escName}')" title="View CBT Worksheets & Tools">
-                            🧠 CBT
-                        </button>
-                        <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: #4338ca; border-color: #c7d2fe;" onclick="promptSwitchTrack(${p.id}, '${escName}', '${p.track}')" title="Switch Track">
-                            🔄 Track
-                        </button>
-                        <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: #0284c7; border-color: #bae6fd;" onclick="advanceParticipantGate(${p.id}, ${(p.current_gate || 1) + 1})" title="Advance Gate">
-                            Gate ➔
-                        </button>
-                        ${p.overall_status === 'archived' || p.overall_status === 'job_placed' ? `
-                            <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: var(--success); border-color: #86efac;" onclick="toggleArchiveParticipant(${p.id}, '${escName}', 'restore')" title="Restore to Caseload">
-                                ♻️
+                    </td>
+                    <td style="text-align: center; vertical-align: middle;">
+                        ${healthScreenHtml}
+                    </td>
+                    <td style="vertical-align: middle;">
+                        ${skillcatHtml}
+                    </td>
+                    <td style="text-align: center; vertical-align: middle;">
+                        ${feedbackHtml}
+                    </td>
+                </tr>
+                `;
+            } else {
+                // Re-entry Nav Formatting
+                return `
+                <tr style="${p.overall_status === 'archived' ? 'opacity: 0.65; background: #f8fafc;' : ''}">
+                    <!-- 1. Participant -->
+                    <td>
+                        <div style="display: flex; align-items: baseline; gap: 6px;">
+                            <strong style="font-size: 13.5px; color: #0f172a;">${p.name}</strong>
+                            <button class="btn btn-outline" style="padding: 1px 5px; font-size: 10px; border-color: #cbd5e1; color: #475569;" onclick="openCorrectionModal(${p.id}, '${escName}')" title="Correct Information / Edit Staff Notes">
+                                ✏️ Fix
                             </button>
-                        ` : `
-                            <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: #f59e0b; border-color: #fde68a;" onclick="toggleArchiveParticipant(${p.id}, '${escName}', 'job_placed')" title="Mark as Job Placed">
-                                💼
+                        </div>
+                        <div style="font-size: 11px; color: var(--slate); margin-top: 2px;">${p.email} • ${p.phone || 'No phone'}</div>
+                        ${p.correction_notes ? `<div style="margin-top: 4px; font-size: 10.5px; background: #fefce8; border-left: 2px solid #eab308; padding: 2px 6px; border-radius: 3px; color: #713f12; max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${p.correction_notes.replace(/"/g, '&quot;')}"><strong>Staff Note:</strong> ${p.correction_notes}</div>` : ''}
+                        ${p.overall_status === 'archived' ? '<span class="badge badge-red" style="font-size: 10px; margin-top: 3px;">Archived</span>' : ''}
+                    </td>
+
+                    <!-- 2. Track & Cohort -->
+                    <td>
+                        <div style="font-size: 12px; font-weight: 700; color: #1e293b;">
+                            Week ${p.weeks_enrolled || 1}
+                        </div>
+                        <div style="font-size: 10.5px; color: var(--slate); cursor: pointer; margin-bottom: 4px;" onclick="openCorrectionModal(${p.id}, '${escName}')" title="Click to adjust enrollment start date">
+                            ${p.enrollment_date ? `Since ${p.enrollment_date}` : 'Set Start Date'}
+                        </div>
+                        <span class="badge ${p.track === 'first_shift' ? 'badge-green' : 'badge-pending'}" style="font-size: 10px;">
+                            ${p.track === 'first_shift' ? 'First Shift' : 'Re-entry Nav'}
+                        </span>
+                        <div style="font-size: 10.5px; color: var(--slate); margin-top: 2px;">📍 ${p.location}</div>
+                    </td>
+
+                    <!-- 3. Gate & Points -->
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <span class="badge" style="background: #e0f2fe; color: #0369a1; font-weight: 800; font-size: 11px;">Gate ${p.current_gate || 1}</span>
+                        </div>
+                        <div style="font-size: 12.5px; font-weight: 800; color: var(--primary); margin-top: 6px;" title="Current Week Points">
+                            Points: ${p.currentWeekPoints || 0}
+                        </div>
+                    </td>
+
+                    <!-- 4. SkillCat Progress -->
+                    <td>
+                        <div style="font-size: 10.5px; color: #475569; background: #f1f5f9; padding: 4px; border-radius: 4px; max-height: 45px; overflow-y: auto;">
+                            ${p.skillcat_notes || 'No SkillCat update'}
+                        </div>
+                    </td>
+
+                    <!-- 5. Weekly Compliance (Drug Screen & Case Mgmt) -->
+                    <td style="vertical-align: middle;">
+                        <div style="display: flex; gap: 6px; justify-content: center; align-items: stretch;">
+                            <div style="flex: 1; min-width: 68px;">
+                                <div style="font-size: 9.5px; color: var(--slate); font-weight: 700; text-transform: uppercase; margin-bottom: 2px; text-align: center;">Screen</div>
+                                ${dtBadgeHtml}
+                            </div>
+                            <div style="flex: 1; min-width: 68px;">
+                                <div style="font-size: 9.5px; color: var(--slate); font-weight: 700; text-transform: uppercase; margin-bottom: 2px; text-align: center;">Case Mgmt</div>
+                                ${cmBadgeHtml}
+                            </div>
+                        </div>
+                    </td>
+
+                    <!-- 6. Case Plan -->
+                    <td style="text-align: center; vertical-align: middle;">
+                        <button class="btn btn-outline" style="padding: 3px 8px; font-size: 11px; font-weight: 600; color: var(--primary); border-color: #93c5fd; background: #eff6ff;" onclick="openStaffCasePlanModal(${p.id}, '${escName}')">
+                            📄 Case Plan
+                        </button>
+                        <div style="margin-top: 5px;">
+                            ${p.has_reentry_plan ? `
+                                <span class="badge ${p.reentry_status === 'immediate_triage_needed' ? 'badge-red' : (p.reentry_status === 'at_risk' ? 'badge-pending' : 'badge-green')}" style="font-size: 9.5px; padding: 2px 5px;">
+                                    🧭 ${p.reentry_status ? p.reentry_status.toUpperCase().replace(/_/g, ' ') : 'ASSESSED'}
+                                </span>
+                            ` : `
+                                <a href="javascript:void(0)" onclick="startReentryAssessmentForUser(${p.id}, '${escName}')" style="font-size: 10px; color: var(--accent); text-decoration: underline;">+ Reentry Plan</a>
+                            `}
+                        </div>
+                    </td>
+
+                    <!-- 7. Caseload Actions -->
+                    <td style="vertical-align: middle;">
+                        <div style="display: flex; gap: 4px; flex-wrap: wrap; justify-content: center;">
+                            <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: #0f766e; border-color: #99f6e4; background: #f0fdfa; font-weight: 700;" onclick="printParticipantScoringByName('${escName}')" title="Print Official LS/CMI Scoring Form">
+                                🖨️ Score
                             </button>
-                            <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: var(--danger); border-color: #fca5a5;" onclick="toggleArchiveParticipant(${p.id}, '${escName}', 'archive')" title="Remove / Archive Participant">
-                                🗑️
+                            <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px;" onclick="openCaseReviewModal(${p.id}, '${escName}')" title="Weekly Case Review">
+                                📋 Review
                             </button>
-                        `}
-                    </div>
-                </td>
-            </tr>
-            `;
+                            <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: #4338ca; border-color: #c7d2fe;" onclick="openPmCbtReviewModal(${p.id}, '${escName}')" title="View CBT Worksheets & Tools">
+                                🧠 CBT
+                            </button>
+                            <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: #4338ca; border-color: #c7d2fe;" onclick="promptSwitchTrack(${p.id}, '${escName}', '${p.track}')" title="Switch Track">
+                                🔄 Track
+                            </button>
+                            <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: #0284c7; border-color: #bae6fd;" onclick="advanceParticipantGate(${p.id}, ${(p.current_gate || 1) + 1})" title="Advance Gate">
+                                Gate ➔
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                `;
+            }
         }).join('');
         
         // --- Health Screening Pop Up for 3rd Week ---
@@ -7035,7 +7084,6 @@ window.switchCaseloadTab = function(tab) {
         activeBtn.classList.add('btn-primary');
     }
 
-    // Always show the pm-sec-caseload section, and hide others
     document.getElementById('pm-sec-caseload').classList.remove('hidden');
     document.getElementById('pm-sec-reentry').classList.add('hidden');
     const msgSec = document.getElementById('pm-sec-messages');
@@ -7047,18 +7095,46 @@ window.switchCaseloadTab = function(tab) {
     const evalCard = document.getElementById('pm-facilitation-evals-list')?.closest('.section-card');
     if (evalCard) evalCard.classList.remove('hidden');
 
-    // Filter caseload based on the tab
     const statusFilter = document.getElementById('pm-filter-status');
     const titleEl = document.getElementById('caseload-title');
+    const thead = document.getElementById('caseload-thead');
     
     if (tab === 'first_shift') {
         if (statusFilter) statusFilter.value = 'active';
         if (titleEl) titleEl.innerText = '🏢 First Shift Caseload';
+        if (thead) {
+            thead.innerHTML = `
+                <tr>
+                    <th style="min-width: 160px;">Participant</th>
+                    <th style="min-width: 110px; text-align: center;">Weeks Enrolled</th>
+                    <th style="min-width: 90px; text-align: center;">Points</th>
+                    <th style="min-width: 150px; text-align: center;">Weekly Compliance</th>
+                    <th style="min-width: 130px; text-align: center;">Health Screen</th>
+                    <th style="min-width: 140px; text-align: center;">SkillCat Update</th>
+                    <th style="min-width: 150px; text-align: center;">Gate Feedback</th>
+                </tr>
+            `;
+        }
     } else if (tab === 'reentry_nav') {
         if (statusFilter) statusFilter.value = 'reentry_nav_stabilizing';
         if (titleEl) titleEl.innerText = '🧭 Re-entry Navigation Caseload';
+        if (thead) {
+            thead.innerHTML = `
+                <tr>
+                    <th style="min-width: 170px;">Participant</th>
+                    <th style="min-width: 125px;">Track & Cohort</th>
+                    <th style="min-width: 110px;">Gate & Points</th>
+                    <th style="min-width: 120px;">SkillCat Progress</th>
+                    <th style="min-width: 145px; text-align: center;">Weekly Compliance<br><span style="font-size: 10px; font-weight: normal; color: var(--slate);">Drug Screen & Case Mgmt</span></th>
+                    <th style="min-width: 115px; text-align: center;">Case Plan</th>
+                    <th style="min-width: 155px; text-align: center;">Caseload Actions</th>
+                </tr>
+            `;
+        }
     }
     
+    // store active tab on window so loadCaseload knows which view to render
+    window.activeCaseloadTab = tab;
     loadCaseload();
 };
 
