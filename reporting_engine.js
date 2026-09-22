@@ -791,9 +791,30 @@ function importUnifiedRenderReport(buffer) {
         if (!first && !last) return null;
         first = String(first || '').trim().toLowerCase();
         last = String(last || '').trim().toLowerCase();
-        const name1 = `%${first}%${last}%`;
-        const name2 = `%${last}%${first}%`;
-        const user = findUserStmt.get(name1, name2);
+        
+        const cleanFirst = first.replace(/['\.]/g, '');
+        const cleanLast = last.replace(/['\.]/g, '').replace(/\b(jr|sr|iii|ii|iv)\b/g, '').trim();
+
+        const allUsers = db.prepare(`SELECT id, name FROM users WHERE role = 'participant'`).all();
+        
+        for (const u of allUsers) {
+            const dbName = u.name.toLowerCase().replace(/['\.]/g, '');
+            if (dbName.includes(cleanFirst) && dbName.includes(cleanLast)) {
+                return u.id;
+            }
+            if (cleanFirst && cleanLast && dbName.includes(cleanLast) && cleanLast.length > 2) {
+                // Check if db first name is a substring of cleanFirst or vice-versa
+                const dbParts = dbName.split(' ');
+                const dbFirst = dbParts[0];
+                if (cleanFirst.includes(dbFirst) || dbFirst.includes(cleanFirst)) {
+                    return u.id;
+                }
+            }
+        }
+        
+        const name1 = `%${cleanFirst}%${cleanLast}%`;
+        const name2 = `%${cleanLast}%${cleanFirst}%`;
+        const user = db.prepare(`SELECT id FROM users WHERE LOWER(name) LIKE ? OR LOWER(name) LIKE ? LIMIT 1`).get(name1, name2);
         return user ? user.id : null;
     };
 

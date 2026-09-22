@@ -716,7 +716,7 @@ app.get('/api/admin/caseload', authenticateToken, requireRole('program_manager',
                (SELECT COUNT(*) FROM gate_criteria WHERE user_id = u.id AND status = 'red') as red_criteria,
                (SELECT AVG(points_earned) FROM daily_points WHERE user_id = u.id) as avg_points,
                (SELECT notes FROM briefcase_items WHERE user_id = u.id AND (item_key = 'skillcat_progress' OR title LIKE '%SkillCat%') LIMIT 1) as skillcat_notes,
-               (SELECT COUNT(*) FROM health_wellness_screen WHERE participant_id = u.id) as has_health_screen
+               (SELECT COUNT(*) FROM health_wellness_screen WHERE user_id = u.id) as has_health_screen
         FROM users u
         LEFT JOIN participant_profiles p ON u.id = p.user_id
         WHERE u.role = 'participant'
@@ -1002,7 +1002,7 @@ app.post('/api/admin/apricot/import-points', authenticateToken, requireRole('pro
                 // Check if it's the unified Render Report
                 const XLSX = require('xlsx');
                 const wb = XLSX.read(req.file.buffer, { type: 'buffer' });
-                if (wb.SheetNames.includes('Points - Rows') || wb.SheetNames.includes('Drug Test - Rows')) {
+                if (wb.SheetNames.some(n => n.includes('Points - Rows') || n.includes('Drug Test - Rows') || n.includes('1st Shift'))) {
                     const { importUnifiedRenderReport } = require('./reporting_engine');
                     result = importUnifiedRenderReport(req.file.buffer);
                 } else {
