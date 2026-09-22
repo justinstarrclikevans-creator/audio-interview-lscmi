@@ -7386,31 +7386,7 @@ async function saveModalGateItem(criterionKey) {
     }
 }
 
-let currentGateModalUserId = null;
-let currentGateModalWeeks = null;
-let currentGateModalRole = null;
 
-async function openGateChecklistModal(userId, name) {
-    const token = localStorage.getItem('fs_token');
-    currentGateModalUserId = userId || currentUser.id;
-    currentGateModalRole = currentUser.role;
-    
-    document.getElementById('gate-modal-title').innerText = name ? `Gate Checklist: ${name}` : 'My Gate Checklist';
-    
-    try {
-        const query = (currentUser.role === 'program_manager' || currentUser.role === 'admin') ? `?userId=${currentGateModalUserId}` : '';
-        const res = await fetch(`/api/participant/gate-status${query}`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const data = await res.json();
-        
-        currentGateModalWeeks = data.weeks;
-        openModal('modal-gate-checklist');
-        renderGateModalWeek(1);
-    } catch (e) {
-        alert('Error loading gates: ' + e.message);
-    }
-}
 
 function renderGateModalWeek(week) {
     for (let i=1; i<=4; i++) {
