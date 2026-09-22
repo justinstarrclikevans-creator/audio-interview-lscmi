@@ -828,90 +828,10 @@ function importUnifiedRenderReport(buffer) {
             for (const row of rows) {
                 const userId = resolveUserId(row['First'], row['Last']);
                 if (!userId) continue;
-                if (row['Enrollment Start Date:']) {
-                    const enrollDate = parseExcelDate(row['Enrollment Start Date:']);
-                    if (enrollDate) {
-                        updateEnrollment.run(enrollDate, userId);
-                    }
-                }
-            }
-        }
-
-        // 1. Points
-        const pointsSheetName = workbook.SheetNames.find(n => n.includes('Points - Rows'));
-        if (pointsSheetName) {
-            const sheet = workbook.Sheets[pointsSheetName];
-            const rows = XLSX.utils.sheet_to_json(sheet);
-            
-            const pointsMap = {};
-            for (const row of rows) {
-                const userId = resolveUserId(row['First'], row['Last']);
-                if (!userId) continue;
                 
-                const dateStr = parseExcelDate(row['Date']);
-                if (!dateStr) continue;
-                
-                const key = `${userId}_${dateStr}`;
-                if (!pointsMap[key]) {
-                    pointsMap[key] = { userId, dateStr, points: 0 };
-                }
-                pointsMap[key].points += parseFloat(row['Points']) || 0;
-            }
-
-            const insertPoint = db.prepare(`
-                INSERT INTO daily_points (user_id, date, points_earned, max_points, attendance_status, notes, imported_from_apricot)
-                VALUES (?, ?, ?, 50, 'present', 'Imported via Render Report', 1)
-                ON CONFLICT(user_id, date) DO UPDATE SET points_earned = excluded.points_earned
-            `);
-
-            for (const key of Object.keys(pointsMap)) {
-                const p = pointsMap[key];
-                insertPoint.run(p.userId, p.dateStr, p.points);
-                stats.points++;
-            }
-        }
-
-        // 2. Drug Tests
-        const dtSheetName = workbook.SheetNames.find(n => n.includes('Drug Test - Rows'));
-        if (dtSheetName) {
-            const sheet = workbook.Sheets[dtSheetName];
-            const rows = XLSX.utils.sheet_to_json(sheet);
-            
-            const insertDrugTest = db.prepare(`
-                INSERT INTO drug_tests (user_id, test_date, result, notes)
-                SELECT ?, ?, 'negative', 'Imported via Render Report'
-                WHERE NOT EXISTS (SELECT 1 FROM drug_tests WHERE user_id = ? AND test_date = ?)
-            `);
-
-            for (const row of rows) {
-                const userId = resolveUserId(row['First'], row['Last']);
-                if (!userId) continue;
-                
-                const dateStr = parseExcelDate(row['Date of Test']);
-                if (!dateStr) continue;
-                
-                const changes = insertDrugTest.run(userId, dateStr, userId, dateStr).changes;
-                if (changes > 0) stats.drugTests++;
-            }
-        }
-
-        // 3. Case Notes
-        const cmSheetName = workbook.SheetNames.find(n => n.includes('Case Notes - Rows') || n.includes('Case Management - Rows'));
-        if (cmSheetName) {
-            const sheet = workbook.Sheets[cmSheetName];
-            const rows = XLSX.utils.sheet_to_json(sheet);
-            
-            const insertNote = db.prepare(`
-                INSERT INTO case_notes (user_id, author_name, session_date, note_type, content, category)
-                SELECT ?, 'Apricot Import', ?, '1-on-1', ?, 'Case Management'
-                WHERE NOT EXISTS (SELECT 1 FROM case_notes WHERE user_id = ? AND session_date = ? AND content = ?)
-            `);
-
-            for (const row of rows) {
-                const userId = resolveUserId(row['First'], row['Last']);
-                if (!userId) continue;
-                
-                const dateStr = parseExcelDate(row['Date of activity:']);
+                const dtKey = Object.keys(row).find(k => k.toLowerCase().includes('date of activity') || k.toLowerCase().includes('date'));
+                if (!dtKey) continue;
+                const dateStr = parseExcelDate(row[dtKey]);
                 if (!dateStr) continue;
                 
                 let content = (row['What happened during this interaction'] || '') + '\n' + (row['Notes'] || '');
