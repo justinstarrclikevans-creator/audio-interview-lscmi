@@ -5690,6 +5690,24 @@ ${JSON.stringify(bundleData, null, 2)}
 })();
 
 
+// Impersonate Participant (Staff Only)
+app.post('/api/admin/impersonate/:userId', authenticateToken, (req, res) => {
+    if (req.user.role !== 'program_manager' && req.user.role !== 'admin' && req.user.role !== 'director') {
+        return res.status(403).json({ error: 'Unauthorized' });
+    }
+    const targetUserId = parseInt(req.params.userId, 10);
+    
+    // Get the JWT module from where it is used (since it's globally required)
+    const jwt = require('jsonwebtoken');
+    const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_for_dev';
+
+    const user = db.prepare('SELECT id, email, name, role, track, location FROM users WHERE id = ?').get(targetUserId);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    
+    const token = jwt.sign({ id: user.id, email: user.email, name: user.name, role: user.role, track: user.track }, JWT_SECRET, { expiresIn: '1d' });
+    res.json({ token, user });
+});
+
 app.listen(PORT, async () => {
     console.log(`🚀 Unified First Shift & Re-entry App running at http://localhost:${PORT}`);
     try {
