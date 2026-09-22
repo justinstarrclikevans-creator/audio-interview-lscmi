@@ -745,11 +745,24 @@ app.get('/api/admin/caseload', authenticateToken, requireRole('program_manager',
         const pointsSummary = getWeeklyPointsSummary(p.id);
         const complianceSummary = getWeeklyComplianceSummary(p.id, weekDate || null);
 
-        // Calculate weeks enrolled based on enrollment_date (or created_at)
+        // Calculate weeks enrolled based on calendar weeks (Monday to Friday)
         const enrollDateStr = p.enrollment_date || (p.created_at ? p.created_at.split(' ')[0] : '2026-08-01');
-        const enrollDate = new Date(enrollDateStr + 'T00:00:00Z');
+        const enrollDate = new Date(enrollDateStr + 'T12:00:00Z');
         const now = new Date();
-        const diffMs = Math.max(0, now.getTime() - enrollDate.getTime());
+        now.setUTCHours(12, 0, 0, 0);
+
+        function getMonday(d) {
+            const date = new Date(d);
+            const day = date.getUTCDay();
+            const diff = date.getUTCDate() - day + (day === 0 ? -6 : 1);
+            date.setUTCDate(diff);
+            date.setUTCHours(0, 0, 0, 0);
+            return date;
+        }
+
+        const enrollMonday = getMonday(enrollDate);
+        const currentMonday = getMonday(now);
+        const diffMs = currentMonday.getTime() - enrollMonday.getTime();
         const weeksEnrolled = Math.max(1, Math.floor(diffMs / (7 * 24 * 60 * 60 * 1000)) + 1);
 
         return {
