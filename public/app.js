@@ -4266,7 +4266,7 @@ async function handleApricotImport() {
 
         const data = await res.json();
         if (data.success) {
-            alert(`Apricot sync successful! ${data.importedCount} participant point records updated.`);
+            alert(`Apricot sync successful!\n\n` + (data.message || `${data.importedCount} participant point records updated.`));
             closeModal('modal-apricot');
             if (fileInput) fileInput.value = '';
             document.getElementById('apricot-csv-text').value = '';

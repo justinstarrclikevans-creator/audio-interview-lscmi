@@ -758,21 +758,29 @@ function generateCaseManagementBriefcaseAudit(userId) {
 
 
 function parseExcelDate(dateVal) {
-    if (dateVal instanceof Date) {
-        return dateVal.toISOString().split('T')[0];
-    } else if (typeof dateVal === 'number') {
+    if (!dateVal) return '';
+    if (dateVal instanceof Date) return dateVal.toISOString().split('T')[0];
+    if (typeof dateVal === 'number') {
         const parsedDate = new Date(Math.round((dateVal - 25569) * 86400 * 1000));
         return !isNaN(parsedDate.getTime()) ? parsedDate.toISOString().split('T')[0] : String(dateVal);
-    } else if (typeof dateVal === 'string') {
-        // e.g. 09/21/2026
-        const parts = dateVal.split('/');
-        if (parts.length === 3) {
-            const y = parts[2].length === 2 ? '20' + parts[2] : parts[2];
-            return `${y}-${parts[0].padStart(2, '0')}-${parts[1].padStart(2, '0')}`;
-        }
-        return dateVal.trim();
     }
-    return '';
+    if (typeof dateVal === 'string') {
+        if (dateVal.includes('/')) {
+            const parts = dateVal.split('/');
+            if (parts.length === 3) {
+                let m = parts[0].padStart(2, '0');
+                let d = parts[1].padStart(2, '0');
+                let y = parts[2];
+                if (y.length === 2) y = '20' + y;
+                return `${y}-${m}-${d}`;
+            }
+        }
+        const parsed = new Date(dateVal);
+        if (!isNaN(parsed.getTime())) {
+            return parsed.toISOString().split('T')[0];
+        }
+    }
+    return String(dateVal);
 }
 
 
@@ -785,6 +793,7 @@ function importUnifiedRenderReport(buffer) {
     }
 
     let stats = { points: 0, drugTests: 0, caseNotes: 0 };
+    const unmatchedNames = [];
     const findUserStmt = db.prepare(`SELECT id FROM users WHERE LOWER(name) LIKE ? OR LOWER(name) LIKE ? LIMIT 1`);
 
     const resolveUserId = (first, last) => {
@@ -827,7 +836,10 @@ function importUnifiedRenderReport(buffer) {
             const updateEnrollment = db.prepare(`UPDATE participant_profiles SET enrollment_date = ? WHERE user_id = ?`);
             for (const row of rows) {
                 const userId = resolveUserId(row['First'], row['Last']);
-                if (!userId) continue;
+                if (!userId) {
+                    unmatchedNames.push((row['First'] || '') + ' ' + (row['Last'] || ''));
+                    continue;
+                }
                 const dtKey = Object.keys(row).find(k => k.toLowerCase().includes('enrollment start date') || k.toLowerCase().includes('start date'));
                 if (dtKey && row[dtKey]) {
                     const enrollDate = parseExcelDate(row[dtKey]);
@@ -847,7 +859,10 @@ function importUnifiedRenderReport(buffer) {
             const pointsMap = {};
             for (const row of rows) {
                 const userId = resolveUserId(row['First'], row['Last']);
-                if (!userId) continue;
+                if (!userId) {
+                    unmatchedNames.push((row['First'] || '') + ' ' + (row['Last'] || ''));
+                    continue;
+                }
                 
                 const dateStr = parseExcelDate(row['Date']);
                 if (!dateStr) continue;
@@ -886,7 +901,10 @@ function importUnifiedRenderReport(buffer) {
 
             for (const row of rows) {
                 const userId = resolveUserId(row['First'], row['Last']);
-                if (!userId) continue;
+                if (!userId) {
+                    unmatchedNames.push((row['First'] || '') + ' ' + (row['Last'] || ''));
+                    continue;
+                }
                 
                 const dtKey = Object.keys(row).find(k => k.toLowerCase().includes('date of test') || k.toLowerCase().includes('test date') || k.toLowerCase().includes('date'));
                 if (!dtKey) continue;
@@ -912,7 +930,10 @@ function importUnifiedRenderReport(buffer) {
 
             for (const row of rows) {
                 const userId = resolveUserId(row['First'], row['Last']);
-                if (!userId) continue;
+                if (!userId) {
+                    unmatchedNames.push((row['First'] || '') + ' ' + (row['Last'] || ''));
+                    continue;
+                }
                 
                 const dtKey = Object.keys(row).find(k => k.toLowerCase().includes('date of activity') || k.toLowerCase().includes('date'));
                 if (!dtKey) continue;
@@ -929,7 +950,9 @@ function importUnifiedRenderReport(buffer) {
         }
     })();
 
-    return { success: true, message: `Imported ${stats.points} days of points, ${stats.drugTests} drug tests, and ${stats.caseNotes} case notes.` };
+    const failedNames = [...new Set(unmatchedNames)];
+    const failMsg = failedNames.length > 0 ? "\nFailed to match: " + failedNames.join(', ') : "";
+    return { success: true, message: `Imported ${stats.points} days of points, ${stats.drugTests} drug tests, and ${stats.caseNotes} case notes.` + failMsg };
 }
 
 module.exports = {
