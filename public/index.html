@@ -153,7 +153,7 @@
                             </div>
                             <p id="fs-attendance-summary">Weekly points benchmark progress & attendance status.</p>
                             <div style="margin-top: 10px;">
-                                <button class="btn btn-outline" style="font-size: 11.5px; padding: 4px 10px;" onclick="openTimeOffModal()">📅 Request Time Off (48h Notice)</button>
+                                
                             </div>
                         </div>
                     </div>
@@ -221,20 +221,8 @@
                     <div class="section-header">
                         <div>
                             <h2>First Shift 4-Week Gate Tracker (Placement Qualifying)</h2>
-                            <p>Must-have benchmarks in Weeks 1–4 to qualify for Week 9 Job Placement vs. Step-down for Stabilization.</p>
-                        </div>
-                    </div>
-
-                    <div class="gate-tabs">
-                        <button class="gate-tab-btn active" onclick="switchGateWeek(1)">Week 1 Gate</button>
-                        <button class="gate-tab-btn" onclick="switchGateWeek(2)">Week 2 Gate</button>
-                        <button class="gate-tab-btn" onclick="switchGateWeek(3)">Week 3 Gate</button>
-                        <button class="gate-tab-btn" onclick="switchGateWeek(4)">Week 4 Gate (Placement Triage)</button>
-                    </div>
-
-                    <div id="gate-criteria-table-container" class="mt-4">
-                        <!-- Loaded dynamically via JavaScript -->
-                    </div>
+<p class="text-slate">Track your progress and readiness for job placement.</p>
+<button class="btn btn-primary mt-3" onclick="openGateChecklistModal()">📝 Open Gate Checklist</button>
                 </div>
             </div> <!-- End fs-sec-overview -->
 
@@ -730,12 +718,8 @@
                         <button class="btn btn-primary" style="border-radius: 0; border: none; font-size: 12px; padding: 7px 12px;" onclick="openLoadProgramFormsModal()" title="Enter daily points, log weekly drug screens, or add case management notes">
                             📥 Load Program Logs
                         </button>
-                        <button class="btn btn-outline" style="border-radius: 0; border: none; border-left: 1px solid var(--border); font-size: 12px; padding: 7px 11px;" onclick="openApricotModal()" title="Sync Apricot Points">
-                            🔄 Sync Apricot
-                        </button>
-                        <button class="btn btn-outline" style="border-radius: 0; border: none; border-left: 1px solid var(--border); font-size: 12px; padding: 7px 11px;" onclick="exportApricotNotesModal()" title="Export Apricot Case Notes">
-                            📄 Export Notes
-                        </button>
+                        
+                        
                         <button class="btn btn-outline" style="border-radius: 0; border: none; border-left: 1px solid var(--border); font-size: 12px; padding: 7px 11px;" onclick="openCmBriefcaseAuditModal()" title="CM vs Briefcase Cross-Audit">
                             📊 CM Audit
                         </button>
@@ -743,12 +727,8 @@
 
                     <!-- Group 2: Executive Reports & Admin -->
                     <div class="pm-btn-cluster" style="display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-                        <button class="btn btn-outline" style="border-radius: 0; border: none; font-size: 12px; padding: 7px 11px;" onclick="generateReport('monday')" title="Generate Monday Kickoff Caseload Report">
-                            📋 Monday Report
-                        </button>
-                        <button class="btn btn-outline" style="border-radius: 0; border: none; border-left: 1px solid var(--border); font-size: 12px; padding: 7px 11px;" onclick="generateReport('friday')" title="Generate Friday Gate & Points Summary">
-                            📊 Friday Report
-                        </button>
+                        
+                        
                         <button class="btn btn-outline" style="border-radius: 0; border: none; border-left: 1px solid var(--border); font-size: 12px; padding: 7px 11px;" onclick="openPmTimeOffModal()" title="Review Participant Time-Off Requests">
                             📅 Time-Off
                         </button>
@@ -2857,5 +2837,37 @@
     </div>
 
     <script src="app.js"></script>
+
+<!-- Gate Checklist Modal -->
+<div id="modal-gate-checklist" class="modal hidden">
+    <div class="modal-content" style="max-width: 800px;">
+        <span class="close" onclick="closeModal('modal-gate-checklist')">&times;</span>
+        <h2 id="gate-modal-title">Gate Checklist</h2>
+        <p class="text-slate mb-4">Track progress through the 4-week job readiness gates.</p>
+        
+        <div class="gate-tabs mb-4">
+            <button class="gate-tab-btn active" id="btn-gate-tab-1" onclick="renderGateModalWeek(1)">Week 1 Gate</button>
+            <button class="gate-tab-btn" id="btn-gate-tab-2" onclick="renderGateModalWeek(2)">Week 2 Gate</button>
+            <button class="gate-tab-btn" id="btn-gate-tab-3" onclick="renderGateModalWeek(3)">Week 3 Gate</button>
+            <button class="gate-tab-btn" id="btn-gate-tab-4" onclick="renderGateModalWeek(4)">Week 4 Gate</button>
+        </div>
+
+        <div id="gate-modal-criteria-container">
+            <!-- Rendered via JS -->
+        </div>
+    </div>
+</div>
 </body>
 </html>
+
+        <div id="gate-modal-criteria-container">
+            <!-- Rendered via JS -->
+        </div>
+    </div>
+</div>
+
+        <div id="gate-modal-criteria-container">
+            <!-- Rendered via JS -->
+        </div>
+    </div>
+</div>

@@ -288,7 +288,9 @@ async function loadFsDashboard() {
         }
         currentProfile = data.profile;
 
-        document.getElementById('fs-welcome-title').innerText = `Welcome, ${currentUser.name}`;
+        const isImpersonating = !!localStorage.getItem('staff_token');
+    document.getElementById('fs-welcome-title').innerHTML = `Welcome, ${currentUser.name} ` + 
+        (isImpersonating ? `<button onclick="restoreStaffSession()" class="btn btn-primary" style="margin-left: 15px; font-size: 11px; padding: 4px 10px; background: #dc2626; border-color: #dc2626;">🚪 End Impersonation (Return to Staff)</button>` : '');
         document.getElementById('fs-gate-badge').innerText = `Current: Gate ${data.currentGate} (Week ${data.currentGate})`;
 
         // Card 1: Check if intake is completed
@@ -1897,13 +1899,14 @@ async function loadCaseload() {
                     <div style="color: #15803d;">✅ ${p.green_criteria || 0} Met</div>
                     <div style="color: #b91c1c; margin-bottom: 4px;">❌ ${p.red_criteria || 0} Needs Work</div>
                     <button class="btn btn-outline" style="padding: 2px 4px; font-size: 9px;" onclick="openCaseReviewModal(${p.id}, '${escName}')">View Feedback</button>
+<button class="btn btn-primary" style="padding: 2px 4px; font-size: 9px; margin-top: 4px; display: block; width: 100%;" onclick="openGateChecklistModal(${p.id}, '${escName}')">✅ Gate Checklist</button>
                 </div>`;
 
                 return `
                 <tr style="${p.overall_status === 'archived' ? 'opacity: 0.65; background: #f8fafc;' : ''}">
                     <td>
                         <div style="display: flex; align-items: baseline; gap: 6px;">
-                            <strong style="font-size: 13.5px; color: #0f172a;">${p.name}</strong>
+                            <strong style="font-size: 13.5px; color: #0f172a; cursor: pointer; text-decoration: underline;" onclick="impersonateParticipant(${p.id})" title="Click to view Participant Dashboard">${p.name}</strong>
                             <button class="btn btn-outline" style="padding: 1px 5px; font-size: 10px; border-color: #cbd5e1; color: #475569;" onclick="openCorrectionModal(${p.id}, '${escName}')">✏️ Fix</button>
                         </div>
                         <div style="font-size: 11px; color: var(--slate); margin-top: 2px;">📍 ${p.location}</div>
@@ -1940,7 +1943,7 @@ async function loadCaseload() {
                     <!-- 1. Participant -->
                     <td>
                         <div style="display: flex; align-items: baseline; gap: 6px;">
-                            <strong style="font-size: 13.5px; color: #0f172a;">${p.name}</strong>
+                            <strong style="font-size: 13.5px; color: #0f172a; cursor: pointer; text-decoration: underline;" onclick="impersonateParticipant(${p.id})" title="Click to view Participant Dashboard">${p.name}</strong>
                             <button class="btn btn-outline" style="padding: 1px 5px; font-size: 10px; border-color: #cbd5e1; color: #475569;" onclick="openCorrectionModal(${p.id}, '${escName}')" title="Correct Information / Edit Staff Notes">
                                 ✏️ Fix
                             </button>
@@ -2036,20 +2039,7 @@ async function loadCaseload() {
             }
         }).join('');
         
-        // --- Health Screening Pop Up for 3rd Week ---
-        const week3NeedsScreen = roster.filter(p => p.weeks_enrolled >= 3 && p.has_health_screen === 0);
-        const existingWarning = document.getElementById('health-screen-warning');
-        if (existingWarning) existingWarning.remove();
         
-        if (week3NeedsScreen.length > 0) {
-            const names = week3NeedsScreen.map(p => p.name).join(', ');
-            const firstId = week3NeedsScreen[0].id;
-            const healthWarningHtml = `<div id="health-screen-warning" style="background: #fee2e2; border: 2px solid #ef4444; color: #b91c1c; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px -1px rgba(239,68,68,0.2); animation: pulse 2s infinite;">
-                <div>⚠️ Health Screen Required! The following participants are in Week 3+: ${names}</div>
-                <button onclick="window.open('staff_tools.html?userId=${firstId}&autoFocus=health', 'HealthScreen', 'width=800,height=900')" style="background: #ef4444; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Launch Screen</button>
-            </div>`;
-            document.getElementById('caseload-table').insertAdjacentHTML('beforebegin', healthWarningHtml);
-        }
 
     } catch (e) {
         console.error('Failed to load caseload:', e);
@@ -7111,7 +7101,7 @@ window.switchCaseloadTab = function(tab) {
                     <th style="min-width: 150px; text-align: center;">Weekly Compliance</th>
                     <th style="min-width: 130px; text-align: center;">Health Screen</th>
                     <th style="min-width: 140px; text-align: center;">SkillCat Update</th>
-                    <th style="min-width: 150px; text-align: center;">Gate Feedback</th>
+                    <th style="min-width: 150px; text-align: center;">Briefcase Progress</th>
                 </tr>
             `;
         }
@@ -7263,5 +7253,297 @@ async function loadAiCaseloadReport(forceRefresh = false) {
     } catch (err) {
         console.error(err);
         container.innerHTML = `<div class="error" style="color: var(--danger); padding: 20px; background: #fee2e2; border-radius: 6px;">Error loading AI Insights: ${err.message}</div>`;
+    }
+}
+
+let currentGateModalUserId = null;
+let currentGateModalWeeks = null;
+let currentGateModalRole = null;
+
+async function openGateChecklistModal(userId, name) {
+    const token = localStorage.getItem('fs_token');
+    currentGateModalUserId = userId || currentUser.id;
+    currentGateModalRole = currentUser.role;
+    
+    document.getElementById('gate-modal-title').innerText = name ? `Gate Checklist: ${name}` : 'My Gate Checklist';
+    
+    try {
+        const query = (currentUser.role === 'program_manager' || currentUser.role === 'admin') ? `?userId=${currentGateModalUserId}` : '';
+        const res = await fetch(`/api/participant/gate-status${query}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        
+        currentGateModalWeeks = data.weeks;
+        openModal('modal-gate-checklist');
+        renderGateModalWeek(1);
+    } catch (e) {
+        alert('Error loading gates: ' + e.message);
+    }
+}
+
+function renderGateModalWeek(week) {
+    for (let i=1; i<=4; i++) {
+        const btn = document.getElementById(`btn-gate-tab-${i}`);
+        if (btn) {
+            if (i === week) btn.classList.add('active');
+            else btn.classList.remove('active');
+        }
+    }
+    
+    const container = document.getElementById('gate-modal-criteria-container');
+    const criteria = currentGateModalWeeks[week] || [];
+
+    if (criteria.length === 0) {
+        container.innerHTML = '<p class="text-slate">No criteria defined for this week.</p>';
+        return;
+    }
+
+    let html = '<div class="gate-criteria-list" style="display: flex; flex-direction: column; gap: 16px;">';
+    criteria.forEach(c => {
+        let badgeClass = 'badge-pending';
+        let badgeText = 'Pending';
+        if (c.status === 'green') { badgeClass = 'badge-green'; badgeText = 'Completed'; }
+        else if (c.status === 'red') { badgeClass = 'badge-red'; badgeText = 'Blocked'; }
+        else if (c.status === 'not_applicable') { badgeClass = 'badge-slate'; badgeText = 'N/A'; }
+
+        html += `
+            <div class="gate-criterion-item" style="background: white; border: 1px solid var(--border); border-radius: 8px; padding: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                    <div>
+                        <h4 style="margin: 0 0 4px 0; color: var(--primary); font-size: 15px;">${c.title}</h4>
+                        <p style="margin: 0; font-size: 13px; color: var(--slate);">${c.description || ''}</p>
+                        ${c.pm_notes ? `<div class="criterion-notes mt-2" style="background: #fffbeb; padding: 8px; border-radius: 4px; border-left: 3px solid #f59e0b; font-size: 12px;"><strong>Staff Note:</strong> ${c.pm_notes}</div>` : ''}
+                    </div>
+                    <div>
+                        <span class="badge ${badgeClass}" id="modal_badge_${c.criterion_key}">${badgeText}</span>
+                    </div>
+                </div>
+
+                <div style="border-top: 1px solid #e2e8f0; padding-top: 12px;">
+                    <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                        <span style="font-size: 12px; font-weight: 600; color: var(--slate);">Status:</span>
+                        <select id="modal_status_${c.criterion_key}" class="form-control" style="width: auto; font-size: 13px; padding: 4px 8px;">
+                            <option value="pending" ${c.status === 'pending' ? 'selected' : ''}>Pending</option>
+                            <option value="green" ${c.status === 'green' ? 'selected' : ''}>Completed</option>
+                            <option value="red" ${c.status === 'red' ? 'selected' : ''}>Blocked (Need Help)</option>
+                            <option value="not_applicable" ${c.status === 'not_applicable' ? 'selected' : ''}>Not Applicable</option>
+                        </select>
+                    </div>
+                    <div style="margin-top: 12px; text-align: right;">
+                        <button class="btn btn-primary" style="padding: 6px 14px; font-size: 13px;" onclick="saveModalGateItem('${c.criterion_key}')">Save Update</button>
+                        <span id="modal_save_feedback_${c.criterion_key}" style="margin-left: 8px; font-size: 12px; color: var(--success);"></span>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+async function saveModalGateItem(criterionKey) {
+    const status = document.getElementById(`modal_status_${criterionKey}`).value;
+    const feedback = document.getElementById(`modal_save_feedback_${criterionKey}`);
+    
+    try {
+        const token = localStorage.getItem('fs_token');
+        const payload = { criterion_key: criterionKey, status: status };
+        if (currentGateModalRole === 'program_manager' || currentGateModalRole === 'admin') {
+            payload.userId = currentGateModalUserId;
+        }
+
+        const res = await fetch('/api/participant/gate-item', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify(payload)
+        });
+        
+        if (!res.ok) throw new Error(await res.text());
+        
+        feedback.innerText = 'Saved!';
+        setTimeout(() => feedback.innerText = '', 2000);
+        
+        // Update badge UI
+        const badge = document.getElementById(`modal_badge_${criterionKey}`);
+        badge.className = 'badge';
+        if (status === 'green') { badge.classList.add('badge-green'); badge.innerText = 'Completed'; }
+        else if (status === 'red') { badge.classList.add('badge-red'); badge.innerText = 'Blocked'; }
+        else if (status === 'not_applicable') { badge.classList.add('badge-slate'); badge.innerText = 'N/A'; }
+        else { badge.classList.add('badge-pending'); badge.innerText = 'Pending'; }
+
+        // Refresh caseload if staff
+        if (currentGateModalRole === 'program_manager' || currentGateModalRole === 'admin') {
+            if (typeof loadCaseload === 'function') loadCaseload();
+        }
+    } catch (e) {
+        feedback.style.color = 'red';
+        feedback.innerText = 'Error';
+        setTimeout(() => {
+            feedback.style.color = 'var(--success)';
+            feedback.innerText = '';
+        }, 2000);
+    }
+}
+
+let currentGateModalUserId = null;
+let currentGateModalWeeks = null;
+let currentGateModalRole = null;
+
+async function openGateChecklistModal(userId, name) {
+    const token = localStorage.getItem('fs_token');
+    currentGateModalUserId = userId || currentUser.id;
+    currentGateModalRole = currentUser.role;
+    
+    document.getElementById('gate-modal-title').innerText = name ? `Gate Checklist: ${name}` : 'My Gate Checklist';
+    
+    try {
+        const query = (currentUser.role === 'program_manager' || currentUser.role === 'admin') ? `?userId=${currentGateModalUserId}` : '';
+        const res = await fetch(`/api/participant/gate-status${query}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        
+        currentGateModalWeeks = data.weeks;
+        openModal('modal-gate-checklist');
+        renderGateModalWeek(1);
+    } catch (e) {
+        alert('Error loading gates: ' + e.message);
+    }
+}
+
+function renderGateModalWeek(week) {
+    for (let i=1; i<=4; i++) {
+        const btn = document.getElementById(`btn-gate-tab-${i}`);
+        if (btn) {
+            if (i === week) btn.classList.add('active');
+            else btn.classList.remove('active');
+        }
+    }
+    
+    const container = document.getElementById('gate-modal-criteria-container');
+    const criteria = currentGateModalWeeks[week] || [];
+
+    if (criteria.length === 0) {
+        container.innerHTML = '<p class="text-slate">No criteria defined for this week.</p>';
+        return;
+    }
+
+    let html = '<div class="gate-criteria-list" style="display: flex; flex-direction: column; gap: 16px;">';
+    criteria.forEach(c => {
+        let badgeClass = 'badge-pending';
+        let badgeText = 'Pending';
+        if (c.status === 'green') { badgeClass = 'badge-green'; badgeText = 'Completed'; }
+        else if (c.status === 'red') { badgeClass = 'badge-red'; badgeText = 'Blocked'; }
+        else if (c.status === 'not_applicable') { badgeClass = 'badge-slate'; badgeText = 'N/A'; }
+
+        html += `
+            <div class="gate-criterion-item" style="background: white; border: 1px solid var(--border); border-radius: 8px; padding: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                    <div>
+                        <h4 style="margin: 0 0 4px 0; color: var(--primary); font-size: 15px;">${c.title}</h4>
+                        <p style="margin: 0; font-size: 13px; color: var(--slate);">${c.description || ''}</p>
+                        ${c.pm_notes ? `<div class="criterion-notes mt-2" style="background: #fffbeb; padding: 8px; border-radius: 4px; border-left: 3px solid #f59e0b; font-size: 12px;"><strong>Staff Note:</strong> ${c.pm_notes}</div>` : ''}
+                    </div>
+                    <div>
+                        <span class="badge ${badgeClass}" id="modal_badge_${c.criterion_key}">${badgeText}</span>
+                    </div>
+                </div>
+
+                <div style="border-top: 1px solid #e2e8f0; padding-top: 12px;">
+                    <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                        <span style="font-size: 12px; font-weight: 600; color: var(--slate);">Status:</span>
+                        <select id="modal_status_${c.criterion_key}" class="form-control" style="width: auto; font-size: 13px; padding: 4px 8px;">
+                            <option value="pending" ${c.status === 'pending' ? 'selected' : ''}>Pending</option>
+                            <option value="green" ${c.status === 'green' ? 'selected' : ''}>Completed</option>
+                            <option value="red" ${c.status === 'red' ? 'selected' : ''}>Blocked (Need Help)</option>
+                            <option value="not_applicable" ${c.status === 'not_applicable' ? 'selected' : ''}>Not Applicable</option>
+                        </select>
+                    </div>
+                    <div style="margin-top: 12px; text-align: right;">
+                        <button class="btn btn-primary" style="padding: 6px 14px; font-size: 13px;" onclick="saveModalGateItem('${c.criterion_key}')">Save Update</button>
+                        <span id="modal_save_feedback_${c.criterion_key}" style="margin-left: 8px; font-size: 12px; color: var(--success);"></span>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+async function saveModalGateItem(criterionKey) {
+    const status = document.getElementById(`modal_status_${criterionKey}`).value;
+    const feedback = document.getElementById(`modal_save_feedback_${criterionKey}`);
+    
+    try {
+        const token = localStorage.getItem('fs_token');
+        const payload = { criterion_key: criterionKey, status: status };
+        if (currentGateModalRole === 'program_manager' || currentGateModalRole === 'admin') {
+            payload.userId = currentGateModalUserId;
+        }
+
+        const res = await fetch('/api/participant/gate-item', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify(payload)
+        });
+        
+        if (!res.ok) throw new Error(await res.text());
+        
+        feedback.innerText = 'Saved!';
+        setTimeout(() => feedback.innerText = '', 2000);
+        
+        // Update badge UI
+        const badge = document.getElementById(`modal_badge_${criterionKey}`);
+        badge.className = 'badge';
+        if (status === 'green') { badge.classList.add('badge-green'); badge.innerText = 'Completed'; }
+        else if (status === 'red') { badge.classList.add('badge-red'); badge.innerText = 'Blocked'; }
+        else if (status === 'not_applicable') { badge.classList.add('badge-slate'); badge.innerText = 'N/A'; }
+        else { badge.classList.add('badge-pending'); badge.innerText = 'Pending'; }
+
+        // Refresh caseload if staff
+        if (currentGateModalRole === 'program_manager' || currentGateModalRole === 'admin') {
+            if (typeof loadCaseload === 'function') loadCaseload();
+        }
+    } catch (e) {
+        feedback.style.color = 'red';
+        feedback.innerText = 'Error';
+        setTimeout(() => {
+            feedback.style.color = 'var(--success)';
+            feedback.innerText = '';
+        }, 2000);
+    }
+}
+
+
+async function impersonateParticipant(userId) {
+    if (!confirm('You are about to enter Participant View. You will be able to see exactly what this participant sees. Continue?')) return;
+    
+    try {
+        const token = localStorage.getItem('fs_token');
+        const res = await fetch(`/api/admin/impersonate/${userId}`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.token) {
+            localStorage.setItem('staff_token', token);
+            localStorage.setItem('fs_token', data.token);
+            window.location.reload();
+        } else {
+            alert('Failed to impersonate: ' + data.error);
+        }
+    } catch (e) {
+        alert('Error: ' + e.message);
+    }
+}
+
+function restoreStaffSession() {
+    const staffToken = localStorage.getItem('staff_token');
+    if (staffToken) {
+        localStorage.setItem('fs_token', staffToken);
+        localStorage.removeItem('staff_token');
+        window.location.reload();
     }
 }

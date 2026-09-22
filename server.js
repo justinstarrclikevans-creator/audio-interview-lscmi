@@ -228,7 +228,10 @@ app.get('/api/auth/me', authenticateToken, (req, res) => {
 
 // Get Participant 4-Week Gate Criteria & Status
 app.get('/api/participant/gate-status', authenticateToken, (req, res) => {
-    const userId = req.user.id;
+    let userId = req.user.id;
+    if ((req.user.role === 'program_manager' || req.user.role === 'admin') && req.query.userId) {
+        userId = parseInt(req.query.userId, 10);
+    }
     initParticipantBriefcase(userId);
     const profile = db.prepare('SELECT * FROM participant_profiles WHERE user_id = ?').get(userId);
     const criteria = db.prepare('SELECT * FROM gate_criteria WHERE user_id = ? ORDER BY week_number, id').all(userId);
@@ -378,7 +381,10 @@ app.post('/api/participant/feedback', authenticateToken, (req, res) => {
 
 // Update Participant Gate Item (Status & Notes)
 app.post('/api/participant/gate-item', authenticateToken, (req, res) => {
-    const userId = req.user.id;
+    let userId = req.user.id;
+    if ((req.user.role === 'program_manager' || req.user.role === 'admin') && req.body.userId) {
+        userId = parseInt(req.body.userId, 10);
+    }
     const { criterion_key, status, participant_notes } = req.body;
 
     if (!['green', 'red', 'pending', 'not_applicable'].includes(status)) {
