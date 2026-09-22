@@ -58,6 +58,24 @@ async function listFilesByDate(dbx, folderPath, dateStrs) {
     return matchedFiles;
 }
 
+
+function validateM4A(filePath, filename) {
+    const ext = require('path').extname(filename).toLowerCase();
+    if (ext === '.m4a' || ext === '.mp4' || ext === '.mov') {
+        try {
+            const cp = require('child_process');
+            const ffprobe = require('ffprobe-static');
+            // Check if moov atom exists / format is valid by getting duration
+            cp.execSync(`"${ffprobe.path}" -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${filePath}"`);
+            return true;
+        } catch(e) {
+            console.error('[Dropbox Evaluator] ffprobe validation failed:', e.stderr ? e.stderr.toString() : e.message);
+            return false;
+        }
+    }
+    return true;
+}
+
 async function downloadLargeFile(dbx, dropboxFilePath, destinationLocalPath) {
     const tempLinkRes = await dbx.filesGetTemporaryLink({ path: dropboxFilePath });
     const downloadUrl = tempLinkRes.result.link;
@@ -155,7 +173,17 @@ async function runDailyEvaluation() {
                     const localPath = path.join(TEMP_DIR, `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9-_\.]/g, '_')}`);
                     if (global.syncStatus) global.syncStatus.log = `Downloading ${file.name}...`;
                     console.log(`[Dropbox Evaluator] Downloading ${file.name}...`);
+                    
                     await downloadLargeFile(dbx, file.path_lower, localPath);
+                    
+                    if (!validateM4A(localPath, file.name)) {
+                        console.error(`[Dropbox Evaluator] Corrupted file detected (missing moov atom): ${file.name}. Skipping.`);
+                        if (global.syncStatus) global.syncStatus.log = `Skipping corrupted file ${file.name}...`;
+                        if (fs.existsSync(localPath)) fs.unlinkSync(localPath);
+                        results.errors.push(`${sessionTitle} (${file.name}): Corrupted media file detected.`);
+                        continue;
+                    }
+
                     
                     if (global.syncStatus) global.syncStatus.log = `Uploading ${file.name} to Gemini...`;
                     console.log(`[Dropbox Evaluator] Uploading ${file.name} to Gemini in a RAM-safe stream...`);

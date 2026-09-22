@@ -7022,59 +7022,46 @@ window.deleteInterviewRecord = async function(clientId, cleanName) {
 };
 
 window.switchCaseloadTab = function(tab) {
-    // Update top control buttons
-    const btns = ['pm-tab-btn-caseload', 'pm-tab-btn-rn-caseload', 'pm-tab-btn-scoring', 'pm-tab-btn-ai-dashboard', 'pm-tab-btn-gate-report'];
-    btns.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) { el.classList.remove('btn-primary'); el.classList.add('btn-outline'); }
+    // Determine which button to highlight
+    document.querySelectorAll('.pm-subtabs button').forEach(b => {
+        b.classList.remove('btn-primary');
+        b.classList.add('btn-outline');
     });
-    
-    let activeBtnId;
-    if (tab === 'first_shift') activeBtnId = 'pm-tab-btn-caseload';
-    else if (tab === 'reentry_nav') activeBtnId = 'pm-tab-btn-rn-caseload';
-    else if (tab === 'scoring') activeBtnId = 'pm-tab-btn-scoring';
-    else if (tab === 'ai-dashboard') activeBtnId = 'pm-tab-btn-ai-dashboard';
-    else if (tab === 'gate-report') activeBtnId = 'pm-tab-btn-gate-report';
-    
-    if (activeBtnId) {
-        const activeBtn = document.getElementById(activeBtnId);
-        if (activeBtn) { activeBtn.classList.remove('btn-outline'); activeBtn.classList.add('btn-primary'); }
+
+    let activeBtnId = (tab === 'first_shift') ? 'pm-tab-btn-caseload' : 'pm-tab-btn-rn-caseload';
+    const activeBtn = document.getElementById(activeBtnId);
+    if (activeBtn) {
+        activeBtn.classList.remove('btn-outline');
+        activeBtn.classList.add('btn-primary');
     }
 
-    const caseloadContent = document.getElementById('pm-caseload-content');
-    const scoringContent = document.getElementById('pm-scoring-content');
-    const gateReportContent = document.getElementById('pm-gate-report-content');
-    const aiContent = document.getElementById('pm-ai-dashboard-content');
+    // Always show the pm-sec-caseload section, and hide others
+    document.getElementById('pm-sec-caseload').classList.remove('hidden');
+    document.getElementById('pm-sec-reentry').classList.add('hidden');
+    const msgSec = document.getElementById('pm-sec-messages');
+    if (msgSec) msgSec.classList.add('hidden');
 
-    if (caseloadContent) caseloadContent.classList.add('hidden');
-    if (scoringContent) scoringContent.classList.add('hidden');
-    if (gateReportContent) gateReportContent.classList.add('hidden');
-    if (aiContent) aiContent.classList.add('hidden');
+    const draftsCard = document.getElementById('pm-drafts-list')?.closest('.section-card');
+    if (draftsCard) draftsCard.classList.remove('hidden');
 
-    if (tab === 'scoring') {
-        if (scoringContent) scoringContent.classList.remove('hidden');
-        loadPmDrafts();
-    } else if (tab === 'ai-dashboard') {
-        if (aiContent) aiContent.classList.remove('hidden');
-        loadAiCaseloadReport();
-    } else if (tab === 'gate-report') {
-        if (gateReportContent) gateReportContent.classList.remove('hidden');
-        loadGateReport();
-    } else {
-        if (caseloadContent) caseloadContent.classList.remove('hidden');
-        
-        // Filter caseload based on the tab
-        const statusFilter = document.getElementById('pm-filter-status');
-        if (tab === 'first_shift') {
-            if (statusFilter) statusFilter.value = 'active';
-            document.getElementById('caseload-title').innerText = '🏢 First Shift Caseload';
-        } else if (tab === 'reentry_nav') {
-            if (statusFilter) statusFilter.value = 'reentry_nav_stabilizing';
-            document.getElementById('caseload-title').innerText = '🧭 Re-entry Navigation Caseload';
-        }
-        loadCaseload();
+    const evalCard = document.getElementById('pm-facilitation-evals-list')?.closest('.section-card');
+    if (evalCard) evalCard.classList.remove('hidden');
+
+    // Filter caseload based on the tab
+    const statusFilter = document.getElementById('pm-filter-status');
+    const titleEl = document.getElementById('caseload-title');
+    
+    if (tab === 'first_shift') {
+        if (statusFilter) statusFilter.value = 'active';
+        if (titleEl) titleEl.innerText = '🏢 First Shift Caseload';
+    } else if (tab === 'reentry_nav') {
+        if (statusFilter) statusFilter.value = 'reentry_nav_stabilizing';
+        if (titleEl) titleEl.innerText = '🧭 Re-entry Navigation Caseload';
     }
+    
+    loadCaseload();
 };
+
 
 async function loadGateReport() {
     const container = document.getElementById('gate-report-container');
