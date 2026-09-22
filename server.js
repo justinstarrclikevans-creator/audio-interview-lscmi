@@ -240,6 +240,28 @@ app.get('/api/participant/gate-status', authenticateToken, (req, res) => {
 
 
     const casePlan = db.prepare('SELECT * FROM reentry_case_plans WHERE user_id = ? ORDER BY id DESC LIMIT 1').get(userId);
+
+    let weeksEnrolled = 1;
+    if (profile) {
+        const enrollDateStr = profile.enrollment_date || (profile.created_at ? profile.created_at.split(' ')[0] : '2026-08-01');
+        const enrollDate = new Date(enrollDateStr + 'T12:00:00Z');
+        const now = new Date();
+        now.setUTCHours(12, 0, 0, 0);
+        function getMonday(d) {
+            const date = new Date(d);
+            const day = date.getUTCDay();
+            const diff = date.getUTCDate() - day + (day === 0 ? -6 : 1);
+            date.setUTCDate(diff);
+            date.setUTCHours(0, 0, 0, 0);
+            return date;
+        }
+        const diffMs = getMonday(now).getTime() - getMonday(enrollDate).getTime();
+        weeksEnrolled = Math.max(1, Math.floor(diffMs / (7 * 24 * 60 * 60 * 1000)) + 1);
+        profile.weeks_enrolled = weeksEnrolled;
+        
+        const healthCheck = db.prepare('SELECT COUNT(*) as c FROM health_wellness_screen WHERE user_id = ?').get(userId);
+        profile.has_health_screen = healthCheck ? healthCheck.c : 0;
+    }
     res.json({
         currentGate: profile ? profile.current_gate : 1,
         profile,
