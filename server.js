@@ -3489,6 +3489,17 @@ app.use((err, req, res, next) => {
 // STAFF ASSESSMENTS (HEALTH & STABILITY)
 // ==========================================
 
+
+app.get('/api/staff/health-assessment/:userId', authenticateToken, (req, res) => {
+    if (req.user.role === 'participant') return res.status(403).json({ error: 'Unauthorized' });
+    try {
+        const data = db.prepare('SELECT * FROM health_wellness_screen WHERE participant_id = ? ORDER BY created_at DESC LIMIT 1').get(req.params.userId);
+        res.json({ success: true, data: data || null });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
 app.post('/api/staff/health-assessment', authenticateToken, (req, res) => {
     if (req.user.role === 'participant') {
         return res.status(403).json({ error: 'Unauthorized' });
