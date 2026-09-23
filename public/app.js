@@ -1914,11 +1914,11 @@ async function loadCaseload() {
                     <td>
                         <div style="display: flex; align-items: baseline; gap: 6px;">
                             <strong style="font-size: 13.5px; color: #0f172a; cursor: pointer; text-decoration: underline;" onclick="impersonateParticipant(${p.id})" title="Click to view Participant Dashboard">${p.name}</strong>
-                            <button class="btn btn-outline" style="padding: 1px 5px; font-size: 10px; border-color: #cbd5e1; color: #475569;" onclick="openCorrectionModal(${p.id}, '${escName}')">✏️ Fix</button>
+                            <button class="btn btn-outline" style="padding: 1px 5px; font-size: 10px; border-color: #cbd5e1; color: #475569;" onclick="openCorrectionModal(${p.id}, '${escName}')">✏️ Update</button>
                         </div>
                         ${p.record_id ? `<div style="font-size: 10px; color: #6366f1; font-weight: 600; margin-top: 1px;">ID: ${p.record_id}</div>` : ''}
                         <div style="font-size: 11px; color: var(--slate); margin-top: 2px;">📍 ${p.location}</div>
-                        <button onclick="document.getElementById('${piiId}').classList.toggle('hidden')" style="font-size: 9px; color: #6366f1; background: none; border: none; cursor: pointer; padding: 2px 0; text-decoration: underline; margin-top: 2px;">▶ View PII</button>
+                        <button onclick="document.getElementById('${piiId}').classList.toggle('hidden')" style="font-size: 9px; color: #6366f1; background: none; border: none; cursor: pointer; padding: 2px 0; text-decoration: underline; margin-top: 2px;">▶ View Personal Information</button>
                         <div id="${piiId}" class="hidden" style="font-size: 10px; color: #475569; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 6px; margin-top: 4px;">
                             <div>📞 ${p.phone || 'No phone'}</div>
                             <div>🏠 ${p.address || 'No address'}</div>
@@ -1984,7 +1984,7 @@ async function loadCaseload() {
                         </div>
                         ${p.record_id ? `<div style="font-size: 10px; color: #6366f1; font-weight: 600; margin-top: 1px;">ID: ${p.record_id}</div>` : ''}
                         <div style="font-size: 11px; color: var(--slate); margin-top: 2px;">${p.email} • ${p.phone || 'No phone'}</div>
-                        <button onclick="document.getElementById('${piiId}').classList.toggle('hidden')" style="font-size: 9px; color: #6366f1; background: none; border: none; cursor: pointer; padding: 2px 0; text-decoration: underline; margin-top: 2px;">▶ View PII</button>
+                        <button onclick="document.getElementById('${piiId}').classList.toggle('hidden')" style="font-size: 9px; color: #6366f1; background: none; border: none; cursor: pointer; padding: 2px 0; text-decoration: underline; margin-top: 2px;">▶ View Personal Information</button>
                         <div id="${piiId}" class="hidden" style="font-size: 10px; color: #475569; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 6px; margin-top: 4px;">
                             <div>📞 ${p.phone || 'No phone'}</div>
                             <div>🏠 ${p.address || 'No address'}</div>
