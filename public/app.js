@@ -1851,7 +1851,6 @@ async function loadCaseload() {
                 dtBadgeHtml = `
                     <div style="background: #fef2f2; color: #dc2626; border: 1.5px solid #fecaca; padding: 4px 6px; border-radius: 6px; text-align: center; font-weight: 800; font-size: 10.5px;" title="No drug screen this week">
                         <div>❌ NO</div>
-                        <div style="font-size: 9px; font-weight: 600; margin-top: 1px; color: #ef4444;">+ Screen</div>
                     </div>
                 `;
             }
@@ -1871,7 +1870,6 @@ async function loadCaseload() {
                 cmBadgeHtml = `
                     <div style="background: #fff7ed; color: #c2410c; border: 1.5px solid #fed7aa; padding: 4px 6px; border-radius: 6px; text-align: center; font-weight: 800; font-size: 10.5px;" title="No case management this week">
                         <div>❌ NO</div>
-                        <div style="font-size: 9px; font-weight: 600; margin-top: 1px; color: #ea580c;">+ Log CM</div>
                     </div>
                 `;
             }
@@ -1902,9 +1900,7 @@ async function loadCaseload() {
 
                 let feedbackHtml = `<div style="font-size: 10px;">
                     ${gateDropdownHtml}
-                    <div style="margin-top: 4px; color: #15803d;">✅ ${p.green_criteria || 0} Met</div>
-                    <div style="color: #b91c1c; margin-bottom: 4px;">❌ ${p.red_criteria || 0} Needs Work</div>
-                    <button class="btn btn-outline" style="padding: 2px 4px; font-size: 9px;" onclick="openCaseReviewModal(${p.id}, '${escName}')">View Feedback</button>
+                    <button class="btn btn-outline" style="padding: 2px 4px; font-size: 9px; margin-top: 6px; width: 100%;" onclick="openCaseReviewModal(${p.id}, '${escName}')">View Feedback</button>
 <button class="btn btn-primary" style="padding: 2px 4px; font-size: 9px; margin-top: 4px; display: block; width: 100%;" onclick="openGateChecklistModal(${p.id}, '${escName}')">✅ Gate Checklist</button>
                 </div>`;
 
