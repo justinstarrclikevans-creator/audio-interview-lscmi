@@ -722,9 +722,7 @@
                     <div class="pm-btn-cluster" style="display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
                         
                         
-                        <button class="btn btn-outline" style="border-radius: 0; border: none; border-left: 1px solid var(--border); font-size: 12px; padding: 7px 11px;" onclick="openPmTimeOffModal()" title="Review Participant Time-Off Requests">
-                            📅 Time-Off
-                        </button>
+                        
                     </div>
 
                     <!-- Group 3: Primary Career AI Launcher -->
@@ -2322,59 +2320,9 @@
         </div>
     </div>
 
-    <!-- Modal: Participant Time-Off Request (48-Hour Notice Enforced) -->
-    <div id="modal-time-off-request" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>📅 Request Time Off (First Shift)</h3>
-                <button class="modal-close" onclick="closeModal('modal-time-off-request')">&times;</button>
-            </div>
-            <div style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1d4ed8; padding: 10px; border-radius: 6px; font-size: 12px; margin-bottom: 14px;">
-                ℹ️ <strong>First Shift Policy:</strong> All time-off requests require at least <strong>48 hours advance notice</strong> for approval.
-            </div>
-            <form id="form-time-off-request" onsubmit="handleTimeOffRequestSubmit(event)">
-                <div class="form-group">
-                    <label>Requested Date of Absence *</label>
-                    <input type="date" id="tor-date" required class="form-control">
-                </div>
-                <div class="form-group mt-3">
-                    <label>Reason for Absence *</label>
-                    <select id="tor-reason" required class="form-control">
-                        <option value="Court Date / Legal Obligation">Court Date / Legal Obligation</option>
-                        <option value="Probation / Parole Appointment">Probation / Parole Appointment</option>
-                        <option value="Medical / Dental / Vision Appointment">Medical / Dental / Vision Appointment</option>
-                        <option value="Child Support Court Review">Child Support Court Review</option>
-                        <option value="SCDMV License Appointment">SCDMV License Appointment</option>
-                        <option value="Family Emergency">Family Emergency</option>
-                        <option value="Other">Other</option>
-                    </select>
-                </div>
-                <div class="form-group mt-3">
-                    <label>Additional Notes / Documentation Details</label>
-                    <textarea id="tor-notes" rows="3" class="form-control" placeholder="Provide appointment location, time, or confirmation details..."></textarea>
-                </div>
-                <div class="modal-footer mt-4">
-                    <button type="button" class="btn btn-outline" onclick="closeModal('modal-time-off-request')">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Submit Request (48h Notice)</button>
-                </div>
-            </form>
-        </div>
-    </div>
+    
 
-    <!-- Modal: Program Manager Time-Off Review Queue -->
-    <div id="modal-pm-time-off" class="modal hidden">
-        <div class="modal-content modal-lg" style="max-width: 800px;">
-            <div class="modal-header">
-                <h3>📅 Caseload Time-Off Requests Queue</h3>
-                <button class="modal-close" onclick="closeModal('modal-pm-time-off')">&times;</button>
-            </div>
-            <div id="pm-time-off-list" style="max-height: 480px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-top: 12px;">
-                <p class="text-slate">Loading pending time-off requests...</p>
-            </div>
-            <div class="modal-footer mt-4">
-                <button class="btn btn-outline" onclick="closeModal('modal-pm-time-off')">Close</button>
-            </div>
-        </div>
+    
     </div>
 
     <!-- Modal: Weekly Points Breakdown (Out of 50) -->
@@ -2834,7 +2782,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=1790124962043"></script>
+    <script src="app.js?v=1790163980825"></script>
 
 <!-- Gate Checklist Modal -->
 <div id="modal-gate-checklist" class="modal hidden">
