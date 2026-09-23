@@ -2348,7 +2348,7 @@ function handleGetCasePlan(req, res) {
             profile_barriers: profile || {}
         },
         briefcaseItems: items,
-        notes: notes
+        notes: req.user.role === 'participant' ? [] : notes
     });
 }
 
@@ -2358,17 +2358,7 @@ app.get('/api/participant/case-plan', authenticateToken, handleGetCasePlan);
 // Staff Endpoint: Fetch Participant Case Plan directly by userId
 app.get('/api/pm/case-plan/:userId', authenticateToken, handleGetCasePlan);
 
-// Fetch Participant's Own Case Management Notes
-app.get('/api/participant/notes', authenticateToken, (req, res) => {
-    const userId = req.user.id;
-    const notes = db.prepare(`
-        SELECT id, author_name, session_date, note_type, category, content, created_at 
-        FROM case_notes 
-        WHERE user_id = ? 
-        ORDER BY session_date DESC, id DESC
-    `).all(userId);
-    res.json(notes);
-});
+
 
 // Fetch Stored W-9 Details (Hardened & Resilient)
 app.get('/api/participant/w9-details/:userId', authenticateToken, (req, res) => {
