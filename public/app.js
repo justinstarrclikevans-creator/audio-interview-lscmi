@@ -3961,8 +3961,11 @@ async function loadFacilitationEvaluations() {
             fetch('/api/admin/evaluations/stats', { headers: { 'Authorization': `Bearer ${token}` } })
         ]);
         
-        const evals = await evalsRes.json();
-        const stats = await statsRes.json();
+        const evals = await safeApiResponse(evalsRes);
+        const stats = await safeApiResponse(statsRes);
+        
+        if (!Array.isArray(evals)) throw new Error(evals.error || 'Evaluations must be an array');
+        if (!Array.isArray(stats)) throw new Error(stats.error || 'Stats must be an array');
 
         // Build Stats Dashboard
         const getStat = (loc) => {
