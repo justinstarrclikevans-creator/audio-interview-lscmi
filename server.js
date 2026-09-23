@@ -1145,6 +1145,19 @@ app.post('/api/pm/import-case-notes', authenticateToken, requireRole('program_ma
     }
 });
 
+
+// Delete a participant permanently
+app.delete('/api/admin/participant/:userId', authenticateToken, requireRole('admin', 'program_manager', 'director'), (req, res) => {
+    const { userId } = req.params;
+    if (!userId) return res.status(400).json({ error: 'User ID required' });
+    try {
+        db.prepare('DELETE FROM users WHERE id = ? AND role = "participant"').run(userId);
+        res.json({ message: 'Participant deleted successfully.' });
+    } catch (e) {
+        res.status(500).json({ error: 'Failed to delete participant: ' + e.message });
+    }
+});
+
 // Participant Information & Correction Notes Update (Fix erroneous information directly)
 app.post('/api/pm/participant-correction', authenticateToken, requireRole('program_manager', 'admin', 'director'), (req, res) => {
     const { 
@@ -1161,6 +1174,11 @@ app.post('/api/pm/participant-correction', authenticateToken, requireRole('progr
     } = req.body;
     
     if (!userId) return res.status(400).json({ error: 'userId is required.' });
+
+
+    if (req.body.track) {
+        db.prepare('UPDATE users SET track = ? WHERE id = ?').run(req.body.track, userId);
+    }
 
     // Update participant_profiles
     db.prepare(`

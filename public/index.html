@@ -2741,6 +2741,13 @@
                         </select>
                     </div>
                     <div>
+                        <label style="display:block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">Program Track</label>
+                        <select id="pc-track" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12.5px;">
+                            <option value="first_shift">First Shift</option>
+                            <option value="reentry_nav">Re-entry Navigation</option>
+                        </select>
+                    </div>
+                    <div>
                         <label style="display:block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">Housing Status</label>
                         <select id="pc-housing-status" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12.5px;">
                             <option value="stable">Stable Own Housing / Family</option>
@@ -2754,6 +2761,7 @@
                 <div id="pc-save-status" style="font-size: 12px; font-weight: 600;"></div>
 
                 <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--border); padding-top: 12px;">
+                    <button type="button" class="btn btn-outline" style="border-color: #ef4444; color: #b91c1c; margin-right: auto;" onclick="deleteParticipant()">🗑️ Delete Participant</button>
                     <button type="button" class="btn btn-outline" onclick="closeModal('modal-participant-correction')">Cancel</button>
                     <button type="submit" id="btn-save-correction" class="btn btn-primary">💾 Save Corrections</button>
                 </div>
@@ -2833,7 +2841,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=1790123881763"></script>
+    <script src="app.js?v=1790124040751"></script>
 
 <!-- Gate Checklist Modal -->
 <div id="modal-gate-checklist" class="modal hidden">

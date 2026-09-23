@@ -6326,6 +6326,7 @@ async function openCorrectionModal(userId, userName) {
             document.getElementById('pc-dl-status').value = p.dl_status || 'unknown';
             document.getElementById('pc-child-support-status').value = p.child_support_status || 'unknown';
             document.getElementById('pc-housing-status').value = p.housing_status || 'stable';
+            document.getElementById('pc-track').value = p.track || 'first_shift';
         }
     } catch(e) {
         console.error('Failed to pre-fill correction modal:', e);
@@ -6346,6 +6347,7 @@ async function handleParticipantCorrectionSubmit(event) {
     const dlStatus = document.getElementById('pc-dl-status').value;
     const childSupportStatus = document.getElementById('pc-child-support-status').value;
     const housingStatus = document.getElementById('pc-housing-status').value;
+    const track = document.getElementById('pc-track').value;
 
     try {
         saveBtn.disabled = true;
@@ -6361,7 +6363,8 @@ async function handleParticipantCorrectionSubmit(event) {
                 enrollmentDate,
                 dlStatus,
                 childSupportStatus,
-                housingStatus
+                housingStatus,
+                track
             })
         });
         const data = await safeApiResponse(res);
@@ -7435,5 +7438,41 @@ function restoreStaffSession() {
         localStorage.setItem('fs_token', staffToken);
         localStorage.removeItem('staff_token');
         window.location.reload();
+    }
+}
+
+
+async function deleteParticipant() {
+    const userId = document.getElementById('pc-user-id').value;
+    if (!userId) return;
+    if (!confirm('Are you absolutely sure you want to permanently delete this participant and all of their data? This action cannot be undone.')) return;
+
+    const token = localStorage.getItem('fs_token');
+    const saveBtn = document.getElementById('btn-save-correction');
+    const statusEl = document.getElementById('pc-save-status');
+
+    try {
+        saveBtn.disabled = true;
+        statusEl.innerHTML = '<span style="color: var(--danger);">Deleting participant...</span>';
+        
+        const res = await fetch(`/api/admin/participant/${userId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (res.ok) {
+            statusEl.innerHTML = '<span style="color: var(--success);">Participant deleted successfully.</span>';
+            loadCaseload();
+            setTimeout(() => {
+                closeModal('modal-participant-correction');
+            }, 1000);
+        } else {
+            const data = await res.json();
+            statusEl.innerHTML = `<span style="color: var(--danger);">❌ Error: ${data.error || 'Failed to delete'}</span>`;
+        }
+    } catch(e) {
+        statusEl.innerHTML = `<span style="color: var(--danger);">❌ Network error: ${e.message}</span>`;
+    } finally {
+        saveBtn.disabled = false;
     }
 }
