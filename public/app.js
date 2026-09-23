@@ -57,7 +57,31 @@ async function safeApiResponse(res) {
 // -------------------------------------------------------------
 // INITIALIZATION & SESSION RESTORE
 // -------------------------------------------------------------
+
+// =========================================================
+// IMPERSONATION LOGIC
+// =========================================================
+
+function checkImpersonation() {
+    const staffToken = localStorage.getItem('staff_token');
+    const banner = document.getElementById('impersonation-banner');
+    if (staffToken && banner) {
+        banner.classList.remove('hidden');
+    }
+}
+
+function endImpersonation() {
+    const staffToken = localStorage.getItem('staff_token');
+    if (staffToken) {
+        localStorage.setItem('fs_token', staffToken);
+        localStorage.removeItem('staff_token');
+        window.location.reload();
+    }
+}
+
+
 document.addEventListener('DOMContentLoaded', async () => {
+    checkImpersonation();
     loadInterviewQuestions();
     const token = localStorage.getItem('fs_token');
     if (token) {

@@ -9,6 +9,12 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
+    <!-- Impersonation Banner -->
+    <div id="impersonation-banner" class="hidden" style="background-color: #ef4444; color: white; text-align: center; padding: 10px; font-weight: bold; font-size: 14px; z-index: 9999; position: relative;">
+        🕵️‍♀️ You are currently viewing as a Participant. 
+        <button onclick="endImpersonation()" style="margin-left: 10px; padding: 4px 10px; background: white; color: #ef4444; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px;">Return to Staff Dashboard</button>
+    </div>
+
     <!-- Top Global Navigation Bar -->
     <header class="top-nav">
         <div class="nav-container">
@@ -2828,7 +2834,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=1790124791290"></script>
+    <script src="app.js?v=1790124962043"></script>
 
 <!-- Gate Checklist Modal -->
 <div id="modal-gate-checklist" class="modal hidden">
