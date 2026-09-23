@@ -540,6 +540,9 @@ function renderGateCriteria(weeksData, selectedWeek) {
                 </div>
 
                 <div style="border-top: 1px solid #e2e8f0; padding-top: 12px;">
+                    <div style="margin-bottom: 12px;">
+                        <textarea id="modal_notes_${c.criterion_key}" class="form-control" placeholder="${c.criterion_key === 'g1_main_goal' ? 'What is your main goal?' : (c.criterion_key === 'g1_skillcat_track' ? 'Which SkillCat track?' : 'Notes (Optional)')}" style="font-size: 13px; min-height: 50px;">${c.participant_notes || ''}</textarea>
+                    </div>
                     <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
                         <span style="font-size: 12px; font-weight: 600; color: var(--slate);">Your Status:</span>
                         <select id="status_${c.criterion_key}" class="form-control" style="width: auto; font-size: 13px; padding: 4px 8px;">
@@ -696,7 +699,7 @@ function openBarriersModal() {
         document.getElementById('bar-cs-notes').value = currentProfile.child_support_notes || '';
         document.getElementById('bar-housing-status').value = currentProfile.housing_status || 'stable';
         document.getElementById('bar-trans-status').value = currentProfile.transportation_status || 'bus';
-        document.getElementById('bar-court-dates').value = currentProfile.court_dates || '';
+        
     }
     openModal('modal-barriers');
 }
@@ -710,8 +713,8 @@ async function handleBarriersSubmit(e) {
         child_support_status: document.getElementById('bar-cs-status').value,
         child_support_notes: document.getElementById('bar-cs-notes').value,
         housing_status: document.getElementById('bar-housing-status').value,
-        transportation_status: document.getElementById('bar-trans-status').value,
-        court_dates: document.getElementById('bar-court-dates').value
+        transportation_status: document.getElementById('bar-trans-status').value
+        
     };
 
     try {
@@ -7346,11 +7349,12 @@ function renderGateModalWeek(week) {
 
 async function saveModalGateItem(criterionKey) {
     const status = document.getElementById(`modal_status_${criterionKey}`).value;
+    const notes = document.getElementById(`modal_notes_${criterionKey}`).value;
     const feedback = document.getElementById(`modal_save_feedback_${criterionKey}`);
     
     try {
         const token = localStorage.getItem('fs_token');
-        const payload = { criterion_key: criterionKey, status: status };
+        const payload = { criterion_key: criterionKey, status: status, participant_notes: notes };
         if (currentGateModalRole === 'program_manager' || currentGateModalRole === 'admin') {
             payload.userId = currentGateModalUserId;
         }
@@ -7365,6 +7369,18 @@ async function saveModalGateItem(criterionKey) {
         
         feedback.innerText = 'Saved!';
         setTimeout(() => feedback.innerText = '', 2000);
+        
+        // Update memory
+        if (currentGateModalWeeks) {
+            for (const w in currentGateModalWeeks) {
+                const item = currentGateModalWeeks[w].find(c => c.criterion_key === criterionKey);
+                if (item) {
+                    item.status = status;
+                    item.participant_notes = notes;
+                    break;
+                }
+            }
+        }
         
         // Update badge UI
         const badge = document.getElementById(`modal_badge_${criterionKey}`);
