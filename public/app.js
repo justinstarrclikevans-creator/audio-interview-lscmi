@@ -288,7 +288,8 @@ async function loadFsDashboard() {
         const healthContainer = document.getElementById('fs-health-screen-container');
         if (healthContainer) {
             if (data.profile && data.profile.weeks_enrolled >= 3 && data.profile.has_health_screen === 0) {
-                healthContainer.innerHTML = `<button class="btn btn-outline" style="background: #fee2e2; border-color: #ef4444; color: #b91c1c; font-weight: bold; animation: pulse 2s infinite;" onclick="window.open('staff_tools.html?userId=${data.profile.user_id}&autoFocus=health', 'HealthScreen', 'width=800,height=900')">⚠️ Complete Health Screen (Required)</button>`;
+                const safeName = (data.profile.name || '').replace(new RegExp("'", 'g'), "\\'");
+                healthContainer.innerHTML = `<button class="btn btn-outline" style="background: #fee2e2; border-color: #ef4444; color: #b91c1c; font-weight: bold; animation: pulse 2s infinite;" onclick="openHealthScreenModal(${data.profile.user_id}, '${safeName}')">⚠️ Complete Health Screen (Required)</button>`;
             } else if (data.profile && data.profile.has_health_screen === 1) {
                 healthContainer.innerHTML = `<span class="badge badge-green">🩺 Health Screen Completed</span>`;
             } else {
@@ -1882,7 +1883,7 @@ async function loadCaseload() {
                 // First Shift Formatting
                 let healthScreenHtml = p.has_health_screen > 0 
                     ? '<div style="color: #15803d; font-weight: bold; font-size: 11px; background: #dcfce7; padding: 4px; border-radius: 4px;">✅ Completed</div>' 
-                    : `<button onclick="window.open('staff_tools.html?userId=${p.id}&autoFocus=health', 'HealthScreen', 'width=800,height=900')" class="btn btn-outline" style="font-size: 10px; padding: 3px 6px; color: #b91c1c; border-color: #fca5a5; background: #fee2e2;">⚠️ Complete Screen</button>`;
+                    : `<button onclick="openHealthScreenModal(${p.id}, '${escName}')" class="btn btn-outline" style="font-size: 10px; padding: 3px 6px; color: #b91c1c; border-color: #fca5a5; background: #fee2e2;">⚠️ Complete Screen</button>`;
                 
                 // SkillCat engagement dropdown
                 const scVal = p.skillcat_notes || '';
@@ -7447,5 +7448,59 @@ async function assignScoring(clientId) {
         }
     } catch(e) {
         alert('Error linking scoring: ' + e.message);
+    }
+}
+
+
+function openHealthScreenModal(participantId, participantName) {
+    document.getElementById('health-form-inline').reset();
+    document.getElementById('hs-participant-id').value = participantId;
+    document.getElementById('hs-participant-name').innerText = participantName;
+    document.getElementById('modal-health-screen').style.display = 'block';
+}
+
+async function submitHealthForm(e) {
+    e.preventDefault();
+    const token = localStorage.getItem('fs_token');
+    const payload = {
+        participant_id: document.getElementById('hs-participant-id').value,
+        vision_issues: document.getElementById('h_vision').checked ? 1 : 0,
+        hearing_issues: document.getElementById('h_hearing').checked ? 1 : 0,
+        mobility_pain: document.getElementById('h_mobility').checked ? 1 : 0,
+        stamina_fatigue: document.getElementById('h_stamina').checked ? 1 : 0,
+        fine_motor_issues: document.getElementById('h_fine_motor').checked ? 1 : 0,
+        physical_notes: document.getElementById('h_physical_notes').value,
+        reading_writing_issues: document.getElementById('h_reading').checked ? 1 : 0,
+        following_instructions_issues: document.getElementById('h_following').checked ? 1 : 0,
+        memory_organization_issues: document.getElementById('h_memory').checked ? 1 : 0,
+        processing_time_issues: document.getElementById('h_processing').checked ? 1 : 0,
+        cognitive_notes: document.getElementById('h_cognitive_notes').value,
+        primary_care_referral: document.getElementById('h_ref_pc').checked ? 1 : 0,
+        vocational_rehab_referral: document.getElementById('h_ref_vr').checked ? 1 : 0,
+        mental_health_referral: document.getElementById('h_ref_mh').checked ? 1 : 0,
+        job_search_adjustment: document.getElementById('h_job_adj').checked ? 1 : 0,
+        immediate_next_step: document.getElementById('h_next_step').value,
+    };
+
+    try {
+        const res = await fetch('/api/staff/health-assessment', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        if(res.ok) { 
+            closeModal('modal-health-screen');
+            // Refresh views
+            if (document.getElementById('view-caseload').classList.contains('active')) {
+                loadCaseload();
+            } else if (document.getElementById('view-participant-dashboard').classList.contains('active')) {
+                loadParticipantDashboard();
+            }
+        } else {
+            const data = await res.json();
+            alert('Error: ' + data.error);
+        }
+    } catch(err) {
+        alert('Failed to submit health assessment: ' + err.message);
     }
 }
