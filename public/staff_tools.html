@@ -23,9 +23,10 @@
         <h2>Health & Wellness Observation Screen</h2>
         <p><em>Staff Instructions: You are not a doctor. Use this tool to note observable behaviors or self-reported struggles.</em></p>
         <form id="health-form" onsubmit="submitHealthForm(event)">
-            <div class="form-group">
-                <label>Participant ID:</label>
-                <input type="number" id="h_participant_id" required>
+            <div class="form-group" style="background: #e0f2fe; padding: 10px; border-radius: 6px; display: inline-block; margin-bottom: 15px;">
+                <label style="color: #0369a1; font-weight: bold; margin-bottom: 0;">Participant:</label>
+                <span id="h_participant_name_display" style="font-weight: 800; font-size: 16px;">Loading...</span>
+                <input type="hidden" id="h_participant_id" required>
             </div>
             
             <div class="section-box">
@@ -115,12 +116,25 @@
             if(res.ok) { alert('Saved!'); e.target.reset(); }
         }
     
-        window.onload = function() {
+        window.onload = async function() {
             const urlParams = new URLSearchParams(window.location.search);
             const uid = urlParams.get('userId');
             if (uid) {
                 document.getElementById('h_participant_id').value = uid;
                 document.getElementById('s_participant_id').value = uid;
+                
+                // Fetch name for display
+                try {
+                    const nameRes = await fetch('/api/admin/caseload?location=all', { headers: { 'Authorization': 'Bearer ' + token } });
+                    const roster = await nameRes.json();
+                    const p = roster.find(r => r.id == uid);
+                    if (p) {
+                        if (document.getElementById('h_participant_name_display')) document.getElementById('h_participant_name_display').innerText = p.name;
+                        if (document.getElementById('s_participant_name_display')) document.getElementById('s_participant_name_display').innerText = p.name;
+                    } else {
+                        if (document.getElementById('h_participant_name_display')) document.getElementById('h_participant_name_display').innerText = 'ID: ' + uid;
+                    }
+                } catch(e) {}
             }
             if (urlParams.get('autoFocus') === 'health') {
                 document.getElementById('health-form').scrollIntoView();

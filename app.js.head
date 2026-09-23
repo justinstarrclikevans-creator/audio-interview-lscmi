@@ -57,31 +57,7 @@ async function safeApiResponse(res) {
 // -------------------------------------------------------------
 // INITIALIZATION & SESSION RESTORE
 // -------------------------------------------------------------
-
-// =========================================================
-// IMPERSONATION LOGIC
-// =========================================================
-
-function checkImpersonation() {
-    const staffToken = localStorage.getItem('staff_token');
-    const banner = document.getElementById('impersonation-banner');
-    if (staffToken && banner) {
-        banner.classList.remove('hidden');
-    }
-}
-
-function endImpersonation() {
-    const staffToken = localStorage.getItem('staff_token');
-    if (staffToken) {
-        localStorage.setItem('fs_token', staffToken);
-        localStorage.removeItem('staff_token');
-        window.location.reload();
-    }
-}
-
-
 document.addEventListener('DOMContentLoaded', async () => {
-    checkImpersonation();
     loadInterviewQuestions();
     const token = localStorage.getItem('fs_token');
     if (token) {
@@ -960,14 +936,13 @@ async function loadRnCasePlan() {
                 }
             }
 
-        } else {
+            } else {
             // Plan not generated yet
             const goalsEl = document.getElementById('rn-plan-goals');
             if (goalsEl) goalsEl.innerText = 'Case plan is being finalized by your Reentry Navigator.';
             const needsEl = document.getElementById('rn-plan-needs');
             if (needsEl) needsEl.innerText = 'Pending assessment review.';
-        }
-    } catch(err) {
+            } catch(err) {
         console.error('Error loading RN case plan:', err);
     }
 }
@@ -1842,14 +1817,14 @@ async function loadCaseload() {
                 const resLabel = dtDetail ? dtDetail.result.toUpperCase() : 'TESTED';
                 const resDate = dtDetail && dtDetail.test_date ? dtDetail.test_date.substring(5) : '';
                 dtBadgeHtml = `
-                    <div style="${resClass} padding: 4px 6px; border-radius: 6px; text-align: center; font-weight: 800; font-size: 10.5px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);" title="Drug screen status">
+                    <div style="${resClass} padding: 4px 6px; border-radius: 6px; text-align: center; font-weight: 800; font-size: 10.5px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.04);" onclick="openLoadProgramFormsModal('drugtest', ${p.id})" title="Click to view/add drug screen">
                         <div>✅ YES</div>
                         <div style="font-size: 9px; font-weight: 700; margin-top: 1px;">${resLabel} ${resDate ? `(${resDate})` : ''}</div>
                     </div>
                 `;
             } else {
                 dtBadgeHtml = `
-                    <div style="background: #fef2f2; color: #dc2626; border: 1.5px solid #fecaca; padding: 4px 6px; border-radius: 6px; text-align: center; font-weight: 800; font-size: 10.5px;" title="No drug screen this week">
+                    <div style="background: #fef2f2; color: #dc2626; border: 1.5px solid #fecaca; padding: 4px 6px; border-radius: 6px; text-align: center; font-weight: 800; font-size: 10.5px; cursor: pointer;" onclick="openLoadProgramFormsModal('drugtest', ${p.id})" title="Click to log drug screen">
                         <div>❌ NO</div>
                         <div style="font-size: 9px; font-weight: 600; margin-top: 1px; color: #ef4444;">+ Screen</div>
                     </div>
@@ -1862,14 +1837,14 @@ async function loadCaseload() {
                 const cmDate = cmDetail && cmDetail.date ? cmDetail.date.substring(5) : '';
                 const totalNotes = p.total_notes_this_week || 1;
                 cmBadgeHtml = `
-                    <div style="background: #dbeafe; color: #1d4ed8; border: 1.5px solid #93c5fd; padding: 4px 6px; border-radius: 6px; text-align: center; font-weight: 800; font-size: 10.5px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);" title="Case management status">
+                    <div style="background: #dbeafe; color: #1d4ed8; border: 1.5px solid #93c5fd; padding: 4px 6px; border-radius: 6px; text-align: center; font-weight: 800; font-size: 10.5px; cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.04);" onclick="openLoadProgramFormsModal('casenotes', ${p.id})" title="Click to view/add 1-on-1 session">
                         <div>✅ YES</div>
                         <div style="font-size: 9px; font-weight: 700; margin-top: 1px;">${totalNotes > 1 ? `${totalNotes} Notes` : '1 Session'} ${cmDate ? `(${cmDate})` : ''}</div>
                     </div>
                 `;
             } else {
                 cmBadgeHtml = `
-                    <div style="background: #fff7ed; color: #c2410c; border: 1.5px solid #fed7aa; padding: 4px 6px; border-radius: 6px; text-align: center; font-weight: 800; font-size: 10.5px;" title="No case management this week">
+                    <div style="background: #fff7ed; color: #c2410c; border: 1.5px solid #fed7aa; padding: 4px 6px; border-radius: 6px; text-align: center; font-weight: 800; font-size: 10.5px; cursor: pointer;" onclick="openLoadProgramFormsModal('casenotes', ${p.id})" title="Click to log 1-on-1 session">
                         <div>❌ NO</div>
                         <div style="font-size: 9px; font-weight: 600; margin-top: 1px; color: #ea580c;">+ Log CM</div>
                     </div>
@@ -1886,31 +1861,17 @@ async function loadCaseload() {
                     ? '<div style="color: #15803d; font-weight: bold; font-size: 11px; background: #dcfce7; padding: 4px; border-radius: 4px;">✅ Completed</div>' 
                     : `<button onclick="window.open('staff_tools.html?userId=${p.id}&autoFocus=health', 'HealthScreen', 'width=800,height=900')" class="btn btn-outline" style="font-size: 10px; padding: 3px 6px; color: #b91c1c; border-color: #fca5a5; background: #fee2e2;">⚠️ Complete Screen</button>`;
                 
-                // SkillCat engagement dropdown
-                const scVal = p.skillcat_notes || '';
-                const scOptions = ['Highly Engaged', 'Moderately Engaged', 'Lightly Engaged', 'Not Engaged'];
-                let skillcatHtml = `<select onchange="updateSkillcat(${p.id}, this.value)" style="font-size: 10.5px; padding: 3px 4px; border: 1px solid #cbd5e1; border-radius: 4px; width: 100%; background: ${scVal === 'Not Engaged' ? '#fee2e2' : (scVal.includes('Highly') ? '#dcfce7' : '#f8fafc')};">
-                    <option value="">Select...</option>
-                    ${scOptions.map(o => `<option value="${o}" ${scVal === o ? 'selected' : ''}>${o}</option>`).join('')}
-                </select>`;
-
-                // Gate dropdown instead of button
-                const curGate = p.current_gate || 1;
-                let gateDropdownHtml = `<select onchange="advanceParticipantGate(${p.id}, parseInt(this.value))" style="font-size: 11px; padding: 2px 4px; border: 1px solid #93c5fd; border-radius: 4px; background: #e0f2fe; font-weight: 700; color: #0369a1; width: 100%;">
-                    ${[1,2,3,4].map(g => `<option value="${g}" ${curGate === g ? 'selected' : ''}>Gate ${g}</option>`).join('')}
-                </select>`;
+                let skillcatHtml = p.skillcat_notes 
+                    ? `<div style="font-size: 10.5px; color: #475569; background: #f1f5f9; padding: 4px; border-radius: 4px; max-height: 45px; overflow-y: auto;">${p.skillcat_notes}</div>` 
+                    : '<div style="font-size: 10.5px; color: #94a3b8; font-style: italic;">No SkillCat update</div>';
 
                 let feedbackHtml = `<div style="font-size: 10px;">
-                    ${gateDropdownHtml}
-                    <div style="margin-top: 4px; color: #15803d;">✅ ${p.green_criteria || 0} Met</div>
+                    <div style="font-weight: bold; color: #0369a1; margin-bottom: 2px;">Gate ${p.current_gate || 1}</div>
+                    <div style="color: #15803d;">✅ ${p.green_criteria || 0} Met</div>
                     <div style="color: #b91c1c; margin-bottom: 4px;">❌ ${p.red_criteria || 0} Needs Work</div>
                     <button class="btn btn-outline" style="padding: 2px 4px; font-size: 9px;" onclick="openCaseReviewModal(${p.id}, '${escName}')">View Feedback</button>
 <button class="btn btn-primary" style="padding: 2px 4px; font-size: 9px; margin-top: 4px; display: block; width: 100%;" onclick="openGateChecklistModal(${p.id}, '${escName}')">✅ Gate Checklist</button>
                 </div>`;
-
-                // PII collapsible section
-                const maskedSsn = p.ssn ? '***-**-' + p.ssn.slice(-4) : 'Not set';
-                const piiId = `pii-${p.id}`;
 
                 return `
                 <tr style="${p.overall_status === 'archived' ? 'opacity: 0.65; background: #f8fafc;' : ''}">
@@ -1919,15 +1880,7 @@ async function loadCaseload() {
                             <strong style="font-size: 13.5px; color: #0f172a; cursor: pointer; text-decoration: underline;" onclick="impersonateParticipant(${p.id})" title="Click to view Participant Dashboard">${p.name}</strong>
                             <button class="btn btn-outline" style="padding: 1px 5px; font-size: 10px; border-color: #cbd5e1; color: #475569;" onclick="openCorrectionModal(${p.id}, '${escName}')">✏️ Fix</button>
                         </div>
-                        ${p.record_id ? `<div style="font-size: 10px; color: #6366f1; font-weight: 600; margin-top: 1px;">ID: ${p.record_id}</div>` : ''}
                         <div style="font-size: 11px; color: var(--slate); margin-top: 2px;">📍 ${p.location}</div>
-                        <button onclick="document.getElementById('${piiId}').classList.toggle('hidden')" style="font-size: 9px; color: #6366f1; background: none; border: none; cursor: pointer; padding: 2px 0; text-decoration: underline; margin-top: 2px;">▶ View PII</button>
-                        <div id="${piiId}" class="hidden" style="font-size: 10px; color: #475569; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 6px; margin-top: 4px;">
-                            <div>📞 ${p.phone || 'No phone'}</div>
-                            <div>🏠 ${p.address || 'No address'}</div>
-                            <div>🔒 SSN: ${maskedSsn}</div>
-                            <div>🎂 DOB: ${p.birthdate || 'Not set'}</div>
-                        </div>
                         ${p.overall_status === 'archived' ? '<span class="badge badge-red" style="font-size: 10px; margin-top: 3px;">Archived</span>' : ''}
                     </td>
                     <td style="text-align: center;">
@@ -1956,25 +1909,6 @@ async function loadCaseload() {
                 `;
             } else {
                 // Re-entry Nav Formatting
-
-                // SkillCat engagement dropdown
-                const scVal = p.skillcat_notes || '';
-                const scOptions = ['Highly Engaged', 'Moderately Engaged', 'Lightly Engaged', 'Not Engaged'];
-                let skillcatHtml = `<select onchange="updateSkillcat(${p.id}, this.value)" style="font-size: 10.5px; padding: 3px 4px; border: 1px solid #cbd5e1; border-radius: 4px; width: 100%; background: ${scVal === 'Not Engaged' ? '#fee2e2' : (scVal.includes('Highly') ? '#dcfce7' : '#f8fafc')};">
-                    <option value="">Select...</option>
-                    ${scOptions.map(o => `<option value="${o}" ${scVal === o ? 'selected' : ''}>${o}</option>`).join('')}
-                </select>`;
-
-                // Gate dropdown instead of button
-                const curGate = p.current_gate || 1;
-                let gateDropdownHtml = `<select onchange="advanceParticipantGate(${p.id}, parseInt(this.value))" style="font-size: 11px; padding: 2px 4px; border: 1px solid #93c5fd; border-radius: 4px; background: #e0f2fe; font-weight: 700; color: #0369a1;">
-                    ${[1,2,3,4].map(g => `<option value="${g}" ${curGate === g ? 'selected' : ''}>Gate ${g}</option>`).join('')}
-                </select>`;
-
-                // PII collapsible section
-                const maskedSsn = p.ssn ? '***-**-' + p.ssn.slice(-4) : 'Not set';
-                const piiId = `pii-${p.id}`;
-
                 return `
                 <tr style="${p.overall_status === 'archived' ? 'opacity: 0.65; background: #f8fafc;' : ''}">
                     <!-- 1. Participant -->
@@ -1985,15 +1919,7 @@ async function loadCaseload() {
                                 ✏️ Fix
                             </button>
                         </div>
-                        ${p.record_id ? `<div style="font-size: 10px; color: #6366f1; font-weight: 600; margin-top: 1px;">ID: ${p.record_id}</div>` : ''}
                         <div style="font-size: 11px; color: var(--slate); margin-top: 2px;">${p.email} • ${p.phone || 'No phone'}</div>
-                        <button onclick="document.getElementById('${piiId}').classList.toggle('hidden')" style="font-size: 9px; color: #6366f1; background: none; border: none; cursor: pointer; padding: 2px 0; text-decoration: underline; margin-top: 2px;">▶ View PII</button>
-                        <div id="${piiId}" class="hidden" style="font-size: 10px; color: #475569; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 6px; margin-top: 4px;">
-                            <div>📞 ${p.phone || 'No phone'}</div>
-                            <div>🏠 ${p.address || 'No address'}</div>
-                            <div>🔒 SSN: ${maskedSsn}</div>
-                            <div>🎂 DOB: ${p.birthdate || 'Not set'}</div>
-                        </div>
                         ${p.correction_notes ? `<div style="margin-top: 4px; font-size: 10.5px; background: #fefce8; border-left: 2px solid #eab308; padding: 2px 6px; border-radius: 3px; color: #713f12; max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${p.correction_notes.replace(/"/g, '&quot;')}"><strong>Staff Note:</strong> ${p.correction_notes}</div>` : ''}
                         ${p.overall_status === 'archived' ? '<span class="badge badge-red" style="font-size: 10px; margin-top: 3px;">Archived</span>' : ''}
                     </td>
@@ -2015,7 +1941,7 @@ async function loadCaseload() {
                     <!-- 3. Gate & Points -->
                     <td>
                         <div style="display: flex; align-items: center; gap: 6px;">
-                            ${gateDropdownHtml}
+                            <span class="badge" style="background: #e0f2fe; color: #0369a1; font-weight: 800; font-size: 11px;">Gate ${p.current_gate || 1}</span>
                         </div>
                         <div style="font-size: 12.5px; font-weight: 800; color: var(--primary); margin-top: 6px;" title="Current Week Points">
                             Points: ${p.currentWeekPoints || 0}
@@ -2024,7 +1950,9 @@ async function loadCaseload() {
 
                     <!-- 4. SkillCat Progress -->
                     <td>
-                        ${skillcatHtml}
+                        <div style="font-size: 10.5px; color: #475569; background: #f1f5f9; padding: 4px; border-radius: 4px; max-height: 45px; overflow-y: auto;">
+                            ${p.skillcat_notes || 'No SkillCat update'}
+                        </div>
                     </td>
 
                     <!-- 5. Weekly Compliance (Drug Screen & Case Mgmt) -->
@@ -2071,6 +1999,9 @@ async function loadCaseload() {
                             </button>
                             <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: #4338ca; border-color: #c7d2fe;" onclick="promptSwitchTrack(${p.id}, '${escName}', '${p.track}')" title="Switch Track">
                                 🔄 Track
+                            </button>
+                            <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: #0284c7; border-color: #bae6fd;" onclick="advanceParticipantGate(${p.id}, ${(p.current_gate || 1) + 1})" title="Advance Gate">
+                                Gate ➔
                             </button>
                         </div>
                     </td>
@@ -3115,16 +3046,8 @@ async function loadPmDrafts() {
             return;
         }
 
-        // Fetch active participants for the assignment dropdown
-    let activeParticipants = [];
-    try {
-        const token = localStorage.getItem('fs_token');
-        const res = await fetch('/api/admin/caseload?location=all', { headers: { 'Authorization': 'Bearer ' + token } });
-        activeParticipants = await res.json();
-    } catch(e) {}
-    
-    let html = `
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; background: #f0fdfa; border: 1.5px solid #99f6e4; padding: 14px 18px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+        let html = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; background: #f0fdfa; border: 1.5px solid #99f6e4; padding: 14px 18px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
                 <div>
                     <strong style="color: #0f766e; font-size: 14.5px;">🖨️ Standardized LS/CMI Scoring & Documentation Center</strong>
                     <div style="font-size: 12px; color: #334155; margin-top: 2px;">Print or inspect completed standardized scorings, comprehensive 158-question interview guides, and complete verbatim transcripts.</div>
@@ -3156,18 +3079,6 @@ async function loadPmDrafts() {
             const parts = clientId.split('_');
             const cleanName = parts.map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
-    const participantOptions = activeParticipants.map(p => 
-        `<option value="${p.name}">${p.name} (${p.location || 'Unknown'})</option>`
-    ).join('');
-    
-    const assignDropdownHtml = `<div style="display: flex; align-items: center; gap: 6px; margin-top: 8px;">
-        <select id="assign-scoring-${clientId}" style="font-size: 11px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
-            <option value="">Link to Participant...</option>
-            ${participantOptions}
-        </select>
-        <button class="btn btn-outline" style="font-size: 10px; padding: 4px 8px;" onclick="assignScoring('${clientId}')">🔗 Link</button>
-    </div>`;
-
             html += `
                 <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 8px; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
                     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
@@ -3179,7 +3090,6 @@ async function loadPmDrafts() {
                                 </span>
                             </div>
                             <div style="font-size: 11px; color: var(--slate); margin-top: 3px;">ID: ${clientId} • Files: ${files.length} documents</div>
-                            ${assignDropdownHtml}
                         </div>
 
                         <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
@@ -4026,11 +3936,8 @@ async function loadFacilitationEvaluations() {
             fetch('/api/admin/evaluations/stats', { headers: { 'Authorization': `Bearer ${token}` } })
         ]);
         
-        const evals = await safeApiResponse(evalsRes);
-        const stats = await safeApiResponse(statsRes);
-        
-        if (!Array.isArray(evals)) throw new Error(evals.error || 'Evaluations must be an array');
-        if (!Array.isArray(stats)) throw new Error(stats.error || 'Stats must be an array');
+        const evals = await evalsRes.json();
+        const stats = await statsRes.json();
 
         // Build Stats Dashboard
         const getStat = (loc) => {
@@ -5721,6 +5628,143 @@ async function toggleArchiveParticipant(userId, name, action) {
 }
 
 // -------------------------------------------------------------
+// TIME-OFF REQUESTS & PM REVIEW QUEUE
+// -------------------------------------------------------------
+function openTimeOffModal() {
+    const dateInput = document.getElementById('tor-date');
+    if (dateInput) {
+        const target = new Date();
+        target.setDate(target.getDate() + 3);
+        dateInput.value = target.toISOString().split('T')[0];
+    }
+    const notesInput = document.getElementById('tor-notes');
+    if (notesInput) notesInput.value = '';
+
+    openModal('modal-time-off-request');
+}
+
+async function handleTimeOffRequestSubmit(e) {
+    e.preventDefault();
+    const requestedDate = document.getElementById('tor-date')?.value;
+    const reason = document.getElementById('tor-reason')?.value;
+    const notes = document.getElementById('tor-notes')?.value.trim();
+
+    if (!requestedDate || !reason) {
+        return alert('Please select a requested date and reason.');
+    }
+
+    const token = localStorage.getItem('fs_token');
+    try {
+        const res = await fetch('/api/participant/time-off', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ requestedDate, reason, notes })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to submit time-off request');
+
+        alert(data.message || 'Time-off request submitted successfully.');
+        closeModal('modal-time-off-request');
+        loadFsPoints();
+    } catch (err) {
+        alert('Time-Off Request Notice: ' + err.message);
+    }
+}
+
+async function openPmTimeOffModal() {
+    openModal('modal-pm-time-off');
+    loadPmTimeOffRequests();
+}
+
+async function loadPmTimeOffRequests() {
+    const container = document.getElementById('pm-time-off-list');
+    if (!container) return;
+    container.innerHTML = '<p class="text-slate">Loading pending time-off requests...</p>';
+
+    const token = localStorage.getItem('fs_token');
+    try {
+        const res = await fetch('/api/pm/time-off-requests', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const requests = await res.json();
+
+        if (!requests || requests.length === 0) {
+            container.innerHTML = '<p class="text-slate" style="text-align: center; padding: 24px;">No time-off requests found in queue.</p>';
+            return;
+        }
+
+        container.innerHTML = requests.map(r => `
+            <div style="background: white; border: 1px solid var(--border); border-left: 4px solid ${r.status === 'approved' ? 'var(--success)' : r.status === 'denied' ? 'var(--danger)' : 'var(--accent)'}; border-radius: 6px; padding: 14px;">
+                <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px;">
+                    <div>
+                        <strong style="font-size: 14px; color: var(--primary);">${r.user_name}</strong>
+                        <span style="font-size: 12px; color: var(--slate); margin-left: 6px;">(${r.user_email} • ${r.user_location})</span>
+                    </div>
+                    <span class="badge ${r.status === 'approved' ? 'badge-green' : r.status === 'denied' ? 'badge-red' : 'badge-pending'}">
+                        ${r.status.toUpperCase()}
+                    </span>
+                </div>
+                <div style="margin-top: 8px; font-size: 13px;">
+                    📅 <strong>Requested Absence Date:</strong> <span style="color: var(--primary); font-weight: 700;">${r.requested_date}</span>
+                </div>
+                <div style="font-size: 12.5px; margin-top: 4px;">
+                    🏷️ <strong>Reason:</strong> ${r.reason}
+                </div>
+                ${r.notes ? `<div style="font-size: 12px; color: #475569; background: #f8fafc; padding: 6px 10px; border-radius: 4px; margin-top: 6px;">📝 ${r.notes}</div>` : ''}
+                <div style="font-size: 11px; color: var(--slate); margin-top: 6px;">
+                    Submitted: ${new Date(r.created_at).toLocaleString()}
+                </div>
+
+                ${r.status === 'pending' ? `
+                    <div style="display: flex; gap: 8px; margin-top: 10px; border-top: 1px dashed var(--border); padding-top: 10px;">
+                        <button class="btn btn-primary" style="font-size: 11.5px; padding: 4px 10px; background: #16a34a;" onclick="handlePmTimeOffAction(${r.id}, 'approved')">
+                            ✅ Approve (Excused Absence)
+                        </button>
+                        <button class="btn btn-outline" style="font-size: 11.5px; padding: 4px 10px; color: var(--danger); border-color: #fca5a5;" onclick="handlePmTimeOffAction(${r.id}, 'denied')">
+                            ❌ Deny Request
+                        </button>
+                    </div>
+                ` : `
+                    <div style="font-size: 11.5px; color: var(--slate); margin-top: 8px; border-top: 1px dashed var(--border); padding-top: 6px;">
+                        Reviewed: ${r.reviewed_at ? new Date(r.reviewed_at).toLocaleDateString() : 'Yes'}
+                        ${r.pm_response_notes ? ` • Note: <em>"${r.pm_response_notes}"</em>` : ''}
+                    </div>
+                `}
+            </div>
+        `).join('');
+    } catch (err) {
+        container.innerHTML = `<p style="color: var(--danger);">Error loading requests: ${err.message}</p>`;
+    }
+}
+
+async function handlePmTimeOffAction(requestId, status) {
+    const notes = prompt(`Provide supervisor review notes for ${status === 'approved' ? 'approving' : 'denying'} this request (optional):`) || '';
+
+    const token = localStorage.getItem('fs_token');
+    try {
+        const res = await fetch('/api/pm/time-off-action', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ requestId, status, responseNotes: notes })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Action failed');
+
+        alert(data.message);
+        loadPmTimeOffRequests();
+        loadCaseload();
+    } catch (err) {
+        alert('Action Error: ' + err.message);
+    }
+}
+
+// -------------------------------------------------------------
 // WEEKLY POINTS BREAKDOWN MODAL (Out of 50 Points)
 // -------------------------------------------------------------
 async function openWeeklyPointsModal(userId, name) {
@@ -6246,10 +6290,6 @@ async function openCorrectionModal(userId, userName) {
 
         if (p) {
             document.getElementById('pc-notes').value = p.correction_notes || '';
-    document.getElementById('pc-record-id').value = p.record_id || '';
-    document.getElementById('pc-ssn').value = p.ssn || '';
-    document.getElementById('pc-birthdate').value = p.birthdate || '';
-    document.getElementById('pc-address').value = p.address || '';
             document.getElementById('pc-enrollment-date').value = p.enrollment_date || '';
             document.getElementById('pc-dl-status').value = p.dl_status || 'unknown';
             document.getElementById('pc-child-support-status').value = p.child_support_status || 'unknown';
@@ -7019,14 +7059,12 @@ window.switchCaseloadTab = function(tab) {
     const evalCard = document.getElementById('pm-facilitation-evals-list')?.closest('.section-card');
     if (evalCard) evalCard.classList.remove('hidden');
 
-    const trackFilter = document.getElementById('pm-filter-track');
     const statusFilter = document.getElementById('pm-filter-status');
-    if (statusFilter) statusFilter.value = '';
     const titleEl = document.getElementById('caseload-title');
     const thead = document.getElementById('caseload-thead');
     
     if (tab === 'first_shift') {
-        if (trackFilter) trackFilter.value = 'first_shift';
+        if (statusFilter) statusFilter.value = 'active';
         if (titleEl) titleEl.innerText = '🏢 First Shift Caseload';
         if (thead) {
             thead.innerHTML = `
@@ -7042,7 +7080,7 @@ window.switchCaseloadTab = function(tab) {
             `;
         }
     } else if (tab === 'reentry_nav') {
-        if (trackFilter) trackFilter.value = 'reentry_nav';
+        if (statusFilter) statusFilter.value = 'reentry_nav_stabilizing';
         if (titleEl) titleEl.innerText = '🧭 Re-entry Navigation Caseload';
         if (thead) {
             thead.innerHTML = `
@@ -7404,52 +7442,5 @@ async function deleteParticipant() {
         statusEl.innerHTML = `<span style="color: var(--danger);">❌ Network error: ${e.message}</span>`;
     } finally {
         saveBtn.disabled = false;
-    }
-}
-
-
-async function updateSkillcat(userId, engagement) {
-    if (!engagement) return;
-    const token = localStorage.getItem('fs_token');
-    try {
-        const res = await fetch('/api/admin/update-skillcat', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-            body: JSON.stringify({ userId, engagement })
-        });
-        const data = await res.json();
-        if (res.ok) {
-            loadCaseload();
-        } else {
-            alert('Failed to update SkillCat: ' + (data.error || 'Unknown error'));
-        }
-    } catch(e) {
-        alert('Error updating SkillCat: ' + e.message);
-    }
-}
-
-
-async function assignScoring(clientId) {
-    const participantName = document.getElementById('assign-scoring-' + clientId).value;
-    if (!participantName) return alert('Select a participant to link to.');
-    
-    if (!confirm('Link scoring records for "' + clientId + '" to participant "' + participantName + '"? This will rename the files.')) return;
-    
-    const token = localStorage.getItem('fs_token');
-    try {
-        const res = await fetch('/api/admin/scoring/assign', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-            body: JSON.stringify({ clientId, participantName })
-        });
-        const data = await res.json();
-        if (res.ok) {
-            alert('Scoring successfully linked and files renamed.');
-            loadPmDrafts();
-        } else {
-            alert('Failed to link scoring: ' + (data.error || 'Unknown error'));
-        }
-    } catch(e) {
-        alert('Error linking scoring: ' + e.message);
     }
 }

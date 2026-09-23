@@ -9,12 +9,6 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-    <!-- Impersonation Banner -->
-    <div id="impersonation-banner" class="hidden" style="background-color: #ef4444; color: white; text-align: center; padding: 10px; font-weight: bold; font-size: 14px; z-index: 9999; position: relative;">
-        🕵️‍♀️ You are currently viewing as a Participant. 
-        <button onclick="endImpersonation()" style="margin-left: 10px; padding: 4px 10px; background: white; color: #ef4444; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px;">Return to Staff Dashboard</button>
-    </div>
-
     <!-- Top Global Navigation Bar -->
     <header class="top-nav">
         <div class="nav-container">
@@ -234,265 +228,7 @@
 
             <!-- SUB-VIEW 2: MASTER BRIEFCASE CHECKLIST -->
             <div id="fs-sec-briefcase" class="fs-sub-view hidden">
-                <div class="section-card">
-                    <div class="section-header">
-                        <h2>Master Briefcase Checklist (6 Domains)</h2>
-                        <p>Track your verified documents, employment readiness tools, credentials, health, and financial plans.</p>
-                    </div>
-                    <div id="briefcase-domains-container">
-                        <!-- Loaded dynamically via JavaScript -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- SUB-VIEW 3: STATE BENEFITS & HEALTHCARE ACCESS -->
-            <div id="fs-sec-benefits" class="fs-sub-view hidden">
-                <div class="section-card" id="fs-benefits-section" style="border-top: 4px solid #0284c7;">
-                    <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
-                        <div>
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <span style="font-size: 22px;">🏛️</span>
-                                <h2 style="margin: 0;">South Carolina Benefits & Healthcare Access Hub</h2>
-                            </div>
-                            <p style="margin: 4px 0 0 0; color: var(--slate);">Official state applications, eligibility guidance, and status tracking for Welvista, Medicaid, SNAP, and TANF.</p>
-                        </div>
-                        <div style="display: flex; gap: 8px;">
-                            <button class="btn btn-outline" style="font-size: 12px;" onclick="openBenefitsHubModal()">🔍 Open Guided Benefits Modal</button>
-                        </div>
-                    </div>
-                    <div id="fs-benefits-container">
-                        <!-- Loaded dynamically via JavaScript -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- SUB-VIEW 4: CBT CURRICULUM & DAILY FEEDBACK -->
-            <div id="fs-sec-cbt" class="fs-sub-view hidden">
-                <div class="section-card">
-                    <div class="section-header">
-                        <h2>🧠 Cognitive Behavioral Training (CBT Curriculum)</h2>
-                        <p>Authentic Turn90 modules and worksheets to build emotional regulation, problem-solving, and cognitive awareness.</p>
-                    </div>
-                    <div class="training-accordion" id="fs-cbt-accordion-container">
-                        <!-- Loaded dynamically -->
-                    </div>
-                </div>
-
-                <!-- Class Feedback Card -->
-                <div class="section-card mt-8">
-                    <div class="section-header">
-                        <h2>Daily Workshop & Training Feedback</h2>
-                        <p>Tell us how today's workshop went so facilitators can adjust support.</p>
-                    </div>
-                    <form id="form-class-feedback" onsubmit="handleClassFeedback(event)" class="feedback-grid">
-                        <div class="form-group">
-                            <label>Workshop / Session Name</label>
-                            <input type="text" id="fb-session" required placeholder="e.g., Week 1 Workplace Etiquette & CBT">
-                        </div>
-                        <div class="form-group">
-                            <label>Facilitator</label>
-                            <input type="text" id="fb-facilitator" placeholder="Facilitator Name">
-                        </div>
-                        <div class="form-group">
-                            <label>Rating (1 to 5 Stars)</label>
-                            <select id="fb-rating" required>
-                                <option value="5">⭐⭐⭐⭐⭐ 5 - Excellent</option>
-                                <option value="4">⭐⭐⭐⭐ 4 - Very Good</option>
-                                <option value="3">⭐⭐⭐ 3 - Good</option>
-                                <option value="2">⭐⭐ 2 - Needs Improvement</option>
-                                <option value="1">⭐ 1 - Poor</option>
-                            </select>
-                        </div>
-                        <div class="form-group full-width">
-                            <label>Key Takeaway or Comments</label>
-                            <textarea id="fb-text" rows="2" placeholder="What was the most useful thing you learned today?"></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Submit Class Feedback</button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- SUB-VIEW 5: SUPPORT, AI ASSISTANT & JOB HUNTING -->
-            <div id="fs-sec-support" class="fs-sub-view hidden">
-                <!-- PARTICIPANT AI ASSISTANT & DIRECT PM MESSAGING -->
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 20px;">
-                    <!-- Card 1: Turn90 Fresh Start AI Assistant -->
-                    <div class="section-card" style="display: flex; flex-direction: column; border-top: 4px solid var(--primary);">
-                        <div class="section-header" style="margin-bottom: 12px;">
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <span style="font-size: 22px;">🤖</span>
-                                <div>
-                                    <h2 style="font-size: 16px; margin: 0;">Fresh Start AI Assistant</h2>
-                                    <p style="font-size: 12px; margin: 2px 0 0 0;">Guidance for Form I-9, Digital ID, SCDMV Driver's License, Welvista & referrals.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Quick Action Chips -->
-                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px;">
-                            <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askAiPrompt('How do I fill out Form I-9 for my new employer?')">📋 Form I-9 Help</button>
-                            <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askAiPrompt('What documents can I use for Form I-9 List B and List C?')">🆔 I-9 Documents</button>
-                            <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askAiPrompt('How do I get my driver license reinstated with SCDMV?')">🚗 License Reinstatement</button>
-                            <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askAiPrompt('How do I get free prescription medicines through Welvista?')">💊 Free Welvista Meds</button>
-                            <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askAiPrompt('How do I apply for South Carolina Healthy Connections Medicaid?')">🩺 SC Medicaid</button>
-                            <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askAiPrompt('How do I apply for SNAP Food Stamps in South Carolina and can I qualify with a record?')">🍎 Food Stamps (SNAP)</button>
-                            <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askAiPrompt('Who qualifies for TANF cash assistance in SC and how do Turn90 hours count?')">💵 TANF Assistance</button>
-                            <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askAiPrompt('Where can I find emergency housing or shelter in Charleston or Columbia?')">🏠 Housing Referrals</button>
-                        </div>
-
-                        <!-- AI Chat Box -->
-                        <div id="fs-ai-chat-history" style="flex: 1; min-height: 220px; max-height: 320px; overflow-y: auto; background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; padding: 12px; font-size: 12.5px; line-height: 1.5; display: flex; flex-direction: column; gap: 10px;">
-                            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px;">
-                                <strong>Turn90 Assistant:</strong> Hello! Ask me any questions about employer paperwork (like <strong>Form I-9</strong> or <strong>W-9</strong>), fixing your driver's license, free prescriptions with Welvista, or housing resources.
-                            </div>
-                        </div>
-
-                        <div style="display: flex; gap: 8px; margin-top: 10px;">
-                            <input type="text" id="fs-ai-input" placeholder="Ask about Form I-9, W-9, referrals..." style="flex: 1; padding: 8px 12px; font-size: 12.5px; border: 1px solid var(--border); border-radius: 4px;" onkeydown="if(event.key==='Enter') sendParticipantAiMessage()">
-                            <button class="btn btn-primary" style="font-size: 12px; padding: 8px 14px;" onclick="sendParticipantAiMessage()" id="btn-fs-ai-send">Ask AI</button>
-                        </div>
-                    </div>
-
-                    
-
-                        <!-- Messages Log -->
-                        
-                </div>
-
-                <!-- JOB HUNTING AI BANNER -->
-                <div class="section-card mt-6" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; border-radius: 8px; padding: 22px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
-                        <div style="max-width: 620px;">
-                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
-                                <span style="font-size: 26px;">💼</span>
-                                <h2 style="color: white; margin: 0; font-size: 18px;">Turn90 Job Hunting AI</h2>
-                                <span class="badge badge-accent" style="font-weight: 700;">Live Matcher & Placement</span>
-                            </div>
-                            <p style="color: #cbd5e1; font-size: 13px; margin: 0; line-height: 1.5;">
-                                Find matching second-chance job openings across South Carolina, tailor your resume for specific employers, and practice your 60-second Turnaround Narrative to explain your background with confidence.
-                            </p>
-                        </div>
-                        <div>
-                            <button class="btn btn-accent" style="font-size: 14px; padding: 12px 20px; font-weight: 700; box-shadow: 0 2px 6px rgba(0,0,0,0.3);" onclick="openJobHuntingAiModal()">
-                                🚀 Launch Job Hunting AI
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div> <!-- End fs-sec-support -->
-        </section>
-
-        <!-- ========================================================= -->
-        <!-- VIEW 3: RE-ENTRY NAVIGATION PARTICIPANT PORTAL             -->
-        <!-- ========================================================= -->
-        <section id="view-rn-portal" class="app-view hidden">
-            <div class="portal-header">
-                <div>
-                    <h1>Re-entry Navigation Hub</h1>
-                    <p class="portal-sub">Access verified fair-chance employers, build your resume, and complete online modules.</p>
-                </div>
-                <button class="btn btn-accent" onclick="openJobHuntingAiModal()">💼 Launch Job Hunting AI</button>
-            </div>
-
-            <div class="nav-sub-tabs">
-                <button class="sub-tab-btn active" onclick="switchRnSection('caseplan')">🎯 My Re-entry Case Plan</button>
-                <button class="sub-tab-btn" onclick="switchRnSection('benefits')">🏛️ State Benefits & Healthcare</button>
-                <!-- Master Briefcase removed -->
-                <button class="sub-tab-btn" onclick="switchRnSection('messages')">🤖 AI Assistant</button>
-                <button class="sub-tab-btn" onclick="switchRnSection('jobs')">💼 Re-entry Job Board</button>
-                <button class="sub-tab-btn" onclick="switchRnSection('cbt')">🧠 Turn90 CBT Modules</button>
-                <button class="sub-tab-btn" onclick="switchRnSection('resume')">📄 AI Resume Builder</button>
-                <button class="sub-tab-btn" onclick="switchRnSection('locker')">📁 Document Locker</button>
-            </div>
-
-            <!-- RN Section: My Re-entry Case Plan (Notes & Needs) -->
-            <div id="rn-section-caseplan" class="rn-sub-view">
-                <!-- Banner with Stability & Downloads -->
-                <div class="section-card" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-left: 5px solid var(--success); margin-bottom: 20px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
-                        <div>
-                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
-                                <span style="font-size: 26px;">🎯</span>
-                                <h2 style="color: #166534; margin: 0; font-size: 20px;">My Personalized Re-entry Case Plan</h2>
-                                <span id="rn-plan-stability-badge" class="badge badge-green" style="font-size: 11px;">Status: Active</span>
-                            </div>
-                            <p style="margin: 0; font-size: 13.5px; color: #1e3a8a; line-height: 1.5;">
-                                Built directly from your Turn90 intake notes, self-reported needs, barrier resolutions, and case brief.
-                            </p>
-                        </div>
-                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                            <a id="rn-plan-docx-btn" href="#" download class="btn btn-primary" style="text-decoration: none; font-size: 12.5px;">📥 Download Word (.docx)</a>
-                            <a id="rn-plan-pdf-btn" href="#" target="_blank" class="btn btn-accent" style="text-decoration: none; font-size: 12.5px;">🖨️ View / Print PDF</a>
-                            <button type="button" class="btn btn-outline" style="font-size: 12.5px;" onclick="openParticipantCasePlanModal()">📄 Read Full Case Plan</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Stated Goals & Needs Assessment Card -->
-                <div class="section-card" style="margin-bottom: 20px;">
-                    <div class="section-header" style="margin-bottom: 12px;">
-                        <h3 style="margin: 0; font-size: 16px; color: var(--primary);">📋 Stated Goals & Identified Needs Assessment</h3>
-                        <p style="margin: 2px 0 0 0; font-size: 12.5px; color: var(--slate);">Your core goals and prioritized stabilization needs on file.</p>
-                    </div>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
-                        <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 14px;">
-                            <div style="font-size: 12px; font-weight: 700; color: var(--slate); text-transform: uppercase; margin-bottom: 4px;">🎯 Stated Goals</div>
-                            <div id="rn-plan-goals" style="font-size: 13.5px; color: #1e293b; font-weight: 600;">Loading stated goals...</div>
-                        </div>
-                        <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 14px;">
-                            <div style="font-size: 12px; font-weight: 700; color: var(--slate); text-transform: uppercase; margin-bottom: 4px;">🚨 Identified Needs & Focus Areas</div>
-                            <div id="rn-plan-needs" style="font-size: 13px; color: #1e293b;">Loading identified needs...</div>
-                        </div>
-                        <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 14px;">
-                            <div style="font-size: 12px; font-weight: 700; color: var(--slate); text-transform: uppercase; margin-bottom: 4px;">🏠 Living Situation</div>
-                            <div id="rn-plan-living" style="font-size: 13.5px; color: #1e293b; font-weight: 600;">Loading housing status...</div>
-                        </div>
-                        <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 14px;">
-                            <div style="font-size: 12px; font-weight: 700; color: var(--slate); text-transform: uppercase; margin-bottom: 4px;">⚖️ Legal & Supervision Status</div>
-                            <div id="rn-plan-legal" style="font-size: 13.5px; color: #1e293b; font-weight: 600;">Loading supervision status...</div>
-                        </div>
-                        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 14px; grid-column: 1 / -1;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-                                <div>
-                                    <div style="font-size: 12px; font-weight: 700; color: #166534; text-transform: uppercase; margin-bottom: 4px;">🏛️ State Benefits & Healthcare Coverage</div>
-                                    <div id="rn-plan-benefits-summary" style="font-size: 12.5px; color: #166534; display: flex; gap: 6px; flex-wrap: wrap;">
-                                        <span class="badge" id="rn-plan-pill-welvista" style="font-size: 11px; background: #dcfce7; color: #166534;">💊 Welvista: ...</span>
-                                        <span class="badge" id="rn-plan-pill-medicaid" style="font-size: 11px; background: #dcfce7; color: #166534;">🩺 Medicaid: ...</span>
-                                        <span class="badge" id="rn-plan-pill-snap" style="font-size: 11px; background: #dcfce7; color: #166534;">🍎 SNAP: ...</span>
-                                        <span class="badge" id="rn-plan-pill-tanf" style="font-size: 11px; background: #dcfce7; color: #166534;">💵 TANF: ...</span>
-                                    </div>
-                                </div>
-                                <div style="display: flex; gap: 6px;">
-                                    <button class="btn btn-primary" style="font-size: 11.5px; padding: 5px 10px;" onclick="switchRnSection('benefits')">Manage Applications</button>
-                                    <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 10px;" onclick="openBenefitsHubModal()">Guided Modal</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Criminogenic Dynamic Domains & High-Risk Triggers -->
-                <div class="section-card" style="margin-bottom: 20px;">
-                    <div class="section-header" style="margin-bottom: 12px;">
-                        <h3 style="margin: 0; font-size: 16px; color: var(--primary);">🧠 Priority Dynamic Focus Domains & CBT Strategies</h3>
-                        <p style="margin: 2px 0 0 0; font-size: 12.5px; color: var(--slate);">Behavioral and thinking patterns targeted during your re-entry coaching.</p>
-                    </div>
-                    <div id="rn-plan-domains-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px;">
-                        <!-- Populated dynamically -->
-                    </div>
-                </div>
-
-                <!-- Personalized Community Referrals -->
-                <div class="section-card" style="margin-bottom: 20px;">
-                    <div class="section-header" style="margin-bottom: 12px;">
-                        <h3 style="margin: 0; font-size: 16px; color: var(--primary);">🤝 Personalized Community Resource Referrals</h3>
-                        <p style="margin: 2px 0 0 0; font-size: 12.5px; color: var(--slate);">Direct links and next action steps for Housing, SCDMV License Reinstatement, Welvista, and legal aid.</p>
-                    </div>
-                    <div id="rn-plan-referrals-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px;">
-                        <!-- Populated dynamically -->
-                    </div>
-                </div>
-            </div>
+                
 
             <!-- RN Section: State Benefits & Healthcare Hub -->
             <div id="rn-section-benefits" class="rn-sub-view hidden">
@@ -648,7 +384,7 @@
                 </div>
             </div>
 
-            <!-- RN Section: AI Assistant -->
+            <!-- RN Section: Message Staff & AI Assistant -->
             <div id="rn-section-messages" class="rn-sub-view hidden">
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 20px;">
                     <!-- Card 1: Fresh Start AI Assistant -->
@@ -722,7 +458,9 @@
                     <div class="pm-btn-cluster" style="display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
                         
                         
-                        
+                        <button class="btn btn-outline" style="border-radius: 0; border: none; border-left: 1px solid var(--border); font-size: 12px; padding: 7px 11px;" onclick="openPmTimeOffModal()" title="Review Participant Time-Off Requests">
+                            📅 Time-Off
+                        </button>
                     </div>
 
                     <!-- Group 3: Primary Career AI Launcher -->
@@ -2320,9 +2058,59 @@
         </div>
     </div>
 
-    
+    <!-- Modal: Participant Time-Off Request (48-Hour Notice Enforced) -->
+    <div id="modal-time-off-request" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📅 Request Time Off (First Shift)</h3>
+                <button class="modal-close" onclick="closeModal('modal-time-off-request')">&times;</button>
+            </div>
+            <div style="background: #eff6ff; border: 1px solid #bfdbfe; color: #1d4ed8; padding: 10px; border-radius: 6px; font-size: 12px; margin-bottom: 14px;">
+                ℹ️ <strong>First Shift Policy:</strong> All time-off requests require at least <strong>48 hours advance notice</strong> for approval.
+            </div>
+            <form id="form-time-off-request" onsubmit="handleTimeOffRequestSubmit(event)">
+                <div class="form-group">
+                    <label>Requested Date of Absence *</label>
+                    <input type="date" id="tor-date" required class="form-control">
+                </div>
+                <div class="form-group mt-3">
+                    <label>Reason for Absence *</label>
+                    <select id="tor-reason" required class="form-control">
+                        <option value="Court Date / Legal Obligation">Court Date / Legal Obligation</option>
+                        <option value="Probation / Parole Appointment">Probation / Parole Appointment</option>
+                        <option value="Medical / Dental / Vision Appointment">Medical / Dental / Vision Appointment</option>
+                        <option value="Child Support Court Review">Child Support Court Review</option>
+                        <option value="SCDMV License Appointment">SCDMV License Appointment</option>
+                        <option value="Family Emergency">Family Emergency</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group mt-3">
+                    <label>Additional Notes / Documentation Details</label>
+                    <textarea id="tor-notes" rows="3" class="form-control" placeholder="Provide appointment location, time, or confirmation details..."></textarea>
+                </div>
+                <div class="modal-footer mt-4">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('modal-time-off-request')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Submit Request (48h Notice)</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-    
+    <!-- Modal: Program Manager Time-Off Review Queue -->
+    <div id="modal-pm-time-off" class="modal hidden">
+        <div class="modal-content modal-lg" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3>📅 Caseload Time-Off Requests Queue</h3>
+                <button class="modal-close" onclick="closeModal('modal-pm-time-off')">&times;</button>
+            </div>
+            <div id="pm-time-off-list" style="max-height: 480px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-top: 12px;">
+                <p class="text-slate">Loading pending time-off requests...</p>
+            </div>
+            <div class="modal-footer mt-4">
+                <button class="btn btn-outline" onclick="closeModal('modal-pm-time-off')">Close</button>
+            </div>
+        </div>
     </div>
 
     <!-- Modal: Weekly Points Breakdown (Out of 50) -->
@@ -2652,30 +2440,6 @@
                     <span style="font-size: 11px; color: var(--slate);">These notes will be displayed directly on the participant profile and appended to their permanent case audit trail.</span>
                 </div>
 
-                <div style="background: #f1f5f9; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 4px;">
-                    <h5 style="margin: 0 0 10px 0; font-size: 13px; color: #334155;">Personally Identifiable Information & Record Matching</h5>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
-                        <div>
-                            <label style="display:block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">Apricot Record ID</label>
-                            <input type="text" id="pc-record-id" placeholder="e.g. 12345" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12.5px;">
-                        </div>
-                        <div>
-                            <label style="display:block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">Social Security Number</label>
-                            <input type="text" id="pc-ssn" placeholder="XXX-XX-XXXX" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12.5px;">
-                        </div>
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                        <div>
-                            <label style="display:block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">Date of Birth</label>
-                            <input type="date" id="pc-birthdate" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12.5px;">
-                        </div>
-                        <div>
-                            <label style="display:block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">Home Address</label>
-                            <input type="text" id="pc-address" placeholder="123 Main St, City, ST 12345" style="width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12.5px;">
-                        </div>
-                    </div>
-                </div>
-
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                     <div>
                         <label style="display:block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">Official Enrollment Start Date</label>
@@ -2806,7 +2570,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=1790163980825"></script>
+    <script src="app.js?v=1790124501868"></script>
 
 <!-- Gate Checklist Modal -->
 <div id="modal-gate-checklist" class="modal hidden">

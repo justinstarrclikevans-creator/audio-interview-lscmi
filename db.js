@@ -338,6 +338,10 @@ try { db.exec("ALTER TABLE participant_profiles ADD COLUMN has_reentry_plan INTE
 try { db.exec("ALTER TABLE participant_profiles ADD COLUMN enrollment_date DATE;"); } catch(e) {}
 try { db.exec("ALTER TABLE participant_profiles ADD COLUMN correction_notes TEXT;"); } catch(e) {}
 try { db.exec("ALTER TABLE participant_profiles ADD COLUMN supabase_id TEXT;"); } catch(e) {}
+try { db.exec("ALTER TABLE participant_profiles ADD COLUMN record_id TEXT;"); } catch(e) {}
+try { db.exec("ALTER TABLE users ADD COLUMN address TEXT;"); } catch(e) {}
+try { db.exec("ALTER TABLE users ADD COLUMN ssn TEXT;"); } catch(e) {}
+try { db.exec("ALTER TABLE users ADD COLUMN birthdate DATE;"); } catch(e) {}
 
 
 // The Official Briefcase Domains & Checklist Items

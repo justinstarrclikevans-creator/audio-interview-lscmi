@@ -233,7 +233,7 @@ function importApricotData(input, isBuffer = false) {
     `);
 
     const findUserStmt = db.prepare(`
-        SELECT id FROM users WHERE LOWER(email) = ? OR LOWER(name) LIKE ? LIMIT 1
+        SELECT u.id FROM users u LEFT JOIN participant_profiles p ON u.id = p.user_id WHERE LOWER(u.email) = ? OR LOWER(u.name) LIKE ? OR p.record_id = ? LIMIT 1
     `);
 
     const tx = db.transaction(() => {
@@ -259,7 +259,7 @@ function importApricotData(input, isBuffer = false) {
             const status = String(cols[3] || 'present').trim().toLowerCase();
             const notes = String(cols[4] || '').trim();
 
-            const user = findUserStmt.get(identifier, `%${identifier}%`);
+            const user = findUserStmt.get(identifier, `%${identifier}%`, identifier);
             if (user) {
                 insertPointsStmt.run(user.id, dateStr, points, 10, status, notes);
                 importedCount++;
@@ -473,7 +473,7 @@ function importDrugTestData(input, isBuffer = false) {
             const notes = String(cols[4] || '').trim();
             const admin = String(cols[5] || 'Program Staff').trim();
 
-            const user = findUserStmt.get(identifier, `%${identifier}%`);
+            const user = findUserStmt.get(identifier, `%${identifier}%`, identifier);
             if (user) {
                 insertStmt.run(user.id, dateStr, result, substances, notes, admin);
                 importedCount++;
@@ -539,7 +539,7 @@ function importCaseManagementNotesData(input, isBuffer = false) {
 
             if (!content) continue;
 
-            const user = findUserStmt.get(identifier, `%${identifier}%`);
+            const user = findUserStmt.get(identifier, `%${identifier}%`, identifier);
             if (user) {
                 insertStmt.run(user.id, author, dateStr, noteType, category, content);
                 importedCount++;
@@ -794,7 +794,7 @@ function importUnifiedRenderReport(buffer) {
 
     let stats = { points: 0, drugTests: 0, caseNotes: 0 };
     const unmatchedNames = [];
-    const findUserStmt = db.prepare(`SELECT id FROM users WHERE LOWER(name) LIKE ? OR LOWER(name) LIKE ? LIMIT 1`);
+    const findUserStmt = db.prepare(`SELECT u.id FROM users u LEFT JOIN participant_profiles p ON u.id = p.user_id WHERE LOWER(u.name) LIKE ? OR LOWER(u.name) LIKE ? OR p.record_id = ? LIMIT 1`);
 
     const resolveUserId = (first, last) => {
         if (!first && !last) return null;
