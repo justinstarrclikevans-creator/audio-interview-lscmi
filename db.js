@@ -199,6 +199,41 @@ CREATE TABLE IF NOT EXISTS reentry_case_plans (
 );
 
 -- Real-Time Two-Way Messaging Between Participants and Program Managers
+
+
+CREATE TABLE IF NOT EXISTS relapse_plans (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    plan_type TEXT NOT NULL, -- 'substance' or 'behavior'
+    triggers TEXT,
+    warning_signs TEXT,
+    coping_skills TEXT,
+    support_system TEXT,
+    emergency_plan TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, plan_type)
+);
+
+CREATE TABLE IF NOT EXISTS habit_logs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    habit_key TEXT NOT NULL,
+    date DATE NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, habit_key, date)
+);
+
+CREATE TABLE IF NOT EXISTS earned_badges (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    badge_key TEXT NOT NULL,
+    badge_name TEXT NOT NULL,
+    icon TEXT,
+    earned_date DATE DEFAULT (DATE('now')),
+    UNIQUE(user_id, badge_key)
+);
+
 CREATE TABLE IF NOT EXISTS messages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     sender_id INTEGER NOT NULL,
