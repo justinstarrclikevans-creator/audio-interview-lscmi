@@ -3454,7 +3454,7 @@ app.delete('/api/jobs/saved/:id', authenticateToken, (req, res) => {
 
 // Impersonate Participant (Staff Only)
 app.post('/api/admin/impersonate/:userId', authenticateToken, (req, res) => {
-    if (req.user.role !== 'program_manager' && req.user.role !== 'admin' && req.user.role !== 'director') {
+    if (req.user.role === 'participant') {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     const targetUserId = parseInt(req.params.userId, 10);
@@ -3495,7 +3495,7 @@ app.use((err, req, res, next) => {
 // ==========================================
 
 app.post('/api/staff/health-assessment', authenticateToken, (req, res) => {
-    if (req.user.role !== 'program_manager' && req.user.role !== 'admin' && req.user.role !== 'director') {
+    if (req.user.role === 'participant') {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     
@@ -3511,22 +3511,18 @@ app.post('/api/staff/health-assessment', authenticateToken, (req, res) => {
     try {
         const stmt = db.prepare(`
             INSERT INTO health_wellness_screen (
-                participant_id, assessor_name, vision_issues, hearing_issues, mobility_pain, stamina_fatigue,
+                participant_id, vision_issues, hearing_issues, mobility_pain, stamina_fatigue,
                 fine_motor_issues, physical_notes, reading_writing_issues, following_instructions_issues,
                 memory_organization_issues, processing_time_issues, cognitive_notes,
-                emotional_regulation_issues, anxiety_panic, social_interactions_issues,
-                baseline_changes, avoidance, mental_health_notes, primary_care_referral,
-                vocational_rehab_referral, mental_health_referral, job_search_adjustment, immediate_next_step
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                primary_care_referral, vocational_rehab_referral, mental_health_referral, job_search_adjustment, immediate_next_step
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `);
         
         stmt.run(
-            participant_id, req.user.name, vision_issues||0, hearing_issues||0, mobility_pain||0, stamina_fatigue||0,
+            participant_id, vision_issues||0, hearing_issues||0, mobility_pain||0, stamina_fatigue||0,
             fine_motor_issues||0, physical_notes, reading_writing_issues||0, following_instructions_issues||0,
             memory_organization_issues||0, processing_time_issues||0, cognitive_notes,
-            emotional_regulation_issues||0, anxiety_panic||0, social_interactions_issues||0,
-            baseline_changes||0, avoidance||0, mental_health_notes, primary_care_referral||0,
-            vocational_rehab_referral||0, mental_health_referral||0, job_search_adjustment||0, immediate_next_step
+            primary_care_referral||0, vocational_rehab_referral||0, mental_health_referral||0, job_search_adjustment||0, immediate_next_step
         );
         
         res.json({ success: true, message: 'Health assessment saved.' });
@@ -3537,7 +3533,7 @@ app.post('/api/staff/health-assessment', authenticateToken, (req, res) => {
 });
 
 app.post('/api/staff/stability-check', authenticateToken, (req, res) => {
-    if (req.user.role !== 'program_manager' && req.user.role !== 'admin' && req.user.role !== 'director') {
+    if (req.user.role === 'participant') {
         return res.status(403).json({ error: 'Unauthorized' });
     }
     
@@ -3546,33 +3542,16 @@ app.post('/api/staff/stability-check', authenticateToken, (req, res) => {
     try {
         const stmt = db.prepare(`
             INSERT INTO weekly_stability_checks (
-                user_id, week_number, assessor_name, new_sexual_convictions, permanent_restraining_order,
-                recent_major_drug_use, housing_instability, homeless_or_motel, facing_eviction,
-                failed_drug_test, new_arrest, two_unplanned_absences, no_call_no_show,
-                moving_out_of_area, court_mandate_conflict, childcare_loss, transportation_breakdown,
-                mental_health_crisis, physical_health_emergency, barriers_identified, can_meet_rapidly,
-                needs_more_resources, attendance_satisfactory, ability_learn_q2, removing_barriers,
-                cbt_homework_completed, cbt_discussion_active, cbt_roleplay_effort, transportation_viable,
-                qualified_for_desired_jobs, no_disqualifying_convictions, has_certifications,
-                has_education, can_work_schedule, supervision_allows_schedule, no_psf_overnight,
-                transitional_house_allows_overnight
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                participant_id, new_sexual_convictions, recent_major_drug_use, housing_instability, no_call_no_show, transportation_breakdown
+            ) VALUES (?, ?, ?, ?, ?, ?)
         `);
-        
         stmt.run(
-            data.participant_id, data.week_number||1, req.user.name,
-            data.new_sexual_convictions||0, data.permanent_restraining_order||0, data.recent_major_drug_use||0,
-            data.housing_instability||0, data.homeless_or_motel||0, data.facing_eviction||0,
-            data.failed_drug_test||0, data.new_arrest||0, data.two_unplanned_absences||0,
-            data.no_call_no_show||0, data.moving_out_of_area||0, data.court_mandate_conflict||0,
-            data.childcare_loss||0, data.transportation_breakdown||0, data.mental_health_crisis||0,
-            data.physical_health_emergency||0, data.barriers_identified, data.can_meet_rapidly||1,
-            data.needs_more_resources||0, data.attendance_satisfactory||1, data.ability_learn_q2||1,
-            data.removing_barriers||1, data.cbt_homework_completed||1, data.cbt_discussion_active||1,
-            data.cbt_roleplay_effort||1, data.transportation_viable||1, data.qualified_for_desired_jobs||1,
-            data.no_disqualifying_convictions||1, data.has_certifications||1, data.has_education||1,
-            data.can_work_schedule||1, data.supervision_allows_schedule||1, data.no_psf_overnight||1,
-            data.transitional_house_allows_overnight||1
+            data.participant_id || data.user_id,
+            data.new_sexual_convictions || 0,
+            data.recent_major_drug_use || 0,
+            data.housing_instability || 0,
+            data.no_call_no_show || 0,
+            data.transportation_breakdown || 0
         );
         res.json({ success: true, message: 'Stability check saved.' });
     } catch (error) {
