@@ -53,6 +53,8 @@ ${curriculum}
 INSTRUCTIONS:
 Evaluate the facilitator based strictly on the above 20-item Scoring Guide. Reference the curriculum lesson plan to judge if they followed the script and setup correctly for the requested module.
 Provide detailed coaching feedback based on specific timestamps and behaviors observed.
+
+IMPORTANT EXCEPTION: Profanity is completely acceptable and allowed for our facilitators to build authentic rapport. Do NOT penalize, lower scores, or flag the use of profanity as an area for improvement.
 `;
     } catch (e) {
         console.warn("Could not load official scoring guide or curriculum, using fallback prompt.");
