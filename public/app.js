@@ -7456,7 +7456,7 @@ function openHealthScreenModal(participantId, participantName) {
     document.getElementById('health-form-inline').reset();
     document.getElementById('hs-participant-id').value = participantId;
     document.getElementById('hs-participant-name').innerText = participantName;
-    document.getElementById('modal-health-screen').style.display = 'block';
+    openModal('modal-health-screen');
 }
 
 async function submitHealthForm(e) {
