@@ -1900,11 +1900,7 @@ async function loadCaseload() {
                 </select>`;
 
                 let feedbackHtml = `<div style="font-size: 10px;">
-                    ${gateDropdownHtml}
-                    <button class="btn btn-outline" style="padding: 2px 4px; font-size: 9px; margin-top: 6px; width: 100%;" onclick="openCaseReviewModal(${p.id}, '${escName}')">View Feedback</button>
-<button class="btn btn-primary" style="padding: 2px 4px; font-size: 9px; margin-top: 4px; display: block; width: 100%;" onclick="openGateChecklistModal(${p.id}, '${escName}')">✅ Gate Checklist</button>
-<button class="btn btn-outline" style="padding: 2px 4px; font-size: 9px; margin-top: 4px; display: block; width: 100%; border-color: #fca5a5; color: #b91c1c; background: #fee2e2;" onclick="openRelapsePlanModal(${p.id}, '${escName}', 'substance')">📝 Sub. Relapse Plan</button>
-<button class="btn btn-outline" style="padding: 2px 4px; font-size: 9px; margin-top: 4px; display: block; width: 100%; border-color: #fcd34d; color: #b45309; background: #fef3c7;" onclick="openRelapsePlanModal(${p.id}, '${escName}', 'behavior')">📝 Beh. Relapse Plan</button>
+                    <button class="btn btn-primary" style="padding: 6px 12px; font-size: 11px; margin-top: 4px; display: block; width: 100%; font-weight: bold;" onclick="openParticipantFile(${p.id}, '${escName}', ${p.current_gate || 1}, '${p.location}', '${p.track}', '${p.enrollment_date}', ${p.has_health_screen})">📂 Open Participant File</button>
                 </div>`;
 
                 // PII collapsible section
@@ -2059,18 +2055,7 @@ async function loadCaseload() {
                     <!-- 7. Caseload Actions -->
                     <td style="vertical-align: middle;">
                         <div style="display: flex; gap: 4px; flex-wrap: wrap; justify-content: center;">
-                            <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: #0f766e; border-color: #99f6e4; background: #f0fdfa; font-weight: 700;" onclick="printParticipantScoringByName('${escName}')" title="Print Official LS/CMI Scoring Form">
-                                🖨️ Score
-                            </button>
-                            <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px;" onclick="openCaseReviewModal(${p.id}, '${escName}')" title="Weekly Case Review">
-                                📋 Review
-                            </button>
-                            <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: #4338ca; border-color: #c7d2fe;" onclick="openPmCbtReviewModal(${p.id}, '${escName}')" title="View CBT Worksheets & Tools">
-                                🧠 CBT
-                            </button>
-                            <button class="btn btn-outline" style="padding: 3px 6px; font-size: 11px; color: #4338ca; border-color: #c7d2fe;" onclick="promptSwitchTrack(${p.id}, '${escName}', '${p.track}')" title="Switch Track">
-                                🔄 Track
-                            </button>
+                            <button class="btn btn-primary" style="padding: 6px 12px; font-size: 11px; display: block; width: 100%; font-weight: bold;" onclick="openParticipantFile(${p.id}, '${escName}', ${p.current_gate || 1}, '${p.location}', '${p.track}', '${p.enrollment_date}', ${p.has_health_screen})">📂 Open Participant File</button>
                         </div>
                     </td>
                 </tr>
@@ -2835,182 +2820,7 @@ async function advanceParticipantGate(userId, nextGate) {
 }
 
 // -------------------------------------------------------------
-// W-9 VIEWER & PARTICIPANT CASE PLAN VIEWER
-// -------------------------------------------------------------
-async function openW9ViewModal(userId) {
-    const token = localStorage.getItem('fs_token');
-    const body = document.getElementById('w9-view-body');
-    body.innerHTML = '<p>Loading Form W-9 record...</p>';
-    openModal('modal-w9-view');
 
-    try {
-        const targetId = userId || (currentUser ? currentUser.id : null);
-        if (!targetId) {
-            body.innerHTML = '<p class="text-slate" style="padding: 16px;">Please select a participant to view their Form W-9.</p>';
-            return;
-        }
-
-        const res = await fetch(`/api/participant/w9-details/${targetId}`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-
-        if (!res.ok) {
-            let errMsg = `Server returned status ${res.status}`;
-            try {
-                const errData = await res.json();
-                errMsg = errData.error || errData.message || errMsg;
-            } catch (_) {
-                const text = await res.text();
-                errMsg = text.includes('<!DOCTYPE') ? 'Service endpoint returned HTML instead of JSON. Please ensure the backend server is running.' : (text.slice(0, 100) || errMsg);
-            }
-            throw new Error(errMsg);
-        }
-
-        const data = await res.json();
-        if (!data.w9Data) {
-            body.innerHTML = `
-                <div style="text-align: center; padding: 24px;">
-                    <div style="font-size: 36px; margin-bottom: 8px;">📄</div>
-                    <h4>Form W-9 Not Yet Submitted</h4>
-                    <p class="text-slate" style="font-size: 13px; max-width: 420px; margin: 0 auto 16px auto;">
-                        ${data.user ? data.user.name : 'This participant'} has not completed their digital W-9 tax certification yet.
-                    </p>
-                    ${currentUser && currentUser.role === 'participant' ? `
-                        <button class="btn btn-primary" onclick="closeModal('modal-w9-view'); openModal('modal-w9-submit');">Complete W-9 Now</button>
-                    ` : ''}
-                </div>
-            `;
-            return;
-        }
-
-        const w9 = data.w9Data;
-        const ssnFormatted = w9.ssnOrEin ? (w9.tinType === 'ein' ? w9.ssnOrEin : (w9.ssnOrEin.length === 9 ? w9.ssnOrEin.slice(0,3) + '-' + w9.ssnOrEin.slice(3,5) + '-' + w9.ssnOrEin.slice(5) : w9.ssnOrEin)) : 'Not Provided';
-
-        body.innerHTML = `
-            <div class="official-w9-document" style="background: white; border: 2px solid #000; padding: 24px; font-family: Arial, Helvetica, sans-serif; color: #000;">
-                <!-- IRS Official Header -->
-                <div style="display: grid; grid-template-columns: 140px 1fr 180px; border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 12px; align-items: center;">
-                    <div>
-                        <div style="font-weight: 900; font-size: 26px; line-height: 1;">Form <span style="font-size: 32px;">W-9</span></div>
-                        <div style="font-size: 10px; font-weight: bold;">(Rev. March 2024)</div>
-                        <div style="font-size: 9px; color: #475569;">Department of the Treasury<br>Internal Revenue Service</div>
-                    </div>
-                    <div style="text-align: center;">
-                        <h2 style="font-size: 18px; font-weight: 900; margin: 0;">Request for Taxpayer<br>Identification Number and Certification</h2>
-                        <div style="font-size: 10px; font-style: italic; margin-top: 4px;">Go to www.irs.gov/FormW9 for instructions and the latest information.</div>
-                    </div>
-                    <div style="text-align: right; font-size: 11px;">
-                        <strong style="display: block; line-height: 1.2;">Give Form to the requester. Do not send to the IRS.</strong>
-                        <div style="margin-top: 6px;"><span class="badge badge-green" style="font-weight: bold; font-size: 11px;">VERIFIED & RECORDED</span></div>
-                    </div>
-                </div>
-
-                <!-- Lines 1 to 7 Table -->
-                <div style="border: 1px solid #000; font-size: 12px; line-height: 1.4;">
-                    <!-- Line 1 -->
-                    <div style="border-bottom: 1px solid #000; padding: 6px 10px;">
-                        <div style="font-size: 10px; font-weight: bold; color: #334155;">1 Name of entity/individual (as shown on your income tax return). Name is required on this line; do not leave this line blank.</div>
-                        <div style="font-size: 14px; font-weight: bold; color: #0f172a; padding: 2px 0;">${w9.fullName || (data.user ? data.user.name : '')}</div>
-                    </div>
-
-                    <!-- Line 2 -->
-                    <div style="border-bottom: 1px solid #000; padding: 6px 10px;">
-                        <div style="font-size: 10px; font-weight: bold; color: #334155;">2 Business name/disregarded entity name, if different from above:</div>
-                        <div style="font-size: 13px; font-style: ${w9.businessName ? 'normal' : 'italic'}; color: ${w9.businessName ? '#0f172a' : '#64748b'}; padding: 2px 0;">
-                            ${w9.businessName || 'None (Individual)'}
-                        </div>
-                    </div>
-
-                    <!-- Line 3a & 4 -->
-                    <div style="display: grid; grid-template-columns: 2fr 1fr; border-bottom: 1px solid #000;">
-                        <div style="padding: 6px 10px; border-right: 1px solid #000;">
-                            <div style="font-size: 10px; font-weight: bold; color: #334155;">3a Check appropriate box for federal tax classification:</div>
-                            <div style="font-size: 13px; font-weight: bold; color: #1e3a8a; margin-top: 4px;">
-                                ☑️ ${w9.taxClassification || 'Individual/sole proprietor or single-member LLC'}
-                            </div>
-                        </div>
-                        <div style="padding: 6px 10px;">
-                            <div style="font-size: 10px; font-weight: bold; color: #334155;">4 Exemptions (codes):</div>
-                            <div style="font-size: 12px; color: #64748b; margin-top: 4px;">${w9.exemptions || 'None / N/A'}</div>
-                        </div>
-                    </div>
-
-                    <!-- Line 5 & Requester -->
-                    <div style="display: grid; grid-template-columns: 2fr 1fr; border-bottom: 1px solid #000;">
-                        <div style="padding: 6px 10px; border-right: 1px solid #000;">
-                            <div style="font-size: 10px; font-weight: bold; color: #334155;">5 Address (number, street, and apt. or suite no.):</div>
-                            <div style="font-size: 13px; font-weight: bold; padding: 2px 0;">${w9.address || 'On file'}</div>
-                            
-                            <div style="font-size: 10px; font-weight: bold; color: #334155; margin-top: 6px;">6 City, state, and ZIP code:</div>
-                            <div style="font-size: 13px; font-weight: bold; padding: 2px 0;">${w9.cityStateZip || 'On file'}</div>
-                        </div>
-                        <div style="padding: 6px 10px; background: #f8fafc; font-size: 11px;">
-                            <strong style="display: block; margin-bottom: 4px; color: #0f172a;">Requester's name and address:</strong>
-                            Turn90, Inc.<br>
-                            3765 Leeds Ave<br>
-                            North Charleston, SC 29405
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Part I: Taxpayer Identification Number -->
-                <div style="border: 2px solid #000; margin-top: 14px; overflow: hidden;">
-                    <div style="background: #000; color: white; padding: 4px 10px; font-weight: bold; font-size: 12px; display: flex; justify-content: space-between;">
-                        <span>Part I: Taxpayer Identification Number (TIN)</span>
-                        <span style="font-size: 11px;">Official Certified TIN</span>
-                    </div>
-                    <div style="padding: 12px; background: #f8fafc;">
-                        <p style="font-size: 11px; margin: 0 0 8px 0; color: #334155;">
-                            Enter your TIN in the appropriate box. The TIN provided must match the name given on line 1 to avoid backup withholding.
-                        </p>
-                        <div style="display: flex; gap: 24px; align-items: center;">
-                            <div style="border: 2px solid #0f172a; background: white; padding: 8px 16px; border-radius: 4px;">
-                                <span style="font-size: 11px; font-weight: bold; color: #475569; display: block;">${w9.tinType === 'ein' ? 'Employer Identification Number (EIN)' : 'Social Security Number (SSN)'}:</span>
-                                <span style="font-family: monospace; font-size: 18px; font-weight: 900; letter-spacing: 3px; color: #0f172a;">${ssnFormatted}</span>
-                            </div>
-                            <div style="font-size: 11px; color: #166534; font-weight: bold;">
-                                ✅ Certified on file with Turn90 Payroll & Stipends
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Part II: Certification -->
-                <div style="border: 2px solid #000; margin-top: 14px; overflow: hidden;">
-                    <div style="background: #000; color: white; padding: 4px 10px; font-weight: bold; font-size: 12px;">
-                        Part II: Certification
-                    </div>
-                    <div style="padding: 10px 12px; font-size: 10.5px; line-height: 1.4; color: #334155;">
-                        <p style="margin: 0 0 4px 0; font-weight: bold;">Under penalties of perjury, I certify that:</p>
-                        <ol style="margin: 0 0 8px 16px; padding: 0;">
-                            <li>The number shown on this form is my correct taxpayer identification number (or I am waiting for a number to be issued to me); and</li>
-                            <li>I am not subject to backup withholding because: (a) I am exempt from backup withholding, or (b) I have not been notified by the IRS that I am subject to backup withholding, or (c) the IRS has notified me that I am no longer subject to backup withholding; and</li>
-                            <li>I am a U.S. citizen or other U.S. person; and</li>
-                            <li>The FATCA code(s) entered on this form (if any) indicating that I am exempt from FATCA reporting is correct.</li>
-                        </ol>
-
-                        <div style="border-top: 1px solid #000; padding-top: 10px; margin-top: 8px; display: grid; grid-template-columns: 2fr 1fr; gap: 16px; align-items: flex-end;">
-                            <div>
-                                <span style="font-size: 10px; font-weight: bold; color: #475569; display: block;">Signature of U.S. Person:</span>
-                                <div style="font-family: 'Brush Script MT', cursive, sans-serif; font-size: 24px; color: #1e3a8a; border-bottom: 1px solid #000; padding: 2px 8px;">
-                                    ${w9.signatureName || w9.fullName || 'Digital Signature Certified'}
-                                </div>
-                            </div>
-                            <div>
-                                <span style="font-size: 10px; font-weight: bold; color: #475569; display: block;">Date:</span>
-                                <div style="font-size: 14px; font-weight: bold; border-bottom: 1px solid #000; padding: 6px 8px;">
-                                    ${w9.signatureDate || new Date().toISOString().split('T')[0]}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-    } catch (e) {
-        body.innerHTML = '<p class="text-danger">Failed to load W-9 details: ' + e.message + '</p>';
-    }
-}
 
 async function openParticipantCasePlanModal() {
     const token = localStorage.getItem('fs_token');
@@ -4206,7 +4016,7 @@ async function generateReport(type) {
                     <div><strong>${data.needsBreakdown.driversLicenseIssues}</strong> Driver's License Actions</div>
                     <div><strong>${data.needsBreakdown.childSupportIssues}</strong> Child Support Issues</div>
                     <div><strong>${data.needsBreakdown.housingAtRisk}</strong> Housing At-Risk</div>
-                    <div><strong>${data.needsBreakdown.w9Pending}</strong> W-9 Submissions Missing</div>
+                    
                 </div>
             </div>
             <table class="data-table">
@@ -7599,4 +7409,65 @@ async function submitRelapseForm(e) {
     } catch(err) {
         alert('Failed to submit: ' + err.message);
     }
+}
+
+// PARTICIPANT FILE TABBED MODAL
+function switchPfTab(tabId) {
+    document.querySelectorAll('.pf-tab-content').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('.pf-tab-btn').forEach(el => {
+        el.classList.remove('active');
+        el.style.color = 'var(--slate)';
+        el.style.borderBottomColor = 'transparent';
+    });
+    
+    document.getElementById('pf-tab-' + tabId).classList.remove('hidden');
+    const activeBtn = Array.from(document.querySelectorAll('.pf-tab-btn')).find(b => b.getAttribute('onclick').includes(tabId));
+    if(activeBtn) {
+        activeBtn.classList.add('active');
+        activeBtn.style.color = 'var(--primary)';
+        activeBtn.style.borderBottomColor = 'var(--primary)';
+    }
+}
+
+function openParticipantFile(pId, pName, pGate, pLocation, pTrack, pEnrolled, hasHealth) {
+    document.getElementById('pf-name').innerText = pName;
+    document.getElementById('pf-location').innerText = pLocation || 'Unknown';
+    document.getElementById('pf-track').innerText = pTrack || 'First Shift';
+    document.getElementById('pf-enrolled').innerText = pEnrolled || 'Pending';
+    
+    // Quick Actions
+    document.getElementById('pf-quick-actions').innerHTML = `
+        <button class="btn btn-outline" onclick="openCorrectionModal(${pId}, '${pName}')">✏️ Edit Profile & Change Start Date</button>
+        <button class="btn btn-outline" onclick="impersonateParticipant(${pId})">👀 View Portal as ${pName.split(' ')[0]}</button>
+        <button class="btn btn-outline" onclick="promptSwitchTrack(${pId}, '${pName}', '${pTrack}')">🔄 Switch Track (Currently ${pTrack})</button>
+    `;
+
+    // Legal / Demographics
+    document.getElementById('pf-legal-content').innerHTML = `
+        
+        <div style="margin-bottom: 6px;"><strong>Driver's License:</strong> Not checked</div>
+        <div style="margin-bottom: 6px;"><strong>Child Support:</strong> Not checked</div>
+    `;
+
+    // Health Actions
+    document.getElementById('pf-health-actions').innerHTML = hasHealth > 0 
+        ? `<button onclick="openHealthScreenModal(${pId}, '${pName}')" class="btn btn-outline" style="color: #15803d; font-weight: bold; font-size: 11px; background: #dcfce7; border-color: #86efac;">✅ Health Assessment Completed</button>` 
+        : `<button onclick="openHealthScreenModal(${pId}, '${pName}')" class="btn btn-outline" style="font-size: 11px; color: #b91c1c; border-color: #fca5a5; background: #fee2e2;">⚠️ Complete Health Screen</button>`;
+
+    // Relapse Actions
+    document.getElementById('pf-relapse-actions').innerHTML = `
+        <button class="btn btn-outline" style="font-size: 11px; border-color: #fca5a5; color: #b91c1c; background: #fee2e2;" onclick="openRelapsePlanModal(${pId}, '${pName}', 'substance')">📝 Substance Relapse Plan</button>
+        <button class="btn btn-outline" style="font-size: 11px; border-color: #fcd34d; color: #b45309; background: #fef3c7;" onclick="openRelapsePlanModal(${pId}, '${pName}', 'behavior')">📝 Behavioral Relapse Plan</button>
+    `;
+
+    // Gamification & Progress
+    document.getElementById('pf-gate-actions').innerHTML = `
+        <button class="btn btn-primary" style="margin-bottom: 6px;" onclick="openGateChecklistModal(${pId}, '${pName}')">✅ Review Gate ${pGate} Checklist</button>
+        <button class="btn btn-outline" style="margin-bottom: 6px;" onclick="openCaseReviewModal(${pId}, '${pName}')">📋 Weekly Case Review & Feedback</button>
+        <button class="btn btn-outline" style="margin-bottom: 6px; color: #4338ca; border-color: #c7d2fe;" onclick="openPmCbtReviewModal(${pId}, '${pName}')">🧠 CBT Worksheets</button>
+        <button class="btn btn-outline" style="margin-bottom: 6px; color: #0f766e; border-color: #99f6e4; background: #f0fdfa;" onclick="printParticipantScoringByName('${pName}')">🖨️ Print LS/CMI Score</button>
+    `;
+
+    switchPfTab('overview');
+    openModal('modal-participant-file');
 }

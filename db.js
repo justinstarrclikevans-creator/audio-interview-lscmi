@@ -31,8 +31,7 @@ CREATE TABLE IF NOT EXISTS participant_profiles (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER UNIQUE NOT NULL,
     current_gate INTEGER DEFAULT 1, -- 1 to 4 (Within the 8-week First Shift program)
-    w9_status TEXT DEFAULT 'pending', -- 'pending', 'submitted', 'verified'
-    dl_status TEXT DEFAULT 'unknown',
+        dl_status TEXT DEFAULT 'unknown',
     dl_notes TEXT,
     child_support_status TEXT DEFAULT 'unknown',
     child_support_notes TEXT,

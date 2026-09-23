@@ -294,38 +294,6 @@ app.post('/api/participant/barriers', authenticateToken, (req, res) => {
     res.json({ message: 'Barrier profile updated successfully.' });
 });
 
-// Official Form W-9 Submission
-app.post('/api/participant/w9', authenticateToken, (req, res) => {
-    const userId = req.user.id;
-    const { fullName, businessName, taxClassification, exemptions, address, cityStateZip, tinType, ssnOrEin, signatureName, signatureDate } = req.body;
-
-    const w9Data = JSON.stringify({ 
-        fullName: fullName || req.user.name,
-        businessName: businessName || '',
-        taxClassification: taxClassification || 'Individual/sole proprietor',
-        exemptions: exemptions || '',
-        address: address || '',
-        cityStateZip: cityStateZip || '',
-        tinType: tinType || 'ssn',
-        ssnOrEin: ssnOrEin || '',
-        signatureName: signatureName || fullName || req.user.name,
-        signatureDate: signatureDate || new Date().toISOString().split('T')[0],
-        requester: 'Turn90, Inc., 3765 Leeds Ave, North Charleston, SC 29405',
-        certified: true
-    });
-
-    // Store in documents table
-    db.prepare(`
-        INSERT INTO documents (user_id, doc_type, title, filename, file_path, metadata_json)
-        VALUES (?, 'w9', 'Official Form W-9 (Signed & Certified)', 'Official_Form_W9.json', 'internal_json', ?)
-    `).run(userId, w9Data);
-
-    // Update profile & week 1 gate criteria
-    db.prepare(`UPDATE participant_profiles SET w9_status = 'verified' WHERE user_id = ?`).run(userId);
-    db.prepare(`UPDATE gate_criteria SET status = 'green', pm_notes = 'Official Form W-9 certified and recorded on file' WHERE user_id = ? AND criterion_key = 'w1_w9_id'`).run(userId);
-
-    res.json({ message: 'Official Form W-9 certified, recorded, and verified.', status: 'verified' });
-});
 
 // Document Uploads (ID, Certifications, etc.)
 app.post('/api/participant/upload-doc', authenticateToken, fileUpload.single('file'), (req, res) => {
@@ -741,7 +709,7 @@ app.get('/api/admin/caseload', authenticateToken, requireRole('program_manager',
     let query = `
         SELECT u.id, u.name, u.email, u.phone, u.location, u.track, u.created_at,
                u.address, u.ssn, u.birthdate,
-               p.current_gate, p.overall_status, p.w9_status, p.dl_status, p.dl_notes, 
+               p.current_gate, p.overall_status, p.dl_status, p.dl_notes, 
                p.child_support_status, p.child_support_notes, p.housing_status, p.transportation_status,
                p.has_reentry_plan, p.reentry_status, p.enrollment_date, p.correction_notes, p.record_id,
                (SELECT COUNT(*) FROM gate_criteria WHERE user_id = u.id AND status = 'green') as green_criteria,
@@ -1118,7 +1086,7 @@ app.post('/api/pm/participant-correction', authenticateToken, requireRole('progr
         childSupportNotes, 
         housingStatus, 
         transportationStatus,
-        w9Status,
+        
         recordId,
         address,
         ssn,
@@ -1156,7 +1124,7 @@ app.post('/api/pm/participant-correction', authenticateToken, requireRole('progr
             child_support_notes = COALESCE(?, child_support_notes),
             housing_status = COALESCE(?, housing_status),
             transportation_status = COALESCE(?, transportation_status),
-            w9_status = COALESCE(?, w9_status),
+            
             record_id = COALESCE(?, record_id),
             updated_at = CURRENT_TIMESTAMP
         WHERE user_id = ?
@@ -1169,7 +1137,7 @@ app.post('/api/pm/participant-correction', authenticateToken, requireRole('progr
         childSupportNotes !== undefined && childSupportNotes !== '' ? childSupportNotes : null,
         housingStatus !== undefined && housingStatus !== '' ? housingStatus : null,
         transportationStatus !== undefined && transportationStatus !== '' ? transportationStatus : null,
-        w9Status !== undefined && w9Status !== '' ? w9Status : null,
+        
         recordId !== undefined && recordId !== '' ? recordId : null,
         userId
     );
@@ -2205,7 +2173,7 @@ function generateParticipantCasePlanMarkdown(user, profile, items, notes) {
     md += `- **Child Support Status:** ${(profile.child_support_status || 'Under Review').toUpperCase()}${profile.child_support_notes ? ' (' + profile.child_support_notes + ')' : ''}\n`;
     md += `- **Housing / Living Situation:** ${(profile.housing_status || 'Transitional / Temporary Housing').toUpperCase()}\n`;
     md += `- **Transportation:** ${(profile.transportation_status || 'Public Transit / Bus').toUpperCase()}\n`;
-    md += `- **W-9 & Identity Verification:** ${(profile.w9_status || 'Pending').toUpperCase()}\n\n`;
+    
 
     md += `### 2. Stated Goals & Career Focus\n`;
     md += `- **Primary Goal:** Turn90 Program Graduation, Long-term Freedom, and Sustainable Career Placement.\n`;
@@ -2354,61 +2322,6 @@ app.get('/api/pm/case-plan/:userId', authenticateToken, handleGetCasePlan);
 
 
 
-// Fetch Stored W-9 Details (Hardened & Resilient)
-app.get('/api/participant/w9-details/:userId', authenticateToken, (req, res) => {
-    let targetId = parseInt(req.params.userId);
-    if (!targetId || isNaN(targetId)) {
-        targetId = req.user ? req.user.id : null;
-    }
-    if (!targetId) {
-        return res.status(400).json({ error: 'Valid participant ID is required.' });
-    }
-    if (req.user && req.user.role === 'participant' && req.user.id !== targetId) {
-        return res.status(403).json({ error: 'Unauthorized to view this W-9.' });
-    }
-
-    try {
-        const doc = db.prepare("SELECT * FROM documents WHERE user_id = ? AND doc_type = 'w9' ORDER BY uploaded_at DESC LIMIT 1").get(targetId);
-        const profile = db.prepare('SELECT w9_status FROM participant_profiles WHERE user_id = ?').get(targetId);
-        const user = db.prepare('SELECT name, email, phone, location FROM users WHERE id = ?').get(targetId);
-        
-        let parsedW9 = null;
-        if (doc && doc.metadata_json) {
-            try {
-                parsedW9 = typeof doc.metadata_json === 'string' ? JSON.parse(doc.metadata_json) : doc.metadata_json;
-            } catch (e) {
-                console.warn('Error parsing W-9 JSON:', e.message);
-            }
-        }
-
-        // Graceful fallback: If record exists in system, render official template populated with user data
-        if (!parsedW9 && user) {
-            parsedW9 = {
-                fullName: user.name,
-                businessName: '',
-                taxClassification: 'Individual/sole proprietor or single-member LLC',
-                exemptions: 'N/A',
-                address: 'On file with Turn90',
-                cityStateZip: (user.location || 'Charleston') + ', SC',
-                tinType: 'ssn',
-                ssnOrEin: '***-**-****',
-                signatureName: user.name,
-                signatureDate: new Date().toISOString().split('T')[0]
-            };
-        }
-
-        res.json({
-            user: user || { name: 'Participant #' + targetId, location: 'Charleston' },
-            status: profile ? profile.w9_status : 'submitted',
-            w9Data: parsedW9
-        });
-    } catch(err) {
-        console.error('Error fetching W-9 details:', err);
-        res.status(500).json({ error: 'Failed to retrieve W-9 details: ' + err.message });
-    }
-});
-
-// Manual / External Interview Entry (for Lawrence, Isiah, or new participants)
 app.post('/api/interviews/manual-entry', memoryUpload.single('audio'), async (req, res) => {
     try {
         const name = req.body.participantName;
@@ -2810,7 +2723,7 @@ app.get('/api/reentry/participants', authenticateToken, requireRole('program_man
         let query = `
             SELECT 
                 u.id, u.name, u.email, u.phone, u.location, u.track,
-                p.current_gate, p.w9_status, p.dl_status, p.child_support_status,
+                p.current_gate, p.dl_status, p.child_support_status,
                 p.housing_status, p.overall_status, p.reentry_status, p.has_reentry_plan,
                 r.stability_status AS plan_stability_status,
                 r.staff_plan_docx, r.participant_guide_docx, r.updated_at AS plan_updated_at
