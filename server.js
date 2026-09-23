@@ -382,7 +382,7 @@ app.post('/api/participant/feedback', authenticateToken, (req, res) => {
 // Update Participant Gate Item (Status & Notes)
 app.post('/api/participant/gate-item', authenticateToken, (req, res) => {
     let userId = req.user.id;
-    if ((req.user.role === 'program_manager' || req.user.role === 'admin') && req.body.userId) {
+    if (req.user.role !== 'participant' && req.body.userId) {
         userId = parseInt(req.body.userId, 10);
     }
     const { criterion_key, status, participant_notes } = req.body;
@@ -459,7 +459,10 @@ app.get('/api/participant/briefcase', authenticateToken, (req, res) => {
 
 // Update Participant Briefcase Item Status
 app.post('/api/participant/briefcase-item', authenticateToken, (req, res) => {
-    const userId = req.user.id;
+    let userId = req.user.id;
+    if (req.user.role !== 'participant' && req.body.userId) {
+        userId = parseInt(req.body.userId, 10);
+    }
     const { itemKey, status, notes } = req.body;
     if (!itemKey || !status) return res.status(400).json({ error: 'itemKey and status required.' });
 
@@ -733,7 +736,7 @@ app.get('/api/resume', authenticateToken, (req, res) => {
 // -------------------------------------------------------------
 
 // Get Full Caseload Roster with Filters
-app.get('/api/admin/caseload', authenticateToken, requireRole('program_manager', 'admin', 'director'), (req, res) => {
+app.get('/api/admin/caseload', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
     const { location, track, gate, status, weekDate } = req.query;
     let query = `
         SELECT u.id, u.name, u.email, u.phone, u.location, u.track, u.created_at,
@@ -819,7 +822,7 @@ app.get('/api/admin/caseload', authenticateToken, requireRole('program_manager',
 });
 
 // Switch Participant Track (First Shift <-> Re-entry Nav)
-app.post('/api/pm/switch-track', authenticateToken, requireRole('program_manager', 'admin', 'director'), async (req, res) => {
+app.post('/api/pm/switch-track', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), async (req, res) => {
     const userId = req.body.userId;
     const newTrack = req.body.newTrack || req.body.targetTrack;
     if (!userId || !newTrack) return res.status(400).json({ error: 'userId and newTrack required.' });
@@ -841,7 +844,7 @@ app.post('/api/pm/switch-track', authenticateToken, requireRole('program_manager
 });
 
 // Remove / Archive Participant (No Longer Receiving Services)
-app.post('/api/pm/archive-participant', authenticateToken, requireRole('program_manager', 'admin', 'director'), async (req, res) => {
+app.post('/api/pm/archive-participant', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), async (req, res) => {
     const { userId, reason, action } = req.body; // action: 'archive' or 'restore'
     if (!userId) return res.status(400).json({ error: 'userId is required.' });
 
@@ -876,7 +879,7 @@ app.post('/api/pm/archive-participant', authenticateToken, requireRole('program_
 });
 
 // Participant Notes Management (Add & Retrieve)
-app.get('/api/pm/notes/:userId', authenticateToken, requireRole('program_manager', 'admin', 'director'), (req, res) => {
+app.get('/api/pm/notes/:userId', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
     const userId = req.params.userId;
     const notes = db.prepare(`
         SELECT * FROM case_notes WHERE user_id = ? ORDER BY session_date DESC, id DESC
@@ -884,7 +887,7 @@ app.get('/api/pm/notes/:userId', authenticateToken, requireRole('program_manager
     res.json(notes);
 });
 
-app.post('/api/pm/notes', authenticateToken, requireRole('program_manager', 'admin', 'director'), (req, res) => {
+app.post('/api/pm/notes', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
     const { userId, noteType, category, content, sessionDate } = req.body;
     if (!userId || !content) return res.status(400).json({ error: 'userId and content are required.' });
 
@@ -900,7 +903,7 @@ app.post('/api/pm/notes', authenticateToken, requireRole('program_manager', 'adm
 });
 
 // Export Case Notes Formatted for Apricot (.xlsx or .csv)
-app.get('/api/pm/notes-export', authenticateToken, requireRole('program_manager', 'admin', 'director'), (req, res) => {
+app.get('/api/pm/notes-export', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
     const format = req.query.format || 'xlsx';
     const location = req.query.location || null;
 
@@ -918,13 +921,13 @@ app.get('/api/pm/notes-export', authenticateToken, requireRole('program_manager'
 });
 
 // Detailed Weekly Points Breakdown for a Participant
-app.get('/api/pm/points-summary/:userId', authenticateToken, requireRole('program_manager', 'admin', 'director'), (req, res) => {
+app.get('/api/pm/points-summary/:userId', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
     const summary = getWeeklyPointsSummary(req.params.userId);
     res.json(summary);
 });
 
 // Update Participant Gate Criteria Status (Red/Green/Pending)
-app.post('/api/admin/update-criterion', authenticateToken, requireRole('program_manager', 'admin', 'director'), (req, res) => {
+app.post('/api/admin/update-criterion', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
     const { userId, criterionKey, status, notes } = req.body;
     if (!userId || !criterionKey || !status) return res.status(400).json({ error: 'Missing required parameters.' });
 
@@ -940,7 +943,7 @@ app.post('/api/admin/update-criterion', authenticateToken, requireRole('program_
 });
 
 // Advance Participant Gate (Week 1 -> 2 -> 3 -> 4)
-app.post('/api/admin/advance-gate', authenticateToken, requireRole('program_manager', 'admin', 'director'), (req, res) => {
+app.post('/api/admin/advance-gate', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
     const { userId, nextGate } = req.body;
     if (!userId || !nextGate) return res.status(400).json({ error: 'Missing userId or nextGate' });
 
@@ -949,7 +952,7 @@ app.post('/api/admin/advance-gate', authenticateToken, requireRole('program_mana
 });
 
 // Update SkillCat Engagement Level
-app.post('/api/admin/update-skillcat', authenticateToken, requireRole('program_manager', 'admin', 'director'), (req, res) => {
+app.post('/api/admin/update-skillcat', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
     const { userId, engagement } = req.body;
     if (!userId || !engagement) return res.status(400).json({ error: 'userId and engagement level required.' });
 
@@ -967,21 +970,21 @@ app.post('/api/admin/update-skillcat', authenticateToken, requireRole('program_m
 });
 
 // Generate Monday Participant Needs Report
-app.get('/api/admin/reports/monday-needs', authenticateToken, requireRole('program_manager', 'admin', 'director'), (req, res) => {
+app.get('/api/admin/reports/monday-needs', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
     const location = req.query.location || null;
     const report = generateMondayNeedsReport(location);
     res.json(report);
 });
 
 // Generate Friday Milestone & Termination Report
-app.get('/api/admin/reports/friday-milestones', authenticateToken, requireRole('program_manager', 'admin', 'director'), (req, res) => {
+app.get('/api/admin/reports/friday-milestones', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
     const location = req.query.location || null;
     const report = generateFridayMilestoneReport(location);
     res.json(report);
 });
 
 // Import Apricot Points Excel Spreadsheet (.xlsx, .xls) or CSV
-app.post('/api/admin/apricot/import-points', authenticateToken, requireRole('program_manager', 'admin', 'director'), memoryUpload.single('file'), (req, res) => {
+app.post('/api/admin/apricot/import-points', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), memoryUpload.single('file'), (req, res) => {
     try {
         let result;
         if (req.file && req.file.buffer) {
@@ -1011,7 +1014,7 @@ app.post('/api/admin/apricot/import-points', authenticateToken, requireRole('pro
 });
 
 // Record Single Daily Point Entry manually
-app.post('/api/pm/daily-point', authenticateToken, requireRole('program_manager', 'admin', 'director'), (req, res) => {
+app.post('/api/pm/daily-point', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
     const { userId, date, points, attendanceStatus, notes } = req.body;
     if (!userId || !date) return res.status(400).json({ error: 'userId and date required.' });
 
@@ -1031,7 +1034,7 @@ app.post('/api/pm/daily-point', authenticateToken, requireRole('program_manager'
 });
 
 // Record Single Drug Test Entry
-app.post('/api/pm/drug-test', authenticateToken, requireRole('program_manager', 'admin', 'director'), (req, res) => {
+app.post('/api/pm/drug-test', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
     const { userId, testDate, result, substancesDetected, notes } = req.body;
     if (!userId) return res.status(400).json({ error: 'userId is required.' });
 
@@ -1047,7 +1050,7 @@ app.post('/api/pm/drug-test', authenticateToken, requireRole('program_manager', 
 });
 
 // Import Drug Tests Spreadsheet (.xlsx) or CSV
-app.post('/api/pm/import-drug-tests', authenticateToken, requireRole('program_manager', 'admin', 'director'), memoryUpload.single('file'), (req, res) => {
+app.post('/api/pm/import-drug-tests', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), memoryUpload.single('file'), (req, res) => {
     try {
         let result;
         if (req.file && req.file.buffer) {
@@ -1065,7 +1068,7 @@ app.post('/api/pm/import-drug-tests', authenticateToken, requireRole('program_ma
 });
 
 // Fetch Drug Tests for a Participant
-app.get('/api/pm/drug-tests/:userId', authenticateToken, requireRole('program_manager', 'admin', 'director'), (req, res) => {
+app.get('/api/pm/drug-tests/:userId', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
     const tests = db.prepare(`
         SELECT * FROM drug_tests WHERE user_id = ? ORDER BY test_date DESC, id DESC
     `).all(req.params.userId);
@@ -1073,7 +1076,7 @@ app.get('/api/pm/drug-tests/:userId', authenticateToken, requireRole('program_ma
 });
 
 // Import Case Management Notes Spreadsheet (.xlsx) or CSV
-app.post('/api/pm/import-case-notes', authenticateToken, requireRole('program_manager', 'admin', 'director'), memoryUpload.single('file'), (req, res) => {
+app.post('/api/pm/import-case-notes', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), memoryUpload.single('file'), (req, res) => {
     try {
         let result;
         if (req.file && req.file.buffer) {
@@ -1104,7 +1107,7 @@ app.delete('/api/admin/participant/:userId', authenticateToken, requireRole('adm
 });
 
 // Participant Information & Correction Notes Update (Fix erroneous information directly)
-app.post('/api/pm/participant-correction', authenticateToken, requireRole('program_manager', 'admin', 'director'), (req, res) => {
+app.post('/api/pm/participant-correction', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
     const { 
         userId, 
         correctionNotes, 
@@ -1183,7 +1186,7 @@ app.post('/api/pm/participant-correction', authenticateToken, requireRole('progr
 });
 
 // Generate Case Management vs Briefcase Cross-Check Audit & Feedback Report
-app.get('/api/pm/reports/cm-briefcase-audit/:userId', authenticateToken, requireRole('program_manager', 'admin', 'director'), (req, res) => {
+app.get('/api/pm/reports/cm-briefcase-audit/:userId', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
     try {
         const audit = generateCaseManagementBriefcaseAudit(parseInt(req.params.userId));
         if (!audit) return res.status(404).json({ error: 'Participant not found.' });
@@ -1194,12 +1197,12 @@ app.get('/api/pm/reports/cm-briefcase-audit/:userId', authenticateToken, require
 });
 
 // Get All Official Stability Step-Down Triggers
-app.get('/api/admin/stability-triggers', authenticateToken, requireRole('program_manager', 'admin', 'director'), (req, res) => {
+app.get('/api/admin/stability-triggers', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
     res.json(STABILITY_STEP_DOWN_TRIGGERS);
 });
 
 // Step-Down to Re-entry Nav OR Apply Director Override
-app.post('/api/admin/stability-action', authenticateToken, requireRole('program_manager', 'admin', 'director'), (req, res) => {
+app.post('/api/admin/stability-action', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
     const { userId, action, triggers, overrideBy, overrideNotes } = req.body;
     if (!userId || !action) return res.status(400).json({ error: 'userId and action required.' });
 
@@ -1246,7 +1249,7 @@ app.post('/api/admin/stability-action', authenticateToken, requireRole('program_
 });
 
 // Submit Weekly 4-Pillar Case Planning Review
-app.post('/api/admin/weekly-case-review', authenticateToken, requireRole('program_manager', 'admin', 'director'), (req, res) => {
+app.post('/api/admin/weekly-case-review', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
     const {
         userId, weekNumber, reviewedBy,
         hasStabilityIssues, stabilityIssuesDetails, canMeetRapidly, needsMoreResources, resourceNotes,
@@ -1292,7 +1295,7 @@ app.post('/api/admin/weekly-case-review', authenticateToken, requireRole('progra
 
 
 // Assign Scoring to Participant
-app.post('/api/admin/scoring/assign', authenticateToken, requireRole('program_manager', 'admin', 'director'), (req, res) => {
+app.post('/api/admin/scoring/assign', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
     const { clientId, participantName } = req.body;
     if (!clientId || !participantName) return res.status(400).json({ error: 'clientId and participantName required' });
     
@@ -1318,7 +1321,7 @@ app.post('/api/admin/scoring/assign', authenticateToken, requireRole('program_ma
 });
 
 // Get Class Feedback Summary
-app.get('/api/admin/feedback-summary', authenticateToken, requireRole('program_manager', 'admin', 'director'), (req, res) => {
+app.get('/api/admin/feedback-summary', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
     const feedback = db.prepare(`SELECT * FROM class_feedback ORDER BY submitted_at DESC LIMIT 50`).all();
     const stats = db.prepare(`
         SELECT session_title, COUNT(*) as responses, AVG(rating) as avg_rating
@@ -1331,7 +1334,7 @@ app.get('/api/admin/feedback-summary', authenticateToken, requireRole('program_m
 // EXISTING AUDIO INTERVIEW & LLM PIPELINE (PRESERVED IN FULL)
 // -------------------------------------------------------------
 
-app.delete('/api/interviews/:clientId', authenticateToken, requireRole('program_manager', 'admin', 'director'), (req, res) => {
+app.delete('/api/interviews/:clientId', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
     try {
         const clientId = req.params.clientId;
         if (!clientId || clientId.includes('..') || clientId.includes('/')) return res.status(400).json({error: "Invalid client ID"});
@@ -2551,7 +2554,7 @@ app.post('/api/interviews/generate-draft', async (req, res) => {
 });
 
 // Class Facilitation Evaluations API
-app.get('/api/admin/evaluations', authenticateToken, requireRole('program_manager', 'admin', 'director'), (req, res) => {
+app.get('/api/admin/evaluations', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
     const location = req.query.location;
     let query = 'SELECT * FROM class_facilitation_evaluations';
     const params = [];
@@ -2564,7 +2567,7 @@ app.get('/api/admin/evaluations', authenticateToken, requireRole('program_manage
     res.json(evals);
 });
 
-app.delete('/api/admin/evaluations/:id', authenticateToken, requireRole('program_manager', 'admin', 'director'), (req, res) => {
+app.delete('/api/admin/evaluations/:id', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
     try {
         const id = req.params.id;
         db.prepare('DELETE FROM class_facilitation_evaluations WHERE id = ?').run(id);
@@ -2575,7 +2578,7 @@ app.delete('/api/admin/evaluations/:id', authenticateToken, requireRole('program
 });
 
 // 2-Week Average Stats
-app.get('/api/admin/evaluations/stats', authenticateToken, requireRole('program_manager', 'admin', 'director'), (req, res) => {
+app.get('/api/admin/evaluations/stats', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
     const stats = db.prepare(`
         SELECT location, AVG(total_score) as avg_score, COUNT(*) as eval_count
         FROM class_facilitation_evaluations
@@ -2587,7 +2590,7 @@ app.get('/api/admin/evaluations/stats', authenticateToken, requireRole('program_
 
 global.syncStatus = { running: false, log: "Not started", results: null };
 
-app.post('/api/admin/evaluations/force-sync', authenticateToken, requireRole('program_manager', 'admin', 'director'), async (req, res) => {
+app.post('/api/admin/evaluations/force-sync', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), async (req, res) => {
     try {
         if (global.syncStatus.running) {
             return res.json({ success: true, message: 'Sync already running.' });
@@ -2612,11 +2615,11 @@ app.post('/api/admin/evaluations/force-sync', authenticateToken, requireRole('pr
     }
 });
 
-app.get('/api/admin/evaluations/sync-status', authenticateToken, requireRole('program_manager', 'admin', 'director'), (req, res) => {
+app.get('/api/admin/evaluations/sync-status', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
     res.json(global.syncStatus);
 });
 
-app.post('/api/admin/evaluate-classes', authenticateToken, requireRole('program_manager', 'admin', 'director'), memoryUpload.single('audioOrTranscript'), async (req, res) => {
+app.post('/api/admin/evaluate-classes', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), memoryUpload.single('audioOrTranscript'), async (req, res) => {
     try {
         const { location, sessionTitle, facilitatorName, transcriptText } = req.body;
         let textToEvaluate = transcriptText || '';

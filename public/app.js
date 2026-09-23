@@ -2810,7 +2810,7 @@ async function advanceParticipantGate(userId, nextGate) {
     if (nextGate > 4) {
         return alert('Participant is already at Gate 4 (Ready for Job Placement).');
     }
-    if (!confirm(`Advance this participant to Gate ${nextGate}?`)) return;
+    if (!confirm(`Advance this participant to Gate ${nextGate}?`)) { loadCaseload(); return; }
 
     const token = localStorage.getItem('fs_token');
     if (!token) {
@@ -7285,7 +7285,7 @@ async function saveModalGateItem(criterionKey) {
     try {
         const token = localStorage.getItem('fs_token');
         const payload = { criterion_key: criterionKey, status: status, participant_notes: notes };
-        if (currentGateModalRole === 'program_manager' || currentGateModalRole === 'admin') {
+        if (currentGateModalRole !== 'participant') {
             payload.userId = currentGateModalUserId;
         }
 
@@ -7321,7 +7321,7 @@ async function saveModalGateItem(criterionKey) {
         else { badge.classList.add('badge-pending'); badge.innerText = 'Pending'; }
 
         // Refresh caseload if staff
-        if (currentGateModalRole === 'program_manager' || currentGateModalRole === 'admin') {
+        if (currentGateModalRole !== 'participant') {
             if (typeof loadCaseload === 'function') loadCaseload();
         }
     } catch (e) {
