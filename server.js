@@ -3466,11 +3466,6 @@ app.post('/api/admin/impersonate/:userId', authenticateToken, (req, res) => {
     res.json({ token, user });
 });
 
-// Catch-all for undefined API routes - ALWAYS return JSON, NEVER HTML
-app.use('/api', (req, res) => {
-    res.status(404).json({ error: `API endpoint ${req.method} ${req.originalUrl} not found.` });
-});
-
 // Fallback to index.html for SPA / client routes
 app.use((req, res, next) => {
     if (req.method === 'GET' && !req.path.startsWith('/api/') && !req.path.startsWith('/data/')) {
@@ -5688,6 +5683,13 @@ ${JSON.stringify(bundleData, null, 2)}
 
 
 
+
+
+
+// Catch-all for undefined API routes - ALWAYS return JSON, NEVER HTML
+app.use('/api', (req, res) => {
+    res.status(404).json({ error: `API endpoint ${req.method} ${req.originalUrl} not found.` });
+});
 
 app.listen(PORT, async () => {
     console.log(`🚀 Unified First Shift & Re-entry App running at http://localhost:${PORT}`);
