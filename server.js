@@ -1151,7 +1151,7 @@ app.delete('/api/admin/participant/:userId', authenticateToken, requireRole('adm
     const { userId } = req.params;
     if (!userId) return res.status(400).json({ error: 'User ID required' });
     try {
-        db.prepare('DELETE FROM users WHERE id = ? AND role = "participant"').run(userId);
+        db.prepare("DELETE FROM users WHERE id = ? AND role = 'participant'").run(userId);
         res.json({ message: 'Participant deleted successfully.' });
     } catch (e) {
         res.status(500).json({ error: 'Failed to delete participant: ' + e.message });
