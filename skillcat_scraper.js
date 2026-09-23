@@ -56,9 +56,9 @@ const db = require('better-sqlite3')('./data/app_database.sqlite');
 
         // Wait for trainees to load and scrape
         console.log("Waiting for employee list to load...");
-        await page.waitForSelector('.trainee-name', { visible: true, timeout: 15000 });
+        await page.waitForSelector('.trainee-name', { visible: true, timeout: 15000 }); console.log("Waiting 10s for engagement labels..."); await new Promise(r => setTimeout(r, 6000));
 
-        console.log("Scraping student engagement levels...");
+        console.log("Scraping student engagement levels..."); 
         const studentData = await page.evaluate(() => {
             const students = [];
             const nameNodes = document.querySelectorAll('.trainee-name');
@@ -113,13 +113,13 @@ const db = require('better-sqlite3')('./data/app_database.sqlite');
                 
                 const result = updateBriefcase.run(finalEngagement, student.name);
                 if (result.changes > 0) {
-                    console.log(`✅ Updated DB for \${student.name} -> \${finalEngagement}`);
+                    console.log(`✅ Updated DB for ${student.name} -> ${finalEngagement}`);
                     updateCount++;
                 }
             }
         })();
 
-        console.log(`Finished updating \${updateCount} records.`);
+        console.log(`Finished updating ${updateCount} records.`);
 
     } catch (error) {
         console.error("Scraping failed:", error.message);
