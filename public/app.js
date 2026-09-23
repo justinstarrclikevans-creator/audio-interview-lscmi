@@ -7084,12 +7084,14 @@ window.switchCaseloadTab = function(tab) {
     const evalCard = document.getElementById('pm-facilitation-evals-list')?.closest('.section-card');
     if (evalCard) evalCard.classList.remove('hidden');
 
+    const trackFilter = document.getElementById('pm-filter-track');
     const statusFilter = document.getElementById('pm-filter-status');
+    if (statusFilter) statusFilter.value = '';
     const titleEl = document.getElementById('caseload-title');
     const thead = document.getElementById('caseload-thead');
     
     if (tab === 'first_shift') {
-        if (statusFilter) statusFilter.value = 'active';
+        if (trackFilter) trackFilter.value = 'first_shift';
         if (titleEl) titleEl.innerText = '🏢 First Shift Caseload';
         if (thead) {
             thead.innerHTML = `
@@ -7105,7 +7107,7 @@ window.switchCaseloadTab = function(tab) {
             `;
         }
     } else if (tab === 'reentry_nav') {
-        if (statusFilter) statusFilter.value = 'reentry_nav_stabilizing';
+        if (trackFilter) trackFilter.value = 'reentry_nav';
         if (titleEl) titleEl.innerText = '🧭 Re-entry Navigation Caseload';
         if (thead) {
             thead.innerHTML = `
