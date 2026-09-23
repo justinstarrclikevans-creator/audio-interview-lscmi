@@ -3684,6 +3684,8 @@ app.get('/api/apricot/export', authenticateToken, (req, res) => {
             const db = require('./db').db;
             db.prepare(`DELETE FROM gate_criteria WHERE criterion_key NOT IN (${placeholders})`).run(...validKeys);
             console.log("Migration: Cleaned up old/deprecated gate criteria");
+            db.prepare("DELETE FROM gate_criteria WHERE criterion_key LIKE '%skillcat%' AND user_id IN (SELECT id FROM users WHERE track = 'reentry_nav')").run();
+            console.log("Migration: Removed SkillCat gates for Reentry Nav participants");
         }
     } catch (e) {
         console.error("Migration failed:", e.message);

@@ -561,6 +561,14 @@ const BENEFIT_PROGRAMS = {
 
 // Initialize default briefcase items, gate criteria, and benefits for a participant
 function initParticipantBriefcase(userId) {
+    const check = db.prepare('SELECT id FROM participant_profiles WHERE user_id = ?').get(userId);
+    if (!check) {
+        db.prepare('INSERT OR IGNORE INTO participant_profiles (user_id) VALUES (?)').run(userId);
+    }
+
+    const user = db.prepare('SELECT track FROM users WHERE id = ?').get(userId);
+    const track = user ? user.track : 'first_shift';
+
     const insertBriefcase = db.prepare(`
         INSERT OR IGNORE INTO briefcase_items (user_id, domain, item_key, title, status)
         VALUES (?, ?, ?, ?, 'pending')
@@ -586,6 +594,9 @@ function initParticipantBriefcase(userId) {
         // Seed 4-week gate criteria
         for (let week = 1; week <= 4; week++) {
             for (const c of DEFAULT_GATE_CRITERIA[week]) {
+                if (track === 'reentry_nav' && c.key.includes('skillcat')) {
+                    continue; // Reentry Nav does not do SkillCat
+                }
                 insertGate.run(userId, week, c.key, c.title, c.description);
             }
         }
