@@ -979,12 +979,8 @@ app.post('/api/admin/apricot/import-points', authenticateToken, requireRole('pro
                 // Check if it's the unified Render Report
                 const XLSX = require('xlsx');
                 const wb = XLSX.read(req.file.buffer, { type: 'buffer' });
-                if (wb.SheetNames.some(n => n.includes('Points - Rows') || n.includes('Drug Test - Rows') || n.includes('1st Shift'))) {
-                    const { importUnifiedRenderReport } = require('./reporting_engine');
-                    result = importUnifiedRenderReport(req.file.buffer);
-                } else {
-                    result = importApricotData(req.file.buffer, true);
-                }
+                const { importUnifiedRenderReport } = require('./reporting_engine');
+                result = importUnifiedRenderReport(req.file.buffer);
             } else {
                 result = importApricotData(req.file.buffer, false);
             }
