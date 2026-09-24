@@ -11,7 +11,7 @@ async function runSkillCatScraper() {
         throw new Error("Missing SKILLCAT_EMAIL or SKILLCAT_PASSWORD in .env file.");
     }
 
-    const browser = await puppeteer.launch({ headless: true });
+    const browser = await puppeteer.launch({ headless: true, args: ["--no-sandbox", "--disable-setuid-sandbox"] });
     try {
         const page = await browser.newPage();
         const loginUrl = 'https://skillcat.app/login/index.php';
