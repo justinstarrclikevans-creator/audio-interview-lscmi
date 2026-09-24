@@ -91,6 +91,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
+window.switchPublicTab = function(tab) {
+    document.getElementById('pub-btn-jobs').classList.replace(tab==='jobs'?'btn-outline':'btn-primary', tab==='jobs'?'btn-primary':'btn-outline');
+    document.getElementById('pub-btn-benefits').classList.replace(tab==='benefits'?'btn-outline':'btn-primary', tab==='benefits'?'btn-primary':'btn-outline');
+    
+    document.getElementById('pub-sec-jobs').classList.toggle('hidden', tab !== 'jobs');
+    document.getElementById('pub-sec-benefits').classList.toggle('hidden', tab !== 'benefits');
+    
+    if (tab === 'jobs' && document.getElementById('job-listings-grid').innerHTML.trim() === '') {
+        handleJobSearchSubmit();
+    } else if (tab === 'benefits' && document.getElementById('rn-benefits-container').innerHTML.trim() === '') {
+        loadParticipantBenefits();
+    }
+};
+
+window.openStaffLogin = function() {
+    showView('view-auth');
+};
+
+
 async function restoreSession(token) {
     try {
         const res = await fetch('/api/auth/me', {
@@ -115,7 +134,7 @@ async function restoreSession(token) {
 function updateNav() {
     const navRight = document.getElementById('nav-user-section');
     if (!currentUser) {
-        navRight.innerHTML = '';
+        navRight.innerHTML = '<button class="btn btn-outline" style="padding: 6px 12px; font-size: 12px; background: white;" onclick="openStaffLogin()">Staff Login</button>';
         return;
     }
 
@@ -129,7 +148,11 @@ function updateNav() {
 }
 
 function routeUserToPortal() {
-    if (!currentUser) return showView('view-auth');
+    if (!currentUser) {
+        showView('view-public');
+        switchPublicTab('jobs');
+        return;
+    }
     resetParticipantAiState();
     showView('view-pm-portal');
     switchCaseloadTab('first_shift');
