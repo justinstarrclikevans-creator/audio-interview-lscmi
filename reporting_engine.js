@@ -847,6 +847,33 @@ function importUnifiedRenderReport(buffer) {
                         updateEnrollment.run(enrollDate, userId);
                     }
                 }
+
+                // Extract PII if present
+                const ssnKey = Object.keys(row).find(k => k.toLowerCase() === 'ssn' || k.toLowerCase().includes('social security'));
+                const dobKey = Object.keys(row).find(k => k.toLowerCase().includes('dob') || k.toLowerCase().includes('date of birth') || k.toLowerCase() === 'birthdate');
+                const addrKey = Object.keys(row).find(k => k.toLowerCase().includes('address') && !k.toLowerCase().includes('email'));
+                const recordIdKey = Object.keys(row).find(k => k.toLowerCase() === 'record id' || k.toLowerCase() === 'participant id');
+
+                const ssn = ssnKey ? row[ssnKey] : null;
+                const dob = dobKey ? parseExcelDate(row[dobKey]) : null;
+                const addr = addrKey ? row[addrKey] : null;
+                const recordId = recordIdKey ? row[recordIdKey] : null;
+
+                if (ssn || dob || addr) {
+                    const updates = [];
+                    const params = [];
+                    if (ssn) { updates.push('ssn = ?'); params.push(String(ssn).trim()); }
+                    if (dob) { updates.push('birthdate = ?'); params.push(dob); }
+                    if (addr) { updates.push('address = ?'); params.push(String(addr).trim()); }
+                    
+                    if (updates.length > 0) {
+                        params.push(userId);
+                        db.prepare(`UPDATE users SET ${updates.join(', ')} WHERE id = ?`).run(...params);
+                    }
+                }
+                if (recordId) {
+                    db.prepare(`UPDATE participant_profiles SET record_id = ? WHERE user_id = ?`).run(String(recordId).trim(), userId);
+                }
             }
         }
 

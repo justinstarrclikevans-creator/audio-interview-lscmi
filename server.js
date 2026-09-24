@@ -61,7 +61,15 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'), {
+    setHeaders: (res, path) => {
+        if (path.endsWith('.html') || path.endsWith('.js') || path.endsWith('.css')) {
+            res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+            res.setHeader('Pragma', 'no-cache');
+            res.setHeader('Expires', '0');
+        }
+    }
+}));
 
 const dataDir = path.join(__dirname, 'data');
 if (!fs.existsSync(dataDir)) {
@@ -920,6 +928,16 @@ app.post('/api/admin/advance-gate', authenticateToken, requireRole('program_mana
 });
 
 // Update SkillCat Engagement Level
+app.post("/api/admin/sync-skillcat-scraper", authenticateToken, requireRole("program_manager", "admin", "director"), async (req, res) => {
+    const { runSkillCatScraper } = require("./skillcat_scraper");
+    try {
+        const result = await runSkillCatScraper();
+        res.json({ message: `Successfully synced ${result.count} students from SkillCat.` });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
 app.post('/api/admin/update-skillcat', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
     const { userId, engagement } = req.body;
     if (!userId || !engagement) return res.status(400).json({ error: 'userId and engagement level required.' });
@@ -5715,9 +5733,9 @@ app.post('/api/participant/habit', authenticateToken, (req, res) => {
 app.listen(PORT, async () => {
     console.log(`🚀 Unified First Shift & Re-entry App running at http://localhost:${PORT}`);
     try {
-        console.log('🔄 Checking and auto-syncing Briefcase caseload on startup...');
-        await runCaseloadMigration();
-        console.log('✅ Caseload auto-sync complete.');
+        // console.log('🔄 Checking and auto-syncing Briefcase caseload on startup...');
+        // await runCaseloadMigration();
+        // console.log('✅ Caseload auto-sync complete.');
         
         // Initialize Dropbox class evaluation cron jobs
         const { initCronJobs } = require('./services/dropbox_evaluator');

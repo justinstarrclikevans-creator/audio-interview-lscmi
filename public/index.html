@@ -961,7 +961,7 @@
             </div>
 
             <!-- Draft Scoring Reviews Section -->
-            <div class="section-card mt-8">
+            <div id="pm-sec-drafts" class="section-card mt-8 hidden">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 14px;">
                     <div>
                         <h2 style="margin: 0; font-size: 20px; color: var(--dark);">Human-in-the-Loop Scoring Reviews (Phase 1 &rarr; Phase 2)</h2>
@@ -981,7 +981,7 @@
             </div>
 
             <!-- Class Facilitation Evaluations Section -->
-            <div class="section-card mt-8">
+            <div id="pm-sec-facilitation" class="section-card mt-8 hidden">
                 <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                     <div>
                         <h2>Class Facilitation Evaluations & Coaching Feedback</h2>
@@ -997,206 +997,6 @@
                 </div>
             </div>
 
-            <!-- SUBSECTION 5: CASELOAD MESSAGING & PARTICIPANT COMMUNICATIONS -->
-            <div id="pm-sec-reentry" class="hidden">
-                <div class="section-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary); padding-bottom: 12px; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
-                        <div>
-                            <h2 style="color: var(--primary); margin: 0;">🧭 Re-entry Navigator: Case Planning & Flag Analysis</h2>
-                            <p class="text-slate" style="margin-top: 4px;">Evaluate intake interviews, detect facilitation & stability flags, link plans directly to participant profiles, and match local resources & jobs.</p>
-                        </div>
-                        <div style="display: flex; gap: 8px;">
-                            <button class="btn btn-outline" onclick="loadReentryResourcesTab()">📍 SC Directory & Jobs</button>
-                        </div>
-                    </div>
-
-                    <!-- Intake & Participant Selector Form -->
-                    <form id="form-reentry-assess" onsubmit="handleReentryAssessSubmit(event)">
-                        <div class="form-row" style="background: #f8fafc; padding: 14px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 16px;">
-                            <div class="form-group" style="flex: 2;">
-                                <label style="font-weight: 700; color: var(--primary);">Link to Participant Profile *</label>
-                                <select id="reentry-participant-select" onchange="handleReentryParticipantSelect()" required>
-                                    <option value="">-- Select Active Participant to Link --</option>
-                                    <!-- Populated dynamically -->
-                                </select>
-                            </div>
-                            <div class="form-group" style="flex: 1;">
-                                <label>Location</label>
-                                <select id="reentry-location">
-                                    <option value="Charleston">Charleston, SC</option>
-                                    <option value="Columbia">Columbia, SC</option>
-                                    <option value="Spartanburg">Spartanburg, SC</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Participant Full Name</label>
-                                <input type="text" id="reentry-name" required placeholder="Full Name">
-                            </div>
-                            <div class="form-group">
-                                <label>Living / Housing Situation</label>
-                                <select id="reentry-housing">
-                                    <option value="Emergency Shelter (One80 Place / Transitions)">Emergency Shelter (One80 Place / Transitions)</option>
-                                    <option value="Transitional Recovery Program (Star Gospel / Miracle Hill)">Transitional Recovery Program</option>
-                                    <option value="Living with Family / Friends (Unstable < 60 days)">Living with Family / Friends (Unstable)</option>
-                                    <option value="Independent Stable Lease / Home">Independent Stable Lease / Home</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group mt-3">
-                            <label>Primary Goals (Employment, Credentials, Fresh Start Vision)</label>
-                            <input type="text" id="reentry-goals" placeholder="e.g. CDL-B certification, steady day shift manufacturing job ($18+/hr), driver's license restoration, child support modification">
-                        </div>
-
-                        <div class="form-group mt-3">
-                            <label>Legal & Supervision Status</label>
-                            <input type="text" id="reentry-legal" placeholder="e.g. SCDPPPS Active Probation, curfew 9pm, child support arrears $4,200">
-                        </div>
-
-                        <div class="form-group mt-3">
-                            <label>Identified Immediate Needs / Barriers (Select all that apply):</label>
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; font-size: 13px; margin-top: 6px;">
-                                <label><input type="checkbox" name="reentry-need" value="Emergency Housing / Rent"> Emergency Housing / Rent</label>
-                                <label><input type="checkbox" name="reentry-need" value="Driver's License Reinstatement (SCDMV)"> SCDMV License Reinstatement</label>
-                                <label><input type="checkbox" name="reentry-need" value="Child Support Court Review / Arrears"> Child Support Court Review</label>
-                                <label><input type="checkbox" name="reentry-need" value="Prescription Medication (Welvista)"> Prescription Meds (Welvista)</label>
-                                <label><input type="checkbox" name="reentry-need" value="Substance Recovery Support / MAT"> Substance Recovery Support</label>
-                                <label><input type="checkbox" name="reentry-need" value="Mental Health / Trauma Counseling"> Mental Health Counseling</label>
-                                <label><input type="checkbox" name="reentry-need" value="Bus Passes / Work Transit"> Bus Passes / Transit</label>
-                                <label><input type="checkbox" name="reentry-need" value="Work Boots & Tools"> Work Boots & Tools</label>
-                            </div>
-                        </div>
-
-                        <div class="form-group mt-4">
-                            <label>Upload Interview Audio, PDF, or Notes File (Optional)</label>
-                            <input type="file" id="reentry-file" accept=".txt,.pdf,.webm,.mp3,.m4a">
-                        </div>
-
-                        <div class="form-group mt-3">
-                            <label>Or Paste Re-entry Navigation Interview Notes / Transcript</label>
-                            <textarea id="reentry-transcript" rows="5" placeholder="Paste dialogue, interview responses, or staff intake notes here..."></textarea>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary btn-block mt-4" id="btn-reentry-submit">
-                            ⚡ Analyze Flags, Generate Dual Case Plan & Link to Profile
-                        </button>
-                    </form>
-                </div>
-
-                <!-- Re-entry Results Section -->
-                <div id="reentry-results-container" class="section-card mt-8 hidden">
-                    <!-- Link Confirmation Banner -->
-                    <div id="reentry-link-badge" style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-weight: bold; font-size: 14px;">
-                        <!-- Dynamically filled -->
-                    </div>
-
-                    <!-- Flags Banner -->
-                    <div id="reentry-flags-banner" class="report-summary-box mb-4">
-                        <!-- Dynamically filled -->
-                    </div>
-
-                    <!-- Direct Links Section for Suggested Jobs & Referrals -->
-                    <div id="reentry-quick-links-section" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 20px;">
-                        <!-- Matched Jobs with Direct Apply Links -->
-                        <div style="background: #f8fafc; border: 1px solid var(--border); border-top: 3px solid var(--accent); border-radius: 8px; padding: 14px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                <h4 style="margin: 0; color: var(--primary); font-size: 13.5px;">💼 Suggested Jobs with Direct Links</h4>
-                                <span style="font-size: 11px; color: var(--slate);">Click to Apply Online</span>
-                            </div>
-                            <div id="reentry-matched-jobs-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto;">
-                                <!-- Rendered dynamically -->
-                            </div>
-                        </div>
-
-                        <!-- Suggested Community Referrals with Direct Links -->
-                        <div style="background: #f8fafc; border: 1px solid var(--border); border-top: 3px solid var(--success); border-radius: 8px; padding: 14px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                <h4 style="margin: 0; color: #166534; font-size: 13.5px;">📍 Suggested Referrals with Direct Links</h4>
-                                <span style="font-size: 11px; color: var(--slate);">Official Websites & Maps</span>
-                            </div>
-                            <div id="reentry-suggested-referrals-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto;">
-                                <!-- Rendered dynamically -->
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Subtabs for Dual Documents -->
-                    <div style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 2px solid var(--border); padding-bottom: 8px;">
-                        <button class="btn btn-primary" id="btn-subtab-part-guide" onclick="switchReentryDocTab('part')">🎯 Participant Action & Referral Guide</button>
-                        <button class="btn btn-outline" id="btn-subtab-staff-plan" onclick="switchReentryDocTab('staff')">📋 Staff Re-entry Case Plan</button>
-                    </div>
-
-                    <!-- Doc 1: Participant Action Guide -->
-                    <div id="reentry-doc-part-view">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
-                            <h3 style="color: var(--primary); margin: 0;">🎯 My Fresh Start Action & Referral Guide</h3>
-                            <div style="display: flex; gap: 8px;">
-                                <a id="link-reentry-part-docx" href="#" download class="btn btn-primary" style="text-decoration: none;">📥 Download Editable Word (.docx)</a>
-                                <a id="link-reentry-part-pdf" href="#" target="_blank" class="btn btn-accent" style="text-decoration: none;">🖨️ View / Print PDF</a>
-                            </div>
-                        </div>
-                        <div id="reentry-part-guide-content" class="report-content-body" style="background: white; border: 1px solid var(--border); padding: 20px; border-radius: 8px; max-height: 500px; overflow-y: auto;">
-                            <!-- Markdown rendered here -->
-                        </div>
-                    </div>
-
-                    <!-- Doc 2: Staff Case Plan -->
-                    <div id="reentry-doc-staff-view" class="hidden">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
-                            <h3 style="color: var(--primary); margin: 0;">📋 Staff Re-entry Navigation Case Plan</h3>
-                            <div style="display: flex; gap: 8px;">
-                                <a id="link-reentry-staff-docx" href="#" download class="btn btn-primary" style="text-decoration: none;">📥 Download Editable Word (.docx)</a>
-                                <a id="link-reentry-staff-pdf" href="#" target="_blank" class="btn btn-outline" style="text-decoration: none;">🖨️ View / Print PDF</a>
-                            </div>
-                        </div>
-                        <div id="reentry-staff-plan-content" class="report-content-body" style="background: white; border: 1px solid var(--border); padding: 20px; border-radius: 8px; max-height: 500px; overflow-y: auto;">
-                            <!-- Markdown rendered here -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Draft Scoring Reviews Section -->
-            <div class="section-card mt-8">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 14px;">
-                    <div>
-                        <h2 style="margin: 0; font-size: 20px; color: var(--dark);">Human-in-the-Loop Scoring Reviews (Phase 1 &rarr; Phase 2)</h2>
-                        <p style="margin: 4px 0 0 0; font-size: 13px;" class="text-slate">Review AI-generated draft scoring forms, cross-reference the official LS/CMI Scoring Guide, provide supervisor feedback, and print assessment documentation.</p>
-                    </div>
-                    <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
-                        <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; background: white;" onclick="previewDocument('LS_CMI_Scoring_Guide.md')" title="Open LS/CMI Assessment Scoring Guide">📖 LS/CMI Scoring Guide</button>
-                        <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; background: white;" onclick="printActiveDraftDocument('LS_CMI_Scoring_Guide.md')" title="Print LS/CMI Scoring Guide">🖨️ Print Guide</button>
-                        <a href="/api/documents/raw/LS_CMI_Scoring_Manual_Guide.pdf" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; text-decoration: none; background: white;" title="Open Official 37-Page PDF">📄 PDF Manual</a>
-                        <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; background: white;" onclick="previewDocument('Facilitator_Scoring_Guide.md')" title="Open 20-Item Turn90 Facilitator Scoring Guide">📋 Facilitator Guide</button>
-                        <button class="btn btn-primary" style="font-size: 12px; padding: 6px 14px;" onclick="openManualInterviewModal()">🎙️ + Add / Import Interview</button>
-                    </div>
-                </div>
-                <div id="pm-drafts-list">
-                    <!-- Loaded dynamically -->
-                </div>
-            </div>
-
-            <!-- Class Facilitation Evaluations Section -->
-            <div class="section-card mt-8">
-                <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-                    <div>
-                        <h2>Class Facilitation Evaluations & Coaching Feedback</h2>
-                        <p>Automated QA scoring across the 20-item Turn90 Facilitation Scoring Guide (Modeling Neutrality, Pacing, Roleplays, Engagement).</p>
-                    </div>
-                    <div style="display: flex; gap: 10px;">
-                        <button class="btn btn-outline" onclick="forceSyncEvaluations()">🔄 Fetch Missing Dropbox Classes</button>
-                        <button class="btn btn-primary" onclick="openFacilitationModal()">+ Evaluate Class Session</button>
-                    </div>
-                </div>
-                <div id="pm-facilitation-evals-list" class="mt-4">
-                    <!-- Loaded dynamically -->
-                </div>
-            </div>
-
-            <!-- SUBSECTION 5: CASELOAD MESSAGING & PARTICIPANT COMMUNICATIONS -->
             <div id="pm-sec-messages" class="hidden">
                 <div class="section-header">
                     <h2>💬 Participant Communications & Caseload Messaging</h2>
@@ -2883,7 +2683,7 @@
 
 
 
-    <script src="app.js?v=1790192098"></script>
+    <script src="app.js?v=1790252200"></script>
 
     <!-- MODAL: Participant File (Consolidated) -->
     <div id="modal-participant-file" class="modal hidden">

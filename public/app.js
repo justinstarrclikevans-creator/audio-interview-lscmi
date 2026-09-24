@@ -337,21 +337,6 @@ async function loadFsDashboard() {
         }
 
         // W-9 feature removed as requested. Check if elements exist before modifying.
-        const w9Card = document.getElementById('w9-card-status');
-        const btnW9View = document.getElementById('btn-w9-view');
-        const btnW9Action = document.getElementById('btn-w9-action');
-
-        if (w9Card && btnW9Action) {
-            if (currentProfile && (currentProfile.w9_status === 'submitted' || currentProfile.w9_status === 'verified')) {
-                w9Card.innerHTML = `<span style="color: green; font-weight: bold;">✅ Status: W-9 Recorded (${currentProfile.w9_status})</span>`;
-                btnW9Action.innerText = 'Edit Form W-9';
-                if (btnW9View) btnW9View.classList.remove('hidden');
-            } else {
-                w9Card.innerHTML = `Status: Incomplete. Submit your W-9 for onboarding.`;
-                btnW9Action.innerText = 'Complete Form W-9';
-                if (btnW9View) btnW9View.classList.add('hidden');
-            }
-        }
 
         renderGateCriteria(data.weeks, currentGateWeek);
         loadFsPoints();
@@ -642,79 +627,6 @@ async function saveGateItem(criterionKey, isWorksheet) {
 // -------------------------------------------------------------
 // W-9 & BARRIER ACTIONS
 // -------------------------------------------------------------
-function openW9Modal() {
-    if (currentUser) {
-        const nameEl = document.getElementById('w9-name');
-        if (nameEl) nameEl.value = currentUser.name || '';
-    }
-    const dateEl = document.getElementById('w9-date');
-    if (dateEl) dateEl.value = new Date().toISOString().split('T')[0];
-    
-    toggleTinType('ssn');
-    openModal('modal-w9');
-}
-
-function toggleTinType(type) {
-    const ssnInput = document.getElementById('w9-ssn-val');
-    const einInput = document.getElementById('w9-ein-val');
-    if (!ssnInput || !einInput) return;
-
-    if (type === 'ssn') {
-        ssnInput.disabled = false;
-        ssnInput.required = true;
-        einInput.disabled = true;
-        einInput.required = false;
-        einInput.value = '';
-    } else {
-        einInput.disabled = false;
-        einInput.required = true;
-        ssnInput.disabled = true;
-        ssnInput.required = false;
-        ssnInput.value = '';
-    }
-}
-
-async function handleW9Submit(e) {
-    e.preventDefault();
-    const token = localStorage.getItem('fs_token');
-    const certCheck = document.getElementById('w9-cert-check');
-    if (!certCheck.checked) {
-        return alert('Please check the Part II Certification box under penalties of perjury.');
-    }
-
-    const tinType = document.querySelector('input[name="w9-tin-type"]:checked')?.value || 'ssn';
-    const tinVal = tinType === 'ssn' ? document.getElementById('w9-ssn-val').value : document.getElementById('w9-ein-val').value;
-    const taxClass = document.querySelector('input[name="w9-tax-class"]:checked')?.value || 'Individual/sole proprietor';
-
-    const payload = {
-        fullName: document.getElementById('w9-name').value,
-        businessName: document.getElementById('w9-business').value,
-        taxClassification: taxClass,
-        exemptions: document.getElementById('w9-exemptions').value,
-        address: document.getElementById('w9-address').value,
-        cityStateZip: document.getElementById('w9-city-state-zip').value,
-        tinType: tinType,
-        ssnOrEin: tinVal,
-        signatureName: document.getElementById('w9-sig').value,
-        signatureDate: document.getElementById('w9-date').value || new Date().toISOString().split('T')[0]
-    };
-
-    try {
-        const res = await fetch('/api/participant/w9', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Submission failed');
-
-        alert('Official Form W-9 successfully completed, certified, and recorded on file.');
-        closeModal('modal-w9');
-        loadFsDashboard();
-    } catch (err) {
-        alert('W-9 Submission Error: ' + err.message);
-    }
-}
 
 function openBarriersModal() {
     if (currentProfile) {
@@ -1821,6 +1733,7 @@ async function loadCaseload() {
     try {
         const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
         const roster = await safeApiResponse(res);
+        window.caseloadData = roster;
         const tbody = document.getElementById('caseload-tbody');
 
         if (!roster || roster.length === 0) {
@@ -1900,7 +1813,7 @@ async function loadCaseload() {
                 </select>`;
 
                 let feedbackHtml = `<div style="font-size: 10px;">
-                    <button class="btn btn-primary" style="padding: 6px 12px; font-size: 11px; margin-top: 4px; display: block; width: 100%; font-weight: bold;" onclick="openParticipantFile(${p.id}, '${escName}', ${p.current_gate || 1}, '${p.location}', '${p.track}', '${p.enrollment_date}', ${p.has_health_screen})">📂 Open Participant File</button>
+                    <button class="btn btn-primary" style="padding: 6px 12px; font-size: 11px; margin-top: 4px; display: block; width: 100%; font-weight: bold;" onclick="openParticipantFile(${p.id})">📂 Open Participant File</button>
                 </div>`;
 
                 // PII collapsible section
@@ -2055,7 +1968,7 @@ async function loadCaseload() {
                     <!-- 7. Caseload Actions -->
                     <td style="vertical-align: middle;">
                         <div style="display: flex; gap: 4px; flex-wrap: wrap; justify-content: center;">
-                            <button class="btn btn-primary" style="padding: 6px 12px; font-size: 11px; display: block; width: 100%; font-weight: bold;" onclick="openParticipantFile(${p.id}, '${escName}', ${p.current_gate || 1}, '${p.location}', '${p.track}', '${p.enrollment_date}', ${p.has_health_screen})">📂 Open Participant File</button>
+                            <button class="btn btn-primary" style="padding: 6px 12px; font-size: 11px; display: block; width: 100%; font-weight: bold;" onclick="openParticipantFile(${p.id})">📂 Open Participant File</button>
                         </div>
                     </td>
                 </tr>
@@ -2071,6 +1984,7 @@ async function loadCaseload() {
 }
 
 async function openCaseReviewModal(userId, name) {
+    closeModal('modal-participant-file');
     document.getElementById('cr-user-id').value = userId;
     document.getElementById('case-review-modal-title').innerText = `Weekly Case Planning: ${name}`;
 
@@ -2130,11 +2044,11 @@ function switchPmSubView(subview) {
     if (msgSec) msgSec.classList.toggle('hidden', subview !== 'messages');
 
     // Drafts and facilitation containers
-    const draftsCard = document.getElementById('pm-drafts-list')?.closest('.section-card');
-    if (draftsCard) draftsCard.classList.toggle('hidden', subview !== 'drafts' && subview !== 'caseload');
+    const draftsCard = document.getElementById('pm-sec-drafts');
+    if (draftsCard) draftsCard.classList.toggle('hidden', subview !== 'drafts');
 
-    const evalCard = document.getElementById('pm-facilitation-evals-list')?.closest('.section-card');
-    if (evalCard) evalCard.classList.toggle('hidden', subview !== 'facilitation' && subview !== 'caseload');
+    const evalCard = document.getElementById('pm-sec-facilitation');
+    if (evalCard) evalCard.classList.toggle('hidden', subview !== 'facilitation');
 
     if (subview === 'reentry') {
         loadReentryParticipants();
@@ -2193,6 +2107,7 @@ function handleReentryParticipantSelect() {
 }
 
 function startReentryAssessmentForUser(userId, name) {
+    closeModal('modal-participant-file');
     switchPmSubView('reentry');
     const select = document.getElementById('reentry-participant-select');
     if (select) {
@@ -5624,6 +5539,7 @@ async function openWeeklyPointsModal(userId, name) {
 // PROGRAM MANAGER CBT WORKSHEETS & RESPONSES REVIEW MODAL
 // -------------------------------------------------------------
 async function openPmCbtReviewModal(userId, name) {
+    closeModal('modal-participant-file');
     const titleEl = document.getElementById('cbt-review-modal-title');
     const subtitleEl = document.getElementById('cbt-review-modal-subtitle');
     const bodyEl = document.getElementById('cbt-review-modal-body');
@@ -6121,6 +6037,51 @@ async function handleParticipantCorrectionSubmit(event) {
     } finally {
         saveBtn.disabled = false;
         saveBtn.textContent = '💾 Save Corrections';
+    }
+}
+
+async function handleAddParticipantSubmit(event) {
+    event.preventDefault();
+    const token = localStorage.getItem('fs_token');
+    const submitBtn = document.getElementById('btn-submit-add-p');
+    const statusEl = document.getElementById('add-p-status');
+
+    const name = document.getElementById('add-p-name').value;
+    const email = document.getElementById('add-p-email').value;
+    const phone = document.getElementById('add-p-phone').value;
+    const password = document.getElementById('add-p-password').value;
+    const track = document.getElementById('add-p-track').value;
+    const location = document.getElementById('add-p-location').value;
+
+    try {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Creating...';
+        statusEl.innerHTML = '<span style="color: var(--primary);">Creating participant profile...</span>';
+
+        const res = await fetch('/api/auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, phone, password, track, location, role: 'participant' })
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+            statusEl.innerHTML = '<span style="color: var(--success);">✅ Participant successfully added!</span>';
+            loadCaseload();
+            setTimeout(() => {
+                closeModal('modal-add-participant');
+                statusEl.innerHTML = '';
+                document.getElementById('form-add-participant').reset();
+                document.getElementById('add-p-password').value = '3765Turn90'; // reset default
+            }, 1200);
+        } else {
+            statusEl.innerHTML = `<span style="color: var(--danger);">❌ Error: ${data.error || 'Creation failed'}</span>`;
+        }
+    } catch(e) {
+        statusEl.innerHTML = `<span style="color: var(--danger);">❌ Network error: ${e.message}</span>`;
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = '➕ Create Participant';
     }
 }
 
@@ -6822,11 +6783,11 @@ window.switchCaseloadTab = function(tab) {
     const msgSec = document.getElementById('pm-sec-messages');
     if (msgSec) msgSec.classList.add('hidden');
 
-    const draftsCard = document.getElementById('pm-drafts-list')?.closest('.section-card');
-    if (draftsCard) draftsCard.classList.remove('hidden');
+    const draftsCard = document.getElementById('pm-sec-drafts');
+    if (draftsCard) draftsCard.classList.add('hidden');
 
-    const evalCard = document.getElementById('pm-facilitation-evals-list')?.closest('.section-card');
-    if (evalCard) evalCard.classList.remove('hidden');
+    const evalCard = document.getElementById('pm-sec-facilitation');
+    if (evalCard) evalCard.classList.add('hidden');
 
     const trackFilter = document.getElementById('pm-filter-track');
     const statusFilter = document.getElementById('pm-filter-status');
@@ -7006,6 +6967,7 @@ let currentGateModalWeeks = null;
 let currentGateModalRole = null;
 
 async function openGateChecklistModal(userId, name) {
+    closeModal('modal-participant-file');
     const token = localStorage.getItem('fs_token');
     currentGateModalUserId = userId || currentUser.id;
     currentGateModalRole = currentUser.role;
@@ -7265,6 +7227,7 @@ async function assignScoring(clientId) {
 
 
 async function openHealthScreenModal(participantId, participantName) {
+    closeModal('modal-participant-file');
     document.getElementById('health-form-inline').reset();
     document.getElementById('hs-participant-id').value = participantId;
     document.getElementById('hs-participant-name').innerText = participantName;
@@ -7351,6 +7314,7 @@ async function submitHealthForm(e) {
 // RELAPSE PREVENTION PLAN
 // ==========================================
 async function openRelapsePlanModal(participantId, participantName, type) {
+    closeModal('modal-participant-file');
     document.getElementById('relapse-form-inline').reset();
     document.getElementById('rp-participant-id').value = participantId;
     document.getElementById('rp-plan-type').value = type;
@@ -7429,24 +7393,45 @@ function switchPfTab(tabId) {
     }
 }
 
-function openParticipantFile(pId, pName, pGate, pLocation, pTrack, pEnrolled, hasHealth) {
+function openParticipantFile(pId) {
+    const p = window.caseloadData?.find(x => x.id === pId);
+    if (!p) return;
+
+    const pName = p.name || 'Unknown';
+    const pLocation = p.location || 'Unknown';
+    const pTrack = p.track || 'First Shift';
+    const pEnrolled = p.enrollment_date || 'Pending';
+    const pGate = p.current_gate || 1;
+    const hasHealth = p.has_health_screen || 0;
+
     document.getElementById('pf-name').innerText = pName;
-    document.getElementById('pf-location').innerText = pLocation || 'Unknown';
-    document.getElementById('pf-track').innerText = pTrack || 'First Shift';
-    document.getElementById('pf-enrolled').innerText = pEnrolled || 'Pending';
+    document.getElementById('pf-location').innerText = pLocation;
+    document.getElementById('pf-track').innerText = pTrack;
+    document.getElementById('pf-enrolled').innerText = pEnrolled;
     
     // Quick Actions
     document.getElementById('pf-quick-actions').innerHTML = `
-        <button class="btn btn-outline" onclick="openCorrectionModal(${pId}, '${pName}')">✏️ Edit Profile & Change Start Date</button>
-        <button class="btn btn-outline" onclick="impersonateParticipant(${pId})">👀 View Portal as ${pName.split(' ')[0]}</button>
-        <button class="btn btn-outline" onclick="promptSwitchTrack(${pId}, '${pName}', '${pTrack}')">🔄 Switch Track (Currently ${pTrack})</button>
+        <button class="btn btn-outline" onclick="openCorrectionModal(${p.id}, '${pName.replace(/'/g, "\\'")}')">✏️ Edit Profile & Change Start Date</button>
+        <button class="btn btn-outline" onclick="impersonateParticipant(${p.id})">👀 View Portal as ${pName.split(' ')[0]}</button>
+        <button class="btn btn-outline" onclick="promptSwitchTrack(${p.id}, '${pName.replace(/'/g, "\\'")}', '${pTrack}')">🔄 Switch Track (Currently ${pTrack})</button>
+    `;
+
+    // PII
+    document.getElementById('pf-pii-content').innerHTML = `
+        <div style="margin-bottom: 6px;"><strong>Email:</strong> ${p.email || 'N/A'}</div>
+        <div style="margin-bottom: 6px;"><strong>Phone:</strong> ${p.phone || 'N/A'}</div>
+        <div style="margin-bottom: 6px;"><strong>Address:</strong> ${p.address || 'N/A'}</div>
+        <div style="margin-bottom: 6px;"><strong>Date of Birth:</strong> ${p.birthdate || 'N/A'}</div>
+        <div style="margin-bottom: 6px;"><strong>SSN:</strong> ${p.ssn ? '***-**-' + p.ssn.slice(-4) : 'N/A'}</div>
+        <div style="margin-bottom: 6px;"><strong>Apricot Record ID:</strong> ${p.record_id || 'N/A'}</div>
     `;
 
     // Legal / Demographics
     document.getElementById('pf-legal-content').innerHTML = `
-        
-        <div style="margin-bottom: 6px;"><strong>Driver's License:</strong> Not checked</div>
-        <div style="margin-bottom: 6px;"><strong>Child Support:</strong> Not checked</div>
+        <div style="margin-bottom: 6px;"><strong>Driver's License:</strong> ${p.dl_status || 'unknown'} - ${p.dl_notes || 'No notes'}</div>
+        <div style="margin-bottom: 6px;"><strong>Child Support:</strong> ${p.child_support_status || 'unknown'} - ${p.child_support_notes || 'No notes'}</div>
+        <div style="margin-bottom: 6px;"><strong>Housing:</strong> ${p.housing_status || 'unknown'}</div>
+        <div style="margin-bottom: 6px;"><strong>Transportation:</strong> ${p.transportation_status || 'unknown'}</div>
     `;
 
     // Health Actions
@@ -7475,4 +7460,22 @@ function openParticipantFile(pId, pName, pGate, pLocation, pTrack, pEnrolled, ha
 
     switchPfTab('overview');
     openModal('modal-participant-file');
+}
+
+async function triggerSkillCatSync() {
+    if (!confirm("This will launch the SkillCat background scraper to sync student engagement levels. It may take 15-30 seconds. Continue?")) return;
+    try {
+        const token = localStorage.getItem('fs_token');
+        const res = await fetch('/api/admin/sync-skillcat-scraper', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await safeApiResponse(res);
+        if (data && data.message) {
+            alert(data.message);
+            loadCaseload();
+        }
+    } catch (e) {
+        alert("Failed to sync SkillCat: " + e.message);
+    }
 }
