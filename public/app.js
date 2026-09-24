@@ -130,21 +130,10 @@ function updateNav() {
 
 function routeUserToPortal() {
     if (!currentUser) return showView('view-auth');
-
-    // Reset AI state & conversation history to ensure prompt isolation between accounts
     resetParticipantAiState();
-
-    if (currentUser.role === 'program_manager' || currentUser.role === 'admin') {
-        showView('view-pm-portal');
-        switchCaseloadTab('first_shift');
-        loadPmDrafts();
-    } else if (currentUser.track === 'first_shift') {
-        showView('view-fs-portal');
-        loadFsDashboard();
-    } else {
-        showView('view-rn-portal');
-        loadRnDashboard();
-    }
+    showView('view-pm-portal');
+    switchCaseloadTab('first_shift');
+    loadPmDrafts();
 }
 
 function showView(viewId) {
@@ -2040,20 +2029,36 @@ function switchPmSubView(subview) {
 
     document.getElementById('pm-sec-caseload').classList.toggle('hidden', subview !== 'caseload');
     document.getElementById('pm-sec-reentry').classList.toggle('hidden', subview !== 'reentry');
+    
     const msgSec = document.getElementById('pm-sec-messages');
     if (msgSec) msgSec.classList.toggle('hidden', subview !== 'messages');
 
-    // Drafts and facilitation containers
     const draftsCard = document.getElementById('pm-sec-drafts');
     if (draftsCard) draftsCard.classList.toggle('hidden', subview !== 'drafts');
 
     const evalCard = document.getElementById('pm-sec-facilitation');
     if (evalCard) evalCard.classList.toggle('hidden', subview !== 'facilitation');
 
+    const jobsCard = document.getElementById('pm-sec-jobs');
+    if (jobsCard) jobsCard.classList.toggle('hidden', subview !== 'jobs');
+
+    const resumeCard = document.getElementById('pm-sec-resume');
+    if (resumeCard) resumeCard.classList.toggle('hidden', subview !== 'resume');
+
+    const benefitsCard = document.getElementById('pm-sec-benefits');
+    if (benefitsCard) benefitsCard.classList.toggle('hidden', subview !== 'benefits');
+
     if (subview === 'reentry') {
         loadReentryParticipants();
     } else if (subview === 'messages') {
         loadPmConversations();
+    } else if (subview === 'jobs') {
+        // Force job load if empty
+        if (document.getElementById('job-listings-grid').innerHTML.trim() === '') {
+            handleJobSearchSubmit();
+        }
+    } else if (subview === 'benefits') {
+        loadParticipantBenefits();
     }
 }
 
@@ -6788,6 +6793,16 @@ window.switchCaseloadTab = function(tab) {
 
     const evalCard = document.getElementById('pm-sec-facilitation');
     if (evalCard) evalCard.classList.add('hidden');
+
+    const jobsCard = document.getElementById('pm-sec-jobs');
+    if (jobsCard) jobsCard.classList.add('hidden');
+
+    const resumeCard = document.getElementById('pm-sec-resume');
+    if (resumeCard) resumeCard.classList.add('hidden');
+
+    const benefitsCard = document.getElementById('pm-sec-benefits');
+    if (benefitsCard) benefitsCard.classList.add('hidden');
+
 
     const trackFilter = document.getElementById('pm-filter-track');
     const statusFilter = document.getElementById('pm-filter-status');
