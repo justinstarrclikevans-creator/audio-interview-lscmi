@@ -2953,7 +2953,7 @@ app.get('/api/reentry/plan/:userId', authenticateToken, (req, res) => {
 });
 
 // 4. Directory & Spreadsheet Jobs Query
-app.get('/api/reentry/resources', authenticateToken, (req, res) => {
+app.get('/api/reentry/resources', (req, res) => {
     const region = req.query.region || 'charleston';
     const locKey = region.toLowerCase().includes('columbia') ? 'columbia' : (region.toLowerCase().includes('spartanburg') || region.toLowerCase().includes('greenville') || region.toLowerCase().includes('upstate') ? 'greenville' : 'charleston');
     

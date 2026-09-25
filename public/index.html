@@ -85,13 +85,38 @@
                     <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
                         <div>
                             <div style="display: flex; align-items: center; gap: 8px;">
-                                <span style="font-size: 24px;">🏛️</span>
-                                <h2 style="margin: 0; font-size: 19px;">South Carolina State Benefits & Healthcare Access Hub</h2>
+                                <span style="font-size: 24px;">🏢</span>
+                                <h2 style="margin: 0; font-size: 19px;">South Carolina Community Resource Guide</h2>
                             </div>
                         </div>
-                        <button class="btn btn-outline" onclick="openBenefitsHubModal()">🔍 Open Guided Modal</button>
                     </div>
-                    <div id="rn-benefits-container"></div>
+                    
+                    <div style="background: #f8fafc; padding: 16px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 16px;">
+                        <p style="margin: 0 0 12px 0; font-size: 13.5px; color: var(--slate);">Select your location and primary need to find verified local resources, contact information, and instructions.</p>
+                        <div class="form-row">
+                            <div class="form-group" style="flex: 1;">
+                                <label style="font-weight: bold; font-size: 13px;">Location</label>
+                                <select id="pub-res-location" class="form-control" onchange="renderPublicResources()">
+                                    <option value="charleston">Charleston Tri-County</option>
+                                    <option value="columbia">Columbia Midlands</option>
+                                    <option value="spartanburg">Spartanburg & Upstate</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label style="font-weight: bold; font-size: 13px;">What do you need?</label>
+                                <select id="pub-res-category" class="form-control" onchange="renderPublicResources()">
+                                    <option value="housing">Emergency Shelter & Housing</option>
+                                    <option value="legal_and_id">Legal Aid, Child Support & ID/License</option>
+                                    <option value="health_and_substance">Healthcare, Mental Health & Substance Recovery</option>
+                                    <option value="transportation_and_clothing">Transportation, Food & Clothing</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="pub-res-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px;">
+                        <!-- Filled dynamically -->
+                    </div>
                 </div>
             </div>
 
@@ -2484,7 +2509,7 @@
 
 
 
-    <script src="app.js?v=1790435000"></script>
+    <script src="app.js?v=1790435100"></script>
 
     <!-- MODAL: Participant File (Consolidated) -->
     <div id="modal-participant-file" class="modal hidden">

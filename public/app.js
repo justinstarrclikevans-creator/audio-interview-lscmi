@@ -100,9 +100,8 @@ window.switchPublicTab = function(tab) {
     
     if (tab === 'jobs' && document.getElementById('job-listings-grid').innerHTML.trim() === '') {
         handleJobSearchSubmit();
-    } else if (tab === 'benefits' && document.getElementById('rn-benefits-container').innerHTML.trim() === '') {
-        loadParticipantBenefits();
-    }
+    } else if (tab === 'benefits') { renderPublicResources(); 
+        }
 };
 
 window.openStaffLogin = function() { showView('view-auth'); };
@@ -7513,5 +7512,55 @@ async function triggerSkillCatSync() {
         }
     } catch (e) {
         alert("Failed to sync SkillCat: " + e.message);
+    }
+}
+
+let cachedPublicResources = null;
+
+async function renderPublicResources() {
+    const loc = document.getElementById('pub-res-location')?.value || 'charleston';
+    const cat = document.getElementById('pub-res-category')?.value || 'housing';
+    const container = document.getElementById('pub-res-container');
+    
+    if (!container) return;
+    container.innerHTML = '<p class="text-slate">Loading resources...</p>';
+    
+    try {
+        if (!cachedPublicResources || cachedPublicResources.region !== loc) {
+            const res = await fetch(`/api/reentry/resources?region=${loc}`);
+            const data = await res.json();
+            cachedPublicResources = { region: loc, data: data.resources || {} };
+        }
+        
+        const items = cachedPublicResources.data[cat] || [];
+        if (items.length === 0) {
+            container.innerHTML = '<p class="text-slate">No resources found for this category in this location.</p>';
+            return;
+        }
+        
+        container.innerHTML = items.map(item => `
+            <div style="background: white; border: 1px solid var(--border); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; height: 100%;">
+                <div style="margin-bottom: 12px;">
+                    <span class="badge badge-accent" style="margin-bottom: 6px; display: inline-block;">${item.category || cat}</span>
+                    <h3 style="margin: 0 0 4px 0; color: var(--primary); font-size: 16px;">${item.name}</h3>
+                    <div style="color: var(--slate); font-size: 13px;">
+                        ${item.phone ? `<div>📞 ${item.phone}</div>` : ''}
+                        ${item.address ? `<div>📍 ${item.address}</div>` : ''}
+                    </div>
+                </div>
+                <div style="flex: 1;">
+                    <p style="margin: 0 0 8px 0; font-size: 13.5px; line-height: 1.4; color: var(--dark);"><strong>Services:</strong> ${item.services}</p>
+                    ${item.eligibility ? `<p style="margin: 0 0 12px 0; font-size: 12.5px; line-height: 1.4; color: #b45309; background: #fefce8; padding: 6px; border-radius: 4px;"><strong>Eligibility:</strong> ${item.eligibility}</p>` : ''}
+                </div>
+                ${item.websiteUrl ? `
+                <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border);">
+                    <a href="${item.websiteUrl}" target="_blank" class="btn btn-outline" style="width: 100%; text-align: center; text-decoration: none; padding: 8px;">Visit Website & Instructions &rarr;</a>
+                </div>
+                ` : ''}
+            </div>
+        `).join('');
+        
+    } catch (e) {
+        container.innerHTML = '<p class="text-danger">Failed to load resources.</p>';
     }
 }
