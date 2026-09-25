@@ -718,7 +718,8 @@
                         <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; background: white;" onclick="printActiveDraftDocument('LS_CMI_Scoring_Guide.md')" title="Print LS/CMI Scoring Guide">🖨️ Print Guide</button>
                         <a href="/api/documents/raw/LS_CMI_Scoring_Manual_Guide.pdf" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; text-decoration: none; background: white;" title="Open Official 37-Page PDF">📄 PDF Manual</a>
                         <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; background: white;" onclick="previewDocument('Facilitator_Scoring_Guide.md')" title="Open 20-Item Turn90 Facilitator Scoring Guide">📋 Facilitator Guide</button>
-                        <button class="btn btn-primary" style="font-size: 12px; padding: 6px 14px;" onclick="openManualInterviewModal()">🎙️ + Add / Import Interview</button>
+                        <button class="btn btn-primary" style="font-size: 12px; padding: 6px 14px;" onclick="openInterviewModal()">🔴 Record Live Interview</button>
+                        <button class="btn btn-outline" style="font-size: 12px; padding: 6px 14px; background: white;" onclick="openManualInterviewModal()">📤 Import Recording</button>
                     </div>
                 </div>
                 <div id="pm-drafts-list">
@@ -1080,6 +1081,20 @@
                 <button class="modal-close" onclick="closeModal('modal-interview')">&times;</button>
             </div>
             <div class="interview-container">
+                <div class="form-row" style="margin-bottom: 16px; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid var(--border);">
+                    <div class="form-group" style="flex: 2;">
+                        <label>Participant Full Name <span class="text-danger">*</span></label>
+                        <input type="text" id="live-interview-name" required placeholder="e.g. Lawrence Pervue" class="form-control" style="font-size: 14px;">
+                    </div>
+                    <div class="form-group">
+                        <label>Turn90 Center Location</label>
+                        <select id="live-interview-location" class="form-control" style="font-size: 14px;">
+                            <option value="Charleston">Charleston</option>
+                            <option value="Columbia">Columbia</option>
+                            <option value="Spartanburg">Spartanburg</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="interview-progress-bar">
                     <div id="int-progress-fill" class="progress-fill" style="width: 2%;"></div>
                 </div>
@@ -2469,7 +2484,7 @@
 
 
 
-    <script src="app.js?v=1790253800"></script>
+    <script src="app.js?v=1790327000"></script>
 
     <!-- MODAL: Participant File (Consolidated) -->
     <div id="modal-participant-file" class="modal hidden">
