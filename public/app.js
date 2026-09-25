@@ -7564,3 +7564,12 @@ async function renderPublicResources() {
         container.innerHTML = '<p class="text-danger">Failed to load resources.</p>';
     }
 }
+
+window.promptKioskIntake = function() {
+    const pin = prompt('Enter 4-Digit Staff PIN to launch the Intake Interview:');
+    if (pin === '2026') {
+        openInterviewModal();
+    } else if (pin !== null) {
+        alert('Incorrect PIN.');
+    }
+};
