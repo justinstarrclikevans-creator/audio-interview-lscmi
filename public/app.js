@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (token) {
         await restoreSession(token);
     } else {
-        showView('view-auth');
+        routeUserToPortal();
     }
 });
 
@@ -105,9 +105,7 @@ window.switchPublicTab = function(tab) {
     }
 };
 
-window.openStaffLogin = function() {
-    showView('view-auth');
-};
+window.openStaffLogin = function() { showView('view-auth'); };
 
 
 async function restoreSession(token) {
@@ -123,11 +121,11 @@ async function restoreSession(token) {
             routeUserToPortal();
         } else {
             localStorage.removeItem('fs_token');
-            showView('view-auth');
+            routeUserToPortal();
         }
     } catch (err) {
         console.error('Session restore failed:', err);
-        showView('view-auth');
+        routeUserToPortal();
     }
 }
 
@@ -243,7 +241,7 @@ function handleLogout() {
     currentProfile = null;
     resetParticipantAiState();
     updateNav();
-    showView('view-auth');
+    routeUserToPortal();
 }
 
 // -------------------------------------------------------------
@@ -2745,7 +2743,7 @@ async function advanceParticipantGate(userId, nextGate) {
     const token = localStorage.getItem('fs_token');
     if (!token) {
         alert('Please log in as Program Manager.');
-        showView('view-auth');
+        routeUserToPortal();
         return;
     }
     try {
@@ -5371,7 +5369,7 @@ async function handleAddCaseNote(e) {
     const token = localStorage.getItem('fs_token');
     if (!token) {
         alert('Please log in as Program Manager.');
-        showView('view-auth');
+        routeUserToPortal();
         return;
     }
     try {
@@ -5412,7 +5410,7 @@ async function promptSwitchTrack(userId, name, currentTrack) {
     const token = localStorage.getItem('fs_token');
     if (!token) {
         alert('Please log in as Program Manager.');
-        showView('view-auth');
+        routeUserToPortal();
         return;
     }
     try {
@@ -5437,7 +5435,7 @@ async function toggleArchiveParticipant(userId, name, action) {
     const token = localStorage.getItem('fs_token');
     if (!token) {
         alert('Please log in as Program Manager.');
-        showView('view-auth');
+        routeUserToPortal();
         return;
     }
     let reason = null;
