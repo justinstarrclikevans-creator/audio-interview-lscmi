@@ -87,6 +87,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (token) {
         await restoreSession(token);
     } else {
+        updateNav();
         routeUserToPortal();
     }
 });
@@ -104,7 +105,14 @@ window.switchPublicTab = function(tab) {
         }
 };
 
-window.openStaffLogin = function() { showView('view-auth'); };
+window.openStaffLogin = function() {
+    const pin = prompt('Enter 6-Digit Staff PIN to access the login portal:');
+    if (pin === '843348') {
+        showView('view-auth');
+    } else if (pin !== null) {
+        alert('Incorrect PIN.');
+    }
+};
 
 
 async function restoreSession(token) {
