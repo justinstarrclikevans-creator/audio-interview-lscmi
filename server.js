@@ -1,3 +1,4 @@
+const { generateReentryNavAssessment } = require('./reentry_engine');
 const express = require('express');
 const cors = require('cors');
 const multer = require('multer');
