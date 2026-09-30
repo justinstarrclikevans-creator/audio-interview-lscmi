@@ -2957,18 +2957,98 @@ app.get('/api/reentry/resources', (req, res) => {
     const region = req.query.region || 'charleston';
     if (region === 'all') {
         return res.json({
-            allResources: SC_COMMUNITY_RESOURCES,
+            allResources: getMergedResources(),
             spreadsheetJobs: loadJobsFromSpreadsheets(),
             employers: SC_FAIR_CHANCE_EMPLOYERS
         });
     }
 
     const locKey = region.toLowerCase().includes('columbia') ? 'columbia' : (region.toLowerCase().includes('spartanburg') || region.toLowerCase().includes('greenville') || region.toLowerCase().includes('upstate') ? 'greenville' : 'charleston');
+    
+// Parse the Resources.xlsx file
+function loadExternalResources() {
+    const filePath = path.join(dataDir, 'Resources.xlsx');
+    if (!fs.existsSync(filePath)) return {};
+    
+    try {
+        const workbook = xlsx.readFile(filePath);
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const rows = xlsx.utils.sheet_to_json(sheet);
+        
+        const mapped = {
+            charleston: { regionName: "Charleston Tri-County", housing: [], legal_and_id: [], health_and_mental: [], food_and_transit: [], employment_and_training: [], other: [] },
+            columbia: { regionName: "Columbia Midlands", housing: [], legal_and_id: [], health_and_mental: [], food_and_transit: [], employment_and_training: [], other: [] },
+            greenville: { regionName: "Spartanburg & Upstate", housing: [], legal_and_id: [], health_and_mental: [], food_and_transit: [], employment_and_training: [], other: [] },
+            statewide: { regionName: "Statewide / All Regions", housing: [], legal_and_id: [], health_and_mental: [], food_and_transit: [], employment_and_training: [], other: [] }
+        };
+        
+        rows.forEach(row => {
+            const rType = (row['Primary Service Types'] || '').toLowerCase();
+            let cat = 'other';
+            if (rType.includes('housing') || rType.includes('shelter')) cat = 'housing';
+            else if (rType.includes('legal') || rType.includes('child support') || rType.includes('id')) cat = 'legal_and_id';
+            else if (rType.includes('health') || rType.includes('medical') || rType.includes('mental') || rType.includes('substance') || rType.includes('recovery')) cat = 'health_and_mental';
+            else if (rType.includes('food') || rType.includes('transportation') || rType.includes('clothing') || rType.includes('transit')) cat = 'food_and_transit';
+            else if (rType.includes('employment') || rType.includes('workforce') || rType.includes('training')) cat = 'employment_and_training';
+            
+            const counties = (row['Counties Served'] || '').toLowerCase();
+            let locKeys = [];
+            if (counties.includes('charleston') || counties.includes('berkeley') || counties.includes('dorchester')) locKeys.push('charleston');
+            if (counties.includes('richland') || counties.includes('lexington') || counties.includes('columbia')) locKeys.push('columbia');
+            if (counties.includes('spartanburg') || counties.includes('greenville') || counties.includes('upstate')) locKeys.push('greenville');
+            if (counties.includes('statewide') || counties.includes('all') || locKeys.length === 0) locKeys.push('statewide');
+            
+            const address = row.Line1 ? `${row.Line1}, ${row.City || ''}, ${row.State || ''} ${row.Zip || ''}` : '';
+            
+            const item = {
+                name: row['Organization Name'] || 'Unknown Resource',
+                category: row['Primary Service Types'] || cat,
+                phone: row['General Phone'] ? String(row['General Phone']) : '',
+                address: address.replace(/,\s*,/g, ',').trim(),
+                websiteUrl: row['Website'] || '',
+                services: row['Referral Instructions'] || row['General Email'] || 'Contact for details',
+                eligibility: row['Organization Type'] || ''
+            };
+            
+            locKeys.forEach(k => {
+                mapped[k][cat].push(item);
+            });
+        });
+        
+        return mapped;
+    } catch(e) {
+        console.error('Error parsing Resources.xlsx:', e);
+        return {};
+    }
+}
+
+// Merge external resources with SC_COMMUNITY_RESOURCES
+function getMergedResources() {
+    const ext = loadExternalResources();
+    const merged = JSON.parse(JSON.stringify(SC_COMMUNITY_RESOURCES));
+    
+    for (const loc in ext) {
+        if (!merged[loc]) {
+            merged[loc] = ext[loc];
+            continue;
+        }
+        for (const cat in ext[loc]) {
+            if (Array.isArray(ext[loc][cat])) {
+                if (!merged[loc][cat]) merged[loc][cat] = [];
+                merged[loc][cat] = merged[loc][cat].concat(ext[loc][cat]);
+            }
+        }
+    }
+    return merged;
+}
+
+
     const spreadsheetJobs = loadJobsFromSpreadsheets();
     const directoryEmployers = SC_FAIR_CHANCE_EMPLOYERS.filter(e => e.region === locKey || e.region === 'all');
 
+    const mergedRes = getMergedResources();
     res.json({
-        resources: SC_COMMUNITY_RESOURCES[locKey] || SC_COMMUNITY_RESOURCES.charleston,
+        resources: mergedRes[locKey] || mergedRes.charleston,
         employers: directoryEmployers,
         spreadsheetJobs: spreadsheetJobs
     });
