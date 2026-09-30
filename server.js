@@ -2955,8 +2955,15 @@ app.get('/api/reentry/plan/:userId', authenticateToken, (req, res) => {
 // 4. Directory & Spreadsheet Jobs Query
 app.get('/api/reentry/resources', (req, res) => {
     const region = req.query.region || 'charleston';
+    if (region === 'all') {
+        return res.json({
+            allResources: SC_COMMUNITY_RESOURCES,
+            spreadsheetJobs: loadJobsFromSpreadsheets(),
+            employers: SC_FAIR_CHANCE_EMPLOYERS
+        });
+    }
+
     const locKey = region.toLowerCase().includes('columbia') ? 'columbia' : (region.toLowerCase().includes('spartanburg') || region.toLowerCase().includes('greenville') || region.toLowerCase().includes('upstate') ? 'greenville' : 'charleston');
-    
     const spreadsheetJobs = loadJobsFromSpreadsheets();
     const directoryEmployers = SC_FAIR_CHANCE_EMPLOYERS.filter(e => e.region === locKey || e.region === 'all');
 

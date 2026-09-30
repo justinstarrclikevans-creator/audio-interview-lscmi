@@ -91,27 +91,29 @@
                         </div>
                     </div>
                     
-                    <div style="background: #f8fafc; padding: 16px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 16px;">
-                        <p style="margin: 0 0 12px 0; font-size: 13.5px; color: var(--slate);">Select your location and primary need to find verified local resources, contact information, and instructions.</p>
-                        <div class="form-row">
-                            <div class="form-group" style="flex: 1;">
-                                <label style="font-weight: bold; font-size: 13px;">Location</label>
-                                <select id="pub-res-location" class="form-control" onchange="renderPublicResources()">
-                                    <option value="charleston">Charleston Tri-County</option>
-                                    <option value="columbia">Columbia Midlands</option>
-                                    <option value="spartanburg">Spartanburg & Upstate</option>
-                                </select>
+                    <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 20px;">
+                        <!-- AI Assistant Box -->
+                        <div style="flex: 1; min-width: 300px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; display: flex; flex-direction: column;">
+                            <h3 style="margin: 0 0 10px 0; font-size: 16px; color: var(--primary);">🤖 Ask the Resource Assistant</h3>
+                            <p style="font-size: 12.5px; color: var(--slate); margin: 0 0 12px 0;">Not sure what you need? Ask the AI to search the database for you.</p>
+                            
+                            <div id="pub-ai-chat-history" style="flex: 1; min-height: 200px; max-height: 250px; overflow-y: auto; background: white; border: 1px solid var(--border); border-radius: 6px; padding: 12px; font-size: 13px; line-height: 1.5; display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px;">
+                                <div style="background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px;">
+                                    <strong>Assistant:</strong> Hello! Tell me what you need help with (e.g., "I need a place to stay in Charleston" or "How do I get a free bus pass in Columbia?")
+                                </div>
                             </div>
-                            <div class="form-group" style="flex: 1;">
-                                <label style="font-weight: bold; font-size: 13px;">What do you need?</label>
-                                <select id="pub-res-category" class="form-control" onchange="renderPublicResources()">
-                                    <option value="housing">Emergency Shelter & Housing</option>
-                                    <option value="legal_and_id">Legal Aid, Child Support & ID/License</option>
-                                    <option value="health_and_mental">Healthcare, Mental Health & Substance Recovery</option>
-                                    <option value="food_and_transit">Transportation, Food & Clothing</option>
-                                    <option value="employment_and_training">Employment & Training (Columbia only)</option>
-                                </select>
+
+                            <div style="display: flex; gap: 8px;">
+                                <input type="text" id="pub-ai-input" placeholder="Type your question here..." style="flex: 1; padding: 10px; font-size: 13px; border: 1px solid var(--border); border-radius: 4px;" onkeydown="if(event.key==='Enter') sendPubAiMessage()">
+                                <button class="btn btn-primary" style="padding: 0 16px;" onclick="sendPubAiMessage()" id="btn-pub-ai-send">Ask</button>
                             </div>
+                        </div>
+
+                        <!-- Info Box -->
+                        <div style="flex: 1; min-width: 300px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 16px;">
+                            <h3 style="margin: 0 0 10px 0; font-size: 16px; color: #b45309;">📍 Full Statewide Database</h3>
+                            <p style="font-size: 13px; color: #92400e; margin: 0 0 12px 0; line-height: 1.5;">Scroll down to view our complete list of verified community resources across South Carolina, categorized by location and need.</p>
+                            <input type="text" id="pub-res-search" placeholder="Quick search by name or keyword..." oninput="filterPublicResources()" style="width: 100%; padding: 10px; font-size: 13px; border: 1px solid #fcd34d; border-radius: 4px; box-sizing: border-box;">
                         </div>
                     </div>
                     
@@ -2514,7 +2516,7 @@
 
 
 
-    <script src="app.js?v=1790695023"></script>
+    <script src="app.js?v=1790695099"></script>
 
     <!-- MODAL: Participant File (Consolidated) -->
     <div id="modal-participant-file" class="modal hidden">

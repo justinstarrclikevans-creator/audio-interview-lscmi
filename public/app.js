@@ -7524,54 +7524,135 @@ async function triggerSkillCatSync() {
 }
 
 let cachedPublicResources = null;
+let allResourcesFlat = [];
 
 async function renderPublicResources() {
-    const loc = document.getElementById('pub-res-location')?.value || 'charleston';
-    const cat = document.getElementById('pub-res-category')?.value || 'housing';
     const container = document.getElementById('pub-res-container');
-    
     if (!container) return;
-    container.innerHTML = '<p class="text-slate">Loading resources...</p>';
+    container.innerHTML = '<p class="text-slate">Loading entire database...</p>';
     
     try {
-        if (!cachedPublicResources || cachedPublicResources.region !== loc) {
-            const res = await fetch(`/api/reentry/resources?region=${loc}`);
+        if (!cachedPublicResources) {
+            const res = await fetch('/api/reentry/resources?region=all');
             const data = await res.json();
-            cachedPublicResources = { region: loc, data: data.resources || {} };
+            cachedPublicResources = data.allResources || {};
+            
+            // Flatten
+            allResourcesFlat = [];
+            for (const region in cachedPublicResources) {
+                const regData = cachedPublicResources[region];
+                for (const cat in regData) {
+                    if (Array.isArray(regData[cat])) {
+                        regData[cat].forEach(item => {
+                            allResourcesFlat.push({ ...item, internalRegion: regData.regionName || region });
+                        });
+                    }
+                }
+            }
         }
         
-        const items = cachedPublicResources.data[cat] || [];
-        if (items.length === 0) {
-            container.innerHTML = '<p class="text-slate">No resources found for this category in this location.</p>';
-            return;
-        }
-        
-        container.innerHTML = items.map(item => `
-            <div style="background: white; border: 1px solid var(--border); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; height: 100%;">
-                <div style="margin-bottom: 12px;">
-                    <span class="badge badge-accent" style="margin-bottom: 6px; display: inline-block;">${item.category || cat}</span>
-                    <h3 style="margin: 0 0 4px 0; color: var(--primary); font-size: 16px;">${item.name}</h3>
-                    <div style="color: var(--slate); font-size: 13px;">
-                        ${item.phone ? `<div>📞 ${item.phone}</div>` : ''}
-                        ${item.address ? `<div>📍 ${item.address}</div>` : ''}
-                    </div>
-                </div>
-                <div style="flex: 1;">
-                    <p style="margin: 0 0 8px 0; font-size: 13.5px; line-height: 1.4; color: var(--dark);"><strong>Services:</strong> ${item.services}</p>
-                    ${item.eligibility ? `<p style="margin: 0 0 12px 0; font-size: 12.5px; line-height: 1.4; color: #b45309; background: #fefce8; padding: 6px; border-radius: 4px;"><strong>Eligibility:</strong> ${item.eligibility}</p>` : ''}
-                </div>
-                ${item.websiteUrl ? `
-                <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border);">
-                    <a href="${item.websiteUrl}" target="_blank" class="btn btn-outline" style="width: 100%; text-align: center; text-decoration: none; padding: 8px;">Visit Website & Instructions &rarr;</a>
-                </div>
-                ` : ''}
-            </div>
-        `).join('');
-        
+        displayFlatResources(allResourcesFlat);
     } catch (e) {
-        container.innerHTML = '<p class="text-danger">Failed to load resources.</p>';
+        container.innerHTML = '<p class="text-danger">Failed to load database.</p>';
     }
 }
+
+function displayFlatResources(list) {
+    const container = document.getElementById('pub-res-container');
+    if (list.length === 0) {
+        container.innerHTML = '<p class="text-slate">No resources match your search.</p>';
+        return;
+    }
+    
+    container.innerHTML = list.map(item => `
+        <div style="background: white; border: 1px solid var(--border); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; height: 100%;">
+            <div style="margin-bottom: 12px;">
+                <span class="badge badge-accent" style="margin-bottom: 6px; display: inline-block;">${item.internalRegion}</span>
+                <span class="badge" style="background: #e2e8f0; color: #475569; margin-bottom: 6px; display: inline-block;">${item.category || ''}</span>
+                <h3 style="margin: 0 0 4px 0; color: var(--primary); font-size: 16px;">${item.name}</h3>
+                <div style="color: var(--slate); font-size: 13px;">
+                    ${item.phone ? `<div>📞 ${item.phone}</div>` : ''}
+                    ${item.address ? `<div>📍 ${item.address}</div>` : ''}
+                </div>
+            </div>
+            <div style="flex: 1;">
+                <p style="margin: 0 0 8px 0; font-size: 13.5px; line-height: 1.4; color: var(--dark);"><strong>Services:</strong> ${item.services}</p>
+                ${item.eligibility ? `<p style="margin: 0 0 12px 0; font-size: 12.5px; line-height: 1.4; color: #b45309; background: #fefce8; padding: 6px; border-radius: 4px;"><strong>Eligibility:</strong> ${item.eligibility}</p>` : ''}
+            </div>
+            ${item.websiteUrl ? `
+            <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border);">
+                <a href="${item.websiteUrl}" target="_blank" class="btn btn-outline" style="width: 100%; text-align: center; text-decoration: none; padding: 8px;">Visit Website & Instructions &rarr;</a>
+            </div>
+            ` : ''}
+        </div>
+    `).join('');
+}
+
+window.filterPublicResources = function() {
+    const q = (document.getElementById('pub-res-search').value || '').toLowerCase();
+    if (!q) {
+        displayFlatResources(allResourcesFlat);
+        return;
+    }
+    const filtered = allResourcesFlat.filter(item => 
+        (item.name || '').toLowerCase().includes(q) ||
+        (item.services || '').toLowerCase().includes(q) ||
+        (item.category || '').toLowerCase().includes(q) ||
+        (item.internalRegion || '').toLowerCase().includes(q) ||
+        (item.address || '').toLowerCase().includes(q)
+    );
+    displayFlatResources(filtered);
+};
+
+window.sendPubAiMessage = async function() {
+    const inputField = document.getElementById('pub-ai-input');
+    const msg = inputField.value.trim();
+    if (!msg) return;
+    
+    inputField.value = '';
+    const chatBox = document.getElementById('pub-ai-chat-history');
+    
+    // Add user message
+    chatBox.innerHTML += `
+        <div style="align-self: flex-end; background: #0284c7; color: white; border-radius: 6px; padding: 10px; max-width: 85%;">
+            ${escapeHtml(msg)}
+        </div>
+    `;
+    chatBox.scrollTop = chatBox.scrollHeight;
+    
+    const btn = document.getElementById('btn-pub-ai-send');
+    btn.disabled = true;
+    btn.innerText = 'Thinking...';
+
+    // Temporary typing indicator
+    const typingId = 'pub-ai-typing-' + Date.now();
+    chatBox.innerHTML += `<div id="${typingId}" style="align-self: flex-start; background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 12px; color: var(--slate); font-style: italic;">Assistant is looking up resources...</div>`;
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    try {
+        const res = await fetch('/api/participant/ai-assistant', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: msg, contextMode: 'rn' }) // reuse rn context which knows about SC_COMMUNITY_RESOURCES
+        });
+        const data = await res.json();
+        
+        document.getElementById(typingId).remove();
+        chatBox.innerHTML += `
+            <div style="align-self: flex-start; background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px; max-width: 90%;">
+                <strong>Assistant:</strong><br>${marked.parse(data.reply || 'Sorry, I could not generate a response.')}
+            </div>
+        `;
+    } catch (err) {
+        document.getElementById(typingId).remove();
+        chatBox.innerHTML += `<div style="color: red; padding: 8px;">Error: Could not connect to AI.</div>`;
+    }
+    
+    btn.disabled = false;
+    btn.innerText = 'Ask';
+    chatBox.scrollTop = chatBox.scrollHeight;
+};
+
 
 window.promptKioskIntake = function() {
     const pin = prompt('Enter 4-Digit Staff PIN to launch the Intake Interview:');
