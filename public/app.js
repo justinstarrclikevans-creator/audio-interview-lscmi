@@ -2149,29 +2149,6 @@ function startReentryAssessmentForUser(userId, name) {
     }
 }
 
-async function handleReentryAssessSubmit(e) {
-    e.preventDefault();
-    const token = localStorage.getItem('fs_token');
-    const btn = document.getElementById('btn-reentry-submit');
-    btn.disabled = true;
-    btn.innerText = 'Analyzing Interview, Checking Flags & Linking to Profile...';
-
-    const selectedNeeds = Array.from(document.querySelectorAll('input[name="reentry-need"]:checked')).map(cb => cb.value);
-    const fileInput = document.getElementById('reentry-file');
-
-    const formData = new FormData();
-    formData.append('userId', document.getElementById('reentry-participant-select').value);
-    formData.append('participantName', document.getElementById('reentry-name').value);
-    formData.append('location', document.getElementById('reentry-location').value);
-    formData.append('statedGoals', document.getElementById('reentry-goals').value);
-    formData.append('livingSituation', document.getElementById('reentry-housing').value);
-    formData.append('legalStatus', document.getElementById('reentry-legal').value);
-    formData.append('identifiedNeeds', JSON.stringify(selectedNeeds));
-    formData.append('transcriptText', document.getElementById('reentry-transcript').value);
-
-    if (fileInput && fileInput.files[0]) {
-        formData.append('file', fileInput.files[0]);
-    }
 
     try {
         const res = await fetch('/api/reentry/assess', {
@@ -7685,3 +7662,50 @@ async function loginWithPin() {
         alert('Error: ' + e.message);
     }
 }
+
+
+window.handleReentryStandaloneSubmit = async function(e) {
+    e.preventDefault();
+    
+    const fileInput = document.getElementById('reentry-standalone-file');
+    if (!fileInput.files[0]) return alert('Please select a file.');
+    
+    const btn = document.getElementById('btn-reentry-standalone');
+    const originalText = btn.innerText;
+    btn.innerText = 'Processing File & Generating PDFs (This takes ~30s)...';
+    btn.disabled = true;
+    
+    const resultsDiv = document.getElementById('reentry-standalone-results');
+    resultsDiv.classList.add('hidden');
+
+    const formData = new FormData();
+    formData.append('audio', fileInput.files[0]);
+    formData.append('participantName', document.getElementById('reentry-standalone-name').value);
+    formData.append('participantLocation', document.getElementById('reentry-standalone-location').value);
+    // Don't link to a participant ID
+    formData.append('reentryLink', 'standalone');
+
+    try {
+        const token = localStorage.getItem('fs_token');
+        const res = await fetch('/api/upload-audio', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` },
+            body: formData
+        });
+        
+        const data = await res.json();
+        
+        if (res.ok) {
+            document.getElementById('btn-dl-staff-pdf').href = data.staffPlanPdf || '#';
+            document.getElementById('btn-dl-part-pdf').href = data.participantGuidePdf || '#';
+            resultsDiv.classList.remove('hidden');
+        } else {
+            alert('Error: ' + (data.error || 'Generation failed.'));
+        }
+    } catch(err) {
+        alert('Upload Error: ' + err.message);
+    }
+    
+    btn.innerText = originalText;
+    btn.disabled = false;
+};
