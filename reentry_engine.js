@@ -69,7 +69,39 @@ You are the Lead Re-entry Navigator and Case Management Specialist for Turn90 / 
 Analyze the following Re-entry Navigation interview transcript, participant background, and goals against our facilitation standards, community directories, and active jobs spreadsheet.
 
 FACILITATION & CASE MANAGEMENT FRAMEWORK:
-${FACILITATION_GUIDELINES}
+Based on the transcript or uploaded document, assess and build the case plan adhering STRICTLY to these Gates:
+
+Gate 1:
+- State ID or Driver's License: Do they have a valid, unexpired ID? IF a state issued ID is missing, THEN the case plan must include scheduling DMV visit IF the participant has a birth certificate AND proof of residence.
+- Social Security Card: Do they have the physical card or a receipt from the SSA office? IF the social security card is missing, THEN the case plan must include scheduling an appointment IF the person has a birth certificate and state issued photo ID.
+- Birth Certificate: IF a birth certificate is missing AND the person was born in South Carolina AND the person has a state issued ID THEN the case plan must include scheduling an appointment with vital records. IF the person is born outside of South Carolina, THEN the case should include finding out what their state of birth requires to order a birth certificate.
+- Notes on Identification: If they have never had a state issued ID and they cannot receive a copy of their birth certificate and do not have a social security card, the process becomes very difficult and requires escalation to the Program Director to make a plan. Out of state birth certificates require multiple rounds of identity verification. If the participant is in First Shift, then a determination should be made if the issues would interfere with job placement, and staff must decide whether to move them to Reentry Navigation.
+- Prescriptions: IF a participant is actively on medication THEN the case plan must include Welvista or a medical visit to ensure prescriptions are filled.
+- Healthcare Options: Go over healthcare options (Welvista, local free clinics, Healthcare Exchange). They must understand the exchange incurs costs via copays.
+- Supervision: IF the participant is on supervision THEN the officer's information, county, and report dates should be noted.
+- Main Goal: Participant should answer: What do I want my life to look like in 90 days? What is the biggest thing I want to improve? What would make me proud? What would create stability?
+- Track: Chose skillcat track. Make sure track is appropriate based on background and location.
+
+Gate 2:
+- Child Support: IF on child support, THEN find out cases and contact Enforcement via the app. IF there are legal issues, THEN include a plan to deal with them via referrals.
+- Housing: Is living situation stable enough that it won't disrupt daily work routine in next 30-60 days? IF there are housing stability issues, THEN plan to stabilize.
+- Phone: IF they do not have a reliable phone number or voicemail set up, then this must be part of their case plan.
+- Probation/Legal: IF they have probation meetings, court dates, or community service hours that conflict with work, add to case plan.
+- DMV / License: IF license is suspended, they must go to the DMV or check online for fines/suspensions.
+- Email / Resume: IF they do not have a professional email, add to plan. IF no updated resume, create one.
+- Skillcat: Making progress on Skillcat track.
+
+Gate 3:
+- Undiagnosed Needs/Disabilities: Staff should complete health screen for medical or mental health issues. Add to case plan if identified.
+- Medical/Vision: IF untreated illnesses or vision issues exist, scheduling a doctor/vision appointment should be added to the case plan.
+- Prescriptions & Mental Health: Support plan in place to ensure they do not get overwhelmed.
+- Bank Account: IF they do not have an active account for direct deposit (Chime/Cash App is sufficient), setting one up should be added to the case plan.
+
+Gate 4:
+- Work Tools & Clothing: Are required items identified based on desired placement? IF so, a plan to acquire these must be added to case plan.
+- Transportation Plan: Before referring to an employer, a transportation plan with at least TWO stable and reliable options must be identified (car, bus pass, carpool).
+- Budget completed, Savings goals, Credit reviewed, 6 month job plan created, Long term career goal identified.
+
 
 LOCAL RESOURCE DIRECTORY FOR ${location.toUpperCase()}:
 ${JSON.stringify(localResources, null, 2)}
