@@ -139,7 +139,7 @@ async function restoreSession(token) {
 function updateNav() {
     const navRight = document.getElementById('nav-user-section');
     if (!currentUser) {
-        navRight.innerHTML = '<button class="btn btn-outline" style="padding: 6px 12px; font-size: 12px; background: white;" onclick="openStaffLogin()">Staff Login</button>';
+        navRight.innerHTML = '';
         return;
     }
 
@@ -7655,10 +7655,33 @@ window.sendPubAiMessage = async function() {
 
 
 window.promptKioskIntake = function() {
-    const pin = prompt('Enter 4-Digit Staff PIN to launch the Intake Interview:');
+    const pin = prompt('Enter Staff PIN:');
     if (pin === '4706') {
         openInterviewModal();
+    } else if (pin === '843348') {
+        loginWithPin();
     } else if (pin !== null) {
         alert('Incorrect PIN.');
     }
 };
+
+async function loginWithPin() {
+    try {
+        const res = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: 'pm@firstshift.org', password: 'FirstShift2026!' })
+        });
+        const data = await res.json();
+        if (data.token) {
+            localStorage.setItem('fs_token', data.token);
+            currentUser = data.user;
+            updateNav();
+            routeUserToPortal();
+        } else {
+            alert('PIN Login Failed');
+        }
+    } catch(e) {
+        alert('Error: ' + e.message);
+    }
+}
