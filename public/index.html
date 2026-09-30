@@ -1,4 +1,582 @@
-<!-- SUBSECTION 2: RE-ENTRY NAVIGATOR & CASE PLANNING -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>First Shift & Re-entry Navigation Platform</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <!-- Impersonation Banner -->
+    <div id="impersonation-banner" class="hidden" style="background-color: #ef4444; color: white; text-align: center; padding: 10px; font-weight: bold; font-size: 14px; z-index: 9999; position: relative;">
+        🕵️‍♀️ You are currently viewing as a Participant. 
+        <button onclick="endImpersonation()" style="margin-left: 10px; padding: 4px 10px; background: white; color: #ef4444; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px;">Return to Staff Dashboard</button>
+    </div>
+
+    <!-- Top Global Navigation Bar -->
+    <header class="top-nav">
+        <div class="nav-container">
+            <div class="brand">
+                <span class="brand-badge">SC RE-ENTRY</span>
+                <span class="brand-title">First Shift <span class="accent-text">&</span> Re-entry Navigation</span>
+            </div>
+            <div class="nav-right" id="nav-user-section">
+                <!-- Dynamically populated based on auth status -->
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <!-- ========================================================= -->
+        <!-- VIEW 1: AUTHENTICATION (LOGIN / SIGN UP)                   -->
+        <!-- ========================================================= -->
+        
+        <!-- ========================================================= -->
+        <!-- VIEW 0: PUBLIC PORTAL                                      -->
+        <!-- ========================================================= -->
+        <section id="view-public" class="app-view active">
+            <div class="portal-header" style="text-align: center; padding: 40px 20px; background: #f8fafc; border-bottom: 1px solid var(--border); margin-bottom: 30px;">
+                <h1 style="font-size: 32px; color: var(--primary); margin: 0;">Turn90 Job Board & Resource Guide</h1>
+                <p style="font-size: 16px; color: var(--slate); max-width: 600px; margin: 10px auto 0 auto;">Browse verified fair-chance employers and state benefits without logging in.</p>
+            </div>
+            
+            <div class="public-tabs" style="display: flex; justify-content: center; gap: 10px; margin-bottom: 30px;">
+                <button id="pub-btn-jobs" class="btn btn-primary" onclick="switchPublicTab('jobs')">💼 Job Board</button>
+                <button id="pub-btn-benefits" class="btn btn-outline" onclick="switchPublicTab('benefits')">🏛️ Resource Guide</button>
+            </div>
+
+            <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+                <!-- SUBSECTION: Job Board -->
+            <div id="pub-sec-jobs" class="">
+                <div class="section-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+                        <div>
+                            <h2 style="margin: 0; font-size: 20px; font-weight: 700; color: var(--dark);">Fair-Chance Re-entry Employers in South Carolina</h2>
+                            <p style="margin: 4px 0 0 0; font-size: 13.5px;" class="text-slate">Verified partners from Turn90 spreadsheets and regional hiring searches offering competitive pay, 1st shift schedules, and rapid career progression.</p>
+                        </div>
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap;" id="rn-job-area-buttons">
+                            <button class="btn btn-primary" id="btn-job-loc-all" style="font-size: 12px; padding: 6px 12px;" onclick="filterJobsByArea('all')">All Areas</button>
+                            <button class="btn btn-outline" id="btn-job-loc-charleston" style="font-size: 12px; padding: 6px 12px;" onclick="filterJobsByArea('Charleston')">📍 Charleston</button>
+                            <button class="btn btn-outline" id="btn-job-loc-columbia" style="font-size: 12px; padding: 6px 12px;" onclick="filterJobsByArea('Columbia')">📍 Columbia</button>
+                            <button class="btn btn-outline" id="btn-job-loc-spartanburg" style="font-size: 12px; padding: 6px 12px;" onclick="filterJobsByArea('Spartanburg')">📍 Spartanburg</button>
+                        </div>
+                    </div>
+                    <div style="background: #f1f5f9; border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; margin-bottom: 16px;">
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                            <div style="flex: 1; min-width: 240px; position: relative;">
+                                <input type="text" id="input-job-keyword" placeholder="Search by job title, trade skill, or employer..." style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px;" onkeyup="handleJobKeywordKeyup(event)">
+                            </div>
+                            <button class="btn btn-primary" style="font-size: 12px; padding: 8px 14px;" onclick="handleJobSearchSubmit()">🔍 Filter Openings</button>
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 8px 14px; background: white;" onclick="launchGoogleJobsSearch()">🌐 Search Live Google Jobs</button>
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 8px 10px; background: white;" onclick="clearJobSearch()" title="Reset Filters">✕ Reset</button>
+                        </div>
+                    </div>
+                    <div id="jobs-status-summary" style="font-size: 13px; color: var(--slate); font-weight: 600; margin-bottom: 14px;">Loading verified openings...</div>
+                    <div id="job-listings-grid" class="job-grid"></div>
+                </div>
+            </div>
+
+            
+                <!-- SUBSECTION: State Benefits -->
+            <div id="pub-sec-benefits" class="hidden">
+                <div class="section-card" style="border-top: 4px solid #0284c7; margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 24px;">🏢</span>
+                                <h2 style="margin: 0; font-size: 19px;">South Carolina Community Resource Guide</h2>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 20px;">
+                        <!-- AI Assistant Box -->
+                        <div style="flex: 1; min-width: 300px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; display: flex; flex-direction: column;">
+                            <h3 style="margin: 0 0 10px 0; font-size: 16px; color: var(--primary);">🤖 Ask the Resource Assistant</h3>
+                            <p style="font-size: 12.5px; color: var(--slate); margin: 0 0 12px 0;">Not sure what you need? Ask the AI to search the database for you.</p>
+                            
+                            <div id="pub-ai-chat-history" style="flex: 1; min-height: 200px; max-height: 250px; overflow-y: auto; background: white; border: 1px solid var(--border); border-radius: 6px; padding: 12px; font-size: 13px; line-height: 1.5; display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px;">
+                                <div style="background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px;">
+                                    <strong>Assistant:</strong> Hello! Tell me what you need help with (e.g., "I need a place to stay in Charleston" or "How do I get a free bus pass in Columbia?")
+                                </div>
+                            </div>
+
+                            <div style="display: flex; gap: 8px;">
+                                <input type="text" id="pub-ai-input" placeholder="Type your question here..." style="flex: 1; padding: 10px; font-size: 13px; border: 1px solid var(--border); border-radius: 4px;" onkeydown="if(event.key==='Enter') sendPubAiMessage()">
+                                <button class="btn btn-primary" style="padding: 0 16px;" onclick="sendPubAiMessage()" id="btn-pub-ai-send">Ask</button>
+                            </div>
+                        </div>
+
+                        <!-- Info Box -->
+                        <div style="flex: 1; min-width: 300px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 16px;">
+                            <h3 style="margin: 0 0 10px 0; font-size: 16px; color: #b45309;">📍 Full Statewide Database</h3>
+                            <p style="font-size: 13px; color: #92400e; margin: 0 0 12px 0; line-height: 1.5;">Scroll down to view our complete list of verified community resources across South Carolina, categorized by location and need.</p>
+                            <input type="text" id="pub-res-search" placeholder="Quick search by name or keyword..." oninput="filterPublicResources()" style="width: 100%; padding: 10px; font-size: 13px; border: 1px solid #fcd34d; border-radius: 4px; box-sizing: border-box;">
+                        </div>
+                    </div>
+                    
+                    <div id="pub-res-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px;">
+                        <!-- Filled dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            </div>
+            <!-- Public Footer with Hidden Intake Kiosk -->
+            <div style="text-align: right; padding: 12px 24px; opacity: 0.6; margin-top: 10px;">
+                <button onclick="promptKioskIntake()" style="background: none; border: none; color: var(--slate); font-size: 12px; cursor: pointer;">🎙️ Intake Portal</button>
+            </div>
+        </section>
+<section id="view-auth" class="app-view hidden">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h2>Welcome to First Shift</h2>
+                    <p class="subtitle">Manage your First Shift milestones, job readiness gates, and access re-entry navigation tools.</p>
+                </div>
+
+
+                <!-- Login Form -->
+                <form id="form-login" class="auth-form" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="login-email">Email Address</label>
+                        <input type="email" id="login-email" required placeholder="name@example.com">
+                    </div>
+                    <div class="form-group">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <label for="login-password">Password</label>
+                            <a href="javascript:void(0)" onclick="openResetPasswordModal()" style="font-size: 11.5px; color: var(--accent); text-decoration: underline;">Forgot Password?</a>
+                        </div>
+                        <input type="password" id="login-password" required placeholder="Enter password">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                </form>
+
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- ========================================================= -->
+        <section id="view-rn-portal" class="app-view hidden">
+            <div class="portal-header">
+                <div>
+                    <h1>Re-entry Navigation Hub</h1>
+                    <p class="portal-sub">Access verified fair-chance employers, build your resume, and complete online modules.</p>
+                </div>
+                <button class="btn btn-accent" onclick="openJobHuntingAiModal()">💼 Launch Job Hunting AI</button>
+            </div>
+
+            <div class="nav-sub-tabs">
+                <button class="sub-tab-btn active" onclick="switchRnSection('caseplan')">🎯 My Re-entry Case Plan</button>
+                <button class="sub-tab-btn" onclick="switchRnSection('benefits')">🏛️ State Benefits & Healthcare</button>
+                <!-- Master Briefcase removed -->
+                <button class="sub-tab-btn" onclick="switchRnSection('messages')">🤖 AI Assistant</button>
+                <button class="sub-tab-btn" onclick="switchRnSection('jobs')">💼 Re-entry Job Board</button>
+                <button class="sub-tab-btn" onclick="switchRnSection('cbt')">🧠 Turn90 CBT Modules</button>
+                <button class="sub-tab-btn" onclick="switchRnSection('resume')">📄 AI Resume Builder</button>
+                <button class="sub-tab-btn" onclick="switchRnSection('locker')">📁 Document Locker</button>
+            </div>
+
+            <!-- RN Section: My Re-entry Case Plan (Notes & Needs) -->
+            <div id="rn-section-caseplan" class="rn-sub-view">
+                <!-- Banner with Stability & Downloads -->
+                <div class="section-card" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-left: 5px solid var(--success); margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+                                <span style="font-size: 26px;">🎯</span>
+                                <h2 style="color: #166534; margin: 0; font-size: 20px;">My Personalized Re-entry Case Plan</h2>
+                                <span id="rn-plan-stability-badge" class="badge badge-green" style="font-size: 11px;">Status: Active</span>
+                            </div>
+                            <p style="margin: 0; font-size: 13.5px; color: #1e3a8a; line-height: 1.5;">
+                                Built directly from your Turn90 intake notes, self-reported needs, barrier resolutions, and case brief.
+                            </p>
+                        </div>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <a id="rn-plan-docx-btn" href="#" download class="btn btn-primary" style="text-decoration: none; font-size: 12.5px;">📥 Download Word (.docx)</a>
+                            <a id="rn-plan-pdf-btn" href="#" target="_blank" class="btn btn-accent" style="text-decoration: none; font-size: 12.5px;">🖨️ View / Print PDF</a>
+                            <button type="button" class="btn btn-outline" style="font-size: 12.5px;" onclick="openParticipantCasePlanModal()">📄 Read Full Case Plan</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stated Goals & Needs Assessment Card -->
+                <div class="section-card" style="margin-bottom: 20px;">
+                    <div class="section-header" style="margin-bottom: 12px;">
+                        <h3 style="margin: 0; font-size: 16px; color: var(--primary);">📋 Stated Goals & Identified Needs Assessment</h3>
+                        <p style="margin: 2px 0 0 0; font-size: 12.5px; color: var(--slate);">Your core goals and prioritized stabilization needs on file.</p>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+                        <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 14px;">
+                            <div style="font-size: 12px; font-weight: 700; color: var(--slate); text-transform: uppercase; margin-bottom: 4px;">🎯 Stated Goals</div>
+                            <div id="rn-plan-goals" style="font-size: 13.5px; color: #1e293b; font-weight: 600;">Loading stated goals...</div>
+                        </div>
+                        <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 14px;">
+                            <div style="font-size: 12px; font-weight: 700; color: var(--slate); text-transform: uppercase; margin-bottom: 4px;">🚨 Identified Needs & Focus Areas</div>
+                            <div id="rn-plan-needs" style="font-size: 13px; color: #1e293b;">Loading identified needs...</div>
+                        </div>
+                        <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 14px;">
+                            <div style="font-size: 12px; font-weight: 700; color: var(--slate); text-transform: uppercase; margin-bottom: 4px;">🏠 Living Situation</div>
+                            <div id="rn-plan-living" style="font-size: 13.5px; color: #1e293b; font-weight: 600;">Loading housing status...</div>
+                        </div>
+                        <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 14px;">
+                            <div style="font-size: 12px; font-weight: 700; color: var(--slate); text-transform: uppercase; margin-bottom: 4px;">⚖️ Legal & Supervision Status</div>
+                            <div id="rn-plan-legal" style="font-size: 13.5px; color: #1e293b; font-weight: 600;">Loading supervision status...</div>
+                        </div>
+                        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 14px; grid-column: 1 / -1;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                                <div>
+                                    <div style="font-size: 12px; font-weight: 700; color: #166534; text-transform: uppercase; margin-bottom: 4px;">🏛️ State Benefits & Healthcare Coverage</div>
+                                    <div id="rn-plan-benefits-summary" style="font-size: 12.5px; color: #166534; display: flex; gap: 6px; flex-wrap: wrap;">
+                                        <span class="badge" id="rn-plan-pill-welvista" style="font-size: 11px; background: #dcfce7; color: #166534;">💊 Welvista: ...</span>
+                                        <span class="badge" id="rn-plan-pill-medicaid" style="font-size: 11px; background: #dcfce7; color: #166534;">🩺 Medicaid: ...</span>
+                                        <span class="badge" id="rn-plan-pill-snap" style="font-size: 11px; background: #dcfce7; color: #166534;">🍎 SNAP: ...</span>
+                                        <span class="badge" id="rn-plan-pill-tanf" style="font-size: 11px; background: #dcfce7; color: #166534;">💵 TANF: ...</span>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 6px;">
+                                    <button class="btn btn-primary" style="font-size: 11.5px; padding: 5px 10px;" onclick="switchRnSection('benefits')">Manage Applications</button>
+                                    <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 10px;" onclick="openBenefitsHubModal()">Guided Modal</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Criminogenic Dynamic Domains & High-Risk Triggers -->
+                <div class="section-card" style="margin-bottom: 20px;">
+                    <div class="section-header" style="margin-bottom: 12px;">
+                        <h3 style="margin: 0; font-size: 16px; color: var(--primary);">🧠 Priority Dynamic Focus Domains & CBT Strategies</h3>
+                        <p style="margin: 2px 0 0 0; font-size: 12.5px; color: var(--slate);">Behavioral and thinking patterns targeted during your re-entry coaching.</p>
+                    </div>
+                    <div id="rn-plan-domains-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px;">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Personalized Community Referrals -->
+                <div class="section-card" style="margin-bottom: 20px;">
+                    <div class="section-header" style="margin-bottom: 12px;">
+                        <h3 style="margin: 0; font-size: 16px; color: var(--primary);">🤝 Personalized Community Resource Referrals</h3>
+                        <p style="margin: 2px 0 0 0; font-size: 12.5px; color: var(--slate);">Direct links and next action steps for Housing, SCDMV License Reinstatement, Welvista, and legal aid.</p>
+                    </div>
+                    <div id="rn-plan-referrals-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px;">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- RN Section: State Benefits & Healthcare Hub -->
+            <div id="rn-section-benefits" class="rn-sub-view hidden">
+                <div class="section-card" style="border-top: 4px solid #0284c7; margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 24px;">🏛️</span>
+                                <h2 style="margin: 0; font-size: 19px;">South Carolina State Benefits & Healthcare Access Hub</h2>
+                            </div>
+                            <p style="margin: 4px 0 0 0;" class="text-slate">Direct application links, document checklists, phone hotlines, and real-time status tracking for Welvista, Medicaid, SNAP, and TANF.</p>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn btn-outline" onclick="openBenefitsHubModal()">🔍 Open Guided Modal</button>
+                        </div>
+                    </div>
+                    <div id="rn-benefits-container">
+                        <!-- Loaded dynamically via JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- RN Section: Job Board -->
+            <div id="rn-section-jobs" class="rn-sub-view hidden">
+                <div class="section-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+                        <div>
+                            <h2 style="margin: 0; font-size: 20px; font-weight: 700; color: var(--dark);">Fair-Chance Re-entry Employers in South Carolina</h2>
+                            <p style="margin: 4px 0 0 0; font-size: 13.5px;" class="text-slate">Verified partners from Turn90 spreadsheets and regional hiring searches offering competitive pay, 1st shift schedules, and rapid career progression.</p>
+                        </div>
+                        <!-- Location Filter Buttons -->
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap;" id="rn-job-area-buttons">
+                            <button class="btn btn-primary" id="btn-job-loc-all" style="font-size: 12px; padding: 6px 12px;" onclick="filterJobsByArea('all')">All Areas</button>
+                            <button class="btn btn-outline" id="btn-job-loc-charleston" style="font-size: 12px; padding: 6px 12px;" onclick="filterJobsByArea('Charleston')">📍 Charleston</button>
+                            <button class="btn btn-outline" id="btn-job-loc-columbia" style="font-size: 12px; padding: 6px 12px;" onclick="filterJobsByArea('Columbia')">📍 Columbia</button>
+                            <button class="btn btn-outline" id="btn-job-loc-spartanburg" style="font-size: 12px; padding: 6px 12px;" onclick="filterJobsByArea('Spartanburg')">📍 Spartanburg</button>
+                        </div>
+                    </div>
+
+                    <!-- Live Hiring Search & Google Search Controls -->
+                    <div style="background: #f1f5f9; border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; margin-bottom: 16px;">
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                            <div style="flex: 1; min-width: 240px; position: relative;">
+                                <input type="text" id="input-job-keyword" placeholder="Search by job title, trade skill, or employer (e.g., Forklift, Welder, CDL, Assembly)..." style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px;" onkeyup="handleJobKeywordKeyup(event)">
+                            </div>
+                            <button class="btn btn-primary" style="font-size: 12px; padding: 8px 14px;" onclick="handleJobSearchSubmit()">🔍 Filter Openings</button>
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 8px 14px; background: white;" onclick="launchGoogleJobsSearch()">🌐 Search Live Google Jobs in Area</button>
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 8px 10px; background: white;" onclick="clearJobSearch()" title="Reset Filters">✕ Reset</button>
+                        </div>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 10px; font-size: 12px; color: var(--slate);">
+                            <span style="font-weight: 600; color: var(--dark);">Quick Google Jobs Searches:</span>
+                            <a href="javascript:void(0)" onclick="launchQuickGoogleJobs('Charleston')" class="chip-link" style="color: var(--primary); text-decoration: underline;">📍 Live Charleston Jobs</a> •
+                            <a href="javascript:void(0)" onclick="launchQuickGoogleJobs('Columbia')" class="chip-link" style="color: var(--primary); text-decoration: underline;">📍 Live Columbia Jobs</a> •
+                            <a href="javascript:void(0)" onclick="launchQuickGoogleJobs('Spartanburg')" class="chip-link" style="color: var(--primary); text-decoration: underline;">📍 Live Spartanburg Jobs</a>
+                        </div>
+                    </div>
+
+                    <!-- Status Summary Banner -->
+                    <div id="jobs-status-summary" style="font-size: 13px; color: var(--slate); font-weight: 600; margin-bottom: 14px;">
+                        Loading verified openings...
+                    </div>
+
+                    <div id="job-listings-grid" class="job-grid">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- RN Section: Resume Builder -->
+            <div id="rn-section-resume" class="rn-sub-view hidden">
+                <div class="section-card">
+                    <h2>Master Resume Builder</h2>
+                    <p class="mb-4">Fill out your background to generate an employer-ready resume formatted for First Shift partners.</p>
+                    <form id="form-resume" onsubmit="handleSaveResume(event)" class="resume-form-grid">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="res-name" required placeholder="John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="text" id="res-phone" required placeholder="843-555-0199">
+                        </div>
+                        <div class="form-group">
+                            <label>City & State</label>
+                            <input type="text" id="res-location" required placeholder="Charleston, SC">
+                        </div>
+                        <div class="form-group">
+                            <label>Professional Objective</label>
+                            <input type="text" id="res-objective" placeholder="Dedicated professional seeking 1st shift manufacturing role...">
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Key Skills (comma separated)</label>
+                            <textarea id="res-skills" rows="2" placeholder="Forklift operation, blueprint reading, OSHA 10, assembly, teamwork"></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Work Experience</label>
+                            <textarea id="res-experience" rows="4" placeholder="Material Handler | Palmetto Logistics | 2024 - 2025&#10;- Operated forklift and managed pallet inventory..."></textarea>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>Certifications & Education</label>
+                            <textarea id="res-education" rows="2" placeholder="GED - 2023 | OSHA 10 Safety Certification - 2024"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save & Generate Resume</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- RN Section: CBT Modules -->
+            <div id="rn-section-cbt" class="rn-sub-view hidden">
+                <div class="section-card">
+                    <h2>Cognitive Behavioral Training (CBT Curriculum)</h2>
+                    <p class="text-slate" style="margin: 4px 0 16px 0;">Complete authentic in-class modules, worksheets, and exercises (DMT, STAC, SODAS Problem-Solving, and Relapse Prevention).</p>
+                    <div class="training-accordion" id="cbt-accordion-container">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- RN Section: Document Locker -->
+            <div id="rn-section-locker" class="rn-sub-view hidden">
+                <div class="section-card">
+                    <h2>Personal Document Locker</h2>
+                    <p class="mb-4">Safely store copies of your State ID, Birth Certificate, W-9, and training certificates.</p>
+                    <form id="form-upload-doc" onsubmit="handleDocUpload(event)" class="upload-bar">
+                        <input type="file" id="locker-file" required>
+                        <select id="locker-type" required>
+                            <option value="id">State Driver's License / ID</option>
+                            <option value="ssn">Social Security Card</option>
+                            <option value="cert">Training / Trade Certificate</option>
+                            <option value="resume">Resume PDF</option>
+                            <option value="other">Other Legal Document</option>
+                        </select>
+                        <button type="submit" class="btn btn-outline">Upload to Locker</button>
+                    </form>
+                    <div id="locker-docs-list" class="mt-4">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- RN Section: Master Briefcase Checklist (6 Domains) -->
+            <div id="rn-section-briefcase" class="rn-sub-view hidden">
+                <div class="section-card">
+                    <div class="section-header" style="margin-bottom: 16px;">
+                        <div>
+                            <h2 style="margin: 0;">Master Briefcase Checklist (6 Domains)</h2>
+                            <p style="margin: 4px 0 0 0;" class="text-slate">Manage your verified documents, employment readiness tools, trade credentials, health, and financial independence plans.</p>
+                        </div>
+                    </div>
+                    <div id="rn-briefcase-domains-container">
+                        <!-- Loaded dynamically via JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- RN Section: AI Assistant -->
+            <div id="rn-section-messages" class="rn-sub-view hidden">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 20px;">
+                    <!-- Card 1: Fresh Start AI Assistant -->
+                    <div class="section-card" style="display: flex; flex-direction: column; border-top: 4px solid var(--primary);">
+                        <div class="section-header" style="margin-bottom: 12px;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 22px;">🤖</span>
+                                <div>
+                                    <h2 style="font-size: 16px; margin: 0;">Fresh Start AI Assistant</h2>
+                                    <p style="font-size: 12px; margin: 2px 0 0 0;">Guidance for Form I-9, W-9, SCDMV Driver's License, Welvista & referrals.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Action Chips -->
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px;">
+                            <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askRnAiPrompt('How do I fill out Form I-9 for my new employer?')">📋 Form I-9 Help</button>
+                            <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askRnAiPrompt('What documents can I use for Form I-9 List B and List C?')">🆔 I-9 Documents</button>
+                            <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askRnAiPrompt('How do I get my driver license reinstated with SCDMV?')">🚗 License Reinstatement</button>
+                            <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askRnAiPrompt('How do I get free prescription medicines through Welvista?')">💊 Free Welvista Meds</button>
+                            <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askRnAiPrompt('How do I apply for South Carolina Healthy Connections Medicaid?')">🩺 SC Medicaid</button>
+                            <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askRnAiPrompt('How do I apply for SNAP Food Stamps in South Carolina and can I qualify with a record?')">🍎 Food Stamps (SNAP)</button>
+                            <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askRnAiPrompt('Who qualifies for TANF cash assistance in SC and how do Turn90 hours count?')">💵 TANF Assistance</button>
+                            <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 4px 8px;" onclick="askRnAiPrompt('Where can I find emergency housing or shelter in Charleston or Columbia?')">🏠 Housing Referrals</button>
+                        </div>
+
+                        <!-- AI Chat Box -->
+                        <div id="rn-ai-chat-history" style="flex: 1; min-height: 240px; max-height: 340px; overflow-y: auto; background: #f8fafc; border: 1px solid var(--border); border-radius: 6px; padding: 12px; font-size: 12.5px; line-height: 1.5; display: flex; flex-direction: column; gap: 10px;">
+                            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px;">
+                                <strong>Turn90 Assistant:</strong> Hello! Ask me any questions about employer paperwork (like <strong>Form I-9</strong> or <strong>W-9</strong>), fixing your driver's license, free prescriptions with Welvista, or housing resources.
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 8px; margin-top: 10px;">
+                            <input type="text" id="rn-ai-input" placeholder="Ask about Form I-9, W-9, referrals..." style="flex: 1; padding: 8px 12px; font-size: 12.5px; border: 1px solid var(--border); border-radius: 4px;" onkeydown="if(event.key==='Enter') sendRnParticipantAiMessage()">
+                            <button class="btn btn-primary" style="font-size: 12px; padding: 8px 14px;" onclick="sendRnParticipantAiMessage()" id="btn-rn-ai-send">Ask AI</button>
+                        </div>
+                    </div>
+
+                    
+
+                        <!-- Messages Log -->
+                        
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- VIEW 4: PROGRAM MANAGER COMMAND CENTER                     -->
+        <!-- ========================================================= -->
+        <section id="view-pm-portal" class="app-view hidden">
+            <div class="portal-header">
+                <div>
+                    <h1>Program Manager Command Center</h1>
+                    <p class="portal-sub">Manage caseloads, re-entry case plans & flag detection, review scoring drafts, and sync Apricot points.</p>
+                </div>
+                <div class="pm-actions-header" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    <!-- Group 1: Data & Logs Tools -->
+                    <div class="pm-btn-cluster" style="display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                        <button class="btn btn-primary" style="border-radius: 0; border: none; font-size: 12px; padding: 7px 12px;" onclick="openLoadProgramFormsModal()" title="Enter daily points, log weekly drug screens, or add case management notes">
+                            📥 Load Program Logs
+                        </button>
+                        
+                        
+                        <button class="btn btn-outline" style="border-radius: 0; border: none; border-left: 1px solid var(--border); font-size: 12px; padding: 7px 11px;" onclick="openCmBriefcaseAuditModal()" title="CM vs Briefcase Cross-Audit">
+                            📊 CM Audit
+                        </button>
+                    </div>
+
+                    <!-- Group 2: Executive Reports & Admin -->
+                    <div class="pm-btn-cluster" style="display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                        
+                        
+                        
+                    </div>
+
+                    <!-- Group 3: Primary Career AI Launcher -->
+                    <button class="btn btn-accent" style="font-size: 12.5px; padding: 7px 14px; font-weight: 700; box-shadow: 0 2px 5px rgba(0,0,0,0.12);" onclick="openJobHuntingAiModal()">
+                        💼 Job Hunting AI
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sub Navigation Tabs for Program Manager Portal -->
+            
+            <div class="pm-subtabs" style="display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 12px; overflow-x: auto;">
+                <button id="pm-tab-btn-caseload" class="btn btn-primary" onclick="window.switchCaseloadTab('first_shift')">🏢 First Shift Caseload</button>
+                <button id="pm-tab-btn-rn-caseload" class="btn btn-outline" onclick="window.switchCaseloadTab('reentry_nav')">🧭 Re-entry Caseload</button>
+                <button id="pm-tab-btn-reentry" class="btn btn-outline" onclick="switchPmSubView('reentry')">🧭 Re-entry Navigator & Case Planning</button>
+                <button id="pm-tab-btn-drafts" class="btn btn-outline" onclick="switchPmSubView('drafts')">📝 Scoring Reviews</button>
+                <button id="pm-tab-btn-facilitation" class="btn btn-outline" onclick="switchPmSubView('facilitation')">🎤 Class Evaluations</button>
+                
+                <button id="pm-tab-btn-resume" class="btn btn-outline" onclick="switchPmSubView('resume')">📄 AI Resume Builder</button>
+                
+            </div>
+
+
+            <!-- SUBSECTION 1: CASELOAD TABLE & FILTERS -->
+            <div id="pm-sec-caseload">
+                <!-- Filter Toolbar -->
+                <div class="filter-toolbar">
+                    <select id="pm-filter-location" onchange="loadCaseload()">
+                        <option value="">All Locations</option>
+                        <option value="Charleston">Charleston, SC</option>
+                        <option value="Columbia">Columbia, SC</option>
+                        <option value="Spartanburg">Spartanburg, SC</option>
+                    </select>
+                    <select id="pm-filter-track" onchange="loadCaseload()" style="display:none;">
+                        <option value="">All Tracks</option>
+                        <option value="first_shift">First Shift</option>
+                        <option value="reentry_nav">Re-entry Navigation</option>
+                    </select>
+                    <select id="pm-filter-status" onchange="loadCaseload()" style="display:none;">
+                        <option value="">Active Caseload</option>
+                        <option value="archived">Archived / Removed</option>
+                        <option value="all">All (Active & Archived)</option>
+                    </select>
+                    <select id="pm-filter-gate" onchange="loadCaseload()">
+                        <option value="">All Gates</option>
+                        <option value="1">Gate 1 (Week 1)</option>
+                        <option value="2">Gate 2 (Week 2)</option>
+                        <option value="3">Gate 3 (Week 3)</option>
+                        <option value="4">Gate 4 (Week 4)</option>
+                    </select>
+                </div>
+
+                <!-- Caseload Table -->
+                
+                
+
+                <div class="section-card mt-4">
+                    <h2 id="caseload-title">Active Participant Caseload</h2>
+                    <div class="table-responsive">
+                        <table class="data-table" id="caseload-table">
+                            <thead id="caseload-thead">
+                                <tr>
+                                    <th style="min-width: 170px;">Participant</th>
+                                    <th style="min-width: 125px;">Track & Cohort</th>
+                                    <th style="min-width: 110px;">Gate & Points</th>
+                                    <th style="min-width: 120px;">SkillCat Progress</th>
+                                    <th style="min-width: 145px; text-align: center;">Weekly Compliance<br><span style="font-size: 10px; font-weight: normal; color: var(--slate);">Drug Screen & Case Mgmt</span></th>
+                                    
+                                    <th style="min-width: 115px; text-align: center;">Case Plan</th>
+                                    <th style="min-width: 155px; text-align: center;">Caseload Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="caseload-tbody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUBSECTION 2: RE-ENTRY NAVIGATOR & CASE PLANNING -->
             <div id="pm-sec-reentry" class="hidden">
                 <div class="section-card" style="max-width: 600px; margin: 0 auto;">
                     <div style="border-bottom: 2px solid var(--primary); padding-bottom: 12px; margin-bottom: 20px;">
@@ -42,169 +620,6 @@
                 </div>
             </div>
 
-            <!-- SUBSECTION 2: RE-ENTRY NAVIGATOR & CASE PLANNING -->
-            <div id="pm-sec-reentry" class="hidden">
-                <div class="section-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary); padding-bottom: 12px; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
-                        <div>
-                            <h2 style="color: var(--primary); margin: 0;">🧭 Re-entry Navigator: Case Planning & Flag Analysis</h2>
-                            <p class="text-slate" style="margin-top: 4px;">Evaluate intake interviews, detect facilitation & stability flags, link plans directly to participant profiles, and match local resources & jobs.</p>
-                        </div>
-                        <div style="display: flex; gap: 8px;">
-                            <button class="btn btn-outline" onclick="loadReentryResourcesTab()">📍 SC Directory & Jobs</button>
-                        </div>
-                    </div>
-
-                    <!-- Intake & Participant Selector Form -->
-                    <form id="form-reentry-assess" onsubmit="handleReentryAssessSubmit(event)">
-                        <div class="form-row" style="background: #f8fafc; padding: 14px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 16px;">
-                            <div class="form-group" style="flex: 2;">
-                                <label style="font-weight: 700; color: var(--primary);">Link to Participant Profile *</label>
-                                <select id="reentry-participant-select" onchange="handleReentryParticipantSelect()" required>
-                                    <option value="">-- Select Active Participant to Link --</option>
-                                    <!-- Populated dynamically -->
-                                </select>
-                            </div>
-                            <div class="form-group" style="flex: 1;">
-                                <label>Location</label>
-                                <select id="reentry-location">
-                                    <option value="Charleston">Charleston, SC</option>
-                                    <option value="Columbia">Columbia, SC</option>
-                                    <option value="Spartanburg">Spartanburg, SC</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Participant Full Name</label>
-                                <input type="text" id="reentry-name" required placeholder="Full Name">
-                            </div>
-                            <div class="form-group">
-                                <label>Living / Housing Situation</label>
-                                <select id="reentry-housing">
-                                    <option value="Emergency Shelter (One80 Place / Transitions)">Emergency Shelter (One80 Place / Transitions)</option>
-                                    <option value="Transitional Recovery Program (Star Gospel / Miracle Hill)">Transitional Recovery Program</option>
-                                    <option value="Living with Family / Friends (Unstable < 60 days)">Living with Family / Friends (Unstable)</option>
-                                    <option value="Independent Stable Lease / Home">Independent Stable Lease / Home</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group mt-3">
-                            <label>Primary Goals (Employment, Credentials, Fresh Start Vision)</label>
-                            <input type="text" id="reentry-goals" placeholder="e.g. CDL-B certification, steady day shift manufacturing job ($18+/hr), driver's license restoration, child support modification">
-                        </div>
-
-                        <div class="form-group mt-3">
-                            <label>Legal & Supervision Status</label>
-                            <input type="text" id="reentry-legal" placeholder="e.g. SCDPPPS Active Probation, curfew 9pm, child support arrears $4,200">
-                        </div>
-
-                        <div class="form-group mt-3">
-                            <label>Identified Immediate Needs / Barriers (Select all that apply):</label>
-                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; font-size: 13px; margin-top: 6px;">
-                                <label><input type="checkbox" name="reentry-need" value="Emergency Housing / Rent"> Emergency Housing / Rent</label>
-                                <label><input type="checkbox" name="reentry-need" value="Driver's License Reinstatement (SCDMV)"> SCDMV License Reinstatement</label>
-                                <label><input type="checkbox" name="reentry-need" value="Child Support Court Review / Arrears"> Child Support Court Review</label>
-                                <label><input type="checkbox" name="reentry-need" value="Prescription Medication (Welvista)"> Prescription Meds (Welvista)</label>
-                                <label><input type="checkbox" name="reentry-need" value="Substance Recovery Support / MAT"> Substance Recovery Support</label>
-                                <label><input type="checkbox" name="reentry-need" value="Mental Health / Trauma Counseling"> Mental Health Counseling</label>
-                                <label><input type="checkbox" name="reentry-need" value="Bus Passes / Work Transit"> Bus Passes / Transit</label>
-                                <label><input type="checkbox" name="reentry-need" value="Work Boots & Tools"> Work Boots & Tools</label>
-                            </div>
-                        </div>
-
-                        <div class="form-group mt-4">
-                            <label>Upload Interview Audio, PDF, or Notes File (Optional)</label>
-                            <input type="file" id="reentry-file" accept=".txt,.pdf,.webm,.mp3,.m4a">
-                        </div>
-
-                        <div class="form-group mt-3">
-                            <label>Or Paste Re-entry Navigation Interview Notes / Transcript</label>
-                            <textarea id="reentry-transcript" rows="5" placeholder="Paste dialogue, interview responses, or staff intake notes here..."></textarea>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary btn-block mt-4" id="btn-reentry-submit">
-                            ⚡ Analyze Flags, Generate Dual Case Plan & Link to Profile
-                        </button>
-                    </form>
-                </div>
-
-                <!-- Re-entry Results Section -->
-                <div id="reentry-results-container" class="section-card mt-8 hidden">
-                    <!-- Link Confirmation Banner -->
-                    <div id="reentry-link-badge" style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-weight: bold; font-size: 14px;">
-                        <!-- Dynamically filled -->
-                    </div>
-
-                    <!-- Flags Banner -->
-                    <div id="reentry-flags-banner" class="report-summary-box mb-4">
-                        <!-- Dynamically filled -->
-                    </div>
-
-                    <!-- Direct Links Section for Suggested Jobs & Referrals -->
-                    <div id="reentry-quick-links-section" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 20px;">
-                        <!-- Matched Jobs with Direct Apply Links -->
-                        <div style="background: #f8fafc; border: 1px solid var(--border); border-top: 3px solid var(--accent); border-radius: 8px; padding: 14px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                <h4 style="margin: 0; color: var(--primary); font-size: 13.5px;">💼 Suggested Jobs with Direct Links</h4>
-                                <span style="font-size: 11px; color: var(--slate);">Click to Apply Online</span>
-                            </div>
-                            <div id="reentry-matched-jobs-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto;">
-                                <!-- Rendered dynamically -->
-                            </div>
-                        </div>
-
-                        <!-- Suggested Community Referrals with Direct Links -->
-                        <div style="background: #f8fafc; border: 1px solid var(--border); border-top: 3px solid var(--success); border-radius: 8px; padding: 14px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                <h4 style="margin: 0; color: #166534; font-size: 13.5px;">📍 Suggested Referrals with Direct Links</h4>
-                                <span style="font-size: 11px; color: var(--slate);">Official Websites & Maps</span>
-                            </div>
-                            <div id="reentry-suggested-referrals-list" style="display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto;">
-                                <!-- Rendered dynamically -->
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Subtabs for Dual Documents -->
-                    <div style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 2px solid var(--border); padding-bottom: 8px;">
-                        <button class="btn btn-primary" id="btn-subtab-part-guide" onclick="switchReentryDocTab('part')">🎯 Participant Action & Referral Guide</button>
-                        <button class="btn btn-outline" id="btn-subtab-staff-plan" onclick="switchReentryDocTab('staff')">📋 Staff Re-entry Case Plan</button>
-                    </div>
-
-                    <!-- Doc 1: Participant Action Guide -->
-                    <div id="reentry-doc-part-view">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
-                            <h3 style="color: var(--primary); margin: 0;">🎯 My Fresh Start Action & Referral Guide</h3>
-                            <div style="display: flex; gap: 8px;">
-                                <a id="link-reentry-part-docx" href="#" download class="btn btn-primary" style="text-decoration: none;">📥 Download Editable Word (.docx)</a>
-                                <a id="link-reentry-part-pdf" href="#" target="_blank" class="btn btn-accent" style="text-decoration: none;">🖨️ View / Print PDF</a>
-                            </div>
-                        </div>
-                        <div id="reentry-part-guide-content" class="report-content-body" style="background: white; border: 1px solid var(--border); padding: 20px; border-radius: 8px; max-height: 500px; overflow-y: auto;">
-                            <!-- Markdown rendered here -->
-                        </div>
-                    </div>
-
-                    <!-- Doc 2: Staff Case Plan -->
-                    <div id="reentry-doc-staff-view" class="hidden">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
-                            <h3 style="color: var(--primary); margin: 0;">📋 Staff Re-entry Navigation Case Plan</h3>
-                            <div style="display: flex; gap: 8px;">
-                                <a id="link-reentry-staff-docx" href="#" download class="btn btn-primary" style="text-decoration: none;">📥 Download Editable Word (.docx)</a>
-                                <a id="link-reentry-staff-pdf" href="#" target="_blank" class="btn btn-outline" style="text-decoration: none;">🖨️ View / Print PDF</a>
-                            </div>
-                        </div>
-                        <div id="reentry-staff-plan-content" class="report-content-body" style="background: white; border: 1px solid var(--border); padding: 20px; border-radius: 8px; max-height: 500px; overflow-y: auto;">
-                            <!-- Markdown rendered here -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Draft Scoring Reviews Section -->
             <div id="pm-sec-drafts" class="section-card mt-8 hidden">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 14px;">
                     <div>
@@ -1982,7 +2397,7 @@
 
 
 
-    <script src="app.js?v=1790695460"></script>
+    <script src="app.js?v=1790695500"></script>
 
     <!-- MODAL: Participant File (Consolidated) -->
     <div id="modal-participant-file" class="modal hidden">
