@@ -2150,25 +2150,6 @@ function startReentryAssessmentForUser(userId, name) {
 }
 
 
-    try {
-        const res = await fetch('/api/reentry/assess', {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${token}` },
-            body: formData
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Assessment failed');
-
-        renderReentryAssessmentResults(data);
-        loadCaseload();
-    } catch (err) {
-        alert('Re-entry Assessment Error: ' + err.message);
-    } finally {
-        btn.disabled = false;
-        btn.innerText = '⚡ Analyze Flags, Generate Dual Case Plan & Link to Profile';
-    }
-}
-
 function renderReentryAssessmentResults(data) {
     const container = document.getElementById('reentry-results-container');
     container.classList.remove('hidden');
@@ -7678,19 +7659,18 @@ window.handleReentryStandaloneSubmit = async function(e) {
     const resultsDiv = document.getElementById('reentry-standalone-results');
     resultsDiv.classList.add('hidden');
 
-    const formData = new FormData();
-    formData.append('audio', fileInput.files[0]);
-    formData.append('participantName', document.getElementById('reentry-standalone-name').value);
-    formData.append('participantLocation', document.getElementById('reentry-standalone-location').value);
-    // Don't link to a participant ID
-    formData.append('reentryLink', 'standalone');
-
+    const newFormData = new FormData();
+    newFormData.append('file', fileInput.files[0]);
+    newFormData.append('participantName', document.getElementById('reentry-standalone-name').value);
+    newFormData.append('location', document.getElementById('reentry-standalone-location').value);
+    newFormData.append('userId', 'standalone'); // Skip DB update logic
+    
     try {
         const token = localStorage.getItem('fs_token');
-        const res = await fetch('/api/upload-audio', {
+        const res = await fetch('/api/reentry/assess', {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${token}` },
-            body: formData
+            body: newFormData
         });
         
         const data = await res.json();
