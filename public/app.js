@@ -2066,6 +2066,10 @@ function switchPmSubView(subview) {
 
     const draftsCard = document.getElementById('pm-sec-drafts');
     if (draftsCard) draftsCard.classList.toggle('hidden', subview !== 'drafts');
+    
+    if (subview === 'reentry' && typeof loadStandaloneReentryPlans === 'function') {
+        loadStandaloneReentryPlans();
+    }
 
     const evalCard = document.getElementById('pm-sec-facilitation');
     if (evalCard) evalCard.classList.toggle('hidden', subview !== 'facilitation');

@@ -2349,7 +2349,38 @@
 
 
 
-    <script src="app.js?v=1790696025"></script>
+    <script src="app.js?v=1790696030"></script>
+
+    
+    <!-- MODAL: Playbook AI -->
+    <div id="modal-playbook" class="modal hidden">
+        <div class="modal-content" style="max-width: 900px; height: 85vh; display: flex; flex-direction: column;">
+            <div class="modal-header" style="flex-shrink: 0;">
+                <h2>📘 Turn90 Playbook AI</h2>
+                <button class="close-btn" onclick="closeModal('modal-playbook')">✕</button>
+            </div>
+            <div class="modal-tabs" style="display: flex; gap: 10px; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 10px; flex-shrink: 0;">
+                <button class="btn btn-primary" id="btn-pb-ask" onclick="switchPbTab('ask')">Ask AI</button>
+                <button class="btn btn-outline" id="btn-pb-doc" onclick="switchPbTab('doc')">View PDF Document</button>
+            </div>
+            
+            <div id="pb-tab-ask" style="flex: 1; display: flex; flex-direction: column; overflow: hidden;">
+                <div id="pb-chat-history" style="flex: 1; overflow-y: auto; background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 16px; display: flex; flex-direction: column; gap: 12px; font-size: 14px;">
+                    <div style="background: white; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px;">
+                        <strong>📘 Playbook AI:</strong> Hello! Ask me any question about Turn90 procedures, 4-Week Gates, Apricot forms, or compliance guidelines.
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; flex-shrink: 0;">
+                    <input type="text" id="pb-input" placeholder="e.g. What happens if a participant misses a drug test?" style="flex: 1; padding: 12px; border: 1px solid var(--border); border-radius: 6px;" onkeydown="if(event.key==='Enter') sendPbQuestion()">
+                    <button class="btn btn-primary" id="btn-pb-send" onclick="sendPbQuestion()">Ask</button>
+                </div>
+            </div>
+
+            <div id="pb-tab-doc" class="hidden" style="flex: 1; overflow: hidden; border: 1px solid var(--border); border-radius: 8px;">
+                <iframe src="/api/documents/print/Turn90_Playbook.pdf" style="width: 100%; height: 100%; border: none;"></iframe>
+            </div>
+        </div>
+    </div>
 
     <!-- MODAL: Participant File (Consolidated) -->
     <div id="modal-participant-file" class="modal hidden">
