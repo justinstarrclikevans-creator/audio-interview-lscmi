@@ -92,23 +92,6 @@
                     </div>
                     
                     <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 20px;">
-                        <!-- AI Assistant Box -->
-                        <div style="flex: 1; min-width: 300px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; display: flex; flex-direction: column;">
-                            <h3 style="margin: 0 0 10px 0; font-size: 16px; color: var(--primary);">🤖 Ask the Resource Assistant</h3>
-                            <p style="font-size: 12.5px; color: var(--slate); margin: 0 0 12px 0;">Not sure what you need? Ask the AI to search the database for you.</p>
-                            
-                            <div id="pub-ai-chat-history" style="flex: 1; min-height: 200px; max-height: 250px; overflow-y: auto; background: white; border: 1px solid var(--border); border-radius: 6px; padding: 12px; font-size: 13px; line-height: 1.5; display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px;">
-                                <div style="background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px;">
-                                    <strong>Assistant:</strong> Hello! Tell me what you need help with (e.g., "I need a place to stay in Charleston" or "How do I get a free bus pass in Columbia?")
-                                </div>
-                            </div>
-
-                            <div style="display: flex; gap: 8px;">
-                                <input type="text" id="pub-ai-input" placeholder="Type your question here..." style="flex: 1; padding: 10px; font-size: 13px; border: 1px solid var(--border); border-radius: 4px;" onkeydown="if(event.key==='Enter') sendPubAiMessage()">
-                                <button class="btn btn-primary" style="padding: 0 16px;" onclick="sendPubAiMessage()" id="btn-pub-ai-send">Ask</button>
-                            </div>
-                        </div>
-
                         <!-- Info Box -->
                         <div style="flex: 1; min-width: 300px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 16px;">
                             <h3 style="margin: 0 0 10px 0; font-size: 16px; color: #b45309;">📍 Full Statewide Database</h3>
@@ -121,23 +104,7 @@
                         <!-- Filled dynamically -->
                     </div>
                     
-                    <div style="margin-top: 40px;">
-                        <h3 style="border-bottom: 2px solid var(--slate); padding-bottom: 8px; margin-bottom: 16px;">📂 Saved Re-entry Case Plans</h3>
-                        <div class="table-responsive">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Date Generated</th>
-                                        <th>Participant Name</th>
-                                        <th style="text-align: right;">Downloads</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="reentry-standalone-list">
-                                    <tr><td colspan="3" class="text-slate text-center">Loading plans...</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+
                 </div>
             </div>
 
@@ -633,6 +600,24 @@
                         <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
                             <a id="btn-dl-staff-pdf" href="#" download class="btn btn-outline" style="text-decoration: none;">📄 Download Staff Case Plan (PDF)</a>
                             <a id="btn-dl-part-pdf" href="#" download class="btn btn-outline" style="text-decoration: none;">📄 Download Participant Guide (PDF)</a>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 40px;">
+                        <h3 style="border-bottom: 2px solid var(--slate); padding-bottom: 8px; margin-bottom: 16px;">📂 Saved Re-entry Case Plans</h3>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date Generated</th>
+                                        <th>Participant Name</th>
+                                        <th style="text-align: right;">Downloads</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reentry-standalone-list">
+                                    <tr><td colspan="3" class="text-slate text-center">Loading plans...</td></tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -2415,7 +2400,7 @@
 
 
 
-    <script src="app.js?v=1790695990"></script>
+    <script src="app.js?v=1790695999"></script>
 
     <!-- MODAL: Participant File (Consolidated) -->
     <div id="modal-participant-file" class="modal hidden">
