@@ -2767,13 +2767,13 @@ app.get('/api/reentry/standalone-plans', authenticateToken, requireRole('program
         const files = fs.readdirSync(dataDir);
         const plans = [];
         
-        // Find all staff case plan PDFs
+        // Find all staff case plan MDs (since PDFs are generated on the fly)
         files.forEach(f => {
-            if (f.endsWith('_reentry_staff_case_plan.pdf')) {
+            if (f.endsWith('_reentry_staff_case_plan.md')) {
                 const parts = f.split('_');
                 const ts = parseInt(parts[0]);
                 // Reconstruct the name by removing the known suffixes and the timestamp
-                const prefix = f.replace('_staff_case_plan.pdf', '');
+                const prefix = f.replace('_staff_case_plan.md', '');
                 let nameParts = prefix.split('_');
                 nameParts.shift(); // remove timestamp
                 nameParts.pop(); // remove 'reentry'
@@ -2782,8 +2782,8 @@ app.get('/api/reentry/standalone-plans', authenticateToken, requireRole('program
                 plans.push({
                     timestamp: ts,
                     name: name,
-                    staffPdf: '/data/' + f,
-                    partPdf: '/data/' + prefix + '_participant_action_guide.pdf'
+                    staffPdf: '/api/documents/print/' + f,
+                    partPdf: '/api/documents/print/' + prefix + '_participant_action_guide.md'
                 });
             }
         });

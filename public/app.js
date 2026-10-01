@@ -3829,20 +3829,31 @@ function printClassEvaluation(id) {
         <head>
             <title>Class Facilitation Evaluation</title>
             <style>
-                body { font-family: 'Inter', sans-serif; padding: 40px; color: #1e293b; line-height: 1.6; max-width: 800px; margin: auto; }
+                body { font-family: 'Inter', -apple-system, sans-serif; padding: 0; color: #1e293b; line-height: 1.6; margin: 0; background: #f1f5f9; }
+                .content-wrapper { max-width: 850px; margin: 20px auto; background: white; padding: 40px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
                 h1, h2, h3 { color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; }
                 .metric-box { background: #f8fafc; border: 1px solid #cbd5e1; padding: 16px; border-radius: 8px; margin-bottom: 20px; }
+                .print-toolbar { position: sticky; top: 0; background: #1e293b; color: white; padding: 10px 18px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+                .print-btn { background: #0f766e; color: white; border: none; padding: 8px 18px; font-weight: 700; border-radius: 4px; cursor: pointer; }
                 @media print {
                     @page { margin: 1in; }
-                    body { -webkit-print-color-adjust: exact; padding: 0; }
+                    .print-toolbar { display: none !important; }
+                    .content-wrapper { box-shadow: none; margin: 0; padding: 0; }
+                    body { -webkit-print-color-adjust: exact; padding: 0; background: white; }
                 }
             </style>
         </head>
         <body>
-            ${htmlContent}
-            <script>
-                setTimeout(() => { window.print(); window.close(); }, 500);
-            </script>
+            <div class="print-toolbar">
+                <div><strong>Class Facilitation Evaluation</strong></div>
+                <div>
+                    <button class="print-btn" onclick="window.print()">🖨️ Print Report</button>
+                    <button class="print-btn" style="background: transparent; border: 1px solid #64748b; margin-left: 10px;" onclick="window.close()">✕ Close</button>
+                </div>
+            </div>
+            <div class="content-wrapper">
+                ${htmlContent}
+            </div>
         </body>
         </html>
     `);
