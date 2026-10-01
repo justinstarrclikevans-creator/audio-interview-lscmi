@@ -160,7 +160,7 @@ function routeUserToPortal() {
     }
     resetParticipantAiState();
     showView('view-pm-portal');
-    switchCaseloadTab('first_shift');
+    switchPmSubView('reentry');
     loadPmDrafts();
 }
 
@@ -1740,6 +1740,8 @@ async function handleDocUpload(e) {
 async function loadCaseload() {
     const token = localStorage.getItem('fs_token');
     if (!token) return;
+    const tbody = document.getElementById('caseload-tbody');
+    if (!tbody) return;
     const loc = document.getElementById('pm-filter-location')?.value || '';
     const track = document.getElementById('pm-filter-track')?.value || '';
     const status = document.getElementById('pm-filter-status')?.value || '';
@@ -2055,7 +2057,8 @@ function switchPmSubView(subview) {
         activeBtn.classList.add('btn-primary');
     }
 
-    document.getElementById('pm-sec-caseload').classList.toggle('hidden', subview !== 'caseload');
+    const caseloadSec = document.getElementById('pm-sec-caseload');
+    if (caseloadSec) caseloadSec.classList.toggle('hidden', subview !== 'caseload');
     document.getElementById('pm-sec-reentry').classList.toggle('hidden', subview !== 'reentry');
     
     const msgSec = document.getElementById('pm-sec-messages');

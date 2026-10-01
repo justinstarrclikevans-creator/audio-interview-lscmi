@@ -493,8 +493,8 @@
             <!-- Sub Navigation Tabs for Program Manager Portal -->
             
             <div class="pm-subtabs" style="display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 12px; overflow-x: auto;">
-                <button id="pm-tab-btn-caseload" class="btn btn-primary" onclick="window.switchCaseloadTab('first_shift')">🏢 First Shift Caseload</button>
-                <button id="pm-tab-btn-rn-caseload" class="btn btn-outline" onclick="window.switchCaseloadTab('reentry_nav')">🧭 Re-entry Caseload</button>
+                
+                
                 <button id="pm-tab-btn-reentry" class="btn btn-outline" onclick="switchPmSubView('reentry')">🧭 Re-entry Navigator & Case Planning</button>
                 <button id="pm-tab-btn-drafts" class="btn btn-outline" onclick="switchPmSubView('drafts')">📝 Scoring Reviews</button>
                 <button id="pm-tab-btn-facilitation" class="btn btn-outline" onclick="switchPmSubView('facilitation')">🎤 Class Evaluations</button>
@@ -503,63 +503,6 @@
                 
             </div>
 
-
-            <!-- SUBSECTION 1: CASELOAD TABLE & FILTERS -->
-            <div id="pm-sec-caseload">
-                <!-- Filter Toolbar -->
-                <div class="filter-toolbar">
-                    <select id="pm-filter-location" onchange="loadCaseload()">
-                        <option value="">All Locations</option>
-                        <option value="Charleston">Charleston, SC</option>
-                        <option value="Columbia">Columbia, SC</option>
-                        <option value="Spartanburg">Spartanburg, SC</option>
-                    </select>
-                    <select id="pm-filter-track" onchange="loadCaseload()" style="display:none;">
-                        <option value="">All Tracks</option>
-                        <option value="first_shift">First Shift</option>
-                        <option value="reentry_nav">Re-entry Navigation</option>
-                    </select>
-                    <select id="pm-filter-status" onchange="loadCaseload()" style="display:none;">
-                        <option value="">Active Caseload</option>
-                        <option value="archived">Archived / Removed</option>
-                        <option value="all">All (Active & Archived)</option>
-                    </select>
-                    <select id="pm-filter-gate" onchange="loadCaseload()">
-                        <option value="">All Gates</option>
-                        <option value="1">Gate 1 (Week 1)</option>
-                        <option value="2">Gate 2 (Week 2)</option>
-                        <option value="3">Gate 3 (Week 3)</option>
-                        <option value="4">Gate 4 (Week 4)</option>
-                    </select>
-                </div>
-
-                <!-- Caseload Table -->
-                
-                
-
-                <div class="section-card mt-4">
-                    <h2 id="caseload-title">Active Participant Caseload</h2>
-                    <div class="table-responsive">
-                        <table class="data-table" id="caseload-table">
-                            <thead id="caseload-thead">
-                                <tr>
-                                    <th style="min-width: 170px;">Participant</th>
-                                    <th style="min-width: 125px;">Track & Cohort</th>
-                                    <th style="min-width: 110px;">Gate & Points</th>
-                                    <th style="min-width: 120px;">SkillCat Progress</th>
-                                    <th style="min-width: 145px; text-align: center;">Weekly Compliance<br><span style="font-size: 10px; font-weight: normal; color: var(--slate);">Drug Screen & Case Mgmt</span></th>
-                                    
-                                    <th style="min-width: 115px; text-align: center;">Case Plan</th>
-                                    <th style="min-width: 155px; text-align: center;">Caseload Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="caseload-tbody">
-                                <!-- Populated dynamically -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
 
             <!-- SUBSECTION 2: RE-ENTRY NAVIGATOR & CASE PLANNING -->
             <div id="pm-sec-reentry" class="hidden">
@@ -2400,7 +2343,7 @@
 
 
 
-    <script src="app.js?v=1790695999"></script>
+    <script src="app.js?v=1790696000"></script>
 
     <!-- MODAL: Participant File (Consolidated) -->
     <div id="modal-participant-file" class="modal hidden">
