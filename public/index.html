@@ -120,6 +120,24 @@
                     <div id="pub-res-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px;">
                         <!-- Filled dynamically -->
                     </div>
+                    
+                    <div style="margin-top: 40px;">
+                        <h3 style="border-bottom: 2px solid var(--slate); padding-bottom: 8px; margin-bottom: 16px;">📂 Saved Re-entry Case Plans</h3>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date Generated</th>
+                                        <th>Participant Name</th>
+                                        <th style="text-align: right;">Downloads</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reentry-standalone-list">
+                                    <tr><td colspan="3" class="text-slate text-center">Loading plans...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -2397,7 +2415,7 @@
 
 
 
-    <script src="app.js?v=1790695900"></script>
+    <script src="app.js?v=1790695950"></script>
 
     <!-- MODAL: Participant File (Consolidated) -->
     <div id="modal-participant-file" class="modal hidden">

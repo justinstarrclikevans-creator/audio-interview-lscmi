@@ -2760,6 +2760,42 @@ app.get('/api/reentry/participants', authenticateToken, requireRole('program_man
 });
 
 // 2. Re-entry Navigation Assessment & Profile Linking
+
+// List standalone generated reentry plans from the data directory
+app.get('/api/reentry/standalone-plans', authenticateToken, requireRole('program_manager', 'director', 'admin'), (req, res) => {
+    try {
+        const files = fs.readdirSync(dataDir);
+        const plans = [];
+        
+        // Find all staff case plan PDFs
+        files.forEach(f => {
+            if (f.endsWith('_reentry_staff_case_plan.pdf')) {
+                const parts = f.split('_');
+                const ts = parseInt(parts[0]);
+                // Reconstruct the name by removing the known suffixes and the timestamp
+                const prefix = f.replace('_staff_case_plan.pdf', '');
+                let nameParts = prefix.split('_');
+                nameParts.shift(); // remove timestamp
+                nameParts.pop(); // remove 'reentry'
+                const name = nameParts.join(' ');
+                
+                plans.push({
+                    timestamp: ts,
+                    name: name,
+                    staffPdf: '/data/' + f,
+                    partPdf: '/data/' + prefix + '_participant_action_guide.pdf'
+                });
+            }
+        });
+        
+        // Sort descending by timestamp
+        plans.sort((a, b) => b.timestamp - a.timestamp);
+        res.json({ success: true, plans });
+    } catch(e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
 app.post('/api/reentry/assess', authenticateToken, requireRole('program_manager', 'director', 'admin'), memoryUpload.single('file'), async (req, res) => {
     try {
         const {

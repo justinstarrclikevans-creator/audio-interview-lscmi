@@ -7679,6 +7679,7 @@ window.handleReentryStandaloneSubmit = async function(e) {
             document.getElementById('btn-dl-staff-pdf').href = data.staffPlanPdf || '#';
             document.getElementById('btn-dl-part-pdf').href = data.participantGuidePdf || '#';
             resultsDiv.classList.remove('hidden');
+            if (window.loadStandaloneReentryPlans) window.loadStandaloneReentryPlans();
         } else {
             alert('Error: ' + (data.error || 'Generation failed.'));
         }
@@ -7688,4 +7689,35 @@ window.handleReentryStandaloneSubmit = async function(e) {
     
     btn.innerText = originalText;
     btn.disabled = false;
+};
+
+
+window.loadStandaloneReentryPlans = async function() {
+    const tbody = document.getElementById('reentry-standalone-list');
+    if (!tbody) return;
+    
+    try {
+        const token = localStorage.getItem('fs_token');
+        const res = await fetch('/api/reentry/standalone-plans', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        
+        if (data.plans && data.plans.length > 0) {
+            tbody.innerHTML = data.plans.map(p => `
+                <tr>
+                    <td style="white-space: nowrap;">${new Date(p.timestamp).toLocaleString()}</td>
+                    <td style="font-weight: 600;">${p.name.replace(/_/g, ' ')}</td>
+                    <td style="text-align: right; white-space: nowrap;">
+                        <a href="${p.staffPdf}" target="_blank" download class="btn btn-outline" style="padding: 4px 8px; font-size: 11px; text-decoration: none; margin-right: 4px;">Staff PDF</a>
+                        <a href="${p.partPdf}" target="_blank" download class="btn btn-outline" style="padding: 4px 8px; font-size: 11px; text-decoration: none;">Participant PDF</a>
+                    </td>
+                </tr>
+            `).join('');
+        } else {
+            tbody.innerHTML = '<tr><td colspan="3" class="text-slate text-center">No standalone case plans generated yet.</td></tr>';
+        }
+    } catch(e) {
+        tbody.innerHTML = '<tr><td colspan="3" class="text-danger text-center">Error loading plans.</td></tr>';
+    }
 };
