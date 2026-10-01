@@ -2759,7 +2759,48 @@ app.get('/api/reentry/participants', authenticateToken, requireRole('program_man
     }
 });
 
+
+// ==========================================
+// PLAYBOOK AI ENDPOINTS
+// ==========================================
+
+app.post('/api/playbook/ask', authenticateToken, requireRole('program_manager', 'director', 'admin'), async (req, res) => {
+    try {
+        const { question } = req.body;
+        const playbookPath = path.join(dataDir, 'Turn90_Playbook.pdf');
+        let playbookText = '';
+        
+        if (fs.existsSync(playbookPath)) {
+            playbookText = await extractPdfText(fs.readFileSync(playbookPath));
+        } else {
+            const fallbackPath = path.join(__dirname, 'manuals', 'Turn90_Playbook.pdf');
+            if (fs.existsSync(fallbackPath)) {
+                playbookText = await extractPdfText(fs.readFileSync(fallbackPath));
+            } else {
+                return res.status(404).json({ error: 'Playbook PDF not found on server.' });
+            }
+        }
+
+        const prompt = `You are an expert on the Turn90 Playbook. Answer the staff member's question strictly using the provided Playbook text below. Do not use outside knowledge. IGNORE ANY SECTIONS LABELED "Changelog" OR "Change log". Keep it concise, helpful, and use markdown formatting.
+
+PLAYBOOK TEXT:
+${playbookText}
+
+QUESTION:
+${question}`;
+
+        const result = await model.generateContent(prompt);
+        const text = result.response.text();
+
+        res.json({ success: true, answer: text });
+    } catch(e) {
+        console.error('Playbook AI error:', e);
+        res.status(500).json({ error: e.message });
+    }
+});
+
 // 2. Re-entry Navigation Assessment & Profile Linking
+
 
 // List standalone generated reentry plans from the data directory
 app.get('/api/reentry/standalone-plans', authenticateToken, requireRole('program_manager', 'director', 'admin'), (req, res) => {

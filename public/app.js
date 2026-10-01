@@ -7735,3 +7735,61 @@ window.loadStandaloneReentryPlans = async function() {
         tbody.innerHTML = '<tr><td colspan="3" class="text-danger text-center">Error loading plans.</td></tr>';
     }
 };
+
+
+window.openPlaybookModal = function() {
+    openModal('modal-playbook');
+    switchPbTab('ask');
+};
+
+window.switchPbTab = function(tab) {
+    document.getElementById('pb-tab-ask').classList.toggle('hidden', tab !== 'ask');
+    document.getElementById('pb-tab-doc').classList.toggle('hidden', tab !== 'doc');
+    document.getElementById('btn-pb-ask').className = tab === 'ask' ? 'btn btn-primary' : 'btn btn-outline';
+    document.getElementById('btn-pb-doc').className = tab === 'doc' ? 'btn btn-primary' : 'btn btn-outline';
+};
+
+window.sendPbQuestion = async function() {
+    const input = document.getElementById('pb-input');
+    const question = input.value.trim();
+    if (!question) return;
+
+    const chatHistory = document.getElementById('pb-chat-history');
+    chatHistory.innerHTML += `
+        <div style="background: #e0f2fe; border: 1px solid #bae6fd; padding: 12px; border-radius: 8px; align-self: flex-end; max-width: 85%;">
+            <strong>You:</strong> ${question}
+        </div>
+    `;
+    input.value = '';
+    
+    const loadingDiv = document.createElement('div');
+    loadingDiv.innerHTML = '<strong>📘 Playbook AI:</strong> Scanning playbook...';
+    loadingDiv.style = "background: white; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; opacity: 0.7;";
+    chatHistory.appendChild(loadingDiv);
+    chatHistory.scrollTop = chatHistory.scrollHeight;
+
+    try {
+        const token = localStorage.getItem('fs_token');
+        const res = await fetch('/api/playbook/ask', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ question })
+        });
+        const data = await res.json();
+        
+        chatHistory.removeChild(loadingDiv);
+        if (res.ok) {
+            chatHistory.innerHTML += `
+                <div style="background: white; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px;">
+                    <strong>📘 Playbook AI:</strong><br>${marked.parse(data.answer)}
+                </div>
+            `;
+        } else {
+            chatHistory.innerHTML += `<div style="color: red; padding: 12px;">Error: ${data.error}</div>`;
+        }
+    } catch(e) {
+        chatHistory.removeChild(loadingDiv);
+        chatHistory.innerHTML += `<div style="color: red; padding: 12px;">Error: ${e.message}</div>`;
+    }
+    chatHistory.scrollTop = chatHistory.scrollHeight;
+};
