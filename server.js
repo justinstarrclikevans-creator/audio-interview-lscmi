@@ -2789,7 +2789,7 @@ ${playbookText}
 QUESTION:
 ${question}`;
 
-        const { GoogleGenerativeAI } = require("@google/generative-ai"); const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY); const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); const result = await model.generateContent(prompt);
+        const { GoogleGenerativeAI } = require("@google/generative-ai"); const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY); const model = genAI.getGenerativeModel({ model: "gemini-3.6-flash" }); const result = await model.generateContent(prompt);
         const text = result.response.text();
 
         res.json({ success: true, answer: text });
