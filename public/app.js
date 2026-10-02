@@ -7666,8 +7666,12 @@ async function loginWithPin() {
 window.handleReentryStandaloneSubmit = async function(e) {
     e.preventDefault();
     
-    const fileInput = document.getElementById('reentry-standalone-file');
-    if (!fileInput.files[0]) return alert('Please select a file.');
+    const fileInputs = document.querySelectorAll('.reentry-standalone-file-input');
+    let hasFile = false;
+    fileInputs.forEach(input => {
+        if (input.files.length > 0) hasFile = true;
+    });
+    if (!hasFile) return alert('Please select at least one file.');
     
     const btn = document.getElementById('btn-reentry-standalone');
     const originalText = btn.innerText;
@@ -7678,9 +7682,11 @@ window.handleReentryStandaloneSubmit = async function(e) {
     resultsDiv.classList.add('hidden');
 
     const newFormData = new FormData();
-    for (let i = 0; i < fileInput.files.length; i++) {
-        newFormData.append('files', fileInput.files[i]);
-    }
+    fileInputs.forEach(input => {
+        if (input.files[0]) {
+            newFormData.append('files', input.files[0]);
+        }
+    });
     newFormData.append('participantName', document.getElementById('reentry-standalone-name').value);
     newFormData.append('location', document.getElementById('reentry-standalone-location').value);
     newFormData.append('userId', 'standalone'); // Skip DB update logic
@@ -7798,4 +7804,16 @@ window.sendPbQuestion = async function() {
         chatHistory.innerHTML += `<div style="color: red; padding: 12px;">Error: ${e.message}</div>`;
     }
     chatHistory.scrollTop = chatHistory.scrollHeight;
+};
+
+
+window.addReentryFileInput = function() {
+    const container = document.getElementById('reentry-file-inputs-container');
+    const wrapper = document.createElement('div');
+    wrapper.style = "display: flex; gap: 10px; align-items: center;";
+    wrapper.innerHTML = `
+        <input type="file" class="form-control reentry-standalone-file-input" accept="audio/*,video/*,application/pdf,.txt">
+        <button type="button" class="btn btn-danger" onclick="this.parentElement.remove()" style="padding: 10px; font-weight: bold;">✕</button>
+    `;
+    container.appendChild(wrapper);
 };
