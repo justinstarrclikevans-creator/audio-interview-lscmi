@@ -2837,7 +2837,7 @@ app.get('/api/reentry/standalone-plans', authenticateToken, requireRole('program
     }
 });
 
-app.post('/api/reentry/assess', authenticateToken, requireRole('program_manager', 'director', 'admin'), memoryUpload.single('file'), async (req, res) => {
+app.post('/api/reentry/assess', authenticateToken, requireRole('program_manager', 'director', 'admin'), memoryUpload.array('files', 10), async (req, res) => {
     try {
         const {
             userId,
@@ -2852,28 +2852,33 @@ app.post('/api/reentry/assess', authenticateToken, requireRole('program_manager'
 
         let fullTranscript = transcriptText || '';
 
-        if (req.file && req.file.buffer) {
-            const ext = path.extname(req.file.originalname).toLowerCase();
-            const mime = req.file.mimetype || '';
-            if (ext === '.pdf' || mime === 'application/pdf') {
-                try {
-                    const text = await extractPdfText(req.file.buffer);
-                    fullTranscript += '\n\n' + text;
-                } catch (e) {
-                    console.warn('PDF parse failed:', e.message);
-                }
-            } else if (ext === '.txt') {
-                fullTranscript += '\n\n' + req.file.buffer.toString('utf8');
-            } else if (mime.startsWith('audio') || mime.startsWith('video')) {
-                console.log('Sending Re-entry audio stream to Deepgram...');
-                try {
-                    const dgResponse = await deepgram.listen.prerecorded.transcribeFile(req.file.buffer, {
-                        model: 'nova-2',
-                        smart_format: true
-                    });
-                    fullTranscript += '\n\n' + (dgResponse.result?.results?.channels[0]?.alternatives[0]?.transcript || '');
-                } catch(e) {
-                    console.warn('Deepgram transcription failed:', e.message);
+        if (req.files && req.files.length > 0) {
+            for (const file of req.files) {
+                const ext = path.extname(file.originalname).toLowerCase();
+                const mime = file.mimetype || '';
+                
+                fullTranscript += `\n\n--- FILE: ${file.originalname} ---\n`;
+                
+                if (ext === '.pdf' || mime === 'application/pdf') {
+                    try {
+                        const text = await extractPdfText(file.buffer);
+                        fullTranscript += text;
+                    } catch (e) {
+                        console.warn('PDF parse failed:', e.message);
+                    }
+                } else if (ext === '.txt') {
+                    fullTranscript += file.buffer.toString('utf8');
+                } else if (mime.startsWith('audio') || mime.startsWith('video')) {
+                    console.log('Sending Re-entry audio stream to Deepgram...');
+                    try {
+                        const dgResponse = await deepgram.listen.prerecorded.transcribeFile(file.buffer, {
+                            model: 'nova-2',
+                            smart_format: true
+                        });
+                        fullTranscript += (dgResponse.result?.results?.channels[0]?.alternatives[0]?.transcript || '');
+                    } catch(e) {
+                        console.warn('Deepgram transcription failed:', e.message);
+                    }
                 }
             }
         }

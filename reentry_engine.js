@@ -123,29 +123,17 @@ PARTICIPANT PROFILE:
 ${interviewTranscript || 'Assessment based on intake notes and self-reported barriers.'}
 
 TASK INSTRUCTIONS:
-1. Examine the interview for Cognitive & Behavioral Flags (e.g., entitlement, externalizing blame, resistance, emotional reactivity) using Modeling Neutrality and CBT standards.
-2. Identify Critical Stability Red Flags that threaten immediate employment.
-3. Recommend specific Facilitation / Coaching Strategies for the Re-entry Navigator.
-4. Build a STAFF-FACING Re-entry Navigation Case Plan (markdown). It MUST include an "Apricot Data Entry Guide" section at the top that crosswalks the clinical analysis into the rigid Apricot database dropdowns. Map the participant's risks to EXACTLY two of the following Focus Areas: Reactions and Self Control (Antisocial Pattern), Thinking Patterns (Procriminal Attitudes), People and Influence (Peer Associations), Work and Follow-Through (Employment/Education), Family and Relationships (Family/Marital), Substance Use, Time and Structure (Leisure/Recreation). Then, select 2-3 specific sub-pattern codes (e.g., "A1. Reactive anger when corrected", "P2. Externalizing blame", "E3. Attendance instability") that match their interview. Finally, include a concise, copy-pasteable clinical note for the Apricot 'Client Brief Text' field summarizing the nuances.
-5. Build a PARTICIPANT-FACING Printable Action & Referral Guide (markdown). This will be printed for them to keep in their binder. It MUST contain:
+1. Review the provided notes, transcript, and screening documents to assess the participant's current stability and immediate needs.
+2. Identify Critical Stability Red Flags that threaten immediate employment or program success.
+3. Build a STAFF-FACING Re-entry Navigation Case Plan (markdown). This plan MUST focus strictly on identifying and resolving Gate requirements (State ID, Social Security Card, Birth Certificate) and Briefcase requirements (resumes, work gear, basic housing). Format this clearly so the case manager knows exactly what appointments need to be scheduled or what documentation is missing.
+4. Build a PARTICIPANT-FACING Printable Action & Referral Guide (markdown). This will be printed for them to keep in their binder. It MUST contain:
    - Positive, respectful framing of their personal fresh start vision.
-   - **CBT Triggers Worksheet**: Identify their top three cognitive behavioral patterns based on the interview. For EACH pattern, provide a blank fill-in table or bulleted list with blank lines (e.g., "_____") so they can write down 5 to 10 real-life situations that could trigger that pattern.
-   - **Gate Checklist**: An explicit, printed 4-week step-by-step milestone checklist outlining the program Gates they must pass.
+   - **Gate Checklist**: An explicit, printed 4-week step-by-step milestone checklist outlining the program Gates they must pass, highlighting exactly what they are currently missing.
    - Specific, localized resource referrals with CLICKABLE markdown web links: [Visit Website](websiteUrl) or [Directions](https://maps.google.com/?q=...), phone numbers, addresses, and next action steps.
    - Targeted local fair-chance job matches with pay rates, shifts, why it fits their background, and a direct CLICKABLE markdown link. (IMPORTANT: Do NOT suggest Turn90 / First Shift as the employer option since the participant is already engaged with us. Recommend external second-chance employers from the provided directory and spreadsheet).
 
 Return a valid JSON object matching EXACTLY this structure:
 {
-  "detected_flags": [
-    {
-      "category": "Cognitive / Attitude" | "Stability Risk" | "Supervision / Legal" | "Substance / Health",
-      "flag": "Short title of flag",
-      "evidence": "Quote or specific evidence from interview",
-      "severity": "high" | "medium" | "low",
-      "navigator_recommendation": "Concrete de-escalation / facilitation advice for staff"
-    }
-  ],
-  "top_criminogenic_domains": ["string", "string"],
   "stability_status": "stable" | "at_risk" | "immediate_triage_needed",
   "navigator_case_plan_md": "# Re-entry Navigation Case Plan: [Name]\\n\\n...",
   "participant_guide_md": "# My Fresh Start Action & Resource Guide: [Name]\\n\\n...",

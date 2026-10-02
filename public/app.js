@@ -7678,7 +7678,9 @@ window.handleReentryStandaloneSubmit = async function(e) {
     resultsDiv.classList.add('hidden');
 
     const newFormData = new FormData();
-    newFormData.append('file', fileInput.files[0]);
+    for (let i = 0; i < fileInput.files.length; i++) {
+        newFormData.append('files', fileInput.files[i]);
+    }
     newFormData.append('participantName', document.getElementById('reentry-standalone-name').value);
     newFormData.append('location', document.getElementById('reentry-standalone-location').value);
     newFormData.append('userId', 'standalone'); // Skip DB update logic
