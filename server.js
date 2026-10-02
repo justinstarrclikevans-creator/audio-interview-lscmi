@@ -40,7 +40,7 @@ async function extractPdfText(buffer) {
             const parsed = await pdfParse(buffer);
             return parsed.text || '';
         } else if (pdfParse && pdfParse.PDFParse) {
-            const parser = new pdfParse.PDFParse({ data: buffer });
+            const parser = new pdfParse.PDFParse(new Uint8Array(buffer));
             const parsed = await parser.getText();
             return parsed.text || '';
         }
