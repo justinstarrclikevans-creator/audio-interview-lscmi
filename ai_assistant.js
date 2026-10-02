@@ -81,7 +81,7 @@ async function getParticipantAiResponse(userMessage, conversationHistory = []) {
     }
 
     try {
-        const model = genAI.getGenerativeModel({ model: "gemini-3.6-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-3.8-flash" });
         
         let formattedHistory = "";
         if (conversationHistory && conversationHistory.length > 0) {

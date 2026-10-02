@@ -107,7 +107,7 @@ async function matchJobsWithAi(criteria = {}, participantProfile = {}) {
     if (genAI) {
         try {
             const model = genAI.getGenerativeModel({
-                model: "gemini-3.6-flash",
+                model: "gemini-3.8-flash",
                 generationConfig: { responseMimeType: "application/json" }
             });
 
@@ -215,7 +215,7 @@ async function generateTailoredResumePoints(jobTitle, company, userSkills = '', 
 
     if (genAI) {
         try {
-            const model = genAI.getGenerativeModel({ model: "gemini-3.6-flash" });
+            const model = genAI.getGenerativeModel({ model: "gemini-3.8-flash" });
             const prompt = `
 You are an expert resume writer specializing in helping second-chance job candidates win interviews at top employers.
 
@@ -250,7 +250,7 @@ Rules:
 async function generateTurnaroundNarrative(jobTitle, company, participantBackground = '') {
     if (genAI) {
         try {
-            const model = genAI.getGenerativeModel({ model: "gemini-3.6-flash" });
+            const model = genAI.getGenerativeModel({ model: "gemini-3.8-flash" });
             const prompt = `
 You are an executive interview coach trained in the Turn90 Evidence-Based Model.
 Help a candidate prepare their "Turnaround Narrative" for an interview at:
