@@ -2823,8 +2823,8 @@ app.get('/api/reentry/standalone-plans', authenticateToken, requireRole('program
                 plans.push({
                     timestamp: ts,
                     name: name,
-                    staffPdf: '/api/documents/print/' + f,
-                    partPdf: '/api/documents/print/' + prefix + '_participant_action_guide.md'
+                    staffPdf: '/api/documents/raw/' + f.replace('.md', '.pdf'),
+                    partPdf: '/api/documents/raw/' + prefix + '_participant_action_guide.pdf'
                 });
             }
         });

@@ -2352,7 +2352,7 @@
 
 
 
-    <script src="app.js?v=1790696038"></script>
+    <script src="app.js?v=1791244053"></script>
 
     
     <!-- MODAL: Playbook AI -->
@@ -2379,8 +2379,13 @@
                 </div>
             </div>
 
-            <div id="pb-tab-doc" class="hidden" style="flex: 1; overflow: hidden; border: 1px solid var(--border); border-radius: 8px;">
-                <iframe src="/api/documents/print/Turn90_Playbook.pdf" style="width: 100%; height: 100%; border: none;"></iframe>
+            <div id="pb-tab-doc" class="hidden" style="flex: 1; display: flex; flex-direction: column;">
+                <div style="margin-bottom: 10px; text-align: right;">
+                    <a href="/api/documents/raw/Turn90_Playbook.pdf" target="_blank" class="btn btn-outline" style="font-size: 12px; text-decoration: none;">↗️ Open Full Screen in New Tab</a>
+                </div>
+                <div style="flex: 1; overflow: hidden; border: 1px solid var(--border); border-radius: 8px;">
+                    <iframe src="/api/documents/raw/Turn90_Playbook.pdf" style="width: 100%; height: 100%; border: none;"></iframe>
+                </div>
             </div>
         </div>
     </div>

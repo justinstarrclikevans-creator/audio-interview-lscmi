@@ -7735,8 +7735,8 @@ window.loadStandaloneReentryPlans = async function() {
                     <td style="white-space: nowrap;">${new Date(p.timestamp).toLocaleString()}</td>
                     <td style="font-weight: 600;">${p.name.replace(/_/g, ' ')}</td>
                     <td style="text-align: right; white-space: nowrap;">
-                        <a href="${p.staffPdf}" target="_blank" download class="btn btn-outline" style="padding: 4px 8px; font-size: 11px; text-decoration: none; margin-right: 4px;">Staff PDF</a>
-                        <a href="${p.partPdf}" target="_blank" download class="btn btn-outline" style="padding: 4px 8px; font-size: 11px; text-decoration: none;">Participant PDF</a>
+                        <a href="${p.staffPdf}" target="_blank" class="btn btn-outline" style="padding: 4px 8px; font-size: 11px; text-decoration: none; margin-right: 4px;">View Staff PDF</a>
+                        <a href="${p.partPdf}" target="_blank" class="btn btn-outline" style="padding: 4px 8px; font-size: 11px; text-decoration: none;">View Participant PDF</a>
                     </td>
                 </tr>
             `).join('');
