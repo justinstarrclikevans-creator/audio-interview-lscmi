@@ -4211,7 +4211,7 @@ async function finishInterview() {
         formData.append('transcript', fullTranscript || 'Audio assessment recorded.');
 
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 55000); // 55s timeout
+        const timeoutId = setTimeout(() => controller.abort(), 300000); // 5min timeout for slow uploads
 
         const res = await fetch('/api/upload-audio', {
             method: 'POST',
