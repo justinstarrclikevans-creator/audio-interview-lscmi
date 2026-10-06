@@ -708,3 +708,25 @@ module.exports = {
     initParticipantBriefcase,
     syncBenefitToBriefcase
 };
+
+
+db.exec(`
+CREATE TABLE IF NOT EXISTS case_management_evaluations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    location TEXT,
+    session_title TEXT,
+    cm_name TEXT,
+    total_score REAL,
+    playbook_adherence REAL,
+    cbt_application REAL,
+    goal_setting REAL,
+    empathy_and_neutrality REAL,
+    apricot_data_gathering REAL,
+    apricot_notes TEXT,
+    summary_markdown TEXT,
+    scores_json TEXT,
+    feedback TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+`);
+

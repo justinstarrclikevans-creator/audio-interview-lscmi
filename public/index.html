@@ -504,6 +504,7 @@
                 <button id="pm-tab-btn-reentry" class="btn btn-outline" onclick="switchPmSubView('reentry')">🧭 Re-entry Navigator & Case Planning</button>
                 <button id="pm-tab-btn-drafts" class="btn btn-outline" onclick="switchPmSubView('drafts')">📝 Scoring Reviews</button>
                 <button id="pm-tab-btn-facilitation" class="btn btn-outline" onclick="switchPmSubView('facilitation')">🎤 Class Evaluations</button>
+                <button id="pm-tab-btn-cmeval" class="btn btn-outline" onclick="switchPmSubView('cmeval')">📊 CM Evaluations</button>
                 
                 <button id="pm-tab-btn-resume" class="btn btn-outline" onclick="switchPmSubView('resume')">📄 AI Resume Builder</button>
                 
@@ -595,7 +596,24 @@
                 </div>
             </div>
 
-            <!-- Class Facilitation Evaluations Section -->
+            
+            <!-- Case Management Evaluations Section -->
+            <div id="pm-sec-cmeval" class="section-card mt-8 hidden">
+                <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                    <div>
+                        <h2>Case Management Evaluations & Feedback</h2>
+                        <p>Automated CM QA scoring based on Turn90 Playbook, CBT standards, and Synapse guidelines.</p>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-primary" onclick="openCmEvalModal()">+ Evaluate CM Meeting</button>
+                    </div>
+                </div>
+                <div id="pm-cmeval-list" class="mt-4">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+
+<!-- Class Facilitation Evaluations Section -->
             <div id="pm-sec-facilitation" class="section-card mt-8 hidden">
                 <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                     <div>
@@ -1436,7 +1454,43 @@
         </div>
     </div>
 
-    <!-- Class Facilitation Evaluation Modal -->
+    
+    <!-- CM Evaluation Modal -->
+    <div id="modal-cmeval" class="modal hidden">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3>📊 Evaluate Case Management Meeting</h3>
+                <button class="modal-close" onclick="closeModal('modal-cmeval')">&times;</button>
+            </div>
+            <form id="form-evaluate-cm" onsubmit="handleCmEvaluationSubmit(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Location / Cohort</label>
+                        <select id="cm-eval-location" required>
+                            <option value="Charleston">Charleston, SC</option>
+                            <option value="Columbia">Columbia, SC</option>
+                            <option value="Spartanburg">Spartanburg, SC</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Case Manager Name</label>
+                        <input type="text" id="cm-eval-cmname" required placeholder="Case Manager Name">
+                    </div>
+                </div>
+                <div class="form-group mt-4">
+                    <label>Meeting Title / Type</label>
+                    <input type="text" id="cm-eval-session-title" required placeholder="e.g. 1-on-1 Barrier Review / Re-entry Planning">
+                </div>
+                <div class="form-group mt-4">
+                    <label>Upload Meeting Recording (Audio/Video)</label>
+                    <input type="file" id="cm-eval-file" accept=".webm,.mp3,.m4a,.wav,.mp4" multiple required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block mt-4" id="btn-run-cm-eval">Evaluate CM Meeting Against Playbook</button>
+            </form>
+        </div>
+    </div>
+
+<!-- Class Facilitation Evaluation Modal -->
     <div id="modal-facilitation" class="modal hidden">
         <div class="modal-content modal-lg">
             <div class="modal-header">
@@ -2352,7 +2406,7 @@
 
 
 
-    <script src="app.js?v=1791244865"></script>
+    <script src="app.js?v=1791336628"></script>
 
     
     <!-- MODAL: Playbook AI -->

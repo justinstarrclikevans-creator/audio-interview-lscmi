@@ -2073,6 +2073,8 @@ function switchPmSubView(subview) {
 
     const evalCard = document.getElementById('pm-sec-facilitation');
     if (evalCard) evalCard.classList.toggle('hidden', subview !== 'facilitation');
+    const cmEvalCard = document.getElementById('pm-sec-cmeval');
+    if (cmEvalCard) cmEvalCard.classList.toggle('hidden', subview !== 'cmeval');
 
     const jobsCard = document.getElementById('pm-sec-jobs');
     if (jobsCard) jobsCard.classList.toggle('hidden', subview !== 'jobs');
@@ -7817,3 +7819,190 @@ window.addReentryFileInput = function() {
     `;
     container.appendChild(wrapper);
 };
+
+
+// ==========================================
+// CASE MANAGEMENT EVALUATIONS
+// ==========================================
+
+window.openCmEvalModal = function() {
+    document.getElementById('cm-eval-session-title').value = '';
+    document.getElementById('cm-eval-cmname').value = '';
+    document.getElementById('cm-eval-file').value = '';
+    openModal('modal-cmeval');
+};
+
+window.handleCmEvaluationSubmit = async function(e) {
+    e.preventDefault();
+    const token = localStorage.getItem('fs_token');
+    const location = document.getElementById('cm-eval-location').value;
+    const cmName = document.getElementById('cm-eval-cmname').value;
+    const sessionTitle = document.getElementById('cm-eval-session-title').value;
+    const fileInput = document.getElementById('cm-eval-file');
+    const btn = document.getElementById('btn-run-cm-eval');
+
+    if (!fileInput.files || fileInput.files.length === 0) {
+        alert("Please select at least one media file.");
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerText = 'Uploading Audio & Evaluating CM Meeting Against Playbook...';
+
+    const formData = new FormData();
+    formData.append('location', location);
+    formData.append('cmName', cmName);
+    formData.append('sessionTitle', sessionTitle);
+    
+    for (let i = 0; i < fileInput.files.length; i++) {
+        formData.append('media', fileInput.files[i]);
+    }
+
+    try {
+        const res = await fetch('/api/cm/evaluate', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` },
+            body: formData
+        });
+        const data = await res.json();
+        
+        if (res.ok) {
+            alert('CM Evaluation complete!');
+            closeModal('modal-cmeval');
+            loadCmEvaluations();
+        } else {
+            alert('Error: ' + data.error);
+        }
+    } catch (err) {
+        alert('Upload/Network Error: ' + err.message);
+    } finally {
+        btn.disabled = false;
+        btn.innerText = 'Evaluate CM Meeting Against Playbook';
+    }
+};
+
+window.loadCmEvaluations = async function() {
+    const container = document.getElementById('pm-cmeval-list');
+    if (!container) return;
+    container.innerHTML = '<p class="text-center text-slate py-4">Loading CM evaluations...</p>';
+    
+    try {
+        const token = localStorage.getItem('fs_token');
+        const [evalsRes, statsRes] = await Promise.all([
+            fetch('/api/cm/evaluations', { headers: { 'Authorization': `Bearer ${token}` } }),
+            fetch('/api/cm/evaluations/stats', { headers: { 'Authorization': `Bearer ${token}` } })
+        ]);
+        
+        const evals = await evalsRes.json();
+        const stats = await statsRes.json();
+        
+        let html = `
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+        `;
+        
+        if (stats.length === 0) {
+            html += `<div class="stat-card"><div class="stat-value text-slate">No Data</div><div class="stat-label">14-Day Averages</div></div>`;
+        } else {
+            stats.forEach(s => {
+                html += `
+                <div class="stat-card" style="border-left: 4px solid #0f766e;">
+                    <div class="stat-value">${s.avg_score.toFixed(1)} / 100</div>
+                    <div class="stat-label">${s.location} Average (Last 14 Days)</div>
+                    <div style="font-size: 11px; color: #64748b; margin-top: 4px;">${s.eval_count} Meeting(s)</div>
+                </div>
+                `;
+            });
+        }
+        html += `</div>`;
+        
+        if (evals.length === 0) {
+            html += `<p class="text-center text-slate">No Case Management evaluations generated yet.</p>`;
+            container.innerHTML = html;
+            return;
+        }
+
+        html += `<div style="display: grid; grid-template-columns: 1fr; gap: 15px;">`;
+        
+        evals.forEach(ev => {
+            const date = new Date(ev.created_at).toLocaleDateString();
+            
+            html += `
+            <div class="card" style="border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; background: white;">
+                <div style="background: #f8fafc; padding: 12px 16px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong style="font-size: 15px; color: #0f172a;">${ev.cm_name} - ${ev.session_title}</strong>
+                        <div style="font-size: 12px; color: #64748b; margin-top: 2px;">${date} &bull; ${ev.location}</div>
+                    </div>
+                    <div style="display: flex; gap: 12px; align-items: center;">
+                        <div style="font-size: 20px; font-weight: 800; color: ${ev.total_score >= 80 ? '#16a34a' : (ev.total_score >= 65 ? '#ca8a04' : '#dc2626')};">
+                            ${ev.total_score} <span style="font-size: 12px; color: #64748b; font-weight: normal;">/ 100</span>
+                        </div>
+                        <button class="btn btn-outline" style="border-color: #ef4444; color: #ef4444; padding: 4px 8px; font-size: 11px;" onclick="deleteCmEvaluation(${ev.id})">Delete</button>
+                    </div>
+                </div>
+                
+                <div style="padding: 16px;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 15px;">
+                        <div style="background: #f1f5f9; padding: 8px 12px; border-radius: 6px;">
+                            <div style="font-size: 11px; color: #64748b; font-weight: 600; text-transform: uppercase;">Playbook Adherence</div>
+                            <div style="font-size: 14px; font-weight: 700; color: #0f172a;">${ev.playbook_adherence} / 5</div>
+                        </div>
+                        <div style="background: #f1f5f9; padding: 8px 12px; border-radius: 6px;">
+                            <div style="font-size: 11px; color: #64748b; font-weight: 600; text-transform: uppercase;">CBT Application</div>
+                            <div style="font-size: 14px; font-weight: 700; color: #0f172a;">${ev.cbt_application} / 5</div>
+                        </div>
+                        <div style="background: #f1f5f9; padding: 8px 12px; border-radius: 6px;">
+                            <div style="font-size: 11px; color: #64748b; font-weight: 600; text-transform: uppercase;">Empathy / Neutrality</div>
+                            <div style="font-size: 14px; font-weight: 700; color: #0f172a;">${ev.empathy_and_neutrality} / 5</div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: #eef2ff; border-left: 4px solid #6366f1; padding: 12px; border-radius: 4px; margin-bottom: 15px;">
+                        <div style="font-weight: 700; color: #4338ca; font-size: 12px; text-transform: uppercase; margin-bottom: 6px;">Apricot Meeting Notes (Ready to Copy)</div>
+                        <div style="font-size: 13.5px; color: #312e81; white-space: pre-wrap;">${ev.apricot_notes || 'No apricot notes generated.'}</div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div>
+                            <h4 style="font-size: 13px; color: #0f766e; margin-bottom: 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px;">Summary & Observations</h4>
+                            <div class="markdown-body" style="font-size: 13px; color: #334155;">${marked.parse(ev.summary_markdown || 'No summary.')}</div>
+                        </div>
+                        <div>
+                            <h4 style="font-size: 13px; color: #b45309; margin-bottom: 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px;">Coaching Feedback</h4>
+                            <ul style="padding-left: 16px; margin: 0; font-size: 13px; color: #334155;">
+                                ${(ev.feedback || '').split(';').filter(f => f.trim()).map(f => `<li style="margin-bottom: 4px;">${f.trim()}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `;
+        });
+        
+        html += `</div>`;
+        container.innerHTML = html;
+        
+    } catch (err) {
+        container.innerHTML = `<p class="text-center text-danger">Error loading CM evaluations: ${err.message}</p>`;
+    }
+};
+
+window.deleteCmEvaluation = async function(id) {
+    if (!confirm('Are you sure you want to delete this CM evaluation?')) return;
+    try {
+        const token = localStorage.getItem('fs_token');
+        const res = await fetch(`/api/cm/evaluations/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+            loadCmEvaluations();
+        } else {
+            alert('Failed to delete.');
+        }
+    } catch (err) {
+        alert('Error: ' + err.message);
+    }
+};
+
+

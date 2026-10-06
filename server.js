@@ -13,6 +13,7 @@ const { runPhase1, runPhase1WithAudio, runPhase2, safeJsonParse } = require('./l
 const { convertSingleMdToPdf } = require('./convert_md_to_pdf');
 const { convertSingleMdToDocx } = require('./convert_md_to_docx');
 const { evaluateClassTranscript } = require('./facilitation_evaluator');
+const { evaluateCaseManagementMedia } = require('./cm_evaluator');
 const { 
     generateMondayNeedsReport, 
     generateFridayMilestoneReport, 
@@ -2479,6 +2480,73 @@ app.post('/api/interviews/generate-draft', async (req, res) => {
         console.error('Error generating AI draft scoring:', err);
         res.status(500).json({ error: 'Failed to generate AI scoring: ' + err.message });
     }
+});
+
+
+// Case Management Evaluations API
+app.post('/api/cm/evaluate', authenticateToken, requireRole('program_manager', 'director', 'admin', 'staff'), memoryUpload.array('media', 5), async (req, res) => {
+    try {
+        const { location, sessionTitle, cmName } = req.body;
+        
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({ error: 'Media files (audio/video) are required for evaluation.' });
+        }
+        
+        // Write buffers to temp files for Gemini File API
+        const fs = require('fs');
+        const os = require('os');
+        const path = require('path');
+        const mediaFiles = [];
+        
+        for (const f of req.files) {
+            const tempPath = path.join(os.tmpdir(), 'cm_eval_' + Date.now() + '_' + f.originalname);
+            fs.writeFileSync(tempPath, f.buffer);
+            mediaFiles.push({
+                path: tempPath,
+                mimeType: f.mimetype,
+                displayName: f.originalname
+            });
+        }
+        
+        const result = await evaluateCaseManagementMedia(mediaFiles, sessionTitle || 'Case Management Meeting', location || 'Charleston', cmName || req.user.name);
+        res.json({ success: true, result });
+    } catch (err) {
+        console.error('CM evaluation error:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.get('/api/cm/evaluations', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff'), (req, res) => {
+    const location = req.query.location;
+    let query = 'SELECT * FROM case_management_evaluations';
+    const params = [];
+    if (location) {
+        query += ' WHERE location = ?';
+        params.push(location);
+    }
+    query += ' ORDER BY created_at DESC LIMIT 50';
+    const evals = db.prepare(query).all(...params);
+    res.json(evals);
+});
+
+app.delete('/api/cm/evaluations/:id', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff'), (req, res) => {
+    try {
+        const id = req.params.id;
+        db.prepare('DELETE FROM case_management_evaluations WHERE id = ?').run(id);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.get('/api/cm/evaluations/stats', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff'), (req, res) => {
+    const stats = db.prepare(`
+        SELECT location, AVG(total_score) as avg_score, COUNT(*) as eval_count
+        FROM case_management_evaluations
+        WHERE created_at >= date('now', '-14 days')
+        GROUP BY location
+    `).all();
+    res.json(stats);
 });
 
 // Class Facilitation Evaluations API
