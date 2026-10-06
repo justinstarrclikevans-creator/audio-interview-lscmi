@@ -3262,7 +3262,9 @@ app.post('/api/upload-audio', memoryUpload.single('audio'), async (req, res) => 
         if (process.env.GEMINI_API_KEY) {
             console.log(`Starting LLM Phase 1 for ${name}...`);
             try {
-                const results = await runPhase1(transcriptText, name);
+                const results = (!isTranscriptOnly && audioBuffer && audioBuffer.length > 200) 
+                    ? await runPhase1WithAudio(audioBuffer, req.file.mimetype || 'audio/webm', name, location, transcriptText)
+                    : await runPhase1(transcriptText, name, location);
                 fs.writeFileSync(path.join(dataDir, `${filePrefix}_interview_guide.md`), results.interview_guide);
                 fs.writeFileSync(path.join(dataDir, `${filePrefix}_draft_scoring_form.md`), results.draft_scoring_form);
                 console.log(`LLM Phase 1 finished for ${name}. Pending review.`);
