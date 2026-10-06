@@ -4213,9 +4213,9 @@ async function finishInterview() {
     
     try {
         const formData = new FormData();
-        const participantNameInput = document.getElementById('live-interview-name');
-        const pName = participantNameInput && participantNameInput.value ? participantNameInput.value.trim() : currentUser.name;
-        const pLoc = document.getElementById('live-interview-location') ? document.getElementById('live-interview-location').value : (currentUser.location || 'Charleston');
+        // participantNameInput already declared above
+        const pName = participantNameInput && participantNameInput.value ? participantNameInput.value.trim() : (currentUser ? currentUser.name : 'Unknown');
+        const pLoc = document.getElementById('live-interview-location') ? document.getElementById('live-interview-location').value : (currentUser ? currentUser.location : 'Charleston');
         
         formData.append('audio', audioBlob, `${pName}_interview.webm`);
         formData.append('participantName', pName);
@@ -4237,7 +4237,7 @@ async function finishInterview() {
         
         alert('Interview submitted successfully! AI Scoring draft is generating.');
         closeModal('modal-interview');
-        if (currentUser.role === 'program_manager' || currentUser.role === 'staff' || currentUser.role === 'admin') {
+        if (currentUser && (currentUser.role === 'program_manager' || currentUser.role === 'staff' || currentUser.role === 'admin')) {
             loadPmDrafts();
         } else {
             loadFsDashboard();
@@ -4260,9 +4260,8 @@ async function finishInterview() {
         const fallbackData = new FormData();
         // Create a tiny placeholder audio so server doesn't reject
         const silentBlob = new Blob([new Uint8Array(100)], { type: 'audio/webm' });
-        const participantNameInput = document.getElementById('live-interview-name');
-        const pName = participantNameInput && participantNameInput.value ? participantNameInput.value.trim() : currentUser.name;
-        const pLoc = document.getElementById('live-interview-location') ? document.getElementById('live-interview-location').value : (currentUser.location || 'Charleston');
+        const pName = participantNameInput && participantNameInput.value ? participantNameInput.value.trim() : (currentUser ? currentUser.name : 'Unknown');
+        const pLoc = document.getElementById('live-interview-location') ? document.getElementById('live-interview-location').value : (currentUser ? currentUser.location : 'Charleston');
         
         fallbackData.append('audio', silentBlob, `${pName}_interview.webm`);
         fallbackData.append('participantName', pName);
@@ -4280,7 +4279,7 @@ async function finishInterview() {
         
         alert('Interview transcript submitted successfully! The audio file was too large to upload, but the AI assessment will be generated from your transcript.');
         closeModal('modal-interview');
-        if (currentUser.role === 'program_manager' || currentUser.role === 'staff' || currentUser.role === 'admin') {
+        if (currentUser && (currentUser.role === 'program_manager' || currentUser.role === 'staff' || currentUser.role === 'admin')) {
             loadPmDrafts();
         } else {
             loadFsDashboard();
