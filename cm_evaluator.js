@@ -11,7 +11,7 @@ async function evaluateCaseManagementMedia(mediaFiles, sessionTitle, location, c
 
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const fileManager = new GoogleAIFileManager(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-3.8-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-3.1-pro-preview" });
 
     let playbookText = '';
     const playbookPath = path.join(__dirname, 'manuals', 'Turn90_Playbook.pdf');
@@ -23,6 +23,10 @@ async function evaluateCaseManagementMedia(mediaFiles, sessionTitle, location, c
     const prompt = `You are a Senior Case Management Auditor for Turn90 / First Shift.
 Please analyze the attached audio/video recording of a Case Management / Re-entry Navigation meeting.
 Evaluate the Case Manager's performance based strictly on the Turn90 Playbook, Cognitive Behavioral protocols, and Synapse documentation.
+
+**CRITICAL PRIVACY & CRM INSTRUCTIONS:**
+1. STRUCTURED MEETING NOTES (CRM): This section is for internal CRM entry. It SHOULD include specific details of what the client discussed, their goals, updates, and next steps to ensure accurate case tracking.
+2. PUBLIC COACHING FEEDBACK (Scores, Summary, Strengths, Improvements): This section is PUBLIC and MUST be strictly generic and HIPAA-compliant. Do NOT mention specific details of the client's life, offenses, diagnoses, or name. Focus your feedback ENTIRELY on the Case Manager's methodology, use of CBT, and playbook adherence (e.g. "The Case Manager effectively utilized reflective listening", NOT "The Case Manager effectively listened to Bob's drug problem").
 
 CRITICAL OUTPUT REQUIREMENT:
 You MUST provide your response in two distinct parts.
