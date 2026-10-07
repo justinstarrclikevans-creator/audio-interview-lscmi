@@ -178,6 +178,21 @@ async function runPhase1WithAudio(audioBuffer, mimeType, clientName, location, a
             if (data.error) throw new Error(data.error.message);
             
             uploadedFileName = data.file.name;
+            
+            // Poll until file is ACTIVE
+            let fileState = data.file.state;
+            let attempts = 0;
+            while (fileState === 'PROCESSING' && attempts < 20) {
+                console.log(`[Audio Pipeline] Waiting for Gemini to process audio file... (${attempts + 1}/20)`);
+                await new Promise(resolve => setTimeout(resolve, 3000));
+                const checkRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/${uploadedFileName}?key=${process.env.GEMINI_API_KEY}`);
+                const checkData = await checkRes.json();
+                if (checkData.error) throw new Error(checkData.error.message);
+                fileState = checkData.state;
+                if (fileState === 'FAILED') throw new Error('Gemini failed to process the uploaded audio file.');
+                attempts++;
+            }
+            
             audioPart = { fileData: { mimeType: data.file.mimeType, fileUri: data.file.uri } };
         } else {
             audioPart = {
@@ -206,7 +221,19 @@ CRITICAL TRANSCRIPTION REQUIREMENTS:
 - CRITICAL: Interviewers often ask questions conversationally or rapidly go through a checklist without reading the full question out loud. Capture all of these conversational cues perfectly, because they will be used to score an assessment later.
 ${additionalNotes && additionalNotes.trim() ? `\nFor context, here is a chronological log of the questions the participant was looking at on the screen while recording this audio. Use this to help identify what they are answering if they just say "Yes" or "No":\n${additionalNotes}` : ''}`;
 
-        const transcriptionResult = await transcriptionModel.generateContent([audioPart, { text: transcriptionPrompt }]);
+        let transcriptionResult;
+        let retries = 3;
+        while (retries > 0) {
+            try {
+                transcriptionResult = await transcriptionModel.generateContent([audioPart, { text: transcriptionPrompt }]);
+                break;
+            } catch (err) {
+                console.error(`[Audio Pipeline] generateContent error (${retries} retries left):`, err.message);
+                retries--;
+                if (retries === 0) throw err;
+                await new Promise(resolve => setTimeout(resolve, 5000));
+            }
+        }
         const transcriptText = transcriptionResult.response.text();
         console.log(`[Audio Pipeline] Transcription complete. Length: ${transcriptText.length} characters.`);
 
