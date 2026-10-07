@@ -3908,6 +3908,8 @@ async function handleClassEvaluationSubmit(e) {
         if (!res.ok) throw new Error(data.error);
 
         alert(`Classroom evaluation complete! Score: ${data.result.total_score} / 100 for ${location}`);
+        document.getElementById('form-facilitation-eval')?.reset();
+        document.getElementById('eval-file').value = '';
         closeModal('modal-facilitation');
         loadFacilitationEvaluations();
     } catch (err) {
@@ -7725,6 +7727,13 @@ window.handleReentryStandaloneSubmit = async function(e) {
         const data = await res.json();
         
         if (res.ok) {
+            // Clear the form to prevent accidental re-submission of the same files
+            document.getElementById('form-reentry-standalone').reset();
+            const container = document.getElementById('reentry-file-inputs');
+            if (container) {
+                container.innerHTML = '<input type="file" class="reentry-standalone-file-input form-control" accept="audio/*,video/*,application/pdf,.txt" required>';
+            }
+            
             document.getElementById('btn-dl-staff-pdf').href = data.staffPlanPdf || '#';
             document.getElementById('btn-dl-part-pdf').href = data.participantGuidePdf || '#';
             resultsDiv.classList.remove('hidden');
@@ -7889,6 +7898,8 @@ window.handleCmEvaluationSubmit = async function(e) {
         
         if (res.ok) {
             alert('CM Evaluation complete!');
+            document.getElementById('form-cmeval')?.reset();
+            document.getElementById('cm-eval-file').value = '';
             closeModal('modal-cmeval');
             loadCmEvaluations();
         } else {

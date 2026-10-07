@@ -34,7 +34,7 @@ async function generateReentryNavAssessment(data) {
 
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
-        model: "gemini-pro-latest",
+        model: "gemini-3.1-pro-preview",
         generationConfig: { responseMimeType: "application/json" }
     });
 

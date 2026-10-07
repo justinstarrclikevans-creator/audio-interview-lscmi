@@ -12,7 +12,7 @@ const { db, BRIEFCASE_DOMAINS, DEFAULT_GATE_CRITERIA, STABILITY_STEP_DOWN_TRIGGE
 const { runPhase1, runPhase1WithAudio, runPhase2, safeJsonParse } = require('./llm_pipeline');
 const { convertSingleMdToPdf } = require('./convert_md_to_pdf');
 const { convertSingleMdToDocx } = require('./convert_md_to_docx');
-const { evaluateClassTranscript } = require('./facilitation_evaluator');
+const { evaluateClassTranscript, evaluateClassMedia } = require('./facilitation_evaluator');
 const { evaluateCaseManagementMedia } = require('./cm_evaluator');
 const { 
     generateMondayNeedsReport, 
@@ -2618,13 +2618,33 @@ app.get('/api/admin/evaluations/sync-status', authenticateToken, requireRole('pr
 app.post('/api/admin/evaluate-classes', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), memoryUpload.single('audioOrTranscript'), async (req, res) => {
     try {
         const { location, sessionTitle, facilitatorName, transcriptText } = req.body;
-        let textToEvaluate = transcriptText || '';
-        if (req.file) {
-            textToEvaluate = req.file.buffer.toString('utf8');
-        }
-        if (!textToEvaluate) return res.status(400).json({ error: 'Transcript or text content required for evaluation.' });
+        
+        let result;
+        
+        if (req.file && (req.file.mimetype.startsWith('audio') || req.file.mimetype.startsWith('video') || req.file.originalname.endsWith('.webm') || req.file.originalname.endsWith('.m4a'))) {
+            // It's an audio/video file! Write to temp disk for GoogleAIFileManager
+            const fs = require('fs');
+            const path = require('path');
+            const os = require('os');
+            const tmpPath = path.join(os.tmpdir(), 'class_eval_' + Date.now() + '_' + req.file.originalname);
+            fs.writeFileSync(tmpPath, req.file.buffer);
+            
+            result = await evaluateClassMedia(
+                location || 'Charleston', 
+                sessionTitle || 'Turn90 Workshop', 
+                facilitatorName || 'Staff Facilitator', 
+                { path: tmpPath, mimeType: req.file.mimetype || 'audio/webm' }
+            );
+        } else {
+            // It's a text transcript
+            let textToEvaluate = transcriptText || '';
+            if (req.file) {
+                textToEvaluate = req.file.buffer.toString('utf8');
+            }
+            if (!textToEvaluate) return res.status(400).json({ error: 'Transcript or text content required for evaluation.' });
 
-        const result = await evaluateClassTranscript(location || 'Charleston', sessionTitle || 'Turn90 Workshop', facilitatorName || 'Staff Facilitator', textToEvaluate);
+            result = await evaluateClassTranscript(location || 'Charleston', sessionTitle || 'Turn90 Workshop', facilitatorName || 'Staff Facilitator', textToEvaluate);
+        }
         res.json({ success: true, result });
     } catch (err) {
         console.error('Class evaluation error:', err);
