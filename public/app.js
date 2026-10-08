@@ -7774,6 +7774,7 @@ window.loadStandaloneReentryPlans = async function() {
                     <td style="text-align: right; white-space: nowrap;">
                         <a href="${p.staffPdf}" target="_blank" class="btn btn-outline" style="padding: 4px 8px; font-size: 11px; text-decoration: none; margin-right: 4px;">View Staff PDF</a>
                         <a href="${p.partPdf}" target="_blank" class="btn btn-outline" style="padding: 4px 8px; font-size: 11px; text-decoration: none;">View Participant PDF</a>
+                        <button class="btn btn-outline" style="padding: 4px 8px; font-size: 11px; margin-left: 4px; color: var(--primary); border-color: var(--primary);" onclick="openRegenerateReentryModal('${p.prefix}')">✍️ Adjust Feedback</button>
                     </td>
                 </tr>
             `).join('');
@@ -8043,3 +8044,44 @@ window.deleteCmEvaluation = async function(id) {
 };
 
 
+
+
+window.openRegenerateReentryModal = function(prefix) {
+    document.getElementById('reentry-regenerate-prefix').value = prefix;
+    document.getElementById('reentry-feedback').value = '';
+    openModal('modal-regenerate-reentry');
+};
+
+window.handleRegenerateReentrySubmit = async function(e) {
+    e.preventDefault();
+    const prefix = document.getElementById('reentry-regenerate-prefix').value;
+    const feedback = document.getElementById('reentry-feedback').value;
+    const btn = document.getElementById('btn-reentry-regenerate');
+    
+    btn.disabled = true;
+    btn.innerText = 'Regenerating Case Plan...';
+    
+    try {
+        const res = await fetch('/api/reentry/regenerate', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('fs_token')}`
+            },
+            body: JSON.stringify({ prefix, feedback })
+        });
+        const data = await res.json();
+        if (res.ok) {
+            alert('Case Plan regenerated successfully with feedback!');
+            closeModal('modal-regenerate-reentry');
+            if (window.loadStandaloneReentryPlans) window.loadStandaloneReentryPlans();
+        } else {
+            alert('Error: ' + data.error);
+        }
+    } catch(err) {
+        alert('Network Error: ' + err.message);
+    }
+    
+    btn.disabled = false;
+    btn.innerText = 'Regenerate Plans';
+};

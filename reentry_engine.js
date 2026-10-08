@@ -1,5 +1,8 @@
 // Re-entry Navigation Case Planning & Flag Analysis Engine
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+
+    const feedback = data.feedback || "";
+    
+    const { GoogleGenerativeAI } = require("@google/generative-ai");
 const fs = require('fs');
 const path = require('path');
 const { SC_COMMUNITY_RESOURCES, SC_FAIR_CHANCE_EMPLOYERS } = require('./sc_resource_directory');
@@ -122,6 +125,8 @@ PARTICIPANT PROFILE:
 - Interview Transcript & Notes:
 ${interviewTranscript || 'Assessment based on intake notes and self-reported barriers.'}
 
+TASK INSTRUCTIONS:
+${feedback ? `\nCRITICAL SUPERVISOR FEEDBACK FOR THIS REGENERATION:\n"""\n${feedback}\n"""\nYou MUST adjust the patterns, action steps, and case plan to explicitly incorporate this feedback.\n` : ""}
 TASK INSTRUCTIONS:
 1. Review the provided notes, transcript, and screening documents to assess the participant's current stability and immediate needs.
 2. Identify Critical Stability Red Flags that threaten immediate employment or program success.

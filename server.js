@@ -2912,7 +2912,8 @@ app.get('/api/reentry/standalone-plans', authenticateToken, requireRole('program
                     timestamp: ts,
                     name: name,
                     staffPdf: '/api/documents/raw/' + f.replace('.md', '.pdf'),
-                    partPdf: '/api/documents/raw/' + prefix + '_participant_action_guide.pdf'
+                    partPdf: '/api/documents/raw/' + prefix + '_participant_action_guide.pdf',
+                    prefix: prefix
                 });
             }
         });
@@ -2921,6 +2922,38 @@ app.get('/api/reentry/standalone-plans', authenticateToken, requireRole('program
         plans.sort((a, b) => b.timestamp - a.timestamp);
         res.json({ success: true, plans });
     } catch(e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+
+app.post('/api/reentry/regenerate', authenticateToken, requireRole('program_manager', 'director', 'admin'), async (req, res) => {
+    try {
+        const { prefix, feedback } = req.body;
+        if (!prefix) return res.status(400).json({ error: 'Missing prefix' });
+        
+        const jsonPath = path.join(dataDir, `${prefix}_assessment_data.json`);
+        if (!fs.existsSync(jsonPath)) {
+            return res.status(404).json({ error: 'Original assessment data not found.' });
+        }
+        
+        const oldData = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+        const assessmentData = oldData.assessmentData;
+        assessmentData.feedback = feedback; // Inject the feedback
+        
+        const { generateReentryNavAssessment } = require('./reentry_engine');
+        const result = await generateReentryNavAssessment(assessmentData);
+        
+        const staffPlanPath = path.join(dataDir, `${prefix}_staff_case_plan.md`);
+        const participantGuidePath = path.join(dataDir, `${prefix}_participant_action_guide.md`);
+        
+        fs.writeFileSync(staffPlanPath, result.navigator_case_plan_md);
+        fs.writeFileSync(participantGuidePath, result.participant_guide_md);
+        fs.writeFileSync(jsonPath, JSON.stringify({ ...result, assessmentData }, null, 2));
+        
+        res.json({ success: true, message: 'Plans regenerated successfully.' });
+    } catch(e) {
+        console.error('Regenerate error:', e);
         res.status(500).json({ error: e.message });
     }
 });
