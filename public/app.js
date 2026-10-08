@@ -7729,7 +7729,7 @@ window.handleReentryStandaloneSubmit = async function(e) {
         if (res.ok) {
             // Clear the form to prevent accidental re-submission of the same files
             document.getElementById('form-reentry-standalone').reset();
-            const container = document.getElementById('reentry-file-inputs');
+            const container = document.getElementById('reentry-file-inputs-container');
             if (container) {
                 container.innerHTML = '<input type="file" class="reentry-standalone-file-input form-control" accept="audio/*,video/*,application/pdf,.txt" required>';
             }
