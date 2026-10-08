@@ -7,7 +7,7 @@ const { db } = require('./db');
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'dummy_key');
 const model = genAI.getGenerativeModel({ 
-    model: "gemini-3.8-flash" 
+    model: "gemini-3.1-pro-preview" 
 });
 
 // Ensure class_facilitation_evaluations table exists
@@ -114,7 +114,8 @@ async function uploadFacilitationResources(fileManager) {
     const uploadedResources = [];
     
     for (const file of files) {
-        if (file.toLowerCase().endsWith('.pdf') || file.toLowerCase().endsWith('.txt') || file.toLowerCase().endsWith('.md')) {
+        if ((file.toLowerCase().endsWith('.pdf') || file.toLowerCase().endsWith('.txt') || file.toLowerCase().endsWith('.md')) && 
+            (file.toLowerCase().includes('workbook') || file.toLowerCase().includes('guide') || file.toLowerCase().includes('playbook') || file.toLowerCase().includes('synapse') || file.toLowerCase().includes('scoring') || file.toLowerCase().includes('module'))) {
             const filePath = path.join(resourcesDir, file);
             console.log(`[Class Evaluation] Uploading background resource file ${file}...`);
             try {
