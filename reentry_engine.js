@@ -1,8 +1,5 @@
 // Re-entry Navigation Case Planning & Flag Analysis Engine
-
-    const feedback = data.feedback || "";
-    
-    const { GoogleGenerativeAI } = require("@google/generative-ai");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 const fs = require('fs');
 const path = require('path');
 const { SC_COMMUNITY_RESOURCES, SC_FAIR_CHANCE_EMPLOYERS } = require('./sc_resource_directory');
@@ -41,6 +38,7 @@ async function generateReentryNavAssessment(data) {
         generationConfig: { responseMimeType: "application/json" }
     });
 
+    const feedback = data.feedback || "";
     const {
         participantName,
         location = "Charleston",
