@@ -2988,6 +2988,7 @@ async function loadPmDrafts() {
         html += '</div>';
         list.innerHTML = html;
         loadFacilitationEvaluations();
+        if (typeof window.loadCmEvaluations === 'function') window.loadCmEvaluations();
     } catch (e) {
         list.innerHTML = '<p>Unable to load drafts: ' + e.message + '</p>';
     }
@@ -3656,6 +3657,7 @@ async function deleteClassEvaluation(id) {
         const data = await res.json();
         if (data.success) {
             loadFacilitationEvaluations();
+        if (typeof window.loadCmEvaluations === 'function') window.loadCmEvaluations();
         } else {
             alert('Failed to delete: ' + data.error);
         }
@@ -3706,6 +3708,7 @@ async function forceSyncEvaluations() {
                             if (status.results.errors?.length) msg += `\nErrors:\n- ${status.results.errors.join('\n- ')}`;
                             alert(msg);
                             loadFacilitationEvaluations();
+        if (typeof window.loadCmEvaluations === 'function') window.loadCmEvaluations();
                         } else {
                             alert('Sync ended: ' + status.log);
                         }
@@ -3714,6 +3717,7 @@ async function forceSyncEvaluations() {
                             currentBtn.innerText = '🔄 Fetch Missing Dropbox Classes';
                         }
                         loadFacilitationEvaluations();
+        if (typeof window.loadCmEvaluations === 'function') window.loadCmEvaluations();
                     }
                 } catch(e) {
                     clearInterval(pollInterval);
@@ -3912,6 +3916,7 @@ async function handleClassEvaluationSubmit(e) {
         document.getElementById('eval-file').value = '';
         closeModal('modal-facilitation');
         loadFacilitationEvaluations();
+        if (typeof window.loadCmEvaluations === 'function') window.loadCmEvaluations();
     } catch (err) {
         alert('Evaluation failed: ' + err.message);
     } finally {
