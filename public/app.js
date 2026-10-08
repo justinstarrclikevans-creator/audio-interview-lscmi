@@ -2978,6 +2978,9 @@ async function loadPmDrafts() {
                                 <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: var(--success); border-color: #86efac;" onclick="printActiveDraftDocument('${finalPlanFile}')" title="Print Participant Action Plan">
                                     🖨️ Print Plan
                                 </button>
+                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: var(--primary); border-color: var(--primary);" onclick="openSupervisorReviewModal('${clientId}', '${cleanName}')" title="Adjust Patterns based on session feedback">
+                                    ✍️ Adjust Feedback
+                                </button>
                             ` : ''}
                         </div>
                     </div>
