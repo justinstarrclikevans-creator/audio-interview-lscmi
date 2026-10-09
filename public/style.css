@@ -928,7 +928,8 @@ body {
 #sup-interview-guide-content ul, #sup-interview-guide-content ol,
 .modal-body ul, .modal-body ol,
 .markdown-body ul, .markdown-body ol {
-    padding-left: 40px !important;
+    padding-left: 30px !important;
+    list-style-position: inside !important;
     margin-bottom: 12px;
 }
 
