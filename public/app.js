@@ -3579,7 +3579,8 @@ async function openSupervisorReviewModal(clientId, cleanName) {
         if (resScoring.ok) {
             try {
                 const data = await resScoring.json();
-                scoringContent.innerHTML = marked.parse(data.content);
+                let mdContent = data.content.replace(/^(\d+)\.\s+/gm, '**$1)** ');
+                scoringContent.innerHTML = marked.parse(mdContent);
             } catch (pe) {
                 scoringContent.innerHTML = '<p class="text-danger">Draft scoring form could not be parsed.</p>';
             }
@@ -3596,7 +3597,8 @@ async function openSupervisorReviewModal(clientId, cleanName) {
         if (resGuide.ok) {
             try {
                 const data = await resGuide.json();
-                guideContent.innerHTML = marked.parse(data.content);
+                let mdContent = data.content.replace(/^(\d+)\.\s+/gm, '**$1)** ');
+                guideContent.innerHTML = marked.parse(mdContent);
             } catch (pe) {
                 guideContent.innerHTML = '<p class="text-slate">Interview guide response could not be parsed.</p>';
             }
