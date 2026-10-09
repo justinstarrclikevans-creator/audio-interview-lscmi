@@ -7774,10 +7774,12 @@ window.loadStandaloneReentryPlans = async function() {
                 <tr>
                     <td style="white-space: nowrap;">${new Date(p.timestamp).toLocaleString()}</td>
                     <td style="font-weight: 600;">${p.name.replace(/_/g, ' ')}</td>
-                    <td style="text-align: right; white-space: nowrap;">
-                        <a href="${p.staffPdf}" target="_blank" class="btn btn-outline" style="padding: 4px 8px; font-size: 11px; text-decoration: none; margin-right: 4px;">View Staff PDF</a>
-                        <a href="${p.partPdf}" target="_blank" class="btn btn-outline" style="padding: 4px 8px; font-size: 11px; text-decoration: none;">View Participant PDF</a>
-                        <button class="btn btn-outline" style="padding: 4px 8px; font-size: 11px; margin-left: 4px; color: var(--primary); border-color: var(--primary);" onclick="openRegenerateReentryModal('${p.prefix}')">✍️ Adjust Feedback</button>
+                    <td style="text-align: right;">
+                        <div style="display: flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap;">
+                            <a href="${p.staffPdf}" target="_blank" class="btn btn-outline" style="padding: 4px 8px; font-size: 11px; text-decoration: none;">View Staff PDF</a>
+                            <a href="${p.partPdf}" target="_blank" class="btn btn-outline" style="padding: 4px 8px; font-size: 11px; text-decoration: none;">View Participant PDF</a>
+                            <button class="btn btn-outline" style="padding: 4px 8px; font-size: 11px; color: var(--primary); border-color: var(--primary);" onclick="openRegenerateReentryModal('${p.prefix}')">✍️ Adjust Feedback</button>
+                        </div>
                     </td>
                 </tr>
             `).join('');
