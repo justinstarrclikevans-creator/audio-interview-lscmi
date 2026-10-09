@@ -25,8 +25,9 @@ Please analyze the attached audio/video recording of a Case Management / Re-entr
 Evaluate the Case Manager's performance based strictly on the Turn90 Playbook, Cognitive Behavioral protocols, and Synapse documentation.
 
 **CRITICAL PRIVACY & CRM INSTRUCTIONS:**
-1. STRUCTURED MEETING NOTES (CRM): This section is for internal CRM entry. It SHOULD include specific details of what the client discussed, their goals, updates, and next steps to ensure accurate case tracking.
-2. PUBLIC COACHING FEEDBACK (Scores, Summary, Strengths, Improvements): This section is PUBLIC and MUST be strictly generic and HIPAA-compliant. Do NOT mention specific details of the client's life, offenses, diagnoses, or name. Focus your feedback ENTIRELY on the Case Manager's methodology, use of CBT, and playbook adherence (e.g. "The Case Manager effectively utilized reflective listening", NOT "The Case Manager effectively listened to Bob's drug problem").
+1. COMPLETE NAME REDACTION: You MUST remove ANY references to the client's actual name throughout the ENTIRE evaluation (including the CRM notes). ALWAYS use "[Client]" as a placeholder instead of their name.
+2. STRUCTURED MEETING NOTES (CRM): This section is for internal CRM entry. It SHOULD include specific details of what the client discussed, their goals, updates, and next steps to ensure accurate case tracking, but STILL use "[Client]" instead of their actual name.
+3. PUBLIC COACHING FEEDBACK (Scores, Summary, Strengths, Improvements): This section is PUBLIC and MUST be strictly generic and HIPAA-compliant. Do NOT mention specific details of the client's life, offenses, diagnoses, or name. Focus your feedback ENTIRELY on the Case Manager's methodology, use of CBT, and playbook adherence (e.g. "The Case Manager effectively utilized reflective listening", NOT "The Case Manager effectively listened to the client's drug problem").
 
 CRITICAL OUTPUT REQUIREMENT:
 You MUST provide your response in two distinct parts.
