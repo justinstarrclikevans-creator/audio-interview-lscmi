@@ -937,3 +937,12 @@ body {
 .modal-body li, .markdown-body li {
     margin-bottom: 4px;
 }
+
+
+/* NUCLEAR OPTION FOR LSCMI MODAL LEFT MARGINS */
+#sup-draft-scoring-content {
+    margin-left: 20px !important;
+}
+#sup-draft-scoring-content *, #sup-interview-guide-content * {
+    margin-left: 20px !important;
+}
