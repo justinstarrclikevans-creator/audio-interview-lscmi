@@ -928,7 +928,7 @@ body {
 #sup-interview-guide-content ul, #sup-interview-guide-content ol,
 .modal-body ul, .modal-body ol,
 .markdown-body ul, .markdown-body ol {
-    padding-left: 24px;
+    padding-left: 40px !important;
     margin-bottom: 12px;
 }
 
