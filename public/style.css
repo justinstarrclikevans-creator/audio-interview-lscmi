@@ -921,3 +921,18 @@ body {
         margin: 10px 0 !important;
     }
 }
+
+
+/* Fix Markdown List Padding */
+#sup-draft-scoring-content ul, #sup-draft-scoring-content ol,
+#sup-interview-guide-content ul, #sup-interview-guide-content ol,
+.modal-body ul, .modal-body ol,
+.markdown-body ul, .markdown-body ol {
+    padding-left: 24px;
+    margin-bottom: 12px;
+}
+
+#sup-draft-scoring-content li, #sup-interview-guide-content li,
+.modal-body li, .markdown-body li {
+    margin-bottom: 4px;
+}
