@@ -1541,7 +1541,7 @@ function buildPrintableDocumentHtml(filename, content, isBatch = false) {
         cleanedContent = cleanedContent.trim();
 
         // Render Markdown content
-        const renderedMarkdown = typeof marked !== 'undefined' ? marked.parse(cleanedContent) : cleanedContent.replace(/\n/g, '<br>');
+        const renderedMarkdown = typeof marked !== 'undefined' ? marked.parse(cleanedContent.replace(/^\s*(\d+)\.\s+/gm, '**$1)** ')) : cleanedContent.replace(/\n/g, '<br>');
 
         bodyHtml = `
             <div class="scoring-report-container" style="page-break-after: always; margin-bottom: 30px;">
@@ -1733,7 +1733,7 @@ function buildPrintableDocumentHtml(filename, content, isBatch = false) {
         cleanedContent = cleanedContent.replace(/^\*\*Data Sources:\*\*.*?\n+/im, '');
         cleanedContent = cleanedContent.replace(/^---\s*\n+/m, '');
 
-        const renderedMarkdown = typeof marked !== 'undefined' ? marked.parse(cleanedContent.trim()) : cleanedContent.replace(/\n/g, '<br>');
+        const renderedMarkdown = typeof marked !== 'undefined' ? marked.parse(cleanedContent.trim().replace(/^\s*(\d+)\.\s+/gm, '**$1)** ')) : cleanedContent.replace(/\n/g, '<br>');
 
         bodyHtml = `
             <div class="criminal-history-report-container" style="page-break-after: always; margin-bottom: 30px;">
@@ -1796,7 +1796,7 @@ function buildPrintableDocumentHtml(filename, content, isBatch = false) {
             </div>
         `;
     } else {
-        const rendered = typeof marked !== 'undefined' ? marked.parse(content) : content.replace(/\n/g, '<br>');
+        const rendered = typeof marked !== 'undefined' ? marked.parse(content.replace(/^\s*(\d+)\.\s+/gm, '**$1)** ')) : content.replace(/\n/g, '<br>');
         bodyHtml = `
             <div style="border-bottom: 2px solid #0f766e; padding-bottom: 8px; margin-bottom: 16px;">
                 <div style="font-size: 10pt; font-weight: 800; color: #0f766e; text-transform: uppercase; letter-spacing: 1px;">TURN90 • FIRST SHIFT REENTRY INITIATIVE</div>

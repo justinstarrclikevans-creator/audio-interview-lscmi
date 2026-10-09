@@ -3355,13 +3355,13 @@ async function previewDocument(filename) {
                     </div>
                 </div>
                 <div id="guide-content-container" class="markdown-preview" style="line-height: 1.6; font-size: 13.5px; color: #1e293b; max-height: 70vh; overflow-y: auto;">
-                    ${typeof marked !== 'undefined' ? marked.parse(fileContent) : fileContent.replace(/\n/g, '<br>')}
+                    ${typeof marked !== 'undefined' ? marked.parse(fileContent.replace(/^\s*(\d+)\.\s+/gm, '**$1)** ')) : fileContent.replace(/\n/g, '<br>')}
                 </div>
             `;
         } else {
             body.innerHTML = `
                 <div class="markdown-preview" style="line-height: 1.6; font-size: 13.5px; color: #1e293b; max-height: 72vh; overflow-y: auto;">
-                    ${typeof marked !== 'undefined' ? marked.parse(fileContent) : fileContent.replace(/\n/g, '<br>')}
+                    ${typeof marked !== 'undefined' ? marked.parse(fileContent.replace(/^\s*(\d+)\.\s+/gm, '**$1)** ')) : fileContent.replace(/\n/g, '<br>')}
                 </div>
             `;
         }
