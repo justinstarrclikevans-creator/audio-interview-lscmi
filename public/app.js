@@ -3745,6 +3745,8 @@ async function forceSyncEvaluations() {
         btn.disabled = false;
         btn.innerText = '🔄 Fetch Missing Dropbox Classes';
     }
+}
+
 window.filterFacilitationByCenter = function(center) {
     window.facilitationCenterFilter = center;
     loadFacilitationEvaluations();
