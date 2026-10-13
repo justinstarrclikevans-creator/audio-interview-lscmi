@@ -32,6 +32,54 @@ CREATE TABLE IF NOT EXISTS class_facilitation_evaluations (
 );
 `);
 
+const LANGUAGE_POLICY = `
+================================================================================
+CRITICAL POLICY: SLANG AND PROFANITY ARE 100% ACCEPTABLE AND NOT UNPROFESSIONAL
+================================================================================
+Turn90 is an authentic cognitive-behavioral reentry program working directly with formerly incarcerated men.
+In our classroom setting:
+1. SLANG AND PROFANITY ARE COMPLETELY ACCEPTABLE AND ARE NEVER CONSIDERED UNPROFESSIONAL.
+2. Colloquial speech, street slang, African American Vernacular English (AAVE), informal phrasing, and profanity/cussing are normal, authentic, and welcomed in our classroom environment. They build genuine credibility and rapport between facilitators and participants.
+3. ABSOLUTE ZERO PENALTY RULE:
+   - NEVER penalize, deduct points, or lower any category score (including "Models behavior", "Modeling neutrality", or total score) for the use of slang, informal phrasing, or profanity.
+   - NEVER list slang, cussing, or profanity in "areas_for_improvement", coaching feedback, or anywhere in the evaluation report as a negative or area for growth.
+   - NEVER recommend that a facilitator "clean up their language," "use more professional phrasing," or "avoid street slang or profanity."
+4. THE ONLY EXCEPTION: If profanity is used in an abusive, violent, or aggressive direct personal attack against a participant. Otherwise, conversational, casual, humorous, emphatic, or cultural slang and profanity are 100% permitted, supported, and validated.
+================================================================================
+`;
+
+function sanitizeLanguageFeedback(evaluation) {
+    if (!evaluation) return evaluation;
+
+    if (Array.isArray(evaluation.areas_for_improvement)) {
+        evaluation.areas_for_improvement = evaluation.areas_for_improvement.filter(item => {
+            if (typeof item !== 'string') return true;
+            const lower = item.toLowerCase();
+            const mentionsLang = lower.includes('profan') || lower.includes('slang') || lower.includes('vulgar') || 
+                                 lower.includes('swear') || lower.includes('curse') || lower.includes('cuss') ||
+                                 lower.includes('language') || lower.includes('shorthand expression');
+            const isNegative = lower.includes('unprofessional') || lower.includes('clean up') || lower.includes('avoid') || 
+                               lower.includes('refrain') || lower.includes('inappropriate') || lower.includes('pissed off') ||
+                               lower.includes('fucked up') || lower.includes('tone down') || lower.includes('formal');
+            return !(mentionsLang && isNegative);
+        });
+    }
+
+    if (evaluation.detailed_summary_markdown && typeof evaluation.detailed_summary_markdown === 'string') {
+        evaluation.detailed_summary_markdown = evaluation.detailed_summary_markdown
+            .split('\n\n')
+            .filter(para => {
+                const lower = para.toLowerCase();
+                const mentionsLang = lower.includes('profan') || lower.includes('slang') || lower.includes('vulgar') || lower.includes('swearing');
+                const isNegative = lower.includes('unprofessional') || lower.includes('clean up') || lower.includes('avoid using') || lower.includes('refrain from');
+                return !(mentionsLang && isNegative);
+            })
+            .join('\n\n');
+    }
+
+    return evaluation;
+}
+
 function getFacilitatorScoringContext() {
     try {
         const guidePath = path.join(__dirname, 'data', 'Facilitator_Scoring_Guide.md');
@@ -41,6 +89,8 @@ function getFacilitatorScoringContext() {
         const curriculum = fs.readFileSync(curriculumPath, 'utf8');
 
         return `
+${LANGUAGE_POLICY}
+
 You are the Lead Facilitator Supervisor and Quality Assurance Director for Turn90 / First Shift.
 You are evaluating a classroom session using the OFFICIAL Turn90 CBT Facilitation Scoring Guide (provided below).
 
@@ -54,11 +104,11 @@ INSTRUCTIONS:
 Evaluate the facilitator based strictly on the above 20-item Scoring Guide. Reference the curriculum lesson plan to judge if they followed the script and setup correctly for the requested module.
 Provide detailed coaching feedback based on specific timestamps and behaviors observed.
 
-IMPORTANT EXCEPTION ABOUT PROFANITY: We do NOT view profanity as unprofessional as long as it isn't aggressive towards a participant. Profanity is acceptable and allowed for our facilitators to build authentic rapport. Do NOT penalize, lower scores, or flag the use of profanity as an area for improvement UNLESS the profanity is used aggressively directed at a participant.
+${LANGUAGE_POLICY}
 `;
     } catch (e) {
         console.warn("Could not load official scoring guide or curriculum, using fallback prompt.");
-        return `You are evaluating a classroom session transcript using the Turn90 CBT Facilitation Scoring Guide... (Fallback)`; 
+        return `You are evaluating a classroom session transcript using the Turn90 CBT Facilitation Scoring Guide...\n${LANGUAGE_POLICY}`; 
     }
 }
 
@@ -84,6 +134,11 @@ CRITICAL ISOLATION & OBJECTIVITY MANDATES:
    Do NOT pull in fictional names, case studies (such as "Marcus"), or hypothetical scenarios from training manuals or workbooks.
    If a participant's name is not explicitly stated in the transcript, refer to them neutrally as "a participant" or "the participant."
 
+4. NON-NEGOTIABLE POLICY: SLANG AND PROFANITY ARE FULLY ACCEPTABLE AND NOT UNPROFESSIONAL:
+   Slang, colloquial expressions, cultural vernacular (AAVE), and profanity are authentic communication tools in our setting.
+   - NEVER penalize or lower any score for the use of slang or profanity.
+   - NEVER list slang or profanity in "areas_for_improvement" or suggest more "professional" language.
+
 Location: ${location}
 Session / Module: ${sessionTitle}
 Facilitator: ${facilitatorName}
@@ -94,7 +149,16 @@ ${transcriptText}
 
     const result = await model.generateContent(prompt);
     const responseText = result.response.text();
-    const evaluation = JSON.parse(responseText);
+    let evaluation;
+    try {
+        const jsonMatch = responseText.match(/```json\s*([\s\S]*?)\s*```/);
+        evaluation = jsonMatch ? JSON.parse(jsonMatch[1]) : JSON.parse(responseText);
+    } catch(err) {
+        evaluation = JSON.parse(responseText);
+    }
+
+    // Apply language policy sanitizer to guarantee zero slang/profanity penalties
+    sanitizeLanguageFeedback(evaluation);
 
     const savedFacilitator = (evaluation.facilitator_name && evaluation.facilitator_name !== 'Staff Facilitator')
         ? evaluation.facilitator_name
@@ -225,6 +289,12 @@ CRITICAL ISOLATION & OBJECTIVITY MANDATES:
 4. AUDIO-ONLY CRITERIA:
    These are AUDIO ONLY recordings. Do not penalize or refuse to score based on a lack of visual "physical presence". Instead, evaluate their presence and engagement purely through their tone of voice, pacing, neutrality, and interactions with participants across this session.
 
+5. NON-NEGOTIABLE POLICY: SLANG AND PROFANITY ARE FULLY ACCEPTABLE AND NOT UNPROFESSIONAL:
+   In our setting, slang, street vernacular, cultural idioms (AAVE), and profanity are authentic communication tools. They build genuine rapport.
+   - NEVER penalize, deduct points, or lower any category score for the use of slang or profanity.
+   - NEVER list slang or profanity in "areas_for_improvement" or coaching recommendations.
+   - NEVER advise a facilitator to use "more professional language" or avoid slang/cussing.
+
 Use the provided official Turn90 Facilitation PDFs and curriculum documents to ground your feedback exactly in the Turn90 Evidence-Based CBT practices.
 
 CRITICAL OUTPUT REQUIREMENT:
@@ -249,7 +319,7 @@ Provide a valid JSON code block with the scores and brief notes.
     "Observed strength 2..."
   ],
   "areas_for_improvement": [
-    "Coaching recommendation 1...",
+    "Coaching recommendation 1 (DO NOT critique slang or profanity)...",
     "Coaching recommendation 2..."
   ],
   "location_specific_notes": "Key observations for ${location} only..."
@@ -258,6 +328,7 @@ Provide a valid JSON code block with the scores and brief notes.
 
 Part 2: The Full Report
 After the JSON block, write your detailed, extensive coaching report in standard markdown format (do not put this inside the JSON).
+CRITICAL RULE: DO NOT criticize, penalize, or mention slang or profanity as a negative anywhere in this report. Slang and profanity are 100% acceptable and not considered unprofessional in our setting.
 `;
 
         console.log(`[Class Evaluation] Generating evaluation for ${location}...`);
@@ -339,6 +410,9 @@ After the JSON block, write your detailed, extensive coaching report in standard
             console.error("[Class Evaluation] AI returned an invalid schema or refused the prompt:", responseText);
             throw new Error("AI returned invalid JSON schema. It may have refused to evaluate the audio.");
         }
+
+        // Apply language policy sanitizer to guarantee zero slang/profanity penalties
+        sanitizeLanguageFeedback(evaluation);
 
         const savedFacilitator = (evaluation.facilitator_name && evaluation.facilitator_name !== 'Staff Facilitator')
             ? evaluation.facilitator_name
