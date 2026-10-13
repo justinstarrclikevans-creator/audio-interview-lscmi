@@ -67,6 +67,23 @@ async function evaluateClassTranscript(location, sessionTitle, facilitatorName, 
 
     const prompt = `${getFacilitatorScoringContext()}
 
+CRITICAL ISOLATION & OBJECTIVITY MANDATES:
+1. STRICT CENTER SEPARATION:
+   You are evaluating ONLY the cohort at ${location}.
+   Each Turn90 Center (Charleston, Columbia, Spartanburg) operates with complete autonomy.
+   Do NOT compare, reference, or pull in information, participants, or staff from other centers. Keep this report 100% focused on ${location}.
+
+2. STRICT FACILITATOR SEPARATION:
+   You are evaluating ONLY the individual facilitator leading this specific session.
+   Do NOT grade or penalize them on what another facilitator did in another session or shift (e.g., do not blend morning and afternoon facilitators).
+   Evaluate purely their individual facilitation skills, neutrality, pacing, and CBT delivery during this specific session.
+   If the facilitator introduces themselves by name or is addressed by name, record their actual name in "facilitator_name". If not mentioned, use "${facilitatorName}".
+
+3. ZERO EXTERNAL / MANUAL HALLUCINATIONS:
+   Every single observation, timestamp, score, and coaching recommendation MUST come DIRECTLY and EXCLUSIVELY from what is in THIS transcript.
+   Do NOT pull in fictional names, case studies (such as "Marcus"), or hypothetical scenarios from training manuals or workbooks.
+   If a participant's name is not explicitly stated in the transcript, refer to them neutrally as "a participant" or "the participant."
+
 Location: ${location}
 Session / Module: ${sessionTitle}
 Facilitator: ${facilitatorName}
@@ -78,6 +95,10 @@ ${transcriptText}
     const result = await model.generateContent(prompt);
     const responseText = result.response.text();
     const evaluation = JSON.parse(responseText);
+
+    const savedFacilitator = (evaluation.facilitator_name && evaluation.facilitator_name !== 'Staff Facilitator')
+        ? evaluation.facilitator_name
+        : (facilitatorName || 'Staff Facilitator');
 
     // Save to database
     const stmt = db.prepare(`
@@ -92,7 +113,7 @@ ${transcriptText}
     stmt.run(
         location,
         sessionTitle,
-        facilitatorName || 'Staff Facilitator',
+        savedFacilitator,
         evaluation.total_score || 88,
         evaluation.scores?.modeling_neutrality || 4.5,
         evaluation.scores?.lesson_plan_adherence || 4.5,
@@ -114,13 +135,17 @@ async function uploadFacilitationResources(fileManager) {
     const uploadedResources = [];
     
     for (const file of files) {
-        if ((file.toLowerCase().endsWith('.pdf') || file.toLowerCase().endsWith('.txt') || file.toLowerCase().endsWith('.md')) && 
-            (file.toLowerCase().includes('workbook') || file.toLowerCase().includes('guide') || file.toLowerCase().includes('playbook') || file.toLowerCase().includes('synapse') || file.toLowerCase().includes('scoring') || file.toLowerCase().includes('module'))) {
+        const lower = file.toLowerCase();
+        // ONLY upload pure rubrics and methodology standards (e.g. Synapse, Neutrality).
+        // NEVER upload training workbooks that contain mock case studies (e.g. Marcus, practice cases) which cause AI hallucinations!
+        const isExcluded = lower.includes('workbook') || lower.includes('lesson plan') || lower.includes('case') || lower.includes('sample') || lower.includes('module');
+        if (!isExcluded && (lower.endsWith('.pdf') || lower.endsWith('.txt') || lower.endsWith('.md')) && 
+            (lower.includes('guide') || lower.includes('synapse') || lower.includes('scoring') || lower.includes('neutrality'))) {
             const filePath = path.join(resourcesDir, file);
             console.log(`[Class Evaluation] Uploading background resource file ${file}...`);
             try {
                 const uploadResult = await fileManager.uploadFile(filePath, {
-                    mimeType: file.toLowerCase().endsWith('.pdf') ? 'application/pdf' : 'text/plain',
+                    mimeType: lower.endsWith('.pdf') ? 'application/pdf' : 'text/plain',
                     displayName: file.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 40)
                 });
                 uploadedResources.push({
@@ -180,8 +205,25 @@ Facilitator: ${facilitatorName}
 
 ${getFacilitatorScoringContext()}
 
-Please listen to the attached classroom audio recording(s) for the day and evaluate the facilitator across the full day of classes. 
-Note: These are AUDIO ONLY recordings. Do not penalize or refuse to score based on a lack of visual "physical presence". Instead, evaluate their presence and engagement purely through their tone of voice, pacing, neutrality, and interactions with participants across all attached sessions.
+CRITICAL ISOLATION & OBJECTIVITY MANDATES:
+1. STRICT CENTER SEPARATION:
+   You are evaluating ONLY the cohort at ${location}.
+   Each Turn90 Center (Charleston, Columbia, Spartanburg) operates with complete autonomy.
+   Do NOT compare, reference, or pull in information, participants, or staff from other centers. Keep this report 100% focused on ${location}.
+
+2. STRICT FACILITATOR SEPARATION:
+   You are evaluating ONLY the individual facilitator leading this specific session recording.
+   Do NOT grade or penalize them on what another facilitator did in another session or shift (e.g., do not blend morning and afternoon facilitators).
+   Evaluate purely their individual facilitation skills, neutrality, pacing, and CBT delivery during this specific recording.
+   If the facilitator introduces themselves by name or is addressed by name in the audio, record their actual name in the "facilitator_name" field. If not mentioned, use "${facilitatorName}".
+
+3. ZERO EXTERNAL / MANUAL HALLUCINATIONS:
+   Every single observation, timestamp, score, and coaching recommendation MUST come DIRECTLY and EXCLUSIVELY from what is audibly spoken and heard in THIS recording.
+   Do NOT pull in fictional names, case studies (such as "Marcus"), or hypothetical scenarios from training manuals or workbooks.
+   If a participant's name is not explicitly spoken in the audio, refer to them neutrally as "a participant" or "the participant."
+
+4. AUDIO-ONLY CRITERIA:
+   These are AUDIO ONLY recordings. Do not penalize or refuse to score based on a lack of visual "physical presence". Instead, evaluate their presence and engagement purely through their tone of voice, pacing, neutrality, and interactions with participants across this session.
 
 Use the provided official Turn90 Facilitation PDFs and curriculum documents to ground your feedback exactly in the Turn90 Evidence-Based CBT practices.
 
@@ -192,6 +234,7 @@ Part 1: The Numerical Data
 Provide a valid JSON code block with the scores and brief notes.
 \`\`\`json
 {
+  "facilitator_name": "Audibly identified facilitator name, or '${facilitatorName}'",
   "total_score": 85,
   "scores": {
     "modeling_neutrality": 4.5,
@@ -209,7 +252,7 @@ Provide a valid JSON code block with the scores and brief notes.
     "Coaching recommendation 1...",
     "Coaching recommendation 2..."
   ],
-  "location_specific_notes": "Key observations for this cohort location..."
+  "location_specific_notes": "Key observations for ${location} only..."
 }
 \`\`\`
 
@@ -218,28 +261,6 @@ After the JSON block, write your detailed, extensive coaching report in standard
 `;
 
         console.log(`[Class Evaluation] Generating evaluation for ${location}...`);
-        
-        const filesToUpload = Array.isArray(mediaFiles) ? mediaFiles : [mediaFiles];
-        const uploadResults = [];
-
-        for (const mf of filesToUpload) {
-            if (mf.file && mf.file.uri) {
-                // Already uploaded to Gemini
-                uploadResults.push(mf);
-            } else {
-                const uploadResult = await fileManager.uploadFile(mf.path, {
-                    mimeType: mf.mimeType || 'video/mp4',
-                    displayName: `${location}_Class_Evaluation_${Date.now()}`
-                });
-                uploadResults.push(uploadResult);
-                
-                // Immediately delete local file to free disk space
-                const fs = require('fs');
-                if (fs.existsSync(mf.path)) {
-                    try { fs.unlinkSync(mf.path); } catch(e) {}
-                }
-            }
-        }
         
         const contentParts = uploadedResources.map(r => ({
             fileData: { mimeType: r.mimeType, fileUri: r.fileUri }
@@ -319,6 +340,10 @@ After the JSON block, write your detailed, extensive coaching report in standard
             throw new Error("AI returned invalid JSON schema. It may have refused to evaluate the audio.");
         }
 
+        const savedFacilitator = (evaluation.facilitator_name && evaluation.facilitator_name !== 'Staff Facilitator')
+            ? evaluation.facilitator_name
+            : (facilitatorName || 'Staff Facilitator');
+
         // Save to database
         const stmt = db.prepare(`
             INSERT INTO class_facilitation_evaluations (
@@ -332,7 +357,7 @@ After the JSON block, write your detailed, extensive coaching report in standard
         stmt.run(
             location,
             sessionTitle,
-            facilitatorName || 'Staff Facilitator',
+            savedFacilitator,
             evaluation.total_score || 88,
             evaluation.scores?.modeling_neutrality || 4.5,
             evaluation.scores?.lesson_plan_adherence || 4.5,

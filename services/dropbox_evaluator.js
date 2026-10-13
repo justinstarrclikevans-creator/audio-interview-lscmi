@@ -123,10 +123,14 @@ async function runDailyEvaluation() {
         refreshToken: process.env.DROPBOX_REFRESH_TOKEN
     });
 
-    // Get yesterday's date
-    const yDate = new Date();
-    yDate.setDate(yDate.getDate() - 1);
-    const yesterday = yDate.toISOString().split('T')[0];
+    // Check recent dates (today and past 2 days) to catch evening recordings or weekend/Monday syncs
+    const checkDates = [];
+    const today = new Date();
+    for (let i = 0; i <= 2; i++) {
+        const d = new Date(today);
+        d.setDate(d.getDate() - i);
+        checkDates.push(d.toISOString().split('T')[0]);
+    }
 
     const { db } = require('../db');
     
@@ -134,117 +138,116 @@ async function runDailyEvaluation() {
 
     for (const center of CENTERS) {
         if (global.syncStatus) global.syncStatus.log = `Checking ${center.name}...`;
-        console.log(`[Dropbox Evaluator] Checking folder for ${center.name} (${center.folderPath}) for date: ${yesterday}`);
+        console.log(`[Dropbox Evaluator] Checking folder for ${center.name} (${center.folderPath}) for dates: ${checkDates.join(', ')}`);
         
-        const filesToProcess = await listFilesByDate(dbx, center.folderPath, [yesterday]);
+        const filesToProcess = await listFilesByDate(dbx, center.folderPath, checkDates);
         
         if (filesToProcess.length === 0) {
             console.log(`[Dropbox Evaluator] No recordings found for ${center.name}.`);
             continue;
         }
 
-        console.log(`[Dropbox Evaluator] Found ${filesToProcess.length} recordings for ${center.name}. Processing...`);
+        console.log(`[Dropbox Evaluator] Found ${filesToProcess.length} recordings for ${center.name}. Processing each session individually...`);
         results.totalFound += filesToProcess.length;
 
-        const filesByDate = {};
+        // Process EACH class session file individually so morning and afternoon facilitators are NEVER graded on each other!
         for (const file of filesToProcess) {
-            const dateStr = new Date(file.server_modified).toISOString().split('T')[0];
-            if (!filesByDate[dateStr]) filesByDate[dateStr] = [];
-            filesByDate[dateStr].push(file);
-        }
+            const lowerName = file.name.toLowerCase();
+            const isAm = lowerName.includes('_am') || lowerName.includes('am_') || lowerName.includes('morning');
+            const isPm = lowerName.includes('_pm') || lowerName.includes('pm_') || lowerName.includes('afternoon');
+            const shift = isAm ? 'Morning (AM)' : (isPm ? 'Afternoon (PM)' : 'Class Session');
 
-        for (const dateStr of Object.keys(filesByDate)) {
-            const dateFiles = filesByDate[dateStr];
-            const sessionTitle = `Class Sessions - ${dateStr}`;
+            // Parse date from filename (e.g. 261012 -> 2026-10-12) or server_modified
+            let fileDateStr = new Date(file.server_modified).toISOString().split('T')[0];
+            const matchDate = file.name.match(/(\d{2})(\d{2})(\d{2})/);
+            if (matchDate) {
+                fileDateStr = `20${matchDate[1]}-${matchDate[2]}-${matchDate[3]}`;
+            }
 
+            const sessionTitle = `${center.name} ${shift} - ${fileDateStr}`;
+            const defaultFacilitator = `Staff Facilitator (${isAm ? 'AM' : (isPm ? 'PM' : 'Class')})`;
+
+            // Check if already evaluated in database
             const existingEval = db.prepare('SELECT id FROM class_facilitation_evaluations WHERE session_title = ? AND location = ?').get(sessionTitle, center.name);
             if (existingEval) {
-                console.log(`[Dropbox Evaluator] Skipping ${sessionTitle} - already evaluated.`);
-                results.skipped += dateFiles.length;
+                console.log(`[Dropbox Evaluator] Skipping ${sessionTitle} (${center.name}) - already evaluated.`);
+                results.skipped++;
                 continue;
             }
 
-            const localMediaFiles = [];
+            const localPath = path.join(TEMP_DIR, `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9-_\.]/g, '_')}`);
+            if (global.syncStatus) global.syncStatus.log = `Downloading ${center.name} ${file.name}...`;
+            console.log(`[Dropbox Evaluator] Downloading ${center.name} ${file.name}...`);
+
             try {
-                const { GoogleAIFileManager } = require("@google/generative-ai/server");
-                const fileManager = new GoogleAIFileManager(process.env.GEMINI_API_KEY);
+                await downloadLargeFile(dbx, file.path_lower, localPath);
 
-                for (const file of dateFiles) {
-                    const localPath = path.join(TEMP_DIR, `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9-_\.]/g, '_')}`);
-                    if (global.syncStatus) global.syncStatus.log = `Downloading ${file.name}...`;
-                    console.log(`[Dropbox Evaluator] Downloading ${file.name}...`);
-                    
-                    await downloadLargeFile(dbx, file.path_lower, localPath);
-                    
-                    if (!validateM4A(localPath, file.name)) {
-                        console.error(`[Dropbox Evaluator] Corrupted file detected (missing moov atom): ${file.name}. Skipping.`);
-                        if (global.syncStatus) global.syncStatus.log = `Skipping corrupted file ${file.name}...`;
-                        if (fs.existsSync(localPath)) fs.unlinkSync(localPath);
-                        results.errors.push(`${sessionTitle} (${file.name}): Corrupted media file detected.`);
-                        continue;
-                    }
-
-                    
-                    if (global.syncStatus) global.syncStatus.log = `Uploading ${file.name} to Gemini...`;
-                    console.log(`[Dropbox Evaluator] Uploading ${file.name} to Gemini in a RAM-safe stream...`);
-                    
-                    const mimeType = getMimeType(file.name);
-                    const https = require('https');
-                    const uploadData = await new Promise((resolve, reject) => {
-                        const stats = fs.statSync(localPath);
-                        const options = {
-                            hostname: 'generativelanguage.googleapis.com',
-                            port: 443,
-                            path: `/upload/v1beta/files?key=${process.env.GEMINI_API_KEY}`,
-                            method: 'POST',
-                            headers: {
-                                'X-Goog-Upload-Protocol': 'raw',
-                                'X-Goog-Upload-Command': 'start, upload, finalize',
-                                'X-Goog-Upload-Header-Content-Length': stats.size,
-                                'X-Goog-Upload-File-Name': path.basename(localPath),
-                                'Content-Type': mimeType,
-                                'Content-Length': stats.size
-                            }
-                        };
-                        const req = https.request(options, (res) => {
-                            let data = '';
-                            res.on('data', chunk => data += chunk);
-                            res.on('end', () => {
-                                if (res.statusCode >= 200 && res.statusCode < 300) {
-                                    resolve(JSON.parse(data));
-                                } else {
-                                    reject(new Error(`Upload failed: ${res.statusCode} ${data}`));
-                                }
-                            });
-                        });
-                        req.on('error', reject);
-                        fs.createReadStream(localPath).pipe(req);
-                    });
-                    
-                    localMediaFiles.push({ file: uploadData.file });
-                    
-                    if (fs.existsSync(localPath)) {
-                        fs.unlinkSync(localPath);
-                    }
-                    console.log(`[Dropbox Evaluator] Streamed ${file.name} successfully.`);
+                if (!validateM4A(localPath, file.name)) {
+                    console.error(`[Dropbox Evaluator] Corrupted file detected (missing moov atom): ${file.name}. Skipping.`);
+                    if (global.syncStatus) global.syncStatus.log = `Skipping corrupted file ${file.name}...`;
+                    if (fs.existsSync(localPath)) fs.unlinkSync(localPath);
+                    results.errors.push(`${sessionTitle} (${file.name}): Corrupted media file detected.`);
+                    continue;
                 }
 
-                if (global.syncStatus) global.syncStatus.log = `Grading ${sessionTitle}...`;
-                console.log(`[Dropbox Evaluator] Sending ${sessionTitle} (${dateFiles.length} files) to Gemini...`);
-                
-                await evaluateClassMedia(center.name, sessionTitle, 'Staff Facilitator', localMediaFiles);
-                console.log(`[Dropbox Evaluator] Successfully evaluated ${sessionTitle}.`);
-                results.processed += dateFiles.length;
+                if (global.syncStatus) global.syncStatus.log = `Uploading ${center.name} ${file.name} to Gemini...`;
+                console.log(`[Dropbox Evaluator] Uploading ${file.name} to Gemini in a RAM-safe stream...`);
+
+                const mimeType = getMimeType(file.name);
+                const https = require('https');
+                const uploadData = await new Promise((resolve, reject) => {
+                    const stats = fs.statSync(localPath);
+                    const options = {
+                        hostname: 'generativelanguage.googleapis.com',
+                        port: 443,
+                        path: `/upload/v1beta/files?key=${process.env.GEMINI_API_KEY}`,
+                        method: 'POST',
+                        headers: {
+                            'X-Goog-Upload-Protocol': 'raw',
+                            'X-Goog-Upload-Command': 'start, upload, finalize',
+                            'X-Goog-Upload-Header-Content-Length': stats.size,
+                            'X-Goog-Upload-File-Name': path.basename(localPath),
+                            'Content-Type': mimeType,
+                            'Content-Length': stats.size
+                        }
+                    };
+                    const req = https.request(options, (res) => {
+                        let data = '';
+                        res.on('data', chunk => data += chunk);
+                        res.on('end', () => {
+                            if (res.statusCode >= 200 && res.statusCode < 300) {
+                                resolve(JSON.parse(data));
+                            } else {
+                                reject(new Error(`Upload failed: ${res.statusCode} ${data}`));
+                            }
+                        });
+                    });
+                    req.on('error', reject);
+                    fs.createReadStream(localPath).pipe(req);
+                });
+
+                // Immediately clean up local disk
+                if (fs.existsSync(localPath)) {
+                    fs.unlinkSync(localPath);
+                }
+
+                if (global.syncStatus) global.syncStatus.log = `Grading ${center.name} ${sessionTitle}...`;
+                console.log(`[Dropbox Evaluator] Evaluating ${center.name} - ${sessionTitle} individually...`);
+
+                await evaluateClassMedia(center.name, sessionTitle, defaultFacilitator, [{ file: uploadData.file }]);
+                console.log(`[Dropbox Evaluator] Successfully evaluated ${center.name} - ${sessionTitle}.`);
+                results.processed++;
 
             } catch (err) {
                 console.error(`[Dropbox Evaluator] Failed to process ${sessionTitle}:`, err);
                 results.errors.push(`${sessionTitle}: ${err.message}`);
+                if (fs.existsSync(localPath)) fs.unlinkSync(localPath);
             }
         }
     }
     
     console.log("[Dropbox Evaluator] Daily evaluation job completed.", results);
-    await sendDailyReportEmail(yesterday);
+    await sendDailyReportEmail(checkDates[0]);
     return results;
 }
 
@@ -264,7 +267,7 @@ function initCronJobs() {
 module.exports = { initCronJobs, runDailyEvaluation };
 
 
-async function sendDailyReportEmail(yesterdayStr) {
+async function sendDailyReportEmail(dateStr) {
     try {
         const nodemailer = require('nodemailer');
         const { db } = require('../db');
@@ -286,32 +289,54 @@ async function sendDailyReportEmail(yesterdayStr) {
             auth: { user, pass }
         });
 
-        // Get evaluations that were processed today (or for the given session title)
-        const sessionTitle = `Class Sessions - ${yesterdayStr}`;
-        const evaluations = db.prepare('SELECT location, facilitator_name, total_score, summary_markdown, coaching_feedback FROM class_facilitation_evaluations WHERE session_title = ?').all(sessionTitle);
+        // Get recent evaluations ordered by location and date
+        const evaluations = db.prepare(`
+            SELECT location, facilitator_name, session_title, total_score, summary_markdown, coaching_feedback 
+            FROM class_facilitation_evaluations 
+            WHERE created_at >= date('now', '-2 days') OR session_title LIKE ?
+            ORDER BY location ASC, created_at DESC
+        `).all(`%${dateStr}%`);
         
         if (evaluations.length === 0) {
-            console.log("No evaluations to email for " + yesterdayStr);
+            console.log("No evaluations to email for " + dateStr);
             return;
         }
         
-        let htmlContent = `<h2 style="color: #1e3a8a;">Daily Class Facilitation Scores</h2><p>Here are the automated evaluation results for <strong>${sessionTitle}</strong>:</p><hr/>`;
+        let htmlContent = `<h2 style="color: #1e3a8a;">Turn90 Class Facilitation QA & Coaching Report</h2>`;
+        htmlContent += `<p>Here are the latest automated evaluation results, organized independently by Turn90 Center:</p><hr/>`;
         
+        // Group evaluations strictly by Center
+        const byCenter = {};
         evaluations.forEach(e => {
+            if (!byCenter[e.location]) byCenter[e.location] = [];
+            byCenter[e.location].push(e);
+        });
+
+        for (const [centerName, centerEvals] of Object.entries(byCenter)) {
             htmlContent += `
-                <div style="margin-bottom: 25px; padding: 15px; border: 1px solid #e2e8f0; border-radius: 8px;">
-                    <h3 style="margin-top: 0; color: #0f766e;">${e.location} - ${e.facilitator_name}</h3>
-                    <p style="font-size: 18px; font-weight: bold; color: #15803d;">Total Score: ${e.total_score}</p>
-                    <p><strong>Summary:</strong><br/> ${e.summary_markdown}</p>
-                    <p><strong>Coaching Feedback:</strong><br/> ${e.coaching_feedback}</p>
+                <div style="margin-top: 25px; margin-bottom: 12px; background: #f8fafc; border-left: 4px solid #0f766e; padding: 10px 16px; border-radius: 4px;">
+                    <h3 style="margin: 0; color: #0f766e; text-transform: uppercase; font-size: 15px;">📍 ${centerName} Center (${centerEvals.length} Session${centerEvals.length > 1 ? 's' : ''})</h3>
                 </div>
             `;
-        });
+
+            centerEvals.forEach(e => {
+                htmlContent += `
+                    <div style="margin-bottom: 20px; padding: 15px; border: 1px solid #e2e8f0; border-radius: 8px; background: #ffffff;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 10px;">
+                            <strong style="color: #1e293b; font-size: 15px;">${e.session_title}</strong>
+                            <span style="font-size: 16px; font-weight: 800; color: #15803d;">Score: ${e.total_score} / 100</span>
+                        </div>
+                        <p style="margin: 4px 0;"><strong>Facilitator:</strong> ${e.facilitator_name}</p>
+                        <p style="margin: 6px 0;"><strong>Coaching Highlights:</strong><br/> ${e.coaching_feedback}</p>
+                    </div>
+                `;
+            });
+        }
         
         const mailOptions = {
-            from: `"Turn90 Automated Evaluator" <${user}>`,
-            to: user, // Emailing to themselves as requested
-            subject: `Daily Facilitation Scores - ${yesterdayStr}`,
+            from: `"Turn90 Automated QA Evaluator" <${user}>`,
+            to: user,
+            subject: `Turn90 Daily Facilitation Scores - ${dateStr}`,
             html: htmlContent
         };
         

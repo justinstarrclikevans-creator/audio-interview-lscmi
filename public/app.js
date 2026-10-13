@@ -3745,7 +3745,10 @@ async function forceSyncEvaluations() {
         btn.disabled = false;
         btn.innerText = '🔄 Fetch Missing Dropbox Classes';
     }
-}
+window.filterFacilitationByCenter = function(center) {
+    window.facilitationCenterFilter = center;
+    loadFacilitationEvaluations();
+};
 
 async function loadFacilitationEvaluations() {
     const token = localStorage.getItem('fs_token');
@@ -3765,45 +3768,72 @@ async function loadFacilitationEvaluations() {
         if (!Array.isArray(evals)) throw new Error(evals.error || 'Evaluations must be an array');
         if (!Array.isArray(stats)) throw new Error(stats.error || 'Stats must be an array');
 
+        window.facilitationCenterFilter = window.facilitationCenterFilter || 'all';
+        const activeFilter = window.facilitationCenterFilter;
+
         // Build Stats Dashboard
         const getStat = (loc) => {
             const match = stats.find(s => s.location === loc);
             return match && match.avg_score ? match.avg_score.toFixed(1) : '--';
         };
 
+        const countAll = evals.length;
+        const countChs = evals.filter(e => e.location && e.location.toLowerCase() === 'charleston').length;
+        const countCol = evals.filter(e => e.location && e.location.toLowerCase() === 'columbia').length;
+        const countSpb = evals.filter(e => e.location && e.location.toLowerCase() === 'spartanburg').length;
+
         const statsHtml = `
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;">
-                <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 16px; border-radius: 8px; text-align: center;">
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 16px;">
+                <div onclick="filterFacilitationByCenter('Charleston')" style="cursor: pointer; background: #f0fdf4; border: 2px solid ${activeFilter === 'Charleston' ? '#15803d' : '#bbf7d0'}; padding: 16px; border-radius: 8px; text-align: center; transition: all 0.2s; box-shadow: ${activeFilter === 'Charleston' ? '0 4px 6px -1px rgba(22, 101, 52, 0.15)' : 'none'};">
                     <div style="font-size: 13px; color: #166534; font-weight: bold; text-transform: uppercase;">Charleston</div>
                     <div style="font-size: 28px; font-weight: 900; color: #15803d; margin-top: 4px;">${getStat('Charleston')}</div>
-                    <div style="font-size: 11px; color: #166534; margin-top: 2px;">14-Day Average</div>
+                    <div style="font-size: 11px; color: #166534; margin-top: 2px;">14-Day Average (${countChs} Evals)</div>
                 </div>
-                <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 16px; border-radius: 8px; text-align: center;">
+                <div onclick="filterFacilitationByCenter('Columbia')" style="cursor: pointer; background: #eff6ff; border: 2px solid ${activeFilter === 'Columbia' ? '#1d4ed8' : '#bfdbfe'}; padding: 16px; border-radius: 8px; text-align: center; transition: all 0.2s; box-shadow: ${activeFilter === 'Columbia' ? '0 4px 6px -1px rgba(29, 78, 216, 0.15)' : 'none'};">
                     <div style="font-size: 13px; color: #1e3a8a; font-weight: bold; text-transform: uppercase;">Columbia</div>
                     <div style="font-size: 28px; font-weight: 900; color: #1d4ed8; margin-top: 4px;">${getStat('Columbia')}</div>
-                    <div style="font-size: 11px; color: #1e3a8a; margin-top: 2px;">14-Day Average</div>
+                    <div style="font-size: 11px; color: #1e3a8a; margin-top: 2px;">14-Day Average (${countCol} Evals)</div>
                 </div>
-                <div style="background: #fdf4ff; border: 1px solid #fbcfe8; padding: 16px; border-radius: 8px; text-align: center;">
+                <div onclick="filterFacilitationByCenter('Spartanburg')" style="cursor: pointer; background: #fdf4ff; border: 2px solid ${activeFilter === 'Spartanburg' ? '#be185d' : '#fbcfe8'}; padding: 16px; border-radius: 8px; text-align: center; transition: all 0.2s; box-shadow: ${activeFilter === 'Spartanburg' ? '0 4px 6px -1px rgba(190, 24, 93, 0.15)' : 'none'};">
                     <div style="font-size: 13px; color: #831843; font-weight: bold; text-transform: uppercase;">Spartanburg</div>
                     <div style="font-size: 28px; font-weight: 900; color: #be185d; margin-top: 4px;">${getStat('Spartanburg')}</div>
-                    <div style="font-size: 11px; color: #831843; margin-top: 2px;">14-Day Average</div>
+                    <div style="font-size: 11px; color: #831843; margin-top: 2px;">14-Day Average (${countSpb} Evals)</div>
                 </div>
+            </div>
+
+            <div style="display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; flex-wrap: wrap; align-items: center;">
+                <span style="font-size: 12px; font-weight: 800; color: var(--slate); text-transform: uppercase; margin-right: 6px;">Center Isolation:</span>
+                <button class="btn ${activeFilter === 'all' ? 'btn-primary' : 'btn-outline'}" style="font-size: 12px; padding: 5px 12px;" onclick="filterFacilitationByCenter('all')">🏢 All Centers (${countAll})</button>
+                <button class="btn ${activeFilter === 'Charleston' ? 'btn-primary' : 'btn-outline'}" style="font-size: 12px; padding: 5px 12px;" onclick="filterFacilitationByCenter('Charleston')">📍 Charleston (${countChs})</button>
+                <button class="btn ${activeFilter === 'Columbia' ? 'btn-primary' : 'btn-outline'}" style="font-size: 12px; padding: 5px 12px;" onclick="filterFacilitationByCenter('Columbia')">📍 Columbia (${countCol})</button>
+                <button class="btn ${activeFilter === 'Spartanburg' ? 'btn-primary' : 'btn-outline'}" style="font-size: 12px; padding: 5px 12px;" onclick="filterFacilitationByCenter('Spartanburg')">📍 Spartanburg (${countSpb})</button>
             </div>
         `;
 
-        if (evals.length === 0) {
-            container.innerHTML = statsHtml + '<p class="text-slate">No class facilitation evaluations recorded yet.</p>';
+        const filteredEvals = activeFilter === 'all'
+            ? evals
+            : evals.filter(e => e.location && e.location.toLowerCase() === activeFilter.toLowerCase());
+
+        if (filteredEvals.length === 0) {
+            container.innerHTML = statsHtml + `<div style="padding: 30px; text-align: center; background: white; border: 1px dashed var(--border); border-radius: 8px;"><p class="text-slate">No class facilitation evaluations recorded for <strong>${activeFilter === 'all' ? 'any center' : activeFilter}</strong> yet.</p></div>`;
             return;
         }
 
         container.innerHTML = statsHtml + `
             <div style="display: flex; flex-direction: column; gap: 14px;">
-                ${evals.map(e => `
-                    <div style="background: #ffffff; border: 1px solid var(--border); border-left: 4px solid var(--primary); border-radius: 8px; padding: 16px;">
+                ${filteredEvals.map(e => {
+                    const loc = e.location || 'Turn90';
+                    const locColor = loc === 'Charleston' ? '#15803d' : (loc === 'Columbia' ? '#1d4ed8' : '#be185d');
+                    const locBg = loc === 'Charleston' ? '#f0fdf4' : (loc === 'Columbia' ? '#eff6ff' : '#fdf4ff');
+                    return `
+                    <div style="background: #ffffff; border: 1px solid var(--border); border-left: 4px solid ${locColor}; border-radius: 8px; padding: 16px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 10px;">
                             <div>
-                                <strong style="font-size: 15px; color: var(--primary);">${e.session_title}</strong>
-                                <div style="font-size: 12px; color: var(--slate);">📍 Location: <strong>${e.location}</strong> • Facilitator: <strong>${e.facilitator_name}</strong> • Date: ${e.class_date}</div>
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                                    <span style="background: ${locBg}; color: ${locColor}; border: 1px solid ${locColor}; padding: 1px 8px; border-radius: 12px; font-weight: 800; font-size: 11px;">📍 ${loc}</span>
+                                    <strong style="font-size: 15px; color: var(--primary);">${e.session_title}</strong>
+                                </div>
+                                <div style="font-size: 12px; color: var(--slate);">Facilitator: <strong>${e.facilitator_name}</strong> • Date: ${e.class_date}</div>
                             </div>
                             <div style="display: flex; align-items: center; gap: 16px;">
                                 <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="printClassEvaluation(${e.id})">🖨️ View & Print Full Report</button>
@@ -3826,7 +3856,7 @@ async function loadFacilitationEvaluations() {
                         <!-- Hidden data for printing -->
                         <div id="eval-markdown-${e.id}" class="hidden">${encodeURIComponent(e.summary_markdown)}</div>
                     </div>
-                `).join('')}
+                `}).join('')}
             </div>
         `;
     } catch (e) {
