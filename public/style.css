@@ -928,7 +928,7 @@ body {
 #sup-interview-guide-content ul, #sup-interview-guide-content ol,
 .modal-body ul, .modal-body ol,
 .markdown-body ul, .markdown-body ol {
-    padding-left: 30px !important;
+    padding-left: 15px !important;
     list-style-position: inside !important;
     margin-bottom: 12px;
 }
@@ -939,10 +939,15 @@ body {
 }
 
 
-/* NUCLEAR OPTION FOR LSCMI MODAL LEFT MARGINS */
-#sup-draft-scoring-content {
-    margin-left: 20px !important;
+/* LSCMI MODAL LEFT MARGINS */
+#sup-draft-scoring-content, #sup-interview-guide-content {
+    margin-left: 10px !important;
 }
-#sup-draft-scoring-content *, #sup-interview-guide-content * {
-    margin-left: 20px !important;
+
+
+/* Fix Dual Review Layout on Mobile */
+@media (max-width: 768px) {
+    #sup-dual-container {
+        grid-template-columns: 1fr !important;
+    }
 }
