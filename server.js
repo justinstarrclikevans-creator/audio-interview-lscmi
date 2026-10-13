@@ -9,7 +9,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const { db, BRIEFCASE_DOMAINS, DEFAULT_GATE_CRITERIA, STABILITY_STEP_DOWN_TRIGGERS, initParticipantBriefcase, BENEFIT_PROGRAMS, syncBenefitToBriefcase } = require('./db');
-const { runPhase1, runPhase1WithAudio, runPhase2, safeJsonParse } = require('./llm_pipeline');
+const { runPhase1, runPhase1WithAudio, runPhase2, adjustActionPlan, safeJsonParse } = require('./llm_pipeline');
 const { convertSingleMdToPdf } = require('./convert_md_to_pdf');
 const { convertSingleMdToDocx } = require('./convert_md_to_docx');
 const { evaluateClassTranscript, evaluateClassMedia } = require('./facilitation_evaluator');
@@ -2814,6 +2814,87 @@ app.post('/api/submit-feedback', memoryUpload.single('criminalHistoryFile'), asy
         console.error("Phase 2 failed:", err);
         fs.writeFileSync(path.join(dataDir, `${clientId}_error_phase2.txt`), `Failed Phase 2: ${err.message}`);
         res.status(500).json({ error: "Phase 2 generation failed: " + err.message });
+    }
+});
+
+// Endpoint to ONLY adjust and update the Participant Action Plan without modifying scores or case brief
+app.post('/api/adjust-action-plan', memoryUpload.none(), async (req, res) => {
+    const { clientId, feedback } = req.body;
+    if (!clientId) return res.status(400).json({ error: "Missing clientId" });
+    if (!feedback || !feedback.trim()) return res.status(400).json({ error: "Please enter feedback or instructions to adjust the Action Plan." });
+
+    try {
+        // Robust participant name extraction
+        const parts = clientId.split('_');
+        if (/^\d{10,}$/.test(parts[0])) {
+            parts.shift();
+        }
+        const lastPart = parts[parts.length - 1].toLowerCase();
+        if (['charleston', 'columbia', 'spartanburg'].includes(lastPart)) {
+            parts.pop();
+        }
+        const participantName = parts.join(' ').trim() || clientId;
+
+        const allFiles = fs.readdirSync(dataDir);
+        let planFileName = `${clientId}_participant_case_plan.md`;
+        let existingPlanPath = path.join(dataDir, planFileName);
+
+        // Check if plan exists under another match or as participant_action_guide
+        if (!fs.existsSync(existingPlanPath)) {
+            const match = allFiles.find(f => f.includes(clientId) && (f.includes('participant_case_plan.md') || f.includes('participant_action_guide.md')));
+            if (match) {
+                planFileName = match;
+                existingPlanPath = path.join(dataDir, match);
+            }
+        }
+
+        let existingPlan = '';
+        if (fs.existsSync(existingPlanPath)) {
+            existingPlan = fs.readFileSync(existingPlanPath, 'utf8');
+        }
+
+        // Gather supporting context (case brief, scoring form, interview guide, transcript)
+        let supportingContext = '';
+        const briefFile = allFiles.find(f => f.includes(clientId) && f.includes('final_case_brief.md'));
+        if (briefFile) {
+            supportingContext += `\n\n=== CASE BRIEF ===\n` + fs.readFileSync(path.join(dataDir, briefFile), 'utf8');
+        }
+        const scoringFile = allFiles.find(f => f.includes(clientId) && (f.includes('final_scoring_form.md') || f.includes('draft_scoring_form.md')));
+        if (scoringFile) {
+            supportingContext += `\n\n=== SCORING FORM ===\n` + fs.readFileSync(path.join(dataDir, scoringFile), 'utf8');
+        }
+        const guideFile = allFiles.find(f => f.includes(clientId) && (f.includes('interview_guide.md') || f.includes('transcript.txt')));
+        if (guideFile) {
+            const raw = fs.readFileSync(path.join(dataDir, guideFile), 'utf8');
+            supportingContext += `\n\n=== INTERVIEW TRANSCRIPT / GUIDE ===\n` + raw.slice(0, 10000);
+        }
+
+        console.log(`[Action Plan Adjustment] Updating action plan for ${participantName} (${clientId})...`);
+        const result = await adjustActionPlan(participantName, existingPlan, feedback, supportingContext);
+
+        if (!result || !result.participant_case_plan) {
+            throw new Error("AI did not return a valid participant action plan.");
+        }
+
+        fs.writeFileSync(existingPlanPath, result.participant_case_plan);
+        const pdfPath = existingPlanPath.replace(/\.md$/, '.pdf');
+        const docxPath = existingPlanPath.replace(/\.md$/, '.docx');
+
+        try {
+            convertSingleMdToPdf(existingPlanPath, pdfPath);
+            convertSingleMdToDocx(existingPlanPath, docxPath);
+        } catch (convErr) {
+            console.warn("[Action Plan Adjustment] Document conversion warning:", convErr.message);
+        }
+
+        res.status(200).json({
+            success: true,
+            message: `✅ Participant Action Plan updated successfully for ${participantName}!`,
+            planFileName: planFileName
+        });
+    } catch (err) {
+        console.error("[Action Plan Adjustment] Error:", err);
+        res.status(500).json({ error: "Action plan adjustment failed: " + err.message });
     }
 });
 

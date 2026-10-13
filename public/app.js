@@ -2978,10 +2978,17 @@ async function loadPmDrafts() {
                                 <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: var(--success); border-color: #86efac;" onclick="printActiveDraftDocument('${finalPlanFile}')" title="Print Participant Action Plan">
                                     🖨️ Print Plan
                                 </button>
-                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: var(--primary); border-color: var(--primary);" onclick="openSupervisorReviewModal('${clientId}', '${cleanName}')" title="Adjust Patterns based on session feedback">
+                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: #059669; border-color: #059669; font-weight: 600;" onclick="openAdjustActionPlanModal('${clientId}', '${cleanName}')" title="Adjust and update only the participant action plan">
+                                    🎯 Adjust Action Plan
+                                </button>
+                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: var(--primary); border-color: var(--primary);" onclick="openSupervisorReviewModal('${clientId}', '${cleanName}')" title="Adjust full scoring, brief, and case documents">
                                     ✍️ Adjust Feedback
                                 </button>
-                            ` : ''}
+                            ` : (completedScoringFile ? `
+                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: #059669; border-color: #059669; font-weight: 600;" onclick="openAdjustActionPlanModal('${clientId}', '${cleanName}')" title="Generate or adjust participant action plan">
+                                    🎯 Adjust Action Plan
+                                </button>
+                            ` : '')}
                         </div>
                     </div>
                 </div>
@@ -3647,6 +3654,122 @@ async function handleSupervisorFeedbackSubmit(e) {
         btn.innerText = 'Approve & Generate Case Documents';
     }
 }
+
+window.handleSupervisorAdjustActionPlanOnly = async function(e) {
+    if (e) e.preventDefault();
+    const clientId = document.getElementById('sup-client-id').value;
+    const feedback = (document.getElementById('sup-feedback-text').value || '').trim();
+    const btnOnly = document.getElementById('btn-submit-action-plan-only');
+    const btnAll = document.getElementById('btn-submit-phase2');
+
+    if (!feedback || feedback === 'No changes needed. The draft scoring form is accurate.') {
+        alert('Please enter specific adjustments or focus guidance for the action plan in the corrections box above.');
+        document.getElementById('sup-feedback-text').focus();
+        return;
+    }
+
+    if (btnOnly) {
+        btnOnly.disabled = true;
+        btnOnly.innerText = '⏳ Updating Action Plan with AI... (~5-10s)';
+    }
+    if (btnAll) btnAll.disabled = true;
+
+    try {
+        const res = await fetch('/api/adjust-action-plan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ clientId, feedback })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Action Plan adjustment failed.');
+
+        alert(data.message || '✅ Action Plan updated successfully!');
+        closeModal('modal-supervisor-review');
+        loadPmDrafts();
+        if (data.planFileName) {
+            previewDocument(data.planFileName);
+        }
+    } catch (err) {
+        alert('Action Plan error: ' + err.message);
+    } finally {
+        if (btnOnly) {
+            btnOnly.disabled = false;
+            btnOnly.innerText = '🎯 Adjust Action Plan Only';
+        }
+        if (btnAll) btnAll.disabled = false;
+    }
+};
+
+window.openAdjustActionPlanModal = async function(clientId, cleanName) {
+    document.getElementById('adj-plan-client-id').value = clientId;
+    document.getElementById('adj-plan-client-name').innerText = cleanName;
+    document.getElementById('adj-plan-feedback-text').value = '';
+
+    const files = (currentInterviewsData && currentInterviewsData[clientId]) || [];
+    const planFile = files.find(f => f.includes('participant_case_plan.md') || f.includes('participant_action_guide.md')) || `${clientId}_participant_case_plan.md`;
+    document.getElementById('adj-plan-target-file').value = planFile;
+    const indicator = document.getElementById('adj-plan-file-indicator');
+    if (indicator) indicator.innerText = planFile;
+
+    const contentDiv = document.getElementById('adj-plan-current-content');
+    contentDiv.innerHTML = '<p class="text-slate">⏳ Loading current action plan...</p>';
+
+    openModal('modal-adjust-action-plan');
+
+    try {
+        const res = await fetch(`/api/file-content?file=${encodeURIComponent(planFile)}`);
+        if (res.ok) {
+            const data = await res.json();
+            if (data.content && data.content.trim()) {
+                let md = data.content.replace(/^\s*(\d+)\.\s+/gm, '**$1)** ');
+                contentDiv.innerHTML = '<div style="padding-left: 10px; list-style-position: inside;">' + marked.parse(md) + '</div>';
+            } else {
+                contentDiv.innerHTML = '<p class="text-slate">Action plan is empty. Enter instructions below to generate a new one.</p>';
+            }
+        } else {
+            contentDiv.innerHTML = '<p class="text-slate">No action plan generated yet on disk. Enter instructions below to generate a fresh action plan using the interview and scoring data.</p>';
+        }
+    } catch (err) {
+        contentDiv.innerHTML = '<p class="text-slate">Could not load current plan: ' + escapeHtml(err.message) + '. You can still enter adjustments below.</p>';
+    }
+};
+
+window.handleAdjustActionPlanSubmit = async function(e) {
+    e.preventDefault();
+    const clientId = document.getElementById('adj-plan-client-id').value;
+    const feedback = (document.getElementById('adj-plan-feedback-text').value || '').trim();
+    const btn = document.getElementById('btn-submit-adj-plan');
+
+    if (!feedback) {
+        alert('Please enter your feedback or adjustments for the action plan.');
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerText = '⏳ Updating Action Plan with AI... (~5-10s)';
+
+    try {
+        const res = await fetch('/api/adjust-action-plan', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ clientId, feedback })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Action Plan adjustment failed.');
+
+        alert(data.message || '✅ Action Plan updated successfully!');
+        closeModal('modal-adjust-action-plan');
+        loadPmDrafts();
+        if (data.planFileName) {
+            previewDocument(data.planFileName);
+        }
+    } catch (err) {
+        alert('Action Plan error: ' + err.message);
+    } finally {
+        btn.disabled = false;
+        btn.innerText = '🎯 Update Action Plan with AI';
+    }
+};
 
 // -------------------------------------------------------------
 // CLASS FACILITATION EVALUATION LOGIC

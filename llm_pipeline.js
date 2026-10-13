@@ -349,4 +349,51 @@ async function runPhase2(transcriptText, clientName, draftScoringForm, feedback,
     return safeJsonParse(responseText);
 }
 
-module.exports = { runPhase1, runPhase1WithAudio, runPhase2, safeJsonParse };
+async function adjustActionPlan(clientName, existingPlanText, feedback, supportingContext = "") {
+    if (!process.env.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is missing");
+
+    const systemPrompt = `You are an expert case manager and CBT specialist for First Shift / Turn90.
+Your task is to refine and update the Participant's First Shift Action Plan based STRICTLY on the supervisor's feedback.
+
+CRITICAL FIRST SHIFT ACTION PLAN SPECIFICATIONS:
+- Beautiful, empowering, PRINTABLE First Shift Action Plan written directly for the participant.
+- Header: Participant Name, Date, Location, Program Track (Turn90 First Shift).
+- CRITICAL REQUIREMENT: DO NOT INCLUDE ANY GOALS. Remove all goal sections entirely.
+- Identify EXACTLY the TOP 3 Areas of Focus (these correspond to their criminogenic domains, but use highly accessible, less clinical language). For each of the 3 areas, structure into EXACTLY these 4 sections:
+  * **Area of Focus & Core Goal**: (e.g., "Area of Focus: Handling Frustration & Anger | Core Goal: Staying calm when things don't go your way", rather than using clinical terms like 'Criminogenic Domain' or 'Hostile Attribution').
+  * **Personal Pattern**: (The specific unhelpful thinking trap, defense mechanism, or automatic loop identified from their interview, explained in everyday language, e.g., "Taking workplace feedback as a personal attack" or "Walking away or quitting when feeling overwhelmed").
+  * **Trigger Situations**:
+    - Leave this section entirely empty so the participant and case manager can identify triggers together. Simply provide 5 to 8 numbered blank lines where the participant can write down specific situations that trigger this pattern:
+      1. ___________________________________________________________________________________
+      2. ___________________________________________________________________________________
+      3. ___________________________________________________________________________________
+      4. ___________________________________________________________________________________
+      5. ___________________________________________________________________________________
+      6. ___________________________________________________________________________________
+  * **Suggested Tools from the Turn90 CBT Toolkit**:
+    - Explicitly recommend 2-3 tools tailored to counteract this exact pattern:
+      - **Stop & Think**: The 3-second pause before reacting to an authority figure or stressor.
+      - **Thinking Report**: Writing out Situation -> Thoughts -> Physical Sensations -> Action -> Outcome to expose faulty beliefs.
+      - **Problem Solving 4-Step Method**: 1. Define problem without blame, 2. Brainstorm 3 choices, 3. Weigh costs to freedom/job, 4. Act.
+      - **Decisional Balance**: Immediate impulse payoff vs Long-term freedom & wages.
+      - **Cognitive Restructuring**: Replacing the automatic thinking trap with a grounded, helpful thought.
+      - **Modeling Neutrality**: De-escalating posture and tone, asking open-ended clarifying questions.
+- CRITICAL REQUIREMENT: DO NOT include a closing message. The plan should end immediately after the Suggested Tools for the third Area of Focus.
+
+INCORPORATE SUPERVISOR ADJUSTMENTS:
+Apply the supervisor's feedback to update the focus areas, personal patterns, trigger count, or suggested CBT tools accordingly.
+
+You must return a valid JSON object with EXACTLY this key:
+{
+  "participant_case_plan": "# My First Shift Action Plan\\n..."
+}`;
+
+    const prompt = `${systemPrompt}\n\nParticipant Name: ${clientName}\n\nSupervisor Adjustments & Feedback:\n${feedback || 'Refine and polish the action plan based on standard Turn90 CBT practices.'}\n\nExisting Action Plan:\n${existingPlanText || 'None currently on file; generate new plan based on supporting context.'}\n\nSupporting Assessment Context:\n${supportingContext || 'None available.'}`;
+
+    const result = await model.generateContent(prompt);
+    const responseText = result.response.text();
+    return safeJsonParse(responseText);
+}
+
+module.exports = { runPhase1, runPhase1WithAudio, runPhase2, adjustActionPlan, safeJsonParse };
+
