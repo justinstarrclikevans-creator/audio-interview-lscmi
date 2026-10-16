@@ -1545,9 +1545,29 @@
                         <input type="text" id="cm-eval-cmname" required placeholder="Case Manager Name">
                     </div>
                 </div>
+                <div class="form-row mt-4">
+                    <div class="form-group">
+                        <label>Apricot Record ID (Links Prior Sessions & Briefcase)</label>
+                        <div style="display: flex; gap: 6px;">
+                            <input type="text" id="cm-eval-apricot-id" placeholder="e.g. 10482 (Keeps [Client] private)" style="flex: 1;">
+                            <select id="cm-eval-participant-lookup" onchange="if(this.value) document.getElementById('cm-eval-apricot-id').value = this.value" style="max-width: 190px; font-size: 12px;" title="Quick-fill Apricot ID from active caseload">
+                                <option value="">🔍 Lookup ID...</option>
+                            </select>
+                        </div>
+                        <small style="color: var(--slate); font-size: 11px;">Automatically loads prior session history so you aren't dinged for topics covered in earlier weeks.</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Session Stage (45-Minute Cadence)</label>
+                        <select id="cm-eval-session-type" required>
+                            <option value="auto">✨ Auto-Detect (First Session if new Apricot ID)</option>
+                            <option value="first_session">1️⃣ First Session (Rapport, Action Plan Review & Initial Goals)</option>
+                            <option value="follow_up">🔄 Weekly Follow-Up (Goal Check-In, 1 CBT Skill & Referrals)</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="form-group mt-4">
-                    <label>Meeting Title / Type</label>
-                    <input type="text" id="cm-eval-session-title" required placeholder="e.g. 1-on-1 Barrier Review / Re-entry Planning">
+                    <label>Meeting Title / Focus</label>
+                    <input type="text" id="cm-eval-session-title" required placeholder="e.g. Week 2 Follow-Up / Voc Rehab & Thinking Report">
                 </div>
                 <div class="form-group mt-4">
                     <label>Upload Meeting Recording (Audio/Video)</label>
@@ -1580,9 +1600,15 @@
                         <input type="text" id="eval-facilitator" required placeholder="Facilitator Name">
                     </div>
                 </div>
-                <div class="form-group mt-4">
-                    <label>Workshop / Module Title</label>
-                    <input type="text" id="eval-session-title" required placeholder="e.g. Module 1: Cognitive Triangle & Thoughts/Feelings/Actions">
+                <div class="form-row mt-4">
+                    <div class="form-group" style="flex: 2;">
+                        <label>Workshop / Module Title</label>
+                        <input type="text" id="eval-session-title" required placeholder="e.g. Module 6: Control / 5 Worries">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Class Headcount (Optional)</label>
+                        <input type="number" id="eval-headcount" min="1" max="30" placeholder="e.g. 3 (Auto-counts voices if blank)">
+                    </div>
                 </div>
                 <div class="form-group mt-4">
                     <label>Upload Classroom Recording / Transcript File (or paste text below)</label>

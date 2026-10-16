@@ -28,56 +28,164 @@ CREATE TABLE IF NOT EXISTS class_facilitation_evaluations (
     summary_markdown TEXT NOT NULL,
     scores_json TEXT NOT NULL,
     coaching_feedback TEXT,
+    class_headcount INTEGER,
+    transcript_text TEXT,
+    detected_session_type TEXT DEFAULT 'class',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 `);
+try { db.exec("ALTER TABLE class_facilitation_evaluations ADD COLUMN class_headcount INTEGER;"); } catch (e) {}
+try { db.exec("ALTER TABLE class_facilitation_evaluations ADD COLUMN transcript_text TEXT;"); } catch (e) {}
+try { db.exec("ALTER TABLE class_facilitation_evaluations ADD COLUMN detected_session_type TEXT DEFAULT 'class';"); } catch (e) {}
+
+// Self-heal any existing evaluations where total_score was disproportionately miscalculated (e.g., 27.5 despite 4.5-5.0 sub-scores)
+try {
+    const existingRows = db.prepare(`
+        SELECT id, total_score, modeling_neutrality_score, lesson_plan_adherence_score,
+               reflective_listening_score, avoiding_confrontation_score, scores_json
+        FROM class_facilitation_evaluations
+    `).all();
+    const updateScoreStmt = db.prepare('UPDATE class_facilitation_evaluations SET total_score = ? WHERE id = ?');
+    for (const row of existingRows) {
+        let subVals = [];
+        try {
+            const parsed = JSON.parse(row.scores_json || '{}');
+            subVals = Object.values(parsed).map(Number).filter(v => !isNaN(v) && v >= 0 && v <= 5);
+        } catch (e) {}
+        if (subVals.length === 0) {
+            subVals = [
+                row.modeling_neutrality_score,
+                row.lesson_plan_adherence_score,
+                row.reflective_listening_score,
+                row.avoiding_confrontation_score
+            ].map(Number).filter(v => !isNaN(v) && v >= 0 && v <= 5);
+        }
+        if (subVals.length > 0) {
+            const avg = subVals.reduce((a, b) => a + b, 0) / subVals.length;
+            const expected100 = Math.round(avg * 20 * 10) / 10;
+            if (Math.abs(Number(row.total_score) - expected100) > 12) {
+                console.log(`[Class Evaluation Self-Heal] Updating Eval #${row.id} from ${row.total_score} -> ${expected100}`);
+                updateScoreStmt.run(expected100, row.id);
+            }
+        }
+    }
+} catch (e) {
+    console.warn("[Class Evaluation Self-Heal] Warning:", e.message);
+}
 
 const LANGUAGE_POLICY = `
 ================================================================================
-CRITICAL POLICY: SLANG AND PROFANITY ARE 100% ACCEPTABLE AND NOT UNPROFESSIONAL
+CRITICAL TURN90 CLASSROOM QA POLICIES (NON-NEGOTIABLE)
 ================================================================================
 Turn90 is an authentic cognitive-behavioral reentry program working directly with formerly incarcerated men.
-In our classroom setting:
-1. SLANG AND PROFANITY ARE COMPLETELY ACCEPTABLE AND ARE NEVER CONSIDERED UNPROFESSIONAL.
-2. Colloquial speech, street slang, African American Vernacular English (AAVE), informal phrasing, and profanity/cussing are normal, authentic, and welcomed in our classroom environment. They build genuine credibility and rapport between facilitators and participants.
-3. ABSOLUTE ZERO PENALTY RULE:
-   - NEVER penalize, deduct points, or lower any category score (including "Models behavior", "Modeling neutrality", or total score) for the use of slang, informal phrasing, or profanity.
-   - NEVER list slang, cussing, or profanity in "areas_for_improvement", coaching feedback, or anywhere in the evaluation report as a negative or area for growth.
-   - NEVER recommend that a facilitator "clean up their language," "use more professional phrasing," or "avoid street slang or profanity."
-4. THE ONLY EXCEPTION: If profanity is used in an abusive, violent, or aggressive direct personal attack against a participant. Otherwise, conversational, casual, humorous, emphatic, or cultural slang and profanity are 100% permitted, supported, and validated.
+You MUST enforce the following 7 Turn90 operational standards without exception:
+
+1. "PRACTICE COURT" RULE — SLANG & PROFANITY (FACILITATORS & PARTICIPANTS):
+   - Slang, colloquial speech, street vernacular, African American Vernacular English (AAVE), and profanity/cussing are 100% ACCEPTABLE from BOTH facilitators and participants and are NEVER considered unprofessional.
+   - The classroom is "Practice Court": when participants share risky thoughts, triggers, or roleplay real-world situations, they MUST express their actual, raw thoughts (e.g., "fuck it", "fuck this bitch"). Sanitizing their language prevents their brain from recognizing real-world stop signs.
+   - ABSOLUTE ZERO PENALTY RULE:
+     * NEVER penalize, deduct points, or lower any category score when a facilitator OR participant uses slang or profanity.
+     * NEVER list slang, cussing, or profanity in "areas_for_improvement" or coaching feedback.
+     * NEVER advise a facilitator to "clean up their language," "use more professional phrasing," or correct participants when they curse.
+     * THE ONLY EXCEPTION: If profanity is used in an abusive, violent personal attack directed at another person in the room.
+
+2. OPERATIONAL PHONE CALL & LOGISTICS EXCEPTION:
+   - Facilitators are required to answer brief operational phone calls during class (e.g., halfway houses calling to verify participant attendance, urgent center logistics).
+   - NEVER deduct points or criticize a facilitator under "Models behavior" or "Time management" for answering a brief operational or attendance-verification phone call.
+
+3. ACTUAL CLASS HEADCOUNT AWARENESS (NO GHOST PARTICIPANTS):
+   - Count the actual number of distinct participant voices heard in the recording (or use the provided Class Headcount).
+   - If a class only has 2, 3, or 4 participants present in the room and all of them participate, score Group Engagement as 5.0 / 5.0!
+   - NEVER penalize a facilitator for "only engaging 3 people" or tell them to "call on quieter participants" when there are literally only 3 participants in class that day.
+
+4. PROSOCIAL VULNERABILITY & FACILITATOR SELF-DISCLOSURE:
+   - Do NOT apply clinical "Counseling 101" rules against self-disclosure.
+   - Turn90 intentionally encourages facilitators to share relatable real-life struggles (e.g., an argument with a spouse, being at the ER with a child the night before, having a rough day) while still showing up positive and working hard. This models real-world emotional regulation and prosocial resilience.
+   - Reward authentic facilitator vulnerability when it connects to the lesson (only flag it if personal venting hijacks the entire class period).
+
+5. REWARD "5TH-GRADE" ACCESSIBLE LANGUAGE OVER CLINICAL JARGON:
+   - Many participants are anti-therapy or have lower literacy levels.
+   - Explicitly REWARD facilitators who translate clinical/workbook terms (e.g., "low frustration tolerance", "neuroplasticity") into plain, everyday "5th-grade" language (e.g., "zero tolerance for frustration"). Never penalize a facilitator for replacing clinical jargon with relatable everyday explanations.
+
+6. MODULE 6 ("CONTROL" / 5 WORRIES) SUPPLEMENTAL EXERCISES:
+   - Because Module 6 ("Control") is shorter and can feel repetitive by Day 3–4, praise and reward facilitators who use approved CBT-aligned control extensions:
+     (a) Pre/Post "% of Control" visual board ratings
+     (b) Process Goals vs. Outcome Goals (identifying the 5 controllable steps toward an outcome)
+     (c) Persona / Emotional Goals ("How do I want to feel/show up?" without implanting negative self-labels).
+
+7. SPECIFIC, TIMESTAMPED "WHAT TO ASK INSTEAD" COACHING REWRITES:
+   - Never give vague feedback like "use more CBT application" or "ask better open-ended questions."
+   - Every single coaching recommendation MUST pinpoint a specific moment in the session with:
+     (1) Exact Timestamp & Quote: What the participant or facilitator said (e.g., "[14:20] Participant said: '...'").
+     (2) What You Said: How the facilitator responded.
+     (3) Try Asking This Next Time (Concrete Script): 2–3 exact alternative questions combining CBT + Motivational Interviewing (MI) + SYNAPSE (Situated Empathy & Yielding the Narrative).
 ================================================================================
 `;
 
 function sanitizeLanguageFeedback(evaluation) {
     if (!evaluation) return evaluation;
 
+    const isForbiddenCritique = (text) => {
+        if (typeof text !== 'string') return false;
+        const lower = text.toLowerCase();
+        const mentionsLang = lower.includes('profan') || lower.includes('slang') || lower.includes('vulgar') || 
+                             lower.includes('swear') || lower.includes('curse') || lower.includes('cuss') ||
+                             lower.includes('language') || lower.includes('shorthand expression');
+        const isNegativeLang = mentionsLang && (
+            lower.includes('unprofessional') || lower.includes('clean up') || lower.includes('avoid') || 
+            lower.includes('refrain') || lower.includes('inappropriate') || lower.includes('pissed off') ||
+            lower.includes('fucked up') || lower.includes('tone down') || lower.includes('formal') ||
+            lower.includes('redirect participant') || lower.includes('correct participant')
+        );
+        const isPhonePenalty = (lower.includes('phone call') || lower.includes('answering the phone') || lower.includes('answered a call')) &&
+                               (lower.includes('unprofessional') || lower.includes('avoid') || lower.includes('disrupt') || lower.includes('models behavior'));
+        return isNegativeLang || isPhonePenalty;
+    };
+
     if (Array.isArray(evaluation.areas_for_improvement)) {
-        evaluation.areas_for_improvement = evaluation.areas_for_improvement.filter(item => {
-            if (typeof item !== 'string') return true;
-            const lower = item.toLowerCase();
-            const mentionsLang = lower.includes('profan') || lower.includes('slang') || lower.includes('vulgar') || 
-                                 lower.includes('swear') || lower.includes('curse') || lower.includes('cuss') ||
-                                 lower.includes('language') || lower.includes('shorthand expression');
-            const isNegative = lower.includes('unprofessional') || lower.includes('clean up') || lower.includes('avoid') || 
-                               lower.includes('refrain') || lower.includes('inappropriate') || lower.includes('pissed off') ||
-                               lower.includes('fucked up') || lower.includes('tone down') || lower.includes('formal');
-            return !(mentionsLang && isNegative);
-        });
+        evaluation.areas_for_improvement = evaluation.areas_for_improvement.filter(item => !isForbiddenCritique(item));
     }
 
     if (evaluation.detailed_summary_markdown && typeof evaluation.detailed_summary_markdown === 'string') {
         evaluation.detailed_summary_markdown = evaluation.detailed_summary_markdown
             .split('\n\n')
-            .filter(para => {
-                const lower = para.toLowerCase();
-                const mentionsLang = lower.includes('profan') || lower.includes('slang') || lower.includes('vulgar') || lower.includes('swearing');
-                const isNegative = lower.includes('unprofessional') || lower.includes('clean up') || lower.includes('avoid using') || lower.includes('refrain from');
-                return !(mentionsLang && isNegative);
-            })
+            .filter(para => !isForbiddenCritique(para))
             .join('\n\n');
     }
 
     return evaluation;
+}
+
+/**
+ * Deterministic Total Score Calculation (Fixes the "27.5 score with 4.5/5.0 sub-scores" bug).
+ * Computes the mathematical 0-100 score directly from the 0-5 rubric category sub-scores.
+ */
+function computeDeterministicClassScore(evaluation) {
+    if (!evaluation || !evaluation.scores || typeof evaluation.scores !== 'object') {
+        return evaluation?.total_score;
+    }
+
+    const numericSubScores = Object.values(evaluation.scores)
+        .map(v => Number(v))
+        .filter(v => !isNaN(v) && v >= 0 && v <= 5);
+
+    if (numericSubScores.length === 0) {
+        return Number(evaluation.total_score);
+    }
+
+    const avgOutOf5 = numericSubScores.reduce((sum, v) => sum + v, 0) / numericSubScores.length;
+    const calculatedOutOf100 = Math.round(avgOutOf5 * 20 * 10) / 10; // e.g., 4.75 -> 95.0
+
+    const rawTotal = Number(evaluation.total_score);
+    // If rawTotal is missing, NaN, out of range, or deviates by more than 6 points from the actual rubric sub-scores (like 27.5 vs 95), use the deterministic score!
+    if (isNaN(rawTotal) || rawTotal <= 0 || rawTotal > 100 || Math.abs(rawTotal - calculatedOutOf100) > 6) {
+        console.log(`[Class Evaluation] Correcting disproportionate LLM total_score (${evaluation.total_score}) -> deterministic rubric score (${calculatedOutOf100})`);
+        evaluation.total_score = calculatedOutOf100;
+    } else {
+        evaluation.total_score = Math.round(rawTotal * 10) / 10;
+    }
+
+    return evaluation.total_score;
 }
 
 function getFacilitatorScoringContext() {
@@ -102,7 +210,7 @@ ${curriculum}
 
 INSTRUCTIONS:
 Evaluate the facilitator based strictly on the above 20-item Scoring Guide. Reference the curriculum lesson plan to judge if they followed the script and setup correctly for the requested module.
-Provide detailed coaching feedback based on specific timestamps and behaviors observed.
+Provide detailed coaching feedback based on specific timestamps and behaviors observed, including concrete "What to Ask Instead" example scripts.
 
 ${LANGUAGE_POLICY}
 `;
@@ -112,8 +220,16 @@ ${LANGUAGE_POLICY}
     }
 }
 
-async function evaluateClassTranscript(location, sessionTitle, facilitatorName, transcriptText) {
+async function evaluateClassTranscript(location, sessionTitle, facilitatorName, transcriptText, classHeadcount = null) {
     if (!process.env.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is missing");
+
+    if (!transcriptText || transcriptText.trim().length < 50) {
+        throw new Error("Transcript is empty or too short to evaluate (under 50 characters). Evaluation aborted to prevent a placeholder score.");
+    }
+
+    const headcountInstruction = classHeadcount
+        ? `REPORTED CLASS HEADCOUNT: There were exactly ${classHeadcount} participants in class today. Judge group engagement strictly against ${classHeadcount} participants.`
+        : `CLASS HEADCOUNT DETECTION: Count the actual number of distinct participant speakers in the transcript. Judge group engagement strictly against that actual number—never assume silent participants exist if they are not in the transcript.`;
 
     const prompt = `${getFacilitatorScoringContext()}
 
@@ -134,14 +250,41 @@ CRITICAL ISOLATION & OBJECTIVITY MANDATES:
    Do NOT pull in fictional names, case studies (such as "Marcus"), or hypothetical scenarios from training manuals or workbooks.
    If a participant's name is not explicitly stated in the transcript, refer to them neutrally as "a participant" or "the participant."
 
-4. NON-NEGOTIABLE POLICY: SLANG AND PROFANITY ARE FULLY ACCEPTABLE AND NOT UNPROFESSIONAL:
-   Slang, colloquial expressions, cultural vernacular (AAVE), and profanity are authentic communication tools in our setting.
-   - NEVER penalize or lower any score for the use of slang or profanity.
-   - NEVER list slang or profanity in "areas_for_improvement" or suggest more "professional" language.
+4. ${headcountInstruction}
+
+5. SESSION TYPE CHECK (1-ON-1 CASE MANAGEMENT VS. GROUP CLASS):
+   If this transcript is clearly a 1-on-1 Case Management / barrier review meeting with a single client (uploaded to the Class Evaluation tab by mistake) rather than a group CBT class, set "detected_session_type": "case_management" in the JSON output. Otherwise set "detected_session_type": "class".
 
 Location: ${location}
 Session / Module: ${sessionTitle}
 Facilitator: ${facilitatorName}
+
+CRITICAL OUTPUT REQUIREMENT:
+Provide a valid JSON object with the following structure:
+\`\`\`json
+{
+  "facilitator_name": "${facilitatorName}",
+  "detected_session_type": "class",
+  "estimated_headcount": ${classHeadcount || 4},
+  "total_score": 90,
+  "scores": {
+    "modeling_neutrality": 4.5,
+    "lesson_plan_adherence": 4.5,
+    "reflective_listening": 4.5,
+    "avoiding_confrontation": 5.0,
+    "time_management": 4.5,
+    "enthusiasm": 4.5,
+    "group_engagement": 5.0
+  },
+  "observed_strengths": [
+    "Specific strength with timestamp/quote..."
+  ],
+  "areas_for_improvement": [
+    "[Timestamp] Quote/Context -> What Facilitator Said -> Try Asking This Next Time: 'Exact CBT/MI/SYNAPSE alternative question...'"
+  ],
+  "detailed_summary_markdown": "Full markdown coaching report including a '### 🎯 Timestamped Coaching Rewrites (What You Said vs. What to Ask Next Time)' table."
+}
+\`\`\`
 
 Classroom Transcript to Evaluate:
 ${transcriptText}
@@ -154,15 +297,29 @@ ${transcriptText}
         const jsonMatch = responseText.match(/```json\s*([\s\S]*?)\s*```/);
         evaluation = jsonMatch ? JSON.parse(jsonMatch[1]) : JSON.parse(responseText);
     } catch(err) {
-        evaluation = JSON.parse(responseText);
+        const bracketMatch = responseText.match(/\{[\s\S]*\}/);
+        if (bracketMatch) {
+            evaluation = JSON.parse(bracketMatch[0]);
+        } else {
+            throw new Error("AI did not return valid evaluation JSON.");
+        }
     }
 
-    // Apply language policy sanitizer to guarantee zero slang/profanity penalties
+    // Apply language & operational policy sanitizer
     sanitizeLanguageFeedback(evaluation);
+
+    // Enforce deterministic score math (no more 27.5 bug or 88 fallback)
+    const finalTotalScore = computeDeterministicClassScore(evaluation);
+    if (isNaN(finalTotalScore) || finalTotalScore <= 0) {
+        throw new Error("Evaluation produced an invalid score. Transcript may be empty or unintelligible.");
+    }
 
     const savedFacilitator = (evaluation.facilitator_name && evaluation.facilitator_name !== 'Staff Facilitator')
         ? evaluation.facilitator_name
         : (facilitatorName || 'Staff Facilitator');
+
+    const savedHeadcount = classHeadcount || evaluation.estimated_headcount || null;
+    const detectedType = evaluation.detected_session_type || 'class';
 
     // Save to database
     const stmt = db.prepare(`
@@ -170,24 +327,29 @@ ${transcriptText}
             location, session_title, facilitator_name, total_score,
             modeling_neutrality_score, lesson_plan_adherence_score,
             reflective_listening_score, avoiding_confrontation_score,
-            summary_markdown, scores_json, coaching_feedback
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            summary_markdown, scores_json, coaching_feedback,
+            class_headcount, transcript_text, detected_session_type
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
-    stmt.run(
+    const info = stmt.run(
         location,
         sessionTitle,
         savedFacilitator,
-        evaluation.total_score || 88,
-        evaluation.scores?.modeling_neutrality || 4.5,
-        evaluation.scores?.lesson_plan_adherence || 4.5,
-        evaluation.scores?.reflective_listening || 4.5,
-        evaluation.scores?.avoiding_confrontation || 5,
+        finalTotalScore,
+        evaluation.scores?.modeling_neutrality ?? 4.5,
+        evaluation.scores?.lesson_plan_adherence ?? 4.5,
+        evaluation.scores?.reflective_listening ?? 4.5,
+        evaluation.scores?.avoiding_confrontation ?? 5,
         evaluation.detailed_summary_markdown || '',
         JSON.stringify(evaluation.scores || {}),
-        (evaluation.areas_for_improvement || []).join('; ')
+        (evaluation.areas_for_improvement || []).join('; '),
+        savedHeadcount,
+        transcriptText,
+        detectedType
     );
 
+    evaluation.id = info.lastInsertRowid;
     return evaluation;
 }
 
@@ -226,7 +388,7 @@ async function uploadFacilitationResources(fileManager) {
     return uploadedResources;
 }
 
-async function evaluateClassMedia(location, sessionTitle, facilitatorName, mediaFiles) {
+async function evaluateClassMedia(location, sessionTitle, facilitatorName, mediaFiles, classHeadcount = null) {
     if (!process.env.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is missing");
 
     const { GoogleAIFileManager } = require("@google/generative-ai/server");
@@ -243,6 +405,16 @@ async function evaluateClassMedia(location, sessionTitle, facilitatorName, media
             // Already uploaded to Gemini
             uploadResults.push(mf);
         } else {
+            // Guardrail against empty / 0-byte recordings (prevents phantom 88 score)
+            if (!mf.path || !fs.existsSync(mf.path)) {
+                throw new Error("Audio/video file is missing or could not be read.");
+            }
+            const stat = fs.statSync(mf.path);
+            if (stat.size < 10240) {
+                try { fs.unlinkSync(mf.path); } catch (e) {}
+                throw new Error(`Recording file is empty or too small (${stat.size} bytes). Evaluation aborted so no placeholder score is recorded.`);
+            }
+
             const uploadResult = await fileManager.uploadFile(mf.path, {
                 mimeType: mf.mimeType || 'video/mp4',
                 displayName: `${location}_Class_Evaluation_${Date.now()}`
@@ -250,7 +422,6 @@ async function evaluateClassMedia(location, sessionTitle, facilitatorName, media
             uploadResults.push(uploadResult);
             
             // Immediately delete local file to free disk space
-            const fs = require('fs');
             if (fs.existsSync(mf.path)) {
                 try { fs.unlinkSync(mf.path); } catch(e) {}
             }
@@ -261,6 +432,10 @@ async function evaluateClassMedia(location, sessionTitle, facilitatorName, media
 
     try {
         uploadedResources = await uploadFacilitationResources(fileManager);
+
+        const headcountInstruction = classHeadcount
+            ? `REPORTED CLASS HEADCOUNT: There were exactly ${classHeadcount} participants in class today. Judge group engagement strictly against ${classHeadcount} participants—if all ${classHeadcount} speak, score Group Engagement 5/5.`
+            : `ACTUAL CLASS HEADCOUNT DETECTION: Listen carefully and count the actual number of distinct participant voices in the room. If only 2, 3, or 4 participants are present in class and all of them participate, score Group Engagement 5/5! NEVER assume silent participants exist in the room without audio evidence, and NEVER penalize a small class for "only engaging 3 people."`;
 
         const prompt = `You are the Lead Facilitator Supervisor and Quality Assurance Director for Turn90 / First Shift.
 Location: ${location}
@@ -286,49 +461,66 @@ CRITICAL ISOLATION & OBJECTIVITY MANDATES:
    Do NOT pull in fictional names, case studies (such as "Marcus"), or hypothetical scenarios from training manuals or workbooks.
    If a participant's name is not explicitly spoken in the audio, refer to them neutrally as "a participant" or "the participant."
 
-4. AUDIO-ONLY CRITERIA:
-   These are AUDIO ONLY recordings. Do not penalize or refuse to score based on a lack of visual "physical presence". Instead, evaluate their presence and engagement purely through their tone of voice, pacing, neutrality, and interactions with participants across this session.
+4. AUDIO-ONLY CRITERIA & OPERATIONAL PHONE CALL EXCEPTION:
+   These are AUDIO ONLY recordings. Do not penalize based on a lack of visual "physical presence".
+   CRITICAL: If the facilitator answers a brief phone call during class (e.g., a halfway house calling to verify participant attendance or center logistics), DO NOT penalize or deduct points. Halfway house verification calls are mandatory operational duties.
 
-5. NON-NEGOTIABLE POLICY: SLANG AND PROFANITY ARE FULLY ACCEPTABLE AND NOT UNPROFESSIONAL:
-   In our setting, slang, street vernacular, cultural idioms (AAVE), and profanity are authentic communication tools. They build genuine rapport.
-   - NEVER penalize, deduct points, or lower any category score for the use of slang or profanity.
-   - NEVER list slang or profanity in "areas_for_improvement" or coaching recommendations.
-   - NEVER advise a facilitator to use "more professional language" or avoid slang/cussing.
+5. ${headcountInstruction}
 
-Use the provided official Turn90 Facilitation PDFs and curriculum documents to ground your feedback exactly in the Turn90 Evidence-Based CBT practices.
+6. "PRACTICE COURT" RULE (SLANG & PROFANITY FROM FACILITATORS & PARTICIPANTS):
+   In our setting, slang, street vernacular, AAVE, and profanity from BOTH facilitators and participants are 100% acceptable and authentic. When participants share risky thoughts (e.g. "fuck it", "fuck this bitch"), they MUST state them raw and unsanitized so their brain recognizes the real stop sign.
+   - NEVER penalize or deduct points for facilitator or participant slang/profanity.
+   - NEVER advise the facilitator to clean up their language or correct participants' profanity.
+
+7. PROSOCIAL VULNERABILITY & "5TH-GRADE" ACCESSIBLE DEFINITIONS:
+   - Praise and reward facilitators when they share relatable personal struggles (e.g. family stress, rough day, ER visit) while modeling positive emotional regulation.
+   - Praise and reward facilitators when they translate clinical terms (e.g. "low frustration tolerance", "neuroplasticity") into everyday "5th-grade" accessible definitions (e.g. "zero tolerance for frustration").
+
+8. EMPTY / SILENT AUDIO & 1-ON-1 CASE MANAGEMENT DETECTION:
+   - If the recording is silent, empty, or contains less than 1 minute of actual speech, set "audio_empty_or_invalid": true.
+   - If the recording is clearly a 1-on-1 Case Management / Re-entry Navigation session with a single client (uploaded to the Class Evaluation tab by mistake) rather than a group CBT class, set "detected_session_type": "case_management". Otherwise set "detected_session_type": "class".
 
 CRITICAL OUTPUT REQUIREMENT:
-You MUST provide your response in two distinct parts.
+You MUST provide your response in three distinct parts:
 
-Part 1: The Numerical Data
-Provide a valid JSON code block with the scores and brief notes.
+Part 1: The Numerical Data (JSON block)
 \`\`\`json
 {
   "facilitator_name": "Audibly identified facilitator name, or '${facilitatorName}'",
-  "total_score": 85,
+  "audio_empty_or_invalid": false,
+  "detected_session_type": "class",
+  "estimated_headcount": ${classHeadcount || 4},
+  "total_score": 90,
   "scores": {
     "modeling_neutrality": 4.5,
-    "lesson_plan_adherence": 3.0,
-    "reflective_listening": 4.0,
+    "lesson_plan_adherence": 4.5,
+    "reflective_listening": 4.5,
     "avoiding_confrontation": 5.0,
-    "time_management": 4.0,
-    "enthusiasm": 5.0
+    "time_management": 4.5,
+    "enthusiasm": 5.0,
+    "group_engagement": 5.0
   },
   "observed_strengths": [
-    "Observed strength 1...",
-    "Observed strength 2..."
+    "[MM:SS] Specific observed strength with quote..."
   ],
   "areas_for_improvement": [
-    "Coaching recommendation 1 (DO NOT critique slang or profanity)...",
-    "Coaching recommendation 2..."
+    "[MM:SS] When participant said '...' -> You said '...' -> Try Asking This Next Time: 'Exact CBT / MI / SYNAPSE question...'"
   ],
   "location_specific_notes": "Key observations for ${location} only..."
 }
 \`\`\`
 
-Part 2: The Full Report
-After the JSON block, write your detailed, extensive coaching report in standard markdown format (do not put this inside the JSON).
-CRITICAL RULE: DO NOT criticize, penalize, or mention slang or profanity as a negative anywhere in this report. Slang and profanity are 100% acceptable and not considered unprofessional in our setting.
+Part 2: The Full Coaching Report (Markdown)
+After the JSON block, write your detailed coaching report in standard markdown format.
+You MUST include a dedicated section titled:
+### 🎯 Actionable Coaching Rewrites: "What You Said" vs. "What to Ask Next Time"
+For each coaching moment, provide:
+- **Timestamp & Context ([MM:SS]):** Exact quote of what the participant or facilitator said.
+- **What You Said:** The facilitator's actual response.
+- **Try Asking This Next Time (CBT + MI + SYNAPSE Script):** 2–3 concrete, verbatim alternative questions or reflections the facilitator can use next time (incorporating Situated Empathy, Yielding the Narrative, or accessible 5th-grade CBT framing).
+
+Part 3: Diarized Session Transcript (for NotebookLM)
+At the very end of your response, include a delimiter \`===SESSION_TRANSCRIPT_START===\` followed by a clean, timestamped transcript of the session dialogue (\`[MM:SS] Facilitator: ...\` / \`[MM:SS] Participant: ...\`), and close with \`===SESSION_TRANSCRIPT_END===\`.
 `;
 
         console.log(`[Class Evaluation] Generating evaluation for ${location}...`);
@@ -372,27 +564,33 @@ CRITICAL RULE: DO NOT criticize, penalize, or mention slang or profanity as a ne
         const responseText = result.response.text();
         
         let evaluation;
-        let markdownPart = responseText; // Default to full text if json extraction is weird
+        let markdownPart = responseText;
+        let extractedTranscript = '';
+
+        // Extract optional transcript block
+        const transcriptMatch = markdownPart.match(/===SESSION_TRANSCRIPT_START===([\s\S]*?)===SESSION_TRANSCRIPT_END===/);
+        if (transcriptMatch) {
+            extractedTranscript = transcriptMatch[1].trim();
+            markdownPart = markdownPart.replace(/===SESSION_TRANSCRIPT_START===[\s\S]*?===SESSION_TRANSCRIPT_END===/, '').trim();
+        }
 
         // Extract the JSON block
-        const jsonMatch = responseText.match(/```json\s*([\s\S]*?)\s*```/);
+        const jsonMatch = markdownPart.match(/```json\s*([\s\S]*?)\s*```/);
         
         if (jsonMatch) {
             try {
                 evaluation = JSON.parse(jsonMatch[1]);
-                // Remove the json block from the markdown report
-                markdownPart = responseText.replace(/```json\s*[\s\S]*?\s*```/, '').trim();
+                markdownPart = markdownPart.replace(/```json\s*[\s\S]*?\s*```/, '').trim();
             } catch(err) {
                 console.error("[Class Evaluation] Extracted JSON was still invalid:", err);
                 throw new Error("AI returned invalid JSON syntax. Raw: " + jsonMatch[1].substring(0, 500));
             }
         } else {
-            // Fallback: try to find any { ... } if they forgot backticks
-            const bracketMatch = responseText.match(/\{[\s\S]*\}/);
+            const bracketMatch = markdownPart.match(/\{[\s\S]*\}/);
             if (bracketMatch) {
                 try {
                     evaluation = JSON.parse(bracketMatch[0]);
-                    markdownPart = responseText.replace(/\{[\s\S]*\}/, '').trim();
+                    markdownPart = markdownPart.replace(/\{[\s\S]*\}/, '').trim();
                 } catch(err) {
                     console.error("[Class Evaluation] Extracted bracket JSON was invalid:", err);
                     throw new Error("AI returned invalid JSON syntax. Raw: " + responseText.substring(0, 500));
@@ -402,21 +600,40 @@ CRITICAL RULE: DO NOT criticize, penalize, or mention slang or profanity as a ne
                 throw new Error("AI did not return a JSON object. Raw output: " + responseText.substring(0, 500));
             }
         }
-        
-        // Attach the markdown part back to the evaluation object
-        evaluation.detailed_summary_markdown = markdownPart || "No detailed summary provided.";
 
-        if (evaluation.total_score === undefined || !evaluation.scores) {
+        // Guardrail: Reject empty / silent recordings so they never get a fake 88 score!
+        if (evaluation.audio_empty_or_invalid === true) {
+            throw new Error("Recording appears to be silent, empty, or contains no intelligible classroom dialogue. Evaluation aborted to prevent an inaccurate score.");
+        }
+
+        if (!evaluation.scores) {
             console.error("[Class Evaluation] AI returned an invalid schema or refused the prompt:", responseText);
             throw new Error("AI returned invalid JSON schema. It may have refused to evaluate the audio.");
         }
 
-        // Apply language policy sanitizer to guarantee zero slang/profanity penalties
+        // Attach notice banner if a 1-on-1 CM session was uploaded to the Class tab by mistake
+        if (evaluation.detected_session_type === 'case_management') {
+            markdownPart = `> ⚠️ **CROSS-TAB UPLOAD NOTICE:** This recording appears to be a **1-on-1 Case Management / Barrier Review Session** rather than a group classroom session. You can move or re-evaluate this file under the **Case Management Evaluations** tab so it does not skew classroom facilitation metrics.\n\n` + markdownPart;
+        }
+        
+        // Attach the markdown part back to the evaluation object
+        evaluation.detailed_summary_markdown = markdownPart || "No detailed summary provided.";
+
+        // Apply language & operational policy sanitizer
         sanitizeLanguageFeedback(evaluation);
+
+        // Enforce deterministic score calculation from rubric sub-scores (fixes 27.5 bug & removes 88 fallback)
+        const finalTotalScore = computeDeterministicClassScore(evaluation);
+        if (isNaN(finalTotalScore) || finalTotalScore <= 0) {
+            throw new Error("Could not compute a valid rubric score from the recording.");
+        }
 
         const savedFacilitator = (evaluation.facilitator_name && evaluation.facilitator_name !== 'Staff Facilitator')
             ? evaluation.facilitator_name
             : (facilitatorName || 'Staff Facilitator');
+
+        const savedHeadcount = classHeadcount || evaluation.estimated_headcount || null;
+        const detectedType = evaluation.detected_session_type || 'class';
 
         // Save to database
         const stmt = db.prepare(`
@@ -424,24 +641,29 @@ CRITICAL RULE: DO NOT criticize, penalize, or mention slang or profanity as a ne
                 location, session_title, facilitator_name, total_score,
                 modeling_neutrality_score, lesson_plan_adherence_score,
                 reflective_listening_score, avoiding_confrontation_score,
-                summary_markdown, scores_json, coaching_feedback
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                summary_markdown, scores_json, coaching_feedback,
+                class_headcount, transcript_text, detected_session_type
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `);
 
-        stmt.run(
+        const info = stmt.run(
             location,
             sessionTitle,
             savedFacilitator,
-            evaluation.total_score || 88,
-            evaluation.scores?.modeling_neutrality || 4.5,
-            evaluation.scores?.lesson_plan_adherence || 4.5,
-            evaluation.scores?.reflective_listening || 4.5,
-            evaluation.scores?.avoiding_confrontation || 5,
+            finalTotalScore,
+            evaluation.scores?.modeling_neutrality ?? 4.5,
+            evaluation.scores?.lesson_plan_adherence ?? 4.5,
+            evaluation.scores?.reflective_listening ?? 4.5,
+            evaluation.scores?.avoiding_confrontation ?? 5,
             evaluation.detailed_summary_markdown || '',
             JSON.stringify(evaluation.scores || {}),
-            (evaluation.areas_for_improvement || []).join('; ')
+            (evaluation.areas_for_improvement || []).join('; '),
+            savedHeadcount,
+            extractedTranscript || evaluation.detailed_summary_markdown || '',
+            detectedType
         );
 
+        evaluation.id = info.lastInsertRowid;
         return evaluation;
     } finally {
         console.log(`[Class Evaluation] Deleting temporary files from Gemini...`);
@@ -463,4 +685,4 @@ CRITICAL RULE: DO NOT criticize, penalize, or mention slang or profanity as a ne
     }
 }
 
-module.exports = { evaluateClassTranscript, evaluateClassMedia };
+module.exports = { evaluateClassTranscript, evaluateClassMedia, computeDeterministicClassScore };

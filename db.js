@@ -716,6 +716,8 @@ CREATE TABLE IF NOT EXISTS case_management_evaluations (
     location TEXT,
     session_title TEXT,
     cm_name TEXT,
+    apricot_id TEXT,
+    session_type TEXT DEFAULT 'follow_up',
     total_score REAL,
     playbook_adherence REAL,
     cbt_application REAL,
@@ -726,7 +728,15 @@ CREATE TABLE IF NOT EXISTS case_management_evaluations (
     summary_markdown TEXT,
     scores_json TEXT,
     feedback TEXT,
+    next_session_recommendations TEXT,
+    referrals_detected TEXT,
+    transcript_text TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 `);
+try { db.exec("ALTER TABLE case_management_evaluations ADD COLUMN apricot_id TEXT;"); } catch (e) {}
+try { db.exec("ALTER TABLE case_management_evaluations ADD COLUMN session_type TEXT DEFAULT 'follow_up';"); } catch (e) {}
+try { db.exec("ALTER TABLE case_management_evaluations ADD COLUMN next_session_recommendations TEXT;"); } catch (e) {}
+try { db.exec("ALTER TABLE case_management_evaluations ADD COLUMN referrals_detected TEXT;"); } catch (e) {}
+try { db.exec("ALTER TABLE case_management_evaluations ADD COLUMN transcript_text TEXT;"); } catch (e) {}
 

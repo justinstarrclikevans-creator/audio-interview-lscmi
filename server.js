@@ -2488,7 +2488,7 @@ app.post('/api/interviews/generate-draft', async (req, res) => {
 // Case Management Evaluations API
 app.post('/api/cm/evaluate', authenticateToken, requireRole('program_manager', 'director', 'admin', 'staff'), memoryUpload.array('media', 5), async (req, res) => {
     try {
-        const { location, sessionTitle, cmName } = req.body;
+        const { location, sessionTitle, cmName, apricotId, sessionType } = req.body;
         
         if (!req.files || req.files.length === 0) {
             return res.status(400).json({ error: 'Media files (audio/video) are required for evaluation.' });
@@ -2501,6 +2501,9 @@ app.post('/api/cm/evaluate', authenticateToken, requireRole('program_manager', '
         const mediaFiles = [];
         
         for (const f of req.files) {
+            if (!f.buffer || f.buffer.length < 10240) {
+                return res.status(400).json({ error: `Recording "${f.originalname}" is empty or too small (${f.buffer ? f.buffer.length : 0} bytes). Please upload a valid audio/video recording.` });
+            }
             const tempPath = path.join(os.tmpdir(), 'cm_eval_' + Date.now() + '_' + f.originalname);
             fs.writeFileSync(tempPath, f.buffer);
             mediaFiles.push({
@@ -2510,7 +2513,13 @@ app.post('/api/cm/evaluate', authenticateToken, requireRole('program_manager', '
             });
         }
         
-        const result = await evaluateCaseManagementMedia(mediaFiles, sessionTitle || 'Case Management Meeting', location || 'Charleston', cmName || req.user.name);
+        const result = await evaluateCaseManagementMedia(
+            mediaFiles,
+            sessionTitle || 'Case Management Meeting',
+            location || 'Charleston',
+            cmName || req.user.name,
+            { apricotId: apricotId || null, sessionType: sessionType || 'auto' }
+        );
         res.json({ success: true, result });
     } catch (err) {
         console.error('CM evaluation error:', err);
@@ -2520,15 +2529,54 @@ app.post('/api/cm/evaluate', authenticateToken, requireRole('program_manager', '
 
 app.get('/api/cm/evaluations', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff'), (req, res) => {
     const location = req.query.location;
+    const apricotId = req.query.apricotId;
     let query = 'SELECT * FROM case_management_evaluations';
+    const conditions = [];
     const params = [];
     if (location) {
-        query += ' WHERE location = ?';
+        conditions.push('location = ?');
         params.push(location);
+    }
+    if (apricotId) {
+        conditions.push('apricot_id = ?');
+        params.push(apricotId);
+    }
+    if (conditions.length > 0) {
+        query += ' WHERE ' + conditions.join(' AND ');
     }
     query += ' ORDER BY created_at DESC LIMIT 50';
     const evals = db.prepare(query).all(...params);
     res.json(evals);
+});
+
+app.patch('/api/cm/evaluations/:id/score', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff'), (req, res) => {
+    try {
+        const id = req.params.id;
+        const { totalScore, cmName, sessionTitle, apricotId, sessionType } = req.body;
+        const numScore = Number(totalScore);
+        if (isNaN(numScore) || numScore < 0 || numScore > 100) {
+            return res.status(400).json({ error: 'Total score must be a valid number between 0 and 100.' });
+        }
+        db.prepare(`
+            UPDATE case_management_evaluations
+            SET total_score = ?,
+                cm_name = COALESCE(?, cm_name),
+                session_title = COALESCE(?, session_title),
+                apricot_id = COALESCE(?, apricot_id),
+                session_type = COALESCE(?, session_type)
+            WHERE id = ?
+        `).run(
+            numScore,
+            cmName || null,
+            sessionTitle || null,
+            apricotId !== undefined ? apricotId : null,
+            sessionType || null,
+            id
+        );
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
 app.delete('/api/cm/evaluations/:id', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff'), (req, res) => {
@@ -2563,6 +2611,73 @@ app.get('/api/admin/evaluations', authenticateToken, requireRole('program_manage
     query += ' ORDER BY created_at DESC LIMIT 50';
     const evals = db.prepare(query).all(...params);
     res.json(evals);
+});
+
+app.patch('/api/admin/evaluations/:id/score', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
+    try {
+        const id = req.params.id;
+        const { totalScore, facilitatorName, sessionTitle } = req.body;
+        const numScore = Number(totalScore);
+        if (isNaN(numScore) || numScore < 0 || numScore > 100) {
+            return res.status(400).json({ error: 'Total score must be a valid number between 0 and 100.' });
+        }
+        db.prepare(`
+            UPDATE class_facilitation_evaluations
+            SET total_score = ?,
+                facilitator_name = COALESCE(?, facilitator_name),
+                session_title = COALESCE(?, session_title)
+            WHERE id = ?
+        `).run(numScore, facilitatorName || null, sessionTitle || null, id);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/admin/evaluations/:id/move-to-cm', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
+    try {
+        const id = req.params.id;
+        const { apricotId, sessionType } = req.body || {};
+        const classEval = db.prepare('SELECT * FROM class_facilitation_evaluations WHERE id = ?').get(id);
+        if (!classEval) {
+            return res.status(404).json({ error: 'Class evaluation not found.' });
+        }
+
+        const insertStmt = db.prepare(`
+            INSERT INTO case_management_evaluations (
+                location, session_title, cm_name, apricot_id, session_type,
+                total_score, playbook_adherence, cbt_application, goal_setting,
+                empathy_and_neutrality, apricot_data_gathering,
+                apricot_notes, summary_markdown, scores_json, feedback,
+                transcript_text, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `);
+
+        insertStmt.run(
+            classEval.location,
+            classEval.session_title,
+            classEval.facilitator_name || 'Staff CM',
+            apricotId || null,
+            sessionType || 'follow_up',
+            classEval.total_score,
+            classEval.lesson_plan_adherence_score ?? 4.5,
+            classEval.reflective_listening_score ?? 4.5,
+            4.5,
+            classEval.modeling_neutrality_score ?? 4.5,
+            4.5,
+            'Moved from Classroom Facilitation tab (1-on-1 session recording).',
+            classEval.summary_markdown || '',
+            classEval.scores_json || '{}',
+            classEval.coaching_feedback || '',
+            classEval.transcript_text || classEval.summary_markdown || '',
+            classEval.created_at
+        );
+
+        db.prepare('DELETE FROM class_facilitation_evaluations WHERE id = ?').run(id);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
 app.delete('/api/admin/evaluations/:id', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
@@ -2619,11 +2734,15 @@ app.get('/api/admin/evaluations/sync-status', authenticateToken, requireRole('pr
 
 app.post('/api/admin/evaluate-classes', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), memoryUpload.single('audioOrTranscript'), async (req, res) => {
     try {
-        const { location, sessionTitle, facilitatorName, transcriptText } = req.body;
+        const { location, sessionTitle, facilitatorName, transcriptText, classHeadcount } = req.body;
+        const parsedHeadcount = classHeadcount && parseInt(classHeadcount) > 0 ? parseInt(classHeadcount) : null;
         
         let result;
         
         if (req.file && (req.file.mimetype.startsWith('audio') || req.file.mimetype.startsWith('video') || req.file.originalname.endsWith('.webm') || req.file.originalname.endsWith('.m4a'))) {
+            if (!req.file.buffer || req.file.buffer.length < 10240) {
+                return res.status(400).json({ error: `Recording "${req.file.originalname}" is empty or too small (${req.file.buffer ? req.file.buffer.length : 0} bytes). Evaluation aborted so no placeholder score is recorded.` });
+            }
             // It's an audio/video file! Write to temp disk for GoogleAIFileManager
             const fs = require('fs');
             const path = require('path');
@@ -2635,7 +2754,8 @@ app.post('/api/admin/evaluate-classes', authenticateToken, requireRole('program_
                 location || 'Charleston', 
                 sessionTitle || 'Turn90 Workshop', 
                 facilitatorName || 'Staff Facilitator', 
-                { path: tmpPath, mimeType: req.file.mimetype || 'audio/webm' }
+                { path: tmpPath, mimeType: req.file.mimetype || 'audio/webm' },
+                parsedHeadcount
             );
         } else {
             // It's a text transcript
@@ -2643,9 +2763,17 @@ app.post('/api/admin/evaluate-classes', authenticateToken, requireRole('program_
             if (req.file) {
                 textToEvaluate = req.file.buffer.toString('utf8');
             }
-            if (!textToEvaluate) return res.status(400).json({ error: 'Transcript or text content required for evaluation.' });
+            if (!textToEvaluate || textToEvaluate.trim().length < 50) {
+                return res.status(400).json({ error: 'Valid classroom recording or transcript (at least 50 characters) is required for evaluation.' });
+            }
 
-            result = await evaluateClassTranscript(location || 'Charleston', sessionTitle || 'Turn90 Workshop', facilitatorName || 'Staff Facilitator', textToEvaluate);
+            result = await evaluateClassTranscript(
+                location || 'Charleston',
+                sessionTitle || 'Turn90 Workshop',
+                facilitatorName || 'Staff Facilitator',
+                textToEvaluate,
+                parsedHeadcount
+            );
         }
         res.json({ success: true, result });
     } catch (err) {

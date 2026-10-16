@@ -3950,20 +3950,32 @@ async function loadFacilitationEvaluations() {
                     const loc = e.location || 'Turn90';
                     const locColor = loc === 'Charleston' ? '#15803d' : (loc === 'Columbia' ? '#1d4ed8' : '#be185d');
                     const locBg = loc === 'Charleston' ? '#f0fdf4' : (loc === 'Columbia' ? '#eff6ff' : '#fdf4ff');
+                    const safeFacName = (e.facilitator_name || '').replace(/'/g, "\\'");
+                    const safeTitle = (e.session_title || '').replace(/'/g, "\\'");
+                    const isCmMisupload = e.detected_session_type === 'case_management';
                     return `
                     <div style="background: #ffffff; border: 1px solid var(--border); border-left: 4px solid ${locColor}; border-radius: 8px; padding: 16px;">
+                        ${isCmMisupload ? `
+                            <div style="background: #fffbeb; border: 1px solid #fcd34d; color: #92400e; padding: 10px 14px; border-radius: 6px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 12.5px;">
+                                <div>⚠️ <strong>1-on-1 Case Management Recording Detected:</strong> This audio appears to be a 1-on-1 CM meeting uploaded to the Class tab.</div>
+                                <button class="btn btn-primary" style="background: #d97706; border-color: #d97706; font-size: 11.5px; padding: 5px 10px;" onclick="moveClassEvalToCm(${e.id})">🔄 Move to Case Management Tab</button>
+                            </div>
+                        ` : ''}
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 10px;">
                             <div>
-                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; flex-wrap: wrap;">
                                     <span style="background: ${locBg}; color: ${locColor}; border: 1px solid ${locColor}; padding: 1px 8px; border-radius: 12px; font-weight: 800; font-size: 11px;">📍 ${loc}</span>
+                                    ${e.class_headcount ? `<span style="background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 1px 8px; border-radius: 12px; font-weight: 700; font-size: 11px;">👥 ${e.class_headcount} Participants</span>` : ''}
                                     <strong style="font-size: 15px; color: var(--primary);">${e.session_title}</strong>
                                 </div>
                                 <div style="font-size: 12px; color: var(--slate);">Facilitator: <strong>${e.facilitator_name}</strong> • Date: ${e.class_date}</div>
                             </div>
-                            <div style="display: flex; align-items: center; gap: 16px;">
-                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="printClassEvaluation(${e.id})">🖨️ View & Print Full Report</button>
-                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; color: #ef4444; border-color: #fca5a5;" onclick="deleteClassEvaluation(${e.id})">🗑️ Delete</button>
-                                <div style="text-align: right;">
+                            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px;" onclick="printClassEvaluation(${e.id})">🖨️ View & Print Report</button>
+                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: #0f766e; border-color: #99f6e4; background: #f0fdfa;" onclick="downloadClassEvaluationTranscript(${e.id}, '${safeTitle}', '${safeFacName}')">📥 Download Transcript</button>
+                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: #4338ca; border-color: #c7d2fe;" onclick="editClassEvaluationScore(${e.id}, ${Number(e.total_score)}, '${safeFacName}', '${safeTitle}')">✏️ Edit Score</button>
+                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: #ef4444; border-color: #fca5a5;" onclick="deleteClassEvaluation(${e.id})">🗑️ Delete</button>
+                                <div style="text-align: right; margin-left: 6px;">
                                     <div style="font-size: 22px; font-weight: 800; color: ${e.total_score >= 85 ? 'var(--success)' : 'var(--warning)'};">${Number(e.total_score).toFixed(1)} / 100</div>
                                     <div style="font-size: 11px; color: var(--slate);">Rubric Score</div>
                                 </div>
@@ -3978,8 +3990,9 @@ async function loadFacilitationEvaluations() {
                         <div style="font-size: 13px; color: #334155;">
                             <strong>Coaching Feedback:</strong> ${e.coaching_feedback || 'Excellent adherence to lesson structure and neutrality.'}
                         </div>
-                        <!-- Hidden data for printing -->
-                        <div id="eval-markdown-${e.id}" class="hidden">${encodeURIComponent(e.summary_markdown)}</div>
+                        <!-- Hidden data for printing & transcript download -->
+                        <div id="eval-markdown-${e.id}" class="hidden">${encodeURIComponent(e.summary_markdown || '')}</div>
+                        <div id="eval-transcript-${e.id}" class="hidden">${encodeURIComponent(e.transcript_text || e.summary_markdown || '')}</div>
                     </div>
                 `}).join('')}
             </div>
@@ -3988,6 +4001,78 @@ async function loadFacilitationEvaluations() {
         container.innerHTML = '<p>Unable to load evaluations.</p>';
     }
 }
+
+window.downloadClassEvaluationTranscript = function(id, sessionTitle, facilitatorName) {
+    const rawEl = document.getElementById(`eval-transcript-${id}`) || document.getElementById(`eval-markdown-${id}`);
+    if (!rawEl) return alert('No transcript text available for this evaluation.');
+    const textContent = decodeURIComponent(rawEl.innerHTML || '');
+    const header = `TURN90 CLASSROOM SESSION TRANSCRIPT & COACHING LOG\nSession: ${sessionTitle || 'Class Session'}\nFacilitator: ${facilitatorName || 'Facilitator'}\n==========================================================\n\n`;
+    const blob = new Blob([header + textContent], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const cleanName = `${facilitatorName || 'Facilitator'}_${sessionTitle || 'Class'}`.replace(/[^a-zA-Z0-9_-]/g, '_');
+    a.href = url;
+    a.download = `${cleanName}_Transcript.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+};
+
+window.editClassEvaluationScore = async function(id, currentScore, currentFacilitator, currentTitle) {
+    const newScoreStr = prompt(`Supervisor Score Override — Enter updated Total Rubric Score (0–100):`, currentScore);
+    if (newScoreStr === null) return;
+    const newScore = Number(newScoreStr);
+    if (isNaN(newScore) || newScore < 0 || newScore > 100) {
+        return alert('Please enter a valid score between 0 and 100.');
+    }
+    const newFacilitator = prompt(`Facilitator Name (leave as-is or update):`, currentFacilitator || '');
+    if (newFacilitator === null) return;
+
+    try {
+        const token = localStorage.getItem('fs_token');
+        const res = await fetch(`/api/admin/evaluations/${id}/score`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                totalScore: newScore,
+                facilitatorName: newFacilitator.trim() || currentFacilitator,
+                sessionTitle: currentTitle
+            })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to update score');
+        loadFacilitationEvaluations();
+    } catch (err) {
+        alert('Error updating score: ' + err.message);
+    }
+};
+
+window.moveClassEvalToCm = async function(id) {
+    const apricotId = prompt('Moving 1-on-1 Session to Case Management Evaluations.\nOptional — Enter Participant Apricot ID (or leave blank):', '');
+    if (apricotId === null) return;
+    try {
+        const token = localStorage.getItem('fs_token');
+        const res = await fetch(`/api/admin/evaluations/${id}/move-to-cm`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ apricotId: apricotId.trim() || null })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to move evaluation');
+        alert('Moved to Case Management Evaluations!');
+        loadFacilitationEvaluations();
+        if (typeof window.loadCmEvaluations === 'function') window.loadCmEvaluations();
+    } catch (err) {
+        alert('Error moving evaluation: ' + err.message);
+    }
+};
 
 function printClassEvaluation(id) {
     const rawData = document.getElementById(`eval-markdown-${id}`);
@@ -4037,6 +4122,8 @@ function openFacilitationModal() {
     document.getElementById('eval-session-title').value = '';
     document.getElementById('eval-text').value = '';
     document.getElementById('eval-file').value = '';
+    const hcEl = document.getElementById('eval-headcount');
+    if (hcEl) hcEl.value = '';
     openModal('modal-facilitation');
 }
 
@@ -4046,6 +4133,7 @@ async function handleClassEvaluationSubmit(e) {
     const location = document.getElementById('eval-location').value;
     const facilitatorName = document.getElementById('eval-facilitator').value;
     const sessionTitle = document.getElementById('eval-session-title').value;
+    const classHeadcount = document.getElementById('eval-headcount')?.value || '';
     const text = document.getElementById('eval-text').value;
     const fileInput = document.getElementById('eval-file');
     const btn = document.getElementById('btn-run-eval');
@@ -4057,6 +4145,7 @@ async function handleClassEvaluationSubmit(e) {
     formData.append('location', location);
     formData.append('facilitatorName', facilitatorName);
     formData.append('sessionTitle', sessionTitle);
+    if (classHeadcount) formData.append('classHeadcount', classHeadcount);
     formData.append('transcriptText', text);
     if (fileInput.files[0]) {
         formData.append('audioOrTranscript', fileInput.files[0]);
@@ -4072,7 +4161,7 @@ async function handleClassEvaluationSubmit(e) {
         if (!res.ok) throw new Error(data.error);
 
         alert(`Classroom evaluation complete! Score: ${data.result.total_score} / 100 for ${location}`);
-        document.getElementById('form-facilitation-eval')?.reset();
+        document.getElementById('form-evaluate-class')?.reset();
         document.getElementById('eval-file').value = '';
         closeModal('modal-facilitation');
         loadFacilitationEvaluations();
@@ -7656,20 +7745,105 @@ function openParticipantFile(pId) {
 
     // Case Planning
     document.getElementById('pf-caseplan-actions').innerHTML = `
-        <button class="btn btn-primary" onclick="openCaseReviewModal(${pId}, '${pName}')">📋 View Weekly Case Plan & Feedback</button>
-        <button class="btn btn-outline" onclick="startReentryAssessmentForUser(${pId}, '${pName}')">🧭 Reentry Nav Plan</button>
+        <button class="btn btn-primary" onclick="openCaseReviewModal(${pId}, '${pName.replace(/'/g, "\\'")}')">📋 View Weekly Case Plan & Feedback</button>
+        <button class="btn btn-outline" onclick="startReentryAssessmentForUser(${pId}, '${pName.replace(/'/g, "\\'")}')">🧭 Reentry Nav Plan</button>
+        <button class="btn btn-outline" style="color: #0f766e; border-color: #99f6e4; background: #f0fdfa;" onclick="printVocRehabVerificationLetter(${pId})">🥾 Print Voc Rehab / Work Boots Letter</button>
     `;
 
     // Gamification & Progress
     document.getElementById('pf-gate-actions').innerHTML = `
-        <button class="btn btn-primary" style="margin-bottom: 6px;" onclick="openGateChecklistModal(${pId}, '${pName}')">✅ Review Gate ${pGate} Checklist</button>
-        <button class="btn btn-outline" style="margin-bottom: 6px; color: #4338ca; border-color: #c7d2fe;" onclick="openPmCbtReviewModal(${pId}, '${pName}')">🧠 CBT Worksheets</button>
-        <button class="btn btn-outline" style="margin-bottom: 6px; color: #0f766e; border-color: #99f6e4; background: #f0fdfa;" onclick="printParticipantScoringByName('${pName}')">🖨️ Print LS/CMI Score</button>
+        <button class="btn btn-primary" style="margin-bottom: 6px;" onclick="openGateChecklistModal(${pId}, '${pName.replace(/'/g, "\\'")}')">✅ Review Gate ${pGate} Checklist</button>
+        <button class="btn btn-outline" style="margin-bottom: 6px; color: #4338ca; border-color: #c7d2fe;" onclick="openPmCbtReviewModal(${pId}, '${pName.replace(/'/g, "\\'")}')">🧠 CBT Worksheets</button>
+        <button class="btn btn-outline" style="margin-bottom: 6px; color: #0f766e; border-color: #99f6e4; background: #f0fdfa;" onclick="printParticipantScoringByName('${pName.replace(/'/g, "\\'")}')">🖨️ Print LS/CMI Score</button>
     `;
 
     switchPfTab('overview');
     openModal('modal-participant-file');
 }
+
+window.printVocRehabVerificationLetter = function(pId) {
+    const p = window.caseloadData?.find(x => x.id === pId) || {};
+    const participantName = p.name || prompt('Enter Participant Full Name for Voc Rehab Verification Letter:', '') || 'Participant Name';
+    const location = p.location || 'South Carolina';
+    const enrolledDate = p.enrollment_date ? new Date(p.enrollment_date).toLocaleDateString() : new Date().toLocaleDateString();
+    const dob = p.birthdate || 'On File';
+    const todayStr = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    const staffName = window.currentUser?.name || 'Turn90 Case Management Team';
+
+    const printWin = window.open('', '_blank');
+    printWin.document.write(`
+        <html>
+        <head>
+            <title>Vocational Rehabilitation Verification Letter - ${participantName}</title>
+            <style>
+                body { font-family: 'Georgia', 'Times New Roman', serif; color: #0f172a; line-height: 1.7; margin: 0; background: #f1f5f9; }
+                .letter-sheet { max-width: 760px; margin: 24px auto; background: white; padding: 56px 64px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+                .letterhead { border-bottom: 3px solid #0f766e; padding-bottom: 16px; margin-bottom: 28px; display: flex; justify-content: space-between; align-items: flex-end; }
+                .org-title { font-family: 'Inter', -apple-system, sans-serif; font-size: 26px; font-weight: 900; color: #0f172a; letter-spacing: -0.5px; }
+                .org-sub { font-family: 'Inter', -apple-system, sans-serif; font-size: 12px; color: #0f766e; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; margin-top: 4px; }
+                .meta-box { background: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #0f766e; padding: 14px 18px; border-radius: 6px; margin: 20px 0; font-family: 'Inter', -apple-system, sans-serif; font-size: 13.5px; }
+                .print-toolbar { position: sticky; top: 0; background: #1e293b; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; font-family: 'Inter', sans-serif; }
+                .print-btn { background: #0f766e; color: white; border: none; padding: 8px 18px; font-weight: 700; border-radius: 4px; cursor: pointer; }
+                @media print {
+                    @page { margin: 0.8in; }
+                    .print-toolbar { display: none !important; }
+                    .letter-sheet { box-shadow: none; margin: 0; padding: 0; }
+                    body { background: white; }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="print-toolbar">
+                <div><strong>🥾 Vocational Rehabilitation Workforce Verification Letter</strong></div>
+                <div>
+                    <button class="print-btn" onclick="window.print()">🖨️ Print Official Letter</button>
+                    <button class="print-btn" style="background: transparent; border: 1px solid #64748b; margin-left: 8px;" onclick="window.close()">✕ Close</button>
+                </div>
+            </div>
+            <div class="letter-sheet" contenteditable="true">
+                <div class="letterhead">
+                    <div>
+                        <div class="org-title">TURN90 • FIRST SHIFT</div>
+                        <div class="org-sub">Workforce Development & Re-Entry Program • ${location} Center</div>
+                    </div>
+                    <div style="text-align: right; font-family: 'Inter', sans-serif; font-size: 12px; color: #475569;">
+                        <strong>Date:</strong> ${todayStr}<br>
+                        <strong>Center:</strong> ${location}, SC
+                    </div>
+                </div>
+
+                <p><strong>To:</strong> South Carolina Vocational Rehabilitation Department (SCVRD)<br>
+                <strong>RE:</strong> Workforce Development Enrollment & Employment Transition Verification (Work Boots / Work Apparel Voucher)</p>
+
+                <div class="meta-box">
+                    <div><strong>Participant Name:</strong> ${participantName}</div>
+                    <div><strong>Date of Birth:</strong> ${dob} &nbsp;|&nbsp; <strong>Enrollment Date:</strong> ${enrolledDate}</div>
+                    <div><strong>Program Track:</strong> Turn90 / First Shift 8-Week Paid Workforce Development & Transitional Employment Program</div>
+                </div>
+
+                <p>To Whom It May Concern,</p>
+
+                <p>This letter serves as official verification that <strong>${participantName}</strong> is actively enrolled and participating in good standing in the <strong>Turn90 (First Shift) 8-Week Workforce Development and Transitional Employment Program</strong> at our ${location}, South Carolina center.</p>
+
+                <p>Turn90 provides structured daily workforce readiness training, cognitive-behavioral skill building, transitional work crew experience, and direct placement into full-time community employment. As part of his transition into full-time employment through our 8-week workforce development curriculum, <strong>${participantName}</strong> requires standard safety footwear (work boots) and appropriate work attire/clothing to meet employer safety and job-site requirements.</p>
+
+                <p>We respectfully request that South Carolina Vocational Rehabilitation provide <strong>${participantName}</strong> with voucher assistance for required <strong>work boots and work clothing</strong> to support his immediate transition into stable employment.</p>
+
+                <p>If you require any additional documentation regarding his attendance, workforce training schedule, or employer placement, please do not hesitate to contact our Case Management team directly.</p>
+
+                <p style="margin-top: 36px;">Sincerely,</p>
+
+                <div style="margin-top: 36px; border-top: 1px solid #94a3b8; width: 280px; padding-top: 6px; font-family: 'Inter', sans-serif; font-size: 13px;">
+                    <strong>${staffName}</strong><br>
+                    Case Management & Re-Entry Navigation<br>
+                    Turn90 / First Shift — ${location} Center
+                </div>
+            </div>
+        </body>
+        </html>
+    `);
+    printWin.document.close();
+};
 
 async function triggerSkillCatSync() {
     if (!confirm("This will launch the SkillCat background scraper to sync student engagement levels. It may take 15-30 seconds. Continue?")) return;
@@ -8026,8 +8200,20 @@ window.addReentryFileInput = function() {
 
 window.openCmEvalModal = function() {
     document.getElementById('cm-eval-session-title').value = '';
-    document.getElementById('cm-eval-cmname').value = '';
+    document.getElementById('cm-eval-cmname').value = window.currentUser?.name || '';
     document.getElementById('cm-eval-file').value = '';
+    const apEl = document.getElementById('cm-eval-apricot-id');
+    if (apEl) apEl.value = '';
+    const stEl = document.getElementById('cm-eval-session-type');
+    if (stEl) stEl.value = 'auto';
+
+    // Populate Apricot ID quick-lookup from active caseload
+    const lookupEl = document.getElementById('cm-eval-participant-lookup');
+    if (lookupEl && Array.isArray(window.caseloadData)) {
+        const withIds = window.caseloadData.filter(p => p.record_id);
+        lookupEl.innerHTML = '<option value="">🔍 Lookup ID...</option>' +
+            withIds.map(p => `<option value="${p.record_id}">Apricot #${p.record_id} (${p.location || 'SC'} • ${p.name})</option>`).join('');
+    }
     openModal('modal-cmeval');
 };
 
@@ -8036,6 +8222,8 @@ window.handleCmEvaluationSubmit = async function(e) {
     const token = localStorage.getItem('fs_token');
     const location = document.getElementById('cm-eval-location').value;
     const cmName = document.getElementById('cm-eval-cmname').value;
+    const apricotId = document.getElementById('cm-eval-apricot-id')?.value?.trim() || '';
+    const sessionType = document.getElementById('cm-eval-session-type')?.value || 'auto';
     const sessionTitle = document.getElementById('cm-eval-session-title').value;
     const fileInput = document.getElementById('cm-eval-file');
     const btn = document.getElementById('btn-run-cm-eval');
@@ -8046,12 +8234,14 @@ window.handleCmEvaluationSubmit = async function(e) {
     }
 
     btn.disabled = true;
-    btn.innerText = 'Uploading Audio & Evaluating CM Meeting Against Playbook...';
+    btn.innerText = 'Uploading Audio & Evaluating CM Meeting (Linking Apricot History)...';
 
     const formData = new FormData();
     formData.append('location', location);
     formData.append('cmName', cmName);
     formData.append('sessionTitle', sessionTitle);
+    if (apricotId) formData.append('apricotId', apricotId);
+    formData.append('sessionType', sessionType);
     
     for (let i = 0; i < fileInput.files.length; i++) {
         formData.append('media', fileInput.files[i]);
@@ -8066,8 +8256,8 @@ window.handleCmEvaluationSubmit = async function(e) {
         const data = await res.json();
         
         if (res.ok) {
-            alert('CM Evaluation complete!');
-            document.getElementById('form-cmeval')?.reset();
+            alert(`CM Evaluation complete! Score: ${data.result.total_cm_score} / 100`);
+            document.getElementById('form-evaluate-cm')?.reset();
             document.getElementById('cm-eval-file').value = '';
             closeModal('modal-cmeval');
             loadCmEvaluations();
@@ -8082,6 +8272,12 @@ window.handleCmEvaluationSubmit = async function(e) {
     }
 };
 
+window.cmApricotFilter = '';
+window.filterCmByApricotId = function(apricotId) {
+    window.cmApricotFilter = apricotId || '';
+    loadCmEvaluations();
+};
+
 window.loadCmEvaluations = async function() {
     const container = document.getElementById('pm-cmeval-list');
     if (!container) return;
@@ -8094,11 +8290,17 @@ window.loadCmEvaluations = async function() {
             fetch('/api/cm/evaluations/stats', { headers: { 'Authorization': `Bearer ${token}` } })
         ]);
         
-        const evals = await evalsRes.json();
+        const allEvals = await evalsRes.json();
         const stats = await statsRes.json();
+
+        const uniqueApricotIds = [...new Set(allEvals.map(e => e.apricot_id).filter(Boolean))];
+        const activeApricot = window.cmApricotFilter || '';
+        const evals = activeApricot
+            ? allEvals.filter(e => String(e.apricot_id) === String(activeApricot))
+            : allEvals;
         
         let html = `
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 16px;">
         `;
         
         if (stats.length === 0) {
@@ -8115,6 +8317,21 @@ window.loadCmEvaluations = async function() {
             });
         }
         html += `</div>`;
+
+        // Longitudinal Apricot ID Filter Bar
+        html += `
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px 14px; border-radius: 8px; margin-bottom: 18px; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <span style="font-size: 12px; font-weight: 800; color: #334155; text-transform: uppercase;">🔗 Longitudinal Client Journey (Apricot ID):</span>
+                    <button class="btn ${!activeApricot ? 'btn-primary' : 'btn-outline'}" style="font-size: 11.5px; padding: 4px 10px;" onclick="filterCmByApricotId('')">All Sessions (${allEvals.length})</button>
+                    ${uniqueApricotIds.map(aid => {
+                        const count = allEvals.filter(x => String(x.apricot_id) === String(aid)).length;
+                        return `<button class="btn ${String(activeApricot) === String(aid) ? 'btn-primary' : 'btn-outline'}" style="font-size: 11.5px; padding: 4px 10px;" onclick="filterCmByApricotId('${aid}')">🆔 Apricot #${aid} (${count} Session${count > 1 ? 's' : ''})</button>`;
+                    }).join('')}
+                </div>
+                <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 12px; color: #0f766e; border-color: #99f6e4; background: #f0fdfa;" onclick="printVocRehabVerificationLetter(null)">🥾 Print Voc Rehab / Work Boots Letter</button>
+            </div>
+        `;
         
         if (evals.length === 0) {
             html += `<p class="text-center text-slate">No Case Management evaluations generated yet.</p>`;
@@ -8126,24 +8343,44 @@ window.loadCmEvaluations = async function() {
         
         evals.forEach(ev => {
             const date = new Date(ev.created_at).toLocaleDateString();
+            const safeCmName = (ev.cm_name || '').replace(/'/g, "\\'");
+            const safeTitle = (ev.session_title || '').replace(/'/g, "\\'");
+            const safeApricot = (ev.apricot_id || '').replace(/'/g, "\\'");
+            const isFirst = ev.session_type === 'first_session';
+            const stageBadge = isFirst
+                ? `<span style="background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700;">1️⃣ First Session (Intake / Action Plan)</span>`
+                : `<span style="background: #f0fdf4; color: #166534; border: 1px solid #86efac; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700;">🔄 Weekly Follow-Up (45m Cadence)</span>`;
+            const apricotBadge = ev.apricot_id
+                ? `<span onclick="filterCmByApricotId('${safeApricot}')" style="cursor: pointer; background: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 800;" title="Click to view all sessions for Apricot #${ev.apricot_id}">🆔 Apricot #${ev.apricot_id}</span>`
+                : `<span style="background: #f1f5f9; color: #64748b; padding: 2px 8px; border-radius: 12px; font-size: 11px; cursor: pointer;" onclick="editCmEvaluationScore(${ev.id}, ${Number(ev.total_score)}, '${safeCmName}', '${safeTitle}', '', '${ev.session_type || 'follow_up'}')">+ Link Apricot ID</span>`;
+
+            const referralsList = (ev.referrals_detected || '').split(';').map(r => r.trim()).filter(Boolean);
+            const nextStepsList = (ev.next_session_recommendations || '').split(';').map(r => r.trim()).filter(Boolean);
             
             html += `
             <div class="card" style="border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; background: white;">
-                <div style="background: #f8fafc; padding: 12px 16px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+                <div style="background: #f8fafc; padding: 12px 16px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                     <div>
-                        <strong style="font-size: 15px; color: #0f172a;">${ev.cm_name} - ${ev.session_title}</strong>
-                        <div style="font-size: 12px; color: #64748b; margin-top: 2px;">${date} &bull; ${ev.location}</div>
-                    </div>
-                    <div style="display: flex; gap: 12px; align-items: center;">
-                        <div style="font-size: 20px; font-weight: 800; color: ${ev.total_score >= 80 ? '#16a34a' : (ev.total_score >= 65 ? '#ca8a04' : '#dc2626')};">
-                            ${ev.total_score} <span style="font-size: 12px; color: #64748b; font-weight: normal;">/ 100</span>
+                        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px;">
+                            <strong style="font-size: 15px; color: #0f172a;">${ev.cm_name} — ${ev.session_title}</strong>
+                            ${apricotBadge}
+                            ${stageBadge}
                         </div>
-                        <button class="btn btn-outline" style="border-color: #ef4444; color: #ef4444; padding: 4px 8px; font-size: 11px;" onclick="deleteCmEvaluation(${ev.id})">Delete</button>
+                        <div style="font-size: 12px; color: #64748b; margin-top: 2px;">${date} &bull; 📍 ${ev.location}</div>
+                    </div>
+                    <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                        <button class="btn btn-outline" style="padding: 5px 10px; font-size: 11.5px;" onclick="printCmEvaluation(${ev.id})">🖨️ Print Report</button>
+                        <button class="btn btn-outline" style="padding: 5px 10px; font-size: 11.5px; color: #0f766e; border-color: #99f6e4; background: #f0fdfa;" onclick="downloadCmEvaluationTranscript(${ev.id}, '${safeTitle}', '${safeCmName}')">📥 Download Transcript</button>
+                        <button class="btn btn-outline" style="padding: 5px 10px; font-size: 11.5px; color: #4338ca; border-color: #c7d2fe;" onclick="editCmEvaluationScore(${ev.id}, ${Number(ev.total_score)}, '${safeCmName}', '${safeTitle}', '${safeApricot}', '${ev.session_type || 'follow_up'}')">✏️ Edit Score / ID</button>
+                        <button class="btn btn-outline" style="border-color: #ef4444; color: #ef4444; padding: 5px 10px; font-size: 11.5px;" onclick="deleteCmEvaluation(${ev.id})">🗑️ Delete</button>
+                        <div style="font-size: 20px; font-weight: 800; margin-left: 6px; color: ${ev.total_score >= 80 ? '#16a34a' : (ev.total_score >= 65 ? '#ca8a04' : '#dc2626')};">
+                            ${Number(ev.total_score).toFixed(1)} <span style="font-size: 12px; color: #64748b; font-weight: normal;">/ 100</span>
+                        </div>
                     </div>
                 </div>
                 
                 <div style="padding: 16px;">
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 15px;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin-bottom: 15px;">
                         <div style="background: #f1f5f9; padding: 8px 12px; border-radius: 6px;">
                             <div style="font-size: 11px; color: #64748b; font-weight: 600; text-transform: uppercase;">Playbook Adherence</div>
                             <div style="font-size: 14px; font-weight: 700; color: #0f172a;">${ev.playbook_adherence} / 5</div>
@@ -8153,28 +8390,55 @@ window.loadCmEvaluations = async function() {
                             <div style="font-size: 14px; font-weight: 700; color: #0f172a;">${ev.cbt_application} / 5</div>
                         </div>
                         <div style="background: #f1f5f9; padding: 8px 12px; border-radius: 6px;">
+                            <div style="font-size: 11px; color: #64748b; font-weight: 600; text-transform: uppercase;">Goal Setting</div>
+                            <div style="font-size: 14px; font-weight: 700; color: #0f172a;">${ev.goal_setting || 4.5} / 5</div>
+                        </div>
+                        <div style="background: #f1f5f9; padding: 8px 12px; border-radius: 6px;">
                             <div style="font-size: 11px; color: #64748b; font-weight: 600; text-transform: uppercase;">Empathy / Neutrality</div>
                             <div style="font-size: 14px; font-weight: 700; color: #0f172a;">${ev.empathy_and_neutrality} / 5</div>
                         </div>
                     </div>
                     
-                    <div style="background: #eef2ff; border-left: 4px solid #6366f1; padding: 12px; border-radius: 4px; margin-bottom: 15px;">
-                        <div style="font-weight: 700; color: #4338ca; font-size: 12px; text-transform: uppercase; margin-bottom: 6px;">Apricot Meeting Notes (Ready to Copy)</div>
+                    <div style="background: #eef2ff; border-left: 4px solid #6366f1; padding: 12px; border-radius: 4px; margin-bottom: 12px;">
+                        <div style="font-weight: 700; color: #4338ca; font-size: 12px; text-transform: uppercase; margin-bottom: 6px;">Apricot Meeting Notes (Ready to Copy — [Client] De-Identified)</div>
                         <div style="font-size: 13.5px; color: #312e81; white-space: pre-wrap;">${ev.apricot_notes || 'No apricot notes generated.'}</div>
                     </div>
 
+                    ${referralsList.length > 0 ? `
+                    <div style="background: #f0fdfa; border: 1px solid #99f6e4; border-left: 4px solid #0f766e; padding: 10px 14px; border-radius: 4px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                        <div>
+                            <div style="font-weight: 800; color: #0f766e; font-size: 11.5px; text-transform: uppercase; margin-bottom: 4px;">🧭 Auto-Logged Session Referrals</div>
+                            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                                ${referralsList.map(ref => `<span style="background: white; color: #115e59; border: 1px solid #5eead4; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600;">✅ ${ref}</span>`).join('')}
+                            </div>
+                        </div>
+                        <button class="btn btn-outline" style="font-size: 11px; padding: 4px 10px; color: #0f766e; border-color: #0f766e; background: white;" onclick="printVocRehabVerificationLetter(null)">🥾 Print Voc Rehab Boots Letter</button>
+                    </div>
+                    ` : ''}
+
+                    ${nextStepsList.length > 0 ? `
+                    <div style="background: #fffbeb; border: 1px solid #fde68a; border-left: 4px solid #d97706; padding: 10px 14px; border-radius: 4px; margin-bottom: 15px;">
+                        <div style="font-weight: 800; color: #b45309; font-size: 11.5px; text-transform: uppercase; margin-bottom: 4px;">🗓️ Next Session Gameplan (Follow Up Next Week)</div>
+                        <ul style="margin: 0; padding-left: 18px; font-size: 13px; color: #78350f;">
+                            ${nextStepsList.map(step => `<li style="margin-bottom: 3px;">${step}</li>`).join('')}
+                        </ul>
+                    </div>
+                    ` : ''}
+
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                         <div>
-                            <h4 style="font-size: 13px; color: #0f766e; margin-bottom: 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px;">Summary & Observations</h4>
+                            <h4 style="font-size: 13px; color: #0f766e; margin-bottom: 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px;">Summary, Observations & Coaching Rewrites</h4>
                             <div class="markdown-body" style="font-size: 13px; color: #334155;">${marked.parse(ev.summary_markdown || 'No summary.')}</div>
                         </div>
                         <div>
-                            <h4 style="font-size: 13px; color: #b45309; margin-bottom: 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px;">Coaching Feedback</h4>
+                            <h4 style="font-size: 13px; color: #b45309; margin-bottom: 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px;">Timestamped Coaching Feedback ("What to Ask Instead")</h4>
                             <ul style="padding-left: 16px; margin: 0; font-size: 13px; color: #334155;">
-                                ${(ev.feedback || '').split(';').filter(f => f.trim()).map(f => `<li style="margin-bottom: 4px;">${f.trim()}</li>`).join('')}
+                                ${(ev.feedback || '').split(';').filter(f => f.trim()).map(f => `<li style="margin-bottom: 6px;">${f.trim()}</li>`).join('')}
                             </ul>
                         </div>
                     </div>
+                    <div id="cm-eval-markdown-${ev.id}" class="hidden">${encodeURIComponent(ev.summary_markdown || '')}</div>
+                    <div id="cm-eval-transcript-${ev.id}" class="hidden">${encodeURIComponent(ev.transcript_text || ev.summary_markdown || '')}</div>
                 </div>
             </div>
             `;
@@ -8185,6 +8449,96 @@ window.loadCmEvaluations = async function() {
         
     } catch (err) {
         container.innerHTML = `<p class="text-center text-danger">Error loading CM evaluations: ${err.message}</p>`;
+    }
+};
+
+window.downloadCmEvaluationTranscript = function(id, sessionTitle, cmName) {
+    const rawEl = document.getElementById(`cm-eval-transcript-${id}`) || document.getElementById(`cm-eval-markdown-${id}`);
+    if (!rawEl) return alert('No transcript text available for this evaluation.');
+    const textContent = decodeURIComponent(rawEl.innerHTML || '');
+    const header = `TURN90 CASE MANAGEMENT SESSION TRANSCRIPT & COACHING LOG ([Client] Redacted)\nSession: ${sessionTitle || 'CM Session'}\nCase Manager: ${cmName || 'Case Manager'}\n====================================================================\n\n`;
+    const blob = new Blob([header + textContent], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const cleanName = `${cmName || 'CM'}_${sessionTitle || 'Session'}`.replace(/[^a-zA-Z0-9_-]/g, '_');
+    a.href = url;
+    a.download = `${cleanName}_Transcript.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+};
+
+window.printCmEvaluation = function(id) {
+    const rawData = document.getElementById(`cm-eval-markdown-${id}`);
+    if (!rawData) return;
+    const markdownText = decodeURIComponent(rawData.innerHTML);
+    const htmlContent = marked.parse(markdownText);
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+        <html>
+        <head>
+            <title>Case Management Evaluation Report</title>
+            <style>
+                body { font-family: 'Inter', -apple-system, sans-serif; padding: 0; color: #1e293b; line-height: 1.6; margin: 0; background: #f1f5f9; }
+                .content-wrapper { max-width: 850px; margin: 20px auto; background: white; padding: 40px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+                h1, h2, h3 { color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; }
+                .print-toolbar { position: sticky; top: 0; background: #1e293b; color: white; padding: 10px 18px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; }
+                .print-btn { background: #0f766e; color: white; border: none; padding: 8px 18px; font-weight: 700; border-radius: 4px; cursor: pointer; }
+                @media print {
+                    @page { margin: 1in; }
+                    .print-toolbar { display: none !important; }
+                    .content-wrapper { box-shadow: none; margin: 0; padding: 0; }
+                    body { background: white; }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="print-toolbar">
+                <div><strong>Case Management Evaluation Report</strong></div>
+                <div>
+                    <button class="print-btn" onclick="window.print()">🖨️ Print Report</button>
+                    <button class="print-btn" style="background: transparent; border: 1px solid #64748b; margin-left: 10px;" onclick="window.close()">✕ Close</button>
+                </div>
+            </div>
+            <div class="content-wrapper">${htmlContent}</div>
+        </body>
+        </html>
+    `);
+    printWindow.document.close();
+};
+
+window.editCmEvaluationScore = async function(id, currentScore, currentCmName, currentTitle, currentApricotId, currentSessionType) {
+    const newScoreStr = prompt('Supervisor Score Override — Enter updated Total CM Score (0–100):', currentScore);
+    if (newScoreStr === null) return;
+    const newScore = Number(newScoreStr);
+    if (isNaN(newScore) || newScore < 0 || newScore > 100) {
+        return alert('Please enter a valid score between 0 and 100.');
+    }
+    const newApricotId = prompt('Participant Apricot Record ID (links longitudinal sessions):', currentApricotId || '');
+    if (newApricotId === null) return;
+
+    try {
+        const token = localStorage.getItem('fs_token');
+        const res = await fetch(`/api/cm/evaluations/${id}/score`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                totalScore: newScore,
+                cmName: currentCmName,
+                sessionTitle: currentTitle,
+                apricotId: newApricotId.trim() || null,
+                sessionType: currentSessionType
+            })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to update evaluation');
+        loadCmEvaluations();
+    } catch (err) {
+        alert('Error updating CM evaluation: ' + err.message);
     }
 };
 
