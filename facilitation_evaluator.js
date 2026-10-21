@@ -38,7 +38,7 @@ try { db.exec("ALTER TABLE class_facilitation_evaluations ADD COLUMN class_headc
 try { db.exec("ALTER TABLE class_facilitation_evaluations ADD COLUMN transcript_text TEXT;"); } catch (e) {}
 try { db.exec("ALTER TABLE class_facilitation_evaluations ADD COLUMN detected_session_type TEXT DEFAULT 'class';"); } catch (e) {}
 
-// Self-heal any existing evaluations where total_score was disproportionately miscalculated (e.g., 27.5 despite 4.5-5.0 sub-scores)
+// Self-heal any existing evaluations where total_score was severely miscalculated (e.g. broken 27.5 score)
 try {
     const existingRows = db.prepare(`
         SELECT id, total_score, modeling_neutrality_score, lesson_plan_adherence_score,
@@ -63,8 +63,9 @@ try {
         if (subVals.length > 0) {
             const avg = subVals.reduce((a, b) => a + b, 0) / subVals.length;
             const expected100 = Math.round(avg * 20 * 10) / 10;
-            if (Math.abs(Number(row.total_score) - expected100) > 12) {
-                console.log(`[Class Evaluation Self-Heal] Updating Eval #${row.id} from ${row.total_score} -> ${expected100}`);
+            // Only fix if total_score was severely corrupted (e.g. under 40 while subscores average > 3.0)
+            if (Number(row.total_score) < 40 && expected100 >= 60) {
+                console.log(`[Class Evaluation Self-Heal] Updating severely broken Eval #${row.id} from ${row.total_score} -> ${expected100}`);
                 updateScoreStmt.run(expected100, row.id);
             }
         }
@@ -156,9 +157,57 @@ function sanitizeLanguageFeedback(evaluation) {
     return evaluation;
 }
 
+// Strict Center-to-Staff Isolation Mapping
+const KNOWN_CENTER_STAFF = {
+    'spartanburg': {
+        centerName: 'Spartanburg',
+        primaryFacilitators: ['TB', 'Terry Brooks'],
+        foreignStaffNames: ['matt', 'benjamin', 'justin', 'evans', 'diyoung', 'dantzler', 'jenn', 'jennifer']
+    },
+    'columbia': {
+        centerName: 'Columbia',
+        primaryFacilitators: ['Diyoung Dantzler', 'Jenn'],
+        foreignStaffNames: ['matt', 'benjamin', 'justin', 'evans', 'tb', 'terry brooks']
+    },
+    'charleston': {
+        centerName: 'Charleston',
+        primaryFacilitators: ['Matt Benjamin', 'Justin Evans'],
+        foreignStaffNames: ['diyoung', 'dantzler', 'jenn', 'jennifer', 'tb', 'terry brooks']
+    }
+};
+
 /**
- * Deterministic Total Score Calculation (Fixes the "27.5 score with 4.5/5.0 sub-scores" bug).
- * Computes the mathematical 0-100 score directly from the 0-5 rubric category sub-scores.
+ * Ensures a session at one center is NEVER attributed to staff from another center
+ * when participants casually mention third-party names during class discussion.
+ */
+function sanitizeFacilitatorName(location, detectedName, defaultName) {
+    if (!detectedName || typeof detectedName !== 'string') return defaultName || 'Staff Facilitator';
+    const locKey = (location || '').toLowerCase().trim();
+    const centerInfo = KNOWN_CENTER_STAFF[locKey];
+
+    // Check if the detected name contains any staff member known to belong to a DIFFERENT center
+    if (centerInfo) {
+        const lowerDetected = detectedName.toLowerCase();
+        const hasForeignStaff = centerInfo.foreignStaffNames.some(foreign => lowerDetected.includes(foreign));
+        if (hasForeignStaff) {
+            console.log(`[Class Evaluation] Detected cross-center facilitator leakage: "${detectedName}" for center "${location}". Reverting to center staff.`);
+            return defaultName || `${centerInfo.primaryFacilitators[0]} (${centerInfo.centerName})`;
+        }
+    }
+
+    // Clean up generic placeholders or prompt echoes
+    const lower = detectedName.toLowerCase();
+    if (lower === 'staff facilitator' || lower.includes('audibly identified') || lower.startsWith('staff facilitator (')) {
+        return defaultName || detectedName;
+    }
+
+    return detectedName.trim();
+}
+
+/**
+ * Calibrated Deterministic Total Score Calculation.
+ * Computes mathematical 0-100 score directly from the 0-5 rubric sub-scores.
+ * Scale: 3.5 = 70.0, 4.0 = 80.0, 4.5 = 90.0, 5.0 = 100.0.
  */
 function computeDeterministicClassScore(evaluation) {
     if (!evaluation || !evaluation.scores || typeof evaluation.scores !== 'object') {
@@ -174,12 +223,12 @@ function computeDeterministicClassScore(evaluation) {
     }
 
     const avgOutOf5 = numericSubScores.reduce((sum, v) => sum + v, 0) / numericSubScores.length;
-    const calculatedOutOf100 = Math.round(avgOutOf5 * 20 * 10) / 10; // e.g., 4.75 -> 95.0
+    const calculatedOutOf100 = Math.round(avgOutOf5 * 20 * 10) / 10; // e.g., 3.9 -> 78.0
 
     const rawTotal = Number(evaluation.total_score);
-    // If rawTotal is missing, NaN, out of range, or deviates by more than 6 points from the actual rubric sub-scores (like 27.5 vs 95), use the deterministic score!
-    if (isNaN(rawTotal) || rawTotal <= 0 || rawTotal > 100 || Math.abs(rawTotal - calculatedOutOf100) > 6) {
-        console.log(`[Class Evaluation] Correcting disproportionate LLM total_score (${evaluation.total_score}) -> deterministic rubric score (${calculatedOutOf100})`);
+    // Align with deterministic rubric calculation if rawTotal is invalid, missing, or deviates by > 8 points
+    if (isNaN(rawTotal) || rawTotal <= 0 || rawTotal > 100 || Math.abs(rawTotal - calculatedOutOf100) > 8) {
+        console.log(`[Class Evaluation] Aligning LLM total_score (${evaluation.total_score}) -> rubric calculated score (${calculatedOutOf100})`);
         evaluation.total_score = calculatedOutOf100;
     } else {
         evaluation.total_score = Math.round(rawTotal * 10) / 10;
@@ -192,9 +241,26 @@ function getFacilitatorScoringContext() {
     try {
         const guidePath = path.join(__dirname, 'data', 'Facilitator_Scoring_Guide.md');
         const guide = fs.readFileSync(guidePath, 'utf8');
-        
-        const curriculumPath = path.join(__dirname, 'cbt_curriculum_exact.json');
-        const curriculum = fs.readFileSync(curriculumPath, 'utf8');
+
+        const CBT_CURRICULUM_FRAMEWORK = `
+TURN90 CBT CURRICULUM OVERVIEW & CORE METHODOLOGY:
+Turn90 uses evidence-based Cognitive Behavioral Training across 8 Core Modules:
+- Module 1: Thinking Controls Behavior (DMT: Decision Making Tool, STAC: Situation -> Thinking -> Action -> Consequences, Behavior Chains)
+- Module 2: Managing Emotions & Recognizing Warning Signs (Physical sensations, identifying triggers, Stop Signs, cooling down)
+- Module 3: Recognizing Destructive Thinking (Blaming, Entitlement, Excuses, Overreacting; Upgrading Thoughts to Helpful Beliefs)
+- Module 4: Interpersonal Communication & Social Skills (Clear listening, assertive communication, body language, non-defensive responses)
+- Module 5: Problem Solving (Generating alternatives, evaluating pros/cons, picking the best long-term option)
+- Module 6: Control & 5 Worries (Sorting Controllable vs Uncontrollable, Process Goals vs Outcome Goals, emotional goals)
+- Module 7: Relationships & Prosocial Support (Evaluating associate influences, boundary setting, positive support networks)
+- Module 8: Reentry Action Planning & Relapse Prevention (High-risk situations, emergency escape plans, ongoing stability)
+
+FACILITATION PROTOCOL EXPECTATIONS:
+1. Pacing & Time Management: Homework review MUST not exceed 20 minutes (2 min/person). Class should finish main activity with all participants.
+2. Rule Enforcement: Point board used in real-time, addresses disengagement (heads down, side talk) using core correctional practices.
+3. Roleplay Protocol: Set the Stage, identify the situation, assign clear co-actor roles, "Begin with the End in Mind" (confirm the exit action BEFORE calling "Action"), call "Freeze" if off track, and conduct immediate positive/constructive debrief.
+4. Reflective Listening: Balance simple reflections (acknowledgment) with complex reflections (paraphrasing, reframing, double-sided change talk).
+5. Avoiding Overdirecting: Ask guided questions rather than giving lectures or lecturing answers.
+`;
 
         return `
 ${LANGUAGE_POLICY}
@@ -202,20 +268,18 @@ ${LANGUAGE_POLICY}
 You are the Lead Facilitator Supervisor and Quality Assurance Director for Turn90 / First Shift.
 You are evaluating a classroom session using the OFFICIAL Turn90 CBT Facilitation Scoring Guide (provided below).
 
-=== OFFICIAL FACILITATOR SCORING GUIDE ===
+=== OFFICIAL FACILITATOR SCORING GUIDE (20-ITEM STANDARD) ===
 ${guide}
 
-=== CURRICULUM LESSON PLANS (REFERENCE FOR LESSON ADHERENCE) ===
-${curriculum}
+=== TURN90 CBT CURRICULUM FRAMEWORK ===
+${CBT_CURRICULUM_FRAMEWORK}
 
 INSTRUCTIONS:
-Evaluate the facilitator based strictly on the above 20-item Scoring Guide. Reference the curriculum lesson plan to judge if they followed the script and setup correctly for the requested module.
-Provide detailed coaching feedback based on specific timestamps and behaviors observed, including concrete "What to Ask Instead" example scripts.
-
-${LANGUAGE_POLICY}
+Evaluate the facilitator based strictly on the 20-item Scoring Guide. Reference the CBT curriculum framework to judge adherence and setup.
+Provide detailed, calibrated coaching feedback based on specific timestamps and behaviors observed, including concrete "What to Ask Instead" example scripts.
 `;
     } catch (e) {
-        console.warn("Could not load official scoring guide or curriculum, using fallback prompt.");
+        console.warn("Could not load official scoring guide, using fallback prompt.");
         return `You are evaluating a classroom session transcript using the Turn90 CBT Facilitation Scoring Guide...\n${LANGUAGE_POLICY}`; 
     }
 }
@@ -233,17 +297,39 @@ async function evaluateClassTranscript(location, sessionTitle, facilitatorName, 
 
     const prompt = `${getFacilitatorScoringContext()}
 
-CRITICAL ISOLATION & OBJECTIVITY MANDATES:
+================================================================================
+CRITICAL SCORING CALIBRATION & RUBRIC DISTRIBUTION:
+================================================================================
+You are an objective Quality Assurance Director. Your evaluations must reflect genuine, calibrated performance.
+DO NOT inflate scores into the 90s. In our program, a 90+ score is reserved strictly for exceptional mastery.
+
+THE 1.0 TO 5.0 RATING SCALE & BENCHMARKS:
+- 5.0 (Exemplary / Mastery — 95–100%): Flawless, textbook execution. Demonstrates advanced complex reflections, seamless buy-in, perfect roleplay staging ("Begin with the End in Mind"), and masterful group engagement. This is rare and must be earned with clear evidence.
+- 4.0 – 4.4 (Good / Proficient — 80–88%): Strong, competent delivery. Solid adherence to the lesson, good pacing, positive climate. Has minor areas for refinement (e.g. relied on simple reflections instead of complex, or minor overdirecting on one question).
+- 3.3 – 3.9 (Acceptable Baseline — 66–78%): Meets baseline standard. Got through the lesson, but has noticeable flaws (e.g. homework review ran over 20 minutes, co-actor instructions were unclear in roleplay, or struggled with buy-in). MOST NORMAL, EVERYDAY SESSIONS WITH REAL-WORLD MISTAKES LAND IN THIS RANGE (74–84%).
+- 2.5 – 3.2 (Needs Improvement — 50–64%): Noticeable inconsistency. Lectured instead of facilitating, rushed or skipped the main activity, lost time management, or struggled to keep group on track.
+- 1.0 – 2.4 (Unsatisfactory — 20–48%): Did not follow the lesson plan or violated core standards.
+
+SCORING REALITY CHECK:
+- If you identify specific areas for improvement (e.g. homework pacing went long, lacked complex reflections, missed "Begin with End in Mind"), the corresponding subscore MUST be lowered (e.g. 3.0 to 3.5).
+- A session with typical areas for improvement should realistically score in the 75–85 range.
+- Differentiate each category based on actual evidence.
+
+================================================================================
+CRITICAL ISOLATION MANDATES (STRICT CENTER & FACILITATOR SEPARATION):
+================================================================================
 1. STRICT CENTER SEPARATION:
    You are evaluating ONLY the cohort at ${location}.
    Each Turn90 Center (Charleston, Columbia, Spartanburg) operates with complete autonomy.
    Do NOT compare, reference, or pull in information, participants, or staff from other centers. Keep this report 100% focused on ${location}.
+   Spartanburg is facilitated by Spartanburg staff (TB). Columbia is facilitated by Columbia staff (Diyoung, Jenn). Charleston is facilitated by Charleston staff (Matt, Justin).
 
 2. STRICT FACILITATOR SEPARATION:
    You are evaluating ONLY the individual facilitator leading this specific session.
-   Do NOT grade or penalize them on what another facilitator did in another session or shift (e.g., do not blend morning and afternoon facilitators).
+   The scheduled facilitator is: "${facilitatorName}".
+   Under NO circumstances grade, critique, or attribute this class to any third-party staff member mentioned in casual conversation or participant anecdotes (e.g., if someone says "Mr. Matt said...", "Justin told us...", "In Diyoung's class...").
+   Do NOT change "facilitator_name" to a mentioned staff member. Only change it if the lead instructor explicitly introduces themselves with their actual name in the opening minutes.
    Evaluate purely their individual facilitation skills, neutrality, pacing, and CBT delivery during this specific session.
-   If the facilitator introduces themselves by name or is addressed by name, record their actual name in "facilitator_name". If not mentioned, use "${facilitatorName}".
 
 3. ZERO EXTERNAL / MANUAL HALLUCINATIONS:
    Every single observation, timestamp, score, and coaching recommendation MUST come DIRECTLY and EXCLUSIVELY from what is in THIS transcript.
@@ -266,18 +352,18 @@ Provide a valid JSON object with the following structure:
   "facilitator_name": "${facilitatorName}",
   "detected_session_type": "class",
   "estimated_headcount": ${classHeadcount || 4},
-  "total_score": 90,
+  "total_score": 80.0,
   "scores": {
-    "modeling_neutrality": 4.5,
-    "lesson_plan_adherence": 4.5,
-    "reflective_listening": 4.5,
-    "avoiding_confrontation": 5.0,
-    "time_management": 4.5,
+    "modeling_neutrality": 4.0,
+    "lesson_plan_adherence": 3.8,
+    "reflective_listening": 3.5,
+    "avoiding_confrontation": 4.2,
+    "time_management": 3.5,
     "enthusiasm": 4.5,
-    "group_engagement": 5.0
+    "group_engagement": 4.0
   },
   "observed_strengths": [
-    "Specific strength with timestamp/quote..."
+    "[Timestamp] Specific strength with quote..."
   ],
   "areas_for_improvement": [
     "[Timestamp] Quote/Context -> What Facilitator Said -> Try Asking This Next Time: 'Exact CBT/MI/SYNAPSE alternative question...'"
@@ -308,16 +394,13 @@ ${transcriptText}
     // Apply language & operational policy sanitizer
     sanitizeLanguageFeedback(evaluation);
 
-    // Enforce deterministic score math (no more 27.5 bug or 88 fallback)
+    // Enforce deterministic score math (no more 27.5 bug or inflated high 90s)
     const finalTotalScore = computeDeterministicClassScore(evaluation);
     if (isNaN(finalTotalScore) || finalTotalScore <= 0) {
         throw new Error("Evaluation produced an invalid score. Transcript may be empty or unintelligible.");
     }
 
-    const savedFacilitator = (evaluation.facilitator_name && evaluation.facilitator_name !== 'Staff Facilitator')
-        ? evaluation.facilitator_name
-        : (facilitatorName || 'Staff Facilitator');
-
+    const savedFacilitator = sanitizeFacilitatorName(location, evaluation.facilitator_name, facilitatorName);
     const savedHeadcount = classHeadcount || evaluation.estimated_headcount || null;
     const detectedType = evaluation.detected_session_type || 'class';
 
@@ -337,10 +420,10 @@ ${transcriptText}
         sessionTitle,
         savedFacilitator,
         finalTotalScore,
-        evaluation.scores?.modeling_neutrality ?? 4.5,
-        evaluation.scores?.lesson_plan_adherence ?? 4.5,
-        evaluation.scores?.reflective_listening ?? 4.5,
-        evaluation.scores?.avoiding_confrontation ?? 5,
+        evaluation.scores?.modeling_neutrality ?? 4.0,
+        evaluation.scores?.lesson_plan_adherence ?? 3.8,
+        evaluation.scores?.reflective_listening ?? 3.5,
+        evaluation.scores?.avoiding_confrontation ?? 4.0,
         evaluation.detailed_summary_markdown || '',
         JSON.stringify(evaluation.scores || {}),
         (evaluation.areas_for_improvement || []).join('; '),
@@ -354,38 +437,9 @@ ${transcriptText}
 }
 
 async function uploadFacilitationResources(fileManager) {
-    const resourcesDir = path.join(__dirname, '..', 'Facilitation Scoring');
-    if (!fs.existsSync(resourcesDir)) return [];
-    
-    const files = fs.readdirSync(resourcesDir);
-    const uploadedResources = [];
-    
-    for (const file of files) {
-        const lower = file.toLowerCase();
-        // ONLY upload pure rubrics and methodology standards (e.g. Synapse, Neutrality).
-        // NEVER upload training workbooks that contain mock case studies (e.g. Marcus, practice cases) which cause AI hallucinations!
-        const isExcluded = lower.includes('workbook') || lower.includes('lesson plan') || lower.includes('case') || lower.includes('sample') || lower.includes('module');
-        if (!isExcluded && (lower.endsWith('.pdf') || lower.endsWith('.txt') || lower.endsWith('.md')) && 
-            (lower.includes('guide') || lower.includes('synapse') || lower.includes('scoring') || lower.includes('neutrality'))) {
-            const filePath = path.join(resourcesDir, file);
-            console.log(`[Class Evaluation] Uploading background resource file ${file}...`);
-            try {
-                const uploadResult = await fileManager.uploadFile(filePath, {
-                    mimeType: lower.endsWith('.pdf') ? 'application/pdf' : 'text/plain',
-                    displayName: file.replace(/[^a-zA-Z0-9]/g, '_').substring(0, 40)
-                });
-                uploadedResources.push({
-                    fileUri: uploadResult.file.uri,
-                    mimeType: uploadResult.file.mimeType,
-                    name: uploadResult.file.name // To delete later
-                });
-            } catch (err) {
-                console.error(`[Class Evaluation] Failed to upload resource ${file}:`, err.message);
-            }
-        }
-    }
-    
-    return uploadedResources;
+    // Intentionally return empty: The 20-item Facilitator Scoring Guide and Turn90 CBT framework are directly embedded in the prompt.
+    // Uploading external PDFs caused Gemini's multimodal attention to blend sample workbook transcripts/cases with the audio recording.
+    return [];
 }
 
 async function evaluateClassMedia(location, sessionTitle, facilitatorName, mediaFiles, classHeadcount = null) {
@@ -405,7 +459,7 @@ async function evaluateClassMedia(location, sessionTitle, facilitatorName, media
             // Already uploaded to Gemini
             uploadResults.push(mf);
         } else {
-            // Guardrail against empty / 0-byte recordings (prevents phantom 88 score)
+            // Guardrail against empty / 0-byte recordings (prevents phantom score)
             if (!mf.path || !fs.existsSync(mf.path)) {
                 throw new Error("Audio/video file is missing or could not be read.");
             }
@@ -444,17 +498,39 @@ Facilitator: ${facilitatorName}
 
 ${getFacilitatorScoringContext()}
 
-CRITICAL ISOLATION & OBJECTIVITY MANDATES:
+================================================================================
+CRITICAL SCORING CALIBRATION & RUBRIC DISTRIBUTION:
+================================================================================
+You are an objective Quality Assurance Director. Your evaluations must reflect genuine, calibrated performance.
+DO NOT inflate scores into the 90s. In our program, a 90+ score is reserved strictly for exceptional mastery.
+
+THE 1.0 TO 5.0 RATING SCALE & BENCHMARKS:
+- 5.0 (Exemplary / Mastery — 95–100%): Flawless, textbook execution. Demonstrates advanced complex reflections, seamless buy-in, perfect roleplay staging ("Begin with the End in Mind"), and masterful group engagement. This is rare and must be earned with clear evidence.
+- 4.0 – 4.4 (Good / Proficient — 80–88%): Strong, competent delivery. Solid adherence to the lesson, good pacing, positive climate. Has minor areas for refinement (e.g. relied on simple reflections instead of complex, or minor overdirecting on one question).
+- 3.3 – 3.9 (Acceptable Baseline — 66–78%): Meets baseline standard. Got through the lesson, but has noticeable flaws (e.g. homework review ran over 20 minutes, co-actor instructions were unclear in roleplay, or struggled with buy-in). MOST NORMAL, EVERYDAY SESSIONS WITH REAL-WORLD MISTAKES LAND IN THIS RANGE (74–84%).
+- 2.5 – 3.2 (Needs Improvement — 50–64%): Noticeable inconsistency. Lectured instead of facilitating, rushed or skipped the main activity, lost time management, or struggled to keep group on track.
+- 1.0 – 2.4 (Unsatisfactory — 20–48%): Did not follow the lesson plan or violated core standards.
+
+SCORING REALITY CHECK:
+- If you identify specific areas for improvement (e.g. homework pacing went long, lacked complex reflections, missed "Begin with End in Mind"), the corresponding subscore MUST be lowered (e.g. 3.0 to 3.5).
+- A session with typical areas for improvement should realistically score in the 75–85 range.
+- Differentiate each category based on actual evidence.
+
+================================================================================
+CRITICAL ISOLATION MANDATES (STRICT CENTER & FACILITATOR SEPARATION):
+================================================================================
 1. STRICT CENTER SEPARATION:
    You are evaluating ONLY the cohort at ${location}.
    Each Turn90 Center (Charleston, Columbia, Spartanburg) operates with complete autonomy.
    Do NOT compare, reference, or pull in information, participants, or staff from other centers. Keep this report 100% focused on ${location}.
+   Spartanburg is facilitated by Spartanburg staff (TB). Columbia is facilitated by Columbia staff (Diyoung, Jenn). Charleston is facilitated by Charleston staff (Matt, Justin).
 
 2. STRICT FACILITATOR SEPARATION:
    You are evaluating ONLY the individual facilitator leading this specific session recording.
-   Do NOT grade or penalize them on what another facilitator did in another session or shift (e.g., do not blend morning and afternoon facilitators).
+   The scheduled facilitator is: "${facilitatorName}".
+   Under NO circumstances grade, critique, or attribute this class to any third-party staff member mentioned in casual conversation or participant anecdotes (e.g., if someone says "Mr. Matt said...", "Justin told us...", "In Diyoung's class...").
+   Do NOT change "facilitator_name" to a mentioned staff member. Only change it if the lead instructor explicitly introduces themselves with their actual name in the opening minutes.
    Evaluate purely their individual facilitation skills, neutrality, pacing, and CBT delivery during this specific recording.
-   If the facilitator introduces themselves by name or is addressed by name in the audio, record their actual name in the "facilitator_name" field. If not mentioned, use "${facilitatorName}".
 
 3. ZERO EXTERNAL / MANUAL HALLUCINATIONS:
    Every single observation, timestamp, score, and coaching recommendation MUST come DIRECTLY and EXCLUSIVELY from what is audibly spoken and heard in THIS recording.
@@ -486,19 +562,19 @@ You MUST provide your response in three distinct parts:
 Part 1: The Numerical Data (JSON block)
 \`\`\`json
 {
-  "facilitator_name": "Audibly identified facilitator name, or '${facilitatorName}'",
+  "facilitator_name": "${facilitatorName}",
   "audio_empty_or_invalid": false,
   "detected_session_type": "class",
   "estimated_headcount": ${classHeadcount || 4},
-  "total_score": 90,
+  "total_score": 80.0,
   "scores": {
-    "modeling_neutrality": 4.5,
-    "lesson_plan_adherence": 4.5,
-    "reflective_listening": 4.5,
-    "avoiding_confrontation": 5.0,
-    "time_management": 4.5,
-    "enthusiasm": 5.0,
-    "group_engagement": 5.0
+    "modeling_neutrality": 4.0,
+    "lesson_plan_adherence": 3.8,
+    "reflective_listening": 3.5,
+    "avoiding_confrontation": 4.2,
+    "time_management": 3.5,
+    "enthusiasm": 4.5,
+    "group_engagement": 4.0
   },
   "observed_strengths": [
     "[MM:SS] Specific observed strength with quote..."
@@ -628,9 +704,7 @@ At the very end of your response, include a delimiter \`===SESSION_TRANSCRIPT_ST
             throw new Error("Could not compute a valid rubric score from the recording.");
         }
 
-        const savedFacilitator = (evaluation.facilitator_name && evaluation.facilitator_name !== 'Staff Facilitator')
-            ? evaluation.facilitator_name
-            : (facilitatorName || 'Staff Facilitator');
+        const savedFacilitator = sanitizeFacilitatorName(location, evaluation.facilitator_name, facilitatorName);
 
         const savedHeadcount = classHeadcount || evaluation.estimated_headcount || null;
         const detectedType = evaluation.detected_session_type || 'class';
@@ -651,10 +725,10 @@ At the very end of your response, include a delimiter \`===SESSION_TRANSCRIPT_ST
             sessionTitle,
             savedFacilitator,
             finalTotalScore,
-            evaluation.scores?.modeling_neutrality ?? 4.5,
-            evaluation.scores?.lesson_plan_adherence ?? 4.5,
-            evaluation.scores?.reflective_listening ?? 4.5,
-            evaluation.scores?.avoiding_confrontation ?? 5,
+            evaluation.scores?.modeling_neutrality ?? 4.0,
+            evaluation.scores?.lesson_plan_adherence ?? 3.8,
+            evaluation.scores?.reflective_listening ?? 3.5,
+            evaluation.scores?.avoiding_confrontation ?? 4.0,
             evaluation.detailed_summary_markdown || '',
             JSON.stringify(evaluation.scores || {}),
             (evaluation.areas_for_improvement || []).join('; '),

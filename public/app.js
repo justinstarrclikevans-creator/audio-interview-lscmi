@@ -3976,16 +3976,16 @@ async function loadFacilitationEvaluations() {
                                 <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: #4338ca; border-color: #c7d2fe;" onclick="editClassEvaluationScore(${e.id}, ${Number(e.total_score)}, '${safeFacName}', '${safeTitle}')">✏️ Edit Score</button>
                                 <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: #ef4444; border-color: #fca5a5;" onclick="deleteClassEvaluation(${e.id})">🗑️ Delete</button>
                                 <div style="text-align: right; margin-left: 6px;">
-                                    <div style="font-size: 22px; font-weight: 800; color: ${e.total_score >= 85 ? 'var(--success)' : 'var(--warning)'};">${Number(e.total_score).toFixed(1)} / 100</div>
+                                    <div style="font-size: 22px; font-weight: 800; color: ${e.total_score >= 85 ? 'var(--success)' : (e.total_score >= 70 ? '#1d4ed8' : 'var(--warning)')};">${Number(e.total_score).toFixed(1)} / 100</div>
                                     <div style="font-size: 11px; color: var(--slate);">Rubric Score</div>
                                 </div>
                             </div>
                         </div>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; background: #f8fafc; padding: 10px; border-radius: 6px; font-size: 12px; margin-bottom: 10px;">
-                            <div><strong>Neutrality:</strong> ${e.modeling_neutrality_score || 5}/5</div>
-                            <div><strong>Lesson Plan:</strong> ${e.lesson_plan_adherence_score || 5}/5</div>
-                            <div><strong>Reflective Listening:</strong> ${e.reflective_listening_score || 5}/5</div>
-                            <div><strong>Confrontation Avoidance:</strong> ${e.avoiding_confrontation_score || 5}/5</div>
+                            <div><strong>Neutrality:</strong> ${e.modeling_neutrality_score ? Number(e.modeling_neutrality_score).toFixed(1) : '--'}/5</div>
+                            <div><strong>Lesson Plan:</strong> ${e.lesson_plan_adherence_score ? Number(e.lesson_plan_adherence_score).toFixed(1) : '--'}/5</div>
+                            <div><strong>Reflective Listening:</strong> ${e.reflective_listening_score ? Number(e.reflective_listening_score).toFixed(1) : '--'}/5</div>
+                            <div><strong>Confrontation Avoidance:</strong> ${e.avoiding_confrontation_score ? Number(e.avoiding_confrontation_score).toFixed(1) : '--'}/5</div>
                         </div>
                         <div style="font-size: 13px; color: #334155;">
                             <strong>Coaching Feedback:</strong> ${e.coaching_feedback || 'Excellent adherence to lesson structure and neutrality.'}

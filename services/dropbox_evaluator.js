@@ -165,7 +165,14 @@ async function runDailyEvaluation() {
             }
 
             const sessionTitle = `${center.name} ${shift} - ${fileDateStr}`;
-            const defaultFacilitator = `Staff Facilitator (${isAm ? 'AM' : (isPm ? 'PM' : 'Class')})`;
+            let defaultFacilitator;
+            if (center.name === 'Spartanburg') {
+                defaultFacilitator = `TB (Spartanburg ${shift})`;
+            } else if (center.name === 'Columbia') {
+                defaultFacilitator = `Staff Facilitator - Columbia (${shift})`;
+            } else {
+                defaultFacilitator = `Staff Facilitator - Charleston (${shift})`;
+            }
 
             // Check if already evaluated in database
             const existingEval = db.prepare('SELECT id FROM class_facilitation_evaluations WHERE session_title = ? AND location = ?').get(sessionTitle, center.name);
