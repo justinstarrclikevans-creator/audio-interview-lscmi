@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>First Shift & Re-entry Navigation Platform</title>
-    <link rel="stylesheet" href="style.css?v=1791901000000">
+    <link rel="stylesheet" href="style.css?v=1792000000000">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
@@ -133,29 +133,418 @@
                 <button onclick="promptKioskIntake()" style="background: none; border: none; color: var(--slate); font-size: 12px; cursor: pointer;">🎙️ Intake Portal</button>
             </div>
         </section>
-<section id="view-auth" class="app-view hidden">
-            <div class="auth-card">
-                <div class="auth-header">
-                    <h2>Welcome to First Shift</h2>
-                    <p class="subtitle">Manage your First Shift milestones, job readiness gates, and access re-entry navigation tools.</p>
+        <section id="view-auth" class="app-view hidden">
+            <div class="auth-card" style="max-width: 520px; margin: 40px auto; background: white; border-radius: 14px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); padding: 32px; border: 1px solid #e2e8f0;">
+                <div class="auth-header" style="text-align: center; margin-bottom: 24px;">
+                    <div style="font-size: 36px; margin-bottom: 8px;">🔐</div>
+                    <h2 style="font-size: 24px; font-weight: 800; color: #0f172a; margin: 0 0 6px 0;">Turn90 Program Portals</h2>
+                    <p class="subtitle" style="font-size: 13.5px; color: #64748b; margin: 0;">Select your program portal and enter your passcode (No emails required).</p>
                 </div>
 
+                <!-- Portal Selector Cards -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;">
+                    <button type="button" class="portal-select-btn active" id="btn-portal-charleston" data-portal="charleston" onclick="selectPortal('charleston')" style="padding: 12px; border: 2px solid #2563eb; background: #eff6ff; border-radius: 10px; cursor: pointer; text-align: left; font-weight: 700; color: #1e3a8a; transition: all 0.2s;">
+                        <div style="font-size: 15px;">🏢 Charleston Center</div>
+                        <div style="font-size: 11px; color: #3b82f6; font-weight: normal; margin-top: 2px;">First Shift & CM</div>
+                    </button>
+                    <button type="button" class="portal-select-btn" id="btn-portal-columbia" data-portal="columbia" onclick="selectPortal('columbia')" style="padding: 12px; border: 1.5px solid #cbd5e1; background: #f8fafc; border-radius: 10px; cursor: pointer; text-align: left; font-weight: 700; color: #334155; transition: all 0.2s;">
+                        <div style="font-size: 15px;">🏢 Columbia Center</div>
+                        <div style="font-size: 11px; color: #64748b; font-weight: normal; margin-top: 2px;">First Shift & CM</div>
+                    </button>
+                    <button type="button" class="portal-select-btn" id="btn-portal-spartanburg" data-portal="spartanburg" onclick="selectPortal('spartanburg')" style="padding: 12px; border: 1.5px solid #cbd5e1; background: #f8fafc; border-radius: 10px; cursor: pointer; text-align: left; font-weight: 700; color: #334155; transition: all 0.2s;">
+                        <div style="font-size: 15px;">🏢 Spartanburg Center</div>
+                        <div style="font-size: 11px; color: #64748b; font-weight: normal; margin-top: 2px;">First Shift & CM</div>
+                    </button>
+                    <button type="button" class="portal-select-btn" id="btn-portal-reentry_nav" data-portal="reentry_nav" onclick="selectPortal('reentry_nav')" style="padding: 12px; border: 1.5px solid #cbd5e1; background: #f8fafc; border-radius: 10px; cursor: pointer; text-align: left; font-weight: 700; color: #334155; transition: all 0.2s;">
+                        <div style="font-size: 15px;">🧭 Reentry Navigation</div>
+                        <div style="font-size: 11px; color: #64748b; font-weight: normal; margin-top: 2px;">Statewide Caseload</div>
+                    </button>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <button type="button" class="portal-select-btn" id="btn-portal-supervisor" data-portal="supervisor" onclick="selectPortal('supervisor')" style="width: 100%; padding: 12px; border: 1.5px solid #cbd5e1; background: #f8fafc; border-radius: 10px; cursor: pointer; text-align: center; font-weight: 700; color: #475569; transition: all 0.2s;">
+                        👑 Supervisor / Leadership Command Center
+                    </button>
+                </div>
 
-                <!-- Login Form -->
-                <form id="form-login" class="auth-form" onsubmit="handleLogin(event)">
-                    <div class="form-group">
-                        <label for="login-email">Email Address</label>
-                        <input type="email" id="login-email" required placeholder="name@example.com">
+                <!-- Passcode Entry Form -->
+                <form id="form-pin-login" onsubmit="handlePinLogin(event)">
+                    <input type="hidden" id="selected-portal-val" value="charleston">
+                    
+                    <div class="form-group" style="margin-bottom: 16px;">
+                        <label for="portal-passcode" style="font-weight: 700; font-size: 13px; color: #1e293b; display: block; margin-bottom: 6px;">
+                            Passcode for <span id="label-active-portal" style="color: #2563eb;">Charleston Center</span>:
+                        </label>
+                        <input type="password" id="portal-passcode" inputmode="numeric" required placeholder="Enter passcode" autofocus style="width: 100%; padding: 12px 14px; font-size: 18px; letter-spacing: 4px; text-align: center; border: 1.5px solid #cbd5e1; border-radius: 8px; box-sizing: border-box;">
                     </div>
-                    <div class="form-group">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <label for="login-password">Password</label>
-                            <a href="javascript:void(0)" onclick="openResetPasswordModal()" style="font-size: 11.5px; color: var(--accent); text-decoration: underline;">Forgot Password?</a>
-                        </div>
-                        <input type="password" id="login-password" required placeholder="Enter password">
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+
+                    <div id="pin-login-error" class="hidden" style="margin-bottom: 14px; padding: 10px; border-radius: 6px; background: #fee2e2; color: #b91c1c; font-size: 12.5px; text-align: center; font-weight: 600;"></div>
+
+                    <button type="submit" id="btn-pin-signin" class="btn btn-primary btn-block" style="padding: 12px; font-size: 15px; font-weight: 700; border-radius: 8px; width: 100%; cursor: pointer;">
+                        Sign In to Portal
+                    </button>
                 </form>
+
+                <div style="margin-top: 20px; text-align: center; border-top: 1px solid #f1f5f9; padding-top: 14px;">
+                    <a href="javascript:void(0)" onclick="toggleLegacyEmailLogin()" style="font-size: 12px; color: #64748b; text-decoration: underline;">Participant / Email Login</a>
+                </div>
+
+                <!-- Collapsible legacy email login if a participant needs it -->
+                <div id="legacy-email-login" class="hidden" style="margin-top: 16px; padding: 16px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
+                    <form id="form-login" class="auth-form" onsubmit="handleLogin(event)">
+                        <div class="form-group" style="margin-bottom: 10px;">
+                            <label for="login-email" style="font-size: 12px;">Email Address</label>
+                            <input type="email" id="login-email" placeholder="name@example.com" style="width: 100%; padding: 8px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 12px;">
+                            <label for="login-password" style="font-size: 12px;">Password</label>
+                            <input type="password" id="login-password" placeholder="Enter password" style="width: 100%; padding: 8px; font-size: 13px;">
+                        </div>
+                        <button type="submit" class="btn btn-outline btn-block" style="width: 100%; font-size: 12px; padding: 8px;">Sign In with Email</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- VIEW: REENTRY NAVIGATION HUB (Caseload & Master Actions)   -->
+        <!-- ========================================================= -->
+        <section id="view-reentry-dashboard" class="app-view hidden">
+            <!-- Supervisor viewing banner if applicable -->
+            <div id="rn-supervisor-banner" class="hidden" style="background: #fef3c7; border-bottom: 1px solid #fde68a; padding: 10px 24px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #92400e; font-weight: 600;">
+                <span>👑 Supervisor Oversight: Viewing Statewide Reentry Navigation Program</span>
+                <button class="btn btn-outline" onclick="supervisorSwitchView('supervisor')" style="padding: 4px 10px; font-size: 11.5px; background: white;">Return to Executive Overview</button>
+            </div>
+
+            <!-- Header -->
+            <div class="portal-header" style="display: flex; justify-content: space-between; align-items: center; background: white; padding: 24px 30px; border-bottom: 1px solid var(--border); margin-bottom: 24px;">
+                <div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 28px;">🧭</span>
+                        <div>
+                            <h1 style="font-size: 24px; font-weight: 800; color: #0f172a; margin: 0;">Reentry Navigation Hub</h1>
+                            <p style="font-size: 13.5px; color: #64748b; margin: 2px 0 0 0;">Statewide Community Caseload, Living Case Plans, and Session Ingestion</p>
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <button class="btn btn-primary" onclick="openNewClientModal()" style="font-weight: 700; padding: 8px 16px; font-size: 13px; display: flex; align-items: center; gap: 6px;">
+                        <span>➕</span> Add New Client
+                    </button>
+                </div>
+            </div>
+
+            <!-- Master Action Item Rollup Banner -->
+            <div style="max-width: 1400px; margin: 0 auto 24px auto; padding: 0 20px;">
+                <!-- Top Metrics Cards -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 20px;">
+                    <div style="background: white; border-radius: 12px; padding: 18px 20px; border-left: 5px solid #ef4444; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 12.5px; font-weight: 700; color: #b91c1c; text-transform: uppercase;">🚨 Immediate Triage</span>
+                            <span id="rn-stat-triage" style="font-size: 26px; font-weight: 800; color: #b91c1c;">0</span>
+                        </div>
+                        <div style="font-size: 11.5px; color: #64748b; margin-top: 4px;">Active crises (housing, legal, relapse risk)</div>
+                    </div>
+
+                    <div style="background: white; border-radius: 12px; padding: 18px 20px; border-left: 5px solid #f59e0b; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 12.5px; font-weight: 700; color: #b45309; text-transform: uppercase;">⚠️ At-Risk Clients</span>
+                            <span id="rn-stat-atrisk" style="font-size: 26px; font-weight: 800; color: #b45309;">0</span>
+                        </div>
+                        <div style="font-size: 11.5px; color: #64748b; margin-top: 4px;">Moderate barriers (transit, licenses, jobs)</div>
+                    </div>
+
+                    <div style="background: white; border-radius: 12px; padding: 18px 20px; border-left: 5px solid #10b981; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 12.5px; font-weight: 700; color: #047857; text-transform: uppercase;">✅ Stable Clients</span>
+                            <span id="rn-stat-stable" style="font-size: 26px; font-weight: 800; color: #047857;">0</span>
+                        </div>
+                        <div style="font-size: 11.5px; color: #64748b; margin-top: 4px;">Housing secured, reliable routine</div>
+                    </div>
+
+                    <div style="background: white; border-radius: 12px; padding: 18px 20px; border-left: 5px solid #3b82f6; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 12.5px; font-weight: 700; color: #1d4ed8; text-transform: uppercase;">📋 Active Goals / Actions</span>
+                            <span id="rn-stat-actions" style="font-size: 26px; font-weight: 800; color: #1d4ed8;">0</span>
+                        </div>
+                        <div style="font-size: 11.5px; color: #64748b; margin-top: 4px;">Pending action steps across caseload</div>
+                    </div>
+                </div>
+
+                <!-- Master Action Items Collapsible Panel -->
+                <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.04); overflow: hidden; margin-bottom: 24px;">
+                    <div style="padding: 14px 20px; background: #f8fafc; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 16px;">📌</span>
+                            <strong style="font-size: 14px; color: #0f172a;">Master Action Items Rollup (Next Steps Across All Cases)</strong>
+                        </div>
+                        <button class="btn btn-outline" onclick="toggleMasterActionsPanel()" id="btn-toggle-master-actions" style="font-size: 11.5px; padding: 4px 10px;">Collapse</button>
+                    </div>
+                    <div id="master-actions-container" style="padding: 16px 20px;">
+                        <!-- Dynamically populated table of master action items -->
+                    </div>
+                </div>
+
+                <!-- Caseload Search & Filters -->
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center; flex: 1; min-width: 300px;">
+                        <input type="text" id="rn-filter-search" oninput="filterReentryCaseload()" placeholder="🔍 Search clients by name, Apricot ID, or phone..." style="flex: 1; min-width: 240px; padding: 9px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px;">
+                        <select id="rn-filter-stability" onchange="filterReentryCaseload()" style="padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; background: white;">
+                            <option value="all">All Stability Tiers</option>
+                            <option value="immediate_triage">🚨 Immediate Triage</option>
+                            <option value="at_risk">⚠️ At-Risk</option>
+                            <option value="stable">✅ Stable</option>
+                        </select>
+                        <select id="rn-filter-location" onchange="filterReentryCaseload()" style="padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; background: white;">
+                            <option value="all">All Locations</option>
+                            <option value="Charleston">Charleston</option>
+                            <option value="Columbia">Columbia</option>
+                            <option value="Spartanburg">Spartanburg</option>
+                        </select>
+                    </div>
+                    <div style="font-size: 13px; color: #64748b; font-weight: 600;">
+                        Showing <span id="rn-caseload-count">0</span> clients
+                    </div>
+                </div>
+
+                <!-- Client Caseload Grid -->
+                <div id="rn-clients-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px;">
+                    <!-- Populated dynamically with client cards -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- VIEW: INDIVIDUAL CLIENT FOLDER (Living Case Plan)          -->
+        <!-- ========================================================= -->
+        <section id="view-reentry-client-folder" class="app-view hidden">
+            <!-- Breadcrumb & Top Bar -->
+            <div style="max-width: 1400px; margin: 0 auto 20px auto; padding: 20px 20px 0 20px;">
+                <button class="btn btn-outline" onclick="backToReentryCaseload()" style="font-size: 12.5px; padding: 6px 14px; margin-bottom: 14px;">
+                    ⬅️ Back to Caseload
+                </button>
+
+                <!-- Client Header Banner -->
+                <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,0.05); padding: 24px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
+                    <div style="display: flex; gap: 16px; align-items: center;">
+                        <div id="folder-client-avatar" style="width: 56px; height: 56px; border-radius: 50%; background: #e0f2fe; color: #0369a1; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800;">
+                            MS
+                        </div>
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <h1 id="folder-client-name" style="font-size: 24px; font-weight: 800; color: #0f172a; margin: 0;">Marcus Sterling</h1>
+                                <span id="folder-client-badge-tier" style="font-size: 12px; padding: 4px 10px; border-radius: 999px; font-weight: 700; background: #fef3c7; color: #92400e;">⚠️ At-Risk</span>
+                                <span id="folder-client-location" style="font-size: 12px; padding: 4px 10px; border-radius: 999px; font-weight: 600; background: #f1f5f9; color: #475569;">Charleston</span>
+                            </div>
+                            <div style="font-size: 13px; color: #64748b; margin-top: 4px; display: flex; gap: 16px; flex-wrap: wrap;">
+                                <span id="folder-client-apricot">Apricot ID: T90-RN-101</span>
+                                <span id="folder-client-phone">📞 843-555-0142</span>
+                                <span id="folder-client-email">✉️ marcus@example.com</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Header Action Controls -->
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <select id="folder-stability-select" onchange="updateClientStabilityTier()" style="font-size: 12.5px; padding: 6px 10px; border-radius: 6px; border: 1.5px solid #cbd5e1; background: white; font-weight: 600;">
+                            <option value="stable">✅ Stable</option>
+                            <option value="at_risk">⚠️ At-Risk</option>
+                            <option value="immediate_triage">🚨 Immediate Triage</option>
+                        </select>
+                        <button class="btn btn-outline" onclick="promptDeleteClientFolder()" style="color: #dc2626; border-color: #fca5a5; font-size: 12px; padding: 6px 12px; font-weight: 600;" title="Permanently delete this client and all associated files">
+                            🗑️ Delete Folder
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Folder Content Grid -->
+            <div style="max-width: 1400px; margin: 0 auto 40px auto; padding: 0 20px; display: grid; grid-template-columns: 1fr; gap: 24px;">
+
+                <!-- 1. What to Talk About in the Next Conversation (PROMINENT TOP AGENDA) -->
+                <div style="background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); overflow: hidden;">
+                    <div style="padding: 14px 20px; background: #dcfce7; border-bottom: 1px solid #bbf7d0; display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 18px;">🗣️</span>
+                            <strong style="font-size: 15px; color: #166534;">What to Talk About in the Next Conversation</strong>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn btn-outline" id="btn-edit-agenda" onclick="toggleEditAgenda()" style="font-size: 12px; padding: 4px 10px; background: white; border-color: #86efac; color: #15803d; font-weight: 700;">
+                                ✏️ Edit Agenda
+                            </button>
+                            <button class="btn btn-primary hidden" id="btn-save-agenda" onclick="saveAgenda()" style="font-size: 12px; padding: 4px 12px; background: #16a34a; font-weight: 700;">
+                                💾 Save Agenda
+                            </button>
+                        </div>
+                    </div>
+                    <div style="padding: 20px;">
+                        <div id="agenda-display" style="font-size: 14px; color: #14532d; line-height: 1.6;">
+                            <!-- Rendered markdown checklist -->
+                        </div>
+                        <textarea id="agenda-editor" class="hidden" style="width: 100%; min-height: 140px; padding: 12px; font-size: 13.5px; font-family: monospace; border: 1.5px solid #86efac; border-radius: 8px; box-sizing: border-box;"></textarea>
+                    </div>
+                </div>
+
+                <!-- 2. Session Ingestion Dropzone (The Brain of the Case Plan) -->
+                <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,0.05); padding: 24px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <div>
+                            <h2 style="font-size: 17px; font-weight: 800; color: #0f172a; margin: 0;">🎙️ Ingest Session (Audio, Transcript, or Meeting Notes)</h2>
+                            <p style="font-size: 13px; color: #64748b; margin: 4px 0 0 0;">Upload meeting audio or paste notes. AI will extract goals, update briefcase checklist items, and generate your next agenda.</p>
+                        </div>
+                    </div>
+
+                    <form id="form-upload-session" onsubmit="handleSessionUpload(event)">
+                        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 14px;">
+                            <div>
+                                <label style="font-size: 12.5px; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">Session Title</label>
+                                <input type="text" id="session-title-input" required placeholder="e.g. Week 2 Housing, Transit & License Follow-Up" style="width: 100%; padding: 10px 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;">
+                            </div>
+                            <div>
+                                <label style="font-size: 12.5px; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">Interaction Type</label>
+                                <select id="session-type-input" style="width: 100%; padding: 10px 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; background: white;">
+                                    <option value="check_in">📞 1-on-1 Check-In</option>
+                                    <option value="initial_intake">📋 Initial Intake & Triage</option>
+                                    <option value="barrier_removal">🚧 Barrier Removal Session</option>
+                                    <option value="job_prep">💼 Job Prep & Career Alignment</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Dropzone / Audio File Picker -->
+                        <div style="margin-bottom: 14px;">
+                            <label style="font-size: 12.5px; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">Audio Recording (Optional - MP3, M4A, WAV, WebM)</label>
+                            <input type="file" id="session-audio-file" accept="audio/*,video/*" style="width: 100%; padding: 8px; border: 1.5px dashed #cbd5e1; border-radius: 8px; font-size: 13px; background: #f8fafc;">
+                        </div>
+
+                        <!-- Transcript or Notes Text Area -->
+                        <div style="margin-bottom: 16px;">
+                            <label style="font-size: 12.5px; font-weight: 700; color: #334155; display: block; margin-bottom: 6px;">Meeting Notes or Pasted Transcript</label>
+                            <textarea id="session-text-input" rows="4" placeholder="Paste full transcript or type detailed navigator notes from the interaction..." style="width: 100%; padding: 10px 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;"></textarea>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div id="session-upload-status" style="font-size: 13px; color: #64748b; font-weight: 600;"></div>
+                            <button type="submit" id="btn-process-session" class="btn btn-primary" style="padding: 10px 20px; font-size: 14px; font-weight: 700;">
+                                ✨ Process & Update Case Plan
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 3. Two-Column Layout: Living Working Goals & Briefcase Checklist -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+
+                    <!-- Left Column: Living Goals & Action Steps -->
+                    <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,0.05); padding: 22px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
+                            <div>
+                                <h2 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0;">🎯 Living Goals & Action Items</h2>
+                                <p style="font-size: 12px; color: #64748b; margin: 2px 0 0 0;">Updated from session uploads or manual entries</p>
+                            </div>
+                            <button class="btn btn-outline" onclick="openAddGoalModal()" style="font-size: 12px; padding: 5px 12px; font-weight: 700;">
+                                ➕ Add Goal
+                            </button>
+                        </div>
+
+                        <div id="folder-goals-list">
+                            <!-- Populated dynamically with interactive goal cards -->
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Interactive 35-Item Briefcase Checklist -->
+                    <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,0.05); padding: 22px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
+                            <div>
+                                <h2 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0;">💼 Briefcase Checklist</h2>
+                                <p style="font-size: 12px; color: #64748b; margin: 2px 0 0 0;">35 items across 6 stability domains</p>
+                            </div>
+                            <div style="font-size: 11.5px; color: #64748b; font-weight: 600;">
+                                <span style="color: #16a34a;">🟢 Verified</span> | <span style="color: #dc2626;">🔴 Barrier</span> | <span style="color: #64748b;">⚪ Pending</span>
+                            </div>
+                        </div>
+
+                        <div id="folder-briefcase-container">
+                            <!-- Populated dynamically domain by domain -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Session History Timeline -->
+                <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,0.05); padding: 22px;">
+                    <div style="margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
+                        <h2 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0;">📜 Session History Timeline</h2>
+                        <p style="font-size: 12px; color: #64748b; margin: 2px 0 0 0;">All recorded sessions, AI summaries, and notes</p>
+                    </div>
+
+                    <div id="folder-sessions-timeline">
+                        <!-- Chronological session cards -->
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- VIEW: SUPERVISOR COMMAND CENTER                            -->
+        <!-- ========================================================= -->
+        <section id="view-supervisor-dashboard" class="app-view hidden">
+            <!-- Top Bar -->
+            <div class="portal-header" style="background: white; padding: 24px 30px; border-bottom: 1px solid var(--border); margin-bottom: 24px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="font-size: 28px;">👑</span>
+                            <div>
+                                <h1 style="font-size: 24px; font-weight: 800; color: #0f172a; margin: 0;">Supervisor Executive Command Center</h1>
+                                <p style="font-size: 13.5px; color: #64748b; margin: 2px 0 0 0;">Cross-Program Performance, Quality Assurance & Regional Oversight</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 1-Click Center Switcher -->
+                    <div style="display: flex; align-items: center; gap: 8px; background: #f8fafc; padding: 6px 12px; border-radius: 8px; border: 1px solid #cbd5e1;">
+                        <span style="font-size: 12px; font-weight: 700; color: #475569;">👁️ View Portal As:</span>
+                        <button class="btn btn-primary" onclick="supervisorSwitchView('supervisor')" style="font-size: 11.5px; padding: 4px 8px;">👑 Overview</button>
+                        <button class="btn btn-outline" onclick="supervisorSwitchView('charleston')" style="font-size: 11.5px; padding: 4px 8px;">🏢 Charleston</button>
+                        <button class="btn btn-outline" onclick="supervisorSwitchView('columbia')" style="font-size: 11.5px; padding: 4px 8px;">🏢 Columbia</button>
+                        <button class="btn btn-outline" onclick="supervisorSwitchView('spartanburg')" style="font-size: 11.5px; padding: 4px 8px;">🏢 Spartanburg</button>
+                        <button class="btn btn-outline" onclick="supervisorSwitchView('reentry_nav')" style="font-size: 11.5px; padding: 4px 8px;">🧭 Reentry Nav</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Supervisor Content Container -->
+            <div style="max-width: 1400px; margin: 0 auto 40px auto; padding: 0 20px;">
+                
+                <!-- Regional Comparison Cards -->
+                <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0 0 16px 0;">🏢 Center Program Operations (Charleston, Columbia, Spartanburg)</h2>
+                <div id="sup-center-cards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 28px;">
+                    <!-- Charleston, Columbia, Spartanburg summary cards -->
+                </div>
+
+                <!-- Reentry Navigation Statewide Summary -->
+                <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0 0 16px 0;">🧭 Statewide Reentry Navigation Program</h2>
+                <div id="sup-reentry-cards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 28px;">
+                    <!-- Reentry Nav summary stats -->
+                </div>
+
+                <!-- QA Alerts & Low-Scoring Review -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,0.05); padding: 20px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+                            <strong style="font-size: 14px; color: #0f172a;">⚠️ Facilitation QA Focus (Classes &lt; 80%)</strong>
+                        </div>
+                        <div id="sup-qa-classes-list"></div>
+                    </div>
+
+                    <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,0.05); padding: 20px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
+                            <strong style="font-size: 14px; color: #b91c1c;">🚨 Reentry Triage Watchlist</strong>
+                        </div>
+                        <div id="sup-triage-cases-list"></div>
+                    </div>
+                </div>
 
             </div>
         </section>
@@ -2500,7 +2889,128 @@
 
 
 
-    <script src="app.js?v=1791910000000"></script>
+    <!-- MODAL: Add New Reentry Navigation Client -->
+    <div id="modal-new-client" class="modal hidden">
+        <div class="modal-content" style="max-width: 540px;">
+            <div class="modal-header">
+                <h2>➕ Add Reentry Navigation Client</h2>
+                <button class="close-btn" onclick="closeModal('modal-new-client')">✕</button>
+            </div>
+            <form id="form-new-client" onsubmit="handleCreateNewClient(event)">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                    <div>
+                        <label style="font-size: 12.5px; font-weight: 700; color: #334155; display: block; margin-bottom: 4px;">First Name *</label>
+                        <input type="text" id="new-client-first" required placeholder="First name" style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;">
+                    </div>
+                    <div>
+                        <label style="font-size: 12.5px; font-weight: 700; color: #334155; display: block; margin-bottom: 4px;">Last Name *</label>
+                        <input type="text" id="new-client-last" required placeholder="Last name" style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                    <div>
+                        <label style="font-size: 12.5px; font-weight: 700; color: #334155; display: block; margin-bottom: 4px;">Apricot ID</label>
+                        <input type="text" id="new-client-apricot" placeholder="e.g. T90-RN-104" style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;">
+                    </div>
+                    <div>
+                        <label style="font-size: 12.5px; font-weight: 700; color: #334155; display: block; margin-bottom: 4px;">Center Region</label>
+                        <select id="new-client-loc" style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; background: white;">
+                            <option value="Charleston">Charleston</option>
+                            <option value="Columbia">Columbia</option>
+                            <option value="Spartanburg">Spartanburg</option>
+                            <option value="Statewide">Statewide / Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                    <div>
+                        <label style="font-size: 12.5px; font-weight: 700; color: #334155; display: block; margin-bottom: 4px;">Phone Number</label>
+                        <input type="tel" id="new-client-phone" placeholder="843-555-0100" style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;">
+                    </div>
+                    <div>
+                        <label style="font-size: 12.5px; font-weight: 700; color: #334155; display: block; margin-bottom: 4px;">Initial Stability Tier</label>
+                        <select id="new-client-tier" style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; background: white;">
+                            <option value="stable">✅ Stable</option>
+                            <option value="at_risk" selected>⚠️ At-Risk</option>
+                            <option value="immediate_triage">🚨 Immediate Triage</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 12px;">
+                    <label style="font-size: 12.5px; font-weight: 700; color: #334155; display: block; margin-bottom: 4px;">Email (Optional)</label>
+                    <input type="email" id="new-client-email" placeholder="client@example.com" style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;">
+                </div>
+
+                <div style="margin-bottom: 16px;">
+                    <label style="font-size: 12.5px; font-weight: 700; color: #334155; display: block; margin-bottom: 4px;">Navigator Notes / Primary Needs</label>
+                    <textarea id="new-client-notes" rows="3" placeholder="Primary barriers, referral source, housing status..." style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;"></textarea>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('modal-new-client')">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="font-weight: 700;">Create Client Folder</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Add Custom Goal to Client Folder -->
+    <div id="modal-add-goal" class="modal hidden">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2>🎯 Add Case Plan Goal</h2>
+                <button class="close-btn" onclick="closeModal('modal-add-goal')">✕</button>
+            </div>
+            <form id="form-add-goal" onsubmit="handleCreateNewGoal(event)">
+                <div style="margin-bottom: 12px;">
+                    <label style="font-size: 12.5px; font-weight: 700; color: #334155; display: block; margin-bottom: 4px;">Goal Description *</label>
+                    <input type="text" id="new-goal-title" required placeholder="e.g. Complete commercial driver permit paperwork" style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                    <div>
+                        <label style="font-size: 12.5px; font-weight: 700; color: #334155; display: block; margin-bottom: 4px;">Category</label>
+                        <select id="new-goal-cat" style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; background: white;">
+                            <option value="employment">Employment & Careers</option>
+                            <option value="housing">Housing & Shelter</option>
+                            <option value="legal">Legal & Driver's License</option>
+                            <option value="credentials">Credentials & Training</option>
+                            <option value="health">Healthcare & Sobriety</option>
+                            <option value="general" selected>General / Stability</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size: 12.5px; font-weight: 700; color: #334155; display: block; margin-bottom: 4px;">Target Date</label>
+                        <input type="date" id="new-goal-date" style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;">
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 12px;">
+                    <label style="font-size: 12.5px; font-weight: 700; color: #334155; display: block; margin-bottom: 4px;">Assigned To</label>
+                    <select id="new-goal-assigned" style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; background: white;">
+                        <option value="client">Client</option>
+                        <option value="navigator">Navigator</option>
+                        <option value="joint" selected>Joint Collaboration</option>
+                    </select>
+                </div>
+
+                <div style="margin-bottom: 16px;">
+                    <label style="font-size: 12.5px; font-weight: 700; color: #334155; display: block; margin-bottom: 4px;">Action Steps (one per line)</label>
+                    <textarea id="new-goal-steps" rows="3" placeholder="Step 1: Obtain court certified record&#10;Step 2: Pay reinstatement fee" style="width: 100%; padding: 8px 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;"></textarea>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('modal-add-goal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="font-weight: 700;">Add Goal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js?v=1792000000000"></script>
 
     
     <!-- MODAL: Playbook AI -->

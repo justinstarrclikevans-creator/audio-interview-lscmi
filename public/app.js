@@ -139,16 +139,30 @@ async function restoreSession(token) {
 function updateNav() {
     const navRight = document.getElementById('nav-user-section');
     if (!currentUser) {
-        navRight.innerHTML = '';
+        navRight.innerHTML = `
+            <button class="btn btn-primary" style="padding: 7px 16px; font-size: 13px; font-weight: 700; border-radius: 8px;" onclick="showPortalLogin()">🔐 Sign In / Staff Portals</button>
+        `;
         return;
     }
 
-    const roleBadge = currentUser.role === 'program_manager' ? 'Program Manager' : 
-                     (currentUser.track === 'first_shift' ? 'First Shift' : 'Re-entry Nav');
+    const portalType = currentUser.portal_type || (currentUser.track === 'reentry_nav' ? 'reentry_nav' : (currentUser.role === 'director' ? 'supervisor' : 'center'));
+    let portalBadge = '';
+    if (portalType === 'supervisor') {
+        portalBadge = '👑 Supervisor Command';
+    } else if (portalType === 'reentry_nav') {
+        portalBadge = '🧭 Reentry Navigation';
+    } else {
+        portalBadge = `🏢 ${currentUser.location || 'Center'} Program`;
+    }
 
     navRight.innerHTML = `
-        <span style="color: #94a3b8;">${currentUser.name} (<strong>${roleBadge}</strong>)</span>
-        <button class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;" onclick="handleLogout()">Sign Out</button>
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 12px; padding: 4px 10px; border-radius: 6px; background: #f1f5f9; color: #1e293b; font-weight: 700; border: 1px solid #cbd5e1;">
+                ${portalBadge}
+            </span>
+            <span style="font-size: 13px; color: #334155; font-weight: 600;">${currentUser.name}</span>
+            <button class="btn btn-outline" style="padding: 5px 12px; font-size: 12px; font-weight: 600;" onclick="handleLogout()">Sign Out</button>
+        </div>
     `;
 }
 
@@ -159,9 +173,30 @@ function routeUserToPortal() {
         return;
     }
     resetParticipantAiState();
-    showView('view-pm-portal');
-    switchPmSubView('reentry');
-    loadPmDrafts();
+
+    const portalType = currentUser.portal_type || (currentUser.track === 'reentry_nav' ? 'reentry_nav' : (currentUser.role === 'director' ? 'supervisor' : 'center'));
+
+    if (portalType === 'supervisor') {
+        showView('view-supervisor-dashboard');
+        if (typeof loadSupervisorDashboard === 'function') loadSupervisorDashboard();
+    } else if (portalType === 'reentry_nav' || currentUser.role === 'navigator') {
+        showView('view-reentry-dashboard');
+        if (typeof loadReentryCaseload === 'function') loadReentryCaseload();
+        if (typeof loadReentryMasterActions === 'function') loadReentryMasterActions();
+    } else if (portalType === 'center' || currentUser.role === 'program_manager' || currentUser.role === 'facilitator') {
+        showView('view-pm-portal');
+        if (typeof setupCenterPortalView === 'function') setupCenterPortalView();
+        else {
+            switchPmSubView('caseload');
+            if (typeof loadCaseload === 'function') loadCaseload();
+        }
+    } else {
+        if (currentUser.track === 'reentry_nav') {
+            showView('view-rn-portal');
+        } else {
+            showView('view-fs-portal');
+        }
+    }
 }
 
 function showView(viewId) {
@@ -8601,4 +8636,1024 @@ window.handleRegenerateReentrySubmit = async function(e) {
     
     btn.disabled = false;
     btn.innerText = 'Regenerate Plans';
+};
+
+// =========================================================================
+// MULTI-PORTAL ROUTING, REENTRY NAVIGATION & SUPERVISOR ENGINE
+// =========================================================================
+
+// Global Portal Authentication State
+let activePortalSelection = 'charleston';
+let activeReentryClientData = null;
+let activeMasterActionsCache = [];
+
+window.showPortalLogin = function() {
+    showView('view-auth');
+    const pinInput = document.getElementById('portal-passcode');
+    if (pinInput) {
+        pinInput.value = '';
+        pinInput.focus();
+    }
+};
+
+window.selectPortal = function(portalKey) {
+    activePortalSelection = portalKey;
+    const portalValInput = document.getElementById('selected-portal-val');
+    if (portalValInput) portalValInput.value = portalKey;
+
+    const names = {
+        charleston: 'Charleston Center',
+        columbia: 'Columbia Center',
+        spartanburg: 'Spartanburg Center',
+        reentry_nav: 'Reentry Navigation',
+        supervisor: 'Supervisor / Leadership'
+    };
+
+    const label = document.getElementById('label-active-portal');
+    if (label) label.innerText = names[portalKey] || 'Selected Portal';
+
+    // Highlight selected button
+    document.querySelectorAll('.portal-select-btn').forEach(btn => {
+        const isCurrent = btn.getAttribute('data-portal') === portalKey;
+        btn.classList.toggle('active', isCurrent);
+        btn.style.borderColor = isCurrent ? '#2563eb' : '#cbd5e1';
+        btn.style.background = isCurrent ? '#eff6ff' : '#f8fafc';
+        btn.style.color = isCurrent ? '#1e3a8a' : '#334155';
+    });
+
+    const errBox = document.getElementById('pin-login-error');
+    if (errBox) errBox.classList.add('hidden');
+
+    const pinInput = document.getElementById('portal-passcode');
+    if (pinInput) {
+        pinInput.value = '';
+        pinInput.focus();
+    }
+};
+
+window.toggleLegacyEmailLogin = function() {
+    const el = document.getElementById('legacy-email-login');
+    if (el) el.classList.toggle('hidden');
+};
+
+window.handlePinLogin = async function(e) {
+    if (e) e.preventDefault();
+    const portal = document.getElementById('selected-portal-val')?.value || activePortalSelection;
+    const passcode = document.getElementById('portal-passcode')?.value || '';
+    const errBox = document.getElementById('pin-login-error');
+    const submitBtn = document.getElementById('btn-pin-signin');
+
+    if (!passcode) {
+        if (errBox) {
+            errBox.innerText = 'Please enter your passcode.';
+            errBox.classList.remove('hidden');
+        }
+        return;
+    }
+
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'Verifying Passcode...';
+    }
+
+    try {
+        const res = await fetch('/api/auth/pin-login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ loginName: portal, passcode: passcode.trim() })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+            throw new Error(data.error || 'Invalid passcode.');
+        }
+
+        localStorage.setItem('fs_token', data.token);
+        currentUser = data.user;
+        updateNav();
+        routeUserToPortal();
+
+    } catch (err) {
+        if (errBox) {
+            errBox.innerText = err.message;
+            errBox.classList.remove('hidden');
+        }
+    } finally {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerText = 'Sign In to Portal';
+        }
+    }
+};
+
+// Center Program Scoping
+window.setupCenterPortalView = function() {
+    const centerTitle = document.querySelector('#view-pm-portal .portal-header h1');
+    const loc = currentUser ? currentUser.location : 'Charleston';
+    if (centerTitle) {
+        centerTitle.innerText = `🏢 ${loc} Center Program Operations`;
+    }
+
+    // Auto-scope filters
+    const locFilter = document.getElementById('pm-filter-location');
+    if (locFilter) locFilter.value = loc;
+
+    const facCenterFilter = document.getElementById('fac-filter-center');
+    if (facCenterFilter) facCenterFilter.value = loc;
+
+    // Load initial center data
+    switchPmSubView('caseload');
+    if (typeof loadCaseload === 'function') loadCaseload();
+    if (typeof loadFacilitationEvals === 'function') loadFacilitationEvals();
+};
+
+// =========================================================================
+// REENTRY NAVIGATION HUB LOGIC (Caseload, Filters, Master Rollup)
+// =========================================================================
+
+window.loadReentryCaseload = async function() {
+    const token = localStorage.getItem('fs_token');
+    if (!token) return;
+
+    const search = document.getElementById('rn-filter-search')?.value || '';
+    const stability = document.getElementById('rn-filter-stability')?.value || 'all';
+    const loc = document.getElementById('rn-filter-location')?.value || 'all';
+
+    const url = `/api/reentry/clients?search=${encodeURIComponent(search)}&stability=${encodeURIComponent(stability)}&location=${encodeURIComponent(loc)}`;
+
+    try {
+        const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
+        const data = await safeApiResponse(res);
+
+        // Update stats
+        if (data.stats) {
+            const triageEl = document.getElementById('rn-stat-triage');
+            const atriskEl = document.getElementById('rn-stat-atrisk');
+            const stableEl = document.getElementById('rn-stat-stable');
+            if (triageEl) triageEl.innerText = data.stats.immediate_triage || 0;
+            if (atriskEl) atriskEl.innerText = data.stats.at_risk || 0;
+            if (stableEl) stableEl.innerText = data.stats.stable || 0;
+        }
+
+        const countEl = document.getElementById('rn-caseload-count');
+        if (countEl) countEl.innerText = data.clients ? data.clients.length : 0;
+
+        renderReentryClientsGrid(data.clients || []);
+
+    } catch (err) {
+        console.error('Failed to load reentry caseload:', err);
+    }
+};
+
+window.filterReentryCaseload = function() {
+    loadReentryCaseload();
+};
+
+function renderReentryClientsGrid(clients) {
+    const grid = document.getElementById('rn-clients-grid');
+    if (!grid) return;
+
+    if (!clients || clients.length === 0) {
+        grid.innerHTML = `
+            <div style="grid-column: 1 / -1; background: white; border-radius: 12px; padding: 40px; text-align: center; border: 1px dashed #cbd5e1;">
+                <div style="font-size: 32px; margin-bottom: 10px;">📂</div>
+                <h3 style="margin: 0 0 6px 0; color: #1e293b; font-size: 16px;">No Reentry Clients Found</h3>
+                <p style="color: #64748b; font-size: 13px; margin: 0 0 16px 0;">No client folders match the selected filters.</p>
+                <button class="btn btn-primary" onclick="openNewClientModal()">➕ Add New Client</button>
+            </div>
+        `;
+        return;
+    }
+
+    grid.innerHTML = clients.map(c => {
+        const initials = `${(c.first_name || '')[0] || ''}${(c.last_name || '')[0] || ''}`.toUpperCase();
+        
+        let tierBadge = '';
+        if (c.stability_tier === 'immediate_triage') {
+            tierBadge = `<span style="font-size: 11px; padding: 3px 8px; border-radius: 999px; font-weight: 700; background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5;">🚨 Immediate Triage</span>`;
+        } else if (c.stability_tier === 'at_risk') {
+            tierBadge = `<span style="font-size: 11px; padding: 3px 8px; border-radius: 999px; font-weight: 700; background: #fef3c7; color: #b45309; border: 1px solid #fcd34d;">⚠️ At-Risk</span>`;
+        } else {
+            tierBadge = `<span style="font-size: 11px; padding: 3px 8px; border-radius: 999px; font-weight: 700; background: #dcfce7; color: #15803d; border: 1px solid #86efac;">✅ Stable</span>`;
+        }
+
+        const lastSession = c.last_session_date ? `Session: ${c.last_session_date}` : 'No sessions recorded';
+
+        return `
+            <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 20px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.2s;">
+                <div>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 44px; height: 44px; border-radius: 50%; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px;">
+                                ${initials}
+                            </div>
+                            <div>
+                                <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: #0f172a;">${escapeHtml(c.first_name)} ${escapeHtml(c.last_name)}</h3>
+                                <div style="font-size: 12px; color: #64748b; margin-top: 2px;">
+                                    ${escapeHtml(c.location)} &bull; ${escapeHtml(c.apricot_id || 'No Apricot ID')}
+                                </div>
+                            </div>
+                        </div>
+                        ${tierBadge}
+                    </div>
+
+                    <div style="background: #f8fafc; border-radius: 8px; padding: 10px 12px; font-size: 12px; color: #475569; margin-bottom: 14px; line-height: 1.4;">
+                        ${c.notes ? escapeHtml(c.notes) : '<em>No intake notes provided.</em>'}
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #64748b; margin-bottom: 16px;">
+                        <span>🎯 <strong>${c.open_goals_count || 0}</strong> Active Goals</span>
+                        <span>🕒 ${lastSession}</span>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 8px; border-top: 1px solid #f1f5f9; padding-top: 14px;">
+                    <button class="btn btn-primary" onclick="openClientFolder(${c.id})" style="flex: 1; font-size: 12.5px; padding: 8px; font-weight: 700;">
+                        📂 Open Folder
+                    </button>
+                    <button class="btn btn-outline" onclick="deleteClientFolder(${c.id}, '${escapeHtml(c.first_name)} ${escapeHtml(c.last_name)}')" style="color: #dc2626; border-color: #fecaca; font-size: 12px; padding: 8px 10px;" title="Delete Client Folder">
+                        🗑️
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+window.loadReentryMasterActions = async function() {
+    const token = localStorage.getItem('fs_token');
+    if (!token) return;
+
+    try {
+        const res = await fetch('/api/reentry/master-actions', { headers: { 'Authorization': `Bearer ${token}` } });
+        const data = await safeApiResponse(res);
+        activeMasterActionsCache = data.masterActions || [];
+
+        const actEl = document.getElementById('rn-stat-actions');
+        if (actEl) actEl.innerText = data.totalActiveActions || 0;
+
+        renderMasterActions(data);
+
+    } catch (err) {
+        console.error('Failed to load master actions:', err);
+    }
+};
+
+function renderMasterActions(data) {
+    const container = document.getElementById('master-actions-container');
+    if (!container) return;
+
+    const actions = data.masterActions || [];
+    if (actions.length === 0) {
+        container.innerHTML = '<p style="color: #64748b; font-size: 13px; margin: 0;">No active action items across the caseload. All tasks completed!</p>';
+        return;
+    }
+
+    container.innerHTML = `
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 12.5px; text-align: left;">
+                <thead>
+                    <tr style="border-bottom: 2px solid #e2e8f0; color: #475569;">
+                        <th style="padding: 8px 12px;">Client</th>
+                        <th style="padding: 8px 12px;">Action Item / Goal</th>
+                        <th style="padding: 8px 12px;">Category</th>
+                        <th style="padding: 8px 12px;">Target Date</th>
+                        <th style="padding: 8px 12px;">Assigned</th>
+                        <th style="padding: 8px 12px; text-align: right;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${actions.slice(0, 15).map(a => {
+                        const targetBadge = a.target_date ? `<span style="font-weight: 600; color: #1e293b;">${a.target_date}</span>` : '<span style="color: #94a3b8;">No date</span>';
+                        return `
+                            <tr style="border-bottom: 1px solid #f1f5f9;">
+                                <td style="padding: 10px 12px;">
+                                    <strong>${escapeHtml(a.first_name)} ${escapeHtml(a.last_name)}</strong>
+                                    <div style="font-size: 11px; color: #64748b;">${escapeHtml(a.location)}</div>
+                                </td>
+                                <td style="padding: 10px 12px; max-width: 320px;">
+                                    <span style="font-weight: 600; color: #0f172a;">${escapeHtml(a.goal_title)}</span>
+                                </td>
+                                <td style="padding: 10px 12px;">
+                                    <span style="font-size: 11px; padding: 2px 8px; border-radius: 4px; background: #f1f5f9; color: #475569; text-transform: capitalize;">${escapeHtml(a.category || 'general')}</span>
+                                </td>
+                                <td style="padding: 10px 12px;">${targetBadge}</td>
+                                <td style="padding: 10px 12px; text-transform: capitalize; color: #475569;">${escapeHtml(a.assigned_to || 'client')}</td>
+                                <td style="padding: 10px 12px; text-align: right;">
+                                    <button class="btn btn-outline" onclick="openClientFolder(${a.client_id})" style="font-size: 11.5px; padding: 4px 10px;">
+                                        Open Folder ➡️
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
+window.toggleMasterActionsPanel = function() {
+    const container = document.getElementById('master-actions-container');
+    const btn = document.getElementById('btn-toggle-master-actions');
+    if (!container) return;
+    if (container.classList.contains('hidden')) {
+        container.classList.remove('hidden');
+        if (btn) btn.innerText = 'Collapse';
+    } else {
+        container.classList.add('hidden');
+        if (btn) btn.innerText = 'Expand';
+    }
+};
+
+window.openNewClientModal = function() {
+    document.getElementById('form-new-client')?.reset();
+    openModal('modal-new-client');
+};
+
+window.handleCreateNewClient = async function(e) {
+    if (e) e.preventDefault();
+    const token = localStorage.getItem('fs_token');
+    if (!token) return;
+
+    const payload = {
+        first_name: document.getElementById('new-client-first').value,
+        last_name: document.getElementById('new-client-last').value,
+        apricot_id: document.getElementById('new-client-apricot').value,
+        location: document.getElementById('new-client-loc').value,
+        phone: document.getElementById('new-client-phone').value,
+        email: document.getElementById('new-client-email').value,
+        stability_tier: document.getElementById('new-client-tier').value,
+        notes: document.getElementById('new-client-notes').value
+    };
+
+    try {
+        const res = await fetch('/api/reentry/clients', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+        });
+        const data = await safeApiResponse(res);
+        closeModal('modal-new-client');
+        loadReentryCaseload();
+        loadReentryMasterActions();
+
+        if (data.client && data.client.id) {
+            openClientFolder(data.client.id);
+        }
+    } catch (err) {
+        alert('Failed to create client folder: ' + err.message);
+    }
+};
+
+// =========================================================================
+// INDIVIDUAL CLIENT FOLDER LOGIC (Living Goals, Briefcase Sync, Agenda)
+// =========================================================================
+
+let activeFolderClientId = null;
+
+window.openClientFolder = async function(clientId) {
+    activeFolderClientId = clientId;
+    showView('view-reentry-client-folder');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    await reloadClientFolder();
+};
+
+window.backToReentryCaseload = function() {
+    activeFolderClientId = null;
+    showView('view-reentry-dashboard');
+    loadReentryCaseload();
+    loadReentryMasterActions();
+};
+
+async function reloadClientFolder() {
+    if (!activeFolderClientId) return;
+    const token = localStorage.getItem('fs_token');
+    if (!token) return;
+
+    try {
+        const res = await fetch(`/api/reentry/clients/${activeFolderClientId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await safeApiResponse(res);
+        activeReentryClientData = data;
+        renderClientFolder(data);
+    } catch (err) {
+        alert('Failed to load client folder: ' + err.message);
+    }
+}
+
+function renderClientFolder(data) {
+    const { client, sessions, goals, briefcase, agenda } = data;
+
+    // Header Info
+    const initials = `${(client.first_name || '')[0] || ''}${(client.last_name || '')[0] || ''}`.toUpperCase();
+    const avatarEl = document.getElementById('folder-client-avatar');
+    if (avatarEl) avatarEl.innerText = initials;
+    const nameEl = document.getElementById('folder-client-name');
+    if (nameEl) nameEl.innerText = `${client.first_name} ${client.last_name}`;
+    const locEl = document.getElementById('folder-client-location');
+    if (locEl) locEl.innerText = client.location;
+    const apEl = document.getElementById('folder-client-apricot');
+    if (apEl) apEl.innerText = `Apricot ID: ${client.apricot_id || 'N/A'}`;
+    const phEl = document.getElementById('folder-client-phone');
+    if (phEl) phEl.innerText = `📞 ${client.phone || 'No phone'}`;
+    const emEl = document.getElementById('folder-client-email');
+    if (emEl) emEl.innerText = `✉️ ${client.email || 'No email'}`;
+
+    const stabilitySelect = document.getElementById('folder-stability-select');
+    if (stabilitySelect) stabilitySelect.value = client.stability_tier || 'stable';
+
+    const tierBadge = document.getElementById('folder-client-badge-tier');
+    if (tierBadge) {
+        if (client.stability_tier === 'immediate_triage') {
+            tierBadge.innerHTML = '🚨 Immediate Triage';
+            tierBadge.style.background = '#fee2e2';
+            tierBadge.style.color = '#b91c1c';
+        } else if (client.stability_tier === 'at_risk') {
+            tierBadge.innerHTML = '⚠️ At-Risk';
+            tierBadge.style.background = '#fef3c7';
+            tierBadge.style.color = '#b45309';
+        } else {
+            tierBadge.innerHTML = '✅ Stable';
+            tierBadge.style.background = '#dcfce7';
+            tierBadge.style.color = '#15803d';
+        }
+    }
+
+    // 1. Next Conversation Agenda
+    const agendaText = agenda || `### 🗣️ Next Session Focus for ${client.first_name}\n- [ ] Review current progress and identify any emerging barriers`;
+    const agendaDisplay = document.getElementById('agenda-display');
+    const agendaEditor = document.getElementById('agenda-editor');
+    if (agendaDisplay) {
+        agendaDisplay.innerHTML = marked.parse(agendaText);
+    }
+    if (agendaEditor) {
+        agendaEditor.value = agendaText;
+        agendaEditor.classList.add('hidden');
+    }
+    document.getElementById('btn-edit-agenda')?.classList.remove('hidden');
+    document.getElementById('btn-save-agenda')?.classList.add('hidden');
+
+    // 2. Living Goals & Action Items
+    renderFolderGoals(goals);
+
+    // 3. Interactive Briefcase Checklist
+    renderFolderBriefcase(briefcase);
+
+    // 4. Session History Timeline
+    renderFolderSessions(sessions);
+}
+
+function renderFolderGoals(goals) {
+    const list = document.getElementById('folder-goals-list');
+    if (!list) return;
+
+    if (!goals || goals.length === 0) {
+        list.innerHTML = `
+            <div style="text-align: center; padding: 24px; color: #64748b; font-size: 13px;">
+                No goals created yet. Upload a session to auto-generate goals, or click "➕ Add Goal".
+            </div>
+        `;
+        return;
+    }
+
+    list.innerHTML = goals.map(g => {
+        const isDone = g.status === 'completed';
+        const isBlocked = g.status === 'blocked';
+        
+        let statusBadge = '';
+        if (isDone) statusBadge = `<span style="font-size: 11px; padding: 2px 8px; border-radius: 999px; background: #dcfce7; color: #15803d; font-weight: 700;">✅ Completed</span>`;
+        else if (isBlocked) statusBadge = `<span style="font-size: 11px; padding: 2px 8px; border-radius: 999px; background: #fee2e2; color: #b91c1c; font-weight: 700;">⛔ Blocked</span>`;
+        else statusBadge = `<span style="font-size: 11px; padding: 2px 8px; border-radius: 999px; background: #e0f2fe; color: #0369a1; font-weight: 700;">🔄 In Progress</span>`;
+
+        const steps = Array.isArray(g.action_steps) ? g.action_steps : [];
+        const stepsHtml = steps.length > 0
+            ? `<div style="margin-top: 8px; padding-left: 12px; border-left: 2px solid #e2e8f0; font-size: 12px; color: #475569;">
+                ${steps.map(s => `<div style="margin-bottom: 2px;">• ${escapeHtml(s)}</div>`).join('')}
+               </div>`
+            : '';
+
+        return `
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; margin-bottom: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                            ${statusBadge}
+                            <span style="font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 700;">${escapeHtml(g.category || 'general')}</span>
+                        </div>
+                        <h4 style="margin: 0; font-size: 14px; color: ${isDone ? '#64748b' : '#0f172a'}; text-decoration: ${isDone ? 'line-through' : 'none'}; font-weight: 700;">
+                            ${escapeHtml(g.goal_title)}
+                        </h4>
+                        ${stepsHtml}
+                        <div style="font-size: 11.5px; color: #64748b; margin-top: 8px; display: flex; gap: 14px;">
+                            <span>📅 Target: <strong>${g.target_date || 'None'}</strong></span>
+                            <span>👤 Assigned: <strong style="text-transform: capitalize;">${g.assigned_to || 'client'}</strong></span>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 6px; margin-left: 12px;">
+                        ${!isDone ? `<button class="btn btn-outline" onclick="updateGoalStatus(${g.id}, 'completed')" style="font-size: 11px; padding: 4px 8px; color: #16a34a; border-color: #86efac;" title="Mark Completed">✓ Done</button>` : `<button class="btn btn-outline" onclick="updateGoalStatus(${g.id}, 'in_progress')" style="font-size: 11px; padding: 4px 8px; color: #0284c7; border-color: #bae6fd;" title="Reopen Goal">↩️ Reopen</button>`}
+                        ${!isBlocked ? `<button class="btn btn-outline" onclick="updateGoalStatus(${g.id}, 'blocked')" style="font-size: 11px; padding: 4px 8px; color: #dc2626; border-color: #fca5a5;" title="Flag as Blocked">⛔ Block</button>` : ''}
+                        <button class="btn btn-outline" onclick="deleteGoal(${g.id})" style="font-size: 11px; padding: 4px 6px; color: #94a3b8;" title="Delete Goal">✕</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function renderFolderBriefcase(items) {
+    const container = document.getElementById('folder-briefcase-container');
+    if (!container) return;
+
+    if (!items || items.length === 0) {
+        container.innerHTML = '<p style="color: #64748b; font-size: 13px;">No briefcase items initialized.</p>';
+        return;
+    }
+
+    // Group items by domain
+    const domains = {};
+    for (const it of items) {
+        if (!domains[it.domain]) domains[it.domain] = [];
+        domains[it.domain].push(it);
+    }
+
+    const domainLabels = {
+        identification: '1. Identification & Vital Documents',
+        professional_presentation: '2. Professional Presentation & Tech',
+        financial_health: '3. Financial & Public Benefits',
+        transportation_housing: '4. Housing & Transportation',
+        legal_supervision: '5. Legal & Supervision Compliance',
+        healthcare_wellness: '6. Healthcare & Medical Home'
+    };
+
+    container.innerHTML = Object.entries(domains).map(([domKey, domItems]) => {
+        return `
+            <div style="margin-bottom: 16px; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
+                <div style="background: #f8fafc; padding: 8px 12px; font-weight: 700; font-size: 12.5px; color: #1e293b; border-bottom: 1px solid #e2e8f0;">
+                    ${domainLabels[domKey] || domKey}
+                </div>
+                <div style="padding: 8px 12px;">
+                    ${domItems.map(item => {
+                        let statusColor = '#94a3b8';
+                        if (item.status === 'green') statusColor = '#16a34a';
+                        if (item.status === 'red') statusColor = '#dc2626';
+
+                        return `
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #f1f5f9; font-size: 12.5px;">
+                                <div style="flex: 1; padding-right: 12px;">
+                                    <span style="font-weight: 600; color: #0f172a;">${escapeHtml(item.title)}</span>
+                                    ${item.notes ? `<div style="font-size: 11px; color: #64748b; margin-top: 1px;">📝 ${escapeHtml(item.notes)}</div>` : ''}
+                                </div>
+                                <div style="display: flex; gap: 4px; align-items: center;">
+                                    <button onclick="updateBriefcaseStatus('${item.item_key}', 'green')" style="border: 1px solid ${item.status === 'green' ? '#16a34a' : '#cbd5e1'}; background: ${item.status === 'green' ? '#dcfce7' : 'white'}; color: #16a34a; border-radius: 4px; padding: 2px 6px; font-size: 11px; cursor: pointer; font-weight: 700;" title="Mark Verified">🟢</button>
+                                    <button onclick="updateBriefcaseStatus('${item.item_key}', 'red')" style="border: 1px solid ${item.status === 'red' ? '#dc2626' : '#cbd5e1'}; background: ${item.status === 'red' ? '#fee2e2' : 'white'}; color: #dc2626; border-radius: 4px; padding: 2px 6px; font-size: 11px; cursor: pointer; font-weight: 700;" title="Flag Barrier">🔴</button>
+                                    <button onclick="updateBriefcaseStatus('${item.item_key}', 'pending')" style="border: 1px solid ${item.status === 'pending' ? '#64748b' : '#cbd5e1'}; background: ${item.status === 'pending' ? '#f1f5f9' : 'white'}; color: #64748b; border-radius: 4px; padding: 2px 6px; font-size: 11px; cursor: pointer;" title="Reset Pending">⚪</button>
+                                    <button onclick="promptEditBriefcaseNotes('${item.item_key}', '${escapeHtml(item.notes || '')}')" style="border: none; background: none; cursor: pointer; font-size: 12px; color: #64748b;" title="Edit Notes">✏️</button>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function renderFolderSessions(sessions) {
+    const timeline = document.getElementById('folder-sessions-timeline');
+    if (!timeline) return;
+
+    if (!sessions || sessions.length === 0) {
+        timeline.innerHTML = '<p style="color: #64748b; font-size: 13px;">No sessions uploaded yet. Upload a meeting audio recording or paste notes above to record the first session.</p>';
+        return;
+    }
+
+    timeline.innerHTML = sessions.map(s => {
+        const ai = s.ai_analysis || {};
+        return `
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 14px;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                    <div>
+                        <strong style="font-size: 14.5px; color: #0f172a;">${escapeHtml(s.session_title)}</strong>
+                        <div style="font-size: 12px; color: #64748b; margin-top: 2px;">
+                            📅 ${s.session_date} &bull; <span style="text-transform: capitalize;">${escapeHtml(s.session_type)}</span>
+                        </div>
+                    </div>
+                </div>
+
+                ${ai.session_summary ? `
+                    <div style="background: white; border-radius: 6px; padding: 12px; border: 1px solid #e2e8f0; font-size: 13px; color: #334155; line-height: 1.5; margin-bottom: 10px;">
+                        ${marked.parse(ai.session_summary)}
+                    </div>
+                ` : ''}
+
+                ${s.transcript_text ? `
+                    <details style="font-size: 12px; color: #64748b; margin-top: 8px;">
+                        <summary style="cursor: pointer; font-weight: 600; color: #0284c7;">View Transcript / Meeting Notes</summary>
+                        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px; margin-top: 6px; white-space: pre-wrap; font-family: monospace; font-size: 11.5px; max-height: 200px; overflow-y: auto;">
+                            ${escapeHtml(s.transcript_text)}
+                        </div>
+                    </details>
+                ` : ''}
+            </div>
+        `;
+    }).join('');
+}
+
+// Client Folder Actions
+window.updateClientStabilityTier = async function() {
+    if (!activeFolderClientId) return;
+    const token = localStorage.getItem('fs_token');
+    const newTier = document.getElementById('folder-stability-select')?.value;
+    if (!token || !newTier) return;
+
+    try {
+        await fetch(`/api/reentry/clients/${activeFolderClientId}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ stability_tier: newTier })
+        });
+        reloadClientFolder();
+    } catch(err) {
+        alert('Failed to update stability tier.');
+    }
+};
+
+window.promptDeleteClientFolder = async function() {
+    if (!activeFolderClientId) return;
+    const token = localStorage.getItem('fs_token');
+    const clientName = document.getElementById('folder-client-name')?.innerText || 'this client';
+
+    const confirmed = confirm(`Are you sure you want to permanently delete the folder for ${clientName}?\n\nThis will completely purge all session transcripts, audio, goals, and briefcase records. This action cannot be undone.`);
+    if (!confirmed) return;
+
+    try {
+        const res = await fetch(`/api/reentry/clients/${activeFolderClientId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await safeApiResponse(res);
+        alert(data.message || 'Client folder deleted.');
+        backToReentryCaseload();
+    } catch(err) {
+        alert('Failed to delete folder: ' + err.message);
+    }
+};
+
+window.deleteClientFolder = async function(clientId, clientName) {
+    const token = localStorage.getItem('fs_token');
+    const confirmed = confirm(`Are you sure you want to permanently delete the folder for ${clientName}?\n\nThis will completely purge all session transcripts, audio, goals, and briefcase records. This action cannot be undone.`);
+    if (!confirmed) return;
+
+    try {
+        const res = await fetch(`/api/reentry/clients/${clientId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await safeApiResponse(res);
+        alert(data.message || 'Client folder deleted.');
+        loadReentryCaseload();
+        loadReentryMasterActions();
+    } catch(err) {
+        alert('Failed to delete folder: ' + err.message);
+    }
+};
+
+// Agenda Edit/Save
+window.toggleEditAgenda = function() {
+    document.getElementById('agenda-display')?.classList.add('hidden');
+    document.getElementById('agenda-editor')?.classList.remove('hidden');
+    document.getElementById('btn-edit-agenda')?.classList.add('hidden');
+    document.getElementById('btn-save-agenda')?.classList.remove('hidden');
+};
+
+window.saveAgenda = async function() {
+    if (!activeFolderClientId) return;
+    const token = localStorage.getItem('fs_token');
+    const newAgenda = document.getElementById('agenda-editor')?.value;
+    if (!token) return;
+
+    try {
+        await fetch(`/api/reentry/clients/${activeFolderClientId}/agenda`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ agenda_markdown: newAgenda })
+        });
+        reloadClientFolder();
+    } catch(err) {
+        alert('Failed to save agenda: ' + err.message);
+    }
+};
+
+// Session Ingestion (Audio / Notes)
+window.handleSessionUpload = async function(e) {
+    if (e) e.preventDefault();
+    if (!activeFolderClientId) return;
+    const token = localStorage.getItem('fs_token');
+    if (!token) return;
+
+    const title = document.getElementById('session-title-input')?.value;
+    const type = document.getElementById('session-type-input')?.value;
+    const text = document.getElementById('session-text-input')?.value;
+    const fileInput = document.getElementById('session-audio-file');
+    const statusEl = document.getElementById('session-upload-status');
+    const btn = document.getElementById('btn-process-session');
+
+    const formData = new FormData();
+    formData.append('sessionTitle', title);
+    formData.append('sessionType', type);
+    formData.append('sessionText', text || '');
+    if (fileInput && fileInput.files[0]) {
+        formData.append('file', fileInput.files[0]);
+    }
+
+    if (btn) {
+        btn.disabled = true;
+        btn.innerText = 'Analyzing Session with AI...';
+    }
+    if (statusEl) {
+        statusEl.innerText = 'Analyzing audio/notes with Gemini 3.1 Pro... Updating case plan...';
+        statusEl.style.color = '#0284c7';
+    }
+
+    try {
+        const res = await fetch(`/api/reentry/clients/${activeFolderClientId}/upload-session`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` },
+            body: formData
+        });
+        const data = await safeApiResponse(res);
+
+        if (statusEl) {
+            statusEl.innerText = '✅ Session processed! Goals & briefcase updated.';
+            statusEl.style.color = '#16a34a';
+        }
+        document.getElementById('form-upload-session')?.reset();
+        await reloadClientFolder();
+
+    } catch (err) {
+        if (statusEl) {
+            statusEl.innerText = '❌ ' + err.message;
+            statusEl.style.color = '#dc2626';
+        }
+        alert('Session processing failed: ' + err.message);
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerText = '✨ Process & Update Case Plan';
+        }
+    }
+};
+
+// Goals Handlers
+window.openAddGoalModal = function() {
+    document.getElementById('form-add-goal')?.reset();
+    openModal('modal-add-goal');
+};
+
+window.handleCreateNewGoal = async function(e) {
+    if (e) e.preventDefault();
+    if (!activeFolderClientId) return;
+    const token = localStorage.getItem('fs_token');
+    if (!token) return;
+
+    const stepsRaw = document.getElementById('new-goal-steps')?.value || '';
+    const steps = stepsRaw.split('\n').map(s => s.trim()).filter(Boolean);
+
+    const payload = {
+        goal_title: document.getElementById('new-goal-title')?.value,
+        target_date: document.getElementById('new-goal-date')?.value || null,
+        category: document.getElementById('new-goal-cat')?.value || 'general',
+        assigned_to: document.getElementById('new-goal-assigned')?.value || 'client',
+        action_steps: steps
+    };
+
+    try {
+        await fetch(`/api/reentry/clients/${activeFolderClientId}/goals`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify(payload)
+        });
+        closeModal('modal-add-goal');
+        reloadClientFolder();
+    } catch(err) {
+        alert('Failed to add goal: ' + err.message);
+    }
+};
+
+window.updateGoalStatus = async function(goalId, newStatus) {
+    if (!activeFolderClientId) return;
+    const token = localStorage.getItem('fs_token');
+    if (!token) return;
+
+    try {
+        await fetch(`/api/reentry/clients/${activeFolderClientId}/goals/${goalId}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ status: newStatus })
+        });
+        reloadClientFolder();
+    } catch(err) {
+        alert('Failed to update goal status.');
+    }
+};
+
+window.deleteGoal = async function(goalId) {
+    if (!activeFolderClientId) return;
+    const token = localStorage.getItem('fs_token');
+    if (!token) return;
+
+    try {
+        await fetch(`/api/reentry/clients/${activeFolderClientId}/goals/${goalId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        reloadClientFolder();
+    } catch(err) {
+        alert('Failed to delete goal.');
+    }
+};
+
+// Briefcase Handlers
+window.updateBriefcaseStatus = async function(itemKey, status) {
+    if (!activeFolderClientId) return;
+    const token = localStorage.getItem('fs_token');
+    if (!token) return;
+
+    try {
+        await fetch(`/api/reentry/clients/${activeFolderClientId}/briefcase/${itemKey}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ status })
+        });
+        reloadClientFolder();
+    } catch(err) {
+        alert('Failed to update briefcase status.');
+    }
+};
+
+window.promptEditBriefcaseNotes = async function(itemKey, currentNotes) {
+    if (!activeFolderClientId) return;
+    const token = localStorage.getItem('fs_token');
+    if (!token) return;
+
+    const newNotes = prompt('Enter notes or barrier details for this briefcase item:', currentNotes);
+    if (newNotes === null) return;
+
+    try {
+        await fetch(`/api/reentry/clients/${activeFolderClientId}/briefcase/${itemKey}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ notes: newNotes.trim() })
+        });
+        reloadClientFolder();
+    } catch(err) {
+        alert('Failed to update briefcase notes.');
+    }
+};
+
+// =========================================================================
+// SUPERVISOR DASHBOARD LOGIC
+// =========================================================================
+
+window.loadSupervisorDashboard = async function() {
+    const token = localStorage.getItem('fs_token');
+    if (!token) return;
+
+    try {
+        const res = await fetch('/api/supervisor/overview', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await safeApiResponse(res);
+        renderSupervisorDashboard(data);
+    } catch (err) {
+        console.error('Failed to load supervisor overview:', err);
+    }
+};
+
+function renderSupervisorDashboard(data) {
+    const centerCardsContainer = document.getElementById('sup-center-cards');
+    const reentryCardsContainer = document.getElementById('sup-reentry-cards');
+    const qaClassesContainer = document.getElementById('sup-qa-classes-list');
+    const triageCasesContainer = document.getElementById('sup-triage-cases-list');
+
+    // Centers Cards
+    if (centerCardsContainer && data.centers) {
+        centerCardsContainer.innerHTML = Object.entries(data.centers).map(([locName, cData]) => {
+            return `
+                <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,0.05); padding: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                        <h3 style="margin: 0; font-size: 17px; font-weight: 800; color: #0f172a;">🏢 ${locName} Center</h3>
+                        <button class="btn btn-outline" onclick="supervisorSwitchView('${locName.toLowerCase()}')" style="font-size: 11.5px; padding: 4px 8px;">Inspect ➡️</button>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
+                        <div style="background: #f8fafc; border-radius: 8px; padding: 10px; text-align: center;">
+                            <div style="font-size: 20px; font-weight: 800; color: #0f172a;">${cData.participantsCount}</div>
+                            <div style="font-size: 11px; color: #64748b;">Active Participants</div>
+                        </div>
+                        <div style="background: #f8fafc; border-radius: 8px; padding: 10px; text-align: center;">
+                            <div style="font-size: 20px; font-weight: 800; color: ${cData.facilitationAvgScore >= 80 ? '#16a34a' : '#dc2626'};">
+                                ${cData.facilitationAvgScore ? `${cData.facilitationAvgScore}%` : 'N/A'}
+                            </div>
+                            <div style="font-size: 11px; color: #64748b;">Avg Class Score</div>
+                        </div>
+                    </div>
+
+                    <div style="font-size: 12px; color: #64748b; line-height: 1.5;">
+                        <div>• Class Evaluations Logged: <strong>${cData.facilitationEvalsCount}</strong></div>
+                        <div>• Class Passing Rate (&ge;80%): <strong>${cData.facilitationPassingRate}%</strong></div>
+                        <div>• 1-on-1 CM Evals Logged: <strong>${cData.cmEvalsCount}</strong></div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // Reentry Nav Cards
+    if (reentryCardsContainer && data.reentryNav) {
+        const rn = data.reentryNav;
+        reentryCardsContainer.innerHTML = `
+            <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 18px; border-left: 5px solid #3b82f6;">
+                <div style="font-size: 11.5px; font-weight: 700; color: #1d4ed8; text-transform: uppercase;">Total Active Caseload</div>
+                <div style="font-size: 24px; font-weight: 800; color: #0f172a; margin-top: 4px;">${rn.totalClients}</div>
+                <div style="font-size: 11px; color: #64748b; margin-top: 2px;">Receiving navigation services</div>
+            </div>
+            <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 18px; border-left: 5px solid #ef4444;">
+                <div style="font-size: 11.5px; font-weight: 700; color: #b91c1c; text-transform: uppercase;">Immediate Triage</div>
+                <div style="font-size: 24px; font-weight: 800; color: #b91c1c; margin-top: 4px;">${rn.triageCount}</div>
+                <div style="font-size: 11px; color: #64748b; margin-top: 2px;">Crisis housing / legal / sobriety</div>
+            </div>
+            <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 18px; border-left: 5px solid #f59e0b;">
+                <div style="font-size: 11.5px; font-weight: 700; color: #b45309; text-transform: uppercase;">At-Risk Clients</div>
+                <div style="font-size: 24px; font-weight: 800; color: #b45309; margin-top: 4px;">${rn.atRiskCount}</div>
+                <div style="font-size: 11px; color: #64748b; margin-top: 2px;">Transit, ID, job search barriers</div>
+            </div>
+            <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 18px; border-left: 5px solid #10b981;">
+                <div style="font-size: 11.5px; font-weight: 700; color: #047857; text-transform: uppercase;">Open Living Goals</div>
+                <div style="font-size: 24px; font-weight: 800; color: #047857; margin-top: 4px;">${rn.openGoalsCount}</div>
+                <div style="font-size: 11px; color: #64748b; margin-top: 2px;">Active action items in flight</div>
+            </div>
+        `;
+    }
+
+    // QA Low Scoring Classes
+    if (qaClassesContainer && data.alerts) {
+        const classes = data.alerts.lowScoreClasses || [];
+        if (classes.length === 0) {
+            qaClassesContainer.innerHTML = '<p style="color: #64748b; font-size: 12.5px; margin: 0;">No classes scored below 80%. Facilitation quality is meeting Turn90 benchmarks.</p>';
+        } else {
+            qaClassesContainer.innerHTML = classes.map(c => `
+                <div style="padding: 10px; background: #fff1f2; border: 1px solid #fecdd3; border-radius: 8px; margin-bottom: 8px; font-size: 12.5px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <strong>${escapeHtml(c.session_title)}</strong>
+                        <span style="font-weight: 800; color: #e11d48; font-size: 13px;">${c.total_score}%</span>
+                    </div>
+                    <div style="font-size: 11.5px; color: #4c0519; margin-top: 2px;">
+                        Facilitator: ${escapeHtml(c.facilitator_name || 'Staff')} &bull; Center: ${escapeHtml(c.location)}
+                    </div>
+                </div>
+            `).join('');
+        }
+    }
+
+    // Immediate Triage Cases
+    if (triageCasesContainer && data.alerts) {
+        const cases = data.alerts.triageCases || [];
+        if (cases.length === 0) {
+            triageCasesContainer.innerHTML = '<p style="color: #64748b; font-size: 12.5px; margin: 0;">No clients currently in immediate triage status.</p>';
+        } else {
+            triageCasesContainer.innerHTML = cases.map(c => `
+                <div style="padding: 10px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; margin-bottom: 8px; font-size: 12.5px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong style="color: #991b1b;">${escapeHtml(c.first_name)} ${escapeHtml(c.last_name)}</strong>
+                        <div style="font-size: 11.5px; color: #7f1d1d;">${escapeHtml(c.location)} &bull; Immediate Triage Flagged</div>
+                    </div>
+                    <button class="btn btn-outline" onclick="openClientFolder(${c.id})" style="font-size: 11px; padding: 4px 8px; color: #b91c1c; border-color: #fca5a5;">Open Folder ➡️</button>
+                </div>
+            `).join('');
+        }
+    }
+}
+
+window.supervisorSwitchView = function(viewKey) {
+    if (viewKey === 'supervisor') {
+        showView('view-supervisor-dashboard');
+        loadSupervisorDashboard();
+    } else if (viewKey === 'reentry_nav') {
+        showView('view-reentry-dashboard');
+        document.getElementById('rn-supervisor-banner')?.classList.remove('hidden');
+        loadReentryCaseload();
+        loadReentryMasterActions();
+    } else {
+        // Center view: Charleston, Columbia, Spartanburg
+        const loc = viewKey.charAt(0).toUpperCase() + viewKey.slice(1);
+        if (currentUser) currentUser.location = loc;
+        showView('view-pm-portal');
+        setupCenterPortalView();
+    }
 };

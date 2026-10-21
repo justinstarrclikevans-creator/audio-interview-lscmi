@@ -680,22 +680,280 @@ function syncBenefitToBriefcase(userId, benefitType, status, notes = '') {
     }
 }
 
+// Ensure users table supports name & passcode authentication
+try { db.exec("ALTER TABLE users ADD COLUMN login_name TEXT;"); } catch (e) {}
+try { db.exec("ALTER TABLE users ADD COLUMN passcode_hash TEXT;"); } catch (e) {}
+try { db.exec("ALTER TABLE users ADD COLUMN portal_type TEXT DEFAULT 'center';"); } catch (e) {}
+try { db.exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_users_login_name ON users(login_name);"); } catch (e) {}
+
+// Reentry Navigation Living Client Folder Schema
+db.exec(`
+CREATE TABLE IF NOT EXISTS reentry_clients (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
+    apricot_id TEXT,
+    location TEXT NOT NULL DEFAULT 'Charleston',
+    status TEXT DEFAULT 'active', -- 'active', 'stabilizing', 'archived', 'terminated'
+    stability_tier TEXT DEFAULT 'stable', -- 'stable', 'at_risk', 'immediate_triage'
+    phone TEXT,
+    email TEXT,
+    notes TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS reentry_client_sessions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    client_id INTEGER NOT NULL,
+    session_date DATE DEFAULT (DATE('now')),
+    session_title TEXT NOT NULL,
+    session_type TEXT DEFAULT 'check_in', -- 'initial_intake', 'check_in', 'barrier_removal', 'job_prep'
+    audio_file_path TEXT,
+    transcript_text TEXT,
+    notes_text TEXT,
+    ai_analysis_json TEXT,
+    next_conversation_topics TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(client_id) REFERENCES reentry_clients(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS reentry_client_goals (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    client_id INTEGER NOT NULL,
+    goal_title TEXT NOT NULL,
+    target_date DATE,
+    status TEXT DEFAULT 'in_progress', -- 'in_progress', 'completed', 'blocked'
+    category TEXT DEFAULT 'general', -- 'employment', 'housing', 'legal', 'credentials', 'health'
+    action_steps TEXT, -- JSON array of strings
+    assigned_to TEXT DEFAULT 'client', -- 'client', 'navigator', 'joint'
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(client_id) REFERENCES reentry_clients(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS reentry_client_agenda (
+    client_id INTEGER PRIMARY KEY,
+    agenda_markdown TEXT,
+    last_updated DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(client_id) REFERENCES reentry_clients(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS reentry_client_briefcase (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    client_id INTEGER NOT NULL,
+    domain TEXT NOT NULL,
+    item_key TEXT NOT NULL,
+    title TEXT NOT NULL,
+    status TEXT DEFAULT 'pending', -- 'green', 'red', 'pending'
+    notes TEXT,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(client_id) REFERENCES reentry_clients(id) ON DELETE CASCADE,
+    UNIQUE(client_id, item_key)
+);
+`);
+
+function initReentryClientBriefcase(clientId) {
+    const insertStmt = db.prepare(`
+        INSERT OR IGNORE INTO reentry_client_briefcase (client_id, domain, item_key, title, status, notes)
+        VALUES (?, ?, ?, ?, 'pending', '')
+    `);
+    for (const [domainKey, items] of Object.entries(BRIEFCASE_DOMAINS)) {
+        for (const item of items) {
+            insertStmt.run(clientId, domainKey, item.key, item.title);
+        }
+    }
+}
+
 function seedDefaultAccounts() {
-    const hash = bcrypt.hashSync('T90dashboard', 10);
-    const existing = db.prepare('SELECT id FROM users WHERE email = ?').get('staff@turnninety.com');
-    if (!existing) {
+    const defaultPasswordHash = bcrypt.hashSync('T90dashboard', 10);
+    
+    // Seed/Update standard staff account
+    const existingStaff = db.prepare('SELECT id FROM users WHERE email = ?').get('staff@turnninety.com');
+    if (!existingStaff) {
         db.prepare(`
             INSERT INTO users (name, email, phone, password_hash, role, track, location)
             VALUES ('Turn90 Staff', 'staff@turnninety.com', '843-555-0190', ?, 'program_manager', 'first_shift', 'Charleston')
-        `).run(hash);
-        console.log('Seeded staff account: staff@turnninety.com');
-    } else {
-        db.prepare('UPDATE users SET password_hash = ? WHERE email = ?').run(hash, 'staff@turnninety.com');
+        `).run(defaultPasswordHash);
+    }
+
+    // Portal accounts with Name + Passcode (PIN) login
+    const PORTAL_SEEDS = [
+        {
+            login_name: 'supervisor',
+            name: 'Supervisor / Leadership',
+            email: 'supervisor@turnninety.com',
+            passcode: '9090',
+            portal_type: 'supervisor',
+            role: 'director',
+            location: 'All'
+        },
+        {
+            login_name: 'charleston',
+            name: 'Charleston Center',
+            email: 'charleston@turnninety.com',
+            passcode: '8431',
+            portal_type: 'center',
+            role: 'program_manager',
+            location: 'Charleston'
+        },
+        {
+            login_name: 'columbia',
+            name: 'Columbia Center',
+            email: 'columbia@turnninety.com',
+            passcode: '8031',
+            portal_type: 'center',
+            role: 'program_manager',
+            location: 'Columbia'
+        },
+        {
+            login_name: 'spartanburg',
+            name: 'Spartanburg Center',
+            email: 'spartanburg@turnninety.com',
+            passcode: '8641',
+            portal_type: 'center',
+            role: 'program_manager',
+            location: 'Spartanburg'
+        },
+        {
+            login_name: 'reentry_nav',
+            name: 'Reentry Navigation',
+            email: 'reentry@turnninety.com',
+            passcode: '7070',
+            portal_type: 'reentry_nav',
+            role: 'navigator',
+            location: 'Statewide'
+        }
+    ];
+
+    for (const seed of PORTAL_SEEDS) {
+        const pinHash = bcrypt.hashSync(seed.passcode, 10);
+        const existing = db.prepare('SELECT id FROM users WHERE login_name = ? OR email = ?').get(seed.login_name, seed.email);
+        if (existing) {
+            db.prepare(`
+                UPDATE users 
+                SET login_name = ?, passcode_hash = ?, portal_type = ?, role = ?, location = ?, name = ?
+                WHERE id = ?
+            `).run(seed.login_name, pinHash, seed.portal_type, seed.role, seed.location, seed.name, existing.id);
+        } else {
+            db.prepare(`
+                INSERT INTO users (name, login_name, email, passcode_hash, password_hash, role, track, location, portal_type)
+                VALUES (?, ?, ?, ?, ?, ?, 'first_shift', ?, ?)
+            `).run(seed.name, seed.login_name, seed.email, pinHash, defaultPasswordHash, seed.role, seed.location, seed.portal_type);
+        }
+        console.log(`[DB Seed] Configured portal account: ${seed.name} (${seed.login_name}) with passcode.`);
     }
 
     // Sync all participants with latest briefcase, gate criteria, and benefits
     const participants = db.prepare("SELECT id FROM users WHERE role = 'participant'").all();
     participants.forEach(p => initParticipantBriefcase(p.id));
+
+    // Seed initial demo Reentry Navigation caseload if empty
+    const reentryCount = db.prepare('SELECT COUNT(*) AS c FROM reentry_clients').get().c;
+    if (reentryCount === 0) {
+        const demoClients = [
+            {
+                first_name: 'Marcus',
+                last_name: 'Sterling',
+                apricot_id: 'T90-RN-101',
+                location: 'Charleston',
+                stability_tier: 'at_risk',
+                phone: '843-555-0142',
+                email: 'marcus.s@example.com',
+                notes: 'Enrolled Oct 2026. Needs assistance modifying child support order to lift driver license suspension.',
+                goals: [
+                    { title: 'Submit DSS Child Support Modification Petition', target_date: '2026-11-04', category: 'legal', assigned_to: 'navigator', steps: ['Obtain court fee schedule', 'File motion with DSS caseworker'] },
+                    { title: 'Secure CARTA monthly transit pass for route #10', target_date: '2026-10-28', category: 'general', assigned_to: 'client', steps: ['Get 30-day bus pass from navigator', 'Practice transfer route to industrial park'] }
+                ],
+                briefcaseUpdates: [
+                    { key: 'state_id', status: 'green', notes: 'SC Real ID verified active.' },
+                    { key: 'drivers_license', status: 'red', notes: 'Suspended due to child support arrears in Charleston County.' },
+                    { key: 'snap_food_stamps', status: 'green', notes: 'Active EBT benefit confirmed.' }
+                ],
+                agenda: `### 🗣️ Next Session Focus for Marcus
+- [ ] Confirm filing of DSS child support petition with Family Court
+- [ ] Verify CARTA monthly transit pass distribution
+- [ ] Review housing lease renewal timeline for next month`
+            },
+            {
+                first_name: 'Dante',
+                last_name: 'Vance',
+                apricot_id: 'T90-RN-102',
+                location: 'Columbia',
+                stability_tier: 'stable',
+                phone: '803-555-0189',
+                email: 'dante.v@example.com',
+                notes: 'Stable housing in Columbia. Preparing for commercial warehousing employment interviews.',
+                goals: [
+                    { title: 'Submit application to Husqvarna Distribution Center', target_date: '2026-10-30', category: 'employment', assigned_to: 'client', steps: ['Tailor resume to forklift logistics role', 'Complete online aptitude assessment'] }
+                ],
+                briefcaseUpdates: [
+                    { key: 'resume_completed', status: 'green', notes: 'Turn90 format resume approved.' },
+                    { key: 'state_id', status: 'green', notes: 'SC Driver License active.' },
+                    { key: 'ss_card', status: 'green', notes: 'Original card verified.' },
+                    { key: 'work_clothing', status: 'green', notes: 'Steel-toe work boots issued.' }
+                ],
+                agenda: `### 🗣️ Next Session Focus for Dante
+- [ ] Review Husqvarna interview prep questions and elevator pitch
+- [ ] Confirm direct deposit banking setup
+- [ ] Review 60-day sobriety maintenance plan`
+            },
+            {
+                first_name: 'Tyrell',
+                last_name: 'Washington',
+                apricot_id: 'T90-RN-103',
+                location: 'Spartanburg',
+                stability_tier: 'immediate_triage',
+                phone: '864-555-0123',
+                email: 'tyrell.w@example.com',
+                notes: 'Immediate triage: Received 7-day informal notice to vacate shared room. Blood pressure medications expired.',
+                goals: [
+                    { title: 'Emergency intake at Miracle Hill Spartanburg Rescue Mission', target_date: '2026-10-23', category: 'housing', assigned_to: 'joint', steps: ['Call shelter intake coordinator', 'Secure emergency bed voucher'] },
+                    { title: 'Schedule Welvista primary health intake for hypertension meds', target_date: '2026-10-24', category: 'health', assigned_to: 'navigator', steps: ['Submit prescription assistance form', 'Coordinate clinic transit'] }
+                ],
+                briefcaseUpdates: [
+                    { key: 'housing_plan', status: 'red', notes: 'CRITICAL: Notice to vacate received. Emergency placement required.' },
+                    { key: 'medical_home', status: 'red', notes: 'Out of prescription hypertension medications.' },
+                    { key: 'state_id', status: 'green', notes: 'SC Beginner Permit verified.' }
+                ],
+                agenda: `### 🚨 URGENT Next Session Focus for Tyrell
+- [ ] Confirm emergency bed placement at Miracle Hill Rescue Mission
+- [ ] Coordinate transportation to Spartanburg Welvista clinic for meds
+- [ ] Provide emergency food pantry voucher`
+            }
+        ];
+
+        for (const c of demoClients) {
+            const insRes = db.prepare(`
+                INSERT INTO reentry_clients (first_name, last_name, apricot_id, location, phone, email, notes, stability_tier, status)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'active')
+            `).run(c.first_name, c.last_name, c.apricot_id, c.location, c.phone, c.email, c.notes, c.stability_tier);
+            const newId = insRes.lastInsertRowid;
+
+            initReentryClientBriefcase(newId);
+
+            db.prepare(`
+                INSERT OR REPLACE INTO reentry_client_agenda (client_id, agenda_markdown)
+                VALUES (?, ?)
+            `).run(newId, c.agenda);
+
+            for (const b of c.briefcaseUpdates) {
+                db.prepare(`
+                    UPDATE reentry_client_briefcase
+                    SET status = ?, notes = ?
+                    WHERE client_id = ? AND item_key = ?
+                `).run(b.status, b.notes, newId, b.key);
+            }
+
+            for (const g of c.goals) {
+                db.prepare(`
+                    INSERT INTO reentry_client_goals (client_id, goal_title, target_date, status, category, action_steps, assigned_to)
+                    VALUES (?, ?, ?, 'in_progress', ?, ?, ?)
+                `).run(newId, g.title, g.target_date, g.category, JSON.stringify(g.steps), g.assigned_to);
+            }
+        }
+        console.log('[DB Seed] Seeded initial Reentry Navigation demo caseload (3 clients).');
+    }
 }
 seedDefaultAccounts();
 
@@ -706,6 +964,7 @@ module.exports = {
     STABILITY_STEP_DOWN_TRIGGERS,
     BENEFIT_PROGRAMS,
     initParticipantBriefcase,
+    initReentryClientBriefcase,
     syncBenefitToBriefcase
 };
 

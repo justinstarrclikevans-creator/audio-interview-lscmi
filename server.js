@@ -8,7 +8,8 @@ const fs = require('fs');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const { db, BRIEFCASE_DOMAINS, DEFAULT_GATE_CRITERIA, STABILITY_STEP_DOWN_TRIGGERS, initParticipantBriefcase, BENEFIT_PROGRAMS, syncBenefitToBriefcase } = require('./db');
+const { db, BRIEFCASE_DOMAINS, DEFAULT_GATE_CRITERIA, STABILITY_STEP_DOWN_TRIGGERS, initParticipantBriefcase, initReentryClientBriefcase, BENEFIT_PROGRAMS, syncBenefitToBriefcase } = require('./db');
+const { analyzeReentrySession } = require('./services/reentry_session_analyzer');
 const { runPhase1, runPhase1WithAudio, runPhase2, adjustActionPlan, safeJsonParse } = require('./llm_pipeline');
 const { convertSingleMdToPdf } = require('./convert_md_to_pdf');
 const { convertSingleMdToDocx } = require('./convert_md_to_docx');
@@ -113,7 +114,13 @@ function authenticateToken(req, res, next) {
 
 function requireRole(...allowedRoles) {
     return (req, res, next) => {
-        if (!req.user || !allowedRoles.includes(req.user.role)) {
+        if (!req.user) {
+            return res.status(403).json({ error: 'Access restricted to authorized personnel.' });
+        }
+        if (req.user.role === 'admin' || req.user.role === 'director' || req.user.portal_type === 'supervisor') {
+            return next();
+        }
+        if (!allowedRoles.includes(req.user.role)) {
             return res.status(403).json({ error: 'Access restricted to authorized personnel.' });
         }
         next();
@@ -179,15 +186,98 @@ app.post('/api/auth/login', async (req, res) => {
         const match = await bcrypt.compare(password, user.password_hash);
         if (!match) return res.status(401).json({ error: 'Invalid email or password.' });
 
-        const token = jwt.sign({ id: user.id, email: user.email, name: user.name, role: user.role, track: user.track }, JWT_SECRET, { expiresIn: '30d' });
+        const token = jwt.sign({ id: user.id, email: user.email, name: user.name, role: user.role, track: user.track, location: user.location, portal_type: user.portal_type || 'center' }, JWT_SECRET, { expiresIn: '30d' });
         res.json({
             message: 'Login successful',
             token,
-            user: { id: user.id, name: user.name, email: user.email, phone: user.phone, role: user.role, track: user.track, location: user.location }
+            user: { id: user.id, name: user.name, email: user.email, phone: user.phone, role: user.role, track: user.track, location: user.location, portal_type: user.portal_type || 'center' }
         });
     } catch (err) {
         console.error('Login error:', err);
         res.status(500).json({ error: 'Login failed.' });
+    }
+});
+
+// Name & Passcode Authentication (No Email required for Staff/Portals)
+app.post('/api/auth/pin-login', async (req, res) => {
+    try {
+        const { loginName, passcode, name } = req.body;
+        const targetIdentifier = (loginName || name || '').trim().toLowerCase();
+        const pin = (passcode || '').trim();
+
+        if (!targetIdentifier || !pin) {
+            return res.status(400).json({ error: 'Please enter both your portal/name and passcode.' });
+        }
+
+        // Map human-friendly names or aliases
+        let mappedLogin = targetIdentifier;
+        if (targetIdentifier.includes('charleston') || targetIdentifier === 'chs') {
+            mappedLogin = 'charleston';
+        } else if (targetIdentifier.includes('columbia') || targetIdentifier === 'col') {
+            mappedLogin = 'columbia';
+        } else if (targetIdentifier.includes('spartanburg') || targetIdentifier === 'spb') {
+            mappedLogin = 'spartanburg';
+        } else if (targetIdentifier.includes('reentry') || targetIdentifier.includes('nav') || targetIdentifier === 'rn') {
+            mappedLogin = 'reentry_nav';
+        } else if (targetIdentifier.includes('supervisor') || targetIdentifier.includes('lead') || targetIdentifier.includes('director') || targetIdentifier === 'admin') {
+            mappedLogin = 'supervisor';
+        }
+
+        // Find user by login_name OR name OR email
+        let user = db.prepare(`
+            SELECT id, name, login_name, email, phone, passcode_hash, password_hash, role, track, location, portal_type 
+            FROM users 
+            WHERE LOWER(login_name) = ? OR LOWER(name) = ? OR LOWER(email) = ?
+        `).get(mappedLogin, targetIdentifier, targetIdentifier);
+
+        if (!user) {
+            return res.status(401).json({ error: 'Account not found. Please verify your portal selection or name.' });
+        }
+
+        // Verify passcode
+        let isPasscodeValid = false;
+        if (user.passcode_hash) {
+            isPasscodeValid = await bcrypt.compare(pin, user.passcode_hash);
+        }
+        if (!isPasscodeValid && user.password_hash) {
+            isPasscodeValid = await bcrypt.compare(pin, user.password_hash);
+        }
+
+        if (!isPasscodeValid) {
+            return res.status(401).json({ error: 'Invalid passcode for ' + user.name + '.' });
+        }
+
+        const portalType = user.portal_type || (user.track === 'reentry_nav' ? 'reentry_nav' : (user.role === 'director' ? 'supervisor' : 'center'));
+
+        const tokenPayload = {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            login_name: user.login_name,
+            role: user.role,
+            track: user.track,
+            location: user.location,
+            portal_type: portalType
+        };
+
+        const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: '30d' });
+
+        res.json({
+            message: 'Signed in successfully as ' + user.name,
+            token,
+            user: {
+                id: user.id,
+                name: user.name,
+                login_name: user.login_name,
+                role: user.role,
+                track: user.track,
+                location: user.location,
+                portal_type: portalType
+            }
+        });
+    } catch (err) {
+        console.error('PIN Login error:', err);
+        res.status(500).json({ error: 'Login failed: ' + err.message });
     }
 });
 
@@ -221,7 +311,7 @@ app.post('/api/auth/reset-password', async (req, res) => {
 });
 
 app.get('/api/auth/me', authenticateToken, (req, res) => {
-    const user = db.prepare('SELECT id, name, email, phone, role, track, location, created_at FROM users WHERE id = ?').get(req.user.id);
+    const user = db.prepare('SELECT id, name, login_name, email, phone, role, track, location, portal_type, created_at FROM users WHERE id = ?').get(req.user.id);
     if (!user) return res.status(404).json({ error: 'User not found.' });
 
     let profile = null;
@@ -3495,6 +3585,615 @@ app.post('/api/reentry/upload-jobs-spreadsheet', authenticateToken, requireRole(
         message: `Spreadsheet '${filename}' uploaded and parsed successfully into program database.`,
         totalJobsCount: jobs.length
     });
+});
+
+// =========================================================================
+// REENTRY NAVIGATION LIVING CLIENT FOLDERS & LIVE CASE PLAN ENGINE
+// =========================================================================
+
+// List Reentry Clients with filter & summary stats
+app.get('/api/reentry/clients', authenticateToken, requireRole('navigator', 'program_manager', 'director', 'admin', 'staff'), (req, res) => {
+    try {
+        const { search, stability, status, location } = req.query;
+        let query = `
+            SELECT 
+                c.id, c.first_name, c.last_name, c.apricot_id, c.location, c.status, 
+                c.stability_tier, c.phone, c.email, c.notes, c.created_at, c.updated_at,
+                (SELECT COUNT(*) FROM reentry_client_goals g WHERE g.client_id = c.id AND g.status = 'in_progress') AS open_goals_count,
+                (SELECT COUNT(*) FROM reentry_client_briefcase b WHERE b.client_id = c.id AND b.status = 'green') AS briefcase_verified_count,
+                (SELECT COUNT(*) FROM reentry_client_briefcase b WHERE b.client_id = c.id AND b.status = 'red') AS briefcase_barrier_count,
+                (SELECT MAX(session_date) FROM reentry_client_sessions s WHERE s.client_id = c.id) AS last_session_date
+            FROM reentry_clients c
+            WHERE 1=1
+        `;
+        const params = [];
+
+        if (status && status !== 'all') {
+            query += ` AND c.status = ?`;
+            params.push(status);
+        } else {
+            query += ` AND c.status != 'archived'`;
+        }
+
+        if (stability && stability !== 'all') {
+            query += ` AND c.stability_tier = ?`;
+            params.push(stability);
+        }
+
+        if (location && location !== 'all' && location !== 'Statewide') {
+            query += ` AND c.location = ?`;
+            params.push(location);
+        }
+
+        if (search && search.trim()) {
+            query += ` AND (c.first_name LIKE ? OR c.last_name LIKE ? OR c.apricot_id LIKE ? OR c.phone LIKE ?)`;
+            const s = `%${search.trim()}%`;
+            params.push(s, s, s, s);
+        }
+
+        query += ` ORDER BY c.updated_at DESC, c.id DESC`;
+        const clients = db.prepare(query).all(...params);
+
+        // Compute overall stats
+        const allStats = db.prepare(`
+            SELECT 
+                COUNT(*) AS total,
+                SUM(CASE WHEN stability_tier = 'stable' THEN 1 ELSE 0 END) AS stable,
+                SUM(CASE WHEN stability_tier = 'at_risk' THEN 1 ELSE 0 END) AS at_risk,
+                SUM(CASE WHEN stability_tier = 'immediate_triage' THEN 1 ELSE 0 END) AS immediate_triage
+            FROM reentry_clients
+            WHERE status != 'archived'
+        `).get();
+
+        res.json({
+            clients,
+            stats: {
+                total: allStats.total || 0,
+                stable: allStats.stable || 0,
+                at_risk: allStats.at_risk || 0,
+                immediate_triage: allStats.immediate_triage || 0
+            }
+        });
+    } catch (err) {
+        console.error('Error fetching reentry clients:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Create New Reentry Client Folder
+app.post('/api/reentry/clients', authenticateToken, requireRole('navigator', 'program_manager', 'director', 'admin', 'staff'), (req, res) => {
+    try {
+        const { first_name, last_name, apricot_id, location, phone, email, notes, stability_tier } = req.body;
+        if (!first_name || !last_name) {
+            return res.status(400).json({ error: 'First name and last name are required.' });
+        }
+
+        const insertStmt = db.prepare(`
+            INSERT INTO reentry_clients (first_name, last_name, apricot_id, location, phone, email, notes, stability_tier, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'active')
+        `);
+        const result = insertStmt.run(
+            first_name.trim(),
+            last_name.trim(),
+            apricot_id ? apricot_id.trim() : null,
+            location || 'Charleston',
+            phone ? phone.trim() : null,
+            email ? email.trim() : null,
+            notes ? notes.trim() : null,
+            stability_tier || 'stable'
+        );
+        const clientId = result.lastInsertRowid;
+
+        // Initialize 35-item briefcase checklist
+        initReentryClientBriefcase(clientId);
+
+        // Initialize default Next Conversation Agenda
+        const defaultAgenda = `### 🗣️ Next Session Focus for ${first_name.trim()}
+- [ ] Complete initial needs assessment & barrier intake
+- [ ] Verify vital documents (State ID, Social Security Card)
+- [ ] Review immediate safe housing, transportation, and health coverage`;
+
+        db.prepare(`
+            INSERT OR REPLACE INTO reentry_client_agenda (client_id, agenda_markdown)
+            VALUES (?, ?)
+        `).run(clientId, defaultAgenda);
+
+        const newClient = db.prepare('SELECT * FROM reentry_clients WHERE id = ?').get(clientId);
+        res.status(201).json({ success: true, client: newClient });
+    } catch (err) {
+        console.error('Error creating reentry client:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Get Individual Client Folder (Full Details: Profile, Sessions, Goals, Briefcase, Agenda)
+app.get('/api/reentry/clients/:id', authenticateToken, requireRole('navigator', 'program_manager', 'director', 'admin', 'staff'), (req, res) => {
+    try {
+        const clientId = req.params.id;
+        const client = db.prepare('SELECT * FROM reentry_clients WHERE id = ?').get(clientId);
+        if (!client) {
+            return res.status(404).json({ error: 'Client folder not found.' });
+        }
+
+        const sessions = db.prepare(`
+            SELECT id, session_date, session_title, session_type, notes_text, transcript_text, ai_analysis_json, next_conversation_topics, created_at 
+            FROM reentry_client_sessions 
+            WHERE client_id = ? 
+            ORDER BY session_date DESC, id DESC
+        `).all(clientId);
+
+        const goals = db.prepare(`
+            SELECT id, goal_title, target_date, status, category, action_steps, assigned_to, created_at, updated_at 
+            FROM reentry_client_goals 
+            WHERE client_id = ? 
+            ORDER BY CASE status WHEN 'in_progress' THEN 1 WHEN 'blocked' THEN 2 ELSE 3 END, target_date ASC
+        `).all(clientId);
+
+        const briefcase = db.prepare(`
+            SELECT id, domain, item_key, title, status, notes, updated_at 
+            FROM reentry_client_briefcase 
+            WHERE client_id = ? 
+            ORDER BY id ASC
+        `).all(clientId);
+
+        const agendaRow = db.prepare('SELECT agenda_markdown, last_updated FROM reentry_client_agenda WHERE client_id = ?').get(clientId);
+
+        res.json({
+            client,
+            sessions: sessions.map(s => {
+                let parsedAnalysis = null;
+                try { if (s.ai_analysis_json) parsedAnalysis = JSON.parse(s.ai_analysis_json); } catch(e){}
+                return { ...s, ai_analysis: parsedAnalysis };
+            }),
+            goals: goals.map(g => {
+                let steps = [];
+                try { if (g.action_steps) steps = JSON.parse(g.action_steps); } catch(e){}
+                return { ...g, action_steps: steps };
+            }),
+            briefcase,
+            agenda: agendaRow ? agendaRow.agenda_markdown : ''
+        });
+    } catch (err) {
+        console.error('Error fetching client folder:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Update Client Profile (stability, location, contact, notes)
+app.patch('/api/reentry/clients/:id', authenticateToken, requireRole('navigator', 'program_manager', 'director', 'admin', 'staff'), (req, res) => {
+    try {
+        const clientId = req.params.id;
+        const { first_name, last_name, apricot_id, location, phone, email, notes, status, stability_tier } = req.body;
+
+        db.prepare(`
+            UPDATE reentry_clients 
+            SET first_name = COALESCE(?, first_name),
+                last_name = COALESCE(?, last_name),
+                apricot_id = COALESCE(?, apricot_id),
+                location = COALESCE(?, location),
+                phone = COALESCE(?, phone),
+                email = COALESCE(?, email),
+                notes = COALESCE(?, notes),
+                status = COALESCE(?, status),
+                stability_tier = COALESCE(?, stability_tier),
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+        `).run(first_name, last_name, apricot_id, location, phone, email, notes, status, stability_tier, clientId);
+
+        res.json({ success: true, message: 'Client profile updated.' });
+    } catch (err) {
+        console.error('Error updating client profile:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Permanently Delete Client Folder (Full Cascade Purge)
+app.delete('/api/reentry/clients/:id', authenticateToken, requireRole('navigator', 'program_manager', 'director', 'admin', 'staff'), (req, res) => {
+    try {
+        const clientId = req.params.id;
+        const client = db.prepare('SELECT first_name, last_name FROM reentry_clients WHERE id = ?').get(clientId);
+        if (!client) {
+            return res.status(404).json({ error: 'Client folder not found.' });
+        }
+
+        // Explicit cleanup across all related tables
+        db.prepare('DELETE FROM reentry_client_sessions WHERE client_id = ?').run(clientId);
+        db.prepare('DELETE FROM reentry_client_goals WHERE client_id = ?').run(clientId);
+        db.prepare('DELETE FROM reentry_client_agenda WHERE client_id = ?').run(clientId);
+        db.prepare('DELETE FROM reentry_client_briefcase WHERE client_id = ?').run(clientId);
+        db.prepare('DELETE FROM reentry_clients WHERE id = ?').run(clientId);
+
+        console.log(`[Reentry Nav] Permanently deleted client folder: ${client.first_name} ${client.last_name} (ID ${clientId})`);
+        res.json({ success: true, message: `Folder for ${client.first_name} ${client.last_name} has been permanently deleted.` });
+    } catch (err) {
+        console.error('Error deleting client folder:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Ingest Session Recording, Transcript, or Notes -> AI Live Case Plan Engine
+app.post('/api/reentry/clients/:id/upload-session', authenticateToken, requireRole('navigator', 'program_manager', 'director', 'admin', 'staff'), memoryUpload.single('file'), async (req, res) => {
+    let tempAudioPath = null;
+    try {
+        const clientId = req.params.id;
+        const client = db.prepare('SELECT * FROM reentry_clients WHERE id = ?').get(clientId);
+        if (!client) {
+            return res.status(404).json({ error: 'Client not found.' });
+        }
+
+        const { sessionTitle, sessionType, sessionText, notes } = req.body;
+        const rawContent = (sessionText || notes || '').trim();
+
+        if (!req.file && !rawContent) {
+            return res.status(400).json({ error: 'Please upload an audio file or provide a transcript / session notes.' });
+        }
+
+        // If file uploaded, persist temporarily to disk for GoogleAIFileManager
+        if (req.file) {
+            const os = require('os');
+            const ext = path.extname(req.file.originalname) || '.mp3';
+            tempAudioPath = path.join(os.tmpdir(), `reentry_${clientId}_${Date.now()}${ext}`);
+            fs.writeFileSync(tempAudioPath, req.file.buffer);
+        }
+
+        // Fetch current goals and briefcase for context continuity
+        const currentGoals = db.prepare('SELECT goal_title, target_date, status, category FROM reentry_client_goals WHERE client_id = ?').all(clientId);
+        const currentBriefcase = db.prepare('SELECT item_key, title, status, notes FROM reentry_client_briefcase WHERE client_id = ?').all(clientId);
+
+        console.log(`[Reentry Nav] Analyzing session for ${client.first_name} ${client.last_name} (${sessionTitle || 'Check-in'})...`);
+        const aiResult = await analyzeReentrySession({
+            client,
+            sessionTitle: sessionTitle || 'Reentry Navigation Session',
+            sessionType: sessionType || 'check_in',
+            sessionText: rawContent,
+            mediaPath: tempAudioPath,
+            currentGoals,
+            currentBriefcase
+        });
+
+        // Save session record
+        const sessionStmt = db.prepare(`
+            INSERT INTO reentry_client_sessions (
+                client_id, session_date, session_title, session_type, 
+                transcript_text, notes_text, ai_analysis_json, next_conversation_topics
+            ) VALUES (?, DATE('now'), ?, ?, ?, ?, ?, ?)
+        `);
+        const sessionResult = sessionStmt.run(
+            clientId,
+            sessionTitle || 'Check-in Session',
+            sessionType || 'check_in',
+            aiResult.diarized_transcript || rawContent,
+            rawContent,
+            JSON.stringify(aiResult),
+            aiResult.next_conversation_agenda || ''
+        );
+        const newSessionId = sessionResult.lastInsertRowid;
+
+        // Update client stability tier and timestamp
+        if (aiResult.stability_tier) {
+            db.prepare(`
+                UPDATE reentry_clients 
+                SET stability_tier = ?, updated_at = CURRENT_TIMESTAMP 
+                WHERE id = ?
+            `).run(aiResult.stability_tier, clientId);
+        } else {
+            db.prepare('UPDATE reentry_clients SET updated_at = CURRENT_TIMESTAMP WHERE id = ?').run(clientId);
+        }
+
+        // Update Next Conversation Agenda
+        if (aiResult.next_conversation_agenda) {
+            db.prepare(`
+                INSERT INTO reentry_client_agenda (client_id, agenda_markdown, last_updated)
+                VALUES (?, ?, CURRENT_TIMESTAMP)
+                ON CONFLICT(client_id) DO UPDATE SET 
+                    agenda_markdown = excluded.agenda_markdown,
+                    last_updated = CURRENT_TIMESTAMP
+            `).run(clientId, aiResult.next_conversation_agenda);
+        }
+
+        // Apply briefcase updates
+        if (Array.isArray(aiResult.briefcase_updates) && aiResult.briefcase_updates.length > 0) {
+            const updateBriefcaseStmt = db.prepare(`
+                UPDATE reentry_client_briefcase 
+                SET status = ?, notes = ?, updated_at = CURRENT_TIMESTAMP 
+                WHERE client_id = ? AND item_key = ?
+            `);
+            for (const b of aiResult.briefcase_updates) {
+                if (b.item_key && b.status) {
+                    updateBriefcaseStmt.run(b.status, b.notes || '', clientId, b.item_key);
+                }
+            }
+        }
+
+        // Apply proposed goals to live case plan
+        if (Array.isArray(aiResult.proposed_goals) && aiResult.proposed_goals.length > 0) {
+            const insertGoalStmt = db.prepare(`
+                INSERT INTO reentry_client_goals (
+                    client_id, goal_title, target_date, status, category, action_steps, assigned_to
+                ) VALUES (?, ?, ?, 'in_progress', ?, ?, ?)
+            `);
+            for (const g of aiResult.proposed_goals) {
+                if (g.goal_title) {
+                    const stepsJson = Array.isArray(g.action_steps) ? JSON.stringify(g.action_steps) : JSON.stringify([g.goal_title]);
+                    insertGoalStmt.run(
+                        clientId,
+                        g.goal_title,
+                        g.target_date || null,
+                        g.category || 'general',
+                        stepsJson,
+                        g.assigned_to || 'client'
+                    );
+                }
+            }
+        }
+
+        res.json({
+            success: true,
+            sessionId: newSessionId,
+            analysis: aiResult,
+            message: `Session processed successfully. Goals, briefcase, and next conversation agenda updated for ${client.first_name}.`
+        });
+
+    } catch (err) {
+        console.error('Error processing reentry session upload:', err);
+        res.status(500).json({ error: 'Failed to process session: ' + err.message });
+    } finally {
+        if (tempAudioPath && fs.existsSync(tempAudioPath)) {
+            try { fs.unlinkSync(tempAudioPath); } catch (e) {}
+        }
+    }
+});
+
+// Goals Management (Manual Add, Update, Delete)
+app.post('/api/reentry/clients/:id/goals', authenticateToken, requireRole('navigator', 'program_manager', 'director', 'admin', 'staff'), (req, res) => {
+    try {
+        const clientId = req.params.id;
+        const { goal_title, target_date, category, action_steps, assigned_to } = req.body;
+        if (!goal_title) return res.status(400).json({ error: 'Goal title is required.' });
+
+        const stepsJson = Array.isArray(action_steps) ? JSON.stringify(action_steps) : (action_steps ? JSON.stringify([action_steps]) : JSON.stringify([]));
+        const insertStmt = db.prepare(`
+            INSERT INTO reentry_client_goals (client_id, goal_title, target_date, status, category, action_steps, assigned_to)
+            VALUES (?, ?, ?, 'in_progress', ?, ?, ?)
+        `);
+        const result = insertStmt.run(
+            clientId,
+            goal_title.trim(),
+            target_date || null,
+            category || 'general',
+            stepsJson,
+            assigned_to || 'client'
+        );
+
+        db.prepare('UPDATE reentry_clients SET updated_at = CURRENT_TIMESTAMP WHERE id = ?').run(clientId);
+        res.status(201).json({ success: true, goalId: result.lastInsertRowid });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.patch('/api/reentry/clients/:id/goals/:goalId', authenticateToken, requireRole('navigator', 'program_manager', 'director', 'admin', 'staff'), (req, res) => {
+    try {
+        const { id: clientId, goalId } = req.params;
+        const { goal_title, target_date, status, category, action_steps, assigned_to } = req.body;
+
+        const stepsJson = action_steps !== undefined ? (Array.isArray(action_steps) ? JSON.stringify(action_steps) : JSON.stringify([action_steps])) : null;
+
+        db.prepare(`
+            UPDATE reentry_client_goals
+            SET goal_title = COALESCE(?, goal_title),
+                target_date = COALESCE(?, target_date),
+                status = COALESCE(?, status),
+                category = COALESCE(?, category),
+                action_steps = COALESCE(?, action_steps),
+                assigned_to = COALESCE(?, assigned_to),
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = ? AND client_id = ?
+        `).run(goal_title, target_date, status, category, stepsJson, assigned_to, goalId, clientId);
+
+        db.prepare('UPDATE reentry_clients SET updated_at = CURRENT_TIMESTAMP WHERE id = ?').run(clientId);
+        res.json({ success: true, message: 'Goal updated.' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.delete('/api/reentry/clients/:id/goals/:goalId', authenticateToken, requireRole('navigator', 'program_manager', 'director', 'admin', 'staff'), (req, res) => {
+    try {
+        const { id: clientId, goalId } = req.params;
+        db.prepare('DELETE FROM reentry_client_goals WHERE id = ? AND client_id = ?').run(goalId, clientId);
+        db.prepare('UPDATE reentry_clients SET updated_at = CURRENT_TIMESTAMP WHERE id = ?').run(clientId);
+        res.json({ success: true, message: 'Goal removed.' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Manual Briefcase Item Status & Notes Update
+app.patch('/api/reentry/clients/:id/briefcase/:itemKey', authenticateToken, requireRole('navigator', 'program_manager', 'director', 'admin', 'staff'), (req, res) => {
+    try {
+        const { id: clientId, itemKey } = req.params;
+        const { status, notes } = req.body;
+
+        db.prepare(`
+            UPDATE reentry_client_briefcase 
+            SET status = COALESCE(?, status),
+                notes = COALESCE(?, notes),
+                updated_at = CURRENT_TIMESTAMP
+            WHERE client_id = ? AND item_key = ?
+        `).run(status, notes, clientId, itemKey);
+
+        db.prepare('UPDATE reentry_clients SET updated_at = CURRENT_TIMESTAMP WHERE id = ?').run(clientId);
+        res.json({ success: true, message: 'Briefcase item updated.' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Update Next Conversation Agenda
+app.patch('/api/reentry/clients/:id/agenda', authenticateToken, requireRole('navigator', 'program_manager', 'director', 'admin', 'staff'), (req, res) => {
+    try {
+        const clientId = req.params.id;
+        const { agenda_markdown } = req.body;
+
+        db.prepare(`
+            INSERT INTO reentry_client_agenda (client_id, agenda_markdown, last_updated)
+            VALUES (?, ?, CURRENT_TIMESTAMP)
+            ON CONFLICT(client_id) DO UPDATE SET 
+                agenda_markdown = excluded.agenda_markdown,
+                last_updated = CURRENT_TIMESTAMP
+        `).run(clientId, agenda_markdown || '');
+
+        db.prepare('UPDATE reentry_clients SET updated_at = CURRENT_TIMESTAMP WHERE id = ?').run(clientId);
+        res.json({ success: true, message: 'Agenda saved.' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Master Action Rollup across ALL Reentry Clients
+app.get('/api/reentry/master-actions', authenticateToken, requireRole('navigator', 'program_manager', 'director', 'admin', 'staff'), (req, res) => {
+    try {
+        const masterActions = db.prepare(`
+            SELECT 
+                g.id AS goal_id, g.client_id, g.goal_title, g.target_date, g.status, g.category, g.assigned_to, g.action_steps,
+                c.first_name, c.last_name, c.apricot_id, c.location, c.stability_tier
+            FROM reentry_client_goals g
+            JOIN reentry_clients c ON g.client_id = c.id
+            WHERE g.status IN ('in_progress', 'blocked') AND c.status != 'archived'
+            ORDER BY 
+                CASE WHEN g.target_date IS NULL THEN 1 ELSE 0 END,
+                g.target_date ASC,
+                g.id DESC
+            LIMIT 50
+        `).all();
+
+        const triageAlerts = db.prepare(`
+            SELECT id, first_name, last_name, apricot_id, location, stability_tier, phone, updated_at
+            FROM reentry_clients
+            WHERE stability_tier IN ('immediate_triage', 'at_risk') AND status != 'archived'
+            ORDER BY CASE stability_tier WHEN 'immediate_triage' THEN 1 ELSE 2 END, updated_at DESC
+        `).all();
+
+        res.json({
+            masterActions: masterActions.map(a => {
+                let steps = [];
+                try { if (a.action_steps) steps = JSON.parse(a.action_steps); } catch(e){}
+                return { ...a, action_steps: steps };
+            }),
+            triageAlerts,
+            totalActiveActions: masterActions.length
+        });
+    } catch (err) {
+        console.error('Error fetching master actions:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// =========================================================================
+// SUPERVISOR COMMAND CENTER & CROSS-PROGRAM METRICS
+// =========================================================================
+app.get('/api/supervisor/overview', authenticateToken, requireRole('director', 'admin', 'program_manager', 'staff'), (req, res) => {
+    try {
+        const centers = ['Charleston', 'Columbia', 'Spartanburg'];
+        const centerMetrics = {};
+
+        for (const loc of centers) {
+            const participantsCount = db.prepare(`
+                SELECT COUNT(*) AS c 
+                FROM users u 
+                LEFT JOIN participant_profiles p ON u.id = p.user_id 
+                WHERE u.role = 'participant' AND u.location = ? AND (p.overall_status IS NULL OR p.overall_status != 'archived')
+            `).get(loc).c;
+
+            const facilitationStats = db.prepare(`
+                SELECT 
+                    COUNT(*) AS count,
+                    ROUND(AVG(total_score), 1) AS avg_score,
+                    SUM(CASE WHEN total_score >= 80 THEN 1 ELSE 0 END) AS passing_count
+                FROM class_facilitation_evaluations
+                WHERE location = ?
+            `).get(loc);
+
+            const cmStats = db.prepare(`
+                SELECT 
+                    COUNT(*) AS count,
+                    ROUND(AVG(total_score), 1) AS avg_score
+                FROM case_management_evaluations
+                WHERE location = ?
+            `).get(loc);
+
+            centerMetrics[loc] = {
+                participantsCount,
+                facilitationEvalsCount: facilitationStats.count || 0,
+                facilitationAvgScore: facilitationStats.avg_score || 0,
+                facilitationPassingRate: facilitationStats.count > 0 ? Math.round((facilitationStats.passing_count / facilitationStats.count) * 100) : 0,
+                cmEvalsCount: cmStats.count || 0,
+                cmAvgScore: cmStats.avg_score || 0
+            };
+        }
+
+        // Reentry Navigation Overview
+        const reentryStats = db.prepare(`
+            SELECT 
+                COUNT(*) AS total_clients,
+                SUM(CASE WHEN stability_tier = 'stable' THEN 1 ELSE 0 END) AS stable_count,
+                SUM(CASE WHEN stability_tier = 'at_risk' THEN 1 ELSE 0 END) AS at_risk_count,
+                SUM(CASE WHEN stability_tier = 'immediate_triage' THEN 1 ELSE 0 END) AS triage_count
+            FROM reentry_clients
+            WHERE status != 'archived'
+        `).get();
+
+        const openGoalsCount = db.prepare(`
+            SELECT COUNT(*) AS c 
+            FROM reentry_client_goals g 
+            JOIN reentry_clients c ON g.client_id = c.id 
+            WHERE g.status = 'in_progress' AND c.status != 'archived'
+        `).get().c;
+
+        const recentSessionsCount = db.prepare(`
+            SELECT COUNT(*) AS c 
+            FROM reentry_client_sessions 
+            WHERE created_at >= DATETIME('now', '-30 days')
+        `).get().c;
+
+        // Recent high-priority QA alerts across whole program
+        const recentLowScoreClasses = db.prepare(`
+            SELECT id, facilitator_name, location, session_title, total_score, created_at
+            FROM class_facilitation_evaluations
+            WHERE total_score < 80
+            ORDER BY created_at DESC
+            LIMIT 5
+        `).all();
+
+        const activeTriageCases = db.prepare(`
+            SELECT id, first_name, last_name, location, stability_tier, updated_at
+            FROM reentry_clients
+            WHERE stability_tier = 'immediate_triage' AND status != 'archived'
+            ORDER BY updated_at DESC
+            LIMIT 5
+        `).all();
+
+        res.json({
+            centers: centerMetrics,
+            reentryNav: {
+                totalClients: reentryStats.total_clients || 0,
+                stableCount: reentryStats.stable_count || 0,
+                atRiskCount: reentryStats.at_risk_count || 0,
+                triageCount: reentryStats.triage_count || 0,
+                openGoalsCount: openGoalsCount || 0,
+                recentSessionsCount: recentSessionsCount || 0
+            },
+            alerts: {
+                lowScoreClasses: recentLowScoreClasses,
+                triageCases: activeTriageCases
+            }
+        });
+
+    } catch (err) {
+        console.error('Error fetching supervisor overview:', err);
+        res.status(500).json({ error: err.message });
+    }
 });
 
 app.post('/api/upload-audio', memoryUpload.single('audio'), async (req, res) => {
