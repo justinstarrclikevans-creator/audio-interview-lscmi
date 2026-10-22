@@ -905,17 +905,66 @@
             </div>
 
             <!-- Sub Navigation Tabs for Program Manager Portal -->
-            
             <div class="pm-subtabs" style="display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 12px; overflow-x: auto;">
-                
-                
-                <button id="pm-tab-btn-reentry" class="btn btn-outline" onclick="switchPmSubView('reentry')">🧭 Re-entry Navigator & Case Planning</button>
-                <button id="pm-tab-btn-drafts" class="btn btn-outline" onclick="switchPmSubView('drafts')">📝 Scoring Reviews</button>
+                <button id="pm-tab-btn-caseload" class="btn btn-primary" onclick="switchPmSubView('caseload')">🏢 First Shift Caseload</button>
                 <button id="pm-tab-btn-facilitation" class="btn btn-outline" onclick="switchPmSubView('facilitation')">🎤 Class Evaluations</button>
                 <button id="pm-tab-btn-cmeval" class="btn btn-outline" onclick="switchPmSubView('cmeval')">📊 CM Evaluations</button>
-                
+                <button id="pm-tab-btn-drafts" class="btn btn-outline" onclick="switchPmSubView('drafts')">📝 Scoring Reviews</button>
                 <button id="pm-tab-btn-resume" class="btn btn-outline" onclick="switchPmSubView('resume')">📄 AI Resume Builder</button>
-                
+                <button id="pm-tab-btn-reentry" class="btn btn-outline" onclick="switchPmSubView('reentry')">🧭 Re-entry Intake Generator</button>
+            </div>
+
+            <!-- SUBSECTION 1: CASELOAD TABLE & FILTERS -->
+            <div id="pm-sec-caseload">
+                <!-- Filter Toolbar -->
+                <div class="filter-toolbar" style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                    <select id="pm-filter-location" onchange="loadCaseload()" class="form-control" style="width: auto; min-width: 170px;">
+                        <option value="">All Locations</option>
+                        <option value="Charleston">Charleston, SC</option>
+                        <option value="Columbia">Columbia, SC</option>
+                        <option value="Spartanburg">Spartanburg, SC</option>
+                    </select>
+                    <select id="pm-filter-track" onchange="loadCaseload()" style="display:none;">
+                        <option value="">All Tracks</option>
+                        <option value="first_shift" selected>First Shift</option>
+                        <option value="reentry_nav">Re-entry Navigation</option>
+                    </select>
+                    <select id="pm-filter-status" onchange="loadCaseload()" style="display:none;">
+                        <option value="">Active Caseload</option>
+                        <option value="archived">Archived / Removed</option>
+                        <option value="all">All (Active & Archived)</option>
+                    </select>
+                    <select id="pm-filter-gate" onchange="loadCaseload()" class="form-control" style="width: auto; min-width: 140px;">
+                        <option value="">All Gates</option>
+                        <option value="1">Gate 1 (Week 1)</option>
+                        <option value="2">Gate 2 (Week 2)</option>
+                        <option value="3">Gate 3 (Week 3)</option>
+                        <option value="4">Gate 4 (Week 4)</option>
+                    </select>
+                </div>
+
+                <!-- Caseload Table -->
+                <div class="section-card mt-4">
+                    <h2 id="caseload-title">Active Participant Caseload</h2>
+                    <div class="table-responsive">
+                        <table class="data-table" id="caseload-table">
+                            <thead id="caseload-thead">
+                                <tr>
+                                    <th style="min-width: 160px;">Participant</th>
+                                    <th style="min-width: 110px; text-align: center;">Weeks Enrolled</th>
+                                    <th style="min-width: 90px; text-align: center;">Points</th>
+                                    <th style="min-width: 150px; text-align: center;">Weekly Compliance</th>
+                                    <th style="min-width: 130px; text-align: center;">Health Screen</th>
+                                    <th style="min-width: 140px; text-align: center;">SkillCat Update</th>
+                                    <th style="min-width: 150px; text-align: center;">Participant File</th>
+                                </tr>
+                            </thead>
+                            <tbody id="caseload-tbody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
 
@@ -3010,7 +3059,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=1792000000000"></script>
+    <script src="app.js?v=1792000000001"></script>
 
     
     <!-- MODAL: Playbook AI -->

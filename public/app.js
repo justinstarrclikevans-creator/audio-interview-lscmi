@@ -1777,7 +1777,12 @@ async function loadCaseload() {
     if (!token) return;
     const tbody = document.getElementById('caseload-tbody');
     if (!tbody) return;
-    const loc = document.getElementById('pm-filter-location')?.value || '';
+    let loc = document.getElementById('pm-filter-location')?.value || '';
+    if (!loc && currentUser && currentUser.location && currentUser.role !== 'director') {
+        loc = currentUser.location;
+        const locFilter = document.getElementById('pm-filter-location');
+        if (locFilter) locFilter.value = loc;
+    }
     const track = document.getElementById('pm-filter-track')?.value || '';
     const status = document.getElementById('pm-filter-status')?.value || '';
     const gate = document.getElementById('pm-filter-gate')?.value || '';
@@ -1844,7 +1849,7 @@ async function loadCaseload() {
 
             
             // Extract the active tab
-            const isFirstShift = window.activeCaseloadTab === 'first_shift';
+            const isFirstShift = (window.activeCaseloadTab || 'first_shift') === 'first_shift';
 
             if (isFirstShift) {
                 // First Shift Formatting
@@ -2120,7 +2125,15 @@ function switchPmSubView(subview) {
     const benefitsCard = document.getElementById('pm-sec-benefits');
     if (benefitsCard) benefitsCard.classList.toggle('hidden', subview !== 'benefits');
 
-    if (subview === 'reentry') {
+    if (subview === 'caseload') {
+        if (typeof loadCaseload === 'function') loadCaseload();
+    } else if (subview === 'facilitation') {
+        if (typeof loadFacilitationEvaluations === 'function') loadFacilitationEvaluations();
+    } else if (subview === 'cmeval') {
+        if (typeof window.loadCmEvaluations === 'function') window.loadCmEvaluations();
+    } else if (subview === 'drafts') {
+        if (typeof loadDraftAssessments === 'function') loadDraftAssessments();
+    } else if (subview === 'reentry') {
         loadReentryParticipants();
     } else if (subview === 'messages') {
         loadPmConversations();
@@ -3928,6 +3941,9 @@ async function loadFacilitationEvaluations() {
         if (!Array.isArray(evals)) throw new Error(evals.error || 'Evaluations must be an array');
         if (!Array.isArray(stats)) throw new Error(stats.error || 'Stats must be an array');
 
+        if (!window.facilitationCenterFilter && currentUser && currentUser.location && currentUser.role !== 'director') {
+            window.facilitationCenterFilter = currentUser.location;
+        }
         window.facilitationCenterFilter = window.facilitationCenterFilter || 'all';
         const activeFilter = window.facilitationCenterFilter;
 
@@ -8308,8 +8324,14 @@ window.handleCmEvaluationSubmit = async function(e) {
 };
 
 window.cmApricotFilter = '';
+window.cmLocationFilter = '';
 window.filterCmByApricotId = function(apricotId) {
     window.cmApricotFilter = apricotId || '';
+    loadCmEvaluations();
+};
+window.filterCmByLocation = function(loc) {
+    window.cmLocationFilter = loc || '';
+    window.cmApricotFilter = '';
     loadCmEvaluations();
 };
 
@@ -8328,11 +8350,20 @@ window.loadCmEvaluations = async function() {
         const allEvals = await evalsRes.json();
         const stats = await statsRes.json();
 
-        const uniqueApricotIds = [...new Set(allEvals.map(e => e.apricot_id).filter(Boolean))];
+        if (!window.cmLocationFilter && currentUser && currentUser.location && currentUser.role !== 'director') {
+            window.cmLocationFilter = currentUser.location;
+        }
+        const activeLocation = window.cmLocationFilter || 'all';
+
+        const filteredByLoc = activeLocation === 'all'
+            ? allEvals
+            : allEvals.filter(e => e.location && e.location.toLowerCase() === activeLocation.toLowerCase());
+
+        const uniqueApricotIds = [...new Set(filteredByLoc.map(e => e.apricot_id).filter(Boolean))];
         const activeApricot = window.cmApricotFilter || '';
         const evals = activeApricot
-            ? allEvals.filter(e => String(e.apricot_id) === String(activeApricot))
-            : allEvals;
+            ? filteredByLoc.filter(e => String(e.apricot_id) === String(activeApricot))
+            : filteredByLoc;
         
         let html = `
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 16px;">
@@ -8353,14 +8384,25 @@ window.loadCmEvaluations = async function() {
         }
         html += `</div>`;
 
+        // Center Isolation Bar
+        html += `
+            <div style="display: flex; gap: 8px; margin-bottom: 14px; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; flex-wrap: wrap; align-items: center;">
+                <span style="font-size: 12px; font-weight: 800; color: var(--slate); text-transform: uppercase; margin-right: 6px;">Center Isolation:</span>
+                <button class="btn ${activeLocation === 'all' ? 'btn-primary' : 'btn-outline'}" style="font-size: 12px; padding: 5px 12px;" onclick="filterCmByLocation('all')">🏢 All Centers (${allEvals.length})</button>
+                <button class="btn ${activeLocation === 'Charleston' ? 'btn-primary' : 'btn-outline'}" style="font-size: 12px; padding: 5px 12px;" onclick="filterCmByLocation('Charleston')">📍 Charleston (${allEvals.filter(e => e.location && e.location.toLowerCase() === 'charleston').length})</button>
+                <button class="btn ${activeLocation === 'Columbia' ? 'btn-primary' : 'btn-outline'}" style="font-size: 12px; padding: 5px 12px;" onclick="filterCmByLocation('Columbia')">📍 Columbia (${allEvals.filter(e => e.location && e.location.toLowerCase() === 'columbia').length})</button>
+                <button class="btn ${activeLocation === 'Spartanburg' ? 'btn-primary' : 'btn-outline'}" style="font-size: 12px; padding: 5px 12px;" onclick="filterCmByLocation('Spartanburg')">📍 Spartanburg (${allEvals.filter(e => e.location && e.location.toLowerCase() === 'spartanburg').length})</button>
+            </div>
+        `;
+
         // Longitudinal Apricot ID Filter Bar
         html += `
             <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px 14px; border-radius: 8px; margin-bottom: 18px; flex-wrap: wrap;">
                 <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                     <span style="font-size: 12px; font-weight: 800; color: #334155; text-transform: uppercase;">🔗 Longitudinal Client Journey (Apricot ID):</span>
-                    <button class="btn ${!activeApricot ? 'btn-primary' : 'btn-outline'}" style="font-size: 11.5px; padding: 4px 10px;" onclick="filterCmByApricotId('')">All Sessions (${allEvals.length})</button>
+                    <button class="btn ${!activeApricot ? 'btn-primary' : 'btn-outline'}" style="font-size: 11.5px; padding: 4px 10px;" onclick="filterCmByApricotId('')">All Sessions (${filteredByLoc.length})</button>
                     ${uniqueApricotIds.map(aid => {
-                        const count = allEvals.filter(x => String(x.apricot_id) === String(aid)).length;
+                        const count = filteredByLoc.filter(x => String(x.apricot_id) === String(aid)).length;
                         return `<button class="btn ${String(activeApricot) === String(aid) ? 'btn-primary' : 'btn-outline'}" style="font-size: 11.5px; padding: 4px 10px;" onclick="filterCmByApricotId('${aid}')">🆔 Apricot #${aid} (${count} Session${count > 1 ? 's' : ''})</button>`;
                     }).join('')}
                 </div>
@@ -8760,10 +8802,14 @@ window.setupCenterPortalView = function() {
     const facCenterFilter = document.getElementById('fac-filter-center');
     if (facCenterFilter) facCenterFilter.value = loc;
 
+    window.activeCaseloadTab = 'first_shift';
+    window.facilitationCenterFilter = loc;
+    window.cmLocationFilter = loc;
+
     // Load initial center data
     switchPmSubView('caseload');
     if (typeof loadCaseload === 'function') loadCaseload();
-    if (typeof loadFacilitationEvals === 'function') loadFacilitationEvals();
+    if (typeof loadFacilitationEvaluations === 'function') loadFacilitationEvaluations();
 };
 
 // =========================================================================

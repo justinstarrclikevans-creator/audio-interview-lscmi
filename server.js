@@ -816,14 +816,14 @@ app.get('/api/admin/caseload', authenticateToken, requireRole('program_manager',
                (SELECT COUNT(*) FROM gate_criteria WHERE user_id = u.id AND status = 'red') as red_criteria,
                (SELECT AVG(points_earned) FROM daily_points WHERE user_id = u.id) as avg_points,
                (SELECT notes FROM briefcase_items WHERE user_id = u.id AND (item_key = 'skillcat_progress' OR title LIKE '%SkillCat%') LIMIT 1) as skillcat_notes,
-               (SELECT COUNT(*) FROM health_wellness_screen WHERE participant_id = u.id) as has_health_screen
+               (SELECT COUNT(*) FROM health_wellness_screen WHERE user_id = u.id OR participant_id = u.id) as has_health_screen
         FROM users u
         LEFT JOIN participant_profiles p ON u.id = p.user_id
         WHERE u.role = 'participant'
 
     `;
     const params = [];
-    if (location && location !== 'all') { query += ` AND u.location = ?`; params.push(location); }
+    if (location && location !== 'all') { query += ` AND LOWER(u.location) = LOWER(?)`; params.push(location); }
     if (track) { query += ` AND u.track = ?`; params.push(track); }
     if (gate) { query += ` AND p.current_gate = ?`; params.push(parseInt(gate)); }
     if (status) {
@@ -2623,8 +2623,8 @@ app.get('/api/cm/evaluations', authenticateToken, requireRole('program_manager',
     let query = 'SELECT * FROM case_management_evaluations';
     const conditions = [];
     const params = [];
-    if (location) {
-        conditions.push('location = ?');
+    if (location && location !== 'all') {
+        conditions.push('LOWER(location) = LOWER(?)');
         params.push(location);
     }
     if (apricotId) {
@@ -2680,12 +2680,19 @@ app.delete('/api/cm/evaluations/:id', authenticateToken, requireRole('program_ma
 });
 
 app.get('/api/cm/evaluations/stats', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff'), (req, res) => {
-    const stats = db.prepare(`
+    let stats = db.prepare(`
         SELECT location, AVG(total_score) as avg_score, COUNT(*) as eval_count
         FROM case_management_evaluations
         WHERE created_at >= date('now', '-14 days')
         GROUP BY location
     `).all();
+    if (!stats || stats.length === 0) {
+        stats = db.prepare(`
+            SELECT location, AVG(total_score) as avg_score, COUNT(*) as eval_count
+            FROM case_management_evaluations
+            GROUP BY location
+        `).all();
+    }
     res.json(stats);
 });
 
@@ -2694,8 +2701,8 @@ app.get('/api/admin/evaluations', authenticateToken, requireRole('program_manage
     const location = req.query.location;
     let query = 'SELECT * FROM class_facilitation_evaluations';
     const params = [];
-    if (location) {
-        query += ' WHERE location = ?';
+    if (location && location !== 'all') {
+        query += ' WHERE LOWER(location) = LOWER(?)';
         params.push(location);
     }
     query += ' ORDER BY created_at DESC LIMIT 50';
@@ -2782,12 +2789,19 @@ app.delete('/api/admin/evaluations/:id', authenticateToken, requireRole('program
 
 // 2-Week Average Stats
 app.get('/api/admin/evaluations/stats', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
-    const stats = db.prepare(`
+    let stats = db.prepare(`
         SELECT location, AVG(total_score) as avg_score, COUNT(*) as eval_count
         FROM class_facilitation_evaluations
         WHERE created_at >= date('now', '-14 days')
         GROUP BY location
     `).all();
+    if (!stats || stats.length === 0) {
+        stats = db.prepare(`
+            SELECT location, AVG(total_score) as avg_score, COUNT(*) as eval_count
+            FROM class_facilitation_evaluations
+            GROUP BY location
+        `).all();
+    }
     res.json(stats);
 });
 
@@ -4103,7 +4117,7 @@ app.get('/api/supervisor/overview', authenticateToken, requireRole('director', '
                 SELECT COUNT(*) AS c 
                 FROM users u 
                 LEFT JOIN participant_profiles p ON u.id = p.user_id 
-                WHERE u.role = 'participant' AND u.location = ? AND (p.overall_status IS NULL OR p.overall_status != 'archived')
+                WHERE u.role = 'participant' AND LOWER(u.location) = LOWER(?) AND (p.overall_status IS NULL OR p.overall_status != 'archived')
             `).get(loc).c;
 
             const facilitationStats = db.prepare(`
@@ -4112,7 +4126,7 @@ app.get('/api/supervisor/overview', authenticateToken, requireRole('director', '
                     ROUND(AVG(total_score), 1) AS avg_score,
                     SUM(CASE WHEN total_score >= 80 THEN 1 ELSE 0 END) AS passing_count
                 FROM class_facilitation_evaluations
-                WHERE location = ?
+                WHERE LOWER(location) = LOWER(?)
             `).get(loc);
 
             const cmStats = db.prepare(`
@@ -4120,7 +4134,7 @@ app.get('/api/supervisor/overview', authenticateToken, requireRole('director', '
                     COUNT(*) AS count,
                     ROUND(AVG(total_score), 1) AS avg_score
                 FROM case_management_evaluations
-                WHERE location = ?
+                WHERE LOWER(location) = LOWER(?)
             `).get(loc);
 
             centerMetrics[loc] = {

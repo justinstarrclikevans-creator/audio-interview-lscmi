@@ -685,6 +685,8 @@ try { db.exec("ALTER TABLE users ADD COLUMN login_name TEXT;"); } catch (e) {}
 try { db.exec("ALTER TABLE users ADD COLUMN passcode_hash TEXT;"); } catch (e) {}
 try { db.exec("ALTER TABLE users ADD COLUMN portal_type TEXT DEFAULT 'center';"); } catch (e) {}
 try { db.exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_users_login_name ON users(login_name);"); } catch (e) {}
+try { db.exec("ALTER TABLE health_wellness_screen ADD COLUMN participant_id INTEGER;"); } catch (e) {}
+try { db.exec("UPDATE health_wellness_screen SET participant_id = user_id WHERE participant_id IS NULL;"); } catch (e) {}
 
 // Reentry Navigation Living Client Folder Schema
 db.exec(`
