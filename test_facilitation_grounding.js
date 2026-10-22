@@ -2,7 +2,8 @@ const assert = require('assert');
 const { 
     filterHallucinatedQuotes, 
     detectLessonModuleFromTranscript, 
-    getFacilitatorScoringContext 
+    getFacilitatorScoringContext,
+    KNOWN_CENTER_STAFF
 } = require('./facilitation_evaluator');
 
 async function runTests() {
@@ -81,6 +82,13 @@ async function runTests() {
     assert.strictEqual(sanitizedEval.detailed_summary_markdown.includes("wouldn't have swung"), false, 'Summary markdown must be purged of hallucinated quotes.');
 
     console.log('✅ Test 3 Passed: Quote Verification Firewall successfully stripped hallucinated quotes while preserving genuine dialogue.');
+
+    // Test 4: Center Facilitator Mapping Clarification
+    console.log('\n[Test 4] Testing Center Facilitator Mapping (Diyoung: Spartanburg, Jenn: Columbia, TB: Charleston)...');
+    assert.ok(KNOWN_CENTER_STAFF.spartanburg.primaryFacilitators.some(f => f.includes('Diyoung')), 'Spartanburg primary facilitator must be Diyoung');
+    assert.ok(KNOWN_CENTER_STAFF.columbia.primaryFacilitators.some(f => f.includes('Jenn')), 'Columbia primary facilitator must be Jenn');
+    assert.ok(KNOWN_CENTER_STAFF.charleston.primaryFacilitators.some(f => f.includes('TB')), 'Charleston primary facilitator must be TB');
+    console.log('✅ Test 4 Passed: Center facilitator assignments accurately verified.');
 
     console.log('\n======================================================');
     console.log('ALL FACILITATION GROUNDING TESTS PASSED SUCCESSFULLY!');

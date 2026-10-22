@@ -167,11 +167,11 @@ async function runDailyEvaluation() {
             const sessionTitle = `${center.name} ${shift} - ${fileDateStr}`;
             let defaultFacilitator;
             if (center.name === 'Spartanburg') {
-                defaultFacilitator = `TB (Spartanburg ${shift})`;
+                defaultFacilitator = 'Diyoung Dantzler';
             } else if (center.name === 'Columbia') {
-                defaultFacilitator = isPm ? 'Jenn Jeanquart (Columbia PM)' : 'Diyoung Dantzler (Columbia AM)';
+                defaultFacilitator = 'Jenn Jeanquart';
             } else {
-                defaultFacilitator = `Staff Facilitator - Charleston (${shift})`;
+                defaultFacilitator = 'TB (Charleston)';
             }
 
             // Check if already evaluated in database

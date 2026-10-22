@@ -99,7 +99,9 @@ try {
         if (row.location === 'Columbia' && (!targetFacilitator || targetFacilitator === 'Staff Facilitator')) {
             targetFacilitator = 'Jenn Jeanquart';
         } else if (row.location === 'Spartanburg' && (!targetFacilitator || targetFacilitator === 'Staff Facilitator')) {
-            targetFacilitator = 'TB (Spartanburg)';
+            targetFacilitator = 'Diyoung Dantzler';
+        } else if (row.location === 'Charleston' && (!targetFacilitator || targetFacilitator === 'Staff Facilitator')) {
+            targetFacilitator = 'TB (Charleston)';
         }
 
         db.prepare(`
@@ -110,6 +112,12 @@ try {
             WHERE id = ?
         `).run(targetFacilitator, cleanFeedback, cleanSummary, row.id);
     }
+
+    // Align all historical evaluations to the official center facilitators:
+    // Spartanburg -> Diyoung Dantzler, Columbia -> Jenn Jeanquart, Charleston -> TB
+    db.prepare("UPDATE class_facilitation_evaluations SET facilitator_name = 'Jenn Jeanquart' WHERE location = 'Columbia'").run();
+    db.prepare("UPDATE class_facilitation_evaluations SET facilitator_name = 'Diyoung Dantzler' WHERE location = 'Spartanburg'").run();
+    db.prepare("UPDATE class_facilitation_evaluations SET facilitator_name = 'TB (Charleston)' WHERE location = 'Charleston' AND facilitator_name != 'Test Facilitator'").run();
 } catch (e) {
     console.warn("[Class Evaluation Self-Heal] Warning:", e.message);
 }
@@ -201,18 +209,18 @@ function sanitizeLanguageFeedback(evaluation) {
 const KNOWN_CENTER_STAFF = {
     'spartanburg': {
         centerName: 'Spartanburg',
-        primaryFacilitators: ['TB', 'Terry Brooks'],
-        foreignStaffNames: ['matt', 'benjamin', 'justin', 'evans', 'diyoung', 'dantzler', 'jenn', 'jennifer', 'jeanquart']
+        primaryFacilitators: ['Diyoung Dantzler', 'Diyoung'],
+        foreignStaffNames: ['matt', 'benjamin', 'justin', 'evans', 'jenn', 'jennifer', 'jeanquart', 'tb', 'terry brooks', 'terrence brown']
     },
     'columbia': {
         centerName: 'Columbia',
-        primaryFacilitators: ['Jenn Jeanquart', 'Diyoung Dantzler'],
-        foreignStaffNames: ['matt', 'benjamin', 'justin', 'evans', 'tb', 'terry brooks']
+        primaryFacilitators: ['Jenn Jeanquart', 'Jenn'],
+        foreignStaffNames: ['matt', 'benjamin', 'justin', 'evans', 'diyoung', 'dantzler', 'tb', 'terry brooks', 'terrence brown']
     },
     'charleston': {
         centerName: 'Charleston',
-        primaryFacilitators: ['Matt Benjamin', 'Justin Evans'],
-        foreignStaffNames: ['diyoung', 'dantzler', 'jenn', 'jennifer', 'jeanquart', 'tb', 'terry brooks']
+        primaryFacilitators: ['TB', 'Terry Brooks', 'Terrence Brown'],
+        foreignStaffNames: ['diyoung', 'dantzler', 'jenn', 'jennifer', 'jeanquart', 'matt', 'benjamin', 'justin', 'evans']
     }
 };
 
@@ -544,7 +552,7 @@ CRITICAL ISOLATION MANDATES (STRICT CENTER & FACILITATOR SEPARATION):
    You are evaluating ONLY the cohort at ${location}.
    Each Turn90 Center (Charleston, Columbia, Spartanburg) operates with complete autonomy.
    Do NOT compare, reference, or pull in information, participants, or staff from other centers. Keep this report 100% focused on ${location}.
-   Spartanburg is facilitated by Spartanburg staff (TB). Columbia is facilitated by Columbia staff (Diyoung, Jenn). Charleston is facilitated by Charleston staff (Matt, Justin).
+   Spartanburg is facilitated by Spartanburg staff (Diyoung). Columbia is facilitated by Columbia staff (Jenn). Charleston is facilitated by Charleston staff (TB).
 
 2. STRICT FACILITATOR SEPARATION:
    You are evaluating ONLY the individual facilitator leading this specific session.
@@ -819,5 +827,6 @@ module.exports = {
     detectLessonModuleFromTranscript,
     filterHallucinatedQuotes,
     getFacilitatorScoringContext,
-    transcribeClassAudio
+    transcribeClassAudio,
+    KNOWN_CENTER_STAFF
 };

@@ -4179,7 +4179,30 @@ function openFacilitationModal() {
     if (hcEl) hcEl.value = '';
     const modEl = document.getElementById('eval-module-select');
     if (modEl) modEl.value = 'auto';
+
+    // Auto-populate location from current portal filter if available
+    const activeLoc = localStorage.getItem('fs_location') || document.getElementById('pm-filter-location')?.value || '';
+    const locSelect = document.getElementById('eval-location');
+    if (locSelect && activeLoc) {
+        if (activeLoc.toLowerCase().includes('spartanburg')) locSelect.value = 'Spartanburg';
+        else if (activeLoc.toLowerCase().includes('charleston')) locSelect.value = 'Charleston';
+        else if (activeLoc.toLowerCase().includes('columbia')) locSelect.value = 'Columbia';
+    }
+    handleLocationChangeForFacilitator();
     openModal('modal-facilitation');
+}
+
+function handleLocationChangeForFacilitator() {
+    const loc = document.getElementById('eval-location')?.value || '';
+    const facInput = document.getElementById('eval-facilitator');
+    if (!facInput) return;
+    if (loc === 'Spartanburg') {
+        facInput.value = 'Diyoung Dantzler';
+    } else if (loc === 'Columbia') {
+        facInput.value = 'Jenn Jeanquart';
+    } else if (loc === 'Charleston') {
+        facInput.value = 'TB (Charleston)';
+    }
 }
 
 function handleModuleSelectChange() {
