@@ -1,3 +1,4 @@
+const { assertValidGeminiApiKey, getGeminiApiKey } = require('../env_config');
 const cron = require('node-cron');
 const { Dropbox } = require('dropbox');
 const fs = require('fs');
@@ -204,10 +205,11 @@ async function runDailyEvaluation() {
                 const https = require('https');
                 const uploadData = await new Promise((resolve, reject) => {
                     const stats = fs.statSync(localPath);
+                    const apiKey = assertValidGeminiApiKey();
                     const options = {
                         hostname: 'generativelanguage.googleapis.com',
                         port: 443,
-                        path: `/upload/v1beta/files?key=${process.env.GEMINI_API_KEY}`,
+                        path: `/upload/v1beta/files?key=${encodeURIComponent(apiKey)}`,
                         method: 'POST',
                         headers: {
                             'X-Goog-Upload-Protocol': 'raw',

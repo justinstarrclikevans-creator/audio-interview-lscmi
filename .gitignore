@@ -10,6 +10,7 @@ data/*error.txt
 data/*_error.txt
 test_*.js
 !test_facilitation_grounding.js
+!test_api_key_sanitization.js
 rerun_*.js
 
 # Preserve all assessment documents, transcripts, guides, and templates

@@ -1,14 +1,13 @@
 // Turn90 Fresh Start Participant AI Assistant Engine
+const { getGeminiApiKey } = require('./env_config');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const path = require('path');
 const { SC_COMMUNITY_RESOURCES, SC_FAIR_CHANCE_EMPLOYERS } = require('./sc_resource_directory');
 
-require('dotenv').config({ path: path.join(__dirname, '.env') });
-if (!process.env.GEMINI_API_KEY) {
-    require('dotenv').config({ path: path.join(__dirname, '..', 'Facilitation Scoring', '.env') });
+function getGenAI() {
+    const key = getGeminiApiKey();
+    return key ? new GoogleGenerativeAI(key) : null;
 }
-
-const genAI = process.env.GEMINI_API_KEY ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY) : null;
 
 const AI_ASSISTANT_SYSTEM_PROMPT = `
 You are the "Turn90 Fresh Start AI Assistant", a compassionate, encouraging, highly practical, and knowledgeable mentor for Turn90 participants re-entering the workforce and society in South Carolina.
@@ -76,6 +75,7 @@ If the user asks a question, answer with warmth, clarity, specific step-by-step 
 `;
 
 async function getParticipantAiResponse(userMessage, conversationHistory = []) {
+    const genAI = getGenAI();
     if (!genAI) {
         return getFallbackResponse(userMessage);
     }

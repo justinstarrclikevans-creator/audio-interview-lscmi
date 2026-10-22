@@ -1,15 +1,10 @@
 // Re-entry Navigation Case Planning & Flag Analysis Engine
+const { assertValidGeminiApiKey, sanitizeApiKey } = require('./env_config');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const fs = require('fs');
 const path = require('path');
 const { SC_COMMUNITY_RESOURCES, SC_FAIR_CHANCE_EMPLOYERS } = require('./sc_resource_directory');
 const { loadJobsFromSpreadsheets } = require('./jobs_loader');
-
-// Load environment from local .env or fallback paths
-require('dotenv').config({ path: path.join(__dirname, '.env') });
-if (!process.env.GEMINI_API_KEY) {
-    require('dotenv').config({ path: path.join(__dirname, '..', 'Facilitation Scoring', '.env') });
-}
 
 const FACILITATION_GUIDELINES = `
 Turn90 Facilitation & Case Management Standards (Modeling Neutrality, CBT Workbooks & Case Planner):
@@ -27,10 +22,7 @@ Turn90 Facilitation & Case Management Standards (Modeling Neutrality, CBT Workbo
 `;
 
 async function generateReentryNavAssessment(data) {
-    const apiKey = data.apiKey || process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-        throw new Error("GEMINI_API_KEY is not configured. Please check your environment variables or settings.");
-    }
+    const apiKey = sanitizeApiKey(data.apiKey) || assertValidGeminiApiKey();
 
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({

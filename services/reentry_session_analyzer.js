@@ -1,25 +1,26 @@
 // Reentry Navigation Session Analyzer
 // Analyzes audio recordings, transcripts, or case notes to update live case plans, goals, briefcase items, and next-session agenda
+const { assertValidGeminiApiKey } = require('../env_config');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const { GoogleAIFileManager } = require("@google/generative-ai/server");
 const fs = require('fs');
 const path = require('path');
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'dummy_key');
-const model = genAI.getGenerativeModel({
-    model: "gemini-3.1-pro-preview",
-    generationConfig: { responseMimeType: "application/json" }
-});
+function getReentryModel(apiKey) {
+    const genAI = new GoogleGenerativeAI(apiKey);
+    return genAI.getGenerativeModel({
+        model: "gemini-3.1-pro-preview",
+        generationConfig: { responseMimeType: "application/json" }
+    });
+}
 
 /**
  * Analyzes a Reentry Navigation session upload (audio, transcript, or notes)
  */
 async function analyzeReentrySession({ client, sessionTitle, sessionType, sessionText = '', mediaPath = null, currentGoals = [], currentBriefcase = [] }) {
-    if (!process.env.GEMINI_API_KEY) {
-        throw new Error("GEMINI_API_KEY is not configured.");
-    }
-
-    const fileManager = new GoogleAIFileManager(process.env.GEMINI_API_KEY);
+    const apiKey = assertValidGeminiApiKey();
+    const model = getReentryModel(apiKey);
+    const fileManager = new GoogleAIFileManager(apiKey);
     let uploadedMedia = null;
     let extractedTranscript = sessionText || '';
 

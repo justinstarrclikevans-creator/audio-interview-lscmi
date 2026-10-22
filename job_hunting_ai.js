@@ -1,17 +1,16 @@
 // Turn90 Job Hunting AI Engine
 // Powered by Gemini 3.6 Flash with Live Spreadsheet Openings & Fair-Chance Directory
 
+const { getGeminiApiKey } = require('./env_config');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const path = require('path');
 const { loadJobsFromSpreadsheets } = require('./jobs_loader');
 const { SC_FAIR_CHANCE_EMPLOYERS, SC_COMMUNITY_RESOURCES } = require('./sc_resource_directory');
 
-require('dotenv').config({ path: path.join(__dirname, '.env') });
-if (!process.env.GEMINI_API_KEY) {
-    require('dotenv').config({ path: path.join(__dirname, '..', 'Facilitation Scoring', '.env') });
+function getGenAI() {
+    const key = getGeminiApiKey();
+    return key ? new GoogleGenerativeAI(key) : null;
 }
-
-const genAI = process.env.GEMINI_API_KEY ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY) : null;
 
 /**
  * Intelligent Job Matching against Live Spreadsheet Openings & Fair-Chance Employers
@@ -104,6 +103,7 @@ async function matchJobsWithAi(criteria = {}, participantProfile = {}) {
     const rankedPool = [...localJobs, ...statewideJobs, ...otherJobs];
 
     // If Gemini is available, perform intelligent ranking & tailoring
+    const genAI = getGenAI();
     if (genAI) {
         try {
             const model = genAI.getGenerativeModel({
@@ -213,6 +213,7 @@ async function generateTailoredResumePoints(jobTitle, company, userSkills = '', 
     const defaultTrack = tradeTrack || 'Manufacturing & Industrial Safety';
     const skillsList = userSkills || 'OSHA 10 Certified, Forklift Operation, Hand & Power Tools, Blueprint Reading, De-escalation & Team Communication';
 
+    const genAI = getGenAI();
     if (genAI) {
         try {
             const model = genAI.getGenerativeModel({ model: "gemini-3.8-flash" });
@@ -248,6 +249,7 @@ Rules:
  * AI Turnaround Narrative & Background Explanation Coach
  */
 async function generateTurnaroundNarrative(jobTitle, company, participantBackground = '') {
+    const genAI = getGenAI();
     if (genAI) {
         try {
             const model = genAI.getGenerativeModel({ model: "gemini-3.8-flash" });

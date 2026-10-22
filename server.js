@@ -1,3 +1,4 @@
+require('./env_config');
 const { generateReentryNavAssessment } = require('./reentry_engine');
 const express = require('express');
 const cors = require('cors');
@@ -52,9 +53,12 @@ async function extractPdfText(buffer) {
     return '';
 }
 
-require('dotenv').config({ path: path.join(__dirname, '..', 'email-settings.txt') });
-if (!process.env.GEMINI_API_KEY && fs.existsSync(path.join(__dirname, '.env'))) {
-    require('dotenv').config();
+const { getGeminiApiKey, assertValidGeminiApiKey } = require('./env_config');
+const geminiKey = getGeminiApiKey();
+if (geminiKey) {
+    console.log(`[Config] GEMINI_API_KEY loaded and sanitized (prefix: ${geminiKey.substring(0, 8)}..., length: ${geminiKey.length})`);
+} else {
+    console.warn(`[Config] WARNING: GEMINI_API_KEY is not configured or is invalid! AI evaluation features will fail until a valid key is provided.`);
 }
 
 const JWT_SECRET = process.env.JWT_SECRET || 'first-shift-secret-key-2026';
@@ -2567,7 +2571,7 @@ app.post('/api/interviews/manual-entry', memoryUpload.single('audio'), async (re
         let results = null;
 
         // If audio recording was uploaded, transcribe and score directly via Gemini Audio LLM
-        if (req.file && req.file.buffer && process.env.GEMINI_API_KEY) {
+        if (req.file && req.file.buffer && getGeminiApiKey()) {
             console.log(`Processing uploaded audio interview for ${cleanName} with Gemini...`);
             try {
                 results = await runPhase1WithAudio(
@@ -2599,7 +2603,7 @@ app.post('/api/interviews/manual-entry', memoryUpload.single('audio'), async (re
                 fs.writeFileSync(path.join(dataDir, `${clientId}_error.txt`), `Failed: ${audioLlmErr.message}`);
                 throw new Error(`Audio processing error: ${audioLlmErr.message}`);
             }
-        } else if (process.env.GEMINI_API_KEY) {
+        } else if (getGeminiApiKey()) {
             // Text-only transcript submitted
             if (!transcriptText || !transcriptText.trim()) {
                 transcriptText = `Assessment interview conducted with ${cleanName} at Turn90 ${location} center. Participant discussed employment history, education, family/support networks, legal background, and personal goals for stability.`;
@@ -2661,8 +2665,8 @@ app.post('/api/interviews/generate-draft', async (req, res) => {
         const transcriptText = fs.readFileSync(transcriptFile, 'utf8');
         const name = clientName || clientId.split('_')[0];
 
-        if (!process.env.GEMINI_API_KEY) {
-            return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' });
+        if (!getGeminiApiKey()) {
+            return res.status(500).json({ error: 'GEMINI_API_KEY is not configured or is invalid. Please verify Render Environment Variables.' });
         }
 
         const results = await runPhase1(transcriptText, name);
@@ -3309,7 +3313,7 @@ ${playbookText}
 QUESTION:
 ${question}`;
 
-        const { GoogleGenerativeAI } = require("@google/generative-ai"); const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY); const model = genAI.getGenerativeModel({ model: "gemini-3.8-flash" }); const result = await model.generateContent(prompt);
+        const { GoogleGenerativeAI } = require("@google/generative-ai"); const genAI = new GoogleGenerativeAI(assertValidGeminiApiKey()); const model = genAI.getGenerativeModel({ model: "gemini-3.8-flash" }); const result = await model.generateContent(prompt);
         const text = result.response.text();
 
         res.json({ success: true, answer: text });
@@ -4353,7 +4357,7 @@ app.post('/api/upload-audio', memoryUpload.single('audio'), async (req, res) => 
         
         res.status(200).json({ message: 'Audio uploaded successfully. Processing in background...', filePrefix });
 
-        if (process.env.GEMINI_API_KEY) {
+        if (getGeminiApiKey()) {
             console.log(`Starting LLM Phase 1 for ${name}...`);
             try {
                 const results = (!isTranscriptOnly && audioBuffer && audioBuffer.length > 200) 
@@ -4990,11 +4994,11 @@ app.get('/api/apricot/export', authenticateToken, (req, res) => {
 app.get('/api/staff/ai-caseload-report', authenticateToken, requireRole('program_manager', 'director', 'admin'), async (req, res) => {
     try {
         const { GoogleGenerativeAI } = require("@google/generative-ai");
-        if (!process.env.GEMINI_API_KEY) {
-            return res.status(500).json({ error: 'GEMINI_API_KEY is not configured.' });
+        if (!getGeminiApiKey()) {
+            return res.status(500).json({ error: 'GEMINI_API_KEY is not configured or is invalid. Please verify Render Environment Variables.' });
         }
         
-        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+        const genAI = new GoogleGenerativeAI(getGeminiApiKey());
         const model = genAI.getGenerativeModel({ 
             model: "gemini-3.1-pro-preview", 
             generationConfig: { responseMimeType: "application/json" } 

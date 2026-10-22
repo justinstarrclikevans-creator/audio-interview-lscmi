@@ -1,3 +1,4 @@
+const { assertValidGeminiApiKey, getGeminiApiKey } = require('./env_config');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { GoogleAIFileManager } = require("@google/generative-ai/server");
 const db = require('./db').db;
@@ -119,9 +120,7 @@ CRITICAL LONGITUDINAL GRADING MANDATE:
 }
 
 async function evaluateCaseManagementMedia(mediaFiles, sessionTitle, location, cmName, options = {}) {
-    if (!process.env.GEMINI_API_KEY) {
-        throw new Error("GEMINI_API_KEY is not configured. Cannot process case management video/audio.");
-    }
+    const apiKey = assertValidGeminiApiKey();
 
     const apricotId = options.apricotId ? String(options.apricotId).trim() : null;
     const longitudinal = buildLongitudinalContext(apricotId);
@@ -158,8 +157,8 @@ Evaluate the Case Manager strictly against the realistic 45-Minute Follow-Up Cad
 4. Next Week's Process Goal: Collaboratively setting 1–2 clear, controllable process goals for the upcoming week.
 `;
 
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const fileManager = new GoogleAIFileManager(process.env.GEMINI_API_KEY);
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const fileManager = new GoogleAIFileManager(apiKey);
     const model = genAI.getGenerativeModel({ model: "gemini-3.1-pro-preview" });
 
     const prompt = `You are a Senior Case Management Quality Assurance Coach for Turn90 / First Shift.
@@ -248,10 +247,18 @@ At the very end of your response, include \`===SESSION_TRANSCRIPT_START===\` fol
                 throw new Error(`Recording file is empty or too small (${stat.size} bytes). Evaluation aborted to prevent a placeholder score.`);
             }
 
-            const uploadResult = await fileManager.uploadFile(mf.path, {
-                mimeType: mf.mimeType || 'audio/mp3',
-                displayName: `CM_Eval_${Date.now()}`
-            });
+            let uploadResult;
+            try {
+                uploadResult = await fileManager.uploadFile(mf.path, {
+                    mimeType: mf.mimeType || 'audio/mp3',
+                    displayName: `CM_Eval_${Date.now()}`
+                });
+            } catch (uploadErr) {
+                if (uploadErr.message && (uploadErr.message.includes('API key not valid') || uploadErr.message.includes('API_KEY_INVALID'))) {
+                    throw new Error("Google Generative Language API rejected the API key during upload (API key not valid). Please verify in your Render Dashboard -> Environment Variables that GEMINI_API_KEY is an active Google AI Studio key without quotes, extra spaces, or placeholder text.");
+                }
+                throw uploadErr;
+            }
             uploadResults.push(uploadResult);
             
             if (fs.existsSync(mf.path)) {
@@ -283,6 +290,9 @@ At the very end of your response, include \`===SESSION_TRANSCRIPT_START===\` fol
                 result = await model.generateContent(contentParts);
                 break;
             } catch (err) {
+                if (err.message && (err.message.includes('API key not valid') || err.message.includes('API_KEY_INVALID'))) {
+                    throw new Error("Google Generative Language API rejected the API key (API key not valid). Please verify in your Render Dashboard -> Environment Variables that GEMINI_API_KEY is an active Google AI Studio key without quotes, extra spaces, or placeholder text.");
+                }
                 if (err.message && err.message.includes('503') && retries > 1) {
                     await new Promise(r => setTimeout(r, 15000));
                     retries--;

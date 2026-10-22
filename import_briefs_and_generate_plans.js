@@ -1,4 +1,5 @@
 // Batch Import First Shift Briefs & Generate Case Plans
+require('./env_config');
 const fs = require('fs');
 const path = require('path');
 const Database = require('better-sqlite3');
@@ -6,12 +7,6 @@ const { generateReentryNavAssessment } = require('./reentry_engine');
 const { convertSingleMdToPdf } = require('./convert_md_to_pdf');
 const { convertSingleMdToDocx } = require('./convert_md_to_docx');
 const pdfParse = require('pdf-parse');
-
-// Load environment variables
-require('dotenv').config({ path: path.join(__dirname, '..', 'email-settings.txt') });
-if (!process.env.GEMINI_API_KEY && fs.existsSync(path.join(__dirname, '.env'))) {
-    require('dotenv').config({ path: path.join(__dirname, '.env') });
-}
 
 const dbPath = path.join(__dirname, 'data', 'app_database.sqlite');
 const dataDir = path.join(__dirname, 'data');

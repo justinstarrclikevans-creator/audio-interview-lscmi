@@ -1,15 +1,23 @@
+const { getGeminiApiKey, assertValidGeminiApiKey } = require('./env_config');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const fs = require('fs');
 const path = require('path');
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'dummy_key');
-const model = genAI.getGenerativeModel({ 
-    model: "gemini-3.1-pro-preview", 
-    generationConfig: { 
-        responseMimeType: "application/json",
-        maxOutputTokens: 65536
-    } 
-});
+function getPipelineGenAI() {
+    const apiKey = assertValidGeminiApiKey();
+    return new GoogleGenerativeAI(apiKey);
+}
+
+function getPipelineModel() {
+    const genAI = getPipelineGenAI();
+    return genAI.getGenerativeModel({ 
+        model: "gemini-3.1-pro-preview", 
+        generationConfig: { 
+            responseMimeType: "application/json",
+            maxOutputTokens: 65536
+        } 
+    });
+}
 
 const manualsDir = path.join(__dirname, 'manuals');
 
@@ -103,7 +111,8 @@ function safeJsonParse(jsonStr) {
 }
 
 async function runPhase1(transcriptText, clientName, location = "", additionalNotes = "") {
-    if (!process.env.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is missing");
+    assertValidGeminiApiKey();
+    const model = getPipelineModel();
 
     const manuals = loadManuals();
     const systemPrompt = `You are an expert case manager and LS/CMI assessor for First Shift / Turn90.
@@ -154,7 +163,8 @@ Format requirements:
 
 // Process Audio Uploads with High-Fidelity 2-Stage Gemini Pipeline
 async function runPhase1WithAudio(audioBuffer, mimeType, clientName, location, additionalNotes = "") {
-    if (!process.env.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is missing");
+    const apiKey = assertValidGeminiApiKey();
+    const genAI = getPipelineGenAI();
 
     // Package audio: inline base64 if <= 20MB, or GoogleAIFileManager if > 20MB
     let audioPart;
@@ -162,7 +172,7 @@ async function runPhase1WithAudio(audioBuffer, mimeType, clientName, location, a
     try {
         if (audioBuffer.length > 100) {
             console.log(`[Audio Pipeline] Audio is > 20MB, uploading via Gemini REST API to bypass disk...`);
-            const url = `https://generativelanguage.googleapis.com/upload/v1beta/files?key=${process.env.GEMINI_API_KEY}`;
+            const url = `https://generativelanguage.googleapis.com/upload/v1beta/files?key=${encodeURIComponent(apiKey)}`;
             const res = await fetch(url, {
                 method: 'POST',
                 headers: {
@@ -185,7 +195,7 @@ async function runPhase1WithAudio(audioBuffer, mimeType, clientName, location, a
             while (fileState === 'PROCESSING' && attempts < 20) {
                 console.log(`[Audio Pipeline] Waiting for Gemini to process audio file... (${attempts + 1}/20)`);
                 await new Promise(resolve => setTimeout(resolve, 3000));
-                const checkRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/${uploadedFileName}?key=${process.env.GEMINI_API_KEY}`);
+                const checkRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/${uploadedFileName}?key=${encodeURIComponent(apiKey)}`);
                 const checkData = await checkRes.json();
                 if (checkData.error) throw new Error(checkData.error.message);
                 fileState = checkData.state;
@@ -256,7 +266,7 @@ ${additionalNotes && additionalNotes.trim() ? `\nFor context, here is a chronolo
     } finally {
         if (uploadedFileName) {
             try {
-                const deleteUrl = `https://generativelanguage.googleapis.com/v1beta/${uploadedFileName}?key=${process.env.GEMINI_API_KEY}`;
+                const deleteUrl = `https://generativelanguage.googleapis.com/v1beta/${uploadedFileName}?key=${encodeURIComponent(apiKey)}`;
                 await fetch(deleteUrl, { method: 'DELETE' });
                 console.log(`[Audio Pipeline] Deleted temporary audio file from Gemini: ${uploadedFileName}`);
             } catch(e) {
@@ -267,7 +277,8 @@ ${additionalNotes && additionalNotes.trim() ? `\nFor context, here is a chronolo
 }
 
 async function runPhase2(transcriptText, clientName, draftScoringForm, feedback, criminalHistoryText = "") {
-    if (!process.env.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is missing");
+    assertValidGeminiApiKey();
+    const model = getPipelineModel();
 
     const manuals = loadManuals();
     const csvHeader = getCsvHeader();
@@ -350,7 +361,8 @@ async function runPhase2(transcriptText, clientName, draftScoringForm, feedback,
 }
 
 async function adjustActionPlan(clientName, existingPlanText, feedback, supportingContext = "") {
-    if (!process.env.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is missing");
+    assertValidGeminiApiKey();
+    const model = getPipelineModel();
 
     const systemPrompt = `You are an expert case manager and CBT specialist for First Shift / Turn90.
 Your task is to refine and update the Participant's First Shift Action Plan based STRICTLY on the supervisor's feedback.

@@ -1,14 +1,16 @@
 // Class Facilitation Evaluator
 // Evaluates class transcripts/audio against the 20-item Turn90 Facilitator Scoring Guide & Module Workbooks
+const { getGeminiApiKey, assertValidGeminiApiKey } = require('./env_config');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const fs = require('fs');
 const path = require('path');
 const { db } = require('./db');
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'dummy_key');
-const model = genAI.getGenerativeModel({ 
-    model: "gemini-3.1-pro-preview" 
-});
+function getFacilitationModel() {
+    const apiKey = assertValidGeminiApiKey();
+    const genAI = new GoogleGenerativeAI(apiKey);
+    return genAI.getGenerativeModel({ model: "gemini-3.1-pro-preview" });
+}
 
 // Ensure class_facilitation_evaluations table exists
 db.exec(`
@@ -509,7 +511,7 @@ Provide detailed, calibrated coaching feedback based on specific timestamps and 
 }
 
 async function evaluateClassTranscript(location, sessionTitle, facilitatorName, transcriptText, classHeadcount = null) {
-    if (!process.env.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is missing");
+    assertValidGeminiApiKey();
 
     if (!transcriptText || transcriptText.trim().length < 50) {
         throw new Error("Transcript is empty or too short to evaluate (under 50 characters). Evaluation aborted to prevent a placeholder score.");
@@ -606,7 +608,16 @@ Classroom Transcript to Evaluate:
 ${transcriptText}
 `;
 
-    const result = await model.generateContent(prompt);
+    let result;
+    try {
+        const activeModel = getFacilitationModel();
+        result = await activeModel.generateContent(prompt);
+    } catch (err) {
+        if (err.message && (err.message.includes('API key not valid') || err.message.includes('API_KEY_INVALID'))) {
+            throw new Error("Google Generative Language API rejected the API key (API key not valid). Please check your Render Dashboard -> Environment Variables -> GEMINI_API_KEY.");
+        }
+        throw err;
+    }
     const responseText = result.response.text();
     let evaluation;
     try {
@@ -751,10 +762,10 @@ MANDATORY TRANSCRIPTION RULES:
  * Stage 3: Grounded evaluation against transcript text with quote verification firewall
  */
 async function evaluateClassMedia(location, sessionTitle, facilitatorName, mediaFiles, classHeadcount = null) {
-    if (!process.env.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is missing");
+    const apiKey = assertValidGeminiApiKey();
 
     const { GoogleAIFileManager } = require("@google/generative-ai/server");
-    const fileManager = new GoogleAIFileManager(process.env.GEMINI_API_KEY);
+    const fileManager = new GoogleAIFileManager(apiKey);
 
     console.log(`[Class Evaluation] Uploading media to Gemini for ${location}...`);
     
@@ -775,10 +786,18 @@ async function evaluateClassMedia(location, sessionTitle, facilitatorName, media
                 throw new Error(`Recording file is empty or too small (${stat.size} bytes). Evaluation aborted so no placeholder score is recorded.`);
             }
 
-            const uploadResult = await fileManager.uploadFile(mf.path, {
-                mimeType: mf.mimeType || 'video/mp4',
-                displayName: `${location}_Class_Evaluation_${Date.now()}`
-            });
+            let uploadResult;
+            try {
+                uploadResult = await fileManager.uploadFile(mf.path, {
+                    mimeType: mf.mimeType || 'video/mp4',
+                    displayName: `${location}_Class_Evaluation_${Date.now()}`
+                });
+            } catch (uploadErr) {
+                if (uploadErr.message && (uploadErr.message.includes('API key not valid') || uploadErr.message.includes('API_KEY_INVALID'))) {
+                    throw new Error("Google Generative Language API rejected the API key during class upload (API key not valid). Please check your Render Dashboard -> Environment Variables -> GEMINI_API_KEY.");
+                }
+                throw uploadErr;
+            }
             uploadResults.push(uploadResult);
             
             if (fs.existsSync(mf.path)) {
