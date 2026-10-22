@@ -12,6 +12,7 @@ const dbPath = path.join(dataDir, 'app_database.sqlite');
 const db = new Database(dbPath);
 
 db.pragma('journal_mode = WAL');
+db.pragma('foreign_keys = ON');
 
 // Comprehensive schema initialization
 db.exec(`

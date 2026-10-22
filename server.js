@@ -1168,14 +1168,131 @@ app.post('/api/pm/import-case-notes', authenticateToken, requireRole('program_ma
 });
 
 
-// Delete a participant permanently
-app.delete('/api/admin/participant/:userId', authenticateToken, requireRole('admin', 'program_manager', 'director'), (req, res) => {
+// Create a new participant directly from Center Caseload
+app.post('/api/pm/participants', authenticateToken, requireRole('admin', 'program_manager', 'director', 'staff', 'navigator'), async (req, res) => {
+    try {
+        const {
+            name,
+            location,
+            phone,
+            recordId,
+            enrollmentDate,
+            gate,
+            dlStatus,
+            housingStatus,
+            childSupportStatus,
+            notes,
+            email,
+            password
+        } = req.body;
+
+        if (!name || !name.trim()) {
+            return res.status(400).json({ error: 'Participant name is required.' });
+        }
+
+        const participantLocation = location || req.user.location || 'Charleston';
+        const cleanedName = name.trim();
+        const safeSlug = cleanedName.toLowerCase().replace(/[^a-z0-9]/g, '.');
+        const userEmail = (email && email.trim()) 
+            ? email.trim().toLowerCase() 
+            : `${safeSlug}.${Date.now()}@turn90.local`;
+
+        const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(userEmail);
+        if (existing) {
+            return res.status(400).json({ error: 'A participant with this email/handle already exists.' });
+        }
+
+        const rawPassword = password || '3765Turn90';
+        const passwordHash = await bcrypt.hash(rawPassword, 10);
+        const curGate = parseInt(gate, 10) || 1;
+        const enrollDate = enrollmentDate || new Date().toISOString().split('T')[0];
+
+        let newUserId;
+        const createTx = db.transaction(() => {
+            const result = db.prepare(`
+                INSERT INTO users (name, email, phone, password_hash, role, track, location)
+                VALUES (?, ?, ?, ?, 'participant', 'first_shift', ?)
+            `).run(cleanedName, userEmail, phone ? phone.trim() : '', passwordHash, participantLocation);
+            newUserId = result.lastInsertRowid;
+
+            db.prepare(`
+                INSERT INTO participant_profiles (
+                    user_id, current_gate, overall_status, dl_status, housing_status,
+                    child_support_status, record_id, enrollment_date, correction_notes
+                ) VALUES (?, ?, 'active', ?, ?, ?, ?, ?, ?)
+            `).run(
+                newUserId,
+                curGate,
+                dlStatus || 'unknown',
+                housingStatus || 'stable',
+                childSupportStatus || 'unknown',
+                recordId ? recordId.trim() : null,
+                enrollDate,
+                notes ? notes.trim() : null
+            );
+        });
+        createTx();
+
+        // Initialize 35-item briefcase, 4-week gate criteria, and benefit programs
+        initParticipantBriefcase(newUserId);
+
+        const createdUser = db.prepare(`
+            SELECT u.id, u.name, u.email, u.phone, u.location, u.track,
+                   p.current_gate, p.overall_status, p.record_id, p.enrollment_date
+            FROM users u
+            LEFT JOIN participant_profiles p ON u.id = p.user_id
+            WHERE u.id = ?
+        `).get(newUserId);
+
+        console.log(`[Caseload] Successfully created new participant: ${createdUser.name} (ID: ${newUserId}, Center: ${participantLocation})`);
+        res.status(201).json({ success: true, participant: createdUser, message: 'Participant successfully created.' });
+    } catch (err) {
+        console.error('Error creating participant:', err);
+        res.status(500).json({ error: 'Failed to create participant: ' + err.message });
+    }
+});
+
+// Delete a participant permanently (Full cascade purge)
+app.delete('/api/admin/participant/:userId', authenticateToken, requireRole('admin', 'program_manager', 'director', 'staff', 'navigator'), (req, res) => {
     const { userId } = req.params;
     if (!userId) return res.status(400).json({ error: 'User ID required' });
     try {
-        db.prepare("DELETE FROM users WHERE id = ? AND role = 'participant'").run(userId);
-        res.json({ message: 'Participant deleted successfully.' });
+        const user = db.prepare("SELECT id, name FROM users WHERE id = ? AND role = 'participant'").get(userId);
+        if (!user) {
+            return res.status(404).json({ error: 'Participant not found.' });
+        }
+
+        const deleteTx = db.transaction(() => {
+            db.prepare('DELETE FROM participant_profiles WHERE user_id = ?').run(userId);
+            db.prepare('DELETE FROM briefcase_items WHERE user_id = ?').run(userId);
+            db.prepare('DELETE FROM gate_criteria WHERE user_id = ?').run(userId);
+            db.prepare('DELETE FROM daily_points WHERE user_id = ?').run(userId);
+            db.prepare('DELETE FROM case_notes WHERE user_id = ?').run(userId);
+            db.prepare('DELETE FROM health_wellness_screen WHERE participant_id = ? OR user_id = ?').run(userId, userId);
+            db.prepare('DELETE FROM weekly_case_reviews WHERE user_id = ?').run(userId);
+            db.prepare('DELETE FROM weekly_stability_checks WHERE user_id = ?').run(userId);
+            db.prepare('DELETE FROM documents WHERE user_id = ?').run(userId);
+            db.prepare('DELETE FROM class_feedback WHERE user_id = ?').run(userId);
+            db.prepare('DELETE FROM resumes WHERE user_id = ?').run(userId);
+            db.prepare('DELETE FROM reentry_case_plans WHERE user_id = ?').run(userId);
+            db.prepare('DELETE FROM relapse_plans WHERE user_id = ?').run(userId);
+            db.prepare('DELETE FROM habit_logs WHERE user_id = ?').run(userId);
+            db.prepare('DELETE FROM earned_badges WHERE user_id = ?').run(userId);
+            db.prepare('DELETE FROM messages WHERE sender_id = ? OR receiver_id = ? OR participant_id = ?').run(userId, userId, userId);
+            db.prepare('DELETE FROM saved_job_applications WHERE user_id = ?').run(userId);
+            db.prepare('DELETE FROM time_off_requests WHERE user_id = ?').run(userId);
+            db.prepare('DELETE FROM cbt_submissions WHERE user_id = ?').run(userId);
+            db.prepare('DELETE FROM drug_tests WHERE user_id = ?').run(userId);
+            db.prepare('DELETE FROM cm_briefcase_audits WHERE user_id = ?').run(userId);
+            db.prepare('DELETE FROM participant_benefits WHERE user_id = ?').run(userId);
+            db.prepare("DELETE FROM users WHERE id = ? AND role = 'participant'").run(userId);
+        });
+        deleteTx();
+
+        console.log(`[Caseload] Permanently deleted participant: ${user.name} (ID ${userId})`);
+        res.json({ success: true, message: `Participant ${user.name} has been permanently deleted.` });
     } catch (e) {
+        console.error('Delete participant error:', e);
         res.status(500).json({ error: 'Failed to delete participant: ' + e.message });
     }
 });

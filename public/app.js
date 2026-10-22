@@ -1871,8 +1871,9 @@ async function loadCaseload() {
                     ${[1,2,3,4].map(g => `<option value="${g}" ${curGate === g ? 'selected' : ''}>Gate ${g}</option>`).join('')}
                 </select>`;
 
-                let feedbackHtml = `<div style="font-size: 10px;">
-                    <button class="btn btn-primary" style="padding: 6px 12px; font-size: 11px; margin-top: 4px; display: block; width: 100%; font-weight: bold;" onclick="openParticipantFile(${p.id})">📂 Open Participant File</button>
+                let feedbackHtml = `<div style="font-size: 10px; display: flex; flex-direction: column; gap: 4px;">
+                    <button class="btn btn-primary" style="padding: 6px 10px; font-size: 11px; display: block; width: 100%; font-weight: bold;" onclick="openParticipantFile(${p.id})">📂 Open File</button>
+                    <button class="btn btn-outline" style="padding: 3px 6px; font-size: 10px; border-color: #fca5a5; color: #b91c1c; background: #fff5f5; width: 100%; font-weight: 600;" onclick="deleteParticipantDirect(${p.id}, '${escName}')" title="Permanently delete participant">🗑️ Delete</button>
                 </div>`;
 
                 // PII collapsible section
@@ -2026,8 +2027,9 @@ async function loadCaseload() {
 
                     <!-- 7. Caseload Actions -->
                     <td style="vertical-align: middle;">
-                        <div style="display: flex; gap: 4px; flex-wrap: wrap; justify-content: center;">
-                            <button class="btn btn-primary" style="padding: 6px 12px; font-size: 11px; display: block; width: 100%; font-weight: bold;" onclick="openParticipantFile(${p.id})">📂 Open Participant File</button>
+                        <div style="display: flex; flex-direction: column; gap: 4px; justify-content: center;">
+                            <button class="btn btn-primary" style="padding: 6px 10px; font-size: 11px; display: block; width: 100%; font-weight: bold;" onclick="openParticipantFile(${p.id})">📂 Open File</button>
+                            <button class="btn btn-outline" style="padding: 3px 6px; font-size: 10px; border-color: #fca5a5; color: #b91c1c; background: #fff5f5; width: 100%; font-weight: 600;" onclick="deleteParticipantDirect(${p.id}, '${escName}')" title="Permanently delete participant">🗑️ Delete</button>
                         </div>
                     </td>
                 </tr>
@@ -6379,48 +6381,98 @@ async function handleParticipantCorrectionSubmit(event) {
     }
 }
 
+window.openAddParticipantModal = function() {
+    const form = document.getElementById('form-add-participant');
+    if (form) form.reset();
+
+    const dateInput = document.getElementById('add-p-enrollment-date');
+    if (dateInput) {
+        dateInput.value = new Date().toISOString().split('T')[0];
+    }
+
+    const locSelect = document.getElementById('add-p-location');
+    if (locSelect && currentUser && currentUser.location && currentUser.location !== 'All' && currentUser.location !== 'Statewide') {
+        locSelect.value = currentUser.location;
+    }
+
+    const statusEl = document.getElementById('add-p-status');
+    if (statusEl) statusEl.innerHTML = '';
+
+    openModal('modal-add-participant');
+};
+
 async function handleAddParticipantSubmit(event) {
-    event.preventDefault();
+    if (event) event.preventDefault();
     const token = localStorage.getItem('fs_token');
+    if (!token) return;
+
     const submitBtn = document.getElementById('btn-submit-add-p');
     const statusEl = document.getElementById('add-p-status');
 
-    const name = document.getElementById('add-p-name').value;
-    const email = document.getElementById('add-p-email').value;
-    const phone = document.getElementById('add-p-phone').value;
-    const password = document.getElementById('add-p-password').value;
-    const track = document.getElementById('add-p-track').value;
-    const location = document.getElementById('add-p-location').value;
+    const name = document.getElementById('add-p-name')?.value;
+    const location = document.getElementById('add-p-location')?.value || (currentUser && currentUser.location) || 'Charleston';
+    const enrollmentDate = document.getElementById('add-p-enrollment-date')?.value || new Date().toISOString().split('T')[0];
+    const gate = document.getElementById('add-p-gate')?.value || 1;
+    const recordId = document.getElementById('add-p-record-id')?.value;
+    const phone = document.getElementById('add-p-phone')?.value;
+    const dlStatus = document.getElementById('add-p-dl-status')?.value || 'unknown';
+    const housingStatus = document.getElementById('add-p-housing-status')?.value || 'stable';
+    const childSupportStatus = document.getElementById('add-p-child-support-status')?.value || 'unknown';
+    const notes = document.getElementById('add-p-notes')?.value;
+
+    if (!name || !name.trim()) {
+        if (statusEl) statusEl.innerHTML = '<span style="color: var(--danger);">Please enter a participant name.</span>';
+        return;
+    }
 
     try {
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Creating...';
-        statusEl.innerHTML = '<span style="color: var(--primary);">Creating participant profile...</span>';
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Creating...';
+        }
+        if (statusEl) {
+            statusEl.innerHTML = '<span style="color: var(--primary);">Enrolling participant and initializing briefcase...</span>';
+        }
 
-        const res = await fetch('/api/auth/register', {
+        const res = await fetch('/api/pm/participants', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, email, phone, password, track, location, role: 'participant' })
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                name: name.trim(),
+                location,
+                enrollmentDate,
+                gate: parseInt(gate, 10),
+                recordId: recordId ? recordId.trim() : null,
+                phone: phone ? phone.trim() : null,
+                dlStatus,
+                housingStatus,
+                childSupportStatus,
+                notes: notes ? notes.trim() : null
+            })
         });
-        const data = await res.json();
+        const data = await safeApiResponse(res);
 
-        if (res.ok) {
-            statusEl.innerHTML = '<span style="color: var(--success);">✅ Participant successfully added!</span>';
-            loadCaseload();
+        if (res.ok && data.success) {
+            if (statusEl) statusEl.innerHTML = '<span style="color: var(--success);">✅ Participant successfully created!</span>';
+            await loadCaseload();
             setTimeout(() => {
                 closeModal('modal-add-participant');
-                statusEl.innerHTML = '';
-                document.getElementById('form-add-participant').reset();
-                document.getElementById('add-p-password').value = '3765Turn90'; // reset default
-            }, 1200);
+                if (statusEl) statusEl.innerHTML = '';
+                document.getElementById('form-add-participant')?.reset();
+            }, 1000);
         } else {
-            statusEl.innerHTML = `<span style="color: var(--danger);">❌ Error: ${data.error || 'Creation failed'}</span>`;
+            if (statusEl) statusEl.innerHTML = `<span style="color: var(--danger);">❌ Error: ${data.error || 'Creation failed'}</span>`;
         }
-    } catch(e) {
-        statusEl.innerHTML = `<span style="color: var(--danger);">❌ Network error: ${e.message}</span>`;
+    } catch (err) {
+        if (statusEl) statusEl.innerHTML = `<span style="color: var(--danger);">❌ Network error: ${err.message}</span>`;
     } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = '➕ Create Participant';
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = '➕ Create Participant';
+        }
     }
 }
 
@@ -7492,39 +7544,37 @@ function restoreStaffSession() {
 }
 
 
-async function deleteParticipant() {
-    const userId = document.getElementById('pc-user-id').value;
+window.deleteParticipantDirect = async function(userId, userName) {
     if (!userId) return;
-    if (!confirm('Are you absolutely sure you want to permanently delete this participant and all of their data? This action cannot be undone.')) return;
+    const confirmed = confirm(`Are you sure you want to permanently delete ${userName || 'this participant'} from the caseload?\n\nThis will completely purge all their briefcase items, gate criteria, daily points, case notes, and records. This action cannot be undone.`);
+    if (!confirmed) return;
 
     const token = localStorage.getItem('fs_token');
-    const saveBtn = document.getElementById('btn-save-correction');
-    const statusEl = document.getElementById('pc-save-status');
-
     try {
-        saveBtn.disabled = true;
-        statusEl.innerHTML = '<span style="color: var(--danger);">Deleting participant...</span>';
-        
         const res = await fetch(`/api/admin/participant/${userId}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
         });
-        
+        const data = await safeApiResponse(res);
         if (res.ok) {
-            statusEl.innerHTML = '<span style="color: var(--success);">Participant deleted successfully.</span>';
+            alert(`Participant ${userName || ''} was successfully deleted.`);
+            closeModal('modal-participant-file');
+            closeModal('modal-participant-correction');
             loadCaseload();
-            setTimeout(() => {
-                closeModal('modal-participant-correction');
-            }, 1000);
         } else {
-            const data = await res.json();
-            statusEl.innerHTML = `<span style="color: var(--danger);">❌ Error: ${data.error || 'Failed to delete'}</span>`;
+            alert(`Failed to delete participant: ${data.error || 'Server error'}`);
         }
-    } catch(e) {
-        statusEl.innerHTML = `<span style="color: var(--danger);">❌ Network error: ${e.message}</span>`;
-    } finally {
-        saveBtn.disabled = false;
+    } catch (err) {
+        alert(`Error: ${err.message}`);
     }
+};
+
+async function deleteParticipant() {
+    const userId = document.getElementById('pc-user-id')?.value;
+    const subtitle = document.getElementById('pc-modal-subtitle')?.textContent || '';
+    const userName = subtitle.replace('Editing corrections and official status for ', '').trim() || 'this participant';
+    if (!userId) return;
+    await deleteParticipantDirect(userId, userName);
 }
 
 
@@ -7763,6 +7813,7 @@ function openParticipantFile(pId) {
         <button class="btn btn-outline" onclick="openCorrectionModal(${p.id}, '${pName.replace(/'/g, "\\'")}')">✏️ Edit Profile & Change Start Date</button>
         <button class="btn btn-outline" onclick="impersonateParticipant(${p.id})">👀 View Portal as ${pName.split(' ')[0]}</button>
         <button class="btn btn-outline" onclick="promptSwitchTrack(${p.id}, '${pName.replace(/'/g, "\\'")}', '${pTrack}')">🔄 Switch Track (Currently ${pTrack})</button>
+        <button class="btn btn-outline" style="border-color: #fca5a5; color: #b91c1c; background: #fff5f5;" onclick="deleteParticipantDirect(${p.id}, '${pName.replace(/'/g, "\\'")}')">🗑️ Delete Participant</button>
     `;
 
     // PII

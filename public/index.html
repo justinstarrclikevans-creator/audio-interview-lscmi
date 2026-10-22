@@ -917,7 +917,7 @@
             <!-- SUBSECTION 1: CASELOAD TABLE & FILTERS -->
             <div id="pm-sec-caseload">
                 <!-- Filter Toolbar -->
-                <div class="filter-toolbar" style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                <div class="filter-toolbar" style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; align-items: center;">
                     <select id="pm-filter-location" onchange="loadCaseload()" class="form-control" style="width: auto; min-width: 170px;">
                         <option value="">All Locations</option>
                         <option value="Charleston">Charleston, SC</option>
@@ -941,6 +941,9 @@
                         <option value="3">Gate 3 (Week 3)</option>
                         <option value="4">Gate 4 (Week 4)</option>
                     </select>
+                    <button class="btn btn-primary" onclick="openAddParticipantModal()" style="margin-left: auto; display: flex; align-items: center; gap: 6px; font-weight: 700; padding: 8px 16px;">
+                        <span>➕</span> Add Participant
+                    </button>
                 </div>
 
                 <!-- Caseload Table -->
@@ -2686,6 +2689,110 @@
     </div>
 
     <!-- ========================================================= -->
+    <!-- MODAL: ADD NEW PARTICIPANT (FIRST SHIFT)                  -->
+    <!-- ========================================================= -->
+    <div id="modal-add-participant" class="modal hidden">
+        <div class="modal-content modal-md" style="max-width: 600px;">
+            <div class="modal-header" style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
+                <div>
+                    <h3 style="margin: 0; color: var(--primary); font-size: 18px;">➕ Add First Shift Participant</h3>
+                    <p class="text-slate" style="margin: 4px 0 0 0; font-size: 12.5px;">Enroll a new participant into the center caseload, initialize their 35-item briefcase, and set up Gate 1 tracking.</p>
+                </div>
+                <button class="modal-close" onclick="closeModal('modal-add-participant')">&times;</button>
+            </div>
+
+            <form id="form-add-participant" onsubmit="handleAddParticipantSubmit(event)" style="padding-top: 14px; display: flex; flex-direction: column; gap: 14px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div>
+                        <label style="display:block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">Full Name *</label>
+                        <input type="text" id="add-p-name" required placeholder="e.g. Marcus Jenkins" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; box-sizing: border-box;">
+                    </div>
+                    <div>
+                        <label style="display:block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">Center Location *</label>
+                        <select id="add-p-location" required style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; box-sizing: border-box; background: white;">
+                            <option value="Charleston">Charleston, SC</option>
+                            <option value="Columbia">Columbia, SC</option>
+                            <option value="Spartanburg">Spartanburg, SC</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div>
+                        <label style="display:block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">Start / Enrollment Date</label>
+                        <input type="date" id="add-p-enrollment-date" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; box-sizing: border-box;">
+                    </div>
+                    <div>
+                        <label style="display:block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">Initial Gate</label>
+                        <select id="add-p-gate" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; box-sizing: border-box; background: white;">
+                            <option value="1" selected>Gate 1 (Week 1)</option>
+                            <option value="2">Gate 2 (Week 2)</option>
+                            <option value="3">Gate 3 (Week 3)</option>
+                            <option value="4">Gate 4 (Week 4)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div>
+                        <label style="display:block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">Apricot Record ID</label>
+                        <input type="text" id="add-p-record-id" placeholder="e.g. 5821" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; box-sizing: border-box;">
+                    </div>
+                    <div>
+                        <label style="display:block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">Phone Number</label>
+                        <input type="tel" id="add-p-phone" placeholder="843-555-0199" style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; box-sizing: border-box;">
+                    </div>
+                </div>
+
+                <div style="background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                    <div style="font-size: 12px; font-weight: 700; color: #475569; margin-bottom: 8px;">Initial Barrier Status</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                        <div>
+                            <label style="display:block; font-size: 11px; font-weight: 600; color: #64748b; margin-bottom: 3px;">Driver's License</label>
+                            <select id="add-p-dl-status" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; background: white;">
+                                <option value="unknown">Unknown</option>
+                                <option value="valid">Valid License</option>
+                                <option value="suspended">Suspended</option>
+                                <option value="reinstatement_needed">Needs Reinstatement</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display:block; font-size: 11px; font-weight: 600; color: #64748b; margin-bottom: 3px;">Housing</label>
+                            <select id="add-p-housing-status" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; background: white;">
+                                <option value="stable">Stable / Family</option>
+                                <option value="transitional">Transitional / Oxford</option>
+                                <option value="shelter">Shelter</option>
+                                <option value="unhoused">Unhoused</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display:block; font-size: 11px; font-weight: 600; color: #64748b; margin-bottom: 3px;">Child Support</label>
+                            <select id="add-p-child-support-status" style="width: 100%; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 12px; background: white;">
+                                <option value="none">None / N/A</option>
+                                <option value="order_active">Order Active</option>
+                                <option value="in_arrears">In Arrears</option>
+                                <option value="unknown">Unknown</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label style="display:block; font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 4px;">Staff Intake Notes (Optional)</label>
+                    <textarea id="add-p-notes" rows="2" placeholder="Initial intake observations, referrals, barrier details..." style="width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 12.5px; box-sizing: border-box;"></textarea>
+                </div>
+
+                <div id="add-p-status" style="font-size: 12.5px; font-weight: 600;"></div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--border); padding-top: 12px;">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('modal-add-participant')">Cancel</button>
+                    <button type="submit" id="btn-submit-add-p" class="btn btn-primary" style="font-weight: 700;">➕ Create Participant</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================================= -->
     <!-- MODAL: PARTICIPANT CORRECTION & PROFILE FIX NOTES           -->
     <!-- ========================================================= -->
     <div id="modal-participant-correction" class="modal hidden">
@@ -3059,7 +3166,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=1792000000001"></script>
+    <script src="app.js?v=1792000000002"></script>
 
     
     <!-- MODAL: Playbook AI -->
