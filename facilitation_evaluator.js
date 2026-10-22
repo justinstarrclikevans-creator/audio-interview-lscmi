@@ -70,6 +70,46 @@ try {
             }
         }
     }
+
+    // Purge historical hallucinated "Marcus" records and calibrate facilitator names
+    const marcusRows = db.prepare(`
+        SELECT id, location, facilitator_name, coaching_feedback, summary_markdown
+        FROM class_facilitation_evaluations
+        WHERE coaching_feedback LIKE '%Marcus%' 
+           OR summary_markdown LIKE '%Marcus%'
+           OR summary_markdown LIKE '%wouldn%swung%'
+    `).all();
+
+    for (const row of marcusRows) {
+        console.log(`[Class Evaluation Self-Heal] Sanitizing hallucinated Marcus references from Eval #${row.id} (${row.location})...`);
+        let cleanSummary = row.summary_markdown
+            .replace(/\*\*2\. Avoiding Confrontation \/ Over-directing: The \"Dating\" Trap[\s\S]*?(?=\*\*3\. Role Play Setup)/, '')
+            .replace(/2\. \*\*Practice the \"Group Pivot\":\*\*[\s\S]*?(?=3\. \*\*Lock in the Ending:\*\*)/, '')
+            .replace(/3\. \*\*Lock in the Ending:\*\*/, '2. **Lock in the Ending:**')
+            .replace(/sounded like James and Marcus/g, 'two active participants')
+            .replace(/—especially protecting the clock and letting the group handle resistance—/, '—especially protecting the clock and keeping behavioral roleplay at the center—');
+
+        let cleanFeedback = (row.coaching_feedback || '')
+            .split(';')
+            .map(s => s.trim())
+            .filter(s => !s.toLowerCase().includes('dating') && !s.toLowerCase().includes('debate') && !s.toLowerCase().includes('marcus'))
+            .join('; ');
+
+        let targetFacilitator = row.facilitator_name;
+        if (row.location === 'Columbia' && (!targetFacilitator || targetFacilitator === 'Staff Facilitator')) {
+            targetFacilitator = 'Jenn Jeanquart';
+        } else if (row.location === 'Spartanburg' && (!targetFacilitator || targetFacilitator === 'Staff Facilitator')) {
+            targetFacilitator = 'TB (Spartanburg)';
+        }
+
+        db.prepare(`
+            UPDATE class_facilitation_evaluations
+            SET facilitator_name = ?,
+                coaching_feedback = ?,
+                summary_markdown = ?
+            WHERE id = ?
+        `).run(targetFacilitator, cleanFeedback, cleanSummary, row.id);
+    }
 } catch (e) {
     console.warn("[Class Evaluation Self-Heal] Warning:", e.message);
 }
@@ -162,19 +202,190 @@ const KNOWN_CENTER_STAFF = {
     'spartanburg': {
         centerName: 'Spartanburg',
         primaryFacilitators: ['TB', 'Terry Brooks'],
-        foreignStaffNames: ['matt', 'benjamin', 'justin', 'evans', 'diyoung', 'dantzler', 'jenn', 'jennifer']
+        foreignStaffNames: ['matt', 'benjamin', 'justin', 'evans', 'diyoung', 'dantzler', 'jenn', 'jennifer', 'jeanquart']
     },
     'columbia': {
         centerName: 'Columbia',
-        primaryFacilitators: ['Diyoung Dantzler', 'Jenn'],
+        primaryFacilitators: ['Jenn Jeanquart', 'Diyoung Dantzler'],
         foreignStaffNames: ['matt', 'benjamin', 'justin', 'evans', 'tb', 'terry brooks']
     },
     'charleston': {
         centerName: 'Charleston',
         primaryFacilitators: ['Matt Benjamin', 'Justin Evans'],
-        foreignStaffNames: ['diyoung', 'dantzler', 'jenn', 'jennifer', 'tb', 'terry brooks']
+        foreignStaffNames: ['diyoung', 'dantzler', 'jenn', 'jennifer', 'jeanquart', 'tb', 'terry brooks']
     }
 };
+
+const CBT_MODULE_CATALOG = {
+    1: { moduleNumber: 1, moduleTitle: "Module 1: Thinking Controls Behavior (DMT & STAC)" },
+    2: { moduleNumber: 2, moduleTitle: "Module 2: Managing Emotions & Warning Signs (Stop Signs)" },
+    3: { moduleNumber: 3, moduleTitle: "Module 3: Recognizing Destructive Thinking (Upgrading Beliefs)" },
+    4: { moduleNumber: 4, moduleTitle: "Module 4: Interpersonal Communication & Social Skills" },
+    5: { moduleNumber: 5, moduleTitle: "Module 5: Problem Solving" },
+    6: { moduleNumber: 6, moduleTitle: "Module 6: Control & 5 Worries" },
+    7: { moduleNumber: 7, moduleTitle: "Module 7: Relationships & Prosocial Support" },
+    8: { moduleNumber: 8, moduleTitle: "Module 8: Reentry Action Planning & Relapse Prevention" }
+};
+
+/**
+ * Dynamically detects today's CBT module and topic from classroom transcript.
+ * Distinguishes today's main lesson from yesterday's homework review.
+ */
+function detectLessonModuleFromTranscript(transcriptText) {
+    if (!transcriptText || typeof transcriptText !== 'string') {
+        return { moduleNumber: 1, moduleTitle: "Module 1: Thinking Controls Behavior (DMT & STAC)" };
+    }
+
+    const lines = transcriptText.split('\n');
+    const todayRegex = /(?:today(?:'s)?(?:\s+main)?(?:\s+class|\s+lesson|\s+session|\s+topic)?(?:\s+is|\s+we are|\s+we're)?|diving into|focus(?:ing)? on|welcome to|starting)\s+(?:module\s*([1-8])(?::\s*([^\n\.\,]+))?|([1-8]))/i;
+    const homeworkRegex = /(?:yesterday(?:'s)?|last\s+(?:week|class|time)|homework|worksheet|check-in|recap|check on|turn that in)\b/i;
+
+    let candidateOther = null;
+
+    for (const rawLine of lines) {
+        const line = rawLine.trim();
+        if (!line) continue;
+        const isHomework = homeworkRegex.test(line);
+
+        const match = line.match(/(?:module\s*([1-8]))(?::\s*([^\n\.\,\!\?]+))?/i);
+        if (match) {
+            const modNum = parseInt(match[1], 10);
+            const capturedTitle = match[2] ? match[2].trim() : '';
+            const catalogEntry = CBT_MODULE_CATALOG[modNum];
+            const fullTitle = catalogEntry ? (capturedTitle ? `Module ${modNum}: ${capturedTitle}` : catalogEntry.moduleTitle) : `Module ${modNum}`;
+
+            if (!isHomework && todayRegex.test(line)) {
+                return { moduleNumber: modNum, moduleTitle: fullTitle };
+            }
+            if (!isHomework && !candidateOther) {
+                candidateOther = { moduleNumber: modNum, moduleTitle: fullTitle };
+            }
+        }
+    }
+
+    if (candidateOther) {
+        return candidateOther;
+    }
+
+    // Fallback: Check for key module concepts in the non-homework text
+    const lowerText = transcriptText.toLowerCase();
+    const conceptScores = [
+        { num: 5, pattern: /\bproblem solving\b|\bgenerating (?:multiple )?choices\b|\bthree things you can do\b/i },
+        { num: 4, pattern: /\binterpersonal communication\b|\bclear listening\b|\blisten without interrupting\b|\bbody language\b/i },
+        { num: 6, pattern: /\bcontrol\b|\b5 worries\b|\bcontrollable vs uncontrollable\b|\bprocess goals\b/i },
+        { num: 2, pattern: /\bstop signs\b|\bmanaging emotions\b|\bphysical warning signs\b|\bcooling down\b/i },
+        { num: 3, pattern: /\bdestructive thinking\b|\bupgrading thoughts\b|\bblaming\b|\bentitlement\b/i },
+        { num: 7, pattern: /\bprosocial support\b|\bpositive associates\b|\bboundaries\b/i },
+        { num: 8, pattern: /\breentry action plan\b|\brelapse prevention\b|\bhigh-risk situations\b/i },
+        { num: 1, pattern: /\bthinking controls behavior\b|\bdmt\b|\bdecision making tool\b|\bstac\b|\bbehavior chain\b/i }
+    ];
+
+    for (const item of conceptScores) {
+        if (item.pattern.test(lowerText)) {
+            const entry = CBT_MODULE_CATALOG[item.num];
+            return { moduleNumber: item.num, moduleTitle: entry ? entry.moduleTitle : `Module ${item.num}` };
+        }
+    }
+
+    return { moduleNumber: 1, moduleTitle: "Module 1: Thinking Controls Behavior (DMT & STAC)" };
+}
+
+function cleanNorm(s) {
+    if (!s) return '';
+    return s.toLowerCase()
+        .replace(/['’]/g, "'")
+        .replace(/["“”]/g, '"')
+        .replace(/[^a-z0-9\s]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
+/**
+ * Checks whether an observed feedback quote or named participant dialogue is grounded
+ * in the actual classroom transcript.
+ */
+function isDialogueGrounded(text, transcriptText, normTranscript) {
+    if (!text || typeof text !== 'string') return true;
+
+    // Check 1: Named participants with action/dialogue verbs (e.g. 'When Marcus pushed back...', 'Marcus claimed')
+    const nameMatches = text.matchAll(/\b(?:when|participant named|participant|with|against)\s+([A-Za-z]+)\b/gi);
+    for (const match of nameMatches) {
+        const name = match[1];
+        const lowerName = name.toLowerCase();
+        if (!['the', 'this', 'that', 'our', 'good', 'you', 'when', 'facilitator', 'a', 'an', 'another', 'one', 'staff', 'lead'].includes(lowerName)) {
+            const namePattern = new RegExp('\\b' + lowerName + '\\b', 'i');
+            if (!namePattern.test(transcriptText)) {
+                return false;
+            }
+        }
+    }
+
+    // Check 2: Dialogue quotes in observation text
+    // Split off recommendation/coaching suggestions so we don't penalize new suggested questions
+    const observationPart = text.split(/->|Try Asking|could have asked|What to Ask Next Time|What You Said/i)[0];
+    const quotes = observationPart.match(/['"]([^'"]{10,})['"]/g) || [];
+    for (const rawQuote of quotes) {
+        const quoteContent = rawQuote.slice(1, -1);
+        const cleanQ = cleanNorm(quoteContent);
+        if (cleanQ.length < 10) continue;
+
+        if (normTranscript.includes(cleanQ)) continue;
+
+        const words = cleanQ.split(' ').filter(Boolean);
+        if (words.length >= 3) {
+            let matchCount = 0;
+            for (let i = 0; i <= words.length - 3; i++) {
+                const trigram = words.slice(i, i + 3).join(' ');
+                if (normTranscript.includes(trigram)) {
+                    matchCount++;
+                }
+            }
+            const matchRatio = matchCount / (words.length - 2);
+            if (matchRatio < 0.25) {
+                return false;
+            }
+        } else {
+            if (!normTranscript.includes(cleanQ)) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+/**
+ * Quote Verification Firewall:
+ * Strips ungrounded quotes, fabricated participant dialogue, and hallucinations.
+ */
+function filterHallucinatedQuotes(evaluation, transcriptText) {
+    if (!evaluation || !transcriptText) return evaluation;
+    const normTranscript = cleanNorm(transcriptText);
+
+    if (Array.isArray(evaluation.observed_strengths)) {
+        evaluation.observed_strengths = evaluation.observed_strengths.filter(item => 
+            isDialogueGrounded(item, transcriptText, normTranscript)
+        );
+    }
+
+    if (Array.isArray(evaluation.areas_for_improvement)) {
+        evaluation.areas_for_improvement = evaluation.areas_for_improvement.filter(item => 
+            isDialogueGrounded(item, transcriptText, normTranscript)
+        );
+    }
+
+    if (evaluation.detailed_summary_markdown && typeof evaluation.detailed_summary_markdown === 'string') {
+        const paragraphs = evaluation.detailed_summary_markdown.split('\n\n');
+        const groundedParagraphs = paragraphs.filter(para => 
+            isDialogueGrounded(para, transcriptText, normTranscript)
+        );
+        evaluation.detailed_summary_markdown = groundedParagraphs.length > 0 
+            ? groundedParagraphs.join('\n\n') 
+            : 'Facilitation session reviewed and grounded against class transcript.';
+    }
+
+    return evaluation;
+}
 
 /**
  * Ensures a session at one center is NEVER attributed to staff from another center
@@ -254,6 +465,11 @@ Turn90 uses evidence-based Cognitive Behavioral Training across 8 Core Modules:
 - Module 7: Relationships & Prosocial Support (Evaluating associate influences, boundary setting, positive support networks)
 - Module 8: Reentry Action Planning & Relapse Prevention (High-risk situations, emergency escape plans, ongoing stability)
 
+IMPORTANT MODULE ADHERENCE RULE:
+A classroom session frequently reviews previous homework or past exercises for 5-15 minutes before transitioning into TODAY's new lesson.
+You MUST identify today's specific module from the main activity and new instruction, NOT from earlier homework checks.
+Judge lesson adherence, roleplay staging, and CBT fidelity solely against TODAY's active module.
+
 FACILITATION PROTOCOL EXPECTATIONS:
 1. Pacing & Time Management: Homework review MUST not exceed 20 minutes (2 min/person). Class should finish main activity with all participants.
 2. Rule Enforcement: Point board used in real-time, addresses disengagement (heads down, side talk) using core correctional practices.
@@ -289,6 +505,12 @@ async function evaluateClassTranscript(location, sessionTitle, facilitatorName, 
 
     if (!transcriptText || transcriptText.trim().length < 50) {
         throw new Error("Transcript is empty or too short to evaluate (under 50 characters). Evaluation aborted to prevent a placeholder score.");
+    }
+
+    const detected = detectLessonModuleFromTranscript(transcriptText);
+    let effectiveSessionTitle = sessionTitle || 'Turn90 Workshop';
+    if (!effectiveSessionTitle.toLowerCase().includes('module') && detected && detected.moduleTitle) {
+        effectiveSessionTitle = `${effectiveSessionTitle} - ${detected.moduleTitle}`;
     }
 
     const headcountInstruction = classHeadcount
@@ -333,7 +555,7 @@ CRITICAL ISOLATION MANDATES (STRICT CENTER & FACILITATOR SEPARATION):
 
 3. ZERO EXTERNAL / MANUAL HALLUCINATIONS:
    Every single observation, timestamp, score, and coaching recommendation MUST come DIRECTLY and EXCLUSIVELY from what is in THIS transcript.
-   Do NOT pull in fictional names, case studies (such as "Marcus"), or hypothetical scenarios from training manuals or workbooks.
+   Do NOT pull in fictional names, case studies, or hypothetical scenarios from training manuals or workbooks.
    If a participant's name is not explicitly stated in the transcript, refer to them neutrally as "a participant" or "the participant."
 
 4. ${headcountInstruction}
@@ -342,7 +564,7 @@ CRITICAL ISOLATION MANDATES (STRICT CENTER & FACILITATOR SEPARATION):
    If this transcript is clearly a 1-on-1 Case Management / barrier review meeting with a single client (uploaded to the Class Evaluation tab by mistake) rather than a group CBT class, set "detected_session_type": "case_management" in the JSON output. Otherwise set "detected_session_type": "class".
 
 Location: ${location}
-Session / Module: ${sessionTitle}
+Session / Module: ${effectiveSessionTitle}
 Facilitator: ${facilitatorName}
 
 CRITICAL OUTPUT REQUIREMENT:
@@ -394,6 +616,9 @@ ${transcriptText}
     // Apply language & operational policy sanitizer
     sanitizeLanguageFeedback(evaluation);
 
+    // Apply Quote Verification Firewall (Strip Hallucinated Dialogue / Fake Characters)
+    filterHallucinatedQuotes(evaluation, transcriptText);
+
     // Enforce deterministic score math (no more 27.5 bug or inflated high 90s)
     const finalTotalScore = computeDeterministicClassScore(evaluation);
     if (isNaN(finalTotalScore) || finalTotalScore <= 0) {
@@ -417,7 +642,7 @@ ${transcriptText}
 
     const info = stmt.run(
         location,
-        sessionTitle,
+        effectiveSessionTitle,
         savedFacilitator,
         finalTotalScore,
         evaluation.scores?.modeling_neutrality ?? 4.0,
@@ -437,11 +662,86 @@ ${transcriptText}
 }
 
 async function uploadFacilitationResources(fileManager) {
-    // Intentionally return empty: The 20-item Facilitator Scoring Guide and Turn90 CBT framework are directly embedded in the prompt.
-    // Uploading external PDFs caused Gemini's multimodal attention to blend sample workbook transcripts/cases with the audio recording.
     return [];
 }
 
+/**
+ * Stage 1: Transcribes classroom media into a verbatim, timestamped transcript.
+ * Runs at temperature 0.1 without rubric or scoring prompt interference.
+ */
+async function transcribeClassAudio(fileManager, uploadResults, location = '', facilitatorName = '') {
+    console.log(`[Class Evaluation] Stage 1: Transcribing classroom audio verbatim for ${location}...`);
+    
+    const contentParts = [];
+    for (const res of uploadResults) {
+        let fileState = res.file;
+        while (fileState.state === 'PROCESSING') {
+            if (global.syncStatus) global.syncStatus.log = `Waiting for audio processing...`;
+            console.log(`[Class Evaluation] Waiting for Gemini to process ${fileState.name}...`);
+            await new Promise(resolve => setTimeout(resolve, 8000));
+            fileState = await fileManager.getFile(fileState.name);
+        }
+        if (fileState.state === 'FAILED') {
+            throw new Error(`Gemini failed to process media file: ${fileState.name}`);
+        }
+        contentParts.push({ fileData: { mimeType: fileState.mimeType, fileUri: fileState.uri } });
+    }
+
+    const transcribePrompt = `You are an expert audio transcription specialist for Turn90 / First Shift.
+Location: ${location}
+Scheduled Facilitator: ${facilitatorName}
+
+TASK: Generate a strict, verbatim, timestamped transcript of the audible speech in this classroom recording.
+Format each spoken line with timestamp:
+[MM:SS] Facilitator: <exact spoken words>
+or
+[MM:SS] Participant: <exact spoken words> (or [MM:SS] Participant (<Name>): <words> if their name is spoken out loud in class)
+
+MANDATORY TRANSCRIPTION RULES:
+1. Verbatim Grounding: Transcribe ONLY the audible words spoken by the human beings in the room.
+2. Zero Fabrication: Absolutely DO NOT invent fictional participants, roleplays, or workbook case examples.
+3. If an utterance is muffled or unintelligible, write [unintelligible].
+4. Do NOT summarize, critique, or score the session. Return ONLY the timestamped dialogue transcript.
+5. If the audio is completely silent or contains less than 1 minute of intelligible speech, output: EMPTY_AUDIO.`;
+
+    contentParts.push({ text: transcribePrompt });
+
+    let result;
+    let retries = 5;
+    while (retries > 0) {
+        try {
+            result = await model.generateContent({
+                contents: [{ role: 'user', parts: contentParts }],
+                generationConfig: {
+                    temperature: 0.1
+                }
+            });
+            break;
+        } catch (err) {
+            if (err.message && err.message.includes('503 Service Unavailable') && retries > 1) {
+                console.warn(`[Class Evaluation] Gemini API 503 Overloaded. Retrying in 15 seconds... (${retries - 1} attempts left)`);
+                await new Promise(r => setTimeout(r, 15000));
+                retries--;
+            } else {
+                throw err;
+            }
+        }
+    }
+
+    const transcriptText = result.response.text().trim();
+    if (transcriptText.includes('EMPTY_AUDIO') || transcriptText.length < 50) {
+        throw new Error("Recording appears to be silent, empty, or contains no intelligible classroom dialogue. Evaluation aborted.");
+    }
+
+    return transcriptText;
+}
+
+/**
+ * Two-Stage Grounded Facilitation Evaluation:
+ * Stage 1: Verbatim timestamped transcription (temperature: 0.1)
+ * Stage 2: Dynamic lesson/module detection from spoken dialogue
+ * Stage 3: Grounded evaluation against transcript text with quote verification firewall
+ */
 async function evaluateClassMedia(location, sessionTitle, facilitatorName, mediaFiles, classHeadcount = null) {
     if (!process.env.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY is missing");
 
@@ -456,10 +756,8 @@ async function evaluateClassMedia(location, sessionTitle, facilitatorName, media
 
     for (const mf of filesToUpload) {
         if (mf.file && mf.file.uri) {
-            // Already uploaded to Gemini
             uploadResults.push(mf);
         } else {
-            // Guardrail against empty / 0-byte recordings (prevents phantom score)
             if (!mf.path || !fs.existsSync(mf.path)) {
                 throw new Error("Audio/video file is missing or could not be read.");
             }
@@ -475,288 +773,51 @@ async function evaluateClassMedia(location, sessionTitle, facilitatorName, media
             });
             uploadResults.push(uploadResult);
             
-            // Immediately delete local file to free disk space
             if (fs.existsSync(mf.path)) {
                 try { fs.unlinkSync(mf.path); } catch(e) {}
             }
         }
     }
-    
-    let uploadedResources = [];
 
     try {
-        uploadedResources = await uploadFacilitationResources(fileManager);
+        // Stage 1: Verbatim Transcription (temperature 0.1)
+        if (global.syncStatus) global.syncStatus.log = `Transcribing classroom audio for ${location}...`;
+        const transcriptText = await transcribeClassAudio(fileManager, uploadResults, location, facilitatorName);
 
-        const headcountInstruction = classHeadcount
-            ? `REPORTED CLASS HEADCOUNT: There were exactly ${classHeadcount} participants in class today. Judge group engagement strictly against ${classHeadcount} participants—if all ${classHeadcount} speak, score Group Engagement 5/5.`
-            : `ACTUAL CLASS HEADCOUNT DETECTION: Listen carefully and count the actual number of distinct participant voices in the room. If only 2, 3, or 4 participants are present in class and all of them participate, score Group Engagement 5/5! NEVER assume silent participants exist in the room without audio evidence, and NEVER penalize a small class for "only engaging 3 people."`;
+        // Stage 2: Dynamic Module Detection from Spoken Dialogue
+        const detected = detectLessonModuleFromTranscript(transcriptText);
+        console.log(`[Class Evaluation] Detected Active Lesson: ${detected.moduleTitle} (Module ${detected.moduleNumber})`);
 
-        const prompt = `You are the Lead Facilitator Supervisor and Quality Assurance Director for Turn90 / First Shift.
-Location: ${location}
-Session / Module: ${sessionTitle}
-Facilitator: ${facilitatorName}
-
-${getFacilitatorScoringContext()}
-
-================================================================================
-CRITICAL SCORING CALIBRATION & RUBRIC DISTRIBUTION:
-================================================================================
-You are an objective Quality Assurance Director. Your evaluations must reflect genuine, calibrated performance.
-DO NOT inflate scores into the 90s. In our program, a 90+ score is reserved strictly for exceptional mastery.
-
-THE 1.0 TO 5.0 RATING SCALE & BENCHMARKS:
-- 5.0 (Exemplary / Mastery — 95–100%): Flawless, textbook execution. Demonstrates advanced complex reflections, seamless buy-in, perfect roleplay staging ("Begin with the End in Mind"), and masterful group engagement. This is rare and must be earned with clear evidence.
-- 4.0 – 4.4 (Good / Proficient — 80–88%): Strong, competent delivery. Solid adherence to the lesson, good pacing, positive climate. Has minor areas for refinement (e.g. relied on simple reflections instead of complex, or minor overdirecting on one question).
-- 3.3 – 3.9 (Acceptable Baseline — 66–78%): Meets baseline standard. Got through the lesson, but has noticeable flaws (e.g. homework review ran over 20 minutes, co-actor instructions were unclear in roleplay, or struggled with buy-in). MOST NORMAL, EVERYDAY SESSIONS WITH REAL-WORLD MISTAKES LAND IN THIS RANGE (74–84%).
-- 2.5 – 3.2 (Needs Improvement — 50–64%): Noticeable inconsistency. Lectured instead of facilitating, rushed or skipped the main activity, lost time management, or struggled to keep group on track.
-- 1.0 – 2.4 (Unsatisfactory — 20–48%): Did not follow the lesson plan or violated core standards.
-
-SCORING REALITY CHECK:
-- If you identify specific areas for improvement (e.g. homework pacing went long, lacked complex reflections, missed "Begin with End in Mind"), the corresponding subscore MUST be lowered (e.g. 3.0 to 3.5).
-- A session with typical areas for improvement should realistically score in the 75–85 range.
-- Differentiate each category based on actual evidence.
-
-================================================================================
-CRITICAL ISOLATION MANDATES (STRICT CENTER & FACILITATOR SEPARATION):
-================================================================================
-1. STRICT CENTER SEPARATION:
-   You are evaluating ONLY the cohort at ${location}.
-   Each Turn90 Center (Charleston, Columbia, Spartanburg) operates with complete autonomy.
-   Do NOT compare, reference, or pull in information, participants, or staff from other centers. Keep this report 100% focused on ${location}.
-   Spartanburg is facilitated by Spartanburg staff (TB). Columbia is facilitated by Columbia staff (Diyoung, Jenn). Charleston is facilitated by Charleston staff (Matt, Justin).
-
-2. STRICT FACILITATOR SEPARATION:
-   You are evaluating ONLY the individual facilitator leading this specific session recording.
-   The scheduled facilitator is: "${facilitatorName}".
-   Under NO circumstances grade, critique, or attribute this class to any third-party staff member mentioned in casual conversation or participant anecdotes (e.g., if someone says "Mr. Matt said...", "Justin told us...", "In Diyoung's class...").
-   Do NOT change "facilitator_name" to a mentioned staff member. Only change it if the lead instructor explicitly introduces themselves with their actual name in the opening minutes.
-   Evaluate purely their individual facilitation skills, neutrality, pacing, and CBT delivery during this specific recording.
-
-3. ZERO EXTERNAL / MANUAL HALLUCINATIONS:
-   Every single observation, timestamp, score, and coaching recommendation MUST come DIRECTLY and EXCLUSIVELY from what is audibly spoken and heard in THIS recording.
-   Do NOT pull in fictional names, case studies (such as "Marcus"), or hypothetical scenarios from training manuals or workbooks.
-   If a participant's name is not explicitly spoken in the audio, refer to them neutrally as "a participant" or "the participant."
-
-4. AUDIO-ONLY CRITERIA & OPERATIONAL PHONE CALL EXCEPTION:
-   These are AUDIO ONLY recordings. Do not penalize based on a lack of visual "physical presence".
-   CRITICAL: If the facilitator answers a brief phone call during class (e.g., a halfway house calling to verify participant attendance or center logistics), DO NOT penalize or deduct points. Halfway house verification calls are mandatory operational duties.
-
-5. ${headcountInstruction}
-
-6. "PRACTICE COURT" RULE (SLANG & PROFANITY FROM FACILITATORS & PARTICIPANTS):
-   In our setting, slang, street vernacular, AAVE, and profanity from BOTH facilitators and participants are 100% acceptable and authentic. When participants share risky thoughts (e.g. "fuck it", "fuck this bitch"), they MUST state them raw and unsanitized so their brain recognizes the real stop sign.
-   - NEVER penalize or deduct points for facilitator or participant slang/profanity.
-   - NEVER advise the facilitator to clean up their language or correct participants' profanity.
-
-7. PROSOCIAL VULNERABILITY & "5TH-GRADE" ACCESSIBLE DEFINITIONS:
-   - Praise and reward facilitators when they share relatable personal struggles (e.g. family stress, rough day, ER visit) while modeling positive emotional regulation.
-   - Praise and reward facilitators when they translate clinical terms (e.g. "low frustration tolerance", "neuroplasticity") into everyday "5th-grade" accessible definitions (e.g. "zero tolerance for frustration").
-
-8. EMPTY / SILENT AUDIO & 1-ON-1 CASE MANAGEMENT DETECTION:
-   - If the recording is silent, empty, or contains less than 1 minute of actual speech, set "audio_empty_or_invalid": true.
-   - If the recording is clearly a 1-on-1 Case Management / Re-entry Navigation session with a single client (uploaded to the Class Evaluation tab by mistake) rather than a group CBT class, set "detected_session_type": "case_management". Otherwise set "detected_session_type": "class".
-
-CRITICAL OUTPUT REQUIREMENT:
-You MUST provide your response in three distinct parts:
-
-Part 1: The Numerical Data (JSON block)
-\`\`\`json
-{
-  "facilitator_name": "${facilitatorName}",
-  "audio_empty_or_invalid": false,
-  "detected_session_type": "class",
-  "estimated_headcount": ${classHeadcount || 4},
-  "total_score": 80.0,
-  "scores": {
-    "modeling_neutrality": 4.0,
-    "lesson_plan_adherence": 3.8,
-    "reflective_listening": 3.5,
-    "avoiding_confrontation": 4.2,
-    "time_management": 3.5,
-    "enthusiasm": 4.5,
-    "group_engagement": 4.0
-  },
-  "observed_strengths": [
-    "[MM:SS] Specific observed strength with quote..."
-  ],
-  "areas_for_improvement": [
-    "[MM:SS] When participant said '...' -> You said '...' -> Try Asking This Next Time: 'Exact CBT / MI / SYNAPSE question...'"
-  ],
-  "location_specific_notes": "Key observations for ${location} only..."
-}
-\`\`\`
-
-Part 2: The Full Coaching Report (Markdown)
-After the JSON block, write your detailed coaching report in standard markdown format.
-You MUST include a dedicated section titled:
-### 🎯 Actionable Coaching Rewrites: "What You Said" vs. "What to Ask Next Time"
-For each coaching moment, provide:
-- **Timestamp & Context ([MM:SS]):** Exact quote of what the participant or facilitator said.
-- **What You Said:** The facilitator's actual response.
-- **Try Asking This Next Time (CBT + MI + SYNAPSE Script):** 2–3 concrete, verbatim alternative questions or reflections the facilitator can use next time (incorporating Situated Empathy, Yielding the Narrative, or accessible 5th-grade CBT framing).
-
-Part 3: Diarized Session Transcript (for NotebookLM)
-At the very end of your response, include a delimiter \`===SESSION_TRANSCRIPT_START===\` followed by a clean, timestamped transcript of the session dialogue (\`[MM:SS] Facilitator: ...\` / \`[MM:SS] Participant: ...\`), and close with \`===SESSION_TRANSCRIPT_END===\`.
-`;
-
-        console.log(`[Class Evaluation] Generating evaluation for ${location}...`);
-        
-        const contentParts = uploadedResources.map(r => ({
-            fileData: { mimeType: r.mimeType, fileUri: r.fileUri }
-        }));
-        
-        for (const res of uploadResults) {
-            let fileState = res.file;
-            // Poll if it's a video/audio that needs processing
-            while (fileState.state === 'PROCESSING') {
-                if (global.syncStatus) global.syncStatus.log = `Waiting for Gemini to process video...`;
-                console.log(`[Class Evaluation] Waiting for Gemini to process ${fileState.name}...`);
-                await new Promise(resolve => setTimeout(resolve, 8000));
-                fileState = await fileManager.getFile(fileState.name);
-            }
-            if (fileState.state === 'FAILED') {
-                throw new Error(`Gemini failed to process media file: ${fileState.name}`);
-            }
-            contentParts.push({ fileData: { mimeType: fileState.mimeType, fileUri: fileState.uri } });
-        }
-        contentParts.push({ text: prompt });
-
-        let result;
-        let retries = 5;
-        while (retries > 0) {
-            try {
-                result = await model.generateContent(contentParts);
-                break;
-            } catch (err) {
-                if (err.message && err.message.includes('503 Service Unavailable') && retries > 1) {
-                    console.warn(`[Class Evaluation] Gemini API 503 Overloaded. Retrying in 15 seconds... (${retries - 1} attempts left)`);
-                    await new Promise(r => setTimeout(r, 15000));
-                    retries--;
-                } else {
-                    throw err;
-                }
-            }
-        }
-        const responseText = result.response.text();
-        
-        let evaluation;
-        let markdownPart = responseText;
-        let extractedTranscript = '';
-
-        // Extract optional transcript block
-        const transcriptMatch = markdownPart.match(/===SESSION_TRANSCRIPT_START===([\s\S]*?)===SESSION_TRANSCRIPT_END===/);
-        if (transcriptMatch) {
-            extractedTranscript = transcriptMatch[1].trim();
-            markdownPart = markdownPart.replace(/===SESSION_TRANSCRIPT_START===[\s\S]*?===SESSION_TRANSCRIPT_END===/, '').trim();
+        let effectiveSessionTitle = sessionTitle;
+        if (!effectiveSessionTitle || effectiveSessionTitle.includes('Class Session') || effectiveSessionTitle.includes('pm') || effectiveSessionTitle.includes('am')) {
+            effectiveSessionTitle = `${sessionTitle} - ${detected.moduleTitle}`;
         }
 
-        // Extract the JSON block
-        const jsonMatch = markdownPart.match(/```json\s*([\s\S]*?)\s*```/);
-        
-        if (jsonMatch) {
-            try {
-                evaluation = JSON.parse(jsonMatch[1]);
-                markdownPart = markdownPart.replace(/```json\s*[\s\S]*?\s*```/, '').trim();
-            } catch(err) {
-                console.error("[Class Evaluation] Extracted JSON was still invalid:", err);
-                throw new Error("AI returned invalid JSON syntax. Raw: " + jsonMatch[1].substring(0, 500));
-            }
-        } else {
-            const bracketMatch = markdownPart.match(/\{[\s\S]*\}/);
-            if (bracketMatch) {
-                try {
-                    evaluation = JSON.parse(bracketMatch[0]);
-                    markdownPart = markdownPart.replace(/\{[\s\S]*\}/, '').trim();
-                } catch(err) {
-                    console.error("[Class Evaluation] Extracted bracket JSON was invalid:", err);
-                    throw new Error("AI returned invalid JSON syntax. Raw: " + responseText.substring(0, 500));
-                }
-            } else {
-                console.error("[Class Evaluation] No JSON object found in response:", responseText);
-                throw new Error("AI did not return a JSON object. Raw output: " + responseText.substring(0, 500));
-            }
-        }
+        // Stage 3: Grounded Evaluation on Verbatim Transcript (with Quote Firewall)
+        if (global.syncStatus) global.syncStatus.log = `Evaluating facilitation for ${location}...`;
+        const evaluation = await evaluateClassTranscript(location, effectiveSessionTitle, facilitatorName, transcriptText, classHeadcount);
 
-        // Guardrail: Reject empty / silent recordings so they never get a fake 88 score!
-        if (evaluation.audio_empty_or_invalid === true) {
-            throw new Error("Recording appears to be silent, empty, or contains no intelligible classroom dialogue. Evaluation aborted to prevent an inaccurate score.");
-        }
-
-        if (!evaluation.scores) {
-            console.error("[Class Evaluation] AI returned an invalid schema or refused the prompt:", responseText);
-            throw new Error("AI returned invalid JSON schema. It may have refused to evaluate the audio.");
-        }
-
-        // Attach notice banner if a 1-on-1 CM session was uploaded to the Class tab by mistake
-        if (evaluation.detected_session_type === 'case_management') {
-            markdownPart = `> ⚠️ **CROSS-TAB UPLOAD NOTICE:** This recording appears to be a **1-on-1 Case Management / Barrier Review Session** rather than a group classroom session. You can move or re-evaluate this file under the **Case Management Evaluations** tab so it does not skew classroom facilitation metrics.\n\n` + markdownPart;
-        }
-        
-        // Attach the markdown part back to the evaluation object
-        evaluation.detailed_summary_markdown = markdownPart || "No detailed summary provided.";
-
-        // Apply language & operational policy sanitizer
-        sanitizeLanguageFeedback(evaluation);
-
-        // Enforce deterministic score calculation from rubric sub-scores (fixes 27.5 bug & removes 88 fallback)
-        const finalTotalScore = computeDeterministicClassScore(evaluation);
-        if (isNaN(finalTotalScore) || finalTotalScore <= 0) {
-            throw new Error("Could not compute a valid rubric score from the recording.");
-        }
-
-        const savedFacilitator = sanitizeFacilitatorName(location, evaluation.facilitator_name, facilitatorName);
-
-        const savedHeadcount = classHeadcount || evaluation.estimated_headcount || null;
-        const detectedType = evaluation.detected_session_type || 'class';
-
-        // Save to database
-        const stmt = db.prepare(`
-            INSERT INTO class_facilitation_evaluations (
-                location, session_title, facilitator_name, total_score,
-                modeling_neutrality_score, lesson_plan_adherence_score,
-                reflective_listening_score, avoiding_confrontation_score,
-                summary_markdown, scores_json, coaching_feedback,
-                class_headcount, transcript_text, detected_session_type
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `);
-
-        const info = stmt.run(
-            location,
-            sessionTitle,
-            savedFacilitator,
-            finalTotalScore,
-            evaluation.scores?.modeling_neutrality ?? 4.0,
-            evaluation.scores?.lesson_plan_adherence ?? 3.8,
-            evaluation.scores?.reflective_listening ?? 3.5,
-            evaluation.scores?.avoiding_confrontation ?? 4.0,
-            evaluation.detailed_summary_markdown || '',
-            JSON.stringify(evaluation.scores || {}),
-            (evaluation.areas_for_improvement || []).join('; '),
-            savedHeadcount,
-            extractedTranscript || evaluation.detailed_summary_markdown || '',
-            detectedType
-        );
-
-        evaluation.id = info.lastInsertRowid;
         return evaluation;
     } finally {
         console.log(`[Class Evaluation] Deleting temporary files from Gemini...`);
         for (const res of uploadResults) {
             try {
-                await fileManager.deleteFile(res.file.name);
+                if (res.file && res.file.name) {
+                    await fileManager.deleteFile(res.file.name);
+                }
             } catch (err) {
                 console.error("Failed to delete video file from Gemini:", err.message);
-            }
-        }
-        
-        for (const res of uploadedResources) {
-            try {
-                await fileManager.deleteFile(res.name);
-            } catch (err) {
-                console.error(`Failed to delete background resource ${res.name} from Gemini:`, err.message);
             }
         }
     }
 }
 
-module.exports = { evaluateClassTranscript, evaluateClassMedia, computeDeterministicClassScore };
+module.exports = { 
+    evaluateClassTranscript, 
+    evaluateClassMedia, 
+    computeDeterministicClassScore,
+    detectLessonModuleFromTranscript,
+    filterHallucinatedQuotes,
+    getFacilitatorScoringContext,
+    transcribeClassAudio
+};

@@ -4177,7 +4177,17 @@ function openFacilitationModal() {
     document.getElementById('eval-file').value = '';
     const hcEl = document.getElementById('eval-headcount');
     if (hcEl) hcEl.value = '';
+    const modEl = document.getElementById('eval-module-select');
+    if (modEl) modEl.value = 'auto';
     openModal('modal-facilitation');
+}
+
+function handleModuleSelectChange() {
+    const modEl = document.getElementById('eval-module-select');
+    const titleEl = document.getElementById('eval-session-title');
+    if (modEl && titleEl && modEl.value !== 'auto') {
+        titleEl.value = modEl.value;
+    }
 }
 
 async function handleClassEvaluationSubmit(e) {

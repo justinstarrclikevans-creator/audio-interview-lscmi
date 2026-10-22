@@ -169,7 +169,7 @@ async function runDailyEvaluation() {
             if (center.name === 'Spartanburg') {
                 defaultFacilitator = `TB (Spartanburg ${shift})`;
             } else if (center.name === 'Columbia') {
-                defaultFacilitator = `Staff Facilitator - Columbia (${shift})`;
+                defaultFacilitator = isPm ? 'Jenn Jeanquart (Columbia PM)' : 'Diyoung Dantzler (Columbia AM)';
             } else {
                 defaultFacilitator = `Staff Facilitator - Charleston (${shift})`;
             }

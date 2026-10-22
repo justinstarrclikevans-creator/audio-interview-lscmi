@@ -2042,8 +2042,22 @@
                     </div>
                 </div>
                 <div class="form-row mt-4">
-                    <div class="form-group" style="flex: 2;">
-                        <label>Workshop / Module Title</label>
+                    <div class="form-group" style="flex: 1.5;">
+                        <label>CBT Module Focus</label>
+                        <select id="eval-module-select" onchange="handleModuleSelectChange()">
+                            <option value="auto">✨ Auto-Detect from Spoken Dialogue</option>
+                            <option value="Module 1: Thinking Controls Behavior (DMT & STAC)">Module 1: Thinking Controls Behavior (DMT & STAC)</option>
+                            <option value="Module 2: Managing Emotions & Stop Signs">Module 2: Managing Emotions & Stop Signs</option>
+                            <option value="Module 3: Recognizing Destructive Thinking">Module 3: Recognizing Destructive Thinking</option>
+                            <option value="Module 4: Interpersonal Communication & Social Skills">Module 4: Interpersonal Communication & Social Skills</option>
+                            <option value="Module 5: Problem Solving">Module 5: Problem Solving</option>
+                            <option value="Module 6: Control & 5 Worries">Module 6: Control & 5 Worries</option>
+                            <option value="Module 7: Relationships & Prosocial Support">Module 7: Relationships & Prosocial Support</option>
+                            <option value="Module 8: Reentry Action Planning & Relapse Prevention">Module 8: Reentry Action Planning & Relapse Prevention</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex: 1.5;">
+                        <label>Workshop / Session Title</label>
                         <input type="text" id="eval-session-title" required placeholder="e.g. Module 6: Control / 5 Worries">
                     </div>
                     <div class="form-group" style="flex: 1;">
