@@ -328,24 +328,27 @@
                 <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,0.05); padding: 24px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px;">
                     <div style="display: flex; gap: 16px; align-items: center;">
                         <div id="folder-client-avatar" style="width: 56px; height: 56px; border-radius: 50%; background: #e0f2fe; color: #0369a1; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 800;">
-                            MS
+                            --
                         </div>
                         <div>
                             <div style="display: flex; align-items: center; gap: 10px;">
-                                <h1 id="folder-client-name" style="font-size: 24px; font-weight: 800; color: #0f172a; margin: 0;">Marcus Sterling</h1>
+                                <h1 id="folder-client-name" style="font-size: 24px; font-weight: 800; color: #0f172a; margin: 0;">Loading Client...</h1>
                                 <span id="folder-client-badge-tier" style="font-size: 12px; padding: 4px 10px; border-radius: 999px; font-weight: 700; background: #fef3c7; color: #92400e;">⚠️ At-Risk</span>
-                                <span id="folder-client-location" style="font-size: 12px; padding: 4px 10px; border-radius: 999px; font-weight: 600; background: #f1f5f9; color: #475569;">Charleston</span>
+                                <span id="folder-client-location" style="font-size: 12px; padding: 4px 10px; border-radius: 999px; font-weight: 600; background: #f1f5f9; color: #475569;">--</span>
                             </div>
                             <div style="font-size: 13px; color: #64748b; margin-top: 4px; display: flex; gap: 16px; flex-wrap: wrap;">
-                                <span id="folder-client-apricot">Apricot ID: T90-RN-101</span>
-                                <span id="folder-client-phone">📞 843-555-0142</span>
-                                <span id="folder-client-email">✉️ marcus@example.com</span>
+                                <span id="folder-client-apricot">Apricot ID: --</span>
+                                <span id="folder-client-phone">📞 --</span>
+                                <span id="folder-client-email">✉️ --</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Header Action Controls -->
                     <div style="display: flex; gap: 10px; align-items: center;">
+                        <button class="btn btn-primary" onclick="exportClientCasePlan(activeFolderClientId)" style="font-size: 12.5px; padding: 7px 15px; font-weight: 700; background: #0f766e; border-color: #0f766e; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 1px 3px rgba(15,118,110,0.25);" title="Export & Print Living Case Plan">
+                            📄 Export Case Plan
+                        </button>
                         <select id="folder-stability-select" onchange="updateClientStabilityTier()" style="font-size: 12.5px; padding: 6px 10px; border-radius: 6px; border: 1.5px solid #cbd5e1; background: white; font-weight: 600;">
                             <option value="stable">✅ Stable</option>
                             <option value="at_risk">⚠️ At-Risk</option>

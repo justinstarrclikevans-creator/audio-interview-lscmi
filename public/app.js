@@ -9004,6 +9004,9 @@ function renderReentryClientsGrid(clients) {
                     <button class="btn btn-primary" onclick="openClientFolder(${c.id})" style="flex: 1; font-size: 12.5px; padding: 8px; font-weight: 700;">
                         📂 Open Folder
                     </button>
+                    <button class="btn btn-outline" onclick="exportClientCasePlan(${c.id})" style="font-size: 12px; padding: 8px 10px; color: #0f766e; border-color: #99f6e4; font-weight: 700;" title="Export & Print Living Case Plan">
+                        📄 Case Plan
+                    </button>
                     <button class="btn btn-outline" onclick="deleteClientFolder(${c.id}, '${escapeHtml(c.first_name)} ${escapeHtml(c.last_name)}')" style="color: #dc2626; border-color: #fecaca; font-size: 12px; padding: 8px 10px;" title="Delete Client Folder">
                         🗑️
                     </button>
@@ -9147,6 +9150,20 @@ window.handleCreateNewClient = async function(e) {
 // =========================================================================
 
 let activeFolderClientId = null;
+
+window.exportClientCasePlan = function(clientId) {
+    const id = clientId || activeFolderClientId;
+    if (!id) {
+        alert('Please open or select a client folder first.');
+        return;
+    }
+    const token = localStorage.getItem('fs_token');
+    if (!token) {
+        alert('Authentication required to export case plan.');
+        return;
+    }
+    window.open(`/api/reentry/clients/${id}/export-case-plan?token=${encodeURIComponent(token)}`, '_blank');
+};
 
 window.openClientFolder = async function(clientId) {
     activeFolderClientId = clientId;

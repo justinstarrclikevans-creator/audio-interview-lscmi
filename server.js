@@ -1,5 +1,6 @@
 require('./env_config');
 const { generateReentryNavAssessment } = require('./reentry_engine');
+const { generateCasePlanHtml, escapeHtml } = require('./case_plan_exporter');
 const express = require('express');
 const cors = require('cors');
 const multer = require('multer');
@@ -3892,6 +3893,63 @@ app.get('/api/reentry/clients/:id', authenticateToken, requireRole('navigator', 
     } catch (err) {
         console.error('Error fetching client folder:', err);
         res.status(500).json({ error: err.message });
+    }
+});
+
+// Export Living Case Plan (Synthesizes Demographics, Goals, 35-item Briefcase & Agenda into Printable Document)
+app.get('/api/reentry/clients/:id/export-case-plan', authenticateToken, requireRole('navigator', 'program_manager', 'director', 'admin', 'staff'), (req, res) => {
+    try {
+        const clientId = req.params.id;
+        const client = db.prepare('SELECT * FROM reentry_clients WHERE id = ?').get(clientId);
+        if (!client) {
+            return res.status(404).send('<h2>Client folder not found.</h2>');
+        }
+
+        const sessions = db.prepare(`
+            SELECT id, session_date, session_title, session_type, notes_text, transcript_text, ai_analysis_json, next_conversation_topics, created_at 
+            FROM reentry_client_sessions 
+            WHERE client_id = ? 
+            ORDER BY session_date DESC, id DESC 
+            LIMIT 5
+        `).all(clientId);
+
+        const goals = db.prepare(`
+            SELECT id, goal_title, target_date, status, category, action_steps, assigned_to, created_at, updated_at 
+            FROM reentry_client_goals 
+            WHERE client_id = ? 
+            ORDER BY CASE status WHEN 'in_progress' THEN 1 WHEN 'blocked' THEN 2 ELSE 3 END, category ASC, id ASC
+        `).all(clientId);
+
+        const briefcase = db.prepare(`
+            SELECT id, domain, item_key, title, status, notes, updated_at 
+            FROM reentry_client_briefcase 
+            WHERE client_id = ? 
+            ORDER BY id ASC
+        `).all(clientId);
+
+        const agendaRow = db.prepare('SELECT agenda_markdown, last_updated FROM reentry_client_agenda WHERE client_id = ?').get(clientId);
+
+        const parsedGoals = goals.map(g => {
+            let steps = [];
+            try { if (g.action_steps) steps = JSON.parse(g.action_steps); } catch(e){}
+            return { ...g, action_steps: steps };
+        });
+
+        const autoprint = req.query.autoprint === 'true';
+        const html = generateCasePlanHtml({
+            client,
+            goals: parsedGoals,
+            briefcase,
+            agenda: agendaRow ? agendaRow.agenda_markdown : '',
+            sessions,
+            user: req.user
+        }, { autoprint });
+
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        res.send(html);
+    } catch (err) {
+        console.error('Error generating exportable case plan:', err);
+        res.status(500).send(`<h2>Error generating case plan: ${escapeHtml(err.message)}</h2>`);
     }
 });
 
