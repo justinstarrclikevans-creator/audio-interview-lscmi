@@ -1,0 +1,102 @@
+{
+  "detected_flags": [
+    {
+      "category": "Stability Risk",
+      "flag": "Missing Vital Documents & Suspended License",
+      "evidence": "Participant states he does not have a Social Security card and his driver's license is suspended.",
+      "severity": "high",
+      "navigator_recommendation": "Immediate barrier to employment (I-9 verification). Assist with SSA office coordination and SCDMV reinstatement plan. Utilize The COMET for transit in the interim."
+    },
+    {
+      "category": "Substance / Health",
+      "flag": "Severe Physical Injury & Prescription Pain Meds",
+      "evidence": "Experiencing radiating pain down the leg from a broken leg. Taking unnamed prescription medications and lidocaine patches. Has a history of drug problems.",
+      "severity": "high",
+      "navigator_recommendation": "Monitor closely. Ensure he has a non-narcotic pain management plan or is communicating with his sponsor/housemates, as he is living in an Oxford House and has a history of substance abuse. Refer to a sliding scale clinic if he needs a primary care follow-up."
+    },
+    {
+      "category": "Cognitive / Attitude",
+      "flag": "Impulsivity & Minimization",
+      "evidence": "Stated he almost gets into trouble by accident 'A lot.' Also minimized some system accountability by saying 'the police just be ridiculous about some things.'",
+      "severity": "medium",
+      "navigator_recommendation": "Model Neutrality (1.5). Do not debate the police comment. Use reflective listening: 'It sounds like you feel targeted sometimes. How can we make sure you stay off their radar?' Use CBT tools to explore the 'accidental trouble' statements and identify triggers."
+    },
+    {
+      "category": "Cognitive / Attitude",
+      "flag": "Family Conflict & Victim Re-entry",
+      "evidence": "Stated his mother was the victim of his last offense (Burglary). Notes relationship is 'choppy'.",
+      "severity": "medium",
+      "navigator_recommendation": "Avoid pushing for immediate family reconciliation. Focus on maintaining his current stable living situation (Oxford House) and establishing safe, prosocial boundaries."
+    }
+  ],
+  "top_criminogenic_domains": [
+    "Substance Use / Relapse Risk (History of drug use + Current pain meds)",
+    "Education / Employment Deficits (9th grade education, long unemployment)",
+    "Family Conflict (Mother was victim of most recent crime)",
+    "Antisocial Attitudes / Impulsivity (Getting into trouble 'by accident')"
+  ],
+  "stability_status": "at_risk",
+  "navigator_case_plan_md": "# Re-entry Navigation Case Plan: Christian (Chris) Shawn Isham\n\n## 1. Case Summary & Triage\nChris is currently engaging with supervision and living in a stable, prosocial environment (Oxford House). However, he faces **immediate physical and administrative barriers** to work. He has a broken leg causing severe radiating pain, lacks a Social Security Card (preventing I-9 verification), and has a suspended driver's license. Furthermore, he is currently prescribed unknown medications for his leg, which poses a relapse risk given his self-admitted history of drug problems.\n\n## 2. Core Criminogenic Targets\n*   **Substance Use / Relapse Risk:** Taking active pain medication for a broken leg while recovering from past substance abuse. Requires a strong relapse prevention plan and medical oversight.\n*   **Education / Employment:** 9th-grade education; no GED. Currently lacks a valid ID/SSN card to begin work. Physical limitations require light-duty or sedentary job placements.\n*   **Impulsivity:** Self-reported getting into trouble \"by accident a lot.\"\n\n## 3. Facilitation & Coaching Strategies (Turn90 Framework)\n*   **Modeling Neutrality (1.5):** Chris expressed that \"police just be ridiculous about some things.\" *Action:* Do not challenge this. Respond neutrally: \"It sounds frustrating when you feel you're being messed with. What's the best way to handle those situations so they don't threaten your freedom?\"\n*   **Managing Buy-In (3.2):** Link compliance (like getting his SSN and dealing with the DMV) to his goal of earning his own money and building a self-sufficient life without relying on his family, especially given the choppy relationship with his mother.\n*   **CBT Workbook Focus:** Assign modules on *Impulse Control* and *Consequential Thinking* to address his pattern of \"accidentally\" getting into trouble.\n\n## 4. 30-Day Milestone Plan\n*   **Week 1 (Stabilization):** Request a replacement Social Security Card. Connect with Cooperative Health for a follow-up on his leg and pain management plan.\n*   **Week 2 (Transit & Documentation):** Pull his driving record at SCDMV to understand reinstatement requirements. Map out COMET bus routes from his Oxford House to the Turn90 center and potential light-duty job sites.\n*   **Week 3 (Job Prep):** Resume building focusing on his interest in \"building\" and hands-on work, pivoting toward light assembly or records management while his leg heals.\n*   **Week 4 (Placement):** Apply for light-industrial, seated, or low-impact roles (e.g., Schneider Electric, Robert Half) that accommodate his physical recovery.\n",
+  "participant_guide_md": "# My Fresh Start Action & Resource Guide: Chris Barranco\n\nWelcome to your Fresh Start, Chris! You've already built a great foundation by living in a solid place with guys who are focused on going to work and doing the right thing. You mentioned that you like to build things—we are going to channel that energy into building a career. Because of your leg injury, our first priority is getting you medically stable, securing your ID documents, and finding a job that won't make your injury worse while you heal.\n\n## 🏆 Your 4-Week Success Checklist\n\n**Week 1: Focus on Health & ID**\n- [ ] Apply for a replacement Social Security Card (Required for hiring).\n- [ ] Make a doctor's appointment to check on your leg and manage your pain safely.\n\n**Week 2: Transit & Mobility**\n- [ ] Visit the DMV to get a printout of your driving record so we can build a reinstatement plan.\n- [ ] Download the COMET bus app to map out your routes to work.\n\n**Week 3: Job Readiness**\n- [ ] Work with your Navigator to build a resume highlighting your interests in building and hands-on work.\n- [ ] Complete your Turn90 CBT module on Impulse Control.\n\n**Week 4: Employment Applications**\n- [ ] Apply to 3 light-duty or assembly roles (see matches below).\n- [ ] Prepare for interviews focusing on your reliability and new goals.\n\n---\n\n## 📍 Local Resources Just for You\n\n**1. Cooperative Health (Eau Claire Health Center)**\n*Why:* You need affordable care to look at that leg and manage your prescriptions safely.\n*Contact:* (803) 786-4831 | 4605 Monticello Rd, Columbia, SC 29203\n*Link:* [Visit Website](https://cooperativehealth.org)\n*Next Step:* Call to schedule an evaluation for your leg pain and discuss sliding-scale payment options.\n\n**2. SCDMV Headquarters & Shop Road Branch**\n*Why:* To figure out exactly what is keeping your license suspended and get a payment plan set up.\n*Contact:* (803) 896-5000 | 1630 Shop Rd, Columbia, SC 29201\n*Link:* [Directions & Info](https://scdmvonline.com/Driver-Services/Reinstatement)\n*Next Step:* Bring your birth certificate and request a full driving record printout.\n\n**3. The COMET (Central Midlands Regional Transit)**\n*Why:* Reliable transit to get to work while we work on your driver's license.\n*Contact:* (803) 255-7100\n*Link:* [Visit Website & Routes](https://catchthecometsc.gov)\n*Next Step:* Review the bus routes that run near your house to the industrial parks.\n\n---\n\n## 💼 Targeted Fair-Chance Job Matches\n*(Jobs selected to accommodate your interest in building and current physical limitations)*\n\n**1. Schneider Electric Columbia Facility**\n*   **Role:** Electro-Mechanical Assembler\n*   **Pay:** $18.50 – $22.50 / hr\n*   **Shift:** 1st Shift (6:30 AM – 3:00 PM)\n*   **Why it fits:** You like to build things. This is a light-assembly manufacturing role that is less physically demanding than heavy construction, which is perfect while your leg heals. \n*   **Apply Here:** [View Careers Page](https://www.se.com/us/en/about-us/careers/overview.jsp)\n\n**2. Automation Personnel Services - Columbia**\n*   **Role:** Packaging Technician / Assembly Specialist\n*   **Pay:** $16.50 – $20.00 / hr\n*   **Shift:** Day Shift (7:00 AM – 3:30 PM)\n*   **Why it fits:** Active second-chance staffing partner offering light industrial roles that don't require heavy lifting.\n*   **Apply Here:** [Apply Online / View Careers Page](https://apstemps.com/branch-columbia-sc/)\n\n**3. Robert Half Recruiters & Employment Agency**\n*   **Role:** Office / Records / Inventory Support Specialist\n*   **Pay:** $17.00 – $21.00 / hr\n*   **Shift:** Standard Business Hours\n*   **Why it fits:** If your leg pain prevents you from standing on an assembly line, this job involves data entry and seated inventory tracking. \n*   **Apply Here:** [Apply Online / View Careers Page](https://www.roberthalf.com/us/en/locations/sc-columbia/1441-main-st?utm_source=gmb_listing&utm_medium=organic&utm_campaign=local_listing)\n",
+  "recommended_referrals": [
+    {
+      "resourceName": "Cooperative Health (Eau Claire Health Center)",
+      "category": "Healthcare",
+      "contact": "(803) 786-4831 | 4605 Monticello Rd, Columbia, SC 29203",
+      "websiteUrl": "https://cooperativehealth.org",
+      "actionStep": "Call to schedule a medical evaluation for his leg and review current pain medication prescriptions."
+    },
+    {
+      "resourceName": "SCDMV Headquarters & Shop Road Branch",
+      "category": "Legal / ID",
+      "contact": "(803) 896-5000 | 1630 Shop Rd, Columbia, SC 29201",
+      "websiteUrl": "https://scdmvonline.com/Driver-Services/Reinstatement",
+      "actionStep": "Go in person to request a driving record printout to determine exact suspension causes and payment plan options."
+    },
+    {
+      "resourceName": "The COMET (Central Midlands Regional Transit)",
+      "category": "Food / Transit",
+      "contact": "(803) 255-7100 | Columbia Area",
+      "websiteUrl": "https://catchthecometsc.gov",
+      "actionStep": "Map out bus routes from his housing to prospective employers and DMV/SSA offices."
+    }
+  ],
+  "matched_employers": [
+    {
+      "company": "Schneider Electric Columbia Facility",
+      "role": "Electro-Mechanical Assembler",
+      "pay": "$18.50 – $22.50 / hr",
+      "shift": "1st Shift (6:30 AM – 3:00 PM)",
+      "careersUrl": "https://www.se.com/us/en/about-us/careers/overview.jsp",
+      "matchReason": "Aligns with his interest in building while offering an indoor, climate-controlled, light-assembly environment that is safer for his broken leg."
+    },
+    {
+      "company": "Automation Personnel Services - Columbia",
+      "role": "Packaging Technician / Assembly Specialist",
+      "pay": "$16.50 – $20.00 / hr",
+      "shift": "Day Shift (7:00 AM – 3:30 PM)",
+      "careersUrl": "https://apstemps.com/branch-columbia-sc/",
+      "matchReason": "Fair-chance staffing agency with light industrial roles that offer lower physical strain compared to general construction labor."
+    },
+    {
+      "company": "Robert Half Recruiters & Employment Agency",
+      "role": "Office / Records / Inventory Support Specialist",
+      "pay": "$17.00 – $21.00 / hr",
+      "shift": "Standard Business Hours",
+      "careersUrl": "https://www.roberthalf.com/us/en/locations/sc-columbia/1441-main-st?utm_source=gmb_listing&utm_medium=organic&utm_campaign=local_listing",
+      "matchReason": "Sedentary/seated alternative if his leg pain remains too severe for warehouse or assembly line work."
+    }
+  ],
+  "assessmentData": {
+    "participantName": "Chris Barranco",
+    "location": "Columbia",
+    "interviewTranscript": "What is your full name and date of birth?\nIt's Christian Shawn Isham.\nOkay.\nIt's a 062896.\nGotcha. What is your license status?\nUh, they're suspended.\nOkay. Do you have a birth certificate?\nI don't have it with me today, but I do.\nOkay. Do you have a social security card?\nI don't have one.\nOkay. Um, how many convictions did you have as a youth?\nAs a youth, none.\nOkay. How many adult convictions have you had?\nAt least eight.\nEight. Okay. Your last uh time being incarcerated, how many convictions were there?\nLast time I was arrested, just one.\nOkay. What was that charge?\nBurglary.\nOkay. What was uh the age you were first arrested? Okay. And um your incarcerations have\nresulted in a conviction. Um were you ever punished for institutional misconduct?\nNo. Any behavioral reports in prison or jail? No. You had your probation or parole suspended\nwhile you were under supervision? No. Any new charges? upon you while yours was under\nsupervision? No. Okay. Currently unemployed. What's the longest period of time you've been\nemployed?\nUh two years.\nTwo years. Okay. You ever been unemployed in a 12-month duration for a period of a year\nlonger?\nProbably. Yeah.\nYeah. Okay.\nProbably a year.\nGotcha. What was the last grade you successfully completed?\nUh, ninth.\nNinth. And do you have a GED?\nNo. Were you ever suspended or expelled from school?\nAll the time.\nUh, currently single or in a relationship?\nIn a relationship.\nAre you satisfied being in your relationship?\nGotcha. Do you and your partner have frequent arguments?\nNot really. Okay. Have you experienced any infidelity in your relationship?\n\n-- 1 of 5 --\n\nCheating?\nNo.\nUh any conflict about her parents or your parents?\nMy mom sometimes.\nShe had both arrested. So,\nokay.\nAnd my brother.\nOh, man. Do you guys ever argue about money? You ever argue about your leisure time? No.\nAny communication problems? No. You guys ever talk about separation?\nNo.\nUm, says, \"Describe your relationship with your parents.\"\nIt's choppy, but it's good.\nGotcha. Your mom raised you.\nYeah.\nGotcha. What's the relationship like with your father? spoke to him in about eight years until this\nyear until recently.\nOkay. Gotcha. Do you argue with your parents?\nSometimes.\nOkay. Now, describe your relationship with your other relatives. So, you've got a brother.\nYeah, we we get a mom.\nOkay. Any other uh siblings?\nYeah, I got uh some half sisters and stuff on my dad's side. I don't really see or talk to them\nmuch. I got two adopted brothers. Okay, gotcha. Um, anybody in your family got a criminal\nrecord?\nJust me and my brother.\nOkay. You belong to any organizations?\nDo you do any community engagement or attend church? No.\nHow do you usually spend your free time?\nJust watching TV.\nOkay. Got any hobbies?\nUm, I like to build\nbuild. Okay.\nDo you know many people who are involved in crime?\nUm or any of your friends involved in crime?\nOkay.\nDo you know many people who are not involved in crime?\nYeah. You have any friends that are not involved in crime?\nNo.\nCan you give an example?\nFriend.\n\n-- 2 of 5 --\n\nYeah. I live in Oxford. We just go to work, come home.\nGotcha. Uh, this topic is on substance abuse. Have you ever had an alcohol problem?\nYou had a drug problem?\nNo.\nWhat drugs have you taken?\nOkay. Do you currently have an alcohol problem?\nYou currently have a drug problem?\nOkay. Do you think that the use of drugs contributed to your any of your law violations?\nYeah.\nOkay. Has anyone in your family complained about your drug use?\nYeah.\nHas your drug use caused any problems with school or work?\nNo.\nOkay. Any medical problems as a result of drug use? No.\nOkay.\nOkay.\nUh let's see what else.\nRadiating pain right now. I don't know why it normally ain't all the way down my leg, but today\nit's going all the way down. Starting right here.\nIt's going all the way down.\nCould try. You can actually take with that 600 milligrams of ibuprofen. You can take some\nTylenol as well.\nIt'll help take the edge off you. We can give you some of that, too. everything.\nYeah. Shouldn't uh shouldn't be about 15 more minutes. Um, how do you feel about the crimes\nyou committed?\nGuilty.\nOkay. So, do you believe they wrong?\nYeah.\nHow do you feel about the victims? What's your thoughts towards them?\nI ain't really had no victim except my mom this last time. Would you like to live a life without\ncrime?\nDo you believe in obeying the law?\nYou believe the law is fair?\nKind of. Kind of.\nGotcha.\nSome things they just be the police just be ridiculous about some things.\nHow important is education in life?\nIt's important.\nWhat about having a job?\nIt's important.\n\n-- 3 of 5 --\n\nDo you feel like your sentences have been fair?\nYeah. You believe you had a choice in committing the offenses?\nHow do you think you're treated by the courts?\nOkay. You're not on any supervision right now?\nI'm on probation supervision.\nGotcha. Feel like probation officer is fair. Reasonable. Good. Um, you ever been assessed by a\npsychiatrist or psychologist?\nNo. Okay. You ever removed from home by a child w child welfare agent? No.\nOkay. Did you ever run away from home? No. Did your parents have trouble reasoning you?\nI wouldn't say so.\nOkay. Do you have Have you ever had any convictions for violent offenses?\nThe last one they said it was violent.\nWhat What was the charge?\nBurg.\nOkay. No. history of escape. Um, no current household income. Do you or anybody in your\nhouse receive government assistance? No. Okay. You worried about having sufficient money to\npay your bills?\nNo. Okay. You have a bank account?\nNo. Do you know your credit score?\nLast like 600 something. Okay. Do you have any outstanding debts? Okay. Since you've been out\nof jail, how many different places have you lived at the last year?\nJust one.\nOkay. Worried about anybody harming you?\nA bunch of like just real quick, I call them popcorn questions. Just pretty much yes or nos. Um,\ndo you often act before thinking?\nNo. Uh, do you set goals for yourself?\nYeah. Do you make plans?\nYeah. Do you check to see if you're following your plans?\nNo. Okay. Gotcha. Do you almost get into trouble by accident?\nAlmost get into trouble by accident.\nYeah.\nA lot.\nA lot. Okay. Do you have frequent arguments with friends?\nNo. Um, do you ever find yourself arguing with strangers? No. Do you find that you need to\nblow off steam now and then? No. Do you get into physical fights with people? No. Do you\noften become impatient with others? No.\nDo you like to be in control?\nHave you ever threatened someone? Let's see what else is now.\nSome of these questions are crazy. Um, assaulted anyone? No. You ever drugged anybody for\nsex? You ever frequented prostitutes? No. Most your friends older or younger than you?\n\n-- 4 of 5 --\n\nOlder.\nOkay. Um, Do you feel that you're working below your potential?\nNo.\nOkay. Do you have any outstanding charges?\nNo. Have you ever been in a fight with a police officer, teacher, employer, or anyone in\nauthority? No. You ever used a weapon to commit a crime? No. You ever intentionally set fire to\nto destroy property or harm somebody? Ever been convicted of a pair driving off a fence. Have\nyou ever shoplifted?\nDo you belong to a gang?\nSo, you have a place to live. Do you like the place where you live?\nYeah. You feel depressed? No. Any concerns about emotional stability? You ever bothered by\nuncontrollable urges or ideas?\nNo. Not on any current medications.\nWell, yeah, but I don't know the names of them.\nGotcha. What are they for?\nFor for my leg. It's broken one of them. And I got a lot of cane patches.\nYeah. Gotcha. Were you ever abused by a family member?\nDo you ever see your parents fighting? Growing up?\nNo.\nYeah. Ever feel neglected by your parents?\nNo. Family members ever harshly criticize you? That's it. Let's go get you that.\n\n-- 5 of 5 --\n\n",
+    "statedGoals": "First Shift graduation, prosocial stabilization, career placement",
+    "identifiedNeeds": [
+      "Prosocial Modeling",
+      "Workplace Stabilization"
+    ],
+    "livingSituation": "Transitional / Community Housing",
+    "legalStatus": "Active Community Supervision"
+  }
+}

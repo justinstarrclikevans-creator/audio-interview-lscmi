@@ -32,7 +32,8 @@ CREATE TABLE IF NOT EXISTS participant_profiles (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER UNIQUE NOT NULL,
     current_gate INTEGER DEFAULT 1, -- 1 to 4 (Within the 8-week First Shift program)
-        dl_status TEXT DEFAULT 'unknown',
+    w9_status TEXT DEFAULT 'unknown',
+    dl_status TEXT DEFAULT 'unknown',
     dl_notes TEXT,
     child_support_status TEXT DEFAULT 'unknown',
     child_support_notes TEXT,
@@ -364,6 +365,7 @@ CREATE TABLE IF NOT EXISTS participant_benefits (
 `);
 
 // Safe column migrations for existing databases
+try { db.exec("ALTER TABLE participant_profiles ADD COLUMN w9_status TEXT DEFAULT 'unknown';"); } catch(e) {}
 try { db.exec("ALTER TABLE participant_profiles ADD COLUMN stability_red_flags TEXT;"); } catch(e) {}
 try { db.exec("ALTER TABLE participant_profiles ADD COLUMN director_override INTEGER DEFAULT 0;"); } catch(e) {}
 try { db.exec("ALTER TABLE participant_profiles ADD COLUMN director_override_notes TEXT;"); } catch(e) {}
@@ -958,20 +960,8 @@ function seedDefaultAccounts() {
         console.log('[DB Seed] Seeded initial Reentry Navigation demo caseload (3 clients).');
     }
 }
-seedDefaultAccounts();
 
-module.exports = {
-    db,
-    BRIEFCASE_DOMAINS,
-    DEFAULT_GATE_CRITERIA,
-    STABILITY_STEP_DOWN_TRIGGERS,
-    BENEFIT_PROGRAMS,
-    initParticipantBriefcase,
-    initReentryClientBriefcase,
-    syncBenefitToBriefcase
-};
-
-
+// Tables for evaluations & facilitation
 db.exec(`
 CREATE TABLE IF NOT EXISTS case_management_evaluations (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -995,10 +985,100 @@ CREATE TABLE IF NOT EXISTS case_management_evaluations (
     transcript_text TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS class_facilitation_evaluations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    location TEXT NOT NULL,
+    session_title TEXT NOT NULL,
+    facilitator_name TEXT,
+    evaluator_name TEXT DEFAULT 'AI Quality Evaluator',
+    class_date DATE DEFAULT (DATE('now')),
+    total_score REAL NOT NULL, -- 0 to 100
+    starting_score REAL DEFAULT 100,
+    modeling_neutrality_score REAL,
+    lesson_plan_adherence_score REAL,
+    reflective_listening_score REAL,
+    avoiding_confrontation_score REAL,
+    summary_markdown TEXT NOT NULL,
+    scores_json TEXT NOT NULL,
+    coaching_feedback TEXT,
+    class_headcount INTEGER,
+    transcript_text TEXT,
+    detected_session_type TEXT DEFAULT 'class',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
 `);
+
 try { db.exec("ALTER TABLE case_management_evaluations ADD COLUMN apricot_id TEXT;"); } catch (e) {}
 try { db.exec("ALTER TABLE case_management_evaluations ADD COLUMN session_type TEXT DEFAULT 'follow_up';"); } catch (e) {}
 try { db.exec("ALTER TABLE case_management_evaluations ADD COLUMN next_session_recommendations TEXT;"); } catch (e) {}
 try { db.exec("ALTER TABLE case_management_evaluations ADD COLUMN referrals_detected TEXT;"); } catch (e) {}
 try { db.exec("ALTER TABLE case_management_evaluations ADD COLUMN transcript_text TEXT;"); } catch (e) {}
+
+try { db.exec("ALTER TABLE class_facilitation_evaluations ADD COLUMN class_headcount INTEGER;"); } catch (e) {}
+try { db.exec("ALTER TABLE class_facilitation_evaluations ADD COLUMN transcript_text TEXT;"); } catch (e) {}
+try { db.exec("ALTER TABLE class_facilitation_evaluations ADD COLUMN detected_session_type TEXT DEFAULT 'class';"); } catch (e) {}
+
+function restoreSnapshotIfEmpty() {
+    try {
+        const usersCount = db.prepare("SELECT COUNT(*) AS c FROM users").get()?.c || 0;
+        const classCount = db.prepare("SELECT COUNT(*) AS c FROM class_facilitation_evaluations").get()?.c || 0;
+
+        // Auto-restore if database is completely fresh, ephemeral reset occurred, or evaluations are empty
+        if (usersCount <= 6 || classCount === 0) {
+            const snapshotPath = path.join(dataDir, 'database_seed_snapshot.json');
+            if (fs.existsSync(snapshotPath)) {
+                console.log('[DB Auto-Restore] Empty or minimal database detected. Restoring all tables from database_seed_snapshot.json...');
+                const raw = fs.readFileSync(snapshotPath, 'utf8');
+                const snapshot = JSON.parse(raw);
+
+                db.pragma('foreign_keys = OFF');
+                const restoreTx = db.transaction(() => {
+                    for (const [table, rows] of Object.entries(snapshot)) {
+                        if (!rows || !Array.isArray(rows) || rows.length === 0) continue;
+                        const tableExists = db.prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name = ?").get(table);
+                        if (!tableExists) continue;
+
+                        const sample = rows[0];
+                        const tableCols = db.prepare(`PRAGMA table_info("${table}")`).all().map(c => c.name);
+                        for (const col of Object.keys(sample)) {
+                            if (!tableCols.includes(col)) {
+                                try { db.exec(`ALTER TABLE "${table}" ADD COLUMN "${col}" TEXT`); } catch(e) {}
+                            }
+                        }
+                        const updatedCols = db.prepare(`PRAGMA table_info("${table}")`).all().map(c => c.name);
+                        const cols = Object.keys(sample).filter(c => updatedCols.includes(c));
+                        const placeholders = cols.map(() => '?').join(', ');
+                        const colNames = cols.map(c => `"${c}"`).join(', ');
+                        const stmt = db.prepare(`INSERT OR REPLACE INTO "${table}" (${colNames}) VALUES (${placeholders})`);
+                        for (const row of rows) {
+                            stmt.run(cols.map(c => row[c]));
+                        }
+                    }
+                });
+                restoreTx();
+                db.pragma('foreign_keys = ON');
+                console.log('[DB Auto-Restore] Database restore complete! Tables restored successfully.');
+            }
+        }
+    } catch (err) {
+        console.error('[DB Auto-Restore] Error restoring database snapshot:', err);
+    }
+}
+
+// Restore snapshot first if empty, then seed/sync default portal accounts
+restoreSnapshotIfEmpty();
+seedDefaultAccounts();
+
+module.exports = {
+    db,
+    BRIEFCASE_DOMAINS,
+    DEFAULT_GATE_CRITERIA,
+    STABILITY_STEP_DOWN_TRIGGERS,
+    BENEFIT_PROGRAMS,
+    initParticipantBriefcase,
+    initReentryClientBriefcase,
+    syncBenefitToBriefcase,
+    restoreSnapshotIfEmpty
+};
 

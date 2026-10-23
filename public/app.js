@@ -1795,7 +1795,7 @@ async function loadCaseload() {
         window.caseloadData = roster;
         const tbody = document.getElementById('caseload-tbody');
 
-        if (!roster || roster.length === 0) {
+        if (!roster || !Array.isArray(roster) || roster.length === 0) {
             tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 24px; color: var(--slate);">No participants match this filter.</td></tr>';
             return;
         }
@@ -2134,7 +2134,8 @@ function switchPmSubView(subview) {
     } else if (subview === 'cmeval') {
         if (typeof window.loadCmEvaluations === 'function') window.loadCmEvaluations();
     } else if (subview === 'drafts') {
-        if (typeof loadDraftAssessments === 'function') loadDraftAssessments();
+        if (typeof loadPmDrafts === 'function') loadPmDrafts();
+        else if (typeof loadDraftAssessments === 'function') loadDraftAssessments();
     } else if (subview === 'reentry') {
         loadReentryParticipants();
     } else if (subview === 'messages') {
@@ -2877,6 +2878,7 @@ async function savePersonalTriggerSituations() {
 // DRAFT SCORING PREVIEWS & SUPERVISOR REVIEW (PHASE 2)
 // -------------------------------------------------------------
 async function loadPmDrafts() {
+    window.loadDraftAssessments = loadPmDrafts;
     const list = document.getElementById('pm-drafts-list');
     try {
         const res = await fetch('/api/interviews');
@@ -8431,8 +8433,10 @@ window.loadCmEvaluations = async function() {
             fetch('/api/cm/evaluations/stats', { headers: { 'Authorization': `Bearer ${token}` } })
         ]);
         
-        const allEvals = await evalsRes.json();
-        const stats = await statsRes.json();
+        let allEvals = await evalsRes.json();
+        let stats = await statsRes.json();
+        if (!Array.isArray(allEvals)) allEvals = [];
+        if (!Array.isArray(stats)) stats = [];
 
         if (!window.cmLocationFilter && currentUser && currentUser.location && currentUser.role !== 'director') {
             window.cmLocationFilter = currentUser.location;

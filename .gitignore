@@ -5,7 +5,9 @@ email-settings.txt
 *.sqlite
 *.sqlite-wal
 *.sqlite-shm
-data/*.sqlite*
+data/*.sqlite-wal
+data/*.sqlite-shm
+!data/app_database.sqlite
 data/*error.txt
 data/*_error.txt
 test_*.js
