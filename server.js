@@ -2936,9 +2936,10 @@ app.post('/api/admin/evaluations/force-sync', authenticateToken, requireRole('pr
         
         const { runDailyEvaluation } = require('./services/dropbox_evaluator');
         global.syncStatus = { running: true, log: "Starting sync...", results: null };
+        const targetDates = req.body?.dates || (req.body?.date ? [req.body.date] : null);
         
         // Fire and forget
-        runDailyEvaluation().then(result => {
+        runDailyEvaluation(targetDates).then(result => {
             global.syncStatus.running = false;
             global.syncStatus.results = result;
             global.syncStatus.log = "Complete";

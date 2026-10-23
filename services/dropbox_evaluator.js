@@ -38,9 +38,12 @@ async function listFilesByDate(dbx, folderPath, dateStrs) {
                 // Exclude obvious non-media files (optional, but good safety)
                 if (entry.name.startsWith('.')) continue;
 
-                // Check date string (YYYY-MM-DD)
-                const fileDateStr = new Date(entry.server_modified).toISOString().split('T')[0];
-                if (dateStrs.includes(fileDateStr)) {
+                // Check date string (YYYY-MM-DD) from server_modified AND filename
+                const modDateUtc = new Date(entry.server_modified).toISOString().split('T')[0];
+                const matchDate = entry.name.match(/(\d{2})(\d{2})(\d{2})/);
+                const fnDate = matchDate ? `20${matchDate[1]}-${matchDate[2]}-${matchDate[3]}` : null;
+
+                if (dateStrs.includes(modDateUtc) || (fnDate && dateStrs.includes(fnDate))) {
                     matchedFiles.push(entry);
                 }
             }
@@ -61,20 +64,36 @@ async function listFilesByDate(dbx, folderPath, dateStrs) {
 
 
 function validateM4A(filePath, filename) {
-    const ext = require('path').extname(filename).toLowerCase();
-    if (ext === '.m4a' || ext === '.mp4' || ext === '.mov') {
+    try {
+        const stats = fs.statSync(filePath);
+        if (stats.size < 10240) {
+            console.error(`[Dropbox Evaluator] File ${filename} is empty or incomplete (${stats.size} bytes). Skipping.`);
+            return false;
+        }
+
+        // Attempt ffprobe check ONLY if binary is executable on this host
         try {
             const cp = require('child_process');
             const ffprobe = require('ffprobe-static');
-            // Check if moov atom exists / format is valid by getting duration
-            cp.execSync(`"${ffprobe.path}" -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${filePath}"`);
-            return true;
+            if (ffprobe && ffprobe.path && fs.existsSync(ffprobe.path)) {
+                cp.execSync(`"${ffprobe.path}" -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${filePath}"`, { stdio: 'pipe' });
+                return true;
+            }
         } catch(e) {
-            console.error('[Dropbox Evaluator] ffprobe validation failed:', e.stderr ? e.stderr.toString() : e.message);
-            return false;
+            const errStr = (e.stderr ? e.stderr.toString() : '') + (e.message || '');
+            // If ffprobe failed to run due to OS binary architecture or missing tool, ignore and proceed
+            if (errStr.includes('Bad CPU type') || errStr.includes('ENOENT') || e.code === 'ENOENT') {
+                console.log(`[Dropbox Evaluator] ffprobe binary not natively executable on this host. Proceeding with file (${(stats.size / 1024 / 1024).toFixed(1)} MB).`);
+                return true;
+            }
+            console.warn(`[Dropbox Evaluator] ffprobe notice for ${filename}:`, errStr.trim());
         }
+
+        return true;
+    } catch(err) {
+        console.error('[Dropbox Evaluator] Error validating file:', err.message);
+        return false;
     }
-    return true;
 }
 
 async function downloadLargeFile(dbx, dropboxFilePath, destinationLocalPath) {
@@ -106,13 +125,13 @@ function getMimeType(filename) {
     }
 }
 
-async function runDailyEvaluation() {
+async function runDailyEvaluation(targetDates = null) {
     if (!process.env.DROPBOX_APP_KEY || !process.env.DROPBOX_APP_SECRET || !process.env.DROPBOX_REFRESH_TOKEN) {
         console.warn("[Dropbox Evaluator] Missing Dropbox credentials in .env. Skipping daily evaluation.");
         return { error: "Missing Dropbox credentials in Render Environment Variables. Please add DROPBOX_APP_KEY, DROPBOX_APP_SECRET, and DROPBOX_REFRESH_TOKEN." };
     }
 
-    console.log("[Dropbox Evaluator] Starting daily class facilitation evaluation job...");
+    console.log("[Dropbox Evaluator] Starting class facilitation evaluation job...");
     
     if (!fs.existsSync(TEMP_DIR)) {
         fs.mkdirSync(TEMP_DIR, { recursive: true });
@@ -124,13 +143,15 @@ async function runDailyEvaluation() {
         refreshToken: process.env.DROPBOX_REFRESH_TOKEN
     });
 
-    // Check recent dates (today and past 2 days) to catch evening recordings or weekend/Monday syncs
-    const checkDates = [];
-    const today = new Date();
-    for (let i = 0; i <= 2; i++) {
-        const d = new Date(today);
-        d.setDate(d.getDate() - i);
-        checkDates.push(d.toISOString().split('T')[0]);
+    // Check target dates if provided, or check recent 5 days to ensure no missed classes
+    const checkDates = Array.isArray(targetDates) && targetDates.length > 0 ? targetDates : [];
+    if (checkDates.length === 0) {
+        const today = new Date();
+        for (let i = 0; i <= 5; i++) {
+            const d = new Date(today);
+            d.setDate(d.getDate() - i);
+            checkDates.push(d.toISOString().split('T')[0]);
+        }
     }
 
     const { db } = require('../db');
@@ -175,8 +196,8 @@ async function runDailyEvaluation() {
                 defaultFacilitator = 'TB (Charleston)';
             }
 
-            // Check if already evaluated in database
-            const existingEval = db.prepare('SELECT id FROM class_facilitation_evaluations WHERE session_title = ? AND location = ?').get(sessionTitle, center.name);
+            // Check if already evaluated in database (matches exact title or title with detected module)
+            const existingEval = db.prepare('SELECT id FROM class_facilitation_evaluations WHERE (session_title = ? OR session_title LIKE ?) AND location = ?').get(sessionTitle, `${sessionTitle}%`, center.name);
             if (existingEval) {
                 console.log(`[Dropbox Evaluator] Skipping ${sessionTitle} (${center.name}) - already evaluated.`);
                 results.skipped++;
@@ -271,6 +292,16 @@ function initCronJobs() {
     });
 
     console.log("[Cron] Scheduled Dropbox daily class evaluation job for 11 PM Mon-Fri.");
+
+    // Auto-catchup on server boot (delayed by 25s so server starts up cleanly without blocking HTTP traffic)
+    setTimeout(async () => {
+        try {
+            console.log("[Startup Evaluator] Checking Dropbox for any recent unscored class sessions...");
+            await runDailyEvaluation();
+        } catch (e) {
+            console.warn("[Startup Evaluator] Notice:", e.message);
+        }
+    }, 25000);
 }
 
 module.exports = { initCronJobs, runDailyEvaluation };

@@ -6,10 +6,10 @@ const fs = require('fs');
 const path = require('path');
 const { db } = require('./db');
 
-function getFacilitationModel() {
+function getFacilitationModel(modelName = "gemini-3.1-pro-preview") {
     const apiKey = assertValidGeminiApiKey();
     const genAI = new GoogleGenerativeAI(apiKey);
-    return genAI.getGenerativeModel({ model: "gemini-3.1-pro-preview" });
+    return genAI.getGenerativeModel({ model: modelName });
 }
 
 // Ensure class_facilitation_evaluations table exists
@@ -717,19 +717,22 @@ or
 [MM:SS] Participant: <exact spoken words> (or [MM:SS] Participant (<Name>): <words> if their name is spoken out loud in class)
 
 MANDATORY TRANSCRIPTION RULES:
-1. Verbatim Grounding: Transcribe ONLY the audible words spoken by the human beings in the room.
-2. Zero Fabrication: Absolutely DO NOT invent fictional participants, roleplays, or workbook case examples.
-3. If an utterance is muffled or unintelligible, write [unintelligible].
-4. Do NOT summarize, critique, or score the session. Return ONLY the timestamped dialogue transcript.
-5. If the audio is completely silent or contains less than 1 minute of intelligible speech, output: EMPTY_AUDIO.`;
+1. IMPORTANT CONTEXT: Classroom sessions frequently start with 5 to 15 minutes of silent setup, rustling papers, or ambient room noise before the facilitator begins instruction. You MUST listen across the entire file and transcribe the lesson, discussions, and roleplays wherever they occur.
+2. Verbatim Grounding: Transcribe ONLY the audible words spoken by the human beings in the room.
+3. Zero Fabrication: Absolutely DO NOT invent fictional participants, roleplays, or workbook case examples.
+4. If an utterance is muffled or unintelligible, write [unintelligible].
+5. Do NOT summarize, critique, or score the session. Return ONLY the timestamped dialogue transcript.
+6. Only output EMPTY_AUDIO if the ENTIRE audio recording from start to finish is completely silent and contains absolutely no spoken human words.`;
 
     contentParts.push({ text: transcribePrompt });
 
+    // Use fast multimodal flash model for transcription to prevent socket timeouts on 2hr recordings
+    const activeModel = getFacilitationModel("gemini-3.8-flash");
     let result;
     let retries = 5;
     while (retries > 0) {
         try {
-            result = await model.generateContent({
+            result = await activeModel.generateContent({
                 contents: [{ role: 'user', parts: contentParts }],
                 generationConfig: {
                     temperature: 0.1
@@ -737,18 +740,16 @@ MANDATORY TRANSCRIPTION RULES:
             });
             break;
         } catch (err) {
-            if (err.message && err.message.includes('503 Service Unavailable') && retries > 1) {
-                console.warn(`[Class Evaluation] Gemini API 503 Overloaded. Retrying in 15 seconds... (${retries - 1} attempts left)`);
-                await new Promise(r => setTimeout(r, 15000));
-                retries--;
-            } else {
-                throw err;
-            }
+            console.warn(`[Class Evaluation] Gemini API error during transcription (${err.message}). Retrying in 10s... (${retries - 1} attempts left)`);
+            retries--;
+            if (retries === 0) throw err;
+            await new Promise(r => setTimeout(r, 10000));
         }
     }
 
     const transcriptText = result.response.text().trim();
-    if (transcriptText.includes('EMPTY_AUDIO') || transcriptText.length < 50) {
+    const cleanCheck = transcriptText.replace(/^[`\s]+|[`\s]+$/g, '');
+    if (cleanCheck === 'EMPTY_AUDIO' || transcriptText.length < 50) {
         throw new Error("Recording appears to be silent, empty, or contains no intelligible classroom dialogue. Evaluation aborted.");
     }
 
