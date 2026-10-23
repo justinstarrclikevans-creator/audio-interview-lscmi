@@ -173,25 +173,25 @@ You MUST enforce the following 7 Turn90 operational standards without exception:
 ================================================================================
 `;
 
+function isForbiddenCritique(text) {
+    if (typeof text !== 'string') return false;
+    const lower = text.toLowerCase();
+    const mentionsLang = lower.includes('profan') || lower.includes('slang') || lower.includes('vulgar') || 
+                         lower.includes('swear') || lower.includes('curse') || lower.includes('cuss') ||
+                         lower.includes('language') || lower.includes('shorthand expression');
+    const isNegativeLang = mentionsLang && (
+        lower.includes('unprofessional') || lower.includes('clean up') || lower.includes('avoid') || 
+        lower.includes('refrain') || lower.includes('inappropriate') || lower.includes('pissed off') ||
+        lower.includes('fucked up') || lower.includes('tone down') || lower.includes('formal') ||
+        lower.includes('redirect participant') || lower.includes('correct participant')
+    );
+    const isPhonePenalty = (lower.includes('phone call') || lower.includes('answering the phone') || lower.includes('answered a call')) &&
+                           (lower.includes('unprofessional') || lower.includes('avoid') || lower.includes('disrupt') || lower.includes('models behavior'));
+    return isNegativeLang || isPhonePenalty;
+}
+
 function sanitizeLanguageFeedback(evaluation) {
     if (!evaluation) return evaluation;
-
-    const isForbiddenCritique = (text) => {
-        if (typeof text !== 'string') return false;
-        const lower = text.toLowerCase();
-        const mentionsLang = lower.includes('profan') || lower.includes('slang') || lower.includes('vulgar') || 
-                             lower.includes('swear') || lower.includes('curse') || lower.includes('cuss') ||
-                             lower.includes('language') || lower.includes('shorthand expression');
-        const isNegativeLang = mentionsLang && (
-            lower.includes('unprofessional') || lower.includes('clean up') || lower.includes('avoid') || 
-            lower.includes('refrain') || lower.includes('inappropriate') || lower.includes('pissed off') ||
-            lower.includes('fucked up') || lower.includes('tone down') || lower.includes('formal') ||
-            lower.includes('redirect participant') || lower.includes('correct participant')
-        );
-        const isPhonePenalty = (lower.includes('phone call') || lower.includes('answering the phone') || lower.includes('answered a call')) &&
-                               (lower.includes('unprofessional') || lower.includes('avoid') || lower.includes('disrupt') || lower.includes('models behavior'));
-        return isNegativeLang || isPhonePenalty;
-    };
 
     if (Array.isArray(evaluation.areas_for_improvement)) {
         evaluation.areas_for_improvement = evaluation.areas_for_improvement.filter(item => !isForbiddenCritique(item));
@@ -510,18 +510,219 @@ Provide detailed, calibrated coaching feedback based on specific timestamps and 
     }
 }
 
+// ---------------------------------------------------------------------------
+// Evidence-grounded evaluation helpers
+// Every strength / coaching point must be backed by a verbatim quote that is
+// verified against the transcript. Unverifiable items are discarded in code and
+// the report itself is assembled in code (not free-written by the model), so the
+// model cannot invent events, stories, or participants.
+// ---------------------------------------------------------------------------
+const MIN_EVAL_TRANSCRIPT_CHARS = 800;
+
+function timestampToSec(ts) {
+    const m = String(ts || '').match(/^(\d+):(\d{2})(?::(\d{2}))?$/);
+    if (!m) return null;
+    return m[3] !== undefined ? (+m[1]) * 3600 + (+m[2]) * 60 + (+m[3]) : (+m[1]) * 60 + (+m[2]);
+}
+
+function secToTimestamp(sec) {
+    const s = Math.max(0, Math.round(sec));
+    const mm = Math.floor(s / 60);
+    const ss = s % 60;
+    return `${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}`;
+}
+
+function parseTranscriptLines(transcriptText) {
+    const lines = [];
+    for (const raw of String(transcriptText || '').split('\n')) {
+        const m = raw.match(/^\s*\[(\d+:\d{2}(?::\d{2})?)\]\s*(.*)$/);
+        if (m) {
+            lines.push({ ts: secToTimestamp(timestampToSec(m[1])), sec: timestampToSec(m[1]), text: m[2] });
+        } else if (raw.trim() && lines.length) {
+            lines[lines.length - 1].text += ' ' + raw.trim();
+        }
+    }
+    return lines;
+}
+
+function trigramSet(words) {
+    const set = new Set();
+    for (let i = 0; i <= words.length - 3; i++) set.add(words.slice(i, i + 3).join(' '));
+    return set;
+}
+
+/**
+ * Locates a quote inside the transcript. Returns { ok, ts } where ts is the REAL
+ * timestamp of the line where the quote begins (the model's own timestamp is never trusted).
+ */
+function locateQuote(quote, lines, normLines) {
+    const cleanQ = cleanNorm(quote);
+    const words = cleanQ.split(' ').filter(Boolean);
+    if (words.length < 4) return { ok: false };
+
+    for (let i = 0; i < normLines.length; i++) {
+        const windowText = normLines[i] + ' ' + (normLines[i + 1] || '') + ' ' + (normLines[i + 2] || '') + ' ' + (normLines[i + 3] || '');
+        if (windowText.includes(cleanQ)) {
+            // Prefer the earliest line in the window that contains the quote's opening words
+            const opening = words.slice(0, 3).join(' ');
+            let startIdx = i;
+            for (let k = i; k < Math.min(i + 4, normLines.length); k++) {
+                if (normLines[k].includes(opening)) { startIdx = k; break; }
+            }
+            return { ok: true, ts: lines[startIdx].ts };
+        }
+    }
+
+    // Tolerant fallback for small transcription differences: require strong trigram overlap in one window
+    const qTri = [...trigramSet(words)];
+    if (qTri.length === 0) return { ok: false };
+    let best = { ratio: 0, idx: -1 };
+    for (let i = 0; i < normLines.length; i++) {
+        const windowText = normLines[i] + ' ' + (normLines[i + 1] || '') + ' ' + (normLines[i + 2] || '') + ' ' + (normLines[i + 3] || '');
+        let hit = 0;
+        for (const t of qTri) if (windowText.includes(t)) hit++;
+        const ratio = hit / qTri.length;
+        if (ratio > best.ratio) best = { ratio, idx: i };
+    }
+    if (best.ratio >= 0.7) return { ok: true, ts: lines[best.idx].ts };
+    return { ok: false };
+}
+
+function stripQuotePrefix(q) {
+    return String(q || '').replace(/\[\d+:\d{2}(?::\d{2})?\]\s*(?:Facilitator|Participant)(?:\s*\([^)]*\))?:\s*/gi, '').trim();
+}
+
+function verifyEvidenceItems(items, lines, normLines, quoteFields) {
+    const kept = [];
+    let dropped = 0;
+    for (const item of (Array.isArray(items) ? items : [])) {
+        if (!item || typeof item !== 'object') { dropped++; continue; }
+        for (const f of quoteFields) if (typeof item[f] === 'string') item[f] = stripQuotePrefix(item[f]);
+        const primary = item[quoteFields[0]];
+        if (!primary || typeof primary !== 'string') { dropped++; continue; }
+        const loc = locateQuote(primary, lines, normLines);
+        if (!loc.ok) { dropped++; continue; }
+        const verified = { ...item, timestamp: loc.ts };
+        // Secondary quote (e.g., what the facilitator said) must also be real or it is removed
+        for (const f of quoteFields.slice(1)) {
+            if (verified[f] && typeof verified[f] === 'string' && !locateQuote(verified[f], lines, normLines).ok) {
+                verified[f] = '';
+            }
+        }
+        kept.push(verified);
+    }
+    return { kept, dropped };
+}
+
+function mdCell(s) {
+    return String(s || '').replace(/\|/g, '/').replace(/\n+/g, ' ').trim();
+}
+
+function buildGroundedSummaryMarkdown({ location, facilitator, sessionTitle, moduleLine, coverage, scores, timeline, strengths, improvements, droppedCount }) {
+    const lines = [];
+    lines.push('### 📊 Turn90 QA Facilitator Evaluation Report');
+    lines.push(`**Center:** ${location}  `);
+    lines.push(`**Facilitator:** ${facilitator}  `);
+    lines.push(`**Session:** ${sessionTitle}  `);
+    lines.push(`**Module Detected:** ${moduleLine}  `);
+    lines.push(`**Recording Coverage:** ${coverage}`);
+    lines.push('');
+
+    if (timeline.length) {
+        lines.push('### 🕒 What Happened in This Session (from the transcript)');
+        for (const t of timeline) {
+            lines.push(`- **[${t.timestamp}]** ${t.activity} — _"${t.quote}"_`);
+        }
+        lines.push('');
+    }
+
+    const scoreLabels = {
+        modeling_neutrality: 'Modeling Neutrality',
+        lesson_plan_adherence: 'Lesson Plan Adherence',
+        reflective_listening: 'Reflective Listening',
+        avoiding_confrontation: 'Avoiding Confrontation / Over-directing',
+        time_management: 'Time Management',
+        enthusiasm: 'Enthusiasm & Energy',
+        group_engagement: 'Group Engagement'
+    };
+    const scoreRows = Object.entries(scores || {}).filter(([, v]) => !isNaN(Number(v)));
+    if (scoreRows.length) {
+        lines.push('### 📈 Rubric Scores (0–5)');
+        lines.push('| Category | Score |');
+        lines.push('|---|---|');
+        for (const [k, v] of scoreRows) lines.push(`| ${scoreLabels[k] || k} | ${Number(v).toFixed(1)} |`);
+        lines.push('');
+    }
+
+    lines.push('### 🌟 Observed Strengths');
+    if (strengths.length) {
+        for (const s of strengths) {
+            lines.push(`- **[${s.timestamp}]** _"${s.quote}"_ — ${s.observation}`);
+        }
+    } else {
+        lines.push('- No strengths could be tied to a verifiable moment in the transcript.');
+    }
+    lines.push('');
+
+    lines.push('### 🎯 Timestamped Coaching Rewrites (What You Said vs. What to Ask Next Time)');
+    if (improvements.length) {
+        lines.push('| Moment | What Happened | Try Asking This Next Time |');
+        lines.push('|---|---|---|');
+        for (const imp of improvements) {
+            const said = imp.what_facilitator_said ? ` Facilitator said: "${imp.what_facilitator_said}".` : '';
+            const tries = (Array.isArray(imp.try_asking) ? imp.try_asking : [imp.try_asking]).filter(Boolean).map(q => `"${q}"`).join(' / ');
+            lines.push(`| **[${imp.timestamp}]** | "${mdCell(imp.quote)}" — ${mdCell(imp.observation)}${mdCell(said) ? ' ' + mdCell(said) : ''} | ${mdCell(tries)} |`);
+        }
+    } else {
+        lines.push('_No coaching points could be tied to a verifiable moment in the transcript._');
+    }
+    lines.push('');
+    lines.push(`---\n_Every quote above was verified word-for-word against the recording transcript${droppedCount ? ` (${droppedCount} unverifiable AI statement${droppedCount === 1 ? '' : 's'} were discarded)` : ''}._`);
+    return lines.join('\n');
+}
+
+async function generateEvaluationJson(prompt) {
+    let lastErr;
+    for (let attempt = 1; attempt <= 3; attempt++) {
+        try {
+            const activeModel = getFacilitationModel();
+            const result = await activeModel.generateContent({
+                contents: [{ role: 'user', parts: [{ text: prompt }] }],
+                generationConfig: { temperature: 0.2, responseMimeType: 'application/json' }
+            });
+            const responseText = result.response.text();
+            try {
+                const jsonMatch = responseText.match(/```json\s*([\s\S]*?)\s*```/);
+                return jsonMatch ? JSON.parse(jsonMatch[1]) : JSON.parse(responseText);
+            } catch (parseErr) {
+                const bracketMatch = responseText.match(/\{[\s\S]*\}/);
+                if (bracketMatch) return JSON.parse(bracketMatch[0]);
+                throw new Error('AI did not return valid evaluation JSON.');
+            }
+        } catch (err) {
+            if (err.message && (err.message.includes('API key not valid') || err.message.includes('API_KEY_INVALID'))) {
+                throw new Error("Google Generative Language API rejected the API key (API key not valid). Please check your Render Dashboard -> Environment Variables -> GEMINI_API_KEY.");
+            }
+            lastErr = err;
+            console.warn(`[Class Evaluation] Evaluation attempt ${attempt} failed: ${err.message}`);
+            if (attempt < 3) await new Promise(r => setTimeout(r, 4000 * attempt));
+        }
+    }
+    throw lastErr;
+}
+
 async function evaluateClassTranscript(location, sessionTitle, facilitatorName, transcriptText, classHeadcount = null) {
     assertValidGeminiApiKey();
 
-    if (!transcriptText || transcriptText.trim().length < 50) {
-        throw new Error("Transcript is empty or too short to evaluate (under 50 characters). Evaluation aborted to prevent a placeholder score.");
+    if (!transcriptText || transcriptText.trim().length < MIN_EVAL_TRANSCRIPT_CHARS) {
+        throw new Error(`Transcript is too short to evaluate (${(transcriptText || '').trim().length} characters; minimum ${MIN_EVAL_TRANSCRIPT_CHARS}). Evaluation aborted so a score is never produced from an incomplete recording.`);
     }
 
-    const detected = detectLessonModuleFromTranscript(transcriptText);
-    let effectiveSessionTitle = sessionTitle || 'Turn90 Workshop';
-    if (!effectiveSessionTitle.toLowerCase().includes('module') && detected && detected.moduleTitle) {
-        effectiveSessionTitle = `${effectiveSessionTitle} - ${detected.moduleTitle}`;
-    }
+    const tLines = parseTranscriptLines(transcriptText);
+    const normLines = tLines.map(l => cleanNorm(l.text));
+    const coverage = tLines.length
+        ? `${tLines.length} transcribed lines spanning ${tLines[0].ts}–${tLines[tLines.length - 1].ts}`
+        : 'untimestamped transcript';
 
     const headcountInstruction = classHeadcount
         ? `REPORTED CLASS HEADCOUNT: There were exactly ${classHeadcount} participants in class today. Judge group engagement strictly against ${classHeadcount} participants.`
@@ -533,58 +734,48 @@ async function evaluateClassTranscript(location, sessionTitle, facilitatorName, 
 CRITICAL SCORING CALIBRATION & RUBRIC DISTRIBUTION:
 ================================================================================
 You are an objective Quality Assurance Director. Your evaluations must reflect genuine, calibrated performance.
-DO NOT inflate scores into the 90s. In our program, a 90+ score is reserved strictly for exceptional mastery.
+DO NOT inflate scores into the 90s. A 90+ score is reserved strictly for exceptional mastery.
 
 THE 1.0 TO 5.0 RATING SCALE & BENCHMARKS:
-- 5.0 (Exemplary / Mastery — 95–100%): Flawless, textbook execution. Demonstrates advanced complex reflections, seamless buy-in, perfect roleplay staging ("Begin with the End in Mind"), and masterful group engagement. This is rare and must be earned with clear evidence.
-- 4.0 – 4.4 (Good / Proficient — 80–88%): Strong, competent delivery. Solid adherence to the lesson, good pacing, positive climate. Has minor areas for refinement (e.g. relied on simple reflections instead of complex, or minor overdirecting on one question).
-- 3.3 – 3.9 (Acceptable Baseline — 66–78%): Meets baseline standard. Got through the lesson, but has noticeable flaws (e.g. homework review ran over 20 minutes, co-actor instructions were unclear in roleplay, or struggled with buy-in). MOST NORMAL, EVERYDAY SESSIONS WITH REAL-WORLD MISTAKES LAND IN THIS RANGE (74–84%).
-- 2.5 – 3.2 (Needs Improvement — 50–64%): Noticeable inconsistency. Lectured instead of facilitating, rushed or skipped the main activity, lost time management, or struggled to keep group on track.
+- 5.0 (Exemplary — 95–100%): Flawless, textbook execution with clear evidence. Rare.
+- 4.0 – 4.4 (Good / Proficient — 80–88%): Strong, competent delivery with minor areas for refinement.
+- 3.3 – 3.9 (Acceptable Baseline — 66–78%): Meets baseline but has noticeable flaws. Most everyday sessions land here (74–84%).
+- 2.5 – 3.2 (Needs Improvement — 50–64%): Noticeable inconsistency, lecturing, rushed/skipped main activity, lost time.
 - 1.0 – 2.4 (Unsatisfactory — 20–48%): Did not follow the lesson plan or violated core standards.
+If you list an area for improvement, the matching subscore MUST be lowered accordingly. Differentiate categories based on evidence.
 
-SCORING REALITY CHECK:
-- If you identify specific areas for improvement (e.g. homework pacing went long, lacked complex reflections, missed "Begin with End in Mind"), the corresponding subscore MUST be lowered (e.g. 3.0 to 3.5).
-- A session with typical areas for improvement should realistically score in the 75–85 range.
-- Differentiate each category based on actual evidence.
+================================================================================
+ABSOLUTE GROUNDING RULES (A VIOLATION MAKES THE REPORT USELESS):
+================================================================================
+1. EVIDENCE-ONLY. You may only report what is literally present in the TRANSCRIPT below. You have no other source of information about this class.
+2. EVERY strength, coaching point, timeline entry, and the module detection MUST include a "quote": text copied WORD-FOR-WORD from the transcript (6–35 words, no paraphrasing, no stitching separate lines together; do NOT include the [MM:SS] timestamp or the Facilitator/Participant label inside the quote). Items whose quote cannot be found verbatim in the transcript are automatically deleted by our system.
+3. NEVER characterize the session or the people in it beyond what your quotes show. Do NOT say anyone "shared a traumatic story", "opened up emotionally", "went off-topic for the whole class", etc. unless a quote proves it, and never describe something as lasting "the entire class" or "throughout" unless the timestamps of your quotes demonstrate it.
+4. Roleplay: speakers labeled "Participant" or "Facilitator" may be PLAYING A CHARACTER in a roleplay (e.g. a nephew, a cousin, a friend asking for money). Statements made in character are NOT the speaker's real life and must not be reported as personal disclosures. Workbook example characters (e.g. "Geoffrey") are lesson material, not class participants.
+5. A facilitator briefly chatting before or after the lesson (small talk, personal anecdote) is NOT a lesson-delivery flaw unless it demonstrably displaced instruction time — and then you must cite the start and end timestamps via quotes.
+6. If the transcript offers little evidence for a category, give a neutral score and say less. Never pad. 3 well-evidenced points are better than 8 weak ones.
+7. Do not mention staff or participants not named in the transcript. If a participant's name is not spoken in the transcript, call them "a participant".
+8. The recording transcript only covers: ${coverage}. Do not assume anything about time outside this range.
 
 ================================================================================
 CRITICAL ISOLATION MANDATES (STRICT CENTER & FACILITATOR SEPARATION):
 ================================================================================
-1. STRICT CENTER SEPARATION:
-   You are evaluating ONLY the cohort at ${location}.
-   Each Turn90 Center (Charleston, Columbia, Spartanburg) operates with complete autonomy.
-   Do NOT compare, reference, or pull in information, participants, or staff from other centers. Keep this report 100% focused on ${location}.
-   Spartanburg is facilitated by Spartanburg staff (Diyoung). Columbia is facilitated by Columbia staff (Jenn). Charleston is facilitated by Charleston staff (TB).
-
-2. STRICT FACILITATOR SEPARATION:
-   You are evaluating ONLY the individual facilitator leading this specific session.
-   The scheduled facilitator is: "${facilitatorName}".
-   Under NO circumstances grade, critique, or attribute this class to any third-party staff member mentioned in casual conversation or participant anecdotes (e.g., if someone says "Mr. Matt said...", "Justin told us...", "In Diyoung's class...").
-   Do NOT change "facilitator_name" to a mentioned staff member. Only change it if the lead instructor explicitly introduces themselves with their actual name in the opening minutes.
-   Evaluate purely their individual facilitation skills, neutrality, pacing, and CBT delivery during this specific session.
-
-3. ZERO EXTERNAL / MANUAL HALLUCINATIONS:
-   Every single observation, timestamp, score, and coaching recommendation MUST come DIRECTLY and EXCLUSIVELY from what is in THIS transcript.
-   Do NOT pull in fictional names, case studies, or hypothetical scenarios from training manuals or workbooks.
-   If a participant's name is not explicitly stated in the transcript, refer to them neutrally as "a participant" or "the participant."
-
-4. ${headcountInstruction}
-
-5. SESSION TYPE CHECK (1-ON-1 CASE MANAGEMENT VS. GROUP CLASS):
-   If this transcript is clearly a 1-on-1 Case Management / barrier review meeting with a single client (uploaded to the Class Evaluation tab by mistake) rather than a group CBT class, set "detected_session_type": "case_management" in the JSON output. Otherwise set "detected_session_type": "class".
+1. You are evaluating ONLY the cohort at ${location}. Do NOT compare to or reference other centers.
+2. The scheduled facilitator is: "${facilitatorName}". Do NOT grade or attribute this class to any third-party staff member mentioned in casual conversation (e.g., "Mr. Matt said...", "Justin told us..."). Only change "facilitator_name" if the lead instructor explicitly introduces themselves by name.
+3. ${headcountInstruction}
+4. SESSION TYPE CHECK: If this is clearly a 1-on-1 Case Management / barrier review meeting with a single client rather than a group CBT class, set "detected_session_type": "case_management". Otherwise "class".
 
 Location: ${location}
-Session / Module: ${effectiveSessionTitle}
+Session: ${sessionTitle}
 Facilitator: ${facilitatorName}
 
-CRITICAL OUTPUT REQUIREMENT:
-Provide a valid JSON object with the following structure:
-\`\`\`json
+CBT MODULE DETECTION: Identify TODAY's main lesson module (1-8, per the curriculum overview above) ONLY if the transcript clearly shows it (facilitator names the module, a worksheet title, or the skill being taught). Provide a verbatim quote as proof. If it is not clear, set "number" to null.
+
+OUTPUT: return ONE valid JSON object (no markdown) with exactly this structure:
 {
   "facilitator_name": "${facilitatorName}",
   "detected_session_type": "class",
   "estimated_headcount": ${classHeadcount || 4},
-  "total_score": 80.0,
+  "module_detected": { "number": 7, "evidence_quote": "verbatim words from the transcript" },
   "scores": {
     "modeling_neutrality": 4.0,
     "lesson_plan_adherence": 3.8,
@@ -594,51 +785,57 @@ Provide a valid JSON object with the following structure:
     "enthusiasm": 4.5,
     "group_engagement": 4.0
   },
-  "observed_strengths": [
-    "[Timestamp] Specific strength with quote..."
+  "timeline": [
+    { "activity": "neutral 4-10 word label of what is happening (e.g. 'Facilitator models the skill in a roleplay')", "quote": "verbatim words that show it" }
   ],
-  "areas_for_improvement": [
-    "[Timestamp] Quote/Context -> What Facilitator Said -> Try Asking This Next Time: 'Exact CBT/MI/SYNAPSE alternative question...'"
+  "strengths": [
+    { "quote": "verbatim words", "observation": "one or two sentences on why this is a strength per the scoring guide" }
   ],
-  "detailed_summary_markdown": "Full markdown coaching report including a '### 🎯 Timestamped Coaching Rewrites (What You Said vs. What to Ask Next Time)' table."
+  "improvements": [
+    {
+      "quote": "verbatim words from the moment being coached (facilitator or participant)",
+      "what_facilitator_said": "verbatim facilitator response at that moment, or empty string",
+      "observation": "one or two sentences on the specific, observable issue per the scoring guide",
+      "try_asking": ["exact alternative question 1 (CBT + MI + SYNAPSE)", "exact alternative question 2"]
+    }
+  ]
 }
-\`\`\`
+Provide 4–8 timeline entries covering the whole recording in chronological order, 2–5 strengths, and 0–5 improvements (only real, evidenced ones).
 
-Classroom Transcript to Evaluate:
+TRANSCRIPT TO EVALUATE (this is the ONLY source of truth):
 ${transcriptText}
 `;
 
-    let result;
-    try {
-        const activeModel = getFacilitationModel();
-        result = await activeModel.generateContent(prompt);
-    } catch (err) {
-        if (err.message && (err.message.includes('API key not valid') || err.message.includes('API_KEY_INVALID'))) {
-            throw new Error("Google Generative Language API rejected the API key (API key not valid). Please check your Render Dashboard -> Environment Variables -> GEMINI_API_KEY.");
-        }
-        throw err;
+    const evaluation = await generateEvaluationJson(prompt);
+
+    // ---- Verify every piece of evidence against the transcript ----
+    let dropped = 0;
+    const tl = verifyEvidenceItems(evaluation.timeline, tLines, normLines, ['quote']);
+    const st = verifyEvidenceItems(evaluation.strengths, tLines, normLines, ['quote']);
+    const im = verifyEvidenceItems(evaluation.improvements, tLines, normLines, ['quote', 'what_facilitator_said']);
+    dropped += tl.dropped + st.dropped + im.dropped;
+
+    // Language / phone-call policy applied to structured evidence
+    const policyFilter = (item) => !isForbiddenCritique(`${item.observation || ''} ${(Array.isArray(item.try_asking) ? item.try_asking.join(' ') : (item.try_asking || ''))}`);
+    const strengthsVerified = st.kept.filter(i => i.observation);
+    const improvementsVerified = im.kept.filter(i => i.observation && policyFilter(i));
+    dropped += (im.kept.length - improvementsVerified.length);
+    const timelineVerified = tl.kept.filter(i => i.activity).sort((a, b) => timestampToSec(a.timestamp) - timestampToSec(b.timestamp));
+
+    // Module detection: only trust it if the evidence quote is real
+    let moduleInfo = null;
+    const md = evaluation.module_detected;
+    if (md && Number(md.number) >= 1 && Number(md.number) <= 8 && md.evidence_quote && locateQuote(stripQuotePrefix(md.evidence_quote), tLines, normLines).ok) {
+        moduleInfo = CBT_MODULE_CATALOG[Number(md.number)];
     }
-    const responseText = result.response.text();
-    let evaluation;
-    try {
-        const jsonMatch = responseText.match(/```json\s*([\s\S]*?)\s*```/);
-        evaluation = jsonMatch ? JSON.parse(jsonMatch[1]) : JSON.parse(responseText);
-    } catch(err) {
-        const bracketMatch = responseText.match(/\{[\s\S]*\}/);
-        if (bracketMatch) {
-            evaluation = JSON.parse(bracketMatch[0]);
-        } else {
-            throw new Error("AI did not return valid evaluation JSON.");
-        }
+    const moduleLine = moduleInfo ? moduleInfo.moduleTitle : 'Not clearly stated in this recording';
+
+    let effectiveSessionTitle = sessionTitle || 'Turn90 Workshop';
+    if (moduleInfo && !effectiveSessionTitle.toLowerCase().includes('module')) {
+        effectiveSessionTitle = `${effectiveSessionTitle} - ${moduleInfo.moduleTitle}`;
     }
 
-    // Apply language & operational policy sanitizer
-    sanitizeLanguageFeedback(evaluation);
-
-    // Apply Quote Verification Firewall (Strip Hallucinated Dialogue / Fake Characters)
-    filterHallucinatedQuotes(evaluation, transcriptText);
-
-    // Enforce deterministic score math (no more 27.5 bug or inflated high 90s)
+    // Enforce deterministic score math
     const finalTotalScore = computeDeterministicClassScore(evaluation);
     if (isNaN(finalTotalScore) || finalTotalScore <= 0) {
         throw new Error("Evaluation produced an invalid score. Transcript may be empty or unintelligible.");
@@ -648,7 +845,31 @@ ${transcriptText}
     const savedHeadcount = classHeadcount || evaluation.estimated_headcount || null;
     const detectedType = evaluation.detected_session_type || 'class';
 
-    // Save to database
+    const summaryMarkdown = buildGroundedSummaryMarkdown({
+        location,
+        facilitator: savedFacilitator,
+        sessionTitle: effectiveSessionTitle,
+        moduleLine,
+        coverage,
+        scores: evaluation.scores,
+        timeline: timelineVerified,
+        strengths: strengthsVerified,
+        improvements: improvementsVerified,
+        droppedCount: dropped
+    });
+
+    const strengthStrings = strengthsVerified.map(s => `[${s.timestamp}] "${s.quote}" -> ${s.observation}`);
+    const improvementStrings = improvementsVerified.map(i => {
+        const tries = (Array.isArray(i.try_asking) ? i.try_asking : [i.try_asking]).filter(Boolean).map(q => `'${q}'`).join(' or ');
+        return `[${i.timestamp}] "${i.quote}" -> ${i.observation} -> Try Asking This Next Time: ${tries}`;
+    });
+
+    evaluation.observed_strengths = strengthStrings;
+    evaluation.areas_for_improvement = improvementStrings;
+    evaluation.detailed_summary_markdown = summaryMarkdown;
+    evaluation.session_title = effectiveSessionTitle;
+    evaluation.dropped_unverified = dropped;
+
     const stmt = db.prepare(`
         INSERT INTO class_facilitation_evaluations (
             location, session_title, facilitator_name, total_score,
@@ -668,9 +889,9 @@ ${transcriptText}
         evaluation.scores?.lesson_plan_adherence ?? 3.8,
         evaluation.scores?.reflective_listening ?? 3.5,
         evaluation.scores?.avoiding_confrontation ?? 4.0,
-        evaluation.detailed_summary_markdown || '',
+        summaryMarkdown,
         JSON.stringify(evaluation.scores || {}),
-        (evaluation.areas_for_improvement || []).join('; '),
+        improvementStrings.join('; '),
         savedHeadcount,
         transcriptText,
         detectedType
@@ -684,83 +905,147 @@ async function uploadFacilitationResources(fileManager) {
     return [];
 }
 
-/**
- * Stage 1: Transcribes classroom media into a verbatim, timestamped transcript.
- * Runs at temperature 0.1 without rubric or scoring prompt interference.
- */
-async function transcribeClassAudio(fileManager, uploadResults, location = '', facilitatorName = '') {
-    console.log(`[Class Evaluation] Stage 1: Transcribing classroom audio verbatim for ${location}...`);
-    
-    const contentParts = [];
-    for (const res of uploadResults) {
-        let fileState = res.file;
-        while (fileState.state === 'PROCESSING') {
-            if (global.syncStatus) global.syncStatus.log = `Waiting for audio processing...`;
-            console.log(`[Class Evaluation] Waiting for Gemini to process ${fileState.name}...`);
-            await new Promise(resolve => setTimeout(resolve, 8000));
-            fileState = await fileManager.getFile(fileState.name);
-        }
-        if (fileState.state === 'FAILED') {
-            throw new Error(`Gemini failed to process media file: ${fileState.name}`);
-        }
-        contentParts.push({ fileData: { mimeType: fileState.mimeType, fileUri: fileState.uri } });
-    }
+const TRANSCRIBE_MODEL = "gemini-3.8-flash";
+const TRANSCRIBE_CONCURRENCY = 3;
 
-    const transcribePrompt = `You are an expert audio transcription specialist for Turn90 / First Shift.
+async function waitForGeminiFile(fileManager, file) {
+    let fileState = file;
+    while (fileState.state === 'PROCESSING') {
+        await new Promise(resolve => setTimeout(resolve, 6000));
+        fileState = await fileManager.getFile(fileState.name);
+    }
+    if (fileState.state === 'FAILED') {
+        throw new Error(`Gemini failed to process media file: ${fileState.name}`);
+    }
+    return fileState;
+}
+
+function buildTranscribePrompt({ location, facilitatorName, chunkIndex, chunkCount, offsetSec }) {
+    const partNote = chunkCount > 1
+        ? `This clip is PART ${chunkIndex + 1} OF ${chunkCount} of a longer classroom recording (this clip begins ${secToTimestamp(offsetSec)} into the full recording). Timestamps MUST be relative to the START OF THIS CLIP (the clip begins at [00:00]).`
+        : `Timestamps are relative to the start of the recording (it begins at [00:00]).`;
+    return `You are an expert audio transcription specialist for Turn90 / First Shift.
 Location: ${location}
 Scheduled Facilitator: ${facilitatorName}
 
-TASK: Generate a strict, verbatim, timestamped transcript of the audible speech in this classroom recording.
-Format each spoken line with timestamp:
+${partNote}
+
+TASK: Produce a strict, verbatim, timestamped transcript of ALL audible human speech in this clip, from the first second to the last second. Do not stop early and do not skip stretches.
+Format every spoken turn on its own line:
 [MM:SS] Facilitator: <exact spoken words>
-or
-[MM:SS] Participant: <exact spoken words> (or [MM:SS] Participant (<Name>): <words> if their name is spoken out loud in class)
+[MM:SS] Participant: <exact spoken words>
+(or [MM:SS] Participant (<Name>): <words> only if their name is actually spoken aloud in this clip)
 
-MANDATORY TRANSCRIPTION RULES:
-1. IMPORTANT CONTEXT: Classroom sessions frequently start with 5 to 15 minutes of silent setup, rustling papers, or ambient room noise before the facilitator begins instruction. You MUST listen across the entire file and transcribe the lesson, discussions, and roleplays wherever they occur.
-2. Verbatim Grounding: Transcribe ONLY the audible words spoken by the human beings in the room.
-3. Zero Fabrication: Absolutely DO NOT invent fictional participants, roleplays, or workbook case examples.
-4. If an utterance is muffled or unintelligible, write [unintelligible].
-5. Do NOT summarize, critique, or score the session. Return ONLY the timestamped dialogue transcript.
-6. Only output EMPTY_AUDIO if the ENTIRE audio recording from start to finish is completely silent and contains absolutely no spoken human words.`;
+WHO IS WHO: The "Facilitator" is the staff instructor who leads the lesson (gives directions, references workbook pages, assigns homework, calls "timeout"/"freeze", debriefs roleplays). Everyone else in the room is a "Participant". During roleplays, label the speaker by who they actually are (Facilitator or Participant), not by the character they are playing.
 
-    contentParts.push({ text: transcribePrompt });
+MANDATORY RULES:
+1. Transcribe ONLY words actually spoken in this audio. Zero fabrication: never invent participants, stories, roleplays, workbook examples, or dialogue.
+2. Keep every spoken turn, including short ones ("Yeah", "Mhm") only when clearly audible.
+3. If words are muffled or unintelligible write [unintelligible]; do not guess.
+4. Do NOT summarize, critique, or score. Return ONLY the transcript lines.
+5. If this clip contains no human speech at all (silence, rustling, room noise only), return exactly: NO_SPEECH`;
+}
 
-    // Use fast multimodal flash model for transcription to prevent socket timeouts on 2hr recordings
-    const activeModel = getFacilitationModel("gemini-3.8-flash");
-    let result;
-    let retries = 5;
-    while (retries > 0) {
-        try {
-            result = await activeModel.generateContent({
-                contents: [{ role: 'user', parts: contentParts }],
-                generationConfig: {
-                    temperature: 0.1
-                }
-            });
-            break;
-        } catch (err) {
-            console.warn(`[Class Evaluation] Gemini API error during transcription (${err.message}). Retrying in 10s... (${retries - 1} attempts left)`);
-            retries--;
-            if (retries === 0) throw err;
-            await new Promise(r => setTimeout(r, 10000));
+function shiftTranscriptTimestamps(text, offsetSec) {
+    return text.split('\n').map(line => {
+        const m = line.match(/^\s*\[(\d+:\d{2}(?::\d{2})?)\]\s*(.*)$/);
+        if (!m) return line;
+        const sec = timestampToSec(m[1]);
+        if (sec === null) return line;
+        return `[${secToTimestamp(sec + offsetSec)}] ${m[2]}`;
+    }).join('\n');
+}
+
+async function transcribeOneClip(fileManager, mimeType, filePath, meta) {
+    const uploaded = await fileManager.uploadFile(filePath, {
+        mimeType,
+        displayName: `${meta.location}_Class_${Date.now()}_p${meta.chunkIndex}`
+    });
+    const uploadedName = uploaded.file.name;
+    try {
+        const fileState = await waitForGeminiFile(fileManager, uploaded.file);
+        const prompt = buildTranscribePrompt(meta);
+        const activeModel = getFacilitationModel(TRANSCRIBE_MODEL);
+
+        let lastErr;
+        for (let attempt = 1; attempt <= 4; attempt++) {
+            try {
+                const result = await activeModel.generateContent({
+                    contents: [{ role: 'user', parts: [
+                        { fileData: { mimeType: fileState.mimeType, fileUri: fileState.uri } },
+                        { text: prompt }
+                    ] }],
+                    generationConfig: { temperature: 0.1, maxOutputTokens: 32768 }
+                });
+                const text = result.response.text().trim().replace(/^```[a-z]*\s*|\s*```$/g, '').trim();
+                return text;
+            } catch (err) {
+                lastErr = err;
+                console.warn(`[Class Evaluation] Transcription error on part ${meta.chunkIndex + 1}/${meta.chunkCount} (${err.message}). Retry ${attempt}/4...`);
+                await new Promise(r => setTimeout(r, 8000 * attempt));
+            }
         }
+        throw lastErr;
+    } finally {
+        try { await fileManager.deleteFile(uploadedName); } catch (e) { /* ignore */ }
+    }
+}
+
+/**
+ * Stage 1: Chunked verbatim transcription.
+ * The recording is split into 10-minute clips, each transcribed independently at low
+ * temperature, then re-stitched with absolute timestamps. This prevents the model from
+ * skipping or truncating large parts of long recordings.
+ */
+async function transcribeClassMedia(fileManager, mediaFile, location = '', facilitatorName = '') {
+    const { splitAudioToChunks, cleanupChunks, isChunkingAvailable } = require('./services/audio_chunker');
+
+    if (!isChunkingAvailable()) {
+        throw new Error('Audio splitting tool (ffmpeg) is unavailable on this server, so the recording cannot be transcribed reliably. Evaluation aborted.');
     }
 
-    const transcriptText = result.response.text().trim();
-    const cleanCheck = transcriptText.replace(/^[`\s]+|[`\s]+$/g, '');
-    if (cleanCheck === 'EMPTY_AUDIO' || transcriptText.length < 50) {
-        throw new Error("Recording appears to be silent, empty, or contains no intelligible classroom dialogue. Evaluation aborted.");
-    }
+    console.log(`[Class Evaluation] Stage 1: Splitting recording into clips for ${location}...`);
+    if (global.syncStatus) global.syncStatus.log = `Preparing ${location} recording...`;
+    const { chunks, dir } = await splitAudioToChunks(mediaFile.path);
 
-    return transcriptText;
+    try {
+        console.log(`[Class Evaluation] Transcribing ${chunks.length} clip(s) for ${location}...`);
+        const results = new Array(chunks.length);
+        let nextIdx = 0;
+        let done = 0;
+
+        const worker = async () => {
+            while (true) {
+                const i = nextIdx++;
+                if (i >= chunks.length) return;
+                const chunk = chunks[i];
+                const text = await transcribeOneClip(fileManager, 'audio/mpeg', chunk.path, {
+                    location, facilitatorName,
+                    chunkIndex: i, chunkCount: chunks.length, offsetSec: chunk.offsetSec
+                });
+                results[i] = /^\s*NO_SPEECH\s*$/i.test(text) ? '' : shiftTranscriptTimestamps(text, chunk.offsetSec);
+                done++;
+                if (global.syncStatus) global.syncStatus.log = `Transcribing ${location}: ${done}/${chunks.length} segments...`;
+                console.log(`[Class Evaluation] ${location}: transcribed segment ${done}/${chunks.length}`);
+            }
+        };
+        await Promise.all(Array.from({ length: Math.min(TRANSCRIBE_CONCURRENCY, chunks.length) }, worker));
+
+        const transcriptText = results.filter(Boolean).join('\n').trim();
+        if (transcriptText.length < MIN_EVAL_TRANSCRIPT_CHARS) {
+            throw new Error("Recording appears to be silent, empty, or contains too little intelligible classroom dialogue to evaluate. Evaluation aborted.");
+        }
+        return transcriptText;
+    } finally {
+        cleanupChunks(dir);
+    }
 }
 
 /**
  * Two-Stage Grounded Facilitation Evaluation:
- * Stage 1: Verbatim timestamped transcription (temperature: 0.1)
- * Stage 2: Dynamic lesson/module detection from spoken dialogue
- * Stage 3: Grounded evaluation against transcript text with quote verification firewall
+ * Stage 1: Chunked verbatim timestamped transcription (temperature 0.1)
+ * Stage 2: Evidence-only evaluation; every quote verified against the transcript;
+ *          the report is assembled in code from verified evidence only.
  */
 async function evaluateClassMedia(location, sessionTitle, facilitatorName, mediaFiles, classHeadcount = null) {
     const apiKey = assertValidGeminiApiKey();
@@ -768,74 +1053,33 @@ async function evaluateClassMedia(location, sessionTitle, facilitatorName, media
     const { GoogleAIFileManager } = require("@google/generative-ai/server");
     const fileManager = new GoogleAIFileManager(apiKey);
 
-    console.log(`[Class Evaluation] Uploading media to Gemini for ${location}...`);
-    
-    // Support single object or array
     const filesToUpload = Array.isArray(mediaFiles) ? mediaFiles : [mediaFiles];
-    const uploadResults = [];
-
+    const localPaths = [];
     for (const mf of filesToUpload) {
-        if (mf.file && mf.file.uri) {
-            uploadResults.push(mf);
-        } else {
-            if (!mf.path || !fs.existsSync(mf.path)) {
-                throw new Error("Audio/video file is missing or could not be read.");
-            }
-            const stat = fs.statSync(mf.path);
-            if (stat.size < 10240) {
-                try { fs.unlinkSync(mf.path); } catch (e) {}
-                throw new Error(`Recording file is empty or too small (${stat.size} bytes). Evaluation aborted so no placeholder score is recorded.`);
-            }
-
-            let uploadResult;
-            try {
-                uploadResult = await fileManager.uploadFile(mf.path, {
-                    mimeType: mf.mimeType || 'video/mp4',
-                    displayName: `${location}_Class_Evaluation_${Date.now()}`
-                });
-            } catch (uploadErr) {
-                if (uploadErr.message && (uploadErr.message.includes('API key not valid') || uploadErr.message.includes('API_KEY_INVALID'))) {
-                    throw new Error("Google Generative Language API rejected the API key during class upload (API key not valid). Please check your Render Dashboard -> Environment Variables -> GEMINI_API_KEY.");
-                }
-                throw uploadErr;
-            }
-            uploadResults.push(uploadResult);
-            
-            if (fs.existsSync(mf.path)) {
-                try { fs.unlinkSync(mf.path); } catch(e) {}
-            }
+        if (!mf || !mf.path || !fs.existsSync(mf.path)) {
+            throw new Error("Audio/video file is missing or could not be read.");
         }
+        const stat = fs.statSync(mf.path);
+        if (stat.size < 10240) {
+            try { fs.unlinkSync(mf.path); } catch (e) {}
+            throw new Error(`Recording file is empty or too small (${stat.size} bytes). Evaluation aborted so no placeholder score is recorded.`);
+        }
+        localPaths.push(mf.path);
     }
 
     try {
-        // Stage 1: Verbatim Transcription (temperature 0.1)
-        if (global.syncStatus) global.syncStatus.log = `Transcribing classroom audio for ${location}...`;
-        const transcriptText = await transcribeClassAudio(fileManager, uploadResults, location, facilitatorName);
-
-        // Stage 2: Dynamic Module Detection from Spoken Dialogue
-        const detected = detectLessonModuleFromTranscript(transcriptText);
-        console.log(`[Class Evaluation] Detected Active Lesson: ${detected.moduleTitle} (Module ${detected.moduleNumber})`);
-
-        let effectiveSessionTitle = sessionTitle;
-        if (!effectiveSessionTitle || effectiveSessionTitle.includes('Class Session') || effectiveSessionTitle.includes('pm') || effectiveSessionTitle.includes('am')) {
-            effectiveSessionTitle = `${sessionTitle} - ${detected.moduleTitle}`;
+        const parts = [];
+        for (const mf of filesToUpload) {
+            if (global.syncStatus) global.syncStatus.log = `Transcribing classroom audio for ${location}...`;
+            parts.push(await transcribeClassMedia(fileManager, mf, location, facilitatorName));
         }
+        const transcriptText = parts.join('\n');
 
-        // Stage 3: Grounded Evaluation on Verbatim Transcript (with Quote Firewall)
         if (global.syncStatus) global.syncStatus.log = `Evaluating facilitation for ${location}...`;
-        const evaluation = await evaluateClassTranscript(location, effectiveSessionTitle, facilitatorName, transcriptText, classHeadcount);
-
-        return evaluation;
+        return await evaluateClassTranscript(location, sessionTitle, facilitatorName, transcriptText, classHeadcount);
     } finally {
-        console.log(`[Class Evaluation] Deleting temporary files from Gemini...`);
-        for (const res of uploadResults) {
-            try {
-                if (res.file && res.file.name) {
-                    await fileManager.deleteFile(res.file.name);
-                }
-            } catch (err) {
-                console.error("Failed to delete video file from Gemini:", err.message);
-            }
+        for (const p of localPaths) {
+            try { if (fs.existsSync(p)) fs.unlinkSync(p); } catch (e) {}
         }
     }
 }
@@ -847,6 +1091,8 @@ module.exports = {
     detectLessonModuleFromTranscript,
     filterHallucinatedQuotes,
     getFacilitatorScoringContext,
-    transcribeClassAudio,
+    transcribeClassMedia,
+    parseTranscriptLines,
+    locateQuote,
     KNOWN_CENTER_STAFF
 };

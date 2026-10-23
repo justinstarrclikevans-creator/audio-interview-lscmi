@@ -219,53 +219,12 @@ async function runDailyEvaluation(targetDates = null) {
                     continue;
                 }
 
-                if (global.syncStatus) global.syncStatus.log = `Uploading ${center.name} ${file.name} to Gemini...`;
-                console.log(`[Dropbox Evaluator] Uploading ${file.name} to Gemini in a RAM-safe stream...`);
-
                 const mimeType = getMimeType(file.name);
-                const https = require('https');
-                const uploadData = await new Promise((resolve, reject) => {
-                    const stats = fs.statSync(localPath);
-                    const apiKey = assertValidGeminiApiKey();
-                    const options = {
-                        hostname: 'generativelanguage.googleapis.com',
-                        port: 443,
-                        path: `/upload/v1beta/files?key=${encodeURIComponent(apiKey)}`,
-                        method: 'POST',
-                        headers: {
-                            'X-Goog-Upload-Protocol': 'raw',
-                            'X-Goog-Upload-Command': 'start, upload, finalize',
-                            'X-Goog-Upload-Header-Content-Length': stats.size,
-                            'X-Goog-Upload-File-Name': path.basename(localPath),
-                            'Content-Type': mimeType,
-                            'Content-Length': stats.size
-                        }
-                    };
-                    const req = https.request(options, (res) => {
-                        let data = '';
-                        res.on('data', chunk => data += chunk);
-                        res.on('end', () => {
-                            if (res.statusCode >= 200 && res.statusCode < 300) {
-                                resolve(JSON.parse(data));
-                            } else {
-                                reject(new Error(`Upload failed: ${res.statusCode} ${data}`));
-                            }
-                        });
-                    });
-                    req.on('error', reject);
-                    fs.createReadStream(localPath).pipe(req);
-                });
-
-                // Immediately clean up local disk
-                if (fs.existsSync(localPath)) {
-                    fs.unlinkSync(localPath);
-                }
-
                 if (global.syncStatus) global.syncStatus.log = `Grading ${center.name} ${sessionTitle}...`;
-                console.log(`[Dropbox Evaluator] Evaluating ${center.name} - ${sessionTitle} individually...`);
+                console.log(`[Dropbox Evaluator] Evaluating ${center.name} - ${sessionTitle} individually (chunked transcription)...`);
 
-                await evaluateClassMedia(center.name, sessionTitle, defaultFacilitator, [{ file: uploadData.file }]);
-                console.log(`[Dropbox Evaluator] Successfully evaluated ${center.name} - ${sessionTitle}.`);
+                // The evaluator splits the recording into short clips, transcribes each in full, and deletes the local file when done.
+                await evaluateClassMedia(center.name, sessionTitle, defaultFacilitator, [{ path: localPath, mimeType }]);
                 results.processed++;
 
             } catch (err) {
