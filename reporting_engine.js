@@ -878,7 +878,7 @@ function importUnifiedRenderReport(buffer) {
         }
 
         // 1. Points
-        const pointsSheetName = workbook.SheetNames.find(n => n.includes('Points - Rows'));
+        const pointsSheetName = workbook.SheetNames.find(n => (n.includes('Points') || n.includes('First Shift Points')) && !n.includes('Totals'));
         if (pointsSheetName) {
             const sheet = workbook.Sheets[pointsSheetName];
             const rows = XLSX.utils.sheet_to_json(sheet);

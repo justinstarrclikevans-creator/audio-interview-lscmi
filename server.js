@@ -3793,6 +3793,14 @@ app.get('/api/reentry/clients', authenticateToken, requireRole('navigator', 'pro
             query += ` AND c.status != 'archived'`;
         }
 
+        // Business Rule: Anyone enrolled in First Shift cannot be enrolled in Reentry Navigation.
+        // Strictly exclude active First Shift participants from Reentry Navigation caseload.
+        query += ` AND (c.apricot_id IS NULL OR c.apricot_id NOT IN (
+            SELECT pp.record_id FROM participant_profiles pp
+            JOIN users u ON pp.user_id = u.id
+            WHERE pp.overall_status = 'active' AND u.track = 'first_shift' AND pp.record_id IS NOT NULL
+        ))`;
+
         if (stability && stability !== 'all') {
             query += ` AND c.stability_tier = ?`;
             params.push(stability);
@@ -3844,6 +3852,18 @@ app.post('/api/reentry/clients', authenticateToken, requireRole('navigator', 'pr
         const { first_name, last_name, apricot_id, location, phone, email, notes, stability_tier } = req.body;
         if (!first_name || !last_name) {
             return res.status(400).json({ error: 'First name and last name are required.' });
+        }
+
+        // Business Rule: Anyone enrolled in First Shift cannot be enrolled in Reentry Navigation.
+        if (apricot_id && apricot_id.trim()) {
+            const isFs = db.prepare(`
+                SELECT u.id, u.name FROM participant_profiles pp
+                JOIN users u ON pp.user_id = u.id
+                WHERE pp.overall_status = 'active' AND u.track = 'first_shift' AND pp.record_id = ?
+            `).get(apricot_id.trim());
+            if (isFs) {
+                return res.status(400).json({ error: `Participant ${isFs.name} (#${apricot_id.trim()}) is currently enrolled in First Shift and cannot be enrolled in Reentry Navigation.` });
+            }
         }
 
         const insertStmt = db.prepare(`
@@ -3999,6 +4019,19 @@ app.patch('/api/reentry/clients/:id', authenticateToken, requireRole('navigator'
     try {
         const clientId = req.params.id;
         const { first_name, last_name, apricot_id, location, phone, email, notes, status, stability_tier } = req.body;
+
+        // Business Rule: Anyone enrolled in First Shift cannot be enrolled in Reentry Navigation.
+        const checkApricotId = apricot_id ? apricot_id.trim() : (db.prepare('SELECT apricot_id FROM reentry_clients WHERE id = ?').get(clientId)?.apricot_id || null);
+        if (checkApricotId && (status === 'active' || !status)) {
+            const isFs = db.prepare(`
+                SELECT u.id, u.name FROM participant_profiles pp
+                JOIN users u ON pp.user_id = u.id
+                WHERE pp.overall_status = 'active' AND u.track = 'first_shift' AND pp.record_id = ?
+            `).get(checkApricotId);
+            if (isFs) {
+                return res.status(400).json({ error: `Participant ${isFs.name} (#${checkApricotId}) is currently enrolled in First Shift and cannot be enrolled or reactivated in Reentry Navigation.` });
+            }
+        }
 
         db.prepare(`
             UPDATE reentry_clients 

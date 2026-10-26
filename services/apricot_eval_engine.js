@@ -577,7 +577,7 @@ function processApricotWorkbook(bufferOrPath, options = {}) {
         consultations: 'Funnel-Reentry Consulta',
         waitlist: 'Waitlist',
         orientation: 'Orientation',
-        points: 'First Shift Points',
+        points: 'Points',
         caseloads: 'Case Loads',
         fsCasePlan: 'First Shift Case Plan',
         rnCasePlan: 'Reentry Nav Case Plan',
@@ -592,12 +592,23 @@ function processApricotWorkbook(bufferOrPath, options = {}) {
         credentials: 'Credentials'
     };
 
+    // If buffer supplied, persist to data/apricot_master_report.xlsx to keep the disk cache current
+    if (Buffer.isBuffer(bufferOrPath)) {
+        try {
+            const masterPath = path.join(__dirname, '..', 'data', 'apricot_master_report.xlsx');
+            fs.writeFileSync(masterPath, bufferOrPath);
+        } catch (e) {
+            console.warn('[Apricot Engine] Could not persist master report to disk:', e.message);
+        }
+    }
+
     // Extract and update sheet cache for any matching sheets in the uploaded workbook
     let sheetsUpdated = 0;
     for (const [key, pattern] of Object.entries(sheetKeyMap)) {
         const matchedName = workbook.SheetNames.find(n => {
             if (key === 'employment') return n === 'Employment - Rows' || (n.includes('Employment') && !n.includes('Historical') && n.includes('Rows'));
-            return n.includes(pattern) && n.includes('Rows');
+            if (key === 'points') return (n.includes('Points') || n.includes('First Shift Points')) && !n.includes('Totals');
+            return (n.includes(pattern) || (pattern === 'Points' && n.includes('Points'))) && !n.includes('Totals');
         });
         if (matchedName) {
             const rows = XLSX.utils.sheet_to_json(workbook.Sheets[matchedName], { defval: '' });
@@ -1032,6 +1043,25 @@ function recomputeFullApricotReport(syncMeta = {}) {
         }
     }
 
+    // Flattened array of program enrollment rows for direct rendering on Dashboards (prevents "undefined" table fields)
+    const programEnrollmentRows = [];
+    for (const [program, centers] of Object.entries(funnelMatrix)) {
+        for (const [center, stats] of Object.entries(centers)) {
+            if (stats.totalEnrollments > 0 || stats.active > 0 || stats.totalExits > 0) {
+                programEnrollmentRows.push({
+                    program,
+                    center,
+                    totalEnrollments: stats.totalEnrollments,
+                    enrolled: stats.totalEnrollments,
+                    active: stats.active,
+                    totalExits: stats.totalExits,
+                    exited: stats.totalExits,
+                    exitReasons: stats.exitReasons || {}
+                });
+            }
+        }
+    }
+
     // Resource Coordinations & Consultations
     const rcStats = {
         Total: { ytd: 0, lastWeek: 0, currentWeek: 0 },
@@ -1275,6 +1305,20 @@ function recomputeFullApricotReport(syncMeta = {}) {
         String(r['Program Enrollment:']).trim() === 'First Shift' && !parseDateStr(r['Date enrollment ended:'])
     );
 
+    // Business Rule: Anyone enrolled in First Shift cannot be enrolled in Reentry Navigation.
+    // Build set of all active First Shift participant Record IDs (from caseloads and enrollments).
+    const activeFsIdSet = new Set(
+        activeFsRowsRaw.map(r => String(r['Record ID'] || '').trim()).filter(Boolean)
+    );
+    enrollments.forEach(r => {
+        const prog = String(r['Program Enrollment:'] || r['Which Program?'] || '').trim();
+        const end = parseDateStr(r['Date enrollment ended:']);
+        const id = String(r['Record ID'] || '').trim();
+        if (prog === 'First Shift' && !end && id) {
+            activeFsIdSet.add(id);
+        }
+    });
+
     const firstShiftActiveDashboard = activeFsRowsRaw.map(r => {
         const id = String(r['Record ID'] || '').trim();
         const fullName = `${r['First']} ${r['Last']}`.trim();
@@ -1363,10 +1407,17 @@ function recomputeFullApricotReport(syncMeta = {}) {
         };
     });
 
-    // B. Active Reentry Navigation Participants (33 active cases, mostly Daisy Boynton)
-    const activeRnRowsRaw = caseloads.filter(r =>
-        String(r['Program Enrollment:']).trim() === 'Reentry Navigation' && !parseDateStr(r['Date enrollment ended:'])
-    );
+    // B. Active Reentry Navigation Participants
+    // Business Rule: Anyone enrolled in First Shift cannot be enrolled in Reentry Navigation.
+    // Do not post them on the Reentry Navigation caseload if they are enrolled in First Shift.
+    const activeRnRowsRaw = caseloads.filter(r => {
+        const prog = String(r['Program Enrollment:']).trim();
+        const isEnded = !!parseDateStr(r['Date enrollment ended:']);
+        const id = String(r['Record ID'] || '').trim();
+        if (prog !== 'Reentry Navigation' || isEnded) return false;
+        if (activeFsIdSet.has(id)) return false;
+        return true;
+    });
 
     const reentryNavActiveDashboard = activeRnRowsRaw.map(r => {
         const id = String(r['Record ID'] || '').trim();
@@ -1888,6 +1939,8 @@ function recomputeFullApricotReport(syncMeta = {}) {
         funnelReport: {
             enrollmentsAndExits: funnelMatrix,
             byProgramAndCenter: funnelMatrix,
+            byProgramAndCenterRows: programEnrollmentRows,
+            programRows: programEnrollmentRows,
             resourceCoordinations: rcStats,
             reentryConsultations: consultStats,
             waitlistByCenter,
@@ -2001,6 +2054,17 @@ function syncParticipantsToOperationalDb(fsList, rnList, pointsRows, allProcesse
                 SET status = 'archived'
                 WHERE apricot_id IS NOT NULL AND apricot_id NOT IN (${rnPlaceholders})
             `).run(...activeRnRecordIds);
+        }
+
+        // Business Rule: Anyone enrolled in First Shift cannot be enrolled in Reentry Navigation.
+        // Ensure any participant enrolled in First Shift is archived in reentry_clients so they never post to Reentry Nav.
+        if (activeFsRecordIds.length > 0) {
+            const fsPlaceholders = activeFsRecordIds.map(() => '?').join(',');
+            db.prepare(`
+                UPDATE reentry_clients
+                SET status = 'archived'
+                WHERE apricot_id IS NOT NULL AND apricot_id IN (${fsPlaceholders})
+            `).run(...activeFsRecordIds);
         }
 
         // 1. Sync Active First Shift Participants into `users` & `participant_profiles`

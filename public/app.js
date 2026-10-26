@@ -10362,7 +10362,36 @@ function renderSupervisorFunnelReport(funnel, containerId = 'sup-funnel-report-c
     const container = document.getElementById(containerId);
     if (!container || !funnel) return;
 
-    const progRows = Object.values(funnel.byProgramAndCenter || {});
+    let progRows = funnel.programRows || funnel.byProgramAndCenterRows;
+    if (!progRows || !Array.isArray(progRows) || progRows.length === 0) {
+        progRows = [];
+        if (funnel.byProgramAndCenter && typeof funnel.byProgramAndCenter === 'object') {
+            Object.entries(funnel.byProgramAndCenter).forEach(([program, centers]) => {
+                if (centers && typeof centers === 'object') {
+                    Object.entries(centers).forEach(([center, stats]) => {
+                        if (stats && typeof stats === 'object') {
+                            const enrolled = stats.totalEnrollments ?? stats.enrolled ?? 0;
+                            const active = stats.active ?? 0;
+                            const exited = stats.totalExits ?? stats.exited ?? 0;
+                            if (enrolled > 0 || active > 0 || exited > 0) {
+                                progRows.push({
+                                    program,
+                                    center,
+                                    totalEnrollments: enrolled,
+                                    enrolled,
+                                    active,
+                                    totalExits: exited,
+                                    exited,
+                                    exitReasons: stats.exitReasons || {}
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+        }
+    }
+
     const exitRows = funnel.exitDetails || [];
     const ph = funnel.phaseFunnel || {};
     const wl = funnel.waitlist || {};
@@ -10388,15 +10417,20 @@ function renderSupervisorFunnelReport(funnel, containerId = 'sup-funnel-report-c
                         </tr>
                     </thead>
                     <tbody>
-                        ${progRows.map(r => {
+                        ${progRows.length === 0 ? '<tr><td colspan="6" style="text-align:center; padding: 16px; color:#64748b;">No enrollment data found.</td></tr>' : progRows.map(r => {
+                            const progName = r.program || 'First Shift';
+                            const centerName = r.center || 'All Centers';
+                            const enrolled = r.totalEnrollments ?? r.enrolled ?? 0;
+                            const active = r.active ?? 0;
+                            const exited = r.totalExits ?? r.exited ?? 0;
                             const reasons = Object.entries(r.exitReasons || {}).map(([k, v]) => `${escapeHtml(k)}: <strong>${v}</strong>`).join(' • ') || '—';
                             return `
                                 <tr>
-                                    <td style="font-weight: 700; color: #0f172a;">${escapeHtml(r.program)}</td>
-                                    <td>📍 ${escapeHtml(r.center)}</td>
-                                    <td style="text-align: center; font-weight: 700;">${r.enrolled}</td>
-                                    <td style="text-align: center; font-weight: 800; color: #16a34a;">${r.active}</td>
-                                    <td style="text-align: center; font-weight: 700; color: #dc2626;">${r.exited}</td>
+                                    <td style="font-weight: 700; color: #0f172a;">${escapeHtml(progName)}</td>
+                                    <td>📍 ${escapeHtml(centerName)}</td>
+                                    <td style="text-align: center; font-weight: 700;">${enrolled}</td>
+                                    <td style="text-align: center; font-weight: 800; color: #16a34a;">${active}</td>
+                                    <td style="text-align: center; font-weight: 700; color: #dc2626;">${exited}</td>
                                     <td style="font-size: 12px; color: #475569;">${reasons}</td>
                                 </tr>
                             `;
