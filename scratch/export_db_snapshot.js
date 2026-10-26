@@ -24,7 +24,11 @@ const tables = [
     'reentry_client_sessions',
     'reentry_client_goals',
     'reentry_client_agenda',
-    'reentry_client_briefcase'
+    'reentry_client_briefcase',
+    'apricot_sheet_cache',
+    'apricot_workbook_state',
+    'apricot_processed_notes',
+    'apricot_participant_evaluations'
 ];
 
 const snapshot = {};

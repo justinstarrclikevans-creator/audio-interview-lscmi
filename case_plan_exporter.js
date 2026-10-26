@@ -104,16 +104,23 @@ function generateCasePlanHtml(data, options = {}) {
     const completedGoals = goals.filter(g => g.status === 'completed');
     const blockedGoals = goals.filter(g => g.status === 'blocked');
 
-    // Group briefcase items by domain
+    // Group briefcase items by domain (Reentry Navigation excludes SkillCat / CBT items)
     const briefcaseByDomain = {};
     for (const dKey of Object.keys(DOMAIN_CONFIG)) {
+        if (dKey === 'skillcat') continue; // Reentry Navigation only includes Goals & Gates, not SkillCat/CBT
         briefcaseByDomain[dKey] = briefcase.filter(b => b.domain === dKey);
     }
     // Any items with other domain keys
-    const otherItems = briefcase.filter(b => !DOMAIN_CONFIG[b.domain]);
+    const otherItems = briefcase.filter(b => !DOMAIN_CONFIG[b.domain] && b.domain !== 'skillcat');
     if (otherItems.length > 0) {
         briefcaseByDomain['other'] = otherItems;
     }
+
+    const assignedNavigator = client.case_manager || staffName || 'Daisy Boynton';
+    const g1Pct = client.gate1_pct ?? 0;
+    const g2Pct = client.gate2_pct ?? 0;
+    const g3Pct = client.gate3_pct ?? 0;
+    const g4Pct = client.gate4_pct ?? 0;
 
     // Rendered Agenda
     let renderedAgenda = '';
@@ -664,14 +671,14 @@ function generateCasePlanHtml(data, options = {}) {
         <div class="header-letterhead">
             <div>
                 <div class="brand-title">TURN90</div>
-                <div class="brand-subtitle">Reentry Navigation &bull; Individualized Living Case Plan</div>
-                <span class="confidential-tag">🔒 Confidential Client Health & Stability Record</span>
+                <div class="brand-subtitle">Reentry Navigation &bull; Goals &amp; Briefcase Gates Case Plan (Non-CBT)</div>
+                <span class="confidential-tag">🔒 Reentry Navigation &bull; Goals &amp; Gates 1–4</span>
             </div>
             <div class="header-meta">
                 <div><strong>Center:</strong> ${escapeHtml(client.location)}, SC</div>
                 <div><strong>Date Generated:</strong> ${todayStr}</div>
                 <div><strong>Apricot ID:</strong> ${escapeHtml(client.apricot_id || 'N/A')}</div>
-                <div><strong>Case Navigator:</strong> ${escapeHtml(staffName)}</div>
+                <div><strong>Assigned Case Manager:</strong> ${escapeHtml(assignedNavigator)}</div>
             </div>
         </div>
 
@@ -683,35 +690,35 @@ function generateCasePlanHtml(data, options = {}) {
                     <span class="tier-badge ${tierClass}">${tierText}</span>
                 </div>
                 <div class="client-details-grid">
-                    <div><strong>Phone:</strong> ${escapeHtml(client.phone || 'On file')}</div>
-                    <div><strong>Email:</strong> ${escapeHtml(client.email || 'None on file')}</div>
-                    <div><strong>Enrolled Center:</strong> ${escapeHtml(client.location)} Center Operations</div>
-                    <div><strong>Caseload Status:</strong> Active Stabilization</div>
+                    <div><strong>Assigned Case Manager:</strong> ${escapeHtml(assignedNavigator)}</div>
+                    <div><strong>Enrollment Start:</strong> ${escapeHtml(client.enrollment_start || 'On file')}</div>
+                    <div><strong>Enrolled Center:</strong> ${escapeHtml(client.location)} Center</div>
+                    <div><strong>Program Scope:</strong> Goals &amp; Briefcase Gates 1–4 (No CBT)</div>
                 </div>
             </div>
             <div class="client-notes-box">
-                <strong style="color: #0f172a; display: block; margin-bottom: 3px;">Primary Navigation Focus / Intake Notes:</strong>
-                ${client.notes ? escapeHtml(client.notes) : '<em>No initial triage intake notes entered.</em>'}
+                <strong style="color: #0f172a; display: block; margin-bottom: 3px;">Stated Reentry Navigation Goals &amp; Plan:</strong>
+                ${client.case_plan_text || client.notes ? escapeHtml(client.case_plan_text || client.notes) : '<em>No initial triage intake notes entered.</em>'}
             </div>
         </div>
 
         <!-- Metrics Overview Strip -->
         <div class="metrics-strip">
             <div class="metric-cell">
-                <div class="metric-num">${inProgressGoals.length}</div>
-                <div class="metric-lbl">Active In-Progress Goals</div>
+                <div class="metric-num">${g1Pct}%</div>
+                <div class="metric-lbl">Gate 1 (Vital ID &amp; Meds)</div>
             </div>
             <div class="metric-cell">
-                <div class="metric-num">${verifiedItems.length} <span style="font-size: 11pt; color: #64748b;">/ ${briefcase.length}</span></div>
-                <div class="metric-lbl">Briefcase Items Verified</div>
-            </div>
-            <div class="metric-cell ${criticalBarriers.length > 0 ? 'alert' : ''}">
-                <div class="metric-num">${criticalBarriers.length}</div>
-                <div class="metric-lbl">Critical Active Barriers</div>
+                <div class="metric-num">${g2Pct}%</div>
+                <div class="metric-lbl">Gate 2 (Housing, DMV, Resume)</div>
             </div>
             <div class="metric-cell">
-                <div class="metric-num">${completedGoals.length}</div>
-                <div class="metric-lbl">Milestones Completed</div>
+                <div class="metric-num">${g3Pct}%</div>
+                <div class="metric-lbl">Gate 3 (Health &amp; Banking)</div>
+            </div>
+            <div class="metric-cell">
+                <div class="metric-num">${g4Pct}%</div>
+                <div class="metric-lbl">Gate 4 (Work Gear &amp; Transit)</div>
             </div>
         </div>
 
@@ -920,8 +927,314 @@ function generateCasePlanHtml(data, options = {}) {
 </html>`;
 }
 
+function generateApricotCasePlanHtml(evalContext, options = {}) {
+    if (!evalContext) {
+        throw new Error('Participant context is required to generate an Apricot Case Plan.');
+    }
+    const autoprint = options.autoprint === true;
+    const isReentryNav = (evalContext.program || '').toLowerCase().includes('reentry');
+    const todayStr = new Date().toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+
+    const g1 = evalContext.gate1Pct ?? 0;
+    const g2 = evalContext.gate2Pct ?? 0;
+    const g3 = evalContext.gate3Pct ?? 0;
+    const g4 = evalContext.gate4Pct ?? 0;
+    const staffName = evalContext.caseManager || evalContext.lastContactStaff || (isReentryNav ? 'Daisy Boynton' : 'First Shift Case Manager');
+    const nextSteps = Array.isArray(evalContext.whatToWorkOnNext) ? evalContext.whatToWorkOnNext : [];
+    const recentNotes = Array.isArray(evalContext.recentNotes) ? evalContext.recentNotes : [];
+    const headerColor = isReentryNav ? '#0f766e' : '#1e3a8a';
+    const badgeBg = isReentryNav ? '#f0fdfa' : '#eff6ff';
+    const badgeBorder = isReentryNav ? '#99f6e4' : '#bfdbfe';
+
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Turn90 Case Plan — ${escapeHtml(evalContext.name)} (#${escapeHtml(evalContext.recordId)})</title>
+    <style>
+        @page { size: letter portrait; margin: 0.5in; }
+        * { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: #0f172a;
+            background: #f1f5f9;
+            margin: 0;
+            padding: 0;
+            font-size: 10pt;
+            line-height: 1.45;
+        }
+        .print-toolbar {
+            background: #0f172a;
+            color: #ffffff;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+        .print-btn {
+            background: #0d9488;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .close-btn {
+            background: transparent;
+            color: #cbd5e1;
+            border: 1px solid #475569;
+            padding: 7px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .plan-sheet {
+            max-width: 8.5in;
+            margin: 24px auto;
+            background: #ffffff;
+            padding: 0.55in;
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.1);
+            border-radius: 8px;
+        }
+        .header-letterhead {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 3px solid ${headerColor};
+            padding-bottom: 14px;
+            margin-bottom: 18px;
+        }
+        .brand-title { font-size: 20pt; font-weight: 900; color: ${headerColor}; margin: 0; }
+        .brand-subtitle { font-size: 9.5pt; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.6px; margin-top: 2px; }
+        .scope-tag {
+            display: inline-block;
+            margin-top: 6px;
+            background: ${badgeBg};
+            color: ${headerColor};
+            border: 1px solid ${badgeBorder};
+            font-size: 8pt;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+        .metrics-strip {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+        .metric-cell {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 10px;
+            text-align: center;
+        }
+        .metric-num { font-size: 15pt; font-weight: 800; color: ${headerColor}; }
+        .metric-lbl { font-size: 7.5pt; font-weight: 700; color: #64748b; text-transform: uppercase; margin-top: 2px; }
+        .section-heading {
+            background: #0f172a;
+            color: #ffffff;
+            padding: 7px 12px;
+            font-size: 9.5pt;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            border-radius: 4px;
+            margin: 18px 0 10px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        .box {
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 12px 14px;
+            background: #ffffff;
+            margin-bottom: 12px;
+        }
+        .step-item {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+            padding: 6px 0;
+            border-bottom: 1px dashed #e2e8f0;
+            font-size: 9.5pt;
+        }
+        .step-item:last-child { border-bottom: none; }
+        .signature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            margin-top: 28px;
+            padding-top: 16px;
+            border-top: 2px solid #cbd5e1;
+        }
+        .sig-line { border-bottom: 1px solid #0f172a; height: 28px; margin-bottom: 5px; }
+        @media print {
+            body { background: #fff; }
+            .no-print { display: none !important; }
+            .plan-sheet { box-shadow: none; margin: 0; padding: 0; max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="print-toolbar no-print">
+        <div>
+            <strong>Turn90 ${escapeHtml(evalContext.program)} Case Plan</strong>
+            <span style="margin-left:10px;color:#94a3b8;">${escapeHtml(evalContext.name)} (#${escapeHtml(evalContext.recordId)}) &bull; ${escapeHtml(evalContext.location)}</span>
+        </div>
+        <div style="display:flex;gap:10px;">
+            <button class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+            <button class="close-btn" onclick="window.close()">✕ Close</button>
+        </div>
+    </div>
+
+    <div class="plan-sheet">
+        <div class="header-letterhead">
+            <div>
+                <div class="brand-title">TURN90</div>
+                <div class="brand-subtitle">${isReentryNav ? 'Reentry Navigation • Goals & Briefcase Gates Case Plan' : 'First Shift • CBT, Briefcase & Gates Case Plan'}</div>
+                <span class="scope-tag">${isReentryNav ? 'Goals & Briefcase Gates 1–4 Only (No CBT)' : 'CBT Focus Areas + Briefcase Gates 1–4'}</span>
+            </div>
+            <div style="text-align:right;font-size:8.5pt;color:#334155;line-height:1.5;">
+                <div><strong>Center:</strong> ${escapeHtml(evalContext.location)}</div>
+                <div><strong>Apricot ID:</strong> #${escapeHtml(evalContext.recordId)}</div>
+                <div><strong>Case Manager:</strong> ${escapeHtml(staffName)}</div>
+                <div><strong>Generated:</strong> ${todayStr}</div>
+            </div>
+        </div>
+
+        <div class="box" style="background:#f8fafc;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                <strong style="font-size:13pt;">${escapeHtml(evalContext.name)}</strong>
+                <span style="font-size:8.5pt;font-weight:700;padding:3px 8px;border-radius:999px;background:${badgeBg};color:${headerColor};border:1px solid ${badgeBorder};">
+                    ${escapeHtml(evalContext.casePlanStatus || 'Case Plan Review')}
+                </span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:9pt;color:#334155;">
+                <div><strong>Program:</strong> ${escapeHtml(evalContext.program)}</div>
+                <div><strong>Center:</strong> ${escapeHtml(evalContext.location)}</div>
+                <div><strong>Assigned Staff:</strong> ${escapeHtml(staffName)}</div>
+                <div><strong>Last Contact:</strong> ${escapeHtml(evalContext.lastContactDate || 'On File')} (${escapeHtml(evalContext.lastContactActivity || 'Session')})</div>
+            </div>
+        </div>
+
+        <div class="metrics-strip">
+            <div class="metric-cell">
+                <div class="metric-num">${g1}%</div>
+                <div class="metric-lbl">Gate 1 (ID &amp; Meds)</div>
+            </div>
+            <div class="metric-cell">
+                <div class="metric-num">${g2}%</div>
+                <div class="metric-lbl">Gate 2 (Housing/DMV/Resume)</div>
+            </div>
+            <div class="metric-cell">
+                <div class="metric-num">${g3}%</div>
+                <div class="metric-lbl">Gate 3 (Health &amp; Banking)</div>
+            </div>
+            <div class="metric-cell">
+                <div class="metric-num">${g4}%</div>
+                <div class="metric-lbl">Gate 4 (Work Gear &amp; Transit)</div>
+            </div>
+        </div>
+
+        ${isReentryNav ? `
+        <div class="section-heading">
+            <span>🎯 Reentry Navigation Stated Goals (Non-CBT)</span>
+            <span>Goals &amp; Gates Scope</span>
+        </div>
+        <div class="box">
+            <p style="margin:0;font-size:9.5pt;color:#1e293b;">
+                ${evalContext.casePlanDetails?.goalsText ? escapeHtml(evalContext.casePlanDetails.goalsText) : '<em style="color:#b91c1c;">No formal Reentry Navigation Case Plan goal text entered in Apricot yet — complete intake goal setting with participant.</em>'}
+            </p>
+        </div>
+        ` : `
+        <div class="section-heading">
+            <span>🧠 First Shift CBT Case Plan Focus Areas &amp; Risky Situations</span>
+            <span>CBT + Briefcase Scope</span>
+        </div>
+        <div class="box">
+            <div style="margin-bottom:10px;">
+                <strong style="color:#1e3a8a;">Focus Area 1 (Social Skill / Thinking Pattern):</strong>
+                <div style="margin-top:3px;">${evalContext.casePlanDetails?.focus1 ? escapeHtml(evalContext.casePlanDetails.focus1) : '<em style="color:#b91c1c;">Not yet entered in Apricot</em>'}</div>
+                <div style="margin-top:4px;font-size:8.5pt;color:#475569;"><strong>Situations Where This Shows Up:</strong> ${evalContext.casePlanDetails?.situations1 ? escapeHtml(evalContext.casePlanDetails.situations1) : '<em>Blank — needs specific real-world triggers documented</em>'}</div>
+            </div>
+            <div style="border-top:1px solid #e2e8f0;padding-top:10px;">
+                <strong style="color:#1e3a8a;">Focus Area 2 (Social Skill / Thinking Pattern):</strong>
+                <div style="margin-top:3px;">${evalContext.casePlanDetails?.focus2 ? escapeHtml(evalContext.casePlanDetails.focus2) : '<em style="color:#b91c1c;">Not yet entered in Apricot</em>'}</div>
+                <div style="margin-top:4px;font-size:8.5pt;color:#475569;"><strong>Situations Where This Shows Up:</strong> ${evalContext.casePlanDetails?.situations2 ? escapeHtml(evalContext.casePlanDetails.situations2) : '<em>Blank — needs specific real-world triggers documented</em>'}</div>
+            </div>
+        </div>
+        `}
+
+        <div class="section-heading">
+            <span>📋 What to Work on Next in Case Management</span>
+            <span>Grounded in Case Plan, Briefcase &amp; Gates 1–4</span>
+        </div>
+        <div class="box">
+            ${nextSteps.length > 0 ? nextSteps.map(s => `
+                <div class="step-item">
+                    <span>☐</span>
+                    <span>${escapeHtml(s)}</span>
+                </div>
+            `).join('') : '<div>Review Briefcase Gates 1–4 and active case plan goals.</div>'}
+        </div>
+
+        <div class="section-heading">
+            <span>🔍 Case Plan &amp; Briefcase Operational Feedback</span>
+            <span>Supervisor / PM Review</span>
+        </div>
+        <div class="box" style="font-size:9pt;color:#334155;">
+            <div style="margin-bottom:8px;"><strong>Current Assessment:</strong> ${escapeHtml(evalContext.operationalFeedback || '')}</div>
+            <div><strong>Case Note Summary:</strong> ${escapeHtml(evalContext.caseNoteAnalysis || '')}</div>
+        </div>
+
+        ${recentNotes.length > 0 ? `
+        <div class="section-heading">
+            <span>📜 Recent Deduplicated Case Notes (${recentNotes.length})</span>
+            <span>Apricot Sync</span>
+        </div>
+        <div class="box" style="font-size:8.5pt;color:#475569;">
+            ${recentNotes.slice(0, 3).map(n => `
+                <div style="padding:5px 0;border-bottom:1px dashed #e2e8f0;">
+                    <strong>${escapeHtml(n.contact_date || '')} &bull; ${escapeHtml(n.staff_name || '')} (${escapeHtml(n.activity || '')}):</strong>
+                    <div>${escapeHtml((n.note_text || '').slice(0, 260))}${(n.note_text || '').length > 260 ? '...' : ''}</div>
+                </div>
+            `).join('')}
+        </div>
+        ` : ''}
+
+        <div class="signature-grid">
+            <div>
+                <div class="sig-line"></div>
+                <div style="font-size:8pt;font-weight:700;text-transform:uppercase;color:#475569;">Participant Signature (${escapeHtml(evalContext.name)})</div>
+                <div style="font-size:8pt;color:#64748b;margin-top:6px;">Date: ________________________</div>
+            </div>
+            <div>
+                <div class="sig-line"></div>
+                <div style="font-size:8pt;font-weight:700;text-transform:uppercase;color:#475569;">Case Manager Signature (${escapeHtml(staffName)})</div>
+                <div style="font-size:8pt;color:#64748b;margin-top:6px;">Date: ________________________</div>
+            </div>
+        </div>
+    </div>
+    ${autoprint ? `<script>window.onload=function(){setTimeout(function(){window.print();},400);};</script>` : ''}
+</body>
+</html>`;
+}
+
 module.exports = {
     generateCasePlanHtml,
+    generateApricotCasePlanHtml,
     escapeHtml,
     DOMAIN_CONFIG,
     CATEGORY_LABELS

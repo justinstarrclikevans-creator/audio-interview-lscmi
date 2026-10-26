@@ -4,6 +4,7 @@ const { GoogleAIFileManager } = require("@google/generative-ai/server");
 const db = require('./db').db;
 const path = require('path');
 const fs = require('fs');
+const { getParticipantCoachingContext, registerProcessedCaseNote } = require('./services/apricot_eval_engine');
 
 function computeDeterministicCmScore(evaluation) {
     if (!evaluation || !evaluation.scores || typeof evaluation.scores !== 'object') {
@@ -32,6 +33,9 @@ function buildLongitudinalContext(apricotId) {
         return {
             hasHistory: false,
             priorSessionCount: 0,
+            program: 'First Shift',
+            isReentryNav: false,
+            evalContext: null,
             contextBlock: `No Apricot ID was linked for this upload. Evaluate this session based on the selected Session Type without assuming what was or wasn't covered in other weeks.`
         };
     }
@@ -49,28 +53,72 @@ function buildLongitudinalContext(apricotId) {
         console.warn("[CM Evaluation] Could not query prior CM evaluations:", e.message);
     }
 
-    let profileContext = '';
+    let evalContext = null;
     try {
-        const prof = db.prepare(`
-            SELECT u.id as user_id, p.current_gate, p.dl_status, p.dl_notes,
-                   p.housing_status, p.transportation_status, p.child_support_status
-            FROM participant_profiles p
-            JOIN users u ON u.id = p.user_id
-            WHERE p.record_id = ?
-            LIMIT 1
-        `).get(cleanId);
+        evalContext = getParticipantCoachingContext(cleanId);
+    } catch (e) {
+        console.warn("[CM Evaluation] Could not load Apricot evaluation context:", e.message);
+    }
 
-        if (prof) {
-            const completedBriefcase = db.prepare(`
-                SELECT title, status, notes FROM briefcase_items
-                WHERE user_id = ?
-            `).all(prof.user_id);
+    const program = evalContext?.program || 'First Shift';
+    const isReentryNav = program.toLowerCase().includes('reentry');
 
-            const briefcaseSummary = completedBriefcase.length > 0
-                ? completedBriefcase.map(b => `- ${b.title}: ${b.status}${b.notes ? ` (${b.notes})` : ''}`).join('\n')
-                : 'No specific briefcase items logged yet.';
+    let profileContext = '';
+    if (evalContext) {
+        const cpDetails = evalContext.casePlanDetails || {};
+        const casePlanBlock = isReentryNav
+            ? `PROGRAM: REENTRY NAVIGATION (Assigned CM: ${evalContext.caseManager || 'Daisy Boynton'})
+- SCOPE MANDATE: Reentry Navigation Case Plans ONLY include Stated Goals and Briefcase Gates 1–4. They do NOT work on CBT!
+- Case Plan Status: ${evalContext.casePlanStatus}
+- Stated Reentry Navigation Goals: ${cpDetails.goalsText || 'Not yet entered in Apricot'}`
+            : `PROGRAM: FIRST SHIFT (CBT + Briefcase + Gates 1–4)
+- Case Plan Status: ${evalContext.casePlanStatus}
+- CBT Focus Area 1: ${cpDetails.focus1 || 'Not yet entered'} (Situations: ${cpDetails.situations1 || 'Blank'})
+- CBT Focus Area 2: ${cpDetails.focus2 || 'Not yet entered'} (Situations: ${cpDetails.situations2 || 'Blank'})`;
 
-            profileContext = `
+        const apricotNotesBlock = Array.isArray(evalContext.recentNotes) && evalContext.recentNotes.length > 0
+            ? evalContext.recentNotes.slice(0, 5).map(n => `  * [${n.contact_date || 'Date N/A'} • ${n.staff_name || 'Staff'} • ${n.activity || 'Contact'}]: ${(n.note_text || '').slice(0, 320)}`).join('\n')
+            : '  * No prior Apricot case notes synced.';
+
+        const nextStepsBlock = Array.isArray(evalContext.whatToWorkOnNext) && evalContext.whatToWorkOnNext.length > 0
+            ? evalContext.whatToWorkOnNext.map(s => `  - ${s}`).join('\n')
+            : '  - Review Case Plan and Briefcase Gates 1–4.';
+
+        profileContext = `
+APRICOT MASTER CASE PLAN, BRIEFCASE & GATES STATUS (Apricot ID #${evalContext.recordId}):
+${casePlanBlock}
+- Briefcase Gate Progress:
+  * Gate 1 (Vital ID, Birth Cert, SS Card, Meds): ${evalContext.gate1Pct ?? 0}%
+  * Gate 2 (Housing, DMV/DL, Resume, Benefits): ${evalContext.gate2Pct ?? 0}%
+  * Gate 3 (Health Screenings, Bank Account, Credit): ${evalContext.gate3Pct ?? 0}%
+  * Gate 4 (Work Gear, Transit Plan, Job Placement): ${evalContext.gate4Pct ?? 0}%
+- Current "What to Work on Next" Priorities before this session:
+${nextStepsBlock}
+- Recent Deduplicated Case Notes from Apricot (${evalContext.caseNoteCount || 0} total):
+${apricotNotesBlock}
+`;
+    } else {
+        try {
+            const prof = db.prepare(`
+                SELECT u.id as user_id, p.current_gate, p.dl_status, p.dl_notes,
+                       p.housing_status, p.transportation_status, p.child_support_status
+                FROM participant_profiles p
+                JOIN users u ON u.id = p.user_id
+                WHERE p.record_id = ?
+                LIMIT 1
+            `).get(cleanId);
+
+            if (prof) {
+                const completedBriefcase = db.prepare(`
+                    SELECT title, status, notes FROM briefcase_items
+                    WHERE user_id = ?
+                `).all(prof.user_id);
+
+                const briefcaseSummary = completedBriefcase.length > 0
+                    ? completedBriefcase.map(b => `- ${b.title}: ${b.status}${b.notes ? ` (${b.notes})` : ''}`).join('\n')
+                    : 'No specific briefcase items logged yet.';
+
+                profileContext = `
 CURRENT PARTICIPANT BRIEFCASE & GATE STATUS (Apricot ID #${cleanId}):
 - Current Gate: Gate ${prof.current_gate || 1}
 - Driver's License: ${prof.dl_status || 'unknown'} ${prof.dl_notes ? `(${prof.dl_notes})` : ''}
@@ -80,15 +128,19 @@ CURRENT PARTICIPANT BRIEFCASE & GATE STATUS (Apricot ID #${cleanId}):
 - Briefcase Checklist Progress:
 ${briefcaseSummary}
 `;
+            }
+        } catch (e) {
+            console.warn("[CM Evaluation] Could not load profile context for Apricot ID:", e.message);
         }
-    } catch (e) {
-        console.warn("[CM Evaluation] Could not load profile context for Apricot ID:", e.message);
     }
 
     if (priorEvals.length === 0 && !profileContext) {
         return {
             hasHistory: false,
             priorSessionCount: 0,
+            program,
+            isReentryNav,
+            evalContext,
             contextBlock: `Apricot ID #${cleanId}: This is the FIRST recorded Case Management evaluation in the system for this Apricot ID.`
         };
     }
@@ -102,18 +154,21 @@ ${briefcaseSummary}
     }).join('\n\n');
 
     return {
-        hasHistory: priorEvals.length > 0,
-        priorSessionCount: priorEvals.length,
+        hasHistory: priorEvals.length > 0 || Boolean(evalContext && evalContext.caseNoteCount > 0),
+        priorSessionCount: priorEvals.length + (evalContext?.caseNoteCount || 0),
+        program,
+        isReentryNav,
+        evalContext,
         contextBlock: `
 === LONGITUDINAL PARTICIPANT HISTORY (APRICOT ID: #${cleanId}) ===
-Total Prior Recorded Sessions for this Client: ${priorEvals.length}
+Total Prior Recorded Sessions / Notes for this Client: ${priorEvals.length + (evalContext?.caseNoteCount || 0)}
 ${profileContext}
-${priorEvals.length > 0 ? `PRIOR SESSION LOGS (CHRONOLOGICAL):\n${historyLines}` : 'No prior session recordings logged yet.'}
+${priorEvals.length > 0 ? `PRIOR RECORDED AUDIO EVALUATIONS (CHRONOLOGICAL):\n${historyLines}` : ''}
 
-CRITICAL LONGITUDINAL GRADING MANDATE:
-- Use the above history to understand what the Case Manager and [Client] have ALREADY covered in previous weeks!
+CRITICAL LONGITUDINAL GRADING & CONTINUOUS COACHING MANDATE:
+- Use the above Case Plan, Briefcase Gates 1–4, and prior notes to understand what the Case Manager and [Client] have ALREADY covered!
 - NEVER penalize or deduct points from the Case Manager for not repeating intake items, barriers, or exercises that were ALREADY addressed in a prior session.
-- Recognize that Case Managers see [Client] daily in the center/hallways—sometimes a goal from last week was already checked off informally the day before. Do NOT heavily penalize if a prior goal is only briefly acknowledged or already resolved.
+- Ground your "next_session_recommendations" ("What to Work on Next in Case Management") directly in the participant's Case Plan, Briefcase items, and Gates 1–4 progress shown above.
 ==================================================================
 `
     };
@@ -124,6 +179,7 @@ async function evaluateCaseManagementMedia(mediaFiles, sessionTitle, location, c
 
     const apricotId = options.apricotId ? String(options.apricotId).trim() : null;
     const longitudinal = buildLongitudinalContext(apricotId);
+    const isReentryNav = longitudinal.isReentryNav || (options.program || '').toLowerCase().includes('reentry');
 
     // Determine session type: explicit option, or infer if first session
     let sessionType = options.sessionType || 'auto';
@@ -136,26 +192,34 @@ async function evaluateCaseManagementMedia(mediaFiles, sessionTitle, location, c
         }
     }
 
-    const cadenceInstructions = sessionType === 'first_session'
+    const cadenceInstructions = isReentryNav
         ? `
-=== STAGE-SPECIFIC RUBRIC: FIRST SESSION (INITIAL INTAKE / ACTION PLAN ALIGNMENT — ~45 MINS) ===
+=== PROGRAM-SPECIFIC RUBRIC: REENTRY NAVIGATION (GOALS & BRIEFCASE GATES 1–4 ONLY — NO CBT) ===
+CRITICAL PROGRAM DISTINCTION: This participant is enrolled in REENTRY NAVIGATION (typically managed by Daisy Boynton or a Reentry Navigator).
+- Reentry Navigation Case Plans ONLY include Stated Goals and Briefcase Gates 1–4 (Gate 1: Vital ID/SS Card/Birth Cert/Meds; Gate 2: Housing/DMV/Resume/Benefits; Gate 3: Health/Banking; Gate 4: Work Gear/Transit/Job Placement).
+- Reentry Navigation does NOT work on CBT (no Thinking Reports, no CBT focus areas/worksheets).
+- NEVER penalize a Reentry Navigator for not doing CBT! Set "cbt_application" score to 5.0 (representing Goal & Gate Alignment) and focus your evaluation, Apricot Case Note, and "What to Work on Next in Case Management" strictly on their Case Plan Goals, Briefcase items, and Gates 1–4.
+`
+        : (sessionType === 'first_session'
+        ? `
+=== STAGE-SPECIFIC RUBRIC: FIRST SHIFT — FIRST SESSION (INITIAL INTAKE / ACTION PLAN ALIGNMENT — ~45 MINS) ===
 This is a FIRST SESSION with [Client]. A Case Manager CANNOT and SHOULD NOT try to solve every problem or complete all 18 program steps in Session 1!
 Evaluate the Case Manager strictly against the realistic 45-Minute First Session Cadence:
 1. Rapport & Psychological Safety: Building genuine trust, Situated Empathy (SYNAPSE), and non-judgmental connection.
-2. Reviewing & Collaborating on the Action Plan: Reviewing the initial assessment/Action Plan with [Client], asking if [Client] agrees with the focus areas, and noting any adjustments if [Client] wants to prioritize different goals (using the Adjust Action Plan workflow).
-3. Initial Briefcase & Stability Check: Identifying immediate stability needs (ID/Driver's License, Housing, Transportation, Voc Rehab work boots/clothes voucher, Welvista/Medical).
+2. Reviewing & Collaborating on the Action Plan: Reviewing the initial assessment/CBT Case Plan with [Client], asking if [Client] agrees with the focus areas and risky situations, and noting any adjustments.
+3. Initial Briefcase & Gate 1–4 Check: Identifying immediate stability needs across Gates 1–4 (ID/Driver's License, Housing, Transportation, Voc Rehab work boots/clothes voucher, Welvista/Medical).
 4. Setting 1–2 Realistic Weekly Process Goals: Helping [Client] set 1–2 achievable process steps for Week 1.
 CRITICAL FIRST-SESSION RULE: DO NOT penalize the Case Manager for not doing deep CBT skill drills, roleplays, or solving every long-term barrier in Session 1!
 `
         : `
-=== STAGE-SPECIFIC RUBRIC: WEEKLY FOLLOW-UP SESSION (REALISTIC 45-MINUTE CADENCE) ===
-This is a WEEKLY FOLLOW-UP SESSION with [Client]. Case Management meetings are roughly 45 minutes long—do NOT expect the Case Manager to cram 18 different interventions into a single 45-minute meeting!
+=== STAGE-SPECIFIC RUBRIC: FIRST SHIFT — WEEKLY FOLLOW-UP SESSION (REALISTIC 45-MINUTE CADENCE) ===
+This is a WEEKLY FOLLOW-UP SESSION with [Client] in First Shift.
 Evaluate the Case Manager strictly against the realistic 45-Minute Follow-Up Cadence:
-1. Goal Check-In: Checking progress on current goals (NOTE: Case Managers interact with [Client] daily in the hallway/center, so if a goal from last week was already resolved informally, do NOT penalize the CM for moving forward).
-2. Briefcase & Referrals Progress: Advancing active Briefcase items and referrals (e.g., Voc Rehab work boots/clothing voucher, DMV, Welvista, housing, job readiness).
-3. Focused CBT / Personal Pattern Application: Practicing ONE relevant CBT tool, thinking report, or personal pattern connected to [Client]'s real-world week (using accessible "5th-grade" language rather than clinical therapy jargon).
-4. Next Week's Process Goal: Collaboratively setting 1–2 clear, controllable process goals for the upcoming week.
-`;
+1. Case Plan & Goal Check-In: Checking progress on current goals and Case Plan focus areas/situations.
+2. Briefcase & Gates 1–4 Progress: Advancing active Briefcase items across Gates 1–4 and referrals (e.g., Voc Rehab work boots/clothing voucher, DMV, Welvista, housing, job readiness).
+3. Focused CBT / Personal Pattern Application: Practicing ONE relevant CBT tool, thinking report, or personal pattern connected to [Client]'s Case Plan focus areas and real-world week (using accessible "5th-grade" language rather than clinical therapy jargon).
+4. Next Week's Process Goal ("What to Work on Next"): Collaboratively setting 1–3 clear, controllable next steps grounded in their Case Plan, Briefcase, and Gates 1–4.
+`);
 
     const genAI = new GoogleGenerativeAI(apiKey);
     const fileManager = new GoogleAIFileManager(apiKey);
@@ -378,6 +442,27 @@ At the very end of your response, include \`===SESSION_TRANSCRIPT_START===\` fol
         );
 
         evaluation.id = info.lastInsertRowid;
+
+        if (apricotId && evaluation.structured_meeting_notes_for_apricot) {
+            try {
+                registerProcessedCaseNote({
+                    recordId: apricotId,
+                    participantName: longitudinal.evalContext?.name || '',
+                    contactDate: new Date().toLocaleDateString('en-US'),
+                    staffName: cmName || 'Staff CM',
+                    activity: sessionType === 'first_session' ? 'Initial Case Management' : 'Case Management Follow-Up',
+                    location: location || '',
+                    noteText: evaluation.structured_meeting_notes_for_apricot,
+                    source: 'cm_recording_upload',
+                    nextStepsArray: Array.isArray(evaluation.next_session_recommendations)
+                        ? evaluation.next_session_recommendations
+                        : []
+                });
+            } catch (regErr) {
+                console.warn("[CM Evaluation] Could not register processed case note:", regErr.message);
+            }
+        }
+
         return evaluation;
     } finally {
         for (const res of uploadResults) {

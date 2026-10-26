@@ -5,6 +5,7 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 const { GoogleAIFileManager } = require("@google/generative-ai/server");
 const fs = require('fs');
 const path = require('path');
+const { getParticipantCoachingContext, registerProcessedCaseNote } = require('./apricot_eval_engine');
 
 function getReentryModel(apiKey) {
     const genAI = new GoogleGenerativeAI(apiKey);
@@ -63,16 +64,30 @@ async function analyzeReentrySession({ client, sessionTitle, sessionType, sessio
                 .map(b => `- [${b.status.toUpperCase()}] ${b.title}: ${b.notes || ''}`).join('\n')
             : 'Briefcase currently pending.';
 
+        let apricotContext = null;
+        try {
+            if (client.apricot_id) {
+                apricotContext = getParticipantCoachingContext(client.apricot_id);
+            }
+        } catch (e) {}
+
+        const gateSummary = apricotContext
+            ? `Gate 1: ${apricotContext.gate1Pct ?? 0}% | Gate 2: ${apricotContext.gate2Pct ?? 0}% | Gate 3: ${apricotContext.gate3Pct ?? 0}% | Gate 4: ${apricotContext.gate4Pct ?? 0}%`
+            : `Gate 1: ${client.gate1_pct ?? 0}% | Gate 2: ${client.gate2_pct ?? 0}% | Gate 3: ${client.gate3_pct ?? 0}% | Gate 4: ${client.gate4_pct ?? 0}%`;
+
         const prompt = `
-You are the Lead Reentry Navigator and Case Planning Specialist for Turn90.
-You are analyzing a 1-on-1 community navigation interaction between a Reentry Navigator and client ${client.first_name} ${client.last_name} in ${client.location}.
+You are the Lead Reentry Navigator and Case Planning Specialist for Turn90 (working closely with Daisy Boynton and the Reentry Navigation team).
+You are analyzing a 1-on-1 community navigation interaction between a Reentry Navigator (${client.case_manager || 'Daisy Boynton'}) and client ${client.first_name} ${client.last_name} in ${client.location}.
 
 CLIENT PROFILE:
 - Name: ${client.first_name} ${client.last_name}
 - Apricot ID: ${client.apricot_id || 'N/A'}
+- Assigned Case Manager: ${client.case_manager || 'Daisy Boynton'}
 - Center / Region: ${client.location}
 - Session Title: ${sessionTitle}
 - Session Type: ${sessionType || 'check_in'}
+- Briefcase Gate Progress: ${gateSummary}
+- Stated Reentry Navigation Goals: ${client.case_plan_text || client.notes || 'Not yet entered'}
 
 CURRENT CASE PLAN CONTEXT:
 Active Goals:
@@ -83,26 +98,28 @@ ${briefcaseContext}
 
 ${sessionText ? `SESSION TRANSCRIPT / MEETING NOTES:\n${sessionText}\n` : ''}
 
-CRITICAL TURN90 REENTRY NAVIGATION INSTRUCTIONS:
-1. SESSION SUMMARY: Provide a concise, professional 2-3 paragraph markdown summary of what was discussed, progress made, and barriers identified.
-2. STABILITY TIER ASSESSMENT:
+CRITICAL TURN90 REENTRY NAVIGATION INSTRUCTIONS (NON-CBT):
+- SCOPE RULE: Reentry Navigation case plans ONLY include Goals and Briefcase Gates 1–4. They do NOT work on CBT (unlike First Shift case plans). NEVER include CBT worksheets, Thinking Reports, or CBT focus areas in Reentry Navigation case plans or coaching!
+1. APRICOT CASE NOTE ("apricot_case_note"): Write a clean, concise, ready-to-copy Case Note formatted specifically to be pasted directly into Apricot (include Contact Summary, Case Plan Goal Progress, Briefcase & Gate 1–4 Updates, Referrals/Resources Provided, and Next Steps).
+2. SESSION SUMMARY: Provide a concise, professional 2-3 paragraph markdown summary of what was discussed, progress made, and barriers identified.
+3. STABILITY TIER ASSESSMENT:
    - "stable": Client has safe housing, reliable communication, stable legal/probation standing, and active prosocial routine.
    - "at_risk": Client is facing moderate barriers (housing precarious, transit difficulty, license issues, job search plateau).
    - "immediate_triage": Urgent crises present (active eviction, immediate court warrant risk, food crisis, mental health/substance relapse crisis).
-3. IDENTIFIED NEEDS: Extract concrete need categories (e.g., "Emergency Housing Assistance", "SNAP Food Stamps", "Driver's License Reinstatement", "Steel-toe Work Boots", "Mental Health Referral").
-4. BRIEFCASE UPDATES:
+4. IDENTIFIED NEEDS: Extract concrete need categories (e.g., "Emergency Housing Assistance", "SNAP Food Stamps", "Driver's License Reinstatement", "Steel-toe Work Boots", "Mental Health Referral").
+5. BRIEFCASE UPDATES:
    Identify any specific briefcase checklist items that were verified completed ("green") or flagged as active barriers ("red") during this interaction.
    Available item keys include: state_id, ss_card, birth_cert, drivers_license, reliable_phone, prof_email, library_card, bank_account, snap_food_stamps, tanf_assistance, child_support_status, transportation_plan, housing_plan, resume_completed, interview_prep, work_clothing, medical_home, vision_screen, dental_check, welvista_medications, medicaid_active.
-5. PROPOSED / UPDATED GOALS:
-   Recommend 1–3 concrete, collaborative process goals based on what client and navigator agreed to work on.
-   Each goal must have a realistic target date (within 1–4 weeks), a category, and 1–3 specific action steps.
-6. WHAT TO TALK ABOUT IN THE NEXT CONVERSATION (AGENDA):
-   Provide a bulleted markdown checklist specifying EXACTLY what the navigator should follow up on in their next conversation with ${client.first_name}. Pinpoint accountability items, questions to ask, and pending verification checks.
+6. PROPOSED / UPDATED GOALS (NO CBT):
+   Recommend 1–3 concrete, collaborative process goals based on what client and navigator agreed to work on (strictly Goals & Briefcase Gates 1–4, NO CBT).
+7. WHAT TO WORK ON NEXT IN CASE MANAGEMENT ("what_to_work_on_next" & "next_conversation_agenda"):
+   Provide concrete action items grounded specifically in the client's Case Plan Goals, Briefcase, and Gates 1–4.
 
 OUTPUT JSON FORMAT:
 Provide a valid JSON object matching this structure:
 \`\`\`json
 {
+  "apricot_case_note": "Clean, copy-ready Case Note for Apricot summarizing session, Goals, Briefcase Gates 1-4 updates, referrals, and next steps...",
   "session_summary": "Markdown summary of the session...",
   "diarized_transcript": "Clean speaker transcript if audio was provided, or summary dialogue...",
   "stability_tier": "stable",
@@ -129,7 +146,11 @@ Provide a valid JSON object matching this structure:
       "assigned_to": "client"
     }
   ],
-  "next_conversation_agenda": "### 🗣️ Next Session Agenda for ${client.first_name}\n- [ ] Follow up on X...\n- [ ] Check if client received Y...\n- [ ] Review progress on Z..."
+  "what_to_work_on_next": [
+    "Next step 1 grounded in Case Plan Goals, Briefcase & Gates 1-4 (no CBT)...",
+    "Next step 2..."
+  ],
+  "next_conversation_agenda": "### 🗣️ What to Work on Next in Case Management (Goals, Briefcase & Gates 1–4)\n- [ ] Follow up on X...\n- [ ] Check if client received Y...\n- [ ] Review progress on Z..."
 }
 \`\`\`
 `;
@@ -147,6 +168,24 @@ Provide a valid JSON object matching this structure:
             const bracketMatch = responseText.match(/\{[\s\S]*\}/);
             if (bracketMatch) parsed = JSON.parse(bracketMatch[0]);
             else throw new Error("AI did not return valid JSON analysis.");
+        }
+
+        if (client.apricot_id && (parsed.apricot_case_note || parsed.session_summary)) {
+            try {
+                registerProcessedCaseNote({
+                    recordId: String(client.apricot_id).trim(),
+                    participantName: `${client.first_name} ${client.last_name}`.trim(),
+                    contactDate: new Date().toLocaleDateString('en-US'),
+                    staffName: client.case_manager || 'Daisy Boynton',
+                    activity: sessionType === 'intake' ? 'Initial Reentry Navigation' : 'Reentry Navigation Follow-Up',
+                    location: client.location || '',
+                    noteText: parsed.apricot_case_note || parsed.session_summary,
+                    source: 'reentry_session_upload',
+                    nextStepsArray: Array.isArray(parsed.what_to_work_on_next) ? parsed.what_to_work_on_next : []
+                });
+            } catch (regErr) {
+                console.warn("[Reentry Analyzer] Could not register processed case note:", regErr.message);
+            }
         }
 
         return parsed;

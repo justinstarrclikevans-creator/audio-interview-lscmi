@@ -1,6 +1,13 @@
 require('./env_config');
 const { generateReentryNavAssessment } = require('./reentry_engine');
-const { generateCasePlanHtml, escapeHtml } = require('./case_plan_exporter');
+const { generateCasePlanHtml, generateApricotCasePlanHtml, escapeHtml } = require('./case_plan_exporter');
+const {
+    processApricotWorkbook,
+    registerProcessedCaseNote,
+    getApricotEvalReport,
+    getParticipantCoachingContext,
+    exportPreviousWeekPayReport
+} = require('./services/apricot_eval_engine');
 const express = require('express');
 const cors = require('cors');
 const multer = require('multer');
@@ -1067,17 +1074,33 @@ app.get('/api/admin/reports/friday-milestones', authenticateToken, requireRole('
 });
 
 // Import Apricot Points Excel Spreadsheet (.xlsx, .xls) or CSV
-app.post('/api/admin/apricot/import-points', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), memoryUpload.single('file'), (req, res) => {
+app.post('/api/admin/apricot/import-points', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator', 'navigator'), memoryUpload.single('file'), (req, res) => {
     try {
         let result;
+        let evalSync = null;
         if (req.file && req.file.buffer) {
             const isExcel = req.file.originalname.endsWith('.xlsx') || req.file.originalname.endsWith('.xls');
             if (isExcel) {
-                // Check if it's the unified Render Report
-                const XLSX = require('xlsx');
-                const wb = XLSX.read(req.file.buffer, { type: 'buffer' });
+                try {
+                    evalSync = processApricotWorkbook(req.file.buffer, { filename: req.file.originalname });
+                } catch (evalErr) {
+                    console.warn('[Apricot Import] processApricotWorkbook notice:', evalErr.message);
+                }
                 const { importUnifiedRenderReport } = require('./reporting_engine');
                 result = importUnifiedRenderReport(req.file.buffer);
+                if (evalSync) {
+                    result = {
+                        ...result,
+                        evalSync: {
+                            newNotesProcessed: evalSync.newNotesProcessed,
+                            duplicateNotesDisregarded: evalSync.duplicateNotesDisregarded,
+                            totalUniqueNotesInDb: evalSync.totalUniqueNotesInDb,
+                            pointsRecordsSynced: evalSync.pointsRecordsSynced,
+                            activeFirstShiftCount: evalSync.activeFirstShiftCount,
+                            activeReentryNavCount: evalSync.activeReentryNavCount
+                        }
+                    };
+                }
             } else {
                 result = importApricotData(req.file.buffer, false);
             }
@@ -1155,12 +1178,28 @@ app.get('/api/pm/drug-tests/:userId', authenticateToken, requireRole('program_ma
 });
 
 // Import Case Management Notes Spreadsheet (.xlsx) or CSV
-app.post('/api/pm/import-case-notes', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), memoryUpload.single('file'), (req, res) => {
+app.post('/api/pm/import-case-notes', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator', 'navigator'), memoryUpload.single('file'), (req, res) => {
     try {
         let result;
+        let evalSync = null;
         if (req.file && req.file.buffer) {
             const isExcel = req.file.originalname.endsWith('.xlsx') || req.file.originalname.endsWith('.xls');
+            if (isExcel) {
+                try {
+                    evalSync = processApricotWorkbook(req.file.buffer, { filename: req.file.originalname });
+                } catch (evalErr) {
+                    console.warn('[Case Notes Import] processApricotWorkbook notice:', evalErr.message);
+                }
+            }
             result = importCaseManagementNotesData(req.file.buffer, isExcel);
+            if (evalSync) {
+                result = {
+                    ...result,
+                    newNotesProcessed: evalSync.newNotesProcessed,
+                    duplicateNotesDisregarded: evalSync.duplicateNotesDisregarded,
+                    totalUniqueNotesInDb: evalSync.totalUniqueNotesInDb
+                };
+            }
         } else if (req.body && req.body.csvData) {
             result = importCaseManagementNotesData(req.body.csvData, false);
         } else {
@@ -3736,6 +3775,8 @@ app.get('/api/reentry/clients', authenticateToken, requireRole('navigator', 'pro
             SELECT 
                 c.id, c.first_name, c.last_name, c.apricot_id, c.location, c.status, 
                 c.stability_tier, c.phone, c.email, c.notes, c.created_at, c.updated_at,
+                c.case_manager, c.enrollment_start, c.gate1_pct, c.gate2_pct, c.gate3_pct, c.gate4_pct,
+                c.last_contact_date, c.last_contact_staff, c.last_contact_activity, c.has_case_plan, c.case_plan_text,
                 (SELECT COUNT(*) FROM reentry_client_goals g WHERE g.client_id = c.id AND g.status = 'in_progress') AS open_goals_count,
                 (SELECT COUNT(*) FROM reentry_client_briefcase b WHERE b.client_id = c.id AND b.status = 'green') AS briefcase_verified_count,
                 (SELECT COUNT(*) FROM reentry_client_briefcase b WHERE b.client_id = c.id AND b.status = 'red') AS briefcase_barrier_count,
@@ -4368,6 +4409,27 @@ app.get('/api/supervisor/overview', authenticateToken, requireRole('director', '
             LIMIT 5
         `).all();
 
+        let apricotReport = null;
+        try {
+            apricotReport = getApricotEvalReport('all');
+        } catch (apErr) {
+            console.warn('[Supervisor Overview] Could not load Apricot Eval Report:', apErr.message);
+        }
+
+        const allClassEvaluations = db.prepare(`
+            SELECT id, facilitator_name, location, session_title, total_score, created_at, summary_markdown
+            FROM class_facilitation_evaluations
+            ORDER BY created_at DESC
+            LIMIT 60
+        `).all();
+
+        const allCmEvaluations = db.prepare(`
+            SELECT id, cm_name, location, session_title, apricot_id, session_type, total_score, apricot_notes, next_session_recommendations, referrals_detected, created_at
+            FROM case_management_evaluations
+            ORDER BY created_at DESC
+            LIMIT 60
+        `).all();
+
         res.json({
             centers: centerMetrics,
             reentryNav: {
@@ -4381,11 +4443,130 @@ app.get('/api/supervisor/overview', authenticateToken, requireRole('director', '
             alerts: {
                 lowScoreClasses: recentLowScoreClasses,
                 triageCases: activeTriageCases
-            }
+            },
+            apricotReport,
+            classEvaluations: allClassEvaluations,
+            cmEvaluations: allCmEvaluations
         });
 
     } catch (err) {
         console.error('Error fetching supervisor overview:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// =========================================================================
+// APRICOT EVAL REPORT, DEDUPLICATED WORKBOOK UPLOAD & PAY REPORT EXPORTS
+// =========================================================================
+
+// 1. Get Full Apricot Eval Report (All Centers for Supervisor, or Filtered by Center for PM Portal)
+app.get('/api/apricot/eval-report', authenticateToken, requireRole('director', 'admin', 'program_manager', 'navigator', 'staff', 'facilitator'), (req, res) => {
+    try {
+        const location = req.query.location || 'all';
+        const report = getApricotEvalReport(location);
+        if (!report) {
+            return res.status(404).json({ error: 'Apricot Eval Report not yet initialized. Please upload the Apricot workbook.' });
+        }
+
+        const isCenterFilter = location && location !== 'all' && location !== 'Statewide';
+        const classEvaluations = isCenterFilter
+            ? db.prepare(`SELECT * FROM class_facilitation_evaluations WHERE LOWER(location) = LOWER(?) ORDER BY created_at DESC LIMIT 50`).all(location)
+            : db.prepare(`SELECT * FROM class_facilitation_evaluations ORDER BY created_at DESC LIMIT 60`).all();
+
+        const cmEvaluations = isCenterFilter
+            ? db.prepare(`SELECT * FROM case_management_evaluations WHERE LOWER(location) = LOWER(?) ORDER BY created_at DESC LIMIT 50`).all(location)
+            : db.prepare(`SELECT * FROM case_management_evaluations ORDER BY created_at DESC LIMIT 60`).all();
+
+        const dedupCount = db.prepare(`SELECT COUNT(*) AS c FROM apricot_processed_notes`).get()?.c || 0;
+
+        res.json({
+            success: true,
+            locationFilter: location,
+            totalDeduplicatedNotesInDb: dedupCount,
+            report,
+            classEvaluations,
+            cmEvaluations
+        });
+    } catch (err) {
+        console.error('Error in GET /api/apricot/eval-report:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// 2. Upload Apricot Master or Daily Incremental Workbook (.xlsx / .xls) with Strict Note Deduplication
+app.post('/api/apricot/upload-workbook', authenticateToken, requireRole('director', 'admin', 'program_manager', 'navigator', 'staff', 'facilitator'), memoryUpload.single('file'), (req, res) => {
+    try {
+        if (!req.file || !req.file.buffer) {
+            return res.status(400).json({ error: 'Please select an Apricot .xlsx or .xls workbook to upload.' });
+        }
+
+        const syncResult = processApricotWorkbook(req.file.buffer, {
+            filename: req.file.originalname || 'Apricot_Upload.xlsx'
+        });
+
+        // Also run unified points sync so daily_points table is updated
+        try {
+            const { importUnifiedRenderReport } = require('./reporting_engine');
+            importUnifiedRenderReport(req.file.buffer);
+        } catch (e) {}
+
+        res.json({
+            success: true,
+            message: `Apricot Report synced! ${syncResult.newNotesProcessed} new case notes processed, ${syncResult.duplicateNotesDisregarded} previously processed notes disregarded, and ${syncResult.pointsRecordsSynced} point entries updated.`,
+            ...syncResult
+        });
+    } catch (err) {
+        console.error('Error in POST /api/apricot/upload-workbook:', err);
+        res.status(500).json({ error: 'Failed to process Apricot workbook: ' + err.message });
+    }
+});
+
+// 3. Export Previous Week's First Shift Payment Report (.xlsx, .csv, or printable .html)
+app.get('/api/apricot/pay-report/export', authenticateToken, requireRole('director', 'admin', 'program_manager', 'staff'), (req, res) => {
+    try {
+        const format = (req.query.format || 'xlsx').toLowerCase();
+        const exported = exportPreviousWeekPayReport(format);
+        res.setHeader('Content-Type', exported.contentType);
+        if (format !== 'html') {
+            res.setHeader('Content-Disposition', `attachment; filename="${exported.filename}"`);
+        }
+        res.send(exported.data);
+    } catch (err) {
+        console.error('Error exporting pay report:', err);
+        res.status(500).json({ error: 'Failed to export payment report: ' + err.message });
+    }
+});
+
+// 4. Export Printable Living Case Plan for any First Shift or Reentry Navigation Participant by Apricot Record ID
+app.get('/api/apricot/case-plan-export/:recordId', authenticateToken, requireRole('director', 'admin', 'program_manager', 'navigator', 'staff', 'facilitator'), (req, res) => {
+    try {
+        const recordId = String(req.params.recordId || '').trim();
+        const ctx = getParticipantCoachingContext(recordId);
+        if (!ctx) {
+            return res.status(404).send(`<h2>Participant #${escapeHtml(recordId)} not found in Apricot evaluation records.</h2>`);
+        }
+
+        // If Reentry Navigation client has a full living folder in reentry_clients, check if they have custom goals/briefcase items
+        const html = generateApricotCasePlanHtml(ctx, {
+            autoprint: req.query.autoprint === 'true'
+        });
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        res.send(html);
+    } catch (err) {
+        console.error('Error exporting Apricot case plan:', err);
+        res.status(500).send(`<h2>Error generating case plan: ${escapeHtml(err.message)}</h2>`);
+    }
+});
+
+// 5. Get Participant Coaching Context (Case Plan, Briefcase Gates 1-4, Recent Deduplicated Notes & Next Steps)
+app.get('/api/apricot/participant-context/:recordId', authenticateToken, (req, res) => {
+    try {
+        const ctx = getParticipantCoachingContext(req.params.recordId);
+        if (!ctx) {
+            return res.status(404).json({ error: 'Participant not found.' });
+        }
+        res.json({ success: true, participant: ctx });
+    } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
@@ -7138,10 +7319,14 @@ app.post('/api/participant/habit', authenticateToken, (req, res) => {
 app.listen(PORT, async () => {
     console.log(`🚀 Unified First Shift & Re-entry App running at http://localhost:${PORT}`);
     try {
-        // console.log('🔄 Checking and auto-syncing Briefcase caseload on startup...');
-        // await runCaseloadMigration();
-        // console.log('✅ Caseload auto-sync complete.');
-        
+        const hasApricotState = db.prepare(`SELECT COUNT(*) AS c FROM apricot_workbook_state WHERE id = 1`).get()?.c || 0;
+        const masterApricotPath = path.join(dataDir, 'apricot_master_report.xlsx');
+        if (!hasApricotState && fs.existsSync(masterApricotPath)) {
+            console.log('🔄 Initializing Apricot Eval Engine from bundled master report...');
+            const initRes = processApricotWorkbook(masterApricotPath, { filename: 'apricot_master_report.xlsx' });
+            console.log(`✅ Apricot Eval Engine initialized: ${initRes.newNotesProcessed} notes, ${initRes.activeFirstShiftCount} FS, ${initRes.activeReentryNavCount} RN.`);
+        }
+
         // Initialize Dropbox class evaluation cron jobs
         const { initCronJobs } = require('./services/dropbox_evaluator');
         initCronJobs();

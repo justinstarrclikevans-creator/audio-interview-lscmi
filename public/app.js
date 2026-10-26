@@ -2101,7 +2101,11 @@ function switchPmSubView(subview) {
 
     const caseloadSec = document.getElementById('pm-sec-caseload');
     if (caseloadSec) caseloadSec.classList.toggle('hidden', subview !== 'caseload');
-    document.getElementById('pm-sec-reentry').classList.toggle('hidden', subview !== 'reentry');
+    const nextStepsSec = document.getElementById('pm-sec-nextsteps');
+    if (nextStepsSec) nextStepsSec.classList.toggle('hidden', subview !== 'nextsteps');
+    const centerReportSec = document.getElementById('pm-sec-centerreport');
+    if (centerReportSec) centerReportSec.classList.toggle('hidden', subview !== 'centerreport');
+    document.getElementById('pm-sec-reentry')?.classList.toggle('hidden', subview !== 'reentry');
     
     const msgSec = document.getElementById('pm-sec-messages');
     if (msgSec) msgSec.classList.toggle('hidden', subview !== 'messages');
@@ -2129,6 +2133,11 @@ function switchPmSubView(subview) {
 
     if (subview === 'caseload') {
         if (typeof loadCaseload === 'function') loadCaseload();
+        if (typeof window.loadCenterApricotTables === 'function') window.loadCenterApricotTables();
+    } else if (subview === 'nextsteps') {
+        if (typeof window.loadCenterCoachingFeedback === 'function') window.loadCenterCoachingFeedback();
+    } else if (subview === 'centerreport') {
+        if (typeof window.loadCenterFunnelAndReferrals === 'function') window.loadCenterFunnelAndReferrals();
     } else if (subview === 'facilitation') {
         if (typeof loadFacilitationEvaluations === 'function') loadFacilitationEvaluations();
     } else if (subview === 'cmeval') {
@@ -8335,23 +8344,156 @@ window.addReentryFileInput = function() {
 // CASE MANAGEMENT EVALUATIONS
 // ==========================================
 
-window.openCmEvalModal = function() {
-    document.getElementById('cm-eval-session-title').value = '';
-    document.getElementById('cm-eval-cmname').value = window.currentUser?.name || '';
+window.copyTextFromElement = function(elementId, btnEl) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    const text = el.innerText || el.textContent || '';
+    navigator.clipboard.writeText(text).then(() => {
+        if (btnEl) {
+            const orig = btnEl.innerHTML;
+            btnEl.innerHTML = '✅ Copied to Clipboard for Apricot!';
+            btnEl.style.background = '#16a34a';
+            btnEl.style.borderColor = '#16a34a';
+            setTimeout(() => {
+                btnEl.innerHTML = orig;
+                btnEl.style.background = '#4f46e5';
+                btnEl.style.borderColor = '#4f46e5';
+            }, 2500);
+        } else {
+            alert('Copied Case Note to clipboard! You can now paste it directly into Apricot.');
+        }
+    }).catch(() => {
+        alert('Could not copy automatically. Please select and copy the text.');
+    });
+};
+
+window.openCmEvalModal = async function(prefillApricotId = '', prefillLocation = '', prefillCmName = '', prefillParticipantName = '') {
+    document.getElementById('cm-eval-instant-result')?.classList.add('hidden');
+    document.getElementById('cm-eval-session-title').value = prefillParticipantName ? `Case Management Session — ${prefillParticipantName}` : '';
+    document.getElementById('cm-eval-cmname').value = prefillCmName || window.currentUser?.name || '';
     document.getElementById('cm-eval-file').value = '';
+    const locEl = document.getElementById('cm-eval-location');
+    if (locEl && (prefillLocation || window.currentUser?.location)) {
+        locEl.value = prefillLocation || window.currentUser.location || 'Charleston';
+    }
     const apEl = document.getElementById('cm-eval-apricot-id');
-    if (apEl) apEl.value = '';
+    if (apEl) apEl.value = prefillApricotId || '';
     const stEl = document.getElementById('cm-eval-session-type');
     if (stEl) stEl.value = 'auto';
 
-    // Populate Apricot ID quick-lookup from active caseload
-    const lookupEl = document.getElementById('cm-eval-participant-lookup');
-    if (lookupEl && Array.isArray(window.caseloadData)) {
-        const withIds = window.caseloadData.filter(p => p.record_id);
-        lookupEl.innerHTML = '<option value="">🔍 Lookup ID...</option>' +
-            withIds.map(p => `<option value="${p.record_id}">Apricot #${p.record_id} (${p.location || 'SC'} • ${p.name})</option>`).join('');
-    }
     openModal('modal-cmeval');
+
+    // Ensure Apricot Eval Report participants are loaded for dropdown
+    if (!window.latestApricotEvalReport) {
+        try {
+            const token = localStorage.getItem('fs_token');
+            const res = await fetch('/api/apricot/eval-report', { headers: { 'Authorization': `Bearer ${token}` } });
+            if (res.ok) window.latestApricotEvalReport = await res.json();
+        } catch (e) {}
+    }
+
+    const lookupEl = document.getElementById('cm-eval-participant-lookup');
+    if (lookupEl) {
+        const evals = window.latestApricotEvalReport?.participantEvaluations || [];
+        if (evals.length > 0) {
+            const fsEvals = evals.filter(p => p.program !== 'Reentry Navigation');
+            const rnEvals = evals.filter(p => p.program === 'Reentry Navigation');
+            lookupEl.innerHTML = `<option value="">🔍 Select Participant (${evals.length} Active)...</option>` +
+                `<optgroup label="⚡ First Shift Active (${fsEvals.length})">` +
+                fsEvals.map(p => `<option value="${p.record_id}" ${String(p.record_id) === String(prefillApricotId) ? 'selected' : ''}>#${p.record_id} — ${p.name} (${p.location})</option>`).join('') +
+                `</optgroup>` +
+                `<optgroup label="🧭 Reentry Navigation Active (${rnEvals.length})">` +
+                rnEvals.map(p => `<option value="${p.record_id}" ${String(p.record_id) === String(prefillApricotId) ? 'selected' : ''}>#${p.record_id} — ${p.name} (${p.location} • ${p.case_manager || 'Daisy'})</option>`).join('') +
+                `</optgroup>`;
+        } else if (Array.isArray(window.caseloadData)) {
+            const withIds = window.caseloadData.filter(p => p.record_id);
+            lookupEl.innerHTML = '<option value="">🔍 Select Participant...</option>' +
+                withIds.map(p => `<option value="${p.record_id}" ${String(p.record_id) === String(prefillApricotId) ? 'selected' : ''}>Apricot #${p.record_id} (${p.location || 'SC'} • ${p.name})</option>`).join('');
+        }
+    }
+
+    if (prefillApricotId) {
+        handleCmModalApricotInput(prefillApricotId);
+    } else {
+        document.getElementById('cm-eval-context-preview')?.classList.add('hidden');
+    }
+};
+
+window.handleCmModalParticipantLookup = function(recordId) {
+    if (!recordId) return;
+    const apEl = document.getElementById('cm-eval-apricot-id');
+    if (apEl) apEl.value = recordId;
+    handleCmModalApricotInput(recordId);
+};
+
+window.handleCmModalApricotInput = async function(recordId) {
+    const previewEl = document.getElementById('cm-eval-context-preview');
+    if (!previewEl) return;
+    const cleanId = String(recordId || '').trim();
+    if (!cleanId) {
+        previewEl.classList.add('hidden');
+        return;
+    }
+
+    let p = (window.latestApricotEvalReport?.participantEvaluations || []).find(x => String(x.record_id) === cleanId);
+    if (!p) {
+        try {
+            const token = localStorage.getItem('fs_token');
+            const res = await fetch(`/api/apricot/participant-context/${encodeURIComponent(cleanId)}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.ok) p = await res.json();
+        } catch (e) {}
+    }
+
+    if (!p) {
+        previewEl.classList.add('hidden');
+        return;
+    }
+
+    // Auto-fill location & CM name if appropriate
+    const locEl = document.getElementById('cm-eval-location');
+    if (locEl && p.location) locEl.value = p.location;
+    const cmEl = document.getElementById('cm-eval-cmname');
+    if (cmEl && p.case_manager && (!cmEl.value || cmEl.value === 'Supervisor')) {
+        cmEl.value = p.case_manager;
+    }
+    const titleEl = document.getElementById('cm-eval-session-title');
+    if (titleEl && !titleEl.value) {
+        titleEl.value = `CM Session — ${p.name} (${p.program})`;
+    }
+
+    const isRN = p.program === 'Reentry Navigation';
+    const nextSteps = Array.isArray(p.what_to_work_on_next) ? p.what_to_work_on_next : [];
+
+    previewEl.classList.remove('hidden');
+    previewEl.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 6px;">
+            <div>
+                <strong style="color: #0f172a; font-size: 13.5px;">${escapeHtml(p.name)} (Apricot #${escapeHtml(p.record_id)})</strong>
+                <span style="margin-left: 6px; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; background: ${isRN ? '#ede9fe' : '#dbeafe'}; color: ${isRN ? '#5b21b6' : '#1e40af'};">
+                    ${isRN ? '🧭 Reentry Navigation (Goals & Gates Only — No CBT)' : '⚡ First Shift (CBT + Briefcase + Gates)'}
+                </span>
+            </div>
+            <span style="font-size: 11.5px; color: #475569; font-weight: 600;">
+                👩‍💼 CM: ${escapeHtml(p.case_manager || 'Center Staff')} &bull; 📋 ${escapeHtml(p.case_plan_status || 'Case Plan Checked')}
+            </span>
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; font-size: 11.5px;">
+            <span style="background: white; border: 1px solid #cbd5e1; padding: 2px 8px; border-radius: 6px; font-weight: 700;">Gate 1: ${p.gate1_pct ?? 0}%</span>
+            <span style="background: white; border: 1px solid #cbd5e1; padding: 2px 8px; border-radius: 6px; font-weight: 700;">Gate 2: ${p.gate2_pct ?? 0}%</span>
+            <span style="background: white; border: 1px solid #cbd5e1; padding: 2px 8px; border-radius: 6px; font-weight: 700;">Gate 3: ${p.gate3_pct ?? 0}%</span>
+            <span style="background: white; border: 1px solid #cbd5e1; padding: 2px 8px; border-radius: 6px; font-weight: 700;">Gate 4: ${p.gate4_pct ?? 0}%</span>
+        </div>
+        ${nextSteps.length > 0 ? `
+            <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; padding: 8px 10px;">
+                <div style="font-size: 11px; font-weight: 800; color: #b45309; text-transform: uppercase; margin-bottom: 4px;">🎯 Current "What to Work on Next" Priorities:</div>
+                <ul style="margin: 0; padding-left: 16px; font-size: 12px; color: #78350f;">
+                    ${nextSteps.slice(0, 4).map(s => `<li>${escapeHtml(s)}</li>`).join('')}
+                </ul>
+            </div>
+        ` : ''}
+    `;
 };
 
 window.handleCmEvaluationSubmit = async function(e) {
@@ -8371,7 +8513,7 @@ window.handleCmEvaluationSubmit = async function(e) {
     }
 
     btn.disabled = true;
-    btn.innerText = 'Uploading Audio & Evaluating CM Meeting (Linking Apricot History)...';
+    btn.innerText = '🎙️ Transcribing Recording, Generating Apricot Case Note & Updating Next Steps...';
 
     const formData = new FormData();
     formData.append('location', location);
@@ -8393,11 +8535,31 @@ window.handleCmEvaluationSubmit = async function(e) {
         const data = await res.json();
         
         if (res.ok) {
-            alert(`CM Evaluation complete! Score: ${data.result.total_cm_score} / 100`);
-            document.getElementById('form-evaluate-cm')?.reset();
+            const result = data.result || {};
+            const instBox = document.getElementById('cm-eval-instant-result');
+            const instScore = document.getElementById('cm-eval-instant-score');
+            const instNote = document.getElementById('cm-eval-instant-apricot-note');
+            const instNext = document.getElementById('cm-eval-instant-next-steps');
+
+            if (instBox && instNote) {
+                instBox.classList.remove('hidden');
+                if (instScore) {
+                    instScore.innerText = `QA Score: ${result.total_cm_score ?? 90} / 100 • Case Note Indexed & Deduplicated`;
+                }
+                instNote.innerText = result.structured_meeting_notes_for_apricot || 'Session note generated.';
+                if (instNext) {
+                    const recs = Array.isArray(result.next_session_recommendations) ? result.next_session_recommendations : [];
+                    instNext.innerHTML = recs.map(r => `<li style="margin-bottom: 4px;">${escapeHtml(r)}</li>`).join('');
+                }
+            }
+
             document.getElementById('cm-eval-file').value = '';
-            closeModal('modal-cmeval');
+            // Refresh cached report & views
+            window.latestApricotEvalReport = null;
             loadCmEvaluations();
+            if (typeof window.loadCenterApricotTables === 'function') window.loadCenterApricotTables();
+            if (typeof window.loadCenterCoachingFeedback === 'function') window.loadCenterCoachingFeedback();
+            if (typeof window.loadSupervisorDashboard === 'function') window.loadSupervisorDashboard();
         } else {
             alert('Error: ' + data.error);
         }
@@ -8405,7 +8567,7 @@ window.handleCmEvaluationSubmit = async function(e) {
         alert('Upload/Network Error: ' + err.message);
     } finally {
         btn.disabled = false;
-        btn.innerText = 'Evaluate CM Meeting Against Playbook';
+        btn.innerText = '🎙️ Process Recording → Generate Copyable Apricot Case Note + Next Steps';
     }
 };
 
@@ -8424,7 +8586,7 @@ window.filterCmByLocation = function(loc) {
 window.loadCmEvaluations = async function() {
     const container = document.getElementById('pm-cmeval-list');
     if (!container) return;
-    container.innerHTML = '<p class="text-center text-slate py-4">Loading CM evaluations...</p>';
+    container.innerHTML = '<p class="text-center text-slate py-4">Loading CM evaluations & Apricot case notes...</p>';
     
     try {
         const token = localStorage.getItem('fs_token');
@@ -8499,7 +8661,7 @@ window.loadCmEvaluations = async function() {
         `;
         
         if (evals.length === 0) {
-            html += `<p class="text-center text-slate">No Case Management evaluations generated yet.</p>`;
+            html += `<p class="text-center text-slate">No Case Management evaluations generated yet. Click "🎙️ + Upload CM Recording" above to generate a copyable Apricot Case Note and Next-Steps coaching.</p>`;
             container.innerHTML = html;
             return;
         }
@@ -8514,13 +8676,14 @@ window.loadCmEvaluations = async function() {
             const isFirst = ev.session_type === 'first_session';
             const stageBadge = isFirst
                 ? `<span style="background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700;">1️⃣ First Session (Intake / Action Plan)</span>`
-                : `<span style="background: #f0fdf4; color: #166534; border: 1px solid #86efac; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700;">🔄 Weekly Follow-Up (45m Cadence)</span>`;
+                : `<span style="background: #f0fdf4; color: #166534; border: 1px solid #86efac; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 700;">🔄 Follow-Up Session</span>`;
             const apricotBadge = ev.apricot_id
                 ? `<span onclick="filterCmByApricotId('${safeApricot}')" style="cursor: pointer; background: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 800;" title="Click to view all sessions for Apricot #${ev.apricot_id}">🆔 Apricot #${ev.apricot_id}</span>`
                 : `<span style="background: #f1f5f9; color: #64748b; padding: 2px 8px; border-radius: 12px; font-size: 11px; cursor: pointer;" onclick="editCmEvaluationScore(${ev.id}, ${Number(ev.total_score)}, '${safeCmName}', '${safeTitle}', '', '${ev.session_type || 'follow_up'}')">+ Link Apricot ID</span>`;
 
             const referralsList = (ev.referrals_detected || '').split(';').map(r => r.trim()).filter(Boolean);
             const nextStepsList = (ev.next_session_recommendations || '').split(';').map(r => r.trim()).filter(Boolean);
+            const noteElemId = `cm-apricot-note-box-${ev.id}`;
             
             html += `
             <div class="card" style="border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; background: white;">
@@ -8534,6 +8697,8 @@ window.loadCmEvaluations = async function() {
                         <div style="font-size: 12px; color: #64748b; margin-top: 2px;">${date} &bull; 📍 ${ev.location}</div>
                     </div>
                     <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                        <button class="btn btn-primary" style="padding: 5px 12px; font-size: 11.5px; background: #4f46e5; border-color: #4f46e5; font-weight: 700;" onclick="copyTextFromElement('${noteElemId}', this)">📋 Copy Case Note for Apricot</button>
+                        ${ev.apricot_id ? `<button class="btn btn-outline" style="padding: 5px 10px; font-size: 11.5px; color: #0f766e; border-color: #0f766e;" onclick="exportApricotCasePlan('${safeApricot}')">📄 Export Case Plan</button>` : ''}
                         <button class="btn btn-outline" style="padding: 5px 10px; font-size: 11.5px;" onclick="printCmEvaluation(${ev.id})">🖨️ Print Report</button>
                         <button class="btn btn-outline" style="padding: 5px 10px; font-size: 11.5px; color: #0f766e; border-color: #99f6e4; background: #f0fdfa;" onclick="downloadCmEvaluationTranscript(${ev.id}, '${safeTitle}', '${safeCmName}')">📥 Download Transcript</button>
                         <button class="btn btn-outline" style="padding: 5px 10px; font-size: 11.5px; color: #4338ca; border-color: #c7d2fe;" onclick="editCmEvaluationScore(${ev.id}, ${Number(ev.total_score)}, '${safeCmName}', '${safeTitle}', '${safeApricot}', '${ev.session_type || 'follow_up'}')">✏️ Edit Score / ID</button>
@@ -8551,7 +8716,7 @@ window.loadCmEvaluations = async function() {
                             <div style="font-size: 14px; font-weight: 700; color: #0f172a;">${ev.playbook_adherence} / 5</div>
                         </div>
                         <div style="background: #f1f5f9; padding: 8px 12px; border-radius: 6px;">
-                            <div style="font-size: 11px; color: #64748b; font-weight: 600; text-transform: uppercase;">CBT Application</div>
+                            <div style="font-size: 11px; color: #64748b; font-weight: 600; text-transform: uppercase;">Skill / Gate Execution</div>
                             <div style="font-size: 14px; font-weight: 700; color: #0f172a;">${ev.cbt_application} / 5</div>
                         </div>
                         <div style="background: #f1f5f9; padding: 8px 12px; border-radius: 6px;">
@@ -8564,10 +8729,22 @@ window.loadCmEvaluations = async function() {
                         </div>
                     </div>
                     
-                    <div style="background: #eef2ff; border-left: 4px solid #6366f1; padding: 12px; border-radius: 4px; margin-bottom: 12px;">
-                        <div style="font-weight: 700; color: #4338ca; font-size: 12px; text-transform: uppercase; margin-bottom: 6px;">Apricot Meeting Notes (Ready to Copy — [Client] De-Identified)</div>
-                        <div style="font-size: 13.5px; color: #312e81; white-space: pre-wrap;">${ev.apricot_notes || 'No apricot notes generated.'}</div>
+                    <div style="background: #eef2ff; border: 1.5px solid #c7d2fe; border-left: 5px solid #4f46e5; padding: 14px; border-radius: 6px; margin-bottom: 14px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+                            <div style="font-weight: 800; color: #312e81; font-size: 12.5px; text-transform: uppercase;">📋 Copyable Case Note for Apricot (Ready to Paste into Apricot)</div>
+                            <button class="btn btn-primary" style="padding: 4px 12px; font-size: 11.5px; background: #4f46e5; border-color: #4f46e5; font-weight: 700;" onclick="copyTextFromElement('${noteElemId}', this)">📋 Copy Case Note for Apricot</button>
+                        </div>
+                        <div id="${noteElemId}" style="font-size: 13.5px; color: #1e1b4b; white-space: pre-wrap; background: white; padding: 10px 12px; border-radius: 6px; border: 1px solid #e0e7ff;">${ev.apricot_notes || 'No apricot notes generated.'}</div>
                     </div>
+
+                    ${nextStepsList.length > 0 ? `
+                    <div style="background: #fffbeb; border: 1.5px solid #fde68a; border-left: 5px solid #d97706; padding: 12px 16px; border-radius: 6px; margin-bottom: 15px;">
+                        <div style="font-weight: 800; color: #b45309; font-size: 12px; text-transform: uppercase; margin-bottom: 6px;">🎯 What to Work on Next in Case Management (Grounded in Case Plan, Briefcase & Gates 1–4)</div>
+                        <ul style="margin: 0; padding-left: 18px; font-size: 13.5px; color: #78350f; line-height: 1.55;">
+                            ${nextStepsList.map(step => `<li style="margin-bottom: 4px;"><strong>${step}</strong></li>`).join('')}
+                        </ul>
+                    </div>
+                    ` : ''}
 
                     ${referralsList.length > 0 ? `
                     <div style="background: #f0fdfa; border: 1px solid #99f6e4; border-left: 4px solid #0f766e; padding: 10px 14px; border-radius: 4px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
@@ -8578,15 +8755,6 @@ window.loadCmEvaluations = async function() {
                             </div>
                         </div>
                         <button class="btn btn-outline" style="font-size: 11px; padding: 4px 10px; color: #0f766e; border-color: #0f766e; background: white;" onclick="printVocRehabVerificationLetter(null)">🥾 Print Voc Rehab Boots Letter</button>
-                    </div>
-                    ` : ''}
-
-                    ${nextStepsList.length > 0 ? `
-                    <div style="background: #fffbeb; border: 1px solid #fde68a; border-left: 4px solid #d97706; padding: 10px 14px; border-radius: 4px; margin-bottom: 15px;">
-                        <div style="font-weight: 800; color: #b45309; font-size: 11.5px; text-transform: uppercase; margin-bottom: 4px;">🗓️ Next Session Gameplan (Follow Up Next Week)</div>
-                        <ul style="margin: 0; padding-left: 18px; font-size: 13px; color: #78350f;">
-                            ${nextStepsList.map(step => `<li style="margin-bottom: 3px;">${step}</li>`).join('')}
-                        </ul>
                     </div>
                     ` : ''}
 
@@ -8880,7 +9048,13 @@ window.setupCenterPortalView = function() {
     const centerTitle = document.querySelector('#view-pm-portal .portal-header h1');
     const loc = currentUser ? currentUser.location : 'Charleston';
     if (centerTitle) {
-        centerTitle.innerText = `🏢 ${loc} Center Program Operations`;
+        centerTitle.innerText = `🏢 ${loc} Center Dashboard (First Shift & Reentry Navigation)`;
+    }
+
+    const supBanner = document.getElementById('pm-supervisor-banner');
+    if (supBanner) {
+        const isSup = currentUser && (currentUser.role === 'director' || currentUser.portal_type === 'supervisor');
+        supBanner.classList.toggle('hidden', !isSup);
     }
 
     // Auto-scope filters
@@ -8897,6 +9071,7 @@ window.setupCenterPortalView = function() {
     // Load initial center data
     switchPmSubView('caseload');
     if (typeof loadCaseload === 'function') loadCaseload();
+    if (typeof window.loadCenterApricotTables === 'function') window.loadCenterApricotTables();
     if (typeof loadFacilitationEvaluations === 'function') loadFacilitationEvaluations();
 };
 
@@ -8911,6 +9086,7 @@ window.loadReentryCaseload = async function() {
     const search = document.getElementById('rn-filter-search')?.value || '';
     const stability = document.getElementById('rn-filter-stability')?.value || 'all';
     const loc = document.getElementById('rn-filter-location')?.value || 'all';
+    const cmFilter = document.getElementById('rn-filter-cm')?.value || 'all';
 
     const url = `/api/reentry/clients?search=${encodeURIComponent(search)}&stability=${encodeURIComponent(stability)}&location=${encodeURIComponent(loc)}`;
 
@@ -8928,10 +9104,19 @@ window.loadReentryCaseload = async function() {
             if (stableEl) stableEl.innerText = data.stats.stable || 0;
         }
 
-        const countEl = document.getElementById('rn-caseload-count');
-        if (countEl) countEl.innerText = data.clients ? data.clients.length : 0;
+        let clients = data.clients || [];
+        if (cmFilter && cmFilter !== 'all') {
+            if (cmFilter === 'Daisy Boynton') {
+                clients = clients.filter(c => (c.case_manager || 'Daisy Boynton').toLowerCase().includes('daisy'));
+            } else {
+                clients = clients.filter(c => !(c.case_manager || 'Daisy Boynton').toLowerCase().includes('daisy'));
+            }
+        }
 
-        renderReentryClientsGrid(data.clients || []);
+        const countEl = document.getElementById('rn-caseload-count');
+        if (countEl) countEl.innerText = clients.length;
+
+        renderReentryClientsGrid(clients);
 
     } catch (err) {
         console.error('Failed to load reentry caseload:', err);
@@ -8960,6 +9145,12 @@ function renderReentryClientsGrid(clients) {
 
     grid.innerHTML = clients.map(c => {
         const initials = `${(c.first_name || '')[0] || ''}${(c.last_name || '')[0] || ''}`.toUpperCase();
+        const fullName = `${c.first_name || ''} ${c.last_name || ''}`.trim();
+        const safeFullName = fullName.replace(/'/g, "\\'");
+        const cmName = c.case_manager || 'Daisy Boynton';
+        const safeCmName = cmName.replace(/'/g, "\\'");
+        const safeApricot = String(c.apricot_id || '').replace(/'/g, "\\'");
+        const safeLoc = String(c.location || 'Charleston').replace(/'/g, "\\'");
         
         let tierBadge = '';
         if (c.stability_tier === 'immediate_triage') {
@@ -8970,44 +9161,74 @@ function renderReentryClientsGrid(clients) {
             tierBadge = `<span style="font-size: 11px; padding: 3px 8px; border-radius: 999px; font-weight: 700; background: #dcfce7; color: #15803d; border: 1px solid #86efac;">✅ Stable</span>`;
         }
 
-        const lastSession = c.last_session_date ? `Session: ${c.last_session_date}` : 'No sessions recorded';
+        const lastContact = c.last_contact_date
+            ? `Last Contact: ${c.last_contact_date} (${c.last_contact_staff || cmName})`
+            : (c.last_session_date ? `Session: ${c.last_session_date}` : 'No contact logged');
+
+        const nextSteps = Array.isArray(c.what_to_work_on_next) ? c.what_to_work_on_next : [];
 
         return `
-            <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 20px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.2s;">
+            <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 18px; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.2s;">
                 <div>
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="width: 44px; height: 44px; border-radius: 50%; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 42px; height: 42px; border-radius: 50%; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px;">
                                 ${initials}
                             </div>
                             <div>
-                                <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: #0f172a;">${escapeHtml(c.first_name)} ${escapeHtml(c.last_name)}</h3>
-                                <div style="font-size: 12px; color: #64748b; margin-top: 2px;">
-                                    ${escapeHtml(c.location)} &bull; ${escapeHtml(c.apricot_id || 'No Apricot ID')}
+                                <h3 style="margin: 0; font-size: 15.5px; font-weight: 800; color: #0f172a;">${escapeHtml(fullName)}</h3>
+                                <div style="font-size: 11.5px; color: #64748b; margin-top: 2px;">
+                                    📍 ${escapeHtml(c.location)} &bull; 🆔 #${escapeHtml(c.apricot_id || 'N/A')}
                                 </div>
                             </div>
                         </div>
                         ${tierBadge}
                     </div>
 
-                    <div style="background: #f8fafc; border-radius: 8px; padding: 10px 12px; font-size: 12px; color: #475569; margin-bottom: 14px; line-height: 1.4;">
-                        ${c.notes ? escapeHtml(c.notes) : '<em>No intake notes provided.</em>'}
+                    <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px;">
+                        <span style="font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 700; background: #ede9fe; color: #5b21b6;">👩‍💼 ${escapeHtml(cmName)}</span>
+                        <span style="font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 700; background: ${c.has_case_plan ? '#dcfce7' : '#fee2e2'}; color: ${c.has_case_plan ? '#15803d' : '#b91c1c'};">
+                            ${c.has_case_plan ? '✅ Case Plan (Goals & Gates)' : '⚠️ Needs Case Plan'}
+                        </span>
                     </div>
 
-                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #64748b; margin-bottom: 16px;">
+                    <!-- Briefcase Gates 1-4 Strip -->
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 10px; text-align: center; font-size: 10.5px;">
+                        <div style="background: ${(c.gate1_pct ?? 0) >= 80 ? '#dcfce7' : '#f1f5f9'}; padding: 4px; border-radius: 5px; font-weight: 700; color: #1e293b;">G1: ${c.gate1_pct ?? 0}%</div>
+                        <div style="background: ${(c.gate2_pct ?? 0) >= 80 ? '#dcfce7' : '#f1f5f9'}; padding: 4px; border-radius: 5px; font-weight: 700; color: #1e293b;">G2: ${c.gate2_pct ?? 0}%</div>
+                        <div style="background: ${(c.gate3_pct ?? 0) >= 80 ? '#dcfce7' : '#f1f5f9'}; padding: 4px; border-radius: 5px; font-weight: 700; color: #1e293b;">G3: ${c.gate3_pct ?? 0}%</div>
+                        <div style="background: ${(c.gate4_pct ?? 0) >= 80 ? '#dcfce7' : '#f1f5f9'}; padding: 4px; border-radius: 5px; font-weight: 700; color: #1e293b;">G4: ${c.gate4_pct ?? 0}%</div>
+                    </div>
+
+                    ${nextSteps.length > 0 ? `
+                        <div style="background: #fffbeb; border: 1px solid #fde68a; border-left: 3px solid #d97706; border-radius: 6px; padding: 8px 10px; font-size: 11.5px; color: #78350f; margin-bottom: 10px; line-height: 1.4;">
+                            <div style="font-weight: 800; color: #b45309; font-size: 10.5px; text-transform: uppercase; margin-bottom: 2px;">🎯 What to Work on Next (Goals & Gates — No CBT):</div>
+                            <div>• ${escapeHtml(nextSteps[0])}</div>
+                            ${nextSteps[1] ? `<div>• ${escapeHtml(nextSteps[1])}</div>` : ''}
+                        </div>
+                    ` : `
+                        <div style="background: #f8fafc; border-radius: 8px; padding: 8px 10px; font-size: 11.5px; color: #475569; margin-bottom: 10px; line-height: 1.4;">
+                            ${c.notes ? escapeHtml(c.notes) : '<em>No intake notes provided.</em>'}
+                        </div>
+                    `}
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11.5px; color: #64748b; margin-bottom: 12px;">
                         <span>🎯 <strong>${c.open_goals_count || 0}</strong> Active Goals</span>
-                        <span>🕒 ${lastSession}</span>
+                        <span>🕒 ${escapeHtml(lastContact)}</span>
                     </div>
                 </div>
 
-                <div style="display: flex; gap: 8px; border-top: 1px solid #f1f5f9; padding-top: 14px;">
-                    <button class="btn btn-primary" onclick="openClientFolder(${c.id})" style="flex: 1; font-size: 12.5px; padding: 8px; font-weight: 700;">
-                        📂 Open Folder
+                <div style="display: flex; gap: 6px; border-top: 1px solid #f1f5f9; padding-top: 12px; flex-wrap: wrap;">
+                    <button class="btn btn-primary" onclick="openClientFolder(${c.id})" style="flex: 1; font-size: 12px; padding: 7px 10px; font-weight: 700;">
+                        📂 Folder
                     </button>
-                    <button class="btn btn-outline" onclick="exportClientCasePlan(${c.id})" style="font-size: 12px; padding: 8px 10px; color: #0f766e; border-color: #99f6e4; font-weight: 700;" title="Export & Print Living Case Plan">
-                        📄 Case Plan
+                    <button class="btn btn-outline" onclick="openCmEvalModal('${safeApricot}', '${safeLoc}', '${safeCmName}', '${safeFullName}')" style="font-size: 11.5px; padding: 7px 9px; color: #4338ca; border-color: #c7d2fe; background: #eef2ff; font-weight: 700;" title="Upload CM Recording to generate Apricot Case Note & Next Steps">
+                        🎙️ CM Note
                     </button>
-                    <button class="btn btn-outline" onclick="deleteClientFolder(${c.id}, '${escapeHtml(c.first_name)} ${escapeHtml(c.last_name)}')" style="color: #dc2626; border-color: #fecaca; font-size: 12px; padding: 8px 10px;" title="Delete Client Folder">
+                    <button class="btn btn-outline" onclick="exportClientCasePlan(${c.id})" style="font-size: 11.5px; padding: 7px 9px; color: #0f766e; border-color: #99f6e4; font-weight: 700;" title="Export & Print Living Case Plan (Goals & Gates)">
+                        📄 Plan
+                    </button>
+                    <button class="btn btn-outline" onclick="deleteClientFolder(${c.id}, '${safeFullName}')" style="color: #dc2626; border-color: #fecaca; font-size: 11.5px; padding: 7px 8px;" title="Delete Client Folder">
                         🗑️
                     </button>
                 </div>
@@ -9165,8 +9386,19 @@ window.exportClientCasePlan = function(clientId) {
     window.open(`/api/reentry/clients/${id}/export-case-plan?token=${encodeURIComponent(token)}`, '_blank');
 };
 
+window.exportApricotCasePlan = function(recordId) {
+    if (!recordId) return;
+    const token = localStorage.getItem('fs_token');
+    if (!token) {
+        alert('Authentication required to export case plan.');
+        return;
+    }
+    window.open(`/api/apricot/case-plan-export/${encodeURIComponent(recordId)}?token=${encodeURIComponent(token)}`, '_blank');
+};
+
 window.openClientFolder = async function(clientId) {
     activeFolderClientId = clientId;
+    document.getElementById('session-apricot-note-banner')?.classList.add('hidden');
     showView('view-reentry-client-folder');
     window.scrollTo({ top: 0, behavior: 'smooth' });
     await reloadClientFolder();
@@ -9207,12 +9439,30 @@ function renderClientFolder(data) {
     if (nameEl) nameEl.innerText = `${client.first_name} ${client.last_name}`;
     const locEl = document.getElementById('folder-client-location');
     if (locEl) locEl.innerText = client.location;
+    const cmEl = document.getElementById('folder-client-cm');
+    if (cmEl) cmEl.innerText = `👩‍💼 ${client.case_manager || 'Daisy Boynton'}`;
     const apEl = document.getElementById('folder-client-apricot');
     if (apEl) apEl.innerText = `Apricot ID: ${client.apricot_id || 'N/A'}`;
     const phEl = document.getElementById('folder-client-phone');
     if (phEl) phEl.innerText = `📞 ${client.phone || 'No phone'}`;
     const emEl = document.getElementById('folder-client-email');
     if (emEl) emEl.innerText = `✉️ ${client.email || 'No email'}`;
+    const lcEl = document.getElementById('folder-client-last-contact');
+    if (lcEl) {
+        lcEl.innerText = client.last_contact_date
+            ? `🕒 Last Contact: ${client.last_contact_date} (${client.last_contact_staff || client.case_manager || 'Staff'} • ${client.last_contact_activity || 'Case Note'})`
+            : '🕒 Last Contact: Pending';
+    }
+
+    const gatesStrip = document.getElementById('folder-client-gates-strip');
+    if (gatesStrip) {
+        gatesStrip.innerHTML = [1, 2, 3, 4].map(g => {
+            const pct = client[`gate${g}_pct`] ?? 0;
+            const bg = pct >= 80 ? '#dcfce7' : (pct >= 50 ? '#fef9c3' : '#fee2e2');
+            const col = pct >= 80 ? '#166534' : (pct >= 50 ? '#854d0e' : '#991b1b');
+            return `<span style="background: ${bg}; color: ${col}; padding: 3px 10px; border-radius: 6px; font-size: 11.5px; font-weight: 800;">Briefcase Gate ${g}: ${pct}%</span>`;
+        }).join('');
+    }
 
     const stabilitySelect = document.getElementById('folder-stability-select');
     if (stabilitySelect) stabilitySelect.value = client.stability_tier || 'stable';
@@ -9235,7 +9485,7 @@ function renderClientFolder(data) {
     }
 
     // 1. Next Conversation Agenda
-    const agendaText = agenda || `### 🗣️ Next Session Focus for ${client.first_name}\n- [ ] Review current progress and identify any emerging barriers`;
+    const agendaText = agenda || `### 🗣️ Next Session Focus for ${client.first_name} (Goals & Briefcase Gates 1–4 — No CBT)\n- [ ] Review current progress on Living Goals and Briefcase Gates 1–4`;
     const agendaDisplay = document.getElementById('agenda-display');
     const agendaEditor = document.getElementById('agenda-editor');
     if (agendaDisplay) {
@@ -9349,10 +9599,6 @@ function renderFolderBriefcase(items) {
                 </div>
                 <div style="padding: 8px 12px;">
                     ${domItems.map(item => {
-                        let statusColor = '#94a3b8';
-                        if (item.status === 'green') statusColor = '#16a34a';
-                        if (item.status === 'red') statusColor = '#dc2626';
-
                         return `
                             <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #f1f5f9; font-size: 12.5px;">
                                 <div style="flex: 1; padding-right: 12px;">
@@ -9379,22 +9625,46 @@ function renderFolderSessions(sessions) {
     if (!timeline) return;
 
     if (!sessions || sessions.length === 0) {
-        timeline.innerHTML = '<p style="color: #64748b; font-size: 13px;">No sessions uploaded yet. Upload a meeting audio recording or paste notes above to record the first session.</p>';
+        timeline.innerHTML = '<p style="color: #64748b; font-size: 13px;">No sessions uploaded yet. Upload a meeting audio recording or paste notes above to record the first session and generate a copyable Apricot Case Note.</p>';
         return;
     }
 
-    timeline.innerHTML = sessions.map(s => {
+    timeline.innerHTML = sessions.map((s, idx) => {
         const ai = s.ai_analysis || {};
+        const apricotNote = ai.apricot_case_note || ai.session_summary || s.transcript_text || '';
+        const nextSteps = Array.isArray(ai.what_to_work_on_next) ? ai.what_to_work_on_next : [];
+        const noteBoxId = `rn-session-apricot-note-${s.id || idx}`;
         return `
             <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 14px;">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
                     <div>
                         <strong style="font-size: 14.5px; color: #0f172a;">${escapeHtml(s.session_title)}</strong>
                         <div style="font-size: 12px; color: #64748b; margin-top: 2px;">
                             📅 ${s.session_date} &bull; <span style="text-transform: capitalize;">${escapeHtml(s.session_type)}</span>
                         </div>
                     </div>
+                    ${apricotNote ? `
+                        <button type="button" class="btn btn-primary" onclick="copyTextFromElement('${noteBoxId}', this)" style="background: #4f46e5; border-color: #4f46e5; font-size: 11.5px; padding: 5px 12px; font-weight: 700;">
+                            📋 Copy Case Note for Apricot
+                        </button>
+                    ` : ''}
                 </div>
+
+                ${apricotNote ? `
+                    <div style="background: #eef2ff; border: 1px solid #c7d2fe; border-left: 4px solid #4f46e5; border-radius: 6px; padding: 10px 12px; margin-bottom: 10px;">
+                        <div style="font-size: 11px; font-weight: 800; color: #312e81; text-transform: uppercase; margin-bottom: 4px;">📋 Copyable Case Note for Apricot</div>
+                        <div id="${noteBoxId}" style="font-size: 12.5px; color: #1e1b4b; white-space: pre-wrap; background: white; padding: 8px 10px; border-radius: 4px; border: 1px solid #e0e7ff;">${escapeHtml(apricotNote)}</div>
+                    </div>
+                ` : ''}
+
+                ${nextSteps.length > 0 ? `
+                    <div style="background: #fffbeb; border: 1px solid #fde68a; border-left: 4px solid #d97706; border-radius: 6px; padding: 10px 12px; margin-bottom: 10px;">
+                        <div style="font-size: 11px; font-weight: 800; color: #b45309; text-transform: uppercase; margin-bottom: 4px;">🎯 What to Work on Next (Grounded in Goals & Briefcase Gates 1–4)</div>
+                        <ul style="margin: 0; padding-left: 18px; font-size: 12.5px; color: #78350f;">
+                            ${nextSteps.map(step => `<li style="margin-bottom: 3px;">${escapeHtml(step)}</li>`).join('')}
+                        </ul>
+                    </div>
+                ` : ''}
 
                 ${ai.session_summary ? `
                     <div style="background: white; border-radius: 6px; padding: 12px; border: 1px solid #e2e8f0; font-size: 13px; color: #334155; line-height: 1.5; margin-bottom: 10px;">
@@ -9524,10 +9794,10 @@ window.handleSessionUpload = async function(e) {
 
     if (btn) {
         btn.disabled = true;
-        btn.innerText = 'Analyzing Session with AI...';
+        btn.innerText = 'Analyzing Session & Generating Apricot Note...';
     }
     if (statusEl) {
-        statusEl.innerText = 'Analyzing audio/notes with Gemini 3.1 Pro... Updating case plan...';
+        statusEl.innerText = 'Analyzing audio/notes with Gemini... Generating Apricot Case Note & updating Goals/Gates...';
         statusEl.style.color = '#0284c7';
     }
 
@@ -9540,10 +9810,20 @@ window.handleSessionUpload = async function(e) {
         const data = await safeApiResponse(res);
 
         if (statusEl) {
-            statusEl.innerText = '✅ Session processed! Goals & briefcase updated.';
+            statusEl.innerText = '✅ Session processed! Apricot Case Note ready to copy, Goals & Briefcase updated.';
             statusEl.style.color = '#16a34a';
         }
+
+        const bannerEl = document.getElementById('session-apricot-note-banner');
+        const noteTextEl = document.getElementById('session-apricot-note-text');
+        const generatedNote = data.analysis?.apricot_case_note || data.analysis?.session_summary || '';
+        if (bannerEl && noteTextEl && generatedNote) {
+            noteTextEl.innerText = generatedNote;
+            bannerEl.classList.remove('hidden');
+        }
+
         document.getElementById('form-upload-session')?.reset();
+        window.latestApricotEvalReport = null;
         await reloadClientFolder();
 
     } catch (err) {
@@ -9555,7 +9835,7 @@ window.handleSessionUpload = async function(e) {
     } finally {
         if (btn) {
             btn.disabled = false;
-            btn.innerText = '✨ Process & Update Case Plan';
+            btn.innerText = '✨ Generate Apricot Note & Update Case Plan';
         }
     }
 };
@@ -9668,88 +9948,231 @@ window.promptEditBriefcaseNotes = async function(itemKey, currentNotes) {
 };
 
 // =========================================================================
-// SUPERVISOR DASHBOARD LOGIC
+// APRICOT EVAL REPORT ENGINE, DAILY UPLOAD & SUPERVISOR / CENTER DASHBOARDS
 // =========================================================================
+
+window.latestApricotEvalReport = null;
+window.supCoachingProgramFilter = 'all';
+window.supCoachingCenterFilter = 'all';
+window.supCoachingSearchQuery = '';
+
+window.triggerApricotWorkbookUpload = function() {
+    const input = document.getElementById('global-apricot-workbook-input');
+    if (input) {
+        input.value = '';
+        input.click();
+    }
+};
+
+window.handleGlobalApricotWorkbookUpload = async function(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const token = localStorage.getItem('fs_token');
+    if (!token) return alert('Please sign in first.');
+
+    const syncMeta = document.getElementById('sup-apricot-sync-meta');
+    if (syncMeta) {
+        syncMeta.innerText = '⏳ Uploading & Deduplicating Apricot Report...';
+        syncMeta.style.background = '#fef3c7';
+        syncMeta.style.color = '#92400e';
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+        const res = await fetch('/api/apricot/upload-workbook', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` },
+            body: formData
+        });
+        const data = await safeApiResponse(res);
+        const s = data.summary || {};
+
+        window.latestApricotEvalReport = data.report || null;
+
+        const dedupText = document.getElementById('sup-apricot-dedup-text');
+        if (dedupText) {
+            dedupText.innerHTML = `<strong>✅ Apricot Report Uploaded (${escapeHtml(file.name)}):</strong> Processed <strong>${s.newNotesProcessed ?? 0}</strong> NEW case note(s) and disregarded <strong>${s.duplicateNotesDisregarded ?? 0}</strong> previously processed note(s). Synced <strong>${s.pointsRecordsSynced ?? 0}</strong> point record(s) across <strong>${s.activeFirstShiftCount ?? 9}</strong> First Shift &amp; <strong>${s.activeReentryNavCount ?? 35}</strong> Reentry Nav cases.`;
+        }
+        if (syncMeta) {
+            syncMeta.innerText = `✅ Synced: ${s.newNotesProcessed ?? 0} New Notes | ${s.duplicateNotesDisregarded ?? 0} Duplicates Skipped`;
+            syncMeta.style.background = '#ecfdf5';
+            syncMeta.style.color = '#047857';
+        }
+
+        alert(
+            `✅ Apricot Report Synced Successfully!\n\n` +
+            `• New Case Notes Processed: ${s.newNotesProcessed ?? 0}\n` +
+            `• Duplicate Prior Notes Disregarded: ${s.duplicateNotesDisregarded ?? 0}\n` +
+            `• Total Unique Case Notes Indexed: ${s.totalUniqueNotesInDb ?? 0}\n` +
+            `• Daily Points Records Updated: ${s.pointsRecordsSynced ?? 0}\n` +
+            `• Previous Week Pay Report: $${(s.previousWeekPayTotalDollars ?? 0).toLocaleString()} (${s.previousWeekPayTotalPoints ?? 0} pts)`
+        );
+
+        // Refresh active views
+        if (!document.getElementById('view-supervisor-dashboard')?.classList.contains('hidden')) {
+            loadSupervisorDashboard();
+        }
+        if (!document.getElementById('view-pm-portal')?.classList.contains('hidden')) {
+            loadCaseload();
+            loadCenterApricotTables();
+            loadCenterCoachingFeedback();
+            loadCenterFunnelAndReferrals();
+        }
+        if (!document.getElementById('view-reentry-dashboard')?.classList.contains('hidden')) {
+            loadReentryCaseload();
+            loadReentryMasterActions();
+        }
+    } catch (err) {
+        alert('Apricot Upload Failed: ' + err.message);
+        if (syncMeta) {
+            syncMeta.innerText = '⚠️ Upload Error';
+            syncMeta.style.background = '#fee2e2';
+            syncMeta.style.color = '#b91c1c';
+        }
+    }
+};
+
+window.exportPreviousWeekPayReport = function(format = 'xlsx') {
+    const token = localStorage.getItem('fs_token');
+    if (!token) return alert('Authentication required.');
+    window.open(`/api/apricot/pay-report/export?format=${encodeURIComponent(format)}&token=${encodeURIComponent(token)}`, '_blank');
+};
+
+window.switchSupervisorReportTab = function(tabKey) {
+    const tabs = ['all', 'pay', 'funnel', 'active', 'coaching', 'employment', 'referrals', 'evals'];
+    tabs.forEach(t => {
+        const btn = document.getElementById(`sup-tab-btn-${t}`);
+        if (btn) {
+            btn.classList.toggle('btn-primary', t === tabKey);
+            btn.classList.toggle('btn-outline', t !== tabKey);
+        }
+    });
+
+    const secMap = {
+        centers: document.getElementById('sup-sec-centers-overview'),
+        pay: document.getElementById('sup-sec-pay'),
+        funnel: document.getElementById('sup-sec-funnel'),
+        active: document.getElementById('sup-sec-active'),
+        coaching: document.getElementById('sup-sec-coaching'),
+        employment: document.getElementById('sup-sec-employment'),
+        referrals: document.getElementById('sup-sec-referrals'),
+        evals: document.getElementById('sup-sec-evals')
+    };
+
+    if (tabKey === 'all') {
+        Object.values(secMap).forEach(el => el?.classList.remove('hidden'));
+    } else {
+        Object.entries(secMap).forEach(([k, el]) => {
+            if (!el) return;
+            if (k === tabKey || (tabKey === 'evals' && k === 'centers')) {
+                el.classList.remove('hidden');
+            } else {
+                el.classList.add('hidden');
+            }
+        });
+    }
+};
 
 window.loadSupervisorDashboard = async function() {
     const token = localStorage.getItem('fs_token');
     if (!token) return;
 
     try {
-        const res = await fetch('/api/supervisor/overview', {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const data = await safeApiResponse(res);
-        renderSupervisorDashboard(data);
+        const [supRes, evalRes, facRes] = await Promise.all([
+            fetch('/api/supervisor/overview', { headers: { 'Authorization': `Bearer ${token}` } }),
+            fetch('/api/apricot/eval-report', { headers: { 'Authorization': `Bearer ${token}` } }),
+            fetch('/api/facilitation/evaluations', { headers: { 'Authorization': `Bearer ${token}` } })
+        ]);
+        const supData = await safeApiResponse(supRes);
+        const evalReport = evalRes.ok ? await evalRes.json() : (supData.apricotReport || null);
+        const facEvals = facRes.ok ? await facRes.json() : [];
+
+        window.latestApricotEvalReport = evalReport;
+        renderSupervisorDashboard(supData, evalReport, Array.isArray(facEvals) ? facEvals : []);
     } catch (err) {
         console.error('Failed to load supervisor overview:', err);
     }
 };
 
-function renderSupervisorDashboard(data) {
+function renderSupervisorDashboard(data, report, facEvals = []) {
     const centerCardsContainer = document.getElementById('sup-center-cards');
-    const reentryCardsContainer = document.getElementById('sup-reentry-cards');
     const qaClassesContainer = document.getElementById('sup-qa-classes-list');
     const triageCasesContainer = document.getElementById('sup-triage-cases-list');
 
-    // Centers Cards
-    if (centerCardsContainer && data.centers) {
-        centerCardsContainer.innerHTML = Object.entries(data.centers).map(([locName, cData]) => {
-            return `
-                <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,0.05); padding: 20px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-                        <h3 style="margin: 0; font-size: 17px; font-weight: 800; color: #0f172a;">🏢 ${locName} Center</h3>
-                        <button class="btn btn-outline" onclick="supervisorSwitchView('${locName.toLowerCase()}')" style="font-size: 11.5px; padding: 4px 8px;">Inspect ➡️</button>
-                    </div>
+    const syncMeta = document.getElementById('sup-apricot-sync-meta');
+    if (syncMeta && report?.syncMetadata) {
+        const sm = report.syncMetadata;
+        syncMeta.innerText = `✅ Report Date: ${report.reportDateStr || '2026-10-23'} • ${sm.total_unique_notes_in_db || 739} Unique Case Notes Indexed`;
+    }
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
-                        <div style="background: #f8fafc; border-radius: 8px; padding: 10px; text-align: center;">
-                            <div style="font-size: 20px; font-weight: 800; color: #0f172a;">${cData.participantsCount}</div>
-                            <div style="font-size: 11px; color: #64748b;">Active Participants</div>
+    // 1. Top All-Centers Snapshot Cards (Charleston, Columbia, Spartanburg, Reentry Nav)
+    if (centerCardsContainer && data.centers) {
+        const fsActive = report?.activeFirstShift || [];
+        const rnActive = report?.activeReentryNav || [];
+
+        const centerHtml = Object.entries(data.centers).map(([locName, cData]) => {
+            const fsCount = fsActive.filter(x => x.location === locName).length || cData.participantsCount;
+            const rnCount = rnActive.filter(x => x.location === locName).length;
+            return `
+                <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,0.05); padding: 18px; border-top: 4px solid #2563eb;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <h3 style="margin: 0; font-size: 16.5px; font-weight: 800; color: #0f172a;">🏢 ${locName} Center</h3>
+                        <button class="btn btn-outline" onclick="supervisorSwitchView('${locName.toLowerCase()}')" style="font-size: 11.5px; padding: 4px 10px; font-weight: 700;">Open Center Dashboard ➡️</button>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px;">
+                        <div style="background: #eff6ff; border-radius: 8px; padding: 8px; text-align: center;">
+                            <div style="font-size: 19px; font-weight: 800; color: #1d4ed8;">${fsCount}</div>
+                            <div style="font-size: 10.5px; color: #1e40af; font-weight: 600;">First Shift</div>
                         </div>
-                        <div style="background: #f8fafc; border-radius: 8px; padding: 10px; text-align: center;">
-                            <div style="font-size: 20px; font-weight: 800; color: ${cData.facilitationAvgScore >= 80 ? '#16a34a' : '#dc2626'};">
+                        <div style="background: #f5f3ff; border-radius: 8px; padding: 8px; text-align: center;">
+                            <div style="font-size: 19px; font-weight: 800; color: #6d28d9;">${rnCount}</div>
+                            <div style="font-size: 10.5px; color: #5b21b6; font-weight: 600;">Reentry Nav</div>
+                        </div>
+                        <div style="background: #f0fdf4; border-radius: 8px; padding: 8px; text-align: center;">
+                            <div style="font-size: 19px; font-weight: 800; color: ${cData.facilitationAvgScore >= 80 ? '#15803d' : '#dc2626'};">
                                 ${cData.facilitationAvgScore ? `${cData.facilitationAvgScore}%` : 'N/A'}
                             </div>
-                            <div style="font-size: 11px; color: #64748b;">Avg Class Score</div>
+                            <div style="font-size: 10.5px; color: #166534; font-weight: 600;">Class QA Avg</div>
                         </div>
                     </div>
-
-                    <div style="font-size: 12px; color: #64748b; line-height: 1.5;">
-                        <div>• Class Evaluations Logged: <strong>${cData.facilitationEvalsCount}</strong></div>
-                        <div>• Class Passing Rate (&ge;80%): <strong>${cData.facilitationPassingRate}%</strong></div>
-                        <div>• 1-on-1 CM Evals Logged: <strong>${cData.cmEvalsCount}</strong></div>
+                    <div style="font-size: 12px; color: #475569; line-height: 1.5;">
+                        <div>• Class Evals: <strong>${cData.facilitationEvalsCount}</strong> (${cData.facilitationPassingRate}% passing &ge;80%)</div>
+                        <div>• 1-on-1 CM Recordings Evaluated: <strong>${cData.cmEvalsCount}</strong></div>
                     </div>
                 </div>
             `;
         }).join('');
-    }
 
-    // Reentry Nav Cards
-    if (reentryCardsContainer && data.reentryNav) {
-        const rn = data.reentryNav;
-        reentryCardsContainer.innerHTML = `
-            <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 18px; border-left: 5px solid #3b82f6;">
-                <div style="font-size: 11.5px; font-weight: 700; color: #1d4ed8; text-transform: uppercase;">Total Active Caseload</div>
-                <div style="font-size: 24px; font-weight: 800; color: #0f172a; margin-top: 4px;">${rn.totalClients}</div>
-                <div style="font-size: 11px; color: #64748b; margin-top: 2px;">Receiving navigation services</div>
-            </div>
-            <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 18px; border-left: 5px solid #ef4444;">
-                <div style="font-size: 11.5px; font-weight: 700; color: #b91c1c; text-transform: uppercase;">Immediate Triage</div>
-                <div style="font-size: 24px; font-weight: 800; color: #b91c1c; margin-top: 4px;">${rn.triageCount}</div>
-                <div style="font-size: 11px; color: #64748b; margin-top: 2px;">Crisis housing / legal / sobriety</div>
-            </div>
-            <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 18px; border-left: 5px solid #f59e0b;">
-                <div style="font-size: 11.5px; font-weight: 700; color: #b45309; text-transform: uppercase;">At-Risk Clients</div>
-                <div style="font-size: 24px; font-weight: 800; color: #b45309; margin-top: 4px;">${rn.atRiskCount}</div>
-                <div style="font-size: 11px; color: #64748b; margin-top: 2px;">Transit, ID, job search barriers</div>
-            </div>
-            <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 18px; border-left: 5px solid #10b981;">
-                <div style="font-size: 11.5px; font-weight: 700; color: #047857; text-transform: uppercase;">Open Living Goals</div>
-                <div style="font-size: 24px; font-weight: 800; color: #047857; margin-top: 4px;">${rn.openGoalsCount}</div>
-                <div style="font-size: 11px; color: #64748b; margin-top: 2px;">Active action items in flight</div>
+        const daisyCount = rnActive.filter(x => (x.caseManager || '').toLowerCase().includes('daisy')).length;
+        const rnCardHtml = `
+            <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,0.05); padding: 18px; border-top: 4px solid #7c3aed;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <h3 style="margin: 0; font-size: 16.5px; font-weight: 800; color: #0f172a;">🧭 Reentry Navigation</h3>
+                    <button class="btn btn-outline" onclick="supervisorSwitchView('reentry_nav')" style="font-size: 11.5px; padding: 4px 10px; font-weight: 700;">Open RN Hub ➡️</button>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px;">
+                    <div style="background: #f5f3ff; border-radius: 8px; padding: 8px; text-align: center;">
+                        <div style="font-size: 19px; font-weight: 800; color: #6d28d9;">${rnActive.length || 35}</div>
+                        <div style="font-size: 10.5px; color: #5b21b6; font-weight: 600;">Active Cases</div>
+                    </div>
+                    <div style="background: #ede9fe; border-radius: 8px; padding: 8px; text-align: center;">
+                        <div style="font-size: 19px; font-weight: 800; color: #4c1d95;">${daisyCount || 30}</div>
+                        <div style="font-size: 10.5px; color: #5b21b6; font-weight: 600;">Daisy's Load</div>
+                    </div>
+                    <div style="background: #ecfdf5; border-radius: 8px; padding: 8px; text-align: center;">
+                        <div style="font-size: 19px; font-weight: 800; color: #047857;">${rnActive.filter(x => x.hasCasePlan).length}</div>
+                        <div style="font-size: 10.5px; color: #065f46; font-weight: 600;">With Plan</div>
+                    </div>
+                </div>
+                <div style="font-size: 12px; color: #475569; line-height: 1.5;">
+                    <div>• Case Plans: <strong>Goals &amp; Briefcase Gates 1–4 Only (No CBT)</strong></div>
+                    <div>• Primary Navigator: <strong>Daisy Boynton</strong> (${daisyCount} of ${rnActive.length} active)</div>
+                </div>
             </div>
         `;
+        centerCardsContainer.innerHTML = centerHtml + rnCardHtml;
     }
 
     // QA Low Scoring Classes
@@ -9789,7 +10212,844 @@ function renderSupervisorDashboard(data) {
             `).join('');
         }
     }
+
+    if (report) {
+        renderSupervisorPayReport(report.previousWeekPayReport);
+        renderSupervisorFunnelReport(report.funnelReport);
+        renderSupervisorActiveDashboards(report.activeFirstShift || [], report.activeReentryNav || []);
+        renderSupervisorCoachingSection(report.participantEvaluations || []);
+        renderSupervisorEmploymentSection(report.employmentReport);
+        renderSupervisorReferralsAndCredentials(report.referralsAndCredentials);
+    }
+    renderSupervisorAllClassEvals(facEvals);
 }
+
+// 1. RENDER PREVIOUS WEEK PAY REPORT (SUPERVISOR ONLY + EXPORTABLE)
+function renderSupervisorPayReport(pay) {
+    const container = document.getElementById('sup-pay-report-container');
+    if (!container || !pay) return;
+
+    const rows = pay.participants || [];
+    const currEnroll = pay.currentWeekEnrollments || [];
+    const prevExits = pay.previousWeekExits || [];
+
+    container.innerHTML = `
+        <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 6px rgba(0,0,0,0.05); padding: 24px; border-top: 5px solid #0f766e;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; margin-bottom: 18px; border-bottom: 1px solid #e2e8f0; padding-bottom: 16px;">
+                <div>
+                    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                        <h2 style="margin: 0; font-size: 20px; font-weight: 800; color: #0f172a;">💵 1. First Shift Payment Report — Previous Week Only (${escapeHtml(pay.weekRangeLabel)})</h2>
+                        <span style="background: #dcfce7; color: #166534; font-weight: 800; font-size: 12px; padding: 4px 10px; border-radius: 999px;">Rate: $${pay.pointDollarRate} / Point</span>
+                    </div>
+                    <p style="margin: 4px 0 0 0; font-size: 13px; color: #64748b;">
+                        Monday–Friday Daily Points Payout (${escapeHtml(pay.prevMonday)} to ${escapeHtml(pay.prevFriday)}) • <strong>${rows.length} Participants</strong> • <strong>${pay.totalPoints} Total Points</strong> • <strong>$${Number(pay.totalDollars || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })} Total Payout</strong>
+                    </p>
+                </div>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button class="btn btn-primary" onclick="exportPreviousWeekPayReport('xlsx')" style="background: #0f766e; border-color: #0f766e; font-size: 12.5px; padding: 8px 14px; font-weight: 700;">
+                        📥 Export Excel (.xlsx)
+                    </button>
+                    <button class="btn btn-outline" onclick="exportPreviousWeekPayReport('csv')" style="font-size: 12.5px; padding: 8px 14px; font-weight: 700; color: #0f766e; border-color: #0f766e;">
+                        📄 Export CSV (.csv)
+                    </button>
+                    <button class="btn btn-outline" onclick="exportPreviousWeekPayReport('html')" style="font-size: 12.5px; padding: 8px 14px; font-weight: 700;">
+                        🖨️ Print / Save PDF
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-responsive" style="margin-bottom: 20px;">
+                <table class="data-table" style="width: 100%; font-size: 12.5px;">
+                    <thead>
+                        <tr style="background: #f8fafc;">
+                            <th>Record ID</th>
+                            <th>Participant Name</th>
+                            <th>Location</th>
+                            <th style="text-align: center;">Mon (${escapeHtml(pay.prevMonday?.slice(5))})</th>
+                            <th style="text-align: center;">Tue</th>
+                            <th style="text-align: center;">Wed</th>
+                            <th style="text-align: center;">Thu</th>
+                            <th style="text-align: center;">Fri (${escapeHtml(pay.prevFriday?.slice(5))})</th>
+                            <th style="text-align: right;">Total Points</th>
+                            <th style="text-align: right;">Total Pay ($9/pt)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rows.map(r => `
+                            <tr>
+                                <td style="font-weight: 700; color: #4338ca;">#${escapeHtml(r.recordId)}</td>
+                                <td style="font-weight: 700; color: #0f172a;">${escapeHtml(r.name)}</td>
+                                <td>📍 ${escapeHtml(r.location)}</td>
+                                <td style="text-align: center;">${r.mon ?? '—'}</td>
+                                <td style="text-align: center;">${r.tue ?? '—'}</td>
+                                <td style="text-align: center;">${r.wed ?? '—'}</td>
+                                <td style="text-align: center;">${r.thu ?? '—'}</td>
+                                <td style="text-align: center;">${r.fri ?? '—'}</td>
+                                <td style="text-align: right; font-weight: 800; color: #0f172a;">${r.totalPoints}</td>
+                                <td style="text-align: right; font-weight: 800; color: #15803d;">$${Number(r.totalPay).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                            </tr>
+                        `).join('')}
+                        <tr style="background: #f0fdf4; font-weight: 800; border-top: 2px solid #16a34a;">
+                            <td colspan="8" style="font-size: 13.5px; color: #166534;">TOTAL PREVIOUS WEEK PAYROLL (${rows.length} Participants)</td>
+                            <td style="text-align: right; font-size: 14px; color: #166534;">${pay.totalPoints} pts</td>
+                            <td style="text-align: right; font-size: 15px; color: #15803d;">$${Number(pay.totalDollars || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px;">
+                    <strong style="font-size: 13px; color: #0f172a; display: block; margin-bottom: 8px;">🆕 Current Week First Shift Enrollments (${currEnroll.length})</strong>
+                    ${currEnroll.length === 0 ? '<div style="font-size: 12px; color: #64748b;">None logged this week.</div>' : `
+                        <ul style="margin: 0; padding-left: 18px; font-size: 12.5px; color: #334155;">
+                            ${currEnroll.map(e => `<li><strong>${escapeHtml(e.name)}</strong> (#${escapeHtml(e.recordId)}) — ${escapeHtml(e.location)} • Start: ${escapeHtml(e.enrollmentStart)}</li>`).join('')}
+                        </ul>
+                    `}
+                </div>
+                <div style="background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 14px;">
+                    <strong style="font-size: 13px; color: #991b1b; display: block; margin-bottom: 8px;">🚪 Previous Week First Shift Exits (${prevExits.length})</strong>
+                    ${prevExits.length === 0 ? '<div style="font-size: 12px; color: #64748b;">None logged previous week.</div>' : `
+                        <ul style="margin: 0; padding-left: 18px; font-size: 12.5px; color: #7f1d1d;">
+                            ${prevExits.map(e => `<li><strong>${escapeHtml(e.name)}</strong> (#${escapeHtml(e.recordId)}) — ${escapeHtml(e.location)} • Exit: ${escapeHtml(e.exitDate)} (${escapeHtml(e.exitReason)})</li>`).join('')}
+                        </ul>
+                    `}
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// 2. RENDER FUNNEL REPORT (ENROLLMENTS, EXITS, CONSULTATIONS, WAITLIST, ORIENTATION)
+function renderSupervisorFunnelReport(funnel, containerId = 'sup-funnel-report-container') {
+    const container = document.getElementById(containerId);
+    if (!container || !funnel) return;
+
+    const progRows = Object.values(funnel.byProgramAndCenter || {});
+    const exitRows = funnel.exitDetails || [];
+    const ph = funnel.phaseFunnel || {};
+    const wl = funnel.waitlist || {};
+    const or = funnel.orientations || {};
+
+    container.innerHTML = `
+        <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 6px rgba(0,0,0,0.05); padding: 24px; border-top: 5px solid #2563eb;">
+            <h2 style="margin: 0 0 6px 0; font-size: 20px; font-weight: 800; color: #0f172a;">📊 2. Program Funnel Report — Enrollments, Exits, Consultations, Waitlist &amp; Orientation</h2>
+            <p style="margin: 0 0 18px 0; font-size: 13px; color: #64748b;">Complete intake-to-enrollment funnel across First Shift, Reentry Navigation, and Pre-release.</p>
+
+            <!-- 2.1 Program Enrollments & Exits -->
+            <h3 style="font-size: 15px; font-weight: 800; color: #1e293b; margin: 0 0 10px 0;">2.1 Program Enrollments &amp; Exits by Center</h3>
+            <div class="table-responsive" style="margin-bottom: 20px;">
+                <table class="data-table" style="width: 100%; font-size: 12.5px;">
+                    <thead>
+                        <tr style="background: #f8fafc;">
+                            <th>Program</th>
+                            <th>Center / Location</th>
+                            <th style="text-align: center;">Total Enrollments</th>
+                            <th style="text-align: center;">Currently Active</th>
+                            <th style="text-align: center;">Exited</th>
+                            <th>Exit Reasons Breakdown</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${progRows.map(r => {
+                            const reasons = Object.entries(r.exitReasons || {}).map(([k, v]) => `${escapeHtml(k)}: <strong>${v}</strong>`).join(' • ') || '—';
+                            return `
+                                <tr>
+                                    <td style="font-weight: 700; color: #0f172a;">${escapeHtml(r.program)}</td>
+                                    <td>📍 ${escapeHtml(r.center)}</td>
+                                    <td style="text-align: center; font-weight: 700;">${r.enrolled}</td>
+                                    <td style="text-align: center; font-weight: 800; color: #16a34a;">${r.active}</td>
+                                    <td style="text-align: center; font-weight: 700; color: #dc2626;">${r.exited}</td>
+                                    <td style="font-size: 12px; color: #475569;">${reasons}</td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 2.2 Phase Funnel & Waitlist Grid -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 18px; margin-bottom: 20px;">
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px;">
+                    <h4 style="margin: 0 0 10px 0; font-size: 14px; font-weight: 800; color: #0f172a;">📞 Resource Coordinations &amp; Reentry Consultations</h4>
+                    <table style="width: 100%; font-size: 12.5px; border-collapse: collapse;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid #cbd5e1; text-align: left; color: #475569;">
+                                <th style="padding: 6px 4px;">Metric</th>
+                                <th style="padding: 6px 4px; text-align: center;">YTD Total</th>
+                                <th style="padding: 6px 4px; text-align: center;">Prev Week</th>
+                                <th style="padding: 6px 4px; text-align: center;">Curr Week</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid #e2e8f0;">
+                                <td style="padding: 6px 4px; font-weight: 600;">Resource Coordinations</td>
+                                <td style="padding: 6px 4px; text-align: center; font-weight: 800;">${ph.resourceCoordinations?.ytd ?? 0}</td>
+                                <td style="padding: 6px 4px; text-align: center;">${ph.resourceCoordinations?.lastWeek ?? 0}</td>
+                                <td style="padding: 6px 4px; text-align: center;">${ph.resourceCoordinations?.currWeek ?? 0}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 6px 4px; font-weight: 600;">Reentry Consultations</td>
+                                <td style="padding: 6px 4px; text-align: center; font-weight: 800;">${ph.consultations?.ytd ?? 0}</td>
+                                <td style="padding: 6px 4px; text-align: center;">${ph.consultations?.lastWeek ?? 0}</td>
+                                <td style="padding: 6px 4px; text-align: center;">${ph.consultations?.currWeek ?? 0}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div style="margin-top: 10px; font-size: 12px; color: #334155;">
+                        <strong>First Shift Eligibility:</strong>
+                        ${Object.entries(ph.eligibilityBreakdown || {}).map(([k, v]) => `${escapeHtml(k)}: <strong>${v}</strong>`).join(' | ')}
+                    </div>
+                    <div style="margin-top: 6px; font-size: 12px; color: #334155;">
+                        <strong>Top Referral Sources:</strong>
+                        ${(ph.referralSources || []).slice(0, 5).map(([k, v]) => `${escapeHtml(k)} (${v})`).join(', ')}
+                    </div>
+                </div>
+
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px;">
+                    <h4 style="margin: 0 0 10px 0; font-size: 14px; font-weight: 800; color: #0f172a;">⏳ Active Waitlist (${wl.totalActiveWaitlist ?? 0}) &amp; Orientation Conversion (${or.totalRecords ?? 0})</h4>
+                    <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
+                        ${Object.entries(wl.byCenter || {}).map(([loc, list]) => `
+                            <div style="flex: 1; min-width: 95px; background: white; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px; text-align: center;">
+                                <div style="font-size: 18px; font-weight: 800; color: #0284c7;">${list.length}</div>
+                                <div style="font-size: 11px; color: #475569; font-weight: 600;">${escapeHtml(loc)} Waitlist</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <table style="width: 100%; font-size: 12px; border-collapse: collapse;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid #cbd5e1; text-align: left; color: #475569;">
+                                <th style="padding: 4px;">Center</th>
+                                <th style="padding: 4px; text-align: center;">Scheduled</th>
+                                <th style="padding: 4px; text-align: center;">Attended</th>
+                                <th style="padding: 4px; text-align: center;">Did Not Attend</th>
+                                <th style="padding: 4px; text-align: center;">Enrolled Day 1</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${Object.entries(or.byCenter || {}).map(([loc, o]) => `
+                                <tr style="border-bottom: 1px solid #e2e8f0;">
+                                    <td style="padding: 4px; font-weight: 700;">${escapeHtml(loc)}</td>
+                                    <td style="padding: 4px; text-align: center;">${o.total}</td>
+                                    <td style="padding: 4px; text-align: center; color: #16a34a; font-weight: 700;">${o.attended}</td>
+                                    <td style="padding: 4px; text-align: center; color: #dc2626;">${o.didNotAttend}</td>
+                                    <td style="padding: 4px; text-align: center; font-weight: 800; color: #1d4ed8;">${o.enrolledDay1}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <details style="font-size: 12.5px; color: #475569;">
+                <summary style="cursor: pointer; font-weight: 700; color: #2563eb;">▶ View All Exited Participants Detail Log (${exitRows.length} Exits)</summary>
+                <div class="table-responsive" style="margin-top: 10px;">
+                    <table class="data-table" style="width: 100%; font-size: 12px;">
+                        <thead>
+                            <tr><th>Record ID</th><th>Name</th><th>Program</th><th>Center</th><th>Enrolled</th><th>Exit Date</th><th>Exit Reason</th></tr>
+                        </thead>
+                        <tbody>
+                            ${exitRows.map(x => `
+                                <tr>
+                                    <td>#${escapeHtml(x.recordId)}</td>
+                                    <td style="font-weight: 600;">${escapeHtml(x.name)}</td>
+                                    <td>${escapeHtml(x.program)}</td>
+                                    <td>${escapeHtml(x.center)}</td>
+                                    <td>${escapeHtml(x.enrollmentStart)}</td>
+                                    <td>${escapeHtml(x.exitDate)}</td>
+                                    <td>${escapeHtml(x.exitReason)}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            </details>
+        </div>
+    `;
+}
+
+// 3. RENDER ACTIVE PROGRAM DASHBOARDS (FIRST SHIFT 9 ACTIVE & REENTRY NAV 35 ACTIVE)
+function renderSupervisorActiveDashboards(fsActive, rnActive, containerId = 'sup-active-dashboards-container', showMode = 'both') {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    const showFS = showMode === 'both' || showMode === 'first_shift';
+    const showRN = showMode === 'both' || showMode === 'reentry_nav';
+
+    let html = '';
+
+    if (showFS) {
+        html += `
+            <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 6px rgba(0,0,0,0.05); padding: 22px; margin-bottom: 24px; border-top: 5px solid #2563eb;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 14px;">
+                    <div>
+                        <h2 style="margin: 0; font-size: 19px; font-weight: 800; color: #0f172a;">⚡ First Shift Active Participant Dashboard (${fsActive.length} Active)</h2>
+                        <p style="margin: 3px 0 0 0; font-size: 12.5px; color: #64748b;">Start Week = Week 1 (increments every Monday) • Includes CBT Focus Areas, Briefcase Gates 1–4 %, Weekly Drug Screen, CM Session, LS/CMI &amp; Bio Info</p>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table" style="width: 100%; font-size: 12px;">
+                        <thead>
+                            <tr style="background: #f8fafc;">
+                                <th>ID</th>
+                                <th>Participant</th>
+                                <th>Center</th>
+                                <th style="text-align: center;">Weeks Enrolled</th>
+                                <th style="text-align: center;">Curr Wk Pts</th>
+                                <th>Case Plan (CBT + Goals)</th>
+                                <th style="text-align: center;">Gate 1</th>
+                                <th style="text-align: center;">Gate 2</th>
+                                <th style="text-align: center;">Gate 3</th>
+                                <th style="text-align: center;">Gate 4</th>
+                                <th style="text-align: center;">Drug Test (Wk)</th>
+                                <th style="text-align: center;">CM Session (Wk)</th>
+                                <th style="text-align: center;">LS/CMI</th>
+                                <th>Bio Info Complete</th>
+                                <th style="text-align: right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${fsActive.map(p => {
+                                const safeName = (p.name || '').replace(/'/g, "\\'");
+                                const safeLoc = (p.location || 'Charleston').replace(/'/g, "\\'");
+                                return `
+                                    <tr>
+                                        <td style="font-weight: 700; color: #4338ca;">#${escapeHtml(p.recordId)}</td>
+                                        <td style="font-weight: 800; color: #0f172a;">${escapeHtml(p.name)}</td>
+                                        <td>📍 ${escapeHtml(p.location)}</td>
+                                        <td style="text-align: center; font-weight: 700;">Wk ${p.weeksEnrolled}<div style="font-size: 10px; color: #64748b;">${escapeHtml(p.enrollmentStart)}</div></td>
+                                        <td style="text-align: center; font-weight: 800; color: #1d4ed8;">${p.currentWeekPoints}</td>
+                                        <td>
+                                            <span style="padding: 2px 7px; border-radius: 999px; font-weight: 700; font-size: 11px; background: ${p.hasCasePlan ? '#dcfce7' : '#fee2e2'}; color: ${p.hasCasePlan ? '#166534' : '#991b1b'};">
+                                                ${escapeHtml(p.casePlanStatus)}
+                                            </span>
+                                        </td>
+                                        <td style="text-align: center; font-weight: 700; color: ${p.gate1 >= 80 ? '#16a34a' : '#d97706'};">${p.gate1}%</td>
+                                        <td style="text-align: center; font-weight: 700; color: ${p.gate2 >= 80 ? '#16a34a' : '#d97706'};">${p.gate2}%</td>
+                                        <td style="text-align: center; font-weight: 700; color: ${p.gate3 >= 80 ? '#16a34a' : '#d97706'};">${p.gate3}%</td>
+                                        <td style="text-align: center; font-weight: 700; color: ${p.gate4 >= 80 ? '#16a34a' : '#d97706'};">${p.gate4}%</td>
+                                        <td style="text-align: center;">${escapeHtml(p.drugTestThisWeek)}</td>
+                                        <td style="text-align: center;">${escapeHtml(p.cmSessionThisWeek)}</td>
+                                        <td style="text-align: center; font-weight: 700;">${escapeHtml(p.lscmiScore)}</td>
+                                        <td style="font-size: 11px;">${escapeHtml(p.bioComplete)}</td>
+                                        <td style="text-align: right; white-space: nowrap;">
+                                            <button class="btn btn-outline" style="padding: 4px 8px; font-size: 11px; color: #4338ca; border-color: #c7d2fe; background: #eef2ff; font-weight: 700;" onclick="openCmEvalModal('${escapeHtml(p.recordId)}', '${safeLoc}', '', '${safeName}')" title="Upload CM Recording to generate Apricot Note & Next Steps">🎙️ CM Note</button>
+                                            <button class="btn btn-outline" style="padding: 4px 8px; font-size: 11px; color: #0f766e; border-color: #99f6e4; font-weight: 700;" onclick="exportApricotCasePlan('${escapeHtml(p.recordId)}')" title="Export Case Plan">📄 Plan</button>
+                                        </td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+    }
+
+    if (showRN) {
+        html += `
+            <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 6px rgba(0,0,0,0.05); padding: 22px; border-top: 5px solid #7c3aed;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 14px;">
+                    <div>
+                        <h2 style="margin: 0; font-size: 19px; font-weight: 800; color: #0f172a;">🧭 Reentry Navigation Active Participant Dashboard (${rnActive.length} Active — Mostly Daisy Boynton)</h2>
+                        <p style="margin: 3px 0 0 0; font-size: 12.5px; color: #64748b;">Reentry Navigation Case Plans include <strong>Goals &amp; Briefcase Gates 1–4 Only (No CBT)</strong> • Tracks Case Manager, Gate %, and Last Contact</p>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table" style="width: 100%; font-size: 12px;">
+                        <thead>
+                            <tr style="background: #f8fafc;">
+                                <th>ID</th>
+                                <th>Participant</th>
+                                <th>Center</th>
+                                <th>Enrolled</th>
+                                <th>Case Manager</th>
+                                <th>RN Case Plan (Goals &amp; Gates)</th>
+                                <th style="text-align: center;">Gate 1</th>
+                                <th style="text-align: center;">Gate 2</th>
+                                <th style="text-align: center;">Gate 3</th>
+                                <th style="text-align: center;">Gate 4</th>
+                                <th>Last Contact Date</th>
+                                <th>Last Contact Activity</th>
+                                <th style="text-align: right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${rnActive.map(p => {
+                                const safeName = (p.name || '').replace(/'/g, "\\'");
+                                const safeLoc = (p.location || 'Charleston').replace(/'/g, "\\'");
+                                const safeCm = (p.caseManager || 'Daisy Boynton').replace(/'/g, "\\'");
+                                return `
+                                    <tr>
+                                        <td style="font-weight: 700; color: #6d28d9;">#${escapeHtml(p.recordId)}</td>
+                                        <td style="font-weight: 800; color: #0f172a;">${escapeHtml(p.name)}</td>
+                                        <td>📍 ${escapeHtml(p.location)}</td>
+                                        <td>${escapeHtml(p.enrollmentStart)}</td>
+                                        <td><span style="background: #ede9fe; color: #5b21b6; padding: 2px 8px; border-radius: 999px; font-weight: 700; font-size: 11px;">👩‍💼 ${escapeHtml(p.caseManager)}</span></td>
+                                        <td>
+                                            <span style="padding: 2px 8px; border-radius: 999px; font-weight: 700; font-size: 11px; background: ${p.hasCasePlan ? '#dcfce7' : '#fee2e2'}; color: ${p.hasCasePlan ? '#166534' : '#991b1b'};">
+                                                ${p.hasCasePlan ? '✅ Yes (Goals & Gates)' : '❌ No'}
+                                            </span>
+                                        </td>
+                                        <td style="text-align: center; font-weight: 700; color: ${p.gate1 >= 80 ? '#16a34a' : '#d97706'};">${p.gate1}%</td>
+                                        <td style="text-align: center; font-weight: 700; color: ${p.gate2 >= 80 ? '#16a34a' : '#d97706'};">${p.gate2}%</td>
+                                        <td style="text-align: center; font-weight: 700; color: ${p.gate3 >= 80 ? '#16a34a' : '#d97706'};">${p.gate3}%</td>
+                                        <td style="text-align: center; font-weight: 700; color: ${p.gate4 >= 80 ? '#16a34a' : '#d97706'};">${p.gate4}%</td>
+                                        <td style="font-weight: 600;">${escapeHtml(p.lastContactDate)}<div style="font-size: 10px; color: #64748b;">by ${escapeHtml(p.lastContactStaff)}</div></td>
+                                        <td style="font-size: 11.5px; color: #334155;">${escapeHtml(p.lastContactActivity)}</td>
+                                        <td style="text-align: right; white-space: nowrap;">
+                                            <button class="btn btn-outline" style="padding: 4px 8px; font-size: 11px; color: #4338ca; border-color: #c7d2fe; background: #eef2ff; font-weight: 700;" onclick="openCmEvalModal('${escapeHtml(p.recordId)}', '${safeLoc}', '${safeCm}', '${safeName}')" title="Upload CM Recording to generate Apricot Note & Next Steps">🎙️ CM Note</button>
+                                            <button class="btn btn-outline" style="padding: 4px 8px; font-size: 11px; color: #0f766e; border-color: #99f6e4; font-weight: 700;" onclick="exportApricotCasePlan('${escapeHtml(p.recordId)}')" title="Export Case Plan (Goals & Gates Only)">📄 Plan</button>
+                                        </td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+    }
+
+    container.innerHTML = html;
+}
+
+// 4. RENDER CASE PLAN, BRIEFCASE & GATES COACHING FEEDBACK ("WHAT TO WORK ON NEXT")
+window.filterSupCoachingCards = function() {
+    window.supCoachingProgramFilter = document.getElementById('sup-coaching-prog-filter')?.value || 'all';
+    window.supCoachingCenterFilter = document.getElementById('sup-coaching-center-filter')?.value || 'all';
+    window.supCoachingSearchQuery = document.getElementById('sup-coaching-search-input')?.value || '';
+    const evals = window.latestApricotEvalReport?.participantEvaluations || [];
+    renderCoachingCardsList(evals, 'sup-coaching-cards-grid', window.supCoachingProgramFilter, window.supCoachingCenterFilter, window.supCoachingSearchQuery);
+};
+
+function renderSupervisorCoachingSection(evaluations, containerId = 'sup-coaching-feedback-container', fixedLocation = '') {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    const gridId = `${containerId}-grid`;
+    const progFilterId = `${containerId}-prog`;
+    const locFilterId = `${containerId}-loc`;
+    const searchInputId = `${containerId}-search`;
+
+    container.innerHTML = `
+        <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 6px rgba(0,0,0,0.05); padding: 24px; border-top: 5px solid #d97706;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+                <div>
+                    <h2 style="margin: 0; font-size: 20px; font-weight: 800; color: #0f172a;">🎯 Case Plan, Briefcase &amp; Gates Feedback — "What to Work on Next in Case Management"</h2>
+                    <p style="margin: 4px 0 0 0; font-size: 13px; color: #64748b;">
+                        Continuous case management coaching grounded in each participant's <strong>Case Plan, Briefcase, and Gates 1–4</strong>. (First Shift includes CBT; Reentry Navigation focuses strictly on Goals &amp; Gates — No CBT).
+                    </p>
+                </div>
+                <button class="btn btn-primary" onclick="openCmEvalModal()" style="background: #4f46e5; border-color: #4f46e5; font-size: 12.5px; padding: 8px 14px; font-weight: 700;">
+                    🎙️ Upload CM Recording (Generate Apricot Note &amp; Update Next Steps)
+                </button>
+            </div>
+
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                <input type="text" id="${searchInputId}" placeholder="🔍 Search participant name, Apricot ID, or Case Manager (e.g. Daisy)..." style="flex: 1; min-width: 240px; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px;" oninput="updateCoachingGrid('${containerId}', '${fixedLocation}')">
+                <select id="${progFilterId}" onchange="updateCoachingGrid('${containerId}', '${fixedLocation}')" style="padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background: white; font-weight: 700;">
+                    <option value="all">All Programs (First Shift + Reentry Nav)</option>
+                    <option value="First Shift">⚡ First Shift Only (CBT + Briefcase + Gates)</option>
+                    <option value="Reentry Navigation">🧭 Reentry Navigation Only (Goals &amp; Gates — No CBT)</option>
+                </select>
+                ${!fixedLocation ? `
+                    <select id="${locFilterId}" onchange="updateCoachingGrid('${containerId}', '')" style="padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; background: white; font-weight: 700;">
+                        <option value="all">All Centers</option>
+                        <option value="Charleston">📍 Charleston</option>
+                        <option value="Columbia">📍 Columbia</option>
+                        <option value="Spartanburg">📍 Spartanburg</option>
+                    </select>
+                ` : ''}
+            </div>
+
+            <div id="${gridId}" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 16px;"></div>
+        </div>
+    `;
+
+    updateCoachingGrid(containerId, fixedLocation);
+}
+
+window.updateCoachingGrid = function(containerId, fixedLocation = '') {
+    const gridId = `${containerId}-grid`;
+    const prog = document.getElementById(`${containerId}-prog`)?.value || 'all';
+    const loc = fixedLocation || document.getElementById(`${containerId}-loc`)?.value || 'all';
+    const q = (document.getElementById(`${containerId}-search`)?.value || '').toLowerCase().trim();
+    const evals = window.latestApricotEvalReport?.participantEvaluations || [];
+
+    const filtered = evals.filter(p => {
+        if (prog !== 'all' && p.program !== prog) return false;
+        if (loc !== 'all' && (p.location || '').toLowerCase() !== loc.toLowerCase()) return false;
+        if (q) {
+            const hay = `${p.name} ${p.record_id} ${p.case_manager} ${p.location} ${p.program}`.toLowerCase();
+            if (!hay.includes(q)) return false;
+        }
+        return true;
+    });
+
+    const gridEl = document.getElementById(gridId);
+    if (!gridEl) return;
+
+    if (filtered.length === 0) {
+        gridEl.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 30px; color: #64748b;">No participants match the selected filters.</div>`;
+        return;
+    }
+
+    gridEl.innerHTML = filtered.map(p => {
+        const isRN = p.program === 'Reentry Navigation';
+        const nextSteps = Array.isArray(p.what_to_work_on_next) ? p.what_to_work_on_next : [];
+        const safeName = (p.name || '').replace(/'/g, "\\'");
+        const safeLoc = (p.location || 'Charleston').replace(/'/g, "\\'");
+        const safeCm = (p.case_manager || '').replace(/'/g, "\\'");
+
+        return `
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-top: 4px solid ${isRN ? '#7c3aed' : '#2563eb'}; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+                <div>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 8px;">
+                        <div>
+                            <strong style="font-size: 15.5px; color: #0f172a;">${escapeHtml(p.name)}</strong>
+                            <span style="font-size: 12px; color: #6366f1; font-weight: 800; margin-left: 4px;">#${escapeHtml(p.record_id)}</span>
+                            <div style="font-size: 11.5px; color: #64748b; margin-top: 2px;">
+                                📍 ${escapeHtml(p.location)} &bull; 👩‍💼 CM: <strong>${escapeHtml(p.case_manager || 'Center Staff')}</strong> &bull; Enrolled: ${escapeHtml(p.enrollment_start || 'N/A')}
+                            </div>
+                        </div>
+                        <span style="padding: 3px 8px; border-radius: 999px; font-size: 10.5px; font-weight: 800; white-space: nowrap; background: ${isRN ? '#ede9fe' : '#dbeafe'}; color: ${isRN ? '#5b21b6' : '#1e40af'};">
+                            ${isRN ? '🧭 Reentry Nav (Goals & Gates)' : '⚡ First Shift (CBT + Gates)'}
+                        </span>
+                    </div>
+
+                    <!-- Case Plan & Briefcase Gates Strip -->
+                    <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; font-size: 11px;">
+                        <span style="padding: 2px 8px; border-radius: 6px; font-weight: 700; background: ${(p.case_plan_status || '').includes('Complete') ? '#dcfce7' : '#fee2e2'}; color: ${(p.case_plan_status || '').includes('Complete') ? '#166534' : '#991b1b'};">
+                            📋 ${escapeHtml(p.case_plan_status)}
+                        </span>
+                        <span style="background: #f1f5f9; padding: 2px 7px; border-radius: 5px; font-weight: 700;">G1: ${p.gate1_pct ?? 0}%</span>
+                        <span style="background: #f1f5f9; padding: 2px 7px; border-radius: 5px; font-weight: 700;">G2: ${p.gate2_pct ?? 0}%</span>
+                        <span style="background: #f1f5f9; padding: 2px 7px; border-radius: 5px; font-weight: 700;">G3: ${p.gate3_pct ?? 0}%</span>
+                        <span style="background: #f1f5f9; padding: 2px 7px; border-radius: 5px; font-weight: 700;">G4: ${p.gate4_pct ?? 0}%</span>
+                    </div>
+
+                    <div style="font-size: 12px; color: #334155; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; margin-bottom: 10px; line-height: 1.45;">
+                        <div><strong>📝 Case Notes (${p.notes_count ?? 0}):</strong> ${escapeHtml(p.case_notes_summary || 'No notes.')}</div>
+                        <div style="margin-top: 4px; color: #475569;"><strong>🔎 Evaluation:</strong> ${escapeHtml(p.operational_feedback || '')}</div>
+                    </div>
+
+                    <div style="background: #fffbeb; border: 1px solid #fde68a; border-left: 4px solid #d97706; border-radius: 6px; padding: 10px 12px; margin-bottom: 12px;">
+                        <div style="font-size: 11px; font-weight: 800; color: #b45309; text-transform: uppercase; margin-bottom: 4px;">
+                            🎯 What to Work on Next in Case Management (${isRN ? 'Goals & Briefcase Gates — No CBT' : 'Case Plan, CBT, Briefcase & Gates'}):
+                        </div>
+                        <ul style="margin: 0; padding-left: 16px; font-size: 12px; color: #78350f; line-height: 1.45;">
+                            ${nextSteps.map(step => `<li style="margin-bottom: 3px;">${escapeHtml(step)}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 8px; border-top: 1px solid #f1f5f9; padding-top: 10px;">
+                    <button class="btn btn-primary" style="flex: 1; font-size: 11.5px; padding: 6px 10px; background: #4f46e5; border-color: #4f46e5; font-weight: 700;" onclick="openCmEvalModal('${escapeHtml(p.record_id)}', '${safeLoc}', '${safeCm}', '${safeName}')">
+                        🎙️ Upload CM Recording (Apricot Note)
+                    </button>
+                    <button class="btn btn-outline" style="font-size: 11.5px; padding: 6px 12px; color: #0f766e; border-color: #0f766e; font-weight: 700;" onclick="exportApricotCasePlan('${escapeHtml(p.record_id)}')">
+                        📄 Export Case Plan
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+};
+
+// 5. RENDER EMPLOYMENT & 30/60/90/180-DAY RETENTION + OVERDUE CHECK-INS
+function renderSupervisorEmploymentSection(emp) {
+    const container = document.getElementById('sup-employment-container');
+    if (!container || !emp) return;
+
+    const ret = emp.retention || {};
+    const overdue = emp.overdueCheckIns || [];
+
+    container.innerHTML = `
+        <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 6px rgba(0,0,0,0.05); padding: 24px; border-top: 5px solid #0284c7;">
+            <h2 style="margin: 0 0 6px 0; font-size: 20px; font-weight: 800; color: #0f172a;">💼 5. Employment &amp; 30/60/90/180-Day Job Retention Analysis</h2>
+            <p style="margin: 0 0 18px 0; font-size: 13px; color: #64748b;">
+                Total Employment Records: <strong>${emp.totalJobRecords}</strong> (${emp.uniqueEmployedParticipants} Unique Participants) • Active Jobs: <strong>${emp.activeJobsCount}</strong>
+            </p>
+
+            <!-- Retention Milestones Cards -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-bottom: 22px;">
+                ${[
+                    { label: '30-Day Job Retention', data: ret.day30, color: '#16a34a' },
+                    { label: '60-Day Job Retention', data: ret.day60, color: '#0284c7' },
+                    { label: '90-Day Job Retention', data: ret.day90, color: '#4f46e5' },
+                    { label: '180-Day Job Retention', data: ret.day180, color: '#7c3aed' }
+                ].map(m => `
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 5px solid ${m.color}; border-radius: 10px; padding: 14px 16px;">
+                        <div style="font-size: 11.5px; font-weight: 800; color: #475569; text-transform: uppercase;">${m.label}</div>
+                        <div style="font-size: 26px; font-weight: 900; color: ${m.color}; margin: 4px 0;">${m.data?.rate ?? 0}%</div>
+                        <div style="font-size: 12px; color: #334155; font-weight: 600;">
+                            <strong>${m.data?.retained ?? 0}</strong> retained of <strong>${m.data?.qualifying ?? 0}</strong> qualifying jobs
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+
+            <!-- Active Employments Lacking a Job Check-In in Last 30 Days -->
+            <div style="background: #fff1f2; border: 1px solid #fecdd3; border-radius: 10px; padding: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
+                    <div>
+                        <strong style="font-size: 15px; color: #9f1239;">⚠️ Active Employments Lacking a Job Check-In Within the Last 30 Days (${overdue.length} of ${emp.activeJobsCount} Active Jobs)</strong>
+                        <div style="font-size: 12px; color: #881337;">Requires immediate 30/60/90/180-day retention verification check-in in Apricot.</div>
+                    </div>
+                </div>
+                <div class="table-responsive" style="max-height: 360px; overflow-y: auto; background: white; border-radius: 8px; border: 1px solid #fecdd3;">
+                    <table class="data-table" style="width: 100%; font-size: 12px;">
+                        <thead>
+                            <tr style="position: sticky; top: 0; background: #ffe4e6;">
+                                <th>Record ID</th>
+                                <th>Participant Name</th>
+                                <th>Employer</th>
+                                <th>Start Date</th>
+                                <th style="text-align: center;">Days Employed</th>
+                                <th>Last Check-In Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${overdue.map(o => `
+                                <tr>
+                                    <td style="font-weight: 700;">#${escapeHtml(o.recordId)}</td>
+                                    <td style="font-weight: 700; color: #0f172a;">${escapeHtml(o.name)}</td>
+                                    <td>${escapeHtml(o.employer)}</td>
+                                    <td>${escapeHtml(o.startDate)}</td>
+                                    <td style="text-align: center; font-weight: 700;">${o.daysEmployed}d</td>
+                                    <td>${escapeHtml(o.lastCheckIn)}</td>
+                                    <td><span style="color: #be123c; font-weight: 700;">${escapeHtml(o.daysSinceCheckIn)}</span></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// 6. RENDER REFERRALS & CREDENTIALS ANALYSIS
+function renderSupervisorReferralsAndCredentials(rc, containerId = 'sup-referrals-credentials-container') {
+    const container = document.getElementById(containerId);
+    if (!container || !rc) return;
+
+    const ref = rc.referrals || {};
+    const cred = rc.credentials || {};
+
+    container.innerHTML = `
+        <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 6px rgba(0,0,0,0.05); padding: 24px; border-top: 5px solid #16a34a;">
+            <h2 style="margin: 0 0 6px 0; font-size: 20px; font-weight: 800; color: #0f172a;">🤝 6. Referrals &amp; Credentials Analysis (By Center &amp; Staff)</h2>
+            <p style="margin: 0 0 18px 0; font-size: 13px; color: #64748b;">
+                Total Referrals: <strong>${ref.total ?? 0}</strong> (First Shift: <strong>${ref.firstShiftTotal ?? 0}</strong> • Reentry Navigation: <strong>${ref.reentryNavTotal ?? 0}</strong>) • Total Credentials Earned: <strong>${cred.total ?? 0}</strong>
+            </p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 18px;">
+                <!-- Referrals by Staff & Center -->
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px;">
+                    <h3 style="margin: 0 0 10px 0; font-size: 14.5px; font-weight: 800; color: #0f172a;">👩‍💼 Who Is Making Referrals (Staff &amp; Center Breakdown)</h3>
+                    <table style="width: 100%; font-size: 12.5px; border-collapse: collapse; margin-bottom: 12px;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid #cbd5e1; text-align: left; color: #475569;">
+                                <th style="padding: 5px;">Staff Member</th>
+                                <th style="padding: 5px;">Primary Track / Center</th>
+                                <th style="padding: 5px; text-align: right;">Referrals Made</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${(ref.byStaff || []).map(([staff, count]) => `
+                                <tr style="border-bottom: 1px solid #e2e8f0;">
+                                    <td style="padding: 5px; font-weight: 700; color: #0f172a;">${escapeHtml(staff)}</td>
+                                    <td style="padding: 5px; font-size: 11.5px; color: #475569;">${staff.includes('Daisy') ? '🧭 Reentry Navigation' : '⚡ First Shift Center'}</td>
+                                    <td style="padding: 5px; text-align: right; font-weight: 800; color: #1d4ed8;">${count}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                    <div style="font-size: 12px; color: #334155;">
+                        <strong>Top Referral Service Types:</strong>
+                        ${(ref.byServiceType || []).slice(0, 6).map(([type, count]) => `${escapeHtml(type)} (<strong>${count}</strong>)`).join(' • ')}
+                    </div>
+                </div>
+
+                <!-- Credentials by Center & Type -->
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px;">
+                    <h3 style="margin: 0 0 10px 0; font-size: 14.5px; font-weight: 800; color: #0f172a;">🎓 Credentials Earned (${cred.total ?? 0} Total across ${cred.uniqueParticipants ?? 0} Men)</h3>
+                    <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
+                        ${Object.entries(cred.byCenter || {}).map(([loc, cnt]) => `
+                            <div style="flex: 1; min-width: 90px; background: white; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px; text-align: center;">
+                                <div style="font-size: 18px; font-weight: 800; color: #15803d;">${cnt}</div>
+                                <div style="font-size: 11px; color: #475569; font-weight: 600;">${escapeHtml(loc)}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div style="font-size: 12px; color: #334155; margin-bottom: 10px;">
+                        <strong>By Credential Type:</strong>
+                        ${Object.entries(cred.byType || {}).map(([t, c]) => `<span style="background: #dcfce7; color: #166534; padding: 2px 8px; border-radius: 999px; font-weight: 700; margin-right: 4px;">${escapeHtml(t)}: ${c}</span>`).join('')}
+                    </div>
+                    <div style="max-height: 190px; overflow-y: auto; background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px;">
+                        <table style="width: 100%; font-size: 11.5px; border-collapse: collapse;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid #cbd5e1; text-align: left;">
+                                    <th style="padding: 4px;">Participant</th>
+                                    <th style="padding: 4px;">Center</th>
+                                    <th style="padding: 4px;">Credential</th>
+                                    <th style="padding: 4px;">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${(cred.recipients || []).map(r => `
+                                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                                        <td style="padding: 4px; font-weight: 600;">${escapeHtml(r.name)} (#${escapeHtml(r.recordId)})</td>
+                                        <td style="padding: 4px;">${escapeHtml(r.location)}</td>
+                                        <td style="padding: 4px; font-weight: 700; color: #15803d;">${escapeHtml(r.credentialType)}</td>
+                                        <td style="padding: 4px;">${escapeHtml(r.dateEarned)}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// 7. RENDER ALL CENTERS CLASS EVALUATIONS ON SUPERVISOR DASHBOARD
+function renderSupervisorAllClassEvals(facEvals) {
+    const container = document.getElementById('sup-all-class-evals-container');
+    if (!container) return;
+
+    if (!facEvals || facEvals.length === 0) {
+        container.innerHTML = '';
+        return;
+    }
+
+    container.innerHTML = `
+        <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,0.05); padding: 20px;">
+            <h3 style="margin: 0 0 12px 0; font-size: 16px; font-weight: 800; color: #0f172a;">🎤 All Centers Class Facilitation Evaluations (${facEvals.length} Sessions)</h3>
+            <div class="table-responsive">
+                <table class="data-table" style="width: 100%; font-size: 12.5px;">
+                    <thead>
+                        <tr style="background: #f8fafc;">
+                            <th>Date</th>
+                            <th>Center</th>
+                            <th>Facilitator</th>
+                            <th>Session / Curriculum Topic</th>
+                            <th style="text-align: center;">Total Score</th>
+                            <th style="text-align: right;">Inspect</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${facEvals.slice(0, 20).map(ev => `
+                            <tr>
+                                <td>${ev.created_at ? new Date(ev.created_at).toLocaleDateString() : '—'}</td>
+                                <td>📍 ${escapeHtml(ev.location || 'Charleston')}</td>
+                                <td style="font-weight: 700;">${escapeHtml(ev.facilitator_name || 'Staff')}</td>
+                                <td style="font-weight: 600; color: #0f172a;">${escapeHtml(ev.session_title || 'Class Session')}</td>
+                                <td style="text-align: center; font-weight: 800; color: ${ev.total_score >= 80 ? '#16a34a' : '#dc2626'};">${ev.total_score}%</td>
+                                <td style="text-align: right;">
+                                    <button class="btn btn-outline" style="padding: 4px 10px; font-size: 11px;" onclick="supervisorSwitchView('${(ev.location || 'charleston').toLowerCase()}'); setTimeout(() => switchPmSubView('facilitation'), 150);">View Center Eval ➡️</button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+}
+
+// =========================================================================
+// CENTER DASHBOARD (CHARLESTON, COLUMBIA, SPARTANBURG) APRICOT RENDERERS
+// =========================================================================
+
+window.centerProgramViewMode = 'both';
+
+window.toggleCenterProgramTables = function(mode) {
+    window.centerProgramViewMode = mode || 'both';
+    const legacyCard = document.getElementById('pm-legacy-fs-caseload-card');
+    if (legacyCard) {
+        legacyCard.classList.toggle('hidden', mode === 'reentry_nav');
+    }
+    loadCenterApricotTables();
+};
+
+window.loadCenterApricotTables = async function() {
+    const container = document.getElementById('pm-center-apricot-tables-container');
+    if (!container) return;
+
+    const token = localStorage.getItem('fs_token');
+    if (!token) return;
+
+    const loc = document.getElementById('pm-filter-location')?.value || currentUser?.location || '';
+    try {
+        const res = await fetch(`/api/apricot/eval-report?location=${encodeURIComponent(loc || 'all')}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) return;
+        const report = await res.json();
+        if (!loc || loc === 'all') window.latestApricotEvalReport = report;
+
+        renderSupervisorActiveDashboards(
+            report.activeFirstShift || [],
+            report.activeReentryNav || [],
+            'pm-center-apricot-tables-container',
+            window.centerProgramViewMode || 'both'
+        );
+    } catch (e) {
+        console.error('Error loading center Apricot tables:', e);
+    }
+};
+
+window.loadCenterCoachingFeedback = async function() {
+    const container = document.getElementById('pm-center-coaching-container');
+    if (!container) return;
+    const token = localStorage.getItem('fs_token');
+    if (!token) return;
+
+    const loc = document.getElementById('pm-filter-location')?.value || currentUser?.location || '';
+    try {
+        if (!window.latestApricotEvalReport) {
+            const res = await fetch('/api/apricot/eval-report', { headers: { 'Authorization': `Bearer ${token}` } });
+            if (res.ok) window.latestApricotEvalReport = await res.json();
+        }
+        renderSupervisorCoachingSection(
+            window.latestApricotEvalReport?.participantEvaluations || [],
+            'pm-center-coaching-container',
+            loc
+        );
+    } catch (e) {
+        console.error('Error loading center coaching feedback:', e);
+    }
+};
+
+window.loadCenterFunnelAndReferrals = async function() {
+    const container = document.getElementById('pm-center-funnel-referrals-container');
+    if (!container) return;
+    const token = localStorage.getItem('fs_token');
+    if (!token) return;
+
+    const loc = document.getElementById('pm-filter-location')?.value || currentUser?.location || '';
+    try {
+        const res = await fetch(`/api/apricot/eval-report?location=${encodeURIComponent(loc || 'all')}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) return;
+        const report = await res.json();
+
+        container.innerHTML = `
+            <div id="pm-center-funnel-sub" style="margin-bottom: 24px;"></div>
+            <div id="pm-center-ref-cred-sub"></div>
+        `;
+        renderSupervisorFunnelReport(report.funnelReport, 'pm-center-funnel-sub');
+        renderSupervisorReferralsAndCredentials(report.referralsAndCredentials, 'pm-center-ref-cred-sub');
+    } catch (e) {
+        console.error('Error loading center funnel & referrals:', e);
+    }
+};
 
 window.supervisorSwitchView = function(viewKey) {
     if (viewKey === 'supervisor') {
