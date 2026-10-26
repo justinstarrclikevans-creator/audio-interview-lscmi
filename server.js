@@ -4445,6 +4445,16 @@ app.get('/api/supervisor/overview', authenticateToken, requireRole('director', '
                 triageCases: activeTriageCases
             },
             apricotReport,
+            activeDashboards: apricotReport?.activeDashboards || null,
+            activeFirstShift: apricotReport?.activeFirstShift || [],
+            activeReentryNav: apricotReport?.activeReentryNav || [],
+            paymentReport: apricotReport?.paymentReport || null,
+            previousWeekPayReport: apricotReport?.paymentReport || null,
+            funnelReport: apricotReport?.funnelReport || null,
+            participantEvaluations: apricotReport?.participantEvaluations || [],
+            employmentAnalysis: apricotReport?.employmentAnalysis || null,
+            employmentReport: apricotReport?.employmentAnalysis || null,
+            referralsAndCredentials: apricotReport?.referralsAndCredentials || null,
             classEvaluations: allClassEvaluations,
             cmEvaluations: allCmEvaluations
         });
@@ -4484,6 +4494,17 @@ app.get('/api/apricot/eval-report', authenticateToken, requireRole('director', '
             locationFilter: location,
             totalDeduplicatedNotesInDb: dedupCount,
             report,
+            paymentReport: report.paymentReport,
+            previousWeekPayReport: report.paymentReport,
+            funnelReport: report.funnelReport,
+            activeDashboards: report.activeDashboards,
+            activeFirstShift: report.activeFirstShift,
+            activeReentryNav: report.activeReentryNav,
+            participantEvaluations: report.participantEvaluations,
+            employmentAnalysis: report.employmentAnalysis,
+            employmentReport: report.employmentAnalysis,
+            referralsAndCredentials: report.referralsAndCredentials,
+            centerView: report.centerView || null,
             classEvaluations,
             cmEvaluations
         });

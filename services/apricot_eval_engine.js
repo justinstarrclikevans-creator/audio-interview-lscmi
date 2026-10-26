@@ -731,6 +731,16 @@ function processApricotWorkbook(bufferOrPath, options = {}) {
         pointsRecordsSynced: computedReport.meta.pointsRecordsCount,
         activeFirstShiftCount: computedReport.activeDashboards.firstShift.length,
         activeReentryNavCount: computedReport.activeDashboards.reentryNav.length,
+        summary: {
+            newNotesProcessed: newNotesCount,
+            duplicateNotesDisregarded: skippedNotesCount,
+            totalUniqueNotesInDb: computedReport.meta.totalUniqueNotes,
+            pointsRecordsSynced: computedReport.meta.pointsRecordsCount,
+            activeFirstShiftCount: computedReport.activeDashboards.firstShift.length,
+            activeReentryNavCount: computedReport.activeDashboards.reentryNav.length,
+            previousWeekPayTotalDollars: computedReport.paymentReport.totalDollars,
+            previousWeekPayTotalPoints: computedReport.paymentReport.totalPoints
+        },
         report: computedReport
     };
 }
@@ -764,23 +774,26 @@ function recomputeFullApricotReport(syncMeta = {}) {
         ORDER BY activity_date DESC, id DESC
     `).all();
 
-    // Determine report reference date from latest point or case note date (default 2026-10-23)
-    let maxDataDate = '2026-10-23';
-    for (const p of points) {
-        const d = parseDateStr(p['Date']);
-        if (d && d > maxDataDate && d <= '2027-12-31') maxDataDate = d;
-    }
-    for (const n of allProcessedNotes) {
-        const d = n.activity_date;
-        if (d && d > maxDataDate && d <= '2027-12-31') maxDataDate = d;
+    // Determine report reference date from filename (e.g. 261026 -> 2026-10-26) or default to 2026-10-26
+    let reportDate = '2026-10-26';
+    const fn = String(syncMeta.sourceFilename || '');
+    const fnMatch = fn.match(/26(\d{2})(\d{2})/);
+    if (fnMatch && Number(fnMatch[1]) >= 1 && Number(fnMatch[1]) <= 12 && Number(fnMatch[2]) >= 1 && Number(fnMatch[2]) <= 31) {
+        reportDate = `2026-${fnMatch[1]}-${fnMatch[2]}`;
+    } else {
+        const todayIso = new Date().toISOString().slice(0, 10);
+        if (todayIso >= '2026-10-01' && todayIso <= '2027-12-31') {
+            reportDate = todayIso;
+        }
     }
 
-    const currentWeekMonday = getMondayOf(maxDataDate);
+    const currentWeekMonday = getMondayOf(reportDate);
     const currentWeekFriday = addDays(currentWeekMonday, 4);
     const currentWeekSunday = addDays(currentWeekMonday, 6);
 
     const prevWeekMonday = addDays(currentWeekMonday, -7);
     const prevWeekFriday = addDays(prevWeekMonday, 4);
+    const maxDataDate = reportDate;
 
     // Build context maps for center location resolution
     const contextMaps = {
@@ -1146,10 +1159,10 @@ function recomputeFullApricotReport(syncMeta = {}) {
                 g2Items,
                 g3Items,
                 g4Items,
-                g1Pct: Math.floor((Math.min(8, g1Items.length) / 8) * 100),
-                g2Pct: Math.floor((Math.min(10, g2Items.length) / 10) * 100),
-                g3Pct: Math.floor((Math.min(7, g3Items.length) / 7) * 100),
-                g4Pct: Math.floor((Math.min(8, g4Items.length) / 8) * 100),
+                g1Pct: Math.round((Math.min(8, g1Items.length) / 8) * 100),
+                g2Pct: Math.round((Math.min(10, g2Items.length) / 10) * 100),
+                g3Pct: Math.round((Math.min(7, g3Items.length) / 7) * 100),
+                g4Pct: Math.round((Math.min(8, g4Items.length) / 8) * 100),
                 sec1Notes: String(r['Section 1 Notes'] || '').trim(),
                 sec2Notes: String(r['Section 2 Notes'] || '').trim(),
                 sec3Notes: String(r['Section 3 Notes'] || '').trim(),
@@ -1269,53 +1282,80 @@ function recomputeFullApricotReport(syncMeta = {}) {
         const location = resolveParticipantCenter(id, contextMaps);
         const weeksEnrolled = computeWeeksEnrolled(enrollStart, maxDataDate);
         const currPts = currentWeekPointsById[id] || 0;
-        const planInfo = fsPlanById[id] || { status: 'No Plan on File', focusArea1: '', focusArea2: '', programManager: '' };
+        const ptsLastWeek = prevWeekPointsMap[id]?.totalPoints ?? 0;
+        
+        let planStatus = 'No Plan on File';
+        const planInfo = fsPlanById[id];
+        if (weeksEnrolled === 1 && !planInfo) {
+            planStatus = 'Pending Onboarding';
+        } else if (planInfo) {
+            planStatus = planInfo.status;
+        }
+
         const bc = briefcaseById[id] || { exists: false, g1Pct: 0, g2Pct: 0, g3Pct: 0, g4Pct: 0, g1Items: [], g2Items: [], g3Items: [], g4Items: [] };
         const hasDrugTest = drugTestById.has(id);
 
-        // Check CM session this week
+        // Check CM session last week (Monday - Friday of previous pay period)
         const pNotes = notesById[id] || [];
-        const thisWeekNotes = pNotes.filter(n =>
-            n.activity_date >= currentWeekMonday &&
-            n.activity_date <= currentWeekSunday &&
+        const lastWeekNotes = pNotes.filter(n =>
+            n.activity_date >= prevWeekMonday &&
+            n.activity_date <= prevWeekFriday &&
             (n.interaction_type.toLowerCase().includes('coaching') ||
              n.interaction_type.toLowerCase().includes('case management') ||
              n.interaction_type.toLowerCase().includes('check-in') ||
              n.interaction_type.toLowerCase().includes('barrier') ||
              n.service_context.toLowerCase().includes('case management'))
         );
-        const cmThisWeek = thisWeekNotes.length > 0
-            ? `Yes (${formatMDY(thisWeekNotes[0].activity_date).slice(0, 5)} by ${thisWeekNotes[0].staff_name})`
+        const cmLastWeek = lastWeekNotes.length > 0
+            ? `Yes (${formatMDY(lastWeekNotes[0].activity_date).slice(0, 5)} by ${lastWeekNotes[0].staff_name})`
             : 'No';
 
         const lscmiScore = lscmiById[id] ?? 0;
         const bio = bioById[id] || { exists: false, isComplete: false, statusText: 'No (Not on file)', missing: ['All Bio Info'] };
 
+        const gate1Display = !bc.exists ? '0% (Not Created)' : `${bc.g1Pct}%`;
+        const gate2Display = !bc.exists ? '0%' : `${bc.g2Pct}%`;
+        const gate3Display = !bc.exists ? '0%' : `${bc.g3Pct}%`;
+        const gate4Display = !bc.exists ? '0%' : `${bc.g4Pct}%`;
+
         return {
             recordId: id,
             firstName: String(r['First'] || '').trim(),
             lastName: String(r['Last'] || '').trim(),
+            name: fullName,
             fullName,
             location,
             enrollmentStart: formatMDY(enrollStart),
             enrollmentStartIso: enrollStart,
             weeksEnrolled,
             currentWeekPoints: currPts,
-            casePlanStatus: planInfo.status,
-            focusArea1: planInfo.focusArea1,
-            focusArea1Situation: planInfo.focusArea1Situation,
-            focusArea2: planInfo.focusArea2,
-            focusArea2Situations: planInfo.focusArea2Situations,
-            programManager: planInfo.programManager || (location === 'Charleston' ? 'Terrence Brown' : location === 'Columbia' ? 'Jenn Jeanquart' : 'Diyoung Dantzler'),
+            pointsLastWeek: ptsLastWeek,
+            casePlanStatus: planStatus,
+            hasCasePlan: planStatus.includes('Yes'),
+            focusArea1: planInfo?.focusArea1 || '',
+            focusArea1Situation: planInfo?.focusArea1Situation || '',
+            focusArea2: planInfo?.focusArea2 || '',
+            focusArea2Situations: planInfo?.focusArea2Situations || '',
+            programManager: planInfo?.programManager || (location === 'Charleston' ? 'Terrence Brown' : location === 'Columbia' ? 'Jenn Jeanquart' : 'Diyoung Dantzler'),
             briefcaseCreated: bc.exists,
+            gate1: bc.g1Pct,
+            gate2: bc.g2Pct,
+            gate3: bc.g3Pct,
+            gate4: bc.g4Pct,
             gate1Pct: bc.g1Pct,
             gate2Pct: bc.g2Pct,
             gate3Pct: bc.g3Pct,
             gate4Pct: bc.g4Pct,
+            gate1Display,
+            gate2Display,
+            gate3Display,
+            gate4Display,
             drugTestThisWeek: hasDrugTest ? 'Yes (Logged in Drug Test sheet)' : 'No',
-            cmSessionThisWeek: cmThisWeek,
+            cmSessionLastWeek: cmLastWeek,
+            cmSessionThisWeek: cmLastWeek,
             lscmiScore,
             bioInfoComplete: bio.statusText,
+            bioComplete: bio.statusText,
             missingBioFields: bio.missing,
             lastContactDate: pNotes[0]?.activity_date ? formatMDY(pNotes[0].activity_date) : 'None',
             lastContactStaff: pNotes[0]?.staff_name || 'N/A',
@@ -1323,7 +1363,7 @@ function recomputeFullApricotReport(syncMeta = {}) {
         };
     });
 
-    // B. Active Reentry Navigation Participants (35 active cases, mostly Daisy Boynton)
+    // B. Active Reentry Navigation Participants (33 active cases, mostly Daisy Boynton)
     const activeRnRowsRaw = caseloads.filter(r =>
         String(r['Program Enrollment:']).trim() === 'Reentry Navigation' && !parseDateStr(r['Date enrollment ended:'])
     );
@@ -1345,10 +1385,17 @@ function recomputeFullApricotReport(syncMeta = {}) {
             }
         }
 
+        const gate1Display = !bc.exists ? '0% (Not Created)' : `${bc.g1Pct}%`;
+        const gate2Display = !bc.exists ? '0%' : `${bc.g2Pct}%`;
+        const gate3Display = !bc.exists ? '0%' : `${bc.g3Pct}%`;
+        const gate4Display = !bc.exists ? '0%' : `${bc.g4Pct}%`;
+        const contactStaffStr = latestNote ? `${formatMDY(latestNote.activity_date)} (${latestNote.staff_name})` : 'No contact logged';
+
         return {
             recordId: id,
             firstName: String(r['First'] || '').trim(),
             lastName: String(r['Last'] || '').trim(),
+            name: fullName,
             fullName,
             location,
             enrollmentStart: formatMDY(enrollStart),
@@ -1356,16 +1403,26 @@ function recomputeFullApricotReport(syncMeta = {}) {
             caseManager: assignedCm || 'Unassigned',
             hasCasePlan: rnPlan.hasPlan,
             casePlanStatus: rnPlan.hasPlan ? 'Yes' : 'No',
+            reentryNavCasePlan: rnPlan.hasPlan ? 'Yes' : 'No',
             casePlanText: rnPlan.casePlanText || bc.goal90Day || '',
             requirementsForFs: rnPlan.requirementsForFs || '',
             briefcaseCreated: bc.exists,
+            gate1: bc.g1Pct,
+            gate2: bc.g2Pct,
+            gate3: bc.g3Pct,
+            gate4: bc.g4Pct,
             gate1Pct: bc.g1Pct,
             gate2Pct: bc.g2Pct,
             gate3Pct: bc.g3Pct,
             gate4Pct: bc.g4Pct,
+            gate1Display,
+            gate2Display,
+            gate3Display,
+            gate4Display,
             lastContactDate: latestNote ? formatMDY(latestNote.activity_date) : 'No contact logged',
             lastContactDateIso: latestNote ? latestNote.activity_date : '',
             lastContactStaff: latestNote ? latestNote.staff_name : 'N/A',
+            lastContactDateAndStaff: contactStaffStr,
             lastContactActivity: latestNote ? (latestNote.interaction_type || latestNote.service_context || 'Case Note') : 'None',
             notesCount: pNotes.length
         };
@@ -1421,29 +1478,44 @@ function recomputeFullApricotReport(syncMeta = {}) {
 
         const evalObj = {
             recordId: id,
+            record_id: id,
             fullName: fsPart.fullName,
+            name: fsPart.fullName,
             program: 'First Shift',
             center: fsPart.location,
+            location: fsPart.location,
             caseManager: curated.case_manager || fsPart.programManager,
+            case_manager: curated.case_manager || fsPart.programManager,
             casePlanStatus: fsPart.casePlanStatus,
+            case_plan_status: fsPart.casePlanStatus,
             focusAreasOrGoals: focusAreasStr,
             briefcaseStatusText: bcStatusText,
             gate1Pct: fsPart.gate1Pct,
+            gate1_pct: fsPart.gate1Pct,
             gate2Pct: fsPart.gate2Pct,
+            gate2_pct: fsPart.gate2Pct,
             gate3Pct: fsPart.gate3Pct,
+            gate3_pct: fsPart.gate3Pct,
             gate4Pct: fsPart.gate4Pct,
+            gate4_pct: fsPart.gate4Pct,
             caseNoteAnalysis: noteAnalysis,
+            case_notes_summary: noteAnalysis,
             operationalFeedback: opFeedback,
+            operational_feedback: opFeedback,
             nextCmSteps: nextSteps,
+            what_to_work_on_next: nextSteps,
             lastNoteDate: pNotes[0]?.activity_date || '',
             notesCount: pNotes.length,
-            recentNotes: pNotes.slice(0, 5)
+            notes_count: pNotes.length,
+            recentNotes: pNotes.slice(0, 5),
+            enrollmentStart: fsPart.enrollmentStart,
+            enrollment_start: fsPart.enrollmentStart
         };
 
         participantEvaluations.push(evalObj);
     }
 
-    // Build evaluations for all 35 Active Reentry Navigation participants (Goals & Gates ONLY — NO CBT!)
+    // Build evaluations for all 33 Active Reentry Navigation participants (Goals & Gates ONLY — NO CBT!)
     for (const rnPart of reentryNavActiveDashboard) {
         const id = rnPart.recordId;
         const curated = INITIAL_CURATED_EVALUATIONS[id] || {};
@@ -1491,23 +1563,38 @@ function recomputeFullApricotReport(syncMeta = {}) {
 
         const evalObj = {
             recordId: id,
+            record_id: id,
             fullName: rnPart.fullName,
+            name: rnPart.fullName,
             program: 'Reentry Navigation',
             center: rnPart.location,
+            location: rnPart.location,
             caseManager: curated.case_manager || rnPart.caseManager,
+            case_manager: curated.case_manager || rnPart.caseManager,
             casePlanStatus: rnPart.hasCasePlan ? 'Yes (Goals & Gates Active)' : 'No (Needs Reentry Nav Case Plan)',
+            case_plan_status: rnPart.hasCasePlan ? 'Yes (Goals & Gates Active)' : 'No (Needs Reentry Nav Case Plan)',
             focusAreasOrGoals: goalsText,
             briefcaseStatusText: bcStatusText,
             gate1Pct: rnPart.gate1Pct,
+            gate1_pct: rnPart.gate1Pct,
             gate2Pct: rnPart.gate2Pct,
+            gate2_pct: rnPart.gate2Pct,
             gate3Pct: rnPart.gate3Pct,
+            gate3_pct: rnPart.gate3Pct,
             gate4Pct: rnPart.gate4Pct,
+            gate4_pct: rnPart.gate4Pct,
             caseNoteAnalysis: noteAnalysis,
+            case_notes_summary: noteAnalysis,
             operationalFeedback: opFeedback,
+            operational_feedback: opFeedback,
             nextCmSteps: nextSteps,
+            what_to_work_on_next: nextSteps,
             lastNoteDate: pNotes[0]?.activity_date || '',
             notesCount: pNotes.length,
-            recentNotes: pNotes.slice(0, 5)
+            notes_count: pNotes.length,
+            recentNotes: pNotes.slice(0, 5),
+            enrollmentStart: rnPart.enrollmentStart,
+            enrollment_start: rnPart.enrollmentStart
         };
 
         participantEvaluations.push(evalObj);
@@ -1749,7 +1836,7 @@ function recomputeFullApricotReport(syncMeta = {}) {
             reportDateFormatted: formatMDY(maxDataDate),
             currentWeekRange: `${formatMDY(currentWeekMonday)} – ${formatMDY(currentWeekFriday)}`,
             previousWeekRange: `${formatMDY(prevWeekMonday)} – ${formatMDY(prevWeekFriday)}`,
-            sourceFilename: syncMeta.sourceFilename || 'Justin\'s Main report 261023.xlsx',
+            sourceFilename: syncMeta.sourceFilename || 'Justin\'s Main report 261026.xlsx',
             totalUniqueNotes: allProcessedNotes.length,
             newNotesProcessedLastUpload: syncMeta.newNotesCount || 0,
             duplicateNotesSkippedLastUpload: syncMeta.skippedNotesCount || 0,
@@ -1760,28 +1847,88 @@ function recomputeFullApricotReport(syncMeta = {}) {
             previousWeekRange: `${formatMDY(prevWeekMonday)} – ${formatMDY(prevWeekFriday)}`,
             ratePerPoint: 9,
             rows: payReportRows,
+            participants: payReportRows.map(r => ({
+                recordId: r.recordId,
+                name: r.fullName,
+                fullName: r.fullName,
+                location: r.centerLocation,
+                centerLocation: r.centerLocation,
+                wasCenterResolved: r.wasCenterResolved,
+                totalPoints: r.totalPoints,
+                totalPay: r.paymentAmount,
+                paymentAmount: r.paymentAmount,
+                statusNotes: r.statusNotes,
+                dailyBreakdown: r.dailyBreakdown,
+                mon: r.dailyBreakdown.find(d => d.date === prevWeekMonday)?.points ?? '—',
+                tue: r.dailyBreakdown.find(d => d.date === addDays(prevWeekMonday, 1))?.points ?? '—',
+                wed: r.dailyBreakdown.find(d => d.date === addDays(prevWeekMonday, 2))?.points ?? '—',
+                thu: r.dailyBreakdown.find(d => d.date === addDays(prevWeekMonday, 3))?.points ?? '—',
+                fri: r.dailyBreakdown.find(d => d.date === prevWeekFriday)?.points ?? '—'
+            })),
             totalParticipants: payReportRows.length,
             totalPoints: totalPrevWeekPoints,
             totalPayroll: totalPrevWeekPayroll,
-            currentWeekEnrollments: currentWeekFsEnrollments,
-            previousWeekExits: prevWeekFsExits
+            totalDollars: totalPrevWeekPayroll,
+            pointDollarRate: 9,
+            weekRangeLabel: `${formatMDY(prevWeekMonday)} – ${formatMDY(prevWeekFriday)}`,
+            prevMonday: formatMDY(prevWeekMonday),
+            prevFriday: formatMDY(prevWeekFriday),
+            currentWeekEnrollments: currentWeekFsEnrollments.map(e => ({
+                ...e,
+                name: e.fullName,
+                location: e.centerLocation,
+                enrollmentStart: e.enrollmentDate
+            })),
+            previousWeekExits: prevWeekFsExits.map(ex => ({
+                ...ex,
+                name: ex.fullName,
+                location: ex.centerLocation
+            }))
         },
         funnelReport: {
             enrollmentsAndExits: funnelMatrix,
+            byProgramAndCenter: funnelMatrix,
             resourceCoordinations: rcStats,
             reentryConsultations: consultStats,
             waitlistByCenter,
-            orientations: orientationRows
+            orientations: orientationRows,
+            phaseFunnel: {
+                resourceCoordinations: rcStats.Total,
+                consultations: consultStats.Total,
+                eligibilityBreakdown: consultStats.eligibility,
+                referralSources: Object.entries(consultStats.referralSources).sort((a,b) => b[1] - a[1])
+            },
+            waitlist: {
+                totalActiveWaitlist: waitlistByCenter.Total || waitlist.length,
+                byCenter: waitlist.reduce((acc, r) => {
+                    const loc = String(r['Which center?'] || 'Unassigned').trim();
+                    if (!acc[loc]) acc[loc] = [];
+                    acc[loc].push(r);
+                    return acc;
+                }, {})
+            },
+            orientationsList: orientationRows
         },
         activeDashboards: {
             firstShift: firstShiftActiveDashboard,
             reentryNav: reentryNavActiveDashboard
         },
+        activeFirstShift: firstShiftActiveDashboard,
+        activeReentryNav: reentryNavActiveDashboard,
         participantEvaluations,
         employmentAnalysis: {
             retentionTable,
+            retention: {
+                day30: retentionTable.find(t => t.days === 30),
+                day60: retentionTable.find(t => t.days === 60),
+                day90: retentionTable.find(t => t.days === 90),
+                day180: retentionTable.find(t => t.days === 180)
+            },
             separationReasons,
+            totalJobRecords: employmentHist.length,
+            uniqueEmployedParticipants: new Set(employmentHist.map(r => r['Record ID'])).size,
             totalActiveEmployments: employmentRows.length,
+            activeJobsCount: employmentRows.length,
             recentCheckInCount,
             overdueCheckInCount: overdueCheckIns.length,
             overdueCheckIns
@@ -1793,6 +1940,8 @@ function recomputeFullApricotReport(syncMeta = {}) {
             reentryNavCredentials: rnCredentials
         }
     };
+    fullReport.previousWeekPayReport = fullReport.paymentReport;
+    fullReport.employmentReport = fullReport.employmentAnalysis;
 
     db.prepare(`
         INSERT INTO apricot_workbook_state (
@@ -2182,32 +2331,50 @@ function getApricotEvalReport(locationFilter = null) {
 
     const report = JSON.parse(state.report_json);
 
+    // Normalize top-level properties and aliases
+    report.activeFirstShift = report.activeDashboards?.firstShift || report.activeFirstShift || [];
+    report.activeReentryNav = report.activeDashboards?.reentryNav || report.activeReentryNav || [];
+    if (!report.activeDashboards) {
+        report.activeDashboards = {
+            firstShift: report.activeFirstShift,
+            reentryNav: report.activeReentryNav
+        };
+    }
+    if (report.paymentReport) {
+        report.paymentReport.participants = report.paymentReport.participants || report.paymentReport.rows || [];
+        report.paymentReport.rows = report.paymentReport.participants;
+        report.previousWeekPayReport = report.paymentReport;
+    }
+    if (report.employmentAnalysis) {
+        report.employmentReport = report.employmentAnalysis;
+    }
+
     // If a specific center location filter is provided ('Charleston', 'Columbia', 'Spartanburg'),
     // attach a `centerView` object pre-filtered for that center!
     if (locationFilter && locationFilter !== 'all' && locationFilter !== 'All') {
-        const loc = locationFilter;
-        const centerFsActive = report.activeDashboards.firstShift.filter(p => p.location.toLowerCase() === loc.toLowerCase());
-        const centerRnActive = report.activeDashboards.reentryNav.filter(p => p.location.toLowerCase() === loc.toLowerCase());
-        const centerEvals = report.participantEvaluations.filter(p => p.center.toLowerCase() === loc.toLowerCase());
-        const centerPayRows = report.paymentReport.rows.filter(p => p.centerLocation.toLowerCase() === loc.toLowerCase());
-        const centerFsRefs = report.referralsAndCredentials.firstShiftReferrals.filter(r => r.center.toLowerCase() === loc.toLowerCase());
-        const centerRnRefs = report.referralsAndCredentials.reentryNavReferrals.filter(r => r.center.toLowerCase() === loc.toLowerCase());
-        const centerFsCreds = report.referralsAndCredentials.firstShiftCredentials.filter(c => c.centerLocation.toLowerCase() === loc.toLowerCase());
-        const centerRnCreds = report.referralsAndCredentials.reentryNavCredentials.filter(c => c.centerLocation.toLowerCase() === loc.toLowerCase());
-        const centerOrientations = report.funnelReport.orientations.filter(o => o.centerLocation.toLowerCase() === loc.toLowerCase());
-        const centerOverdueEmp = report.employmentAnalysis.overdueCheckIns.filter(e => e.centerLocation.toLowerCase() === loc.toLowerCase());
+        const loc = String(locationFilter).toLowerCase().trim();
+        const centerFsActive = (report.activeDashboards.firstShift || []).filter(p => (p.location || '').toLowerCase() === loc);
+        const centerRnActive = (report.activeDashboards.reentryNav || []).filter(p => (p.location || '').toLowerCase() === loc);
+        const centerEvals = (report.participantEvaluations || []).filter(p => ((p.center || p.location || '')).toLowerCase() === loc);
+        const centerPayRows = (report.paymentReport?.participants || report.paymentReport?.rows || []).filter(p => ((p.centerLocation || p.location || '')).toLowerCase() === loc);
+        const centerFsRefs = (report.referralsAndCredentials?.firstShiftReferrals || []).filter(r => ((r.center || r.location || '')).toLowerCase() === loc);
+        const centerRnRefs = (report.referralsAndCredentials?.reentryNavReferrals || []).filter(r => ((r.center || r.location || '')).toLowerCase() === loc);
+        const centerFsCreds = (report.referralsAndCredentials?.firstShiftCredentials || []).filter(c => ((c.centerLocation || c.location || '')).toLowerCase() === loc);
+        const centerRnCreds = (report.referralsAndCredentials?.reentryNavCredentials || []).filter(c => ((c.centerLocation || c.location || '')).toLowerCase() === loc);
+        const centerOrientations = (report.funnelReport?.orientations || []).filter(o => ((o.centerLocation || o.location || '')).toLowerCase() === loc);
+        const centerOverdueEmp = (report.employmentAnalysis?.overdueCheckIns || []).filter(e => ((e.centerLocation || e.location || '')).toLowerCase() === loc);
 
         report.centerView = {
-            center: loc,
+            center: locationFilter,
             firstShiftActive: centerFsActive,
             reentryNavActive: centerRnActive,
             participantEvaluations: centerEvals,
             payReportRows: centerPayRows,
             funnel: {
-                firstShiftEnrollments: report.funnelReport.enrollmentsAndExits['First Shift']?.[loc] || { totalEnrollments: 0, totalExits: 0, active: 0, exitReasons: {} },
-                resourceCoordinations: report.funnelReport.resourceCoordinations[loc] || { ytd: 0, lastWeek: 0, currentWeek: 0 },
-                reentryConsultations: report.funnelReport.reentryConsultations[loc] || { ytd: 0, lastWeek: 0, currentWeek: 0 },
-                waitlistCount: report.funnelReport.waitlistByCenter[loc] || 0,
+                firstShiftEnrollments: report.funnelReport?.enrollmentsAndExits?.['First Shift']?.[locationFilter] || { totalEnrollments: 0, totalExits: 0, active: 0, exitReasons: {} },
+                resourceCoordinations: report.funnelReport?.resourceCoordinations?.[locationFilter] || { ytd: 0, lastWeek: 0, currentWeek: 0 },
+                reentryConsultations: report.funnelReport?.reentryConsultations?.[locationFilter] || { ytd: 0, lastWeek: 0, currentWeek: 0 },
+                waitlistCount: report.funnelReport?.waitlistByCenter?.[locationFilter] || 0,
                 orientations: centerOrientations
             },
             referrals: {
@@ -2220,6 +2387,14 @@ function getApricotEvalReport(locationFilter = null) {
             },
             overdueEmploymentCheckIns: centerOverdueEmp
         };
+
+        report.activeDashboards = {
+            firstShift: centerFsActive,
+            reentryNav: centerRnActive
+        };
+        report.activeFirstShift = centerFsActive;
+        report.activeReentryNav = centerRnActive;
+        report.participantEvaluations = centerEvals;
     }
 
     return report;

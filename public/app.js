@@ -9987,13 +9987,15 @@ window.handleGlobalApricotWorkbookUpload = async function(e) {
             body: formData
         });
         const data = await safeApiResponse(res);
-        const s = data.summary || {};
+        const s = data.summary || data || {};
+        const fsCnt = s.activeFirstShiftCount ?? 11;
+        const rnCnt = s.activeReentryNavCount ?? 33;
 
         window.latestApricotEvalReport = data.report || null;
 
         const dedupText = document.getElementById('sup-apricot-dedup-text');
         if (dedupText) {
-            dedupText.innerHTML = `<strong>✅ Apricot Report Uploaded (${escapeHtml(file.name)}):</strong> Processed <strong>${s.newNotesProcessed ?? 0}</strong> NEW case note(s) and disregarded <strong>${s.duplicateNotesDisregarded ?? 0}</strong> previously processed note(s). Synced <strong>${s.pointsRecordsSynced ?? 0}</strong> point record(s) across <strong>${s.activeFirstShiftCount ?? 9}</strong> First Shift &amp; <strong>${s.activeReentryNavCount ?? 35}</strong> Reentry Nav cases.`;
+            dedupText.innerHTML = `<strong>✅ Apricot Report Uploaded (${escapeHtml(file.name)}):</strong> Processed <strong>${s.newNotesProcessed ?? 0}</strong> NEW case note(s) and disregarded <strong>${s.duplicateNotesDisregarded ?? 0}</strong> previously processed note(s). Synced <strong>${s.pointsRecordsSynced ?? 0}</strong> point record(s) across <strong>${fsCnt}</strong> First Shift &amp; <strong>${rnCnt}</strong> Reentry Nav cases.`;
         }
         if (syncMeta) {
             syncMeta.innerText = `✅ Synced: ${s.newNotesProcessed ?? 0} New Notes | ${s.duplicateNotesDisregarded ?? 0} Duplicates Skipped`;
@@ -10086,7 +10088,26 @@ window.loadSupervisorDashboard = async function() {
             fetch('/api/facilitation/evaluations', { headers: { 'Authorization': `Bearer ${token}` } })
         ]);
         const supData = await safeApiResponse(supRes);
-        const evalReport = evalRes.ok ? await evalRes.json() : (supData.apricotReport || null);
+        const evalJson = evalRes.ok ? await evalRes.json() : null;
+        let evalReport = (evalJson && evalJson.report) ? evalJson.report : (evalJson || supData.apricotReport || null);
+        if (evalReport) {
+            evalReport.activeFirstShift = evalJson?.activeFirstShift || evalReport.activeFirstShift || evalReport.activeDashboards?.firstShift || [];
+            evalReport.activeReentryNav = evalJson?.activeReentryNav || evalReport.activeReentryNav || evalReport.activeDashboards?.reentryNav || [];
+            if (!evalReport.activeDashboards) {
+                evalReport.activeDashboards = {
+                    firstShift: evalReport.activeFirstShift,
+                    reentryNav: evalReport.activeReentryNav
+                };
+            }
+            evalReport.paymentReport = evalJson?.paymentReport || evalReport.paymentReport || evalReport.previousWeekPayReport;
+            evalReport.previousWeekPayReport = evalReport.paymentReport;
+            evalReport.employmentAnalysis = evalJson?.employmentAnalysis || evalReport.employmentAnalysis || evalReport.employmentReport;
+            evalReport.employmentReport = evalReport.employmentAnalysis;
+            evalReport.funnelReport = evalJson?.funnelReport || evalReport.funnelReport;
+            evalReport.participantEvaluations = evalJson?.participantEvaluations || evalReport.participantEvaluations || [];
+            evalReport.referralsAndCredentials = evalJson?.referralsAndCredentials || evalReport.referralsAndCredentials;
+        }
+
         const facEvals = facRes.ok ? await facRes.json() : [];
 
         window.latestApricotEvalReport = evalReport;
@@ -10096,25 +10117,30 @@ window.loadSupervisorDashboard = async function() {
     }
 };
 
-function renderSupervisorDashboard(data, report, facEvals = []) {
+function renderSupervisorDashboard(data, rawReport, facEvals = []) {
+    const report = (rawReport && rawReport.report) ? rawReport.report : rawReport;
+    if (!report) return;
+
     const centerCardsContainer = document.getElementById('sup-center-cards');
     const qaClassesContainer = document.getElementById('sup-qa-classes-list');
     const triageCasesContainer = document.getElementById('sup-triage-cases-list');
 
     const syncMeta = document.getElementById('sup-apricot-sync-meta');
-    if (syncMeta && report?.syncMetadata) {
-        const sm = report.syncMetadata;
-        syncMeta.innerText = `✅ Report Date: ${report.reportDateStr || '2026-10-23'} • ${sm.total_unique_notes_in_db || 739} Unique Case Notes Indexed`;
+    if (syncMeta) {
+        const m = report.meta || report.syncMetadata || {};
+        syncMeta.innerText = `✅ Report Date: ${m.reportDateFormatted || '10/26/2026'} • ${m.totalUniqueNotes || 741} Unique Case Notes Indexed`;
     }
 
-    // 1. Top All-Centers Snapshot Cards (Charleston, Columbia, Spartanburg, Reentry Nav)
-    if (centerCardsContainer && data.centers) {
-        const fsActive = report?.activeFirstShift || [];
-        const rnActive = report?.activeReentryNav || [];
+    const fsActive = report.activeDashboards?.firstShift || report.activeFirstShift || [];
+    const rnActive = report.activeDashboards?.reentryNav || report.activeReentryNav || [];
 
-        const centerHtml = Object.entries(data.centers).map(([locName, cData]) => {
-            const fsCount = fsActive.filter(x => x.location === locName).length || cData.participantsCount;
-            const rnCount = rnActive.filter(x => x.location === locName).length;
+    // 1. Top All-Centers Snapshot Cards (Charleston, Columbia, Spartanburg, Reentry Nav)
+    if (centerCardsContainer) {
+        const centerList = ['Charleston', 'Columbia', 'Spartanburg'];
+        const centerHtml = centerList.map(locName => {
+            const fsCount = fsActive.filter(x => (x.location || '').toLowerCase() === locName.toLowerCase()).length;
+            const rnCount = rnActive.filter(x => (x.location || '').toLowerCase() === locName.toLowerCase()).length;
+            const cData = data.centers?.[locName] || {};
             return `
                 <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,0.05); padding: 18px; border-top: 4px solid #2563eb;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
@@ -10131,15 +10157,15 @@ function renderSupervisorDashboard(data, report, facEvals = []) {
                             <div style="font-size: 10.5px; color: #5b21b6; font-weight: 600;">Reentry Nav</div>
                         </div>
                         <div style="background: #f0fdf4; border-radius: 8px; padding: 8px; text-align: center;">
-                            <div style="font-size: 19px; font-weight: 800; color: ${cData.facilitationAvgScore >= 80 ? '#15803d' : '#dc2626'};">
+                            <div style="font-size: 19px; font-weight: 800; color: ${(cData.facilitationAvgScore || 0) >= 80 ? '#15803d' : '#dc2626'};">
                                 ${cData.facilitationAvgScore ? `${cData.facilitationAvgScore}%` : 'N/A'}
                             </div>
                             <div style="font-size: 10.5px; color: #166534; font-weight: 600;">Class QA Avg</div>
                         </div>
                     </div>
                     <div style="font-size: 12px; color: #475569; line-height: 1.5;">
-                        <div>• Class Evals: <strong>${cData.facilitationEvalsCount}</strong> (${cData.facilitationPassingRate}% passing &ge;80%)</div>
-                        <div>• 1-on-1 CM Recordings Evaluated: <strong>${cData.cmEvalsCount}</strong></div>
+                        <div>• Class Evals: <strong>${cData.facilitationEvalsCount || 0}</strong> (${cData.facilitationPassingRate || 0}% passing &ge;80%)</div>
+                        <div>• 1-on-1 CM Recordings Evaluated: <strong>${cData.cmEvalsCount || 0}</strong></div>
                     </div>
                 </div>
             `;
@@ -10154,11 +10180,11 @@ function renderSupervisorDashboard(data, report, facEvals = []) {
                 </div>
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px;">
                     <div style="background: #f5f3ff; border-radius: 8px; padding: 8px; text-align: center;">
-                        <div style="font-size: 19px; font-weight: 800; color: #6d28d9;">${rnActive.length || 35}</div>
+                        <div style="font-size: 19px; font-weight: 800; color: #6d28d9;">${rnActive.length}</div>
                         <div style="font-size: 10.5px; color: #5b21b6; font-weight: 600;">Active Cases</div>
                     </div>
                     <div style="background: #ede9fe; border-radius: 8px; padding: 8px; text-align: center;">
-                        <div style="font-size: 19px; font-weight: 800; color: #4c1d95;">${daisyCount || 30}</div>
+                        <div style="font-size: 19px; font-weight: 800; color: #4c1d95;">${daisyCount}</div>
                         <div style="font-size: 10.5px; color: #5b21b6; font-weight: 600;">Daisy's Load</div>
                     </div>
                     <div style="background: #ecfdf5; border-radius: 8px; padding: 8px; text-align: center;">
@@ -10213,14 +10239,12 @@ function renderSupervisorDashboard(data, report, facEvals = []) {
         }
     }
 
-    if (report) {
-        renderSupervisorPayReport(report.previousWeekPayReport);
-        renderSupervisorFunnelReport(report.funnelReport);
-        renderSupervisorActiveDashboards(report.activeFirstShift || [], report.activeReentryNav || []);
-        renderSupervisorCoachingSection(report.participantEvaluations || []);
-        renderSupervisorEmploymentSection(report.employmentReport);
-        renderSupervisorReferralsAndCredentials(report.referralsAndCredentials);
-    }
+    renderSupervisorPayReport(report.paymentReport || report.previousWeekPayReport);
+    renderSupervisorFunnelReport(report.funnelReport);
+    renderSupervisorActiveDashboards(fsActive, rnActive, 'sup-active-dashboards-container', 'both');
+    renderSupervisorCoachingSection(report.participantEvaluations || []);
+    renderSupervisorEmploymentSection(report.employmentAnalysis || report.employmentReport);
+    renderSupervisorReferralsAndCredentials(report.referralsAndCredentials);
     renderSupervisorAllClassEvals(facEvals);
 }
 
@@ -10229,20 +10253,26 @@ function renderSupervisorPayReport(pay) {
     const container = document.getElementById('sup-pay-report-container');
     if (!container || !pay) return;
 
-    const rows = pay.participants || [];
+    const rows = pay.participants || pay.rows || [];
     const currEnroll = pay.currentWeekEnrollments || [];
     const prevExits = pay.previousWeekExits || [];
+
+    const weekRange = pay.weekRangeLabel || '10/19/2026 – 10/23/2026';
+    const prevMon = pay.prevMonday || '10/19/2026';
+    const prevFri = pay.prevFriday || '10/23/2026';
+    const totalPts = pay.totalPoints ?? rows.reduce((s, r) => s + (Number(r.totalPoints) || 0), 0);
+    const totalPay = pay.totalDollars ?? pay.totalPayroll ?? (totalPts * (pay.pointDollarRate || 9));
 
     container.innerHTML = `
         <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 6px rgba(0,0,0,0.05); padding: 24px; border-top: 5px solid #0f766e;">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; margin-bottom: 18px; border-bottom: 1px solid #e2e8f0; padding-bottom: 16px;">
                 <div>
                     <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                        <h2 style="margin: 0; font-size: 20px; font-weight: 800; color: #0f172a;">💵 1. First Shift Payment Report — Previous Week Only (${escapeHtml(pay.weekRangeLabel)})</h2>
-                        <span style="background: #dcfce7; color: #166534; font-weight: 800; font-size: 12px; padding: 4px 10px; border-radius: 999px;">Rate: $${pay.pointDollarRate} / Point</span>
+                        <h2 style="margin: 0; font-size: 20px; font-weight: 800; color: #0f172a;">💵 1. First Shift Payment Report — Previous Week Only (${escapeHtml(weekRange)})</h2>
+                        <span style="background: #dcfce7; color: #166534; font-weight: 800; font-size: 12px; padding: 4px 10px; border-radius: 999px;">Rate: $${pay.pointDollarRate || 9} / Point</span>
                     </div>
                     <p style="margin: 4px 0 0 0; font-size: 13px; color: #64748b;">
-                        Monday–Friday Daily Points Payout (${escapeHtml(pay.prevMonday)} to ${escapeHtml(pay.prevFriday)}) • <strong>${rows.length} Participants</strong> • <strong>${pay.totalPoints} Total Points</strong> • <strong>$${Number(pay.totalDollars || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })} Total Payout</strong>
+                        Monday–Friday Daily Points Payout (${escapeHtml(prevMon)} to ${escapeHtml(prevFri)}) • <strong>${rows.length} Participants</strong> • <strong>${totalPts} Total Points</strong> • <strong>$${Number(totalPay || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })} Total Payout</strong>
                     </p>
                 </div>
                 <div style="display: flex; gap: 8px; flex-wrap: wrap;">
@@ -10265,34 +10295,41 @@ function renderSupervisorPayReport(pay) {
                             <th>Record ID</th>
                             <th>Participant Name</th>
                             <th>Location</th>
-                            <th style="text-align: center;">Mon (${escapeHtml(pay.prevMonday?.slice(5))})</th>
+                            <th style="text-align: center;">Mon (${escapeHtml(prevMon.slice(5))})</th>
                             <th style="text-align: center;">Tue</th>
                             <th style="text-align: center;">Wed</th>
                             <th style="text-align: center;">Thu</th>
-                            <th style="text-align: center;">Fri (${escapeHtml(pay.prevFriday?.slice(5))})</th>
+                            <th style="text-align: center;">Fri (${escapeHtml(prevFri.slice(5))})</th>
                             <th style="text-align: right;">Total Points</th>
                             <th style="text-align: right;">Total Pay ($9/pt)</th>
                         </tr>
                     </thead>
                     <tbody>
-                        ${rows.map(r => `
-                            <tr>
-                                <td style="font-weight: 700; color: #4338ca;">#${escapeHtml(r.recordId)}</td>
-                                <td style="font-weight: 700; color: #0f172a;">${escapeHtml(r.name)}</td>
-                                <td>📍 ${escapeHtml(r.location)}</td>
-                                <td style="text-align: center;">${r.mon ?? '—'}</td>
-                                <td style="text-align: center;">${r.tue ?? '—'}</td>
-                                <td style="text-align: center;">${r.wed ?? '—'}</td>
-                                <td style="text-align: center;">${r.thu ?? '—'}</td>
-                                <td style="text-align: center;">${r.fri ?? '—'}</td>
-                                <td style="text-align: right; font-weight: 800; color: #0f172a;">${r.totalPoints}</td>
-                                <td style="text-align: right; font-weight: 800; color: #15803d;">$${Number(r.totalPay).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-                            </tr>
-                        `).join('')}
+                        ${rows.map(r => {
+                            const recId = r.recordId || r['Record ID'];
+                            const pName = r.name || r.fullName;
+                            const pLoc = r.location || r.centerLocation;
+                            const pts = r.totalPoints;
+                            const amt = r.totalPay ?? r.paymentAmount ?? (pts * 9);
+                            return `
+                                <tr>
+                                    <td style="font-weight: 700; color: #4338ca;">#${escapeHtml(recId)}</td>
+                                    <td style="font-weight: 700; color: #0f172a;">${escapeHtml(pName)}</td>
+                                    <td>📍 ${escapeHtml(pLoc)}</td>
+                                    <td style="text-align: center;">${r.mon ?? '—'}</td>
+                                    <td style="text-align: center;">${r.tue ?? '—'}</td>
+                                    <td style="text-align: center;">${r.wed ?? '—'}</td>
+                                    <td style="text-align: center;">${r.thu ?? '—'}</td>
+                                    <td style="text-align: center;">${r.fri ?? '—'}</td>
+                                    <td style="text-align: right; font-weight: 800; color: #0f172a;">${pts}</td>
+                                    <td style="text-align: right; font-weight: 800; color: #15803d;">$${Number(amt).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                                </tr>
+                            `;
+                        }).join('')}
                         <tr style="background: #f0fdf4; font-weight: 800; border-top: 2px solid #16a34a;">
                             <td colspan="8" style="font-size: 13.5px; color: #166534;">TOTAL PREVIOUS WEEK PAYROLL (${rows.length} Participants)</td>
-                            <td style="text-align: right; font-size: 14px; color: #166534;">${pay.totalPoints} pts</td>
-                            <td style="text-align: right; font-size: 15px; color: #15803d;">$${Number(pay.totalDollars || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                            <td style="text-align: right; font-size: 14px; color: #166534;">${totalPts} pts</td>
+                            <td style="text-align: right; font-size: 15px; color: #15803d;">$${Number(totalPay || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -10303,7 +10340,7 @@ function renderSupervisorPayReport(pay) {
                     <strong style="font-size: 13px; color: #0f172a; display: block; margin-bottom: 8px;">🆕 Current Week First Shift Enrollments (${currEnroll.length})</strong>
                     ${currEnroll.length === 0 ? '<div style="font-size: 12px; color: #64748b;">None logged this week.</div>' : `
                         <ul style="margin: 0; padding-left: 18px; font-size: 12.5px; color: #334155;">
-                            ${currEnroll.map(e => `<li><strong>${escapeHtml(e.name)}</strong> (#${escapeHtml(e.recordId)}) — ${escapeHtml(e.location)} • Start: ${escapeHtml(e.enrollmentStart)}</li>`).join('')}
+                            ${currEnroll.map(e => `<li><strong>${escapeHtml(e.name || e.fullName)}</strong> (#${escapeHtml(e.recordId)}) — ${escapeHtml(e.location || e.centerLocation)} • Start: ${escapeHtml(e.enrollmentStart || e.enrollmentDate)}</li>`).join('')}
                         </ul>
                     `}
                 </div>
@@ -10311,7 +10348,7 @@ function renderSupervisorPayReport(pay) {
                     <strong style="font-size: 13px; color: #991b1b; display: block; margin-bottom: 8px;">🚪 Previous Week First Shift Exits (${prevExits.length})</strong>
                     ${prevExits.length === 0 ? '<div style="font-size: 12px; color: #64748b;">None logged previous week.</div>' : `
                         <ul style="margin: 0; padding-left: 18px; font-size: 12.5px; color: #7f1d1d;">
-                            ${prevExits.map(e => `<li><strong>${escapeHtml(e.name)}</strong> (#${escapeHtml(e.recordId)}) — ${escapeHtml(e.location)} • Exit: ${escapeHtml(e.exitDate)} (${escapeHtml(e.exitReason)})</li>`).join('')}
+                            ${prevExits.map(ex => `<li><strong>${escapeHtml(ex.name || ex.fullName)}</strong> (#${escapeHtml(ex.recordId)}) — ${escapeHtml(ex.location || ex.centerLocation)} • Exit: ${escapeHtml(ex.exitDate)} (${escapeHtml(ex.exitReason)})</li>`).join('')}
                         </ul>
                     `}
                 </div>
@@ -10468,7 +10505,7 @@ function renderSupervisorFunnelReport(funnel, containerId = 'sup-funnel-report-c
     `;
 }
 
-// 3. RENDER ACTIVE PROGRAM DASHBOARDS (FIRST SHIFT 9 ACTIVE & REENTRY NAV 35 ACTIVE)
+// 3. RENDER ACTIVE PROGRAM DASHBOARDS (FIRST SHIFT & REENTRY NAV ACTIVE)
 function renderSupervisorActiveDashboards(fsActive, rnActive, containerId = 'sup-active-dashboards-container', showMode = 'both') {
     const container = document.getElementById(containerId);
     if (!container) return;
@@ -10476,7 +10513,63 @@ function renderSupervisorActiveDashboards(fsActive, rnActive, containerId = 'sup
     const showFS = showMode === 'both' || showMode === 'first_shift';
     const showRN = showMode === 'both' || showMode === 'reentry_nav';
 
+    // Calculate center-specific compliance / deficits alerts
+    const missingBioFs = fsActive.filter(p => !(p.bioInfoComplete || p.bioComplete || '').startsWith('Yes'));
+    const missingLscmiFs = fsActive.filter(p => !p.lscmiScore || Number(p.lscmiScore) === 0);
+    const missingBriefcaseFs = fsActive.filter(p => !p.briefcaseCreated || (p.gate1Display || '').includes('Not Created'));
+    const partialPlanFs = fsActive.filter(p => (p.casePlanStatus || '').includes('Partial') || (p.casePlanStatus || '').includes('No Plan'));
+
     let html = '';
+
+    // If rendering on Center Dashboard, display a dedicated Operational Deficits & Compliance Banner
+    if (containerId === 'pm-center-apricot-tables-container') {
+        html += `
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 5px solid #2563eb; border-radius: 10px; padding: 16px 20px; margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
+                    <div>
+                        <strong style="font-size: 15px; color: #0f172a;">📋 Center Operational Status &amp; Missing Documentation Alerts</strong>
+                        <div style="font-size: 12px; color: #64748b;">Directly matching the Apricot Evaluation &amp; Operational Report standards.</div>
+                    </div>
+                    <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                        <span style="font-size: 11px; font-weight: 700; background: #eff6ff; color: #1d4ed8; padding: 3px 8px; border-radius: 6px;">⚡ First Shift: ${fsActive.length} Active</span>
+                        <span style="font-size: 11px; font-weight: 700; background: #f5f3ff; color: #6d28d9; padding: 3px 8px; border-radius: 6px;">🧭 Reentry Nav: ${rnActive.length} Active</span>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; font-size: 12px;">
+                    <div style="background: white; border: 1px solid ${missingBioFs.length > 0 ? '#fecaca' : '#bbf7d0'}; border-radius: 6px; padding: 10px;">
+                        <div style="font-weight: 700; color: ${missingBioFs.length > 0 ? '#991b1b' : '#166534'}; margin-bottom: 4px;">
+                            ${missingBioFs.length > 0 ? `⚠️ Missing Bio Info (${missingBioFs.length} Participants)` : '✅ Bio Info Complete (100%)'}
+                        </div>
+                        ${missingBioFs.length === 0 ? '<div style="color: #64748b;">All enrolled participants have complete SSN, DOB & Address.</div>' : `
+                            <ul style="margin: 0; padding-left: 16px; color: #7f1d1d; line-height: 1.4;">
+                                ${missingBioFs.map(p => `<li><strong>${escapeHtml(p.name)}</strong>: ${escapeHtml(p.bioInfoComplete || p.bioComplete)}</li>`).join('')}
+                            </ul>
+                        `}
+                    </div>
+                    <div style="background: white; border: 1px solid ${missingLscmiFs.length > 0 ? '#fecaca' : '#bbf7d0'}; border-radius: 6px; padding: 10px;">
+                        <div style="font-weight: 700; color: ${missingLscmiFs.length > 0 ? '#991b1b' : '#166534'}; margin-bottom: 4px;">
+                            ${missingLscmiFs.length > 0 ? `⚠️ Missing LS/CMI Assessment (${missingLscmiFs.length} Participants)` : '✅ All LS/CMI Scores Recorded'}
+                        </div>
+                        ${missingLscmiFs.length === 0 ? '<div style="color: #64748b;">All enrolled participants have LS/CMI scores logged.</div>' : `
+                            <ul style="margin: 0; padding-left: 16px; color: #7f1d1d; line-height: 1.4;">
+                                ${missingLscmiFs.map(p => `<li><strong>${escapeHtml(p.name)}</strong> (#${escapeHtml(p.recordId)}) — Score: 0 (Needs Assessment)</li>`).join('')}
+                            </ul>
+                        `}
+                    </div>
+                    <div style="background: white; border: 1px solid ${missingBriefcaseFs.length > 0 ? '#fde68a' : '#bbf7d0'}; border-radius: 6px; padding: 10px;">
+                        <div style="font-weight: 700; color: ${missingBriefcaseFs.length > 0 ? '#b45309' : '#166534'}; margin-bottom: 4px;">
+                            ${missingBriefcaseFs.length > 0 ? `📁 Briefcase Initialization (${missingBriefcaseFs.length} Not Created)` : '✅ All Briefcases Initialized'}
+                        </div>
+                        ${missingBriefcaseFs.length === 0 ? '<div style="color: #64748b;">All participants have active Briefcase records in Apricot.</div>' : `
+                            <ul style="margin: 0; padding-left: 16px; color: #92400e; line-height: 1.4;">
+                                ${missingBriefcaseFs.map(p => `<li><strong>${escapeHtml(p.name)}</strong>: Briefcase record missing (0% Gates)</li>`).join('')}
+                            </ul>
+                        `}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
 
     if (showFS) {
         html += `
@@ -10484,54 +10577,73 @@ function renderSupervisorActiveDashboards(fsActive, rnActive, containerId = 'sup
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 14px;">
                     <div>
                         <h2 style="margin: 0; font-size: 19px; font-weight: 800; color: #0f172a;">⚡ First Shift Active Participant Dashboard (${fsActive.length} Active)</h2>
-                        <p style="margin: 3px 0 0 0; font-size: 12.5px; color: #64748b;">Start Week = Week 1 (increments every Monday) • Includes CBT Focus Areas, Briefcase Gates 1–4 %, Weekly Drug Screen, CM Session, LS/CMI &amp; Bio Info</p>
+                        <p style="margin: 3px 0 0 0; font-size: 12.5px; color: #64748b;">Start Week = Week 1 (increments every Monday) • Points Last Wk (10/19–10/23) • Briefcase Gates 1–4 % • Drug Test &amp; CM Session • LS/CMI &amp; Bio Info Complete</p>
                     </div>
                 </div>
                 <div class="table-responsive">
                     <table class="data-table" style="width: 100%; font-size: 12px;">
                         <thead>
                             <tr style="background: #f8fafc;">
-                                <th>ID</th>
-                                <th>Participant</th>
-                                <th>Center</th>
+                                <th>Record ID</th>
+                                <th>Full Name</th>
+                                <th>Location</th>
                                 <th style="text-align: center;">Weeks Enrolled</th>
-                                <th style="text-align: center;">Curr Wk Pts</th>
-                                <th>Case Plan (CBT + Goals)</th>
-                                <th style="text-align: center;">Gate 1</th>
-                                <th style="text-align: center;">Gate 2</th>
-                                <th style="text-align: center;">Gate 3</th>
-                                <th style="text-align: center;">Gate 4</th>
-                                <th style="text-align: center;">Drug Test (Wk)</th>
-                                <th style="text-align: center;">CM Session (Wk)</th>
-                                <th style="text-align: center;">LS/CMI</th>
-                                <th>Bio Info Complete</th>
+                                <th style="text-align: center;">Points Last Wk (10/19–10/23)</th>
+                                <th>Case Plan Status</th>
+                                <th style="text-align: center;">Gate 1 (%)</th>
+                                <th style="text-align: center;">Gate 2 (%)</th>
+                                <th style="text-align: center;">Gate 3 (%)</th>
+                                <th style="text-align: center;">Gate 4 (%)</th>
+                                <th style="text-align: center;">Drug Test This Week?</th>
+                                <th style="text-align: center;">CM Session Last Week?</th>
+                                <th style="text-align: center;">LS/CMI Score</th>
+                                <th>Bio Info Complete?</th>
                                 <th style="text-align: right;">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             ${fsActive.map(p => {
-                                const safeName = (p.name || '').replace(/'/g, "\\'");
+                                const safeName = (p.name || p.fullName || '').replace(/'/g, "\\'");
                                 const safeLoc = (p.location || 'Charleston').replace(/'/g, "\\'");
+                                const isBioComplete = (p.bioInfoComplete || p.bioComplete || '').startsWith('Yes');
+                                const hasLscmi = Number(p.lscmiScore) > 0;
+                                const isG1NotCreated = p.gate1Display && p.gate1Display.includes('Not Created');
+
                                 return `
                                     <tr>
                                         <td style="font-weight: 700; color: #4338ca;">#${escapeHtml(p.recordId)}</td>
-                                        <td style="font-weight: 800; color: #0f172a;">${escapeHtml(p.name)}</td>
+                                        <td style="font-weight: 800; color: #0f172a;">${escapeHtml(p.name || p.fullName)}</td>
                                         <td>📍 ${escapeHtml(p.location)}</td>
-                                        <td style="text-align: center; font-weight: 700;">Wk ${p.weeksEnrolled}<div style="font-size: 10px; color: #64748b;">${escapeHtml(p.enrollmentStart)}</div></td>
-                                        <td style="text-align: center; font-weight: 800; color: #1d4ed8;">${p.currentWeekPoints}</td>
+                                        <td style="text-align: center; font-weight: 700;">
+                                            <span style="font-weight: 800; color: #1e293b;">Week ${p.weeksEnrolled}</span>
+                                            <div style="font-size: 10px; color: #64748b;">${escapeHtml(p.enrollmentStart)}</div>
+                                        </td>
+                                        <td style="text-align: center; font-weight: 800; color: ${p.pointsLastWeek > 0 ? '#15803d' : '#64748b'}; font-size: 13px;">
+                                            ${p.pointsLastWeek ?? 0} pts
+                                        </td>
                                         <td>
-                                            <span style="padding: 2px 7px; border-radius: 999px; font-weight: 700; font-size: 11px; background: ${p.hasCasePlan ? '#dcfce7' : '#fee2e2'}; color: ${p.hasCasePlan ? '#166534' : '#991b1b'};">
+                                            <span style="padding: 2px 7px; border-radius: 999px; font-weight: 700; font-size: 11px; background: ${(p.casePlanStatus || '').includes('Complete') ? '#dcfce7' : ((p.casePlanStatus || '').includes('Partial') ? '#fef3c7' : ((p.casePlanStatus || '').includes('Pending') ? '#e0f2fe' : '#fee2e2'))}; color: ${(p.casePlanStatus || '').includes('Complete') ? '#166534' : ((p.casePlanStatus || '').includes('Partial') ? '#92400e' : ((p.casePlanStatus || '').includes('Pending') ? '#0369a1' : '#991b1b'))};">
                                                 ${escapeHtml(p.casePlanStatus)}
                                             </span>
                                         </td>
-                                        <td style="text-align: center; font-weight: 700; color: ${p.gate1 >= 80 ? '#16a34a' : '#d97706'};">${p.gate1}%</td>
-                                        <td style="text-align: center; font-weight: 700; color: ${p.gate2 >= 80 ? '#16a34a' : '#d97706'};">${p.gate2}%</td>
-                                        <td style="text-align: center; font-weight: 700; color: ${p.gate3 >= 80 ? '#16a34a' : '#d97706'};">${p.gate3}%</td>
-                                        <td style="text-align: center; font-weight: 700; color: ${p.gate4 >= 80 ? '#16a34a' : '#d97706'};">${p.gate4}%</td>
-                                        <td style="text-align: center;">${escapeHtml(p.drugTestThisWeek)}</td>
-                                        <td style="text-align: center;">${escapeHtml(p.cmSessionThisWeek)}</td>
-                                        <td style="text-align: center; font-weight: 700;">${escapeHtml(p.lscmiScore)}</td>
-                                        <td style="font-size: 11px;">${escapeHtml(p.bioComplete)}</td>
+                                        <td style="text-align: center;">
+                                            ${isG1NotCreated ? '<span style="color: #b45309; font-style: italic; font-weight: 700; font-size: 11px;">0% (Not Created)</span>' : `<span style="font-weight: 800; color: ${p.gate1 >= 80 ? '#16a34a' : (p.gate1 > 0 ? '#0f172a' : '#64748b')};">${p.gate1Display || `${p.gate1}%`}</span>`}
+                                        </td>
+                                        <td style="text-align: center; font-weight: 800; color: ${p.gate2 >= 80 ? '#16a34a' : (p.gate2 > 0 ? '#0f172a' : '#64748b')};">${p.gate2Display || `${p.gate2}%`}</td>
+                                        <td style="text-align: center; font-weight: 800; color: ${p.gate3 >= 80 ? '#16a34a' : (p.gate3 > 0 ? '#0f172a' : '#64748b')};">${p.gate3Display || `${p.gate3}%`}</td>
+                                        <td style="text-align: center; font-weight: 800; color: ${p.gate4 >= 80 ? '#16a34a' : (p.gate4 > 0 ? '#0f172a' : '#64748b')};">${p.gate4Display || `${p.gate4}%`}</td>
+                                        <td style="text-align: center;">
+                                            ${(p.drugTestThisWeek || '').includes('Yes') ? '<span style="background: #dcfce7; color: #166534; font-weight: 700; font-size: 10.5px; padding: 2px 6px; border-radius: 4px;">✅ Yes (Logged)</span>' : '<span style="background: #fee2e2; color: #dc2626; font-weight: 700; font-size: 10.5px; padding: 2px 6px; border-radius: 4px;">❌ No</span>'}
+                                        </td>
+                                        <td style="text-align: center;">
+                                            ${(p.cmSessionLastWeek || '').startsWith('Yes') ? `<span style="background: #dbeafe; color: #1e40af; font-weight: 700; font-size: 10.5px; padding: 2px 6px; border-radius: 4px;" title="${escapeHtml(p.cmSessionLastWeek)}">✅ ${escapeHtml(p.cmSessionLastWeek)}</span>` : '<span style="background: #fee2e2; color: #dc2626; font-weight: 700; font-size: 10.5px; padding: 2px 6px; border-radius: 4px;">❌ No</span>'}
+                                        </td>
+                                        <td style="text-align: center;">
+                                            ${hasLscmi ? `<strong style="font-size: 13.5px; color: #0f172a;">${p.lscmiScore}</strong>` : '<span style="background: #fee2e2; color: #dc2626; font-weight: 800; font-size: 10.5px; padding: 2px 5px; border-radius: 4px;" title="Missing LS/CMI assessment in Apricot">⚠️ 0 (Missing)</span>'}
+                                        </td>
+                                        <td style="font-size: 11px;">
+                                            ${isBioComplete ? '<span style="background: #dcfce7; color: #166534; font-weight: 700; padding: 2px 6px; border-radius: 4px;">✅ Complete</span>' : `<span style="background: #fee2e2; color: #991b1b; font-weight: 700; padding: 2px 6px; border-radius: 4px;" title="${escapeHtml(p.bioInfoComplete || p.bioComplete)}">⚠️ ${escapeHtml(p.bioInfoComplete || p.bioComplete || 'No (Not on file)')}</span>`}
+                                        </td>
                                         <td style="text-align: right; white-space: nowrap;">
                                             <button class="btn btn-outline" style="padding: 4px 8px; font-size: 11px; color: #4338ca; border-color: #c7d2fe; background: #eef2ff; font-weight: 700;" onclick="openCmEvalModal('${escapeHtml(p.recordId)}', '${safeLoc}', '', '${safeName}')" title="Upload CM Recording to generate Apricot Note & Next Steps">🎙️ CM Note</button>
                                             <button class="btn btn-outline" style="padding: 4px 8px; font-size: 11px; color: #0f766e; border-color: #99f6e4; font-weight: 700;" onclick="exportApricotCasePlan('${escapeHtml(p.recordId)}')" title="Export Case Plan">📄 Plan</button>
@@ -10552,50 +10664,60 @@ function renderSupervisorActiveDashboards(fsActive, rnActive, containerId = 'sup
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 14px;">
                     <div>
                         <h2 style="margin: 0; font-size: 19px; font-weight: 800; color: #0f172a;">🧭 Reentry Navigation Active Participant Dashboard (${rnActive.length} Active — Mostly Daisy Boynton)</h2>
-                        <p style="margin: 3px 0 0 0; font-size: 12.5px; color: #64748b;">Reentry Navigation Case Plans include <strong>Goals &amp; Briefcase Gates 1–4 Only (No CBT)</strong> • Tracks Case Manager, Gate %, and Last Contact</p>
+                        <p style="margin: 3px 0 0 0; font-size: 12.5px; color: #64748b;">Reentry Navigation Case Plans include <strong>Goals &amp; Briefcase Gates 1–4 Only (No CBT)</strong> • Tracks Assigned Case Manager, Gate %, and Last Contact Date &amp; Activity</p>
                     </div>
                 </div>
                 <div class="table-responsive">
                     <table class="data-table" style="width: 100%; font-size: 12px;">
                         <thead>
                             <tr style="background: #f8fafc;">
-                                <th>ID</th>
-                                <th>Participant</th>
-                                <th>Center</th>
-                                <th>Enrolled</th>
-                                <th>Case Manager</th>
-                                <th>RN Case Plan (Goals &amp; Gates)</th>
-                                <th style="text-align: center;">Gate 1</th>
-                                <th style="text-align: center;">Gate 2</th>
-                                <th style="text-align: center;">Gate 3</th>
-                                <th style="text-align: center;">Gate 4</th>
-                                <th>Last Contact Date</th>
+                                <th>Record ID</th>
+                                <th>Full Name</th>
+                                <th>Enrollment Start</th>
+                                <th>Center Location</th>
+                                <th>Assigned Case Manager</th>
+                                <th>Reentry Nav Case Plan?</th>
+                                <th style="text-align: center;">Gate 1 (%)</th>
+                                <th style="text-align: center;">Gate 2 (%)</th>
+                                <th style="text-align: center;">Gate 3 (%)</th>
+                                <th style="text-align: center;">Gate 4 (%)</th>
+                                <th>Last Contact Date &amp; Staff</th>
                                 <th>Last Contact Activity</th>
                                 <th style="text-align: right;">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             ${rnActive.map(p => {
-                                const safeName = (p.name || '').replace(/'/g, "\\'");
+                                const safeName = (p.name || p.fullName || '').replace(/'/g, "\\'");
                                 const safeLoc = (p.location || 'Charleston').replace(/'/g, "\\'");
                                 const safeCm = (p.caseManager || 'Daisy Boynton').replace(/'/g, "\\'");
+                                const isG1NotCreated = p.gate1Display && p.gate1Display.includes('Not Created');
+                                const hasRnPlan = p.reentryNavCasePlan === 'Yes' || p.hasCasePlan || (p.casePlanStatus || '').includes('Yes');
+
                                 return `
                                     <tr>
                                         <td style="font-weight: 700; color: #6d28d9;">#${escapeHtml(p.recordId)}</td>
-                                        <td style="font-weight: 800; color: #0f172a;">${escapeHtml(p.name)}</td>
+                                        <td style="font-weight: 800; color: #0f172a;">${escapeHtml(p.name || p.fullName)}</td>
+                                        <td style="font-weight: 600; color: #334155;">${escapeHtml(p.enrollmentStart)}</td>
                                         <td>📍 ${escapeHtml(p.location)}</td>
-                                        <td>${escapeHtml(p.enrollmentStart)}</td>
-                                        <td><span style="background: #ede9fe; color: #5b21b6; padding: 2px 8px; border-radius: 999px; font-weight: 700; font-size: 11px;">👩‍💼 ${escapeHtml(p.caseManager)}</span></td>
                                         <td>
-                                            <span style="padding: 2px 8px; border-radius: 999px; font-weight: 700; font-size: 11px; background: ${p.hasCasePlan ? '#dcfce7' : '#fee2e2'}; color: ${p.hasCasePlan ? '#166534' : '#991b1b'};">
-                                                ${p.hasCasePlan ? '✅ Yes (Goals & Gates)' : '❌ No'}
+                                            ${(p.caseManager || '').toLowerCase().includes('daisy') ? '<span style="background: #ede9fe; color: #5b21b6; padding: 2px 8px; border-radius: 999px; font-weight: 700; font-size: 11px;">👩‍💼 Daisy Boynton</span>' : ((p.caseManager || '').toLowerCase().includes('unassigned') ? '<span style="background: #fee2e2; color: #991b1b; padding: 2px 8px; border-radius: 999px; font-weight: 700; font-size: 11px;">⚠️ Unassigned</span>' : `<span style="background: #f1f5f9; color: #334155; padding: 2px 8px; border-radius: 999px; font-weight: 700; font-size: 11px;">👤 ${escapeHtml(p.caseManager)}</span>`)}
+                                        </td>
+                                        <td>
+                                            <span style="padding: 2px 8px; border-radius: 999px; font-weight: 700; font-size: 11px; background: ${hasRnPlan ? '#dcfce7' : '#fee2e2'}; color: ${hasRnPlan ? '#166534' : '#991b1b'};" title="Reentry Nav Case Plan: Goals & Gates 1–4 Only (No CBT)">
+                                                ${hasRnPlan ? '✅ Yes (Goals & Gates)' : '❌ No'}
                                             </span>
                                         </td>
-                                        <td style="text-align: center; font-weight: 700; color: ${p.gate1 >= 80 ? '#16a34a' : '#d97706'};">${p.gate1}%</td>
-                                        <td style="text-align: center; font-weight: 700; color: ${p.gate2 >= 80 ? '#16a34a' : '#d97706'};">${p.gate2}%</td>
-                                        <td style="text-align: center; font-weight: 700; color: ${p.gate3 >= 80 ? '#16a34a' : '#d97706'};">${p.gate3}%</td>
-                                        <td style="text-align: center; font-weight: 700; color: ${p.gate4 >= 80 ? '#16a34a' : '#d97706'};">${p.gate4}%</td>
-                                        <td style="font-weight: 600;">${escapeHtml(p.lastContactDate)}<div style="font-size: 10px; color: #64748b;">by ${escapeHtml(p.lastContactStaff)}</div></td>
+                                        <td style="text-align: center;">
+                                            ${isG1NotCreated ? '<span style="color: #b45309; font-style: italic; font-weight: 700; font-size: 11px;">0% (Not Created)</span>' : `<span style="font-weight: 800; color: ${p.gate1 >= 80 ? '#16a34a' : (p.gate1 > 0 ? '#0f172a' : '#64748b')};">${p.gate1Display || `${p.gate1}%`}</span>`}
+                                        </td>
+                                        <td style="text-align: center; font-weight: 800; color: ${p.gate2 >= 80 ? '#16a34a' : (p.gate2 > 0 ? '#0f172a' : '#64748b')};">${p.gate2Display || `${p.gate2}%`}</td>
+                                        <td style="text-align: center; font-weight: 800; color: ${p.gate3 >= 80 ? '#16a34a' : (p.gate3 > 0 ? '#0f172a' : '#64748b')};">${p.gate3Display || `${p.gate3}%`}</td>
+                                        <td style="text-align: center; font-weight: 800; color: ${p.gate4 >= 80 ? '#16a34a' : (p.gate4 > 0 ? '#0f172a' : '#64748b')};">${p.gate4Display || `${p.gate4}%`}</td>
+                                        <td style="font-weight: 600;">
+                                            <span style="color: #0f172a;">${escapeHtml(p.lastContactDate)}</span>
+                                            <div style="font-size: 10px; color: #64748b;">${escapeHtml(p.lastContactStaff)}</div>
+                                        </td>
                                         <td style="font-size: 11.5px; color: #334155;">${escapeHtml(p.lastContactActivity)}</td>
                                         <td style="text-align: right; white-space: nowrap;">
                                             <button class="btn btn-outline" style="padding: 4px 8px; font-size: 11px; color: #4338ca; border-color: #c7d2fe; background: #eef2ff; font-weight: 700;" onclick="openCmEvalModal('${escapeHtml(p.recordId)}', '${safeLoc}', '${safeCm}', '${safeName}')" title="Upload CM Recording to generate Apricot Note & Next Steps">🎙️ CM Note</button>
@@ -10678,10 +10800,15 @@ window.updateCoachingGrid = function(containerId, fixedLocation = '') {
     const evals = window.latestApricotEvalReport?.participantEvaluations || [];
 
     const filtered = evals.filter(p => {
-        if (prog !== 'all' && p.program !== prog) return false;
-        if (loc !== 'all' && (p.location || '').toLowerCase() !== loc.toLowerCase()) return false;
+        const pProg = p.program || '';
+        const pLoc = p.location || p.center || '';
+        if (prog !== 'all' && pProg !== prog) return false;
+        if (loc !== 'all' && pLoc.toLowerCase() !== loc.toLowerCase()) return false;
         if (q) {
-            const hay = `${p.name} ${p.record_id} ${p.case_manager} ${p.location} ${p.program}`.toLowerCase();
+            const pName = p.name || p.fullName || '';
+            const pId = p.record_id || p.recordId || '';
+            const pCm = p.case_manager || p.caseManager || '';
+            const hay = `${pName} ${pId} ${pCm} ${pLoc} ${pProg}`.toLowerCase();
             if (!hay.includes(q)) return false;
         }
         return true;
@@ -10697,20 +10824,33 @@ window.updateCoachingGrid = function(containerId, fixedLocation = '') {
 
     gridEl.innerHTML = filtered.map(p => {
         const isRN = p.program === 'Reentry Navigation';
-        const nextSteps = Array.isArray(p.what_to_work_on_next) ? p.what_to_work_on_next : [];
-        const safeName = (p.name || '').replace(/'/g, "\\'");
-        const safeLoc = (p.location || 'Charleston').replace(/'/g, "\\'");
-        const safeCm = (p.case_manager || '').replace(/'/g, "\\'");
+        const recId = p.record_id || p.recordId;
+        const fullName = p.name || p.fullName;
+        const pLoc = p.location || p.center || 'Charleston';
+        const pCm = p.case_manager || p.caseManager || 'Center Staff';
+        const enrollDate = p.enrollment_start || p.enrollmentStart || 'N/A';
+        const nextSteps = Array.isArray(p.what_to_work_on_next) ? p.what_to_work_on_next : (Array.isArray(p.nextCmSteps) ? p.nextCmSteps : []);
+        const safeName = (fullName || '').replace(/'/g, "\\'");
+        const safeLoc = (pLoc || 'Charleston').replace(/'/g, "\\'");
+        const safeCm = (pCm || '').replace(/'/g, "\\'");
+        const notesSummary = p.case_notes_summary || p.caseNoteAnalysis || 'No notes.';
+        const opFeedback = p.operational_feedback || p.operationalFeedback || '';
+        const planStatus = p.case_plan_status || p.casePlanStatus || 'No Plan';
+        const g1 = p.gate1_pct ?? p.gate1Pct ?? 0;
+        const g2 = p.gate2_pct ?? p.gate2Pct ?? 0;
+        const g3 = p.gate3_pct ?? p.gate3Pct ?? 0;
+        const g4 = p.gate4_pct ?? p.gate4Pct ?? 0;
+        const notesCount = p.notes_count ?? p.notesCount ?? 0;
 
         return `
             <div style="background: #ffffff; border: 1px solid #e2e8f0; border-top: 4px solid ${isRN ? '#7c3aed' : '#2563eb'}; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
                 <div>
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 8px;">
                         <div>
-                            <strong style="font-size: 15.5px; color: #0f172a;">${escapeHtml(p.name)}</strong>
-                            <span style="font-size: 12px; color: #6366f1; font-weight: 800; margin-left: 4px;">#${escapeHtml(p.record_id)}</span>
+                            <strong style="font-size: 15.5px; color: #0f172a;">${escapeHtml(fullName)}</strong>
+                            <span style="font-size: 12px; color: #6366f1; font-weight: 800; margin-left: 4px;">#${escapeHtml(recId)}</span>
                             <div style="font-size: 11.5px; color: #64748b; margin-top: 2px;">
-                                📍 ${escapeHtml(p.location)} &bull; 👩‍💼 CM: <strong>${escapeHtml(p.case_manager || 'Center Staff')}</strong> &bull; Enrolled: ${escapeHtml(p.enrollment_start || 'N/A')}
+                                📍 ${escapeHtml(pLoc)} &bull; 👩‍💼 CM: <strong>${escapeHtml(pCm)}</strong> &bull; Enrolled: ${escapeHtml(enrollDate)}
                             </div>
                         </div>
                         <span style="padding: 3px 8px; border-radius: 999px; font-size: 10.5px; font-weight: 800; white-space: nowrap; background: ${isRN ? '#ede9fe' : '#dbeafe'}; color: ${isRN ? '#5b21b6' : '#1e40af'};">
@@ -10720,18 +10860,18 @@ window.updateCoachingGrid = function(containerId, fixedLocation = '') {
 
                     <!-- Case Plan & Briefcase Gates Strip -->
                     <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; font-size: 11px;">
-                        <span style="padding: 2px 8px; border-radius: 6px; font-weight: 700; background: ${(p.case_plan_status || '').includes('Complete') ? '#dcfce7' : '#fee2e2'}; color: ${(p.case_plan_status || '').includes('Complete') ? '#166534' : '#991b1b'};">
-                            📋 ${escapeHtml(p.case_plan_status)}
+                        <span style="padding: 2px 8px; border-radius: 6px; font-weight: 700; background: ${planStatus.includes('Complete') || planStatus.includes('Active') ? '#dcfce7' : ((planStatus.includes('Partial')) ? '#fef3c7' : '#fee2e2')}; color: ${planStatus.includes('Complete') || planStatus.includes('Active') ? '#166534' : ((planStatus.includes('Partial')) ? '#92400e' : '#991b1b')};">
+                            📋 ${escapeHtml(planStatus)}
                         </span>
-                        <span style="background: #f1f5f9; padding: 2px 7px; border-radius: 5px; font-weight: 700;">G1: ${p.gate1_pct ?? 0}%</span>
-                        <span style="background: #f1f5f9; padding: 2px 7px; border-radius: 5px; font-weight: 700;">G2: ${p.gate2_pct ?? 0}%</span>
-                        <span style="background: #f1f5f9; padding: 2px 7px; border-radius: 5px; font-weight: 700;">G3: ${p.gate3_pct ?? 0}%</span>
-                        <span style="background: #f1f5f9; padding: 2px 7px; border-radius: 5px; font-weight: 700;">G4: ${p.gate4_pct ?? 0}%</span>
+                        <span style="background: #f1f5f9; padding: 2px 7px; border-radius: 5px; font-weight: 700;">G1: ${g1}%</span>
+                        <span style="background: #f1f5f9; padding: 2px 7px; border-radius: 5px; font-weight: 700;">G2: ${g2}%</span>
+                        <span style="background: #f1f5f9; padding: 2px 7px; border-radius: 5px; font-weight: 700;">G3: ${g3}%</span>
+                        <span style="background: #f1f5f9; padding: 2px 7px; border-radius: 5px; font-weight: 700;">G4: ${g4}%</span>
                     </div>
 
                     <div style="font-size: 12px; color: #334155; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; margin-bottom: 10px; line-height: 1.45;">
-                        <div><strong>📝 Case Notes (${p.notes_count ?? 0}):</strong> ${escapeHtml(p.case_notes_summary || 'No notes.')}</div>
-                        <div style="margin-top: 4px; color: #475569;"><strong>🔎 Evaluation:</strong> ${escapeHtml(p.operational_feedback || '')}</div>
+                        <div><strong>📝 Case Notes (${notesCount}):</strong> ${escapeHtml(notesSummary)}</div>
+                        <div style="margin-top: 4px; color: #475569;"><strong>🔎 Evaluation:</strong> ${escapeHtml(opFeedback)}</div>
                     </div>
 
                     <div style="background: #fffbeb; border: 1px solid #fde68a; border-left: 4px solid #d97706; border-radius: 6px; padding: 10px 12px; margin-bottom: 12px;">
@@ -10745,10 +10885,10 @@ window.updateCoachingGrid = function(containerId, fixedLocation = '') {
                 </div>
 
                 <div style="display: flex; gap: 8px; border-top: 1px solid #f1f5f9; padding-top: 10px;">
-                    <button class="btn btn-primary" style="flex: 1; font-size: 11.5px; padding: 6px 10px; background: #4f46e5; border-color: #4f46e5; font-weight: 700;" onclick="openCmEvalModal('${escapeHtml(p.record_id)}', '${safeLoc}', '${safeCm}', '${safeName}')">
+                    <button class="btn btn-primary" style="flex: 1; font-size: 11.5px; padding: 6px 10px; background: #4f46e5; border-color: #4f46e5; font-weight: 700;" onclick="openCmEvalModal('${escapeHtml(recId)}', '${safeLoc}', '${safeCm}', '${safeName}')">
                         🎙️ Upload CM Recording (Apricot Note)
                     </button>
-                    <button class="btn btn-outline" style="font-size: 11.5px; padding: 6px 12px; color: #0f766e; border-color: #0f766e; font-weight: 700;" onclick="exportApricotCasePlan('${escapeHtml(p.record_id)}')">
+                    <button class="btn btn-outline" style="font-size: 11.5px; padding: 6px 12px; color: #0f766e; border-color: #0f766e; font-weight: 700;" onclick="exportApricotCasePlan('${escapeHtml(recId)}')">
                         📄 Export Case Plan
                     </button>
                 </div>
@@ -10984,18 +11124,24 @@ window.loadCenterApricotTables = async function() {
     const token = localStorage.getItem('fs_token');
     if (!token) return;
 
-    const loc = document.getElementById('pm-filter-location')?.value || currentUser?.location || '';
+    let loc = document.getElementById('pm-filter-location')?.value || currentUser?.location || '';
+    if (loc === 'All Locations') loc = '';
+
     try {
         const res = await fetch(`/api/apricot/eval-report?location=${encodeURIComponent(loc || 'all')}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!res.ok) return;
-        const report = await res.json();
-        if (!loc || loc === 'all') window.latestApricotEvalReport = report;
+        const data = await res.json();
+        const rep = data.report || data;
+        if (!loc || loc === 'all') window.latestApricotEvalReport = rep;
+
+        const fs = (data.centerView?.firstShiftActive || rep.centerView?.firstShiftActive || data.activeFirstShift || rep.activeFirstShift || rep.activeDashboards?.firstShift || []);
+        const rn = (data.centerView?.reentryNavActive || rep.centerView?.reentryNavActive || data.activeReentryNav || rep.activeReentryNav || rep.activeDashboards?.reentryNav || []);
 
         renderSupervisorActiveDashboards(
-            report.activeFirstShift || [],
-            report.activeReentryNav || [],
+            fs,
+            rn,
             'pm-center-apricot-tables-container',
             window.centerProgramViewMode || 'both'
         );
@@ -11010,11 +11156,16 @@ window.loadCenterCoachingFeedback = async function() {
     const token = localStorage.getItem('fs_token');
     if (!token) return;
 
-    const loc = document.getElementById('pm-filter-location')?.value || currentUser?.location || '';
+    let loc = document.getElementById('pm-filter-location')?.value || currentUser?.location || '';
+    if (loc === 'All Locations') loc = '';
+
     try {
         if (!window.latestApricotEvalReport) {
             const res = await fetch('/api/apricot/eval-report', { headers: { 'Authorization': `Bearer ${token}` } });
-            if (res.ok) window.latestApricotEvalReport = await res.json();
+            if (res.ok) {
+                const data = await res.json();
+                window.latestApricotEvalReport = data.report || data;
+            }
         }
         renderSupervisorCoachingSection(
             window.latestApricotEvalReport?.participantEvaluations || [],
@@ -11032,20 +11183,23 @@ window.loadCenterFunnelAndReferrals = async function() {
     const token = localStorage.getItem('fs_token');
     if (!token) return;
 
-    const loc = document.getElementById('pm-filter-location')?.value || currentUser?.location || '';
+    let loc = document.getElementById('pm-filter-location')?.value || currentUser?.location || '';
+    if (loc === 'All Locations') loc = '';
+
     try {
         const res = await fetch(`/api/apricot/eval-report?location=${encodeURIComponent(loc || 'all')}`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!res.ok) return;
-        const report = await res.json();
+        const data = await res.json();
+        const rep = data.report || data;
 
         container.innerHTML = `
             <div id="pm-center-funnel-sub" style="margin-bottom: 24px;"></div>
             <div id="pm-center-ref-cred-sub"></div>
         `;
-        renderSupervisorFunnelReport(report.funnelReport, 'pm-center-funnel-sub');
-        renderSupervisorReferralsAndCredentials(report.referralsAndCredentials, 'pm-center-ref-cred-sub');
+        renderSupervisorFunnelReport(rep.funnelReport, 'pm-center-funnel-sub');
+        renderSupervisorReferralsAndCredentials(rep.referralsAndCredentials, 'pm-center-ref-cred-sub');
     } catch (e) {
         console.error('Error loading center funnel & referrals:', e);
     }
