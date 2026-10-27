@@ -1292,6 +1292,25 @@ function recomputeFullApricotReport(syncMeta = {}) {
         }
     });
 
+    // Also include points logged directly in the app's daily_points table for the current week
+    try {
+        const appPointsRows = db.prepare(`
+            SELECT pp.record_id, dp.date, dp.points_earned
+            FROM daily_points dp
+            JOIN participant_profiles pp ON dp.user_id = pp.user_id
+            WHERE dp.date >= ? AND dp.date <= ? AND pp.record_id IS NOT NULL
+        `).all(currentWeekMonday, currentWeekSunday);
+        for (const ap of appPointsRows) {
+            const id = String(ap.record_id).trim();
+            const dt = ap.date;
+            const k = `${id}_${dt}`;
+            if (!seenCurrPt.has(k)) {
+                seenCurrPt.add(k);
+                currentWeekPointsById[id] = (currentWeekPointsById[id] || 0) + (Number(ap.points_earned) || 0);
+            }
+        }
+    } catch (e) {}
+
     // Group processed case notes by Record ID
     const notesById = {};
     allProcessedNotes.forEach(n => {
@@ -1348,10 +1367,63 @@ function recomputeFullApricotReport(syncMeta = {}) {
              n.interaction_type.toLowerCase().includes('case management') ||
              n.interaction_type.toLowerCase().includes('check-in') ||
              n.interaction_type.toLowerCase().includes('barrier') ||
-             n.service_context.toLowerCase().includes('case management'))
+             n.service_context.toLowerCase().includes('case management') ||
+             n.service_context.toLowerCase().includes('first shift'))
         );
         const cmLastWeek = lastWeekNotes.length > 0
             ? `Yes (${formatMDY(lastWeekNotes[0].activity_date).slice(0, 5)} by ${lastWeekNotes[0].staff_name})`
+            : 'No';
+
+        // Check CM session this current week (Monday - Sunday of active week)
+        const thisWeekNotes = pNotes.filter(n =>
+            n.activity_date >= currentWeekMonday &&
+            n.activity_date <= currentWeekSunday &&
+            (n.interaction_type.toLowerCase().includes('coaching') ||
+             n.interaction_type.toLowerCase().includes('case management') ||
+             n.interaction_type.toLowerCase().includes('check-in') ||
+             n.interaction_type.toLowerCase().includes('barrier') ||
+             n.interaction_type.toLowerCase().includes('session') ||
+             n.service_context.toLowerCase().includes('case management') ||
+             n.service_context.toLowerCase().includes('first shift'))
+        );
+
+        let cmThisWeekStaff = '';
+        let cmThisWeekDate = '';
+        if (thisWeekNotes.length > 0) {
+            cmThisWeekStaff = thisWeekNotes[0].staff_name;
+            cmThisWeekDate = thisWeekNotes[0].activity_date;
+        } else {
+            // Check SQLite case_management_evaluations
+            try {
+                const cmEvalThisWeek = db.prepare(`
+                    SELECT cm_name, created_at FROM case_management_evaluations
+                    WHERE apricot_id = ? AND created_at >= ? AND created_at <= ?
+                    ORDER BY created_at DESC LIMIT 1
+                `).get(id, currentWeekMonday, currentWeekSunday + ' 23:59:59');
+                if (cmEvalThisWeek) {
+                    cmThisWeekStaff = cmEvalThisWeek.cm_name || 'Staff CM';
+                    cmThisWeekDate = (cmEvalThisWeek.created_at || '').slice(0, 10);
+                } else {
+                    // Check SQLite case_notes
+                    const appCaseNote = db.prepare(`
+                        SELECT cn.author_name, cn.session_date, cn.created_at FROM case_notes cn
+                        JOIN participant_profiles pp ON cn.user_id = pp.user_id
+                        WHERE pp.record_id = ? AND (
+                            (cn.session_date IS NOT NULL AND cn.session_date >= ? AND cn.session_date <= ?) OR
+                            (cn.session_date IS NULL AND cn.created_at >= ? AND cn.created_at <= ?)
+                        )
+                        ORDER BY cn.session_date DESC, cn.id DESC LIMIT 1
+                    `).get(id, currentWeekMonday, currentWeekSunday, currentWeekMonday, currentWeekSunday + ' 23:59:59');
+                    if (appCaseNote) {
+                        cmThisWeekStaff = appCaseNote.author_name || 'Staff CM';
+                        cmThisWeekDate = appCaseNote.session_date || (appCaseNote.created_at || '').slice(0, 10);
+                    }
+                }
+            } catch (e) {}
+        }
+
+        const cmThisWeek = cmThisWeekDate
+            ? `Yes (${formatMDY(cmThisWeekDate).slice(0, 5)} by ${cmThisWeekStaff || 'Staff'})`
             : 'No';
 
         const lscmiScore = lscmiById[id] ?? 0;
@@ -1395,8 +1467,10 @@ function recomputeFullApricotReport(syncMeta = {}) {
             gate3Display,
             gate4Display,
             drugTestThisWeek: hasDrugTest ? 'Yes (Logged in Drug Test sheet)' : 'No',
+            cmSessionThisWeek: cmThisWeek,
             cmSessionLastWeek: cmLastWeek,
-            cmSessionThisWeek: cmLastWeek,
+            currentWeekRange: `${formatMDY(currentWeekMonday)} – ${formatMDY(currentWeekFriday)}`,
+            previousWeekRange: `${formatMDY(prevWeekMonday)} – ${formatMDY(prevWeekFriday)}`,
             lscmiScore,
             bioInfoComplete: bio.statusText,
             bioComplete: bio.statusText,

@@ -10552,6 +10552,10 @@ function renderSupervisorActiveDashboards(fsActive, rnActive, containerId = 'sup
     const missingLscmiFs = fsActive.filter(p => !p.lscmiScore || Number(p.lscmiScore) === 0);
     const missingBriefcaseFs = fsActive.filter(p => !p.briefcaseCreated || (p.gate1Display || '').includes('Not Created'));
     const partialPlanFs = fsActive.filter(p => (p.casePlanStatus || '').includes('Partial') || (p.casePlanStatus || '').includes('No Plan'));
+    const missingCmThisWeekFs = fsActive.filter(p => !(p.cmSessionThisWeek || '').startsWith('Yes'));
+    const totalPtsThisWeek = fsActive.reduce((sum, p) => sum + (Number(p.currentWeekPoints) || 0), 0);
+    const currentWeekRange = fsActive[0]?.currentWeekRange || '10/26 – 10/30';
+    const previousWeekRange = fsActive[0]?.previousWeekRange || '10/19 – 10/23';
 
     let html = '';
 
@@ -10565,7 +10569,7 @@ function renderSupervisorActiveDashboards(fsActive, rnActive, containerId = 'sup
                         <div style="font-size: 12px; color: #64748b;">Directly matching the Apricot Evaluation &amp; Operational Report standards.</div>
                     </div>
                     <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                        <span style="font-size: 11px; font-weight: 700; background: #eff6ff; color: #1d4ed8; padding: 3px 8px; border-radius: 6px;">⚡ First Shift: ${fsActive.length} Active</span>
+                        <span style="font-size: 11px; font-weight: 700; background: #eff6ff; color: #1d4ed8; padding: 3px 8px; border-radius: 6px;">⚡ First Shift: ${fsActive.length} Active (${totalPtsThisWeek} Pts Earned This Week)</span>
                         <span style="font-size: 11px; font-weight: 700; background: #f5f3ff; color: #6d28d9; padding: 3px 8px; border-radius: 6px;">🧭 Reentry Nav: ${rnActive.length} Active</span>
                     </div>
                 </div>
@@ -10600,6 +10604,16 @@ function renderSupervisorActiveDashboards(fsActive, rnActive, containerId = 'sup
                             </ul>
                         `}
                     </div>
+                    <div style="background: white; border: 1px solid ${missingCmThisWeekFs.length > 0 ? '#fde68a' : '#bbf7d0'}; border-radius: 6px; padding: 10px;">
+                        <div style="font-weight: 700; color: ${missingCmThisWeekFs.length > 0 ? '#b45309' : '#166534'}; margin-bottom: 4px;">
+                            ${missingCmThisWeekFs.length === 0 ? '✅ All CM Sessions Completed This Week' : `💬 CM Session This Week (${missingCmThisWeekFs.length} Pending)`}
+                        </div>
+                        ${missingCmThisWeekFs.length === 0 ? '<div style="color: #64748b;">All enrolled participants have completed their 1-on-1 CM session this week.</div>' : `
+                            <ul style="margin: 0; padding-left: 16px; color: #92400e; line-height: 1.4;">
+                                ${missingCmThisWeekFs.map(p => `<li><strong>${escapeHtml(p.name)}</strong>: Session needed for week of ${escapeHtml(currentWeekRange)}</li>`).join('')}
+                            </ul>
+                        `}
+                    </div>
                 </div>
             </div>
         `;
@@ -10611,7 +10625,9 @@ function renderSupervisorActiveDashboards(fsActive, rnActive, containerId = 'sup
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 14px;">
                     <div>
                         <h2 style="margin: 0; font-size: 19px; font-weight: 800; color: #0f172a;">⚡ First Shift Active Participant Dashboard (${fsActive.length} Active)</h2>
-                        <p style="margin: 3px 0 0 0; font-size: 12.5px; color: #64748b;">Start Week = Week 1 (increments every Monday) • Points Last Wk (10/19–10/23) • Briefcase Gates 1–4 % • Drug Test &amp; CM Session • LS/CMI &amp; Bio Info Complete</p>
+                        <p style="margin: 3px 0 0 0; font-size: 12.5px; color: #64748b;">
+                            Start Week = Week 1 • <strong>Points This Wk (${escapeHtml(currentWeekRange)})</strong> &amp; <strong>Last Wk (${escapeHtml(previousWeekRange)})</strong> • Briefcase Gates 1–4 % • <strong>CM Session This Week?</strong> • Drug Test &amp; LS/CMI
+                        </p>
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -10622,14 +10638,24 @@ function renderSupervisorActiveDashboards(fsActive, rnActive, containerId = 'sup
                                 <th>Full Name</th>
                                 <th>Location</th>
                                 <th style="text-align: center;">Weeks Enrolled</th>
-                                <th style="text-align: center;">Points Last Wk (10/19–10/23)</th>
+                                <th style="text-align: center; background: #eff6ff; color: #1d4ed8; font-weight: 800; border-bottom: 2px solid #93c5fd;">
+                                    Points This Wk<br><span style="font-size: 10px; font-weight: normal; color: #2563eb;">(${escapeHtml(currentWeekRange)})</span>
+                                </th>
+                                <th style="text-align: center;">
+                                    Points Last Wk<br><span style="font-size: 10px; font-weight: normal; color: #64748b;">(${escapeHtml(previousWeekRange)})</span>
+                                </th>
                                 <th>Case Plan Status</th>
                                 <th style="text-align: center;">Gate 1 (%)</th>
                                 <th style="text-align: center;">Gate 2 (%)</th>
                                 <th style="text-align: center;">Gate 3 (%)</th>
                                 <th style="text-align: center;">Gate 4 (%)</th>
                                 <th style="text-align: center;">Drug Test This Week?</th>
-                                <th style="text-align: center;">CM Session Last Week?</th>
+                                <th style="text-align: center; background: #f0fdf4; color: #166534; font-weight: 800; border-bottom: 2px solid #86efac;">
+                                    CM Session This Wk?<br><span style="font-size: 10px; font-weight: normal; color: #15803d;">(${escapeHtml(currentWeekRange)})</span>
+                                </th>
+                                <th style="text-align: center;">
+                                    CM Session Last Wk?<br><span style="font-size: 10px; font-weight: normal; color: #64748b;">(${escapeHtml(previousWeekRange)})</span>
+                                </th>
                                 <th style="text-align: center;">LS/CMI Score</th>
                                 <th>Bio Info Complete?</th>
                                 <th style="text-align: right;">Actions</th>
@@ -10652,7 +10678,12 @@ function renderSupervisorActiveDashboards(fsActive, rnActive, containerId = 'sup
                                             <span style="font-weight: 800; color: #1e293b;">Week ${p.weeksEnrolled}</span>
                                             <div style="font-size: 10px; color: #64748b;">${escapeHtml(p.enrollmentStart)}</div>
                                         </td>
-                                        <td style="text-align: center; font-weight: 800; color: ${p.pointsLastWeek > 0 ? '#15803d' : '#64748b'}; font-size: 13px;">
+                                        <td style="text-align: center; font-weight: 800; font-size: 13px; background: #f8fafc;">
+                                            ${(p.currentWeekPoints || 0) > 0 
+                                                ? `<span style="color: #15803d; background: #dcfce7; padding: 3px 8px; border-radius: 6px; font-weight: 800;">${p.currentWeekPoints} pts</span>` 
+                                                : `<span style="color: #64748b; font-weight: 600;">0 pts</span>`}
+                                        </td>
+                                        <td style="text-align: center; font-weight: 700; color: ${(p.pointsLastWeek || 0) > 0 ? '#0f172a' : '#94a3b8'}; font-size: 12.5px;">
                                             ${p.pointsLastWeek ?? 0} pts
                                         </td>
                                         <td>
@@ -10669,8 +10700,11 @@ function renderSupervisorActiveDashboards(fsActive, rnActive, containerId = 'sup
                                         <td style="text-align: center;">
                                             ${(p.drugTestThisWeek || '').includes('Yes') ? '<span style="background: #dcfce7; color: #166534; font-weight: 700; font-size: 10.5px; padding: 2px 6px; border-radius: 4px;">✅ Yes (Logged)</span>' : '<span style="background: #fee2e2; color: #dc2626; font-weight: 700; font-size: 10.5px; padding: 2px 6px; border-radius: 4px;">❌ No</span>'}
                                         </td>
+                                        <td style="text-align: center; background: #fafdfa;">
+                                            ${(p.cmSessionThisWeek || '').startsWith('Yes') ? `<span style="background: #dcfce7; color: #166534; font-weight: 800; font-size: 10.5px; padding: 3px 7px; border-radius: 4px;" title="${escapeHtml(p.cmSessionThisWeek)}">✅ ${escapeHtml(p.cmSessionThisWeek)}</span>` : '<span style="background: #fee2e2; color: #dc2626; font-weight: 700; font-size: 10.5px; padding: 3px 7px; border-radius: 4px;" title="No Case Management session logged for current week">❌ No</span>'}
+                                        </td>
                                         <td style="text-align: center;">
-                                            ${(p.cmSessionLastWeek || '').startsWith('Yes') ? `<span style="background: #dbeafe; color: #1e40af; font-weight: 700; font-size: 10.5px; padding: 2px 6px; border-radius: 4px;" title="${escapeHtml(p.cmSessionLastWeek)}">✅ ${escapeHtml(p.cmSessionLastWeek)}</span>` : '<span style="background: #fee2e2; color: #dc2626; font-weight: 700; font-size: 10.5px; padding: 2px 6px; border-radius: 4px;">❌ No</span>'}
+                                            ${(p.cmSessionLastWeek || '').startsWith('Yes') ? `<span style="background: #e0f2fe; color: #0369a1; font-weight: 700; font-size: 10.5px; padding: 2px 6px; border-radius: 4px;" title="${escapeHtml(p.cmSessionLastWeek)}">✅ ${escapeHtml(p.cmSessionLastWeek)}</span>` : '<span style="background: #f1f5f9; color: #64748b; font-weight: 600; font-size: 10.5px; padding: 2px 6px; border-radius: 4px;">No</span>'}
                                         </td>
                                         <td style="text-align: center;">
                                             ${hasLscmi ? `<strong style="font-size: 13.5px; color: #0f172a;">${p.lscmiScore}</strong>` : '<span style="background: #fee2e2; color: #dc2626; font-weight: 800; font-size: 10.5px; padding: 2px 5px; border-radius: 4px;" title="Missing LS/CMI assessment in Apricot">⚠️ 0 (Missing)</span>'}
