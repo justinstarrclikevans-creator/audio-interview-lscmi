@@ -4030,11 +4030,15 @@ async function loadFacilitationEvaluations() {
                                 <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px; flex-wrap: wrap;">
                                     <span style="background: ${locBg}; color: ${locColor}; border: 1px solid ${locColor}; padding: 1px 8px; border-radius: 12px; font-weight: 800; font-size: 11px;">📍 ${loc}</span>
                                     ${e.class_headcount ? `<span style="background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 1px 8px; border-radius: 12px; font-weight: 700; font-size: 11px;">👥 ${e.class_headcount} Participants</span>` : ''}
+                                    ${e.status === 'needs_review' 
+                                        ? `<span style="background: #fefce8; color: #854d0e; border: 1px solid #fef08a; padding: 1px 8px; border-radius: 12px; font-weight: 700; font-size: 11px;">🟡 Needs Review</span>` 
+                                        : `<span style="background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; padding: 1px 8px; border-radius: 12px; font-weight: 700; font-size: 11px;">🟢 Approved</span>`}
                                     <strong style="font-size: 15px; color: var(--primary);">${e.session_title}</strong>
                                 </div>
                                 <div style="font-size: 12px; color: var(--slate);">Facilitator: <strong>${e.facilitator_name}</strong> • Date: ${e.class_date}</div>
                             </div>
                             <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: ${e.status === 'needs_review' ? '#166534' : '#854d0e'}; border-color: ${e.status === 'needs_review' ? '#bbf7d0' : '#fef08a'}; background: ${e.status === 'needs_review' ? '#f0fdf4' : '#fefce8'};" onclick="toggleClassEvalStatus(${e.id}, '${e.status || 'published'}')">${e.status === 'needs_review' ? '✅ Approve' : '⏸️ Flag Review'}</button>
                                 <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px;" onclick="printClassEvaluation(${e.id})">🖨️ View & Print Report</button>
                                 <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: #0f766e; border-color: #99f6e4; background: #f0fdfa;" onclick="downloadClassEvaluationTranscript(${e.id}, '${safeTitle}', '${safeFacName}')">📥 Download Transcript</button>
                                 <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: #4338ca; border-color: #c7d2fe;" onclick="editClassEvaluationScore(${e.id}, ${Number(e.total_score)}, '${safeFacName}', '${safeTitle}')">✏️ Edit Score</button>
@@ -4135,6 +4139,26 @@ window.moveClassEvalToCm = async function(id) {
         if (typeof window.loadCmEvaluations === 'function') window.loadCmEvaluations();
     } catch (err) {
         alert('Error moving evaluation: ' + err.message);
+    }
+};
+
+window.toggleClassEvalStatus = async function(id, currentStatus) {
+    const newStatus = currentStatus === 'needs_review' ? 'published' : 'needs_review';
+    try {
+        const token = localStorage.getItem('fs_token');
+        const res = await fetch(`/api/admin/evaluations/${id}/status`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ status: newStatus })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to update evaluation status');
+        loadFacilitationEvaluations();
+    } catch (err) {
+        alert('Error updating status: ' + err.message);
     }
 };
 

@@ -4,6 +4,8 @@ const {
     detectLessonModuleFromTranscript, 
     getFacilitatorScoringContext,
     getScheduledModuleForDate,
+    computeDeterministicMilestoneScores,
+    routeToOneOnOneCaseManagement,
     MODULE_SEQUENCE,
     CBT_MODULE_CATALOG,
     TRAINER_WORKBOOK_GUIDES,
@@ -166,6 +168,53 @@ async function runTests() {
     const mod7Rows = db.prepare("SELECT id, session_title FROM class_facilitation_evaluations WHERE session_title LIKE '%Module 7%'").all();
     assert.strictEqual(mod7Rows.length, 0, `Found unexpected Module 7 records in database: ${JSON.stringify(mod7Rows)}`);
     console.log('✅ Test 8 Passed: Database has zero references to Module 7 (all migrated to Module 8: Support Network).');
+
+    // Test 9: Deterministic Milestone Scoring Math
+    console.log('\n[Test 9] Testing Deterministic Milestone Scoring Math...');
+    const goodHWFacts = {
+        homework_review: { conducted: true, duration_minutes: 14 },
+        today_lesson: { topic_taught: 'Module 1: Thinking' },
+        roleplay: { occurred: true, set_the_stage: true, begin_with_end_in_mind: true },
+        estimated_headcount: 3
+    };
+    const goodResult = computeDeterministicMilestoneScores(goodHWFacts, []);
+    assert.strictEqual(goodResult.scores.time_management, 4.8, 'HW <= 18 min must yield 4.8 for time_management');
+    assert.strictEqual(goodResult.scores.lesson_plan_adherence, 4.8, 'Complete roleplay setup must boost lesson adherence to 4.8');
+    assert.strictEqual(goodResult.scores.group_engagement, 5.0, 'Small cohort with full participation must yield 5.0');
+    assert.ok(goodResult.totalScore >= 90, 'Exemplary execution should yield high score');
+
+    const poorHWFacts = {
+        homework_review: { conducted: true, duration_minutes: 32 },
+        today_lesson: { topic_taught: 'Module 1: Thinking' },
+        roleplay: { occurred: false },
+        estimated_headcount: 6
+    };
+    const poorMoments = [{ category: 'group_pivot_needed', issue_category: 'group_pivot_needed' }];
+    const poorResult = computeDeterministicMilestoneScores(poorHWFacts, poorMoments);
+    assert.strictEqual(poorResult.scores.time_management, 2.8, 'Overrun HW review must drop time_management to 2.8');
+    assert.strictEqual(poorResult.scores.modeling_neutrality, 3.4, 'Lectured instead of group pivot must lower neutrality to 3.4');
+    assert.ok(poorResult.totalScore < 75, 'Overrun and missed pivot must mathematically lower total score');
+    console.log('✅ Test 9 Passed: Deterministic milestone scores calculate mathematically without LLM inflation.');
+
+    // Test 10: Automatic Case Management Gatekeeper Routing
+    console.log('\n[Test 10] Testing Automatic Case Management Gatekeeper Routing...');
+    const sampleCMTranscript = `
+        [00:10] Facilitator: Morning James. Let's look over your court compliance letter.
+        [02:00] Participant: Yes ma'am, I have court tomorrow at 9 AM.
+        [04:30] Facilitator: Okay, I signed it. Bring this to the clerk.
+    `;
+    const divertResult = await routeToOneOnOneCaseManagement('Columbia', 'Columbia AM - 1-on-1 Paperwork', 'Jenn Jeanquart', sampleCMTranscript);
+    assert.strictEqual(divertResult.diverted_to_cm, true, 'Must indicate diverted_to_cm = true');
+    assert.strictEqual(divertResult.detected_session_type, 'case_management');
+
+    // Verify it was saved to case_management_evaluations
+    const cmRow = db.prepare('SELECT id, session_title, cm_name FROM case_management_evaluations WHERE id = ?').get(divertResult.id);
+    assert.ok(cmRow, 'Row must exist in case_management_evaluations');
+    assert.strictEqual(cmRow.cm_name, 'Jenn Jeanquart');
+
+    // Clean up test CM row
+    db.prepare('DELETE FROM case_management_evaluations WHERE id = ?').run(divertResult.id);
+    console.log('✅ Test 10 Passed: 1-on-1 session successfully routed to Case Management.');
 
     console.log('\n======================================================');
     console.log('ALL FACILITATION GROUNDING TESTS PASSED SUCCESSFULLY!');

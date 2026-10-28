@@ -2892,6 +2892,20 @@ app.patch('/api/admin/evaluations/:id/score', authenticateToken, requireRole('pr
     }
 });
 
+app.patch('/api/admin/evaluations/:id/status', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
+    try {
+        const id = req.params.id;
+        const { status } = req.body;
+        if (!status || !['published', 'needs_review', 'archived'].includes(status)) {
+            return res.status(400).json({ error: "Status must be 'published', 'needs_review', or 'archived'." });
+        }
+        db.prepare('UPDATE class_facilitation_evaluations SET status = ? WHERE id = ?').run(status, id);
+        res.json({ success: true, status });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 app.post('/api/admin/evaluations/:id/move-to-cm', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
     try {
         const id = req.params.id;
