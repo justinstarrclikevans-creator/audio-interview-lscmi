@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const { pipeline } = require('stream/promises');
 const { Readable } = require('stream');
-const { evaluateClassMedia } = require('../facilitation_evaluator');
+const { evaluateClassMedia, getScheduledModuleForDate } = require('../facilitation_evaluator');
 
 const os = require('os');
 const TEMP_DIR = path.join(os.tmpdir(), 'turn90_temp_dropbox');
@@ -186,7 +186,8 @@ async function runDailyEvaluation(targetDates = null) {
                 fileDateStr = `20${matchDate[1]}-${matchDate[2]}-${matchDate[3]}`;
             }
 
-            const sessionTitle = `${center.name} ${shift} - ${fileDateStr}`;
+            const scheduledMod = getScheduledModuleForDate(fileDateStr);
+            const sessionTitle = `${center.name} ${shift} - ${fileDateStr} - ${scheduledMod.moduleTitle}`;
             let defaultFacilitator;
             if (center.name === 'Spartanburg') {
                 defaultFacilitator = 'Diyoung Dantzler';
@@ -196,8 +197,9 @@ async function runDailyEvaluation(targetDates = null) {
                 defaultFacilitator = 'TB (Charleston)';
             }
 
-            // Check if already evaluated in database (matches exact title or title with detected module)
-            const existingEval = db.prepare('SELECT id FROM class_facilitation_evaluations WHERE (session_title = ? OR session_title LIKE ?) AND location = ?').get(sessionTitle, `${sessionTitle}%`, center.name);
+            // Check if already evaluated in database (matches exact title, old format, or title with detected module)
+            const basePrefix = `${center.name} ${shift} - ${fileDateStr}`;
+            const existingEval = db.prepare('SELECT id FROM class_facilitation_evaluations WHERE (session_title = ? OR session_title LIKE ? OR session_title LIKE ?) AND location = ?').get(sessionTitle, `${basePrefix}%`, `${sessionTitle}%`, center.name);
             if (existingEval) {
                 console.log(`[Dropbox Evaluator] Skipping ${sessionTitle} (${center.name}) - already evaluated.`);
                 results.skipped++;
@@ -224,7 +226,7 @@ async function runDailyEvaluation(targetDates = null) {
                 console.log(`[Dropbox Evaluator] Evaluating ${center.name} - ${sessionTitle} individually (chunked transcription)...`);
 
                 // The evaluator splits the recording into short clips, transcribes each in full, and deletes the local file when done.
-                await evaluateClassMedia(center.name, sessionTitle, defaultFacilitator, [{ path: localPath, mimeType }]);
+                await evaluateClassMedia(center.name, sessionTitle, defaultFacilitator, [{ path: localPath, mimeType }], null, fileDateStr);
                 results.processed++;
 
             } catch (err) {

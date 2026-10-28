@@ -4182,14 +4182,47 @@ function printClassEvaluation(id) {
     printWindow.document.close();
 }
 
+function getClientScheduledModule(date = new Date()) {
+    const MODULE_SEQUENCE = [
+        { num: 1, title: 'Module 1: Thinking' },
+        { num: 2, title: 'Module 2: Feelings' },
+        { num: 3, title: 'Module 3: Thinking Errors' },
+        { num: 4, title: 'Module 4: Personality' },
+        { num: 5, title: 'Module 5: Low Frustration' },
+        { num: 6, title: 'Module 6: Control' },
+        { num: 8, title: 'Module 8: Support Network' },
+        { num: 9, title: 'Module 9: Ideal Self' }
+    ];
+    const ANCHOR_INDEX = 7; // Module 9 on week of 2026-10-26
+    const d = new Date(date);
+    const day = d.getDay();
+    const diffToMon = day === 0 ? -6 : 1 - day;
+    const mon = new Date(d);
+    mon.setDate(d.getDate() + diffToMon);
+    mon.setHours(0, 0, 0, 0);
+    const anchorMon = new Date(2026, 9, 26, 0, 0, 0); // 2026-10-26
+    const diffWeeks = Math.round((mon.getTime() - anchorMon.getTime()) / (7 * 24 * 3600 * 1000));
+    let idx = (ANCHOR_INDEX + diffWeeks) % MODULE_SEQUENCE.length;
+    if (idx < 0) idx += MODULE_SEQUENCE.length;
+    return MODULE_SEQUENCE[idx];
+}
+
 function openFacilitationModal() {
-    document.getElementById('eval-session-title').value = '';
+    const sched = getClientScheduledModule();
+    const modEl = document.getElementById('eval-module-select');
+    if (modEl) {
+        modEl.options[0].text = `📅 Current Schedule: ${sched.title}`;
+        modEl.options[0].value = sched.title;
+        modEl.value = sched.title;
+    }
+    const titleEl = document.getElementById('eval-session-title');
+    if (titleEl) {
+        titleEl.value = sched.title;
+    }
     document.getElementById('eval-text').value = '';
     document.getElementById('eval-file').value = '';
     const hcEl = document.getElementById('eval-headcount');
     if (hcEl) hcEl.value = '';
-    const modEl = document.getElementById('eval-module-select');
-    if (modEl) modEl.value = 'auto';
 
     // Auto-populate location from current portal filter if available
     const activeLoc = localStorage.getItem('fs_location') || document.getElementById('pm-filter-location')?.value || '';
@@ -4219,7 +4252,7 @@ function handleLocationChangeForFacilitator() {
 function handleModuleSelectChange() {
     const modEl = document.getElementById('eval-module-select');
     const titleEl = document.getElementById('eval-session-title');
-    if (modEl && titleEl && modEl.value !== 'auto') {
+    if (modEl && titleEl) {
         titleEl.value = modEl.value;
     }
 }

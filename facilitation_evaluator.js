@@ -120,6 +120,19 @@ try {
     db.prepare("UPDATE class_facilitation_evaluations SET facilitator_name = 'Jenn Jeanquart' WHERE location = 'Columbia'").run();
     db.prepare("UPDATE class_facilitation_evaluations SET facilitator_name = 'Diyoung Dantzler' WHERE location = 'Spartanburg'").run();
     db.prepare("UPDATE class_facilitation_evaluations SET facilitator_name = 'TB (Charleston)' WHERE location = 'Charleston' AND facilitator_name != 'Test Facilitator'").run();
+
+    // Self-heal Module 7 references -> Module 8: Support Network (Turn90 has no Module 7)
+    db.prepare(`
+        UPDATE class_facilitation_evaluations
+        SET session_title = REPLACE(session_title, 'Module 7: Relationships & Prosocial Support', 'Module 8: Support Network'),
+            summary_markdown = REPLACE(summary_markdown, 'Module 7: Relationships & Prosocial Support', 'Module 8: Support Network')
+        WHERE session_title LIKE '%Module 7%' OR summary_markdown LIKE '%Module 7%'
+    `).run();
+    db.prepare(`
+        UPDATE class_facilitation_evaluations
+        SET session_title = REPLACE(session_title, 'Module 7', 'Module 8: Support Network')
+        WHERE session_title LIKE '%Module 7%'
+    `).run();
 } catch (e) {
     console.warn("[Class Evaluation Self-Heal] Warning:", e.message);
 }
@@ -227,27 +240,177 @@ const KNOWN_CENTER_STAFF = {
 };
 
 const CBT_MODULE_CATALOG = {
-    1: { moduleNumber: 1, moduleTitle: "Module 1: Thinking Controls Behavior (DMT & STAC)" },
-    2: { moduleNumber: 2, moduleTitle: "Module 2: Managing Emotions & Warning Signs (Stop Signs)" },
-    3: { moduleNumber: 3, moduleTitle: "Module 3: Recognizing Destructive Thinking (Upgrading Beliefs)" },
-    4: { moduleNumber: 4, moduleTitle: "Module 4: Interpersonal Communication & Social Skills" },
-    5: { moduleNumber: 5, moduleTitle: "Module 5: Problem Solving" },
-    6: { moduleNumber: 6, moduleTitle: "Module 6: Control & 5 Worries" },
-    7: { moduleNumber: 7, moduleTitle: "Module 7: Relationships & Prosocial Support" },
-    8: { moduleNumber: 8, moduleTitle: "Module 8: Reentry Action Planning & Relapse Prevention" }
+    1: { moduleNumber: 1, moduleTitle: "Module 1: Thinking" },
+    2: { moduleNumber: 2, moduleTitle: "Module 2: Feelings" },
+    3: { moduleNumber: 3, moduleTitle: "Module 3: Thinking Errors" },
+    4: { moduleNumber: 4, moduleTitle: "Module 4: Personality" },
+    5: { moduleNumber: 5, moduleTitle: "Module 5: Low Frustration" },
+    6: { moduleNumber: 6, moduleTitle: "Module 6: Control" },
+    8: { moduleNumber: 8, moduleTitle: "Module 8: Support Network" },
+    9: { moduleNumber: 9, moduleTitle: "Module 9: Ideal Self" }
+};
+
+const MODULE_SEQUENCE = [1, 2, 3, 4, 5, 6, 8, 9];
+const ANCHOR_DATE = '2026-10-26'; // Monday of week covering Module 9
+const ANCHOR_INDEX = 7; // Index of Module 9 in MODULE_SEQUENCE
+
+function getScheduledModuleForDate(dateInput) {
+    let d;
+    if (!dateInput) {
+        d = new Date();
+    } else if (typeof dateInput === 'string') {
+        const parts = dateInput.split('T')[0].split('-');
+        if (parts.length === 3) {
+            d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+        } else {
+            d = new Date(dateInput);
+        }
+    } else {
+        d = new Date(dateInput);
+    }
+
+    if (isNaN(d.getTime())) d = new Date();
+
+    const day = d.getDay();
+    const diffToMon = day === 0 ? -6 : 1 - day;
+    const mon = new Date(d.getFullYear(), d.getMonth(), d.getDate() + diffToMon);
+    mon.setHours(0, 0, 0, 0);
+
+    const anchorMon = new Date(2026, 9, 26, 0, 0, 0); // 2026-10-26 (Oct is month 9)
+    const diffWeeks = Math.round((mon.getTime() - anchorMon.getTime()) / (7 * 24 * 3600 * 1000));
+    let idx = (ANCHOR_INDEX + diffWeeks) % MODULE_SEQUENCE.length;
+    if (idx < 0) idx += MODULE_SEQUENCE.length;
+
+    const modNum = MODULE_SEQUENCE[idx];
+    return CBT_MODULE_CATALOG[modNum];
+}
+
+const TRAINER_WORKBOOK_GUIDES = {
+    general_protocols: {
+        lesson_3_2_flow: {
+            title: "Trainer Workbook 3.2: Following Lesson Plan & Managing Class Flow",
+            rules: [
+                "Homework Review must NOT exceed 15-18 minutes total (approx 2 minutes per participant).",
+                "If a participant needs deep personal processing during homework review, table it for 1-on-1 Case Management to protect group instructional time.",
+                "Moving to Today's Skill: Clearly announce the transition, set the objective, define the core cognitive concept, and open the day's workbook exercise.",
+                "Roleplay Protocol (Set the Stage): (1) Identify real-life trigger, (2) Assign roles (co-actor plays trigger), (3) 'Begin with the End in Mind' - confirm what specific skill/exit behavior the actor will practice BEFORE calling 'Action', (4) Direct observers what to watch for, (5) Call 'Freeze' immediately if off track, (6) Debrief: Actor first, Observers second, Facilitator last with praise."
+            ]
+        },
+        lesson_1_5_neutrality: {
+            title: "Trainer Workbook 1.5: Modeling Neutrality & The Group Pivot",
+            rules: [
+                "Facilitator must NEVER debate, argue, lecture, or moralize when a participant pushes back or defends antisocial thinking.",
+                "Use the Group Pivot: (1) Reflect the participant's feeling/perspective without judgment, (2) Throw it immediately to the room: 'What does the rest of the group think about that?' or 'When you've tried that in the past, where did it lead?'",
+                "Let the peer group challenge criminal thinking, protecting the facilitator's neutral, non-adversarial role."
+            ]
+        }
+    },
+    modules: {
+        1: {
+            number: 1,
+            title: "Module 1: Thinking",
+            core_concept: "Thinking Controls Behavior (STAC: Situation -> Thinking -> Action -> Consequence). DMT: Decision Making Tool. Behavior Chains.",
+            objectives: "Help participants recognize that thoughts dictate actions, trace behavior chains back to immediate thoughts, and identify how thinking can be interrupted before destructive actions occur.",
+            key_questions: [
+                "What was the immediate thought right before you took that action?",
+                "If we put that on a behavior chain, what was the situation, what was the exact thought, and what happened next?",
+                "What new thought could lead to a different outcome next time?"
+            ]
+        },
+        2: {
+            number: 2,
+            title: "Module 2: Feelings",
+            core_concept: "Managing Emotions & Physical Warning Signs (Stop Signs). Bodily sensations of anger/stress vs. automatic reactions.",
+            objectives: "Identify bodily warning signs (racing heartbeat, clenched fists, heat in chest/neck) that alert the brain that thinking is compromised. Distinguish feelings from actions; use cooling down strategies.",
+            key_questions: [
+                "What physical warning signs told you that your emotions were taking over?",
+                "Where did you feel that in your body before you said or did anything?",
+                "What physical Stop Sign can you use in that exact moment to pause before reacting?"
+            ]
+        },
+        3: {
+            number: 3,
+            title: "Module 3: Thinking Errors",
+            core_concept: "Recognizing Destructive Thinking Patterns & Thinking Errors (Blaming, Entitlement, Making Excuses, Assuming/Jumping to Conclusions, Minimizing). Upgrading to Helpful Beliefs.",
+            objectives: "Identify specific cognitive distortions that justify criminal or antisocial behavior. Challenge excuses and entitlement. Replace distorted thoughts with realistic, accountable beliefs.",
+            key_questions: [
+                "What thinking error was operating there? Were you blaming, assuming, or feeling entitled?",
+                "How did telling yourself that excuse give you permission to cross the line?",
+                "How would you upgrade that thought right now into a realistic, accountable belief?"
+            ]
+        },
+        4: {
+            number: 4,
+            title: "Module 4: Personality",
+            core_concept: "Personality Styles, Interpersonal Communication & Social Styles. Understanding how personality traits influence reactions and relationships.",
+            objectives: "Explore personality styles, recognize how personal traits interact with authority or peers, and practice assertive communication without becoming aggressive or passive.",
+            key_questions: [
+                "How does your personality style usually react when someone challenges you?",
+                "How can you communicate your boundary assertively without aggressive body language or tone?",
+                "What does clear, non-defensive listening look like in that interaction?"
+            ]
+        },
+        5: {
+            number: 5,
+            title: "Module 5: Low Frustration",
+            core_concept: "Low Frustration Tolerance (LFT) vs. High Frustration Tolerance. Recognizing 'I can't stand this' thoughts. Delaying gratification and building distress tolerance.",
+            objectives: "Identify the irrational belief that discomfort or frustration is unbearable. Shift from 'I can't take this' to 'I don't like this, but I can tolerate it to protect my freedom'.",
+            key_questions: [
+                "When you tell yourself 'I can't take this shit,' what happens to your ability to make good decisions?",
+                "How can you reframe that into high frustration tolerance: 'I don't like this, but I can stand it'?",
+                "What is the long-term payoff of enduring that 5 minutes of frustration right now?"
+            ]
+        },
+        6: {
+            number: 6,
+            title: "Module 6: Control",
+            core_concept: "Sorting Controllable vs. Uncontrollable Events. 5 Worries Exercise. Process Goals vs. Outcome Goals.",
+            objectives: "Distinguish what is in the individual's direct control (own thoughts, actions, reactions) versus what is out of their control (other people's actions, rules, court outcomes). Focus 100% of effort on controllable process steps.",
+            key_questions: [
+                "In that situation, what was 100% in your control, and what was completely out of your control?",
+                "How much energy did you spend trying to control something or someone you can't control?",
+                "What are the 2 controllable process steps you can take today, regardless of what anyone else does?"
+            ]
+        },
+        8: {
+            number: 8,
+            title: "Module 8: Support Network",
+            core_concept: "Evaluating Social Circles, Prosocial vs. Antisocial Associates, Setting Firm Boundaries, and Building a Support Network.",
+            objectives: "Audit personal relationships to distinguish healthy, supportive influences from associates who trigger criminal thinking or substance use. Practice boundary-setting roleplays to say 'no' and protect recovery.",
+            key_questions: [
+                "Is that person a positive support for your goals, or do they pull you toward your old lifestyle?",
+                "What boundary do you need to set with them, and what exact words will you use?",
+                "Who is one person in your prosocial support network you can call when you feel triggered?"
+            ]
+        },
+        9: {
+            number: 9,
+            title: "Module 9: Ideal Self",
+            core_concept: "Envisioning the Ideal Self, Core Values, Long-term Identity Shift, Relapse Prevention & Action Planning.",
+            objectives: "Define the person the participant wants to become (values, character, family role, work identity). Contrast the 'Old Self' habits with the 'Ideal Self' behaviors. Create a concrete relapse prevention plan.",
+            key_questions: [
+                "Does that choice align with your Ideal Self, or does it belong to your Old Self?",
+                "When you picture the person you want to be in one year, what daily habits are non-negotiable?",
+                "What is your immediate escape plan if you find yourself slipping into old thinking patterns?"
+            ]
+        }
+    }
 };
 
 /**
  * Dynamically detects today's CBT module and topic from classroom transcript.
  * Distinguishes today's main lesson from yesterday's homework review.
+ * Respects the statewide synchronized calendar schedule.
  */
-function detectLessonModuleFromTranscript(transcriptText) {
+function detectLessonModuleFromTranscript(transcriptText, sessionDate = null) {
+    const scheduledFallback = getScheduledModuleForDate(sessionDate);
+
     if (!transcriptText || typeof transcriptText !== 'string') {
-        return { moduleNumber: 1, moduleTitle: "Module 1: Thinking Controls Behavior (DMT & STAC)" };
+        return scheduledFallback;
     }
 
     const lines = transcriptText.split('\n');
-    const todayRegex = /(?:today(?:'s)?(?:\s+main)?(?:\s+class|\s+lesson|\s+session|\s+topic)?(?:\s+is|\s+we are|\s+we're)?|diving into|focus(?:ing)? on|welcome to|starting)\s+(?:module\s*([1-8])(?::\s*([^\n\.\,]+))?|([1-8]))/i;
+    const todayRegex = /(?:today(?:'s)?(?:\s+main)?(?:\s+class|\s+lesson|\s+session|\s+topic)?(?:\s+is|\s+we are|\s+we're)?|diving into|focus(?:ing)? on|welcome to|starting)\s+(?:module\s*([1-689])(?::\s*([^\n\.\,]+))?|([1-689]))/i;
     const homeworkRegex = /(?:yesterday(?:'s)?|last\s+(?:week|class|time)|homework|worksheet|check-in|recap|check on|turn that in)\b/i;
 
     let candidateOther = null;
@@ -257,18 +420,20 @@ function detectLessonModuleFromTranscript(transcriptText) {
         if (!line) continue;
         const isHomework = homeworkRegex.test(line);
 
-        const match = line.match(/(?:module\s*([1-8]))(?::\s*([^\n\.\,\!\?]+))?/i);
+        const match = line.match(/(?:module\s*([1-689]))(?::\s*([^\n\.\,\!\?]+))?/i);
         if (match) {
             const modNum = parseInt(match[1], 10);
-            const capturedTitle = match[2] ? match[2].trim() : '';
-            const catalogEntry = CBT_MODULE_CATALOG[modNum];
-            const fullTitle = catalogEntry ? (capturedTitle ? `Module ${modNum}: ${capturedTitle}` : catalogEntry.moduleTitle) : `Module ${modNum}`;
+            if (CBT_MODULE_CATALOG[modNum]) {
+                const catalogEntry = CBT_MODULE_CATALOG[modNum];
+                const capturedTitle = match[2] ? match[2].trim() : '';
+                const fullTitle = capturedTitle ? `Module ${modNum}: ${capturedTitle}` : catalogEntry.moduleTitle;
 
-            if (!isHomework && todayRegex.test(line)) {
-                return { moduleNumber: modNum, moduleTitle: fullTitle };
-            }
-            if (!isHomework && !candidateOther) {
-                candidateOther = { moduleNumber: modNum, moduleTitle: fullTitle };
+                if (!isHomework && todayRegex.test(line)) {
+                    return { moduleNumber: modNum, moduleTitle: fullTitle };
+                }
+                if (!isHomework && !candidateOther) {
+                    candidateOther = { moduleNumber: modNum, moduleTitle: fullTitle };
+                }
             }
         }
     }
@@ -280,13 +445,13 @@ function detectLessonModuleFromTranscript(transcriptText) {
     // Fallback: Check for key module concepts in the non-homework text
     const lowerText = transcriptText.toLowerCase();
     const conceptScores = [
-        { num: 5, pattern: /\bproblem solving\b|\bgenerating (?:multiple )?choices\b|\bthree things you can do\b/i },
-        { num: 4, pattern: /\binterpersonal communication\b|\bclear listening\b|\blisten without interrupting\b|\bbody language\b/i },
+        { num: 9, pattern: /\bideal self\b|\bold self\b|\bidentity shift\b|\brelapse prevention plan\b/i },
+        { num: 8, pattern: /\bsupport network\b|\bprosocial support\b|\bpositive associates\b|\bboundaries\b/i },
         { num: 6, pattern: /\bcontrol\b|\b5 worries\b|\bcontrollable vs uncontrollable\b|\bprocess goals\b/i },
-        { num: 2, pattern: /\bstop signs\b|\bmanaging emotions\b|\bphysical warning signs\b|\bcooling down\b/i },
-        { num: 3, pattern: /\bdestructive thinking\b|\bupgrading thoughts\b|\bblaming\b|\bentitlement\b/i },
-        { num: 7, pattern: /\bprosocial support\b|\bpositive associates\b|\bboundaries\b/i },
-        { num: 8, pattern: /\breentry action plan\b|\brelapse prevention\b|\bhigh-risk situations\b/i },
+        { num: 5, pattern: /\blow frustration\b|\bfrustration tolerance\b|\bi can't stand this\b|\bdelaying gratification\b/i },
+        { num: 4, pattern: /\bpersonality\b|\bsocial style\b|\binterpersonal communication\b|\bclear listening\b|\blisten without interrupting\b|\bbody language\b/i },
+        { num: 3, pattern: /\bthinking errors\b|\bdestructive thinking\b|\bupgrading thoughts\b|\bblaming\b|\bentitlement\b|\bmaking excuses\b/i },
+        { num: 2, pattern: /\bfeelings\b|\bstop signs\b|\bmanaging emotions\b|\bphysical warning signs\b|\bcooling down\b/i },
         { num: 1, pattern: /\bthinking controls behavior\b|\bdmt\b|\bdecision making tool\b|\bstac\b|\bbehavior chain\b/i }
     ];
 
@@ -297,7 +462,7 @@ function detectLessonModuleFromTranscript(transcriptText) {
         }
     }
 
-    return { moduleNumber: 1, moduleTitle: "Module 1: Thinking Controls Behavior (DMT & STAC)" };
+    return scheduledFallback;
 }
 
 function cleanNorm(s) {
@@ -458,51 +623,63 @@ function computeDeterministicClassScore(evaluation) {
     return evaluation.total_score;
 }
 
-function getFacilitatorScoringContext() {
+function getFacilitatorScoringContext(scheduledModule = null) {
     try {
         const guidePath = path.join(__dirname, 'data', 'Facilitator_Scoring_Guide.md');
         const guide = fs.readFileSync(guidePath, 'utf8');
 
+        const activeMod = scheduledModule || getScheduledModuleForDate();
+        const modGuide = TRAINER_WORKBOOK_GUIDES.modules[activeMod.moduleNumber] || TRAINER_WORKBOOK_GUIDES.modules[1];
+        const flowGuide = TRAINER_WORKBOOK_GUIDES.general_protocols.lesson_3_2_flow;
+        const neutralityGuide = TRAINER_WORKBOOK_GUIDES.general_protocols.lesson_1_5_neutrality;
+
         const CBT_CURRICULUM_FRAMEWORK = `
-TURN90 CBT CURRICULUM OVERVIEW & CORE METHODOLOGY:
+TURN90 CBT CURRICULUM OVERVIEW & CORE METHODOLOGY (8 OFFICIAL MODULES):
 Turn90 uses evidence-based Cognitive Behavioral Training across 8 Core Modules:
-- Module 1: Thinking Controls Behavior (DMT: Decision Making Tool, STAC: Situation -> Thinking -> Action -> Consequences, Behavior Chains)
-- Module 2: Managing Emotions & Recognizing Warning Signs (Physical sensations, identifying triggers, Stop Signs, cooling down)
-- Module 3: Recognizing Destructive Thinking (Blaming, Entitlement, Excuses, Overreacting; Upgrading Thoughts to Helpful Beliefs)
-- Module 4: Interpersonal Communication & Social Skills (Clear listening, assertive communication, body language, non-defensive responses)
-- Module 5: Problem Solving (Generating alternatives, evaluating pros/cons, picking the best long-term option)
-- Module 6: Control & 5 Worries (Sorting Controllable vs Uncontrollable, Process Goals vs Outcome Goals, emotional goals)
-- Module 7: Relationships & Prosocial Support (Evaluating associate influences, boundary setting, positive support networks)
-- Module 8: Reentry Action Planning & Relapse Prevention (High-risk situations, emergency escape plans, ongoing stability)
+- Module 1: Thinking
+- Module 2: Feelings
+- Module 3: Thinking Errors
+- Module 4: Personality
+- Module 5: Low Frustration
+- Module 6: Control
+- [CRITICAL: Turn90 has NO Module 7]
+- Module 8: Support Network
+- Module 9: Ideal Self
 
-IMPORTANT MODULE ADHERENCE RULE:
-A classroom session frequently reviews previous homework or past exercises for 5-15 minutes before transitioning into TODAY's new lesson.
-You MUST identify today's specific module from the main activity and new instruction, NOT from earlier homework checks.
-Judge lesson adherence, roleplay staging, and CBT fidelity solely against TODAY's active module.
+STATEWIDE SYNCHRONIZED CALENDAR & ACTIVE MODULE:
+All three centers (Spartanburg, Columbia, Charleston) follow the exact same module schedule rotating chronologically each Monday.
+For this session, the scheduled module is: ${activeMod.moduleTitle}
 
-FACILITATION PROTOCOL EXPECTATIONS:
-1. Pacing & Time Management: Homework review MUST not exceed 20 minutes (2 min/person). Class should finish main activity with all participants.
-2. Rule Enforcement: Point board used in real-time, addresses disengagement (heads down, side talk) using core correctional practices.
-3. Roleplay Protocol: Set the Stage, identify the situation, assign clear co-actor roles, "Begin with the End in Mind" (confirm the exit action BEFORE calling "Action"), call "Freeze" if off track, and conduct immediate positive/constructive debrief.
-4. Reflective Listening: Balance simple reflections (acknowledgment) with complex reflections (paraphrasing, reframing, double-sided change talk).
-5. Avoiding Overdirecting: Ask guided questions rather than giving lectures or lecturing answers.
+=== TURN90 TRAINER WORKBOOK BENCHMARK FOR THIS LESSON ===
+Target Module: ${modGuide.title}
+Core Concept: ${modGuide.core_concept}
+Learning Objectives: ${modGuide.objectives}
+Official Trainer Workbook Key Questions (Use these to construct coaching rewrites!):
+${modGuide.key_questions.map((q, idx) => `  ${idx + 1}. "${q}"`).join('\n')}
+
+=== GENERAL TRAINER WORKBOOK PROTOCOLS (NON-NEGOTIABLE) ===
+1. ${flowGuide.title}:
+${flowGuide.rules.map(r => `   - ${r}`).join('\n')}
+
+2. ${neutralityGuide.title}:
+${neutralityGuide.rules.map(r => `   - ${r}`).join('\n')}
 `;
 
         return `
 ${LANGUAGE_POLICY}
 
 You are the Lead Facilitator Supervisor and Quality Assurance Director for Turn90 / First Shift.
-You are evaluating a classroom session using the OFFICIAL Turn90 CBT Facilitation Scoring Guide (provided below).
+You are evaluating a classroom session using the OFFICIAL Turn90 CBT Facilitation Scoring Guide & Trainer Workbooks.
 
 === OFFICIAL FACILITATOR SCORING GUIDE (20-ITEM STANDARD) ===
 ${guide}
 
-=== TURN90 CBT CURRICULUM FRAMEWORK ===
+=== TURN90 CBT CURRICULUM FRAMEWORK & TRAINER WORKBOOKS ===
 ${CBT_CURRICULUM_FRAMEWORK}
 
 INSTRUCTIONS:
-Evaluate the facilitator based strictly on the 20-item Scoring Guide. Reference the CBT curriculum framework to judge adherence and setup.
-Provide detailed, calibrated coaching feedback based on specific timestamps and behaviors observed, including concrete "What to Ask Instead" example scripts.
+Evaluate the facilitator based strictly on the 20-item Scoring Guide and the Trainer Workbook benchmarks.
+Provide detailed, calibrated coaching feedback based on specific timestamps and behaviors observed, including concrete "What to Ask Next Time" example scripts anchored directly in the Trainer Workbooks.
 `;
     } catch (e) {
         console.warn("Could not load official scoring guide, using fallback prompt.");
@@ -711,12 +888,32 @@ async function generateEvaluationJson(prompt) {
     throw lastErr;
 }
 
-async function evaluateClassTranscript(location, sessionTitle, facilitatorName, transcriptText, classHeadcount = null) {
+async function evaluateClassTranscript(location, sessionTitle, facilitatorName, transcriptText, classHeadcount = null, sessionDate = null) {
     assertValidGeminiApiKey();
 
     if (!transcriptText || transcriptText.trim().length < MIN_EVAL_TRANSCRIPT_CHARS) {
         throw new Error(`Transcript is too short to evaluate (${(transcriptText || '').trim().length} characters; minimum ${MIN_EVAL_TRANSCRIPT_CHARS}). Evaluation aborted so a score is never produced from an incomplete recording.`);
     }
+
+    // Determine session date and scheduled module
+    let effDate = sessionDate;
+    if (!effDate && sessionTitle) {
+        const m = sessionTitle.match(/20\d{2}-\d{2}-\d{2}/);
+        if (m) effDate = m[0];
+    }
+    const scheduledModule = getScheduledModuleForDate(effDate);
+
+    // Check if sessionTitle explicitly set a module
+    let forcedModule = null;
+    if (sessionTitle) {
+        for (const mod of Object.values(CBT_MODULE_CATALOG)) {
+            if (sessionTitle.toLowerCase().includes(mod.moduleTitle.toLowerCase())) {
+                forcedModule = mod;
+                break;
+            }
+        }
+    }
+    const targetModule = forcedModule || scheduledModule;
 
     const tLines = parseTranscriptLines(transcriptText);
     const normLines = tLines.map(l => cleanNorm(l.text));
@@ -724,12 +921,24 @@ async function evaluateClassTranscript(location, sessionTitle, facilitatorName, 
         ? `${tLines.length} transcribed lines spanning ${tLines[0].ts}–${tLines[tLines.length - 1].ts}`
         : 'untimestamped transcript';
 
+    let totalDurationSec = 0;
+    if (tLines.length >= 2) {
+        const startSec = tLines[0].sec || 0;
+        const endSec = tLines[tLines.length - 1].sec || 0;
+        totalDurationSec = Math.max(0, endSec - startSec);
+    }
+    const isShortSession = totalDurationSec > 0 && totalDurationSec < 1500; // < 25 minutes
+
     const headcountInstruction = classHeadcount
         ? `REPORTED CLASS HEADCOUNT: There were exactly ${classHeadcount} participants in class today. Judge group engagement strictly against ${classHeadcount} participants.`
         : `CLASS HEADCOUNT DETECTION: Count the actual number of distinct participant speakers in the transcript. Judge group engagement strictly against that actual number—never assume silent participants exist if they are not in the transcript.`;
 
-    const prompt = `${getFacilitatorScoringContext()}
+    const durationInstruction = isShortSession
+        ? `\nSESSION DURATION ALERT: This recording spans only ${Math.round(totalDurationSec / 60)} minutes (under the 25-minute group class minimum). If this was a 1-on-1 barrier removal or case management meeting rather than a full group class, set "detected_session_type": "case_management".\n`
+        : '';
 
+    const prompt = `${getFacilitatorScoringContext(targetModule)}
+${durationInstruction}
 ================================================================================
 CRITICAL SCORING CALIBRATION & RUBRIC DISTRIBUTION:
 ================================================================================
@@ -749,7 +958,11 @@ ABSOLUTE GROUNDING RULES (A VIOLATION MAKES THE REPORT USELESS):
 ================================================================================
 1. EVIDENCE-ONLY. You may only report what is literally present in the TRANSCRIPT below. You have no other source of information about this class.
 2. EVERY strength, coaching point, timeline entry, and the module detection MUST include a "quote": text copied WORD-FOR-WORD from the transcript (6–35 words, no paraphrasing, no stitching separate lines together; do NOT include the [MM:SS] timestamp or the Facilitator/Participant label inside the quote). Items whose quote cannot be found verbatim in the transcript are automatically deleted by our system.
-3. NEVER characterize the session or the people in it beyond what your quotes show. Do NOT say anyone "shared a traumatic story", "opened up emotionally", "went off-topic for the whole class", etc. unless a quote proves it, and never describe something as lasting "the entire class" or "throughout" unless the timestamps of your quotes demonstrate it.
+3. TARGETED TRAINER WORKBOOK COACHING REWRITES:
+   Whenever an improvement is identified, provide concrete, actionable alternative questions anchored DIRECTLY in:
+   - For Lesson Flow / Homework overruns: Trainer Workbook 3.2 ('Table for 1-on-1 Case Management to protect group instructional time').
+   - For Confrontation / Resistance / Lecturing: Trainer Workbook 1.5 ('The Group Pivot: Reflect feeling without judgment -> Throw to peer group').
+   - For Cognitive Concepts: The targeted questions from ${targetModule.moduleTitle} Trainer Workbook.
 4. Roleplay: speakers labeled "Participant" or "Facilitator" may be PLAYING A CHARACTER in a roleplay (e.g. a nephew, a cousin, a friend asking for money). Statements made in character are NOT the speaker's real life and must not be reported as personal disclosures. Workbook example characters (e.g. "Geoffrey") are lesson material, not class participants.
 5. A facilitator briefly chatting before or after the lesson (small talk, personal anecdote) is NOT a lesson-delivery flaw unless it demonstrably displaced instruction time — and then you must cite the start and end timestamps via quotes.
 6. If the transcript offers little evidence for a category, give a neutral score and say less. Never pad. 3 well-evidenced points are better than 8 weak ones.
@@ -767,15 +980,16 @@ CRITICAL ISOLATION MANDATES (STRICT CENTER & FACILITATOR SEPARATION):
 Location: ${location}
 Session: ${sessionTitle}
 Facilitator: ${facilitatorName}
+STATEWIDE SCHEDULED MODULE: ${targetModule.moduleTitle}
 
-CBT MODULE DETECTION: Identify TODAY's main lesson module (1-8, per the curriculum overview above) ONLY if the transcript clearly shows it (facilitator names the module, a worksheet title, or the skill being taught). Provide a verbatim quote as proof. If it is not clear, set "number" to null.
+CBT MODULE DETECTION: Verify TODAY's main lesson module (valid Turn90 modules: 1, 2, 3, 4, 5, 6, 8, or 9; Turn90 has NO Module 7). If the transcript confirms ${targetModule.moduleTitle}, cite a verbatim quote as proof.
 
 OUTPUT: return ONE valid JSON object (no markdown) with exactly this structure:
 {
   "facilitator_name": "${facilitatorName}",
   "detected_session_type": "class",
   "estimated_headcount": ${classHeadcount || 4},
-  "module_detected": { "number": 7, "evidence_quote": "verbatim words from the transcript" },
+  "module_detected": { "number": ${targetModule.moduleNumber}, "evidence_quote": "verbatim words from the transcript" },
   "scores": {
     "modeling_neutrality": 4.0,
     "lesson_plan_adherence": 3.8,
@@ -796,7 +1010,7 @@ OUTPUT: return ONE valid JSON object (no markdown) with exactly this structure:
       "quote": "verbatim words from the moment being coached (facilitator or participant)",
       "what_facilitator_said": "verbatim facilitator response at that moment, or empty string",
       "observation": "one or two sentences on the specific, observable issue per the scoring guide",
-      "try_asking": ["exact alternative question 1 (CBT + MI + SYNAPSE)", "exact alternative question 2"]
+      "try_asking": ["exact alternative question 1 grounded in Trainer Workbook", "exact alternative question 2"]
     }
   ]
 }
@@ -822,16 +1036,18 @@ ${transcriptText}
     dropped += (im.kept.length - improvementsVerified.length);
     const timelineVerified = tl.kept.filter(i => i.activity).sort((a, b) => timestampToSec(a.timestamp) - timestampToSec(b.timestamp));
 
-    // Module detection: only trust it if the evidence quote is real
+    // Module detection: only trust it if the evidence quote is real and module is valid (not 7)
     let moduleInfo = null;
     const md = evaluation.module_detected;
-    if (md && Number(md.number) >= 1 && Number(md.number) <= 8 && md.evidence_quote && locateQuote(stripQuotePrefix(md.evidence_quote), tLines, normLines).ok) {
+    if (md && Number(md.number) && Number(md.number) !== 7 && CBT_MODULE_CATALOG[Number(md.number)] && md.evidence_quote && locateQuote(stripQuotePrefix(md.evidence_quote), tLines, normLines).ok) {
         moduleInfo = CBT_MODULE_CATALOG[Number(md.number)];
+    } else {
+        moduleInfo = targetModule;
     }
-    const moduleLine = moduleInfo ? moduleInfo.moduleTitle : 'Not clearly stated in this recording';
+    const moduleLine = moduleInfo.moduleTitle;
 
     let effectiveSessionTitle = sessionTitle || 'Turn90 Workshop';
-    if (moduleInfo && !effectiveSessionTitle.toLowerCase().includes('module')) {
+    if (!effectiveSessionTitle.toLowerCase().includes('module')) {
         effectiveSessionTitle = `${effectiveSessionTitle} - ${moduleInfo.moduleTitle}`;
     }
 
@@ -1047,7 +1263,7 @@ async function transcribeClassMedia(fileManager, mediaFile, location = '', facil
  * Stage 2: Evidence-only evaluation; every quote verified against the transcript;
  *          the report is assembled in code from verified evidence only.
  */
-async function evaluateClassMedia(location, sessionTitle, facilitatorName, mediaFiles, classHeadcount = null) {
+async function evaluateClassMedia(location, sessionTitle, facilitatorName, mediaFiles, classHeadcount = null, sessionDate = null) {
     const apiKey = assertValidGeminiApiKey();
 
     const { GoogleAIFileManager } = require("@google/generative-ai/server");
@@ -1076,7 +1292,7 @@ async function evaluateClassMedia(location, sessionTitle, facilitatorName, media
         const transcriptText = parts.join('\n');
 
         if (global.syncStatus) global.syncStatus.log = `Evaluating facilitation for ${location}...`;
-        return await evaluateClassTranscript(location, sessionTitle, facilitatorName, transcriptText, classHeadcount);
+        return await evaluateClassTranscript(location, sessionTitle, facilitatorName, transcriptText, classHeadcount, sessionDate);
     } finally {
         for (const p of localPaths) {
             try { if (fs.existsSync(p)) fs.unlinkSync(p); } catch (e) {}
@@ -1089,6 +1305,10 @@ module.exports = {
     evaluateClassMedia, 
     computeDeterministicClassScore,
     detectLessonModuleFromTranscript,
+    getScheduledModuleForDate,
+    MODULE_SEQUENCE,
+    CBT_MODULE_CATALOG,
+    TRAINER_WORKBOOK_GUIDES,
     filterHallucinatedQuotes,
     getFacilitatorScoringContext,
     transcribeClassMedia,

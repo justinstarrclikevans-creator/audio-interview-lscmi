@@ -20,6 +20,19 @@
 >    - Many participants are anti-therapy or have varying literacy levels. **Reward facilitators who translate clinical/workbook terms** (e.g., *"low frustration tolerance"*, *"neuroplasticity"*) into plain, everyday "5th-grade" language (e.g., *"zero tolerance for frustration"*).
 > 6. **MODULE 6 ("CONTROL" / 5 WORRIES) SUPPLEMENTAL EXERCISES:**
 >    - Because Module 6 is shorter and can feel repetitive by Day 3–4, **praise and reward** facilitators who incorporate approved CBT-aligned control extensions: (a) Pre/Post **"% of Control"** visual board ratings, (b) **Process Goals vs. Outcome Goals** (listing the 5 controllable steps toward an outcome), and (c) **Persona / Emotional Goals** (focusing on how they want to feel/respond without implanting negative labels).
+>
+> 7. **SYNCHRONIZED 8-MODULE STATEWIDE SCHEDULE:**
+>    - All three centers follow the exact same module schedule, starting on Monday and rotating chronologically:
+>      * Module 1: Thinking
+>      * Module 2: Feelings
+>      * Module 3: Thinking Errors
+>      * Module 4: Personality
+>      * Module 5: Low Frustration
+>      * Module 6: Control
+>      * [NOTE: Turn90 has NO Module 7]
+>      * Module 8: Support Network
+>      * Module 9: Ideal Self
+>    - Each week reviews previous module homework in the first 15–18 minutes, followed by today's scheduled module lesson.
 
 ---
 

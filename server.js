@@ -2954,12 +2954,14 @@ app.get('/api/admin/evaluations/stats', authenticateToken, requireRole('program_
         SELECT location, AVG(total_score) as avg_score, COUNT(*) as eval_count
         FROM class_facilitation_evaluations
         WHERE created_at >= date('now', '-14 days')
+          AND (detected_session_type = 'class' OR detected_session_type IS NULL)
         GROUP BY location
     `).all();
     if (!stats || stats.length === 0) {
         stats = db.prepare(`
             SELECT location, AVG(total_score) as avg_score, COUNT(*) as eval_count
             FROM class_facilitation_evaluations
+            WHERE (detected_session_type = 'class' OR detected_session_type IS NULL)
             GROUP BY location
         `).all();
     }
@@ -4381,6 +4383,7 @@ app.get('/api/supervisor/overview', authenticateToken, requireRole('director', '
                     SUM(CASE WHEN total_score >= 80 THEN 1 ELSE 0 END) AS passing_count
                 FROM class_facilitation_evaluations
                 WHERE LOWER(location) = LOWER(?)
+                  AND (detected_session_type = 'class' OR detected_session_type IS NULL)
             `).get(loc);
 
             const cmStats = db.prepare(`
@@ -4430,6 +4433,7 @@ app.get('/api/supervisor/overview', authenticateToken, requireRole('director', '
             SELECT id, facilitator_name, location, session_title, total_score, created_at
             FROM class_facilitation_evaluations
             WHERE total_score < 80
+              AND (detected_session_type = 'class' OR detected_session_type IS NULL)
             ORDER BY created_at DESC
             LIMIT 5
         `).all();
