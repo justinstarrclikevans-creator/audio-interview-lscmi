@@ -10100,7 +10100,7 @@ window.exportPreviousWeekPayReport = function(format = 'xlsx') {
 };
 
 window.switchSupervisorReportTab = function(tabKey) {
-    const tabs = ['all', 'pay', 'funnel', 'active', 'coaching', 'employment', 'referrals', 'evals'];
+    const tabs = ['all', 'pay', 'funnel', 'active', 'coaching', 'employment', 'referrals', 'evals', 'cmevals', 'interview_scoring'];
     tabs.forEach(t => {
         const btn = document.getElementById(`sup-tab-btn-${t}`);
         if (btn) {
@@ -10117,7 +10117,9 @@ window.switchSupervisorReportTab = function(tabKey) {
         coaching: document.getElementById('sup-sec-coaching'),
         employment: document.getElementById('sup-sec-employment'),
         referrals: document.getElementById('sup-sec-referrals'),
-        evals: document.getElementById('sup-sec-evals')
+        evals: document.getElementById('sup-sec-evals'),
+        cmevals: document.getElementById('sup-sec-cmevals'),
+        interview_scoring: document.getElementById('sup-sec-interview-scoring')
     };
 
     if (tabKey === 'all') {
@@ -10125,7 +10127,7 @@ window.switchSupervisorReportTab = function(tabKey) {
     } else {
         Object.entries(secMap).forEach(([k, el]) => {
             if (!el) return;
-            if (k === tabKey || (tabKey === 'evals' && k === 'centers')) {
+            if (k === tabKey || ((tabKey === 'evals' || tabKey === 'cmevals') && k === 'centers')) {
                 el.classList.remove('hidden');
             } else {
                 el.classList.add('hidden');
@@ -10139,10 +10141,14 @@ window.loadSupervisorDashboard = async function() {
     if (!token) return;
 
     try {
-        const [supRes, evalRes, facRes] = await Promise.all([
+        const [supRes, evalRes, facRes, cmRes, cmStatsRes, interviewsRes, caseloadRes] = await Promise.all([
             fetch('/api/supervisor/overview', { headers: { 'Authorization': `Bearer ${token}` } }),
             fetch('/api/apricot/eval-report', { headers: { 'Authorization': `Bearer ${token}` } }),
-            fetch('/api/facilitation/evaluations', { headers: { 'Authorization': `Bearer ${token}` } })
+            fetch('/api/facilitation/evaluations', { headers: { 'Authorization': `Bearer ${token}` } }),
+            fetch('/api/cm/evaluations', { headers: { 'Authorization': `Bearer ${token}` } }).catch(() => ({ ok: false })),
+            fetch('/api/cm/evaluations/stats', { headers: { 'Authorization': `Bearer ${token}` } }).catch(() => ({ ok: false })),
+            fetch('/api/interviews').catch(() => ({ ok: false })),
+            fetch('/api/admin/caseload?location=all', { headers: { 'Authorization': `Bearer ${token}` } }).catch(() => ({ ok: false }))
         ]);
         const supData = await safeApiResponse(supRes);
         const evalJson = evalRes.ok ? await evalRes.json() : null;
@@ -10166,9 +10172,22 @@ window.loadSupervisorDashboard = async function() {
         }
 
         const facEvals = facRes.ok ? await facRes.json() : [];
+        const cmEvals = (cmRes && cmRes.ok) ? await cmRes.json() : [];
+        const cmStats = (cmStatsRes && cmStatsRes.ok) ? await cmStatsRes.json() : [];
+        const interviewClients = (interviewsRes && interviewsRes.ok) ? await interviewsRes.json() : {};
+        const activeParticipants = (caseloadRes && caseloadRes.ok) ? await caseloadRes.json() : [];
 
         window.latestApricotEvalReport = evalReport;
-        renderSupervisorDashboard(supData, evalReport, Array.isArray(facEvals) ? facEvals : []);
+        window.latestSupervisorFacEvals = Array.isArray(facEvals) ? facEvals : [];
+        window.latestSupervisorCmEvals = Array.isArray(cmEvals) ? cmEvals : [];
+        window.latestSupervisorCmStats = Array.isArray(cmStats) ? cmStats : [];
+        window.latestSupervisorInterviews = interviewClients || {};
+        window.latestSupervisorActiveParticipants = Array.isArray(activeParticipants) ? activeParticipants : [];
+
+        renderSupervisorDashboard(supData, evalReport, window.latestSupervisorFacEvals);
+        renderSupervisorAllClassEvals(window.latestSupervisorFacEvals);
+        renderSupervisorAllCmEvals(window.latestSupervisorCmEvals, window.latestSupervisorCmStats);
+        renderSupervisorAllInterviewScorings(window.latestSupervisorInterviews, window.latestSupervisorActiveParticipants);
     } catch (err) {
         console.error('Failed to load supervisor overview:', err);
     }
@@ -11183,48 +11202,351 @@ function renderSupervisorReferralsAndCredentials(rc, containerId = 'sup-referral
 }
 
 // 7. RENDER ALL CENTERS CLASS EVALUATIONS ON SUPERVISOR DASHBOARD
+window.supClassLocationFilter = 'all';
+window.filterSupClassByLocation = function(loc) {
+    window.supClassLocationFilter = loc || 'all';
+    renderSupervisorAllClassEvals(window.latestSupervisorFacEvals || []);
+};
+
 function renderSupervisorAllClassEvals(facEvals) {
     const container = document.getElementById('sup-all-class-evals-container');
     if (!container) return;
 
     if (!facEvals || facEvals.length === 0) {
-        container.innerHTML = '';
+        container.innerHTML = '<div style="background: white; border-radius: 12px; border: 1px solid var(--border); padding: 30px; text-align: center; color: var(--slate);">No classroom evaluations recorded yet.</div>';
         return;
     }
 
-    container.innerHTML = `
-        <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,0.05); padding: 20px;">
-            <h3 style="margin: 0 0 12px 0; font-size: 16px; font-weight: 800; color: #0f172a;">🎤 All Centers Class Facilitation Evaluations (${facEvals.length} Sessions)</h3>
-            <div class="table-responsive">
-                <table class="data-table" style="width: 100%; font-size: 12.5px;">
-                    <thead>
-                        <tr style="background: #f8fafc;">
-                            <th>Date</th>
-                            <th>Center</th>
-                            <th>Facilitator</th>
-                            <th>Session / Curriculum Topic</th>
-                            <th style="text-align: center;">Total Score</th>
-                            <th style="text-align: right;">Inspect</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${facEvals.slice(0, 20).map(ev => `
-                            <tr>
-                                <td>${ev.created_at ? new Date(ev.created_at).toLocaleDateString() : '—'}</td>
-                                <td>📍 ${escapeHtml(ev.location || 'Charleston')}</td>
-                                <td style="font-weight: 700;">${escapeHtml(ev.facilitator_name || 'Staff')}</td>
-                                <td style="font-weight: 600; color: #0f172a;">${escapeHtml(ev.session_title || 'Class Session')}</td>
-                                <td style="text-align: center; font-weight: 800; color: ${ev.total_score >= 80 ? '#16a34a' : '#dc2626'};">${ev.total_score}%</td>
-                                <td style="text-align: right;">
-                                    <button class="btn btn-outline" style="padding: 4px 10px; font-size: 11px;" onclick="supervisorSwitchView('${(ev.location || 'charleston').toLowerCase()}'); setTimeout(() => switchPmSubView('facilitation'), 150);">View Center Eval ➡️</button>
-                                </td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
+    const loc = window.supClassLocationFilter || 'all';
+    const filtered = loc === 'all'
+        ? facEvals
+        : facEvals.filter(e => e.location && e.location.toLowerCase() === loc.toLowerCase());
+
+    const centerCounts = {
+        all: facEvals.length,
+        charleston: facEvals.filter(e => e.location && e.location.toLowerCase() === 'charleston').length,
+        columbia: facEvals.filter(e => e.location && e.location.toLowerCase() === 'columbia').length,
+        spartanburg: facEvals.filter(e => e.location && e.location.toLowerCase() === 'spartanburg').length
+    };
+
+    let html = `
+        <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,0.05); padding: 22px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; border-bottom: 2px solid #f1f5f9; padding-bottom: 14px;">
+                <div>
+                    <h3 style="margin: 0; font-size: 16.5px; font-weight: 800; color: #0f172a;">All Centers Class Facilitation Evaluations (${filtered.length} of ${facEvals.length})</h3>
+                    <div style="font-size: 12px; color: #64748b; margin-top: 2px;">Review 20-item Turn90 rubric scores, print reports, download transcripts, and toggle approval status.</div>
+                </div>
+                <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                    <span style="font-size: 11.5px; font-weight: 800; color: var(--slate); text-transform: uppercase; margin-right: 4px;">Filter:</span>
+                    <button class="btn ${loc === 'all' ? 'btn-primary' : 'btn-outline'}" style="font-size: 11.5px; padding: 4px 10px;" onclick="filterSupClassByLocation('all')">🏢 All (${centerCounts.all})</button>
+                    <button class="btn ${loc === 'charleston' ? 'btn-primary' : 'btn-outline'}" style="font-size: 11.5px; padding: 4px 10px;" onclick="filterSupClassByLocation('charleston')">📍 Charleston (${centerCounts.charleston})</button>
+                    <button class="btn ${loc === 'columbia' ? 'btn-primary' : 'btn-outline'}" style="font-size: 11.5px; padding: 4px 10px;" onclick="filterSupClassByLocation('columbia')">📍 Columbia (${centerCounts.columbia})</button>
+                    <button class="btn ${loc === 'spartanburg' ? 'btn-primary' : 'btn-outline'}" style="font-size: 11.5px; padding: 4px 10px;" onclick="filterSupClassByLocation('spartanburg')">📍 Spartanburg (${centerCounts.spartanburg})</button>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 14px;">
+    `;
+
+    filtered.forEach(e => {
+        const safeTitle = (e.session_title || 'Class Session').replace(/'/g, "\\'");
+        const safeFacName = (e.facilitator_name || 'Staff').replace(/'/g, "\\'");
+        const isNeedsReview = e.status === 'needs_review';
+        const statusBadge = isNeedsReview
+            ? `<span style="display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; background: #fef9c3; color: #854d0e; border: 1px solid #fde047;">🟡 Needs Review</span>`
+            : `<span style="display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; background: #dcfce7; color: #166534; border: 1px solid #86efac;">🟢 Published</span>`;
+
+        html += `
+            <div style="background: #ffffff; border: 1px solid ${isNeedsReview ? '#fde047' : 'var(--border)'}; border-left: 5px solid ${e.total_score >= 80 ? '#16a34a' : '#d97706'}; border-radius: 8px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 10px;">
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                            <span style="font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 4px; background: #e0f2fe; color: #0369a1; text-transform: uppercase;">${escapeHtml(e.location || 'Center')}</span>
+                            ${statusBadge}
+                            <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #0f172a;">${escapeHtml(e.session_title)}</h4>
+                        </div>
+                        <div style="font-size: 12px; color: var(--slate); margin-top: 3px;">
+                            Facilitator: <strong>${escapeHtml(e.facilitator_name || 'Staff')}</strong> • Date: ${e.class_date || (e.created_at ? new Date(e.created_at).toLocaleDateString() : '—')}
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                        <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 9px; color: ${isNeedsReview ? '#166534' : '#854d0e'}; border-color: ${isNeedsReview ? '#bbf7d0' : '#fef08a'}; background: ${isNeedsReview ? '#f0fdf4' : '#fefce8'};" onclick="toggleClassEvalStatus(${e.id}, '${e.status || 'published'}')">
+                            ${isNeedsReview ? '✅ Approve' : '⏸️ Flag Review'}
+                        </button>
+                        <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 9px;" onclick="printClassEvaluation(${e.id})">🖨️ View & Print</button>
+                        <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 9px; color: #0f766e; border-color: #99f6e4; background: #f0fdfa;" onclick="downloadClassEvaluationTranscript(${e.id}, '${safeTitle}', '${safeFacName}')">📥 Transcript</button>
+                        <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 9px; color: #4338ca; border-color: #c7d2fe;" onclick="editClassEvaluationScore(${e.id}, ${Number(e.total_score)}, '${safeFacName}', '${safeTitle}')">✏️ Edit</button>
+                        <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 9px; color: #ef4444; border-color: #fca5a5;" onclick="deleteClassEvaluation(${e.id})">🗑️</button>
+                        <div style="text-align: right; margin-left: 4px;">
+                            <div style="font-size: 20px; font-weight: 800; color: ${e.total_score >= 80 ? 'var(--success)' : '#d97706'};">${Number(e.total_score).toFixed(1)}%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; background: #f8fafc; padding: 8px 12px; border-radius: 6px; font-size: 11.5px; margin-bottom: 8px;">
+                    <div><strong>Neutrality:</strong> ${e.modeling_neutrality_score ? Number(e.modeling_neutrality_score).toFixed(1) : '--'}/5</div>
+                    <div><strong>Lesson Plan:</strong> ${e.lesson_plan_adherence_score ? Number(e.lesson_plan_adherence_score).toFixed(1) : '--'}/5</div>
+                    <div><strong>Reflection:</strong> ${e.reflective_listening_score ? Number(e.reflective_listening_score).toFixed(1) : '--'}/5</div>
+                    <div><strong>Confrontation:</strong> ${e.avoiding_confrontation_score ? Number(e.avoiding_confrontation_score).toFixed(1) : '--'}/5</div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+                    <div style="font-size: 12px; color: #475569; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 75%;">
+                        <strong>Feedback:</strong> ${escapeHtml(e.coaching_feedback || 'Turn90 Facilitator standard adherence.')}
+                    </div>
+                    <button class="btn btn-outline" style="font-size: 11px; padding: 3px 8px;" onclick="document.getElementById('sup-class-details-${e.id}')?.classList.toggle('hidden')">
+                        Toggle Full Report ▾
+                    </button>
+                </div>
+
+                <div id="sup-class-details-${e.id}" class="hidden" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #e2e8f0;">
+                    <div class="markdown-body" style="font-size: 12.5px; color: #1e293b; line-height: 1.5;">${marked.parse(e.summary_markdown || 'No summary.')}</div>
+                </div>
+
+                <div id="eval-markdown-${e.id}" class="hidden">${encodeURIComponent(e.summary_markdown || '')}</div>
+                <div id="eval-transcript-${e.id}" class="hidden">${encodeURIComponent(e.transcript_text || e.summary_markdown || '')}</div>
+            </div>
+        `;
+    });
+
+    html += `
             </div>
         </div>
     `;
+
+    container.innerHTML = html;
+}
+
+// 8. RENDER ALL CENTERS CASE MANAGEMENT EVALUATIONS ON SUPERVISOR DASHBOARD
+window.supCmLocationFilter = 'all';
+window.filterSupCmByLocation = function(loc) {
+    window.supCmLocationFilter = loc || 'all';
+    renderSupervisorAllCmEvals(window.latestSupervisorCmEvals || [], window.latestSupervisorCmStats || []);
+};
+
+function renderSupervisorAllCmEvals(cmEvals, stats = []) {
+    const container = document.getElementById('sup-all-cm-evals-container');
+    if (!container) return;
+
+    if (!cmEvals || cmEvals.length === 0) {
+        container.innerHTML = '<div style="background: white; border-radius: 12px; border: 1px solid var(--border); padding: 30px; text-align: center; color: var(--slate);">No Case Management evaluations recorded yet.</div>';
+        return;
+    }
+
+    const loc = window.supCmLocationFilter || 'all';
+    const filtered = loc === 'all'
+        ? cmEvals
+        : cmEvals.filter(e => e.location && e.location.toLowerCase() === loc.toLowerCase());
+
+    const centerCounts = {
+        all: cmEvals.length,
+        charleston: cmEvals.filter(e => e.location && e.location.toLowerCase() === 'charleston').length,
+        columbia: cmEvals.filter(e => e.location && e.location.toLowerCase() === 'columbia').length,
+        spartanburg: cmEvals.filter(e => e.location && e.location.toLowerCase() === 'spartanburg').length
+    };
+
+    let html = `
+        <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,0.05); padding: 22px;">
+    `;
+
+    // 14-day stats cards
+    if (Array.isArray(stats) && stats.length > 0) {
+        html += `
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-bottom: 18px;">
+                ${stats.map(s => `
+                    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #4f46e5; border-radius: 8px; padding: 12px 16px;">
+                        <div style="font-size: 20px; font-weight: 800; color: #1e1b4b;">${s.avg_score.toFixed(1)} / 100</div>
+                        <div style="font-size: 12px; font-weight: 700; color: #475569; margin-top: 2px;">${escapeHtml(s.location)} Average (Last 14 Days)</div>
+                        <div style="font-size: 11px; color: #64748b; margin-top: 2px;">${s.eval_count} Session(s) Evaluated</div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    // Filter toolbar
+    html += `
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; border-bottom: 2px solid #f1f5f9; padding-bottom: 14px;">
+                <div>
+                    <h3 style="margin: 0; font-size: 16.5px; font-weight: 800; color: #0f172a;">All Centers Case Management Sessions (${filtered.length} of ${cmEvals.length})</h3>
+                    <div style="font-size: 12px; color: #64748b; margin-top: 2px;">Review 5-area rubric scoring, deduction rationales, copy ready-to-paste Apricot notes, and print reports.</div>
+                </div>
+                <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                    <span style="font-size: 11.5px; font-weight: 800; color: var(--slate); text-transform: uppercase; margin-right: 4px;">Filter:</span>
+                    <button class="btn ${loc === 'all' ? 'btn-primary' : 'btn-outline'}" style="font-size: 11.5px; padding: 4px 10px;" onclick="filterSupCmByLocation('all')">🏢 All (${centerCounts.all})</button>
+                    <button class="btn ${loc === 'charleston' ? 'btn-primary' : 'btn-outline'}" style="font-size: 11.5px; padding: 4px 10px;" onclick="filterSupCmByLocation('charleston')">📍 Charleston (${centerCounts.charleston})</button>
+                    <button class="btn ${loc === 'columbia' ? 'btn-primary' : 'btn-outline'}" style="font-size: 11.5px; padding: 4px 10px;" onclick="filterSupCmByLocation('columbia')">📍 Columbia (${centerCounts.columbia})</button>
+                    <button class="btn ${loc === 'spartanburg' ? 'btn-primary' : 'btn-outline'}" style="font-size: 11.5px; padding: 4px 10px;" onclick="filterSupCmByLocation('spartanburg')">📍 Spartanburg (${centerCounts.spartanburg})</button>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 14px;">
+    `;
+
+    filtered.forEach(ev => {
+        const safeTitle = (ev.session_title || 'CM Session').replace(/'/g, "\\'");
+        const safeCmName = (ev.cm_name || 'Staff CM').replace(/'/g, "\\'");
+        const stageLabel = ev.session_type === 'first_session'
+            ? 'First Session (Action Plan Review)'
+            : (ev.session_type === 'intake' ? 'Intake' : 'Weekly Follow-Up');
+
+        html += `
+            <div style="background: #ffffff; border: 1px solid var(--border); border-left: 5px solid ${ev.total_score >= 85 ? '#4f46e5' : '#0f766e'}; border-radius: 8px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 10px;">
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                            <span style="font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 4px; background: #e0f2fe; color: #0369a1; text-transform: uppercase;">${escapeHtml(ev.location || 'Columbia')}</span>
+                            <span style="font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: #f3e8ff; color: #7e22ce;">${stageLabel}</span>
+                            ${ev.apricot_id ? `<span style="font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: #f1f5f9; color: #475569;">Apricot #${escapeHtml(ev.apricot_id)}</span>` : ''}
+                            <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #0f172a;">${escapeHtml(ev.session_title)}</h4>
+                        </div>
+                        <div style="font-size: 12px; color: var(--slate); margin-top: 3px;">
+                            Case Manager: <strong>${escapeHtml(ev.cm_name || 'Staff CM')}</strong> • Date: ${ev.created_at ? new Date(ev.created_at).toLocaleDateString() : '—'}
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                        <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 9px;" onclick="printCmEvaluation(${ev.id})">🖨️ View & Print</button>
+                        <button class="btn btn-primary" style="background: #4f46e5; border-color: #4f46e5; font-size: 11.5px; padding: 5px 9px; font-weight: 700;" onclick="copyTextFromElement('sup-cm-note-${ev.id}', this)">📋 Copy Apricot Note</button>
+                        <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 9px; color: #0f766e; border-color: #99f6e4; background: #f0fdfa;" onclick="downloadCmEvaluationTranscript(${ev.id}, '${safeTitle}', '${safeCmName}')">📥 Transcript</button>
+                        <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 9px; color: #4338ca; border-color: #c7d2fe;" onclick="editCmEvaluationScore(${ev.id}, ${Number(ev.total_score)}, '${safeCmName}', '${safeTitle}', '${ev.apricot_id || ''}', '${ev.session_type || ''}')">✏️ Edit</button>
+                        <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 9px; color: #ef4444; border-color: #fca5a5;" onclick="deleteCmEvaluation(${ev.id})">🗑️</button>
+                        <div style="text-align: right; margin-left: 4px;">
+                            <div style="font-size: 20px; font-weight: 800; color: ${ev.total_score >= 85 ? '#4f46e5' : '#0f766e'};">${Number(ev.total_score).toFixed(1)}%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; background: #f8fafc; padding: 8px 12px; border-radius: 6px; font-size: 11.5px; margin-bottom: 8px;">
+                    <div><strong>Cadence:</strong> ${ev.playbook_adherence ? Number(ev.playbook_adherence).toFixed(1) : '--'}/5</div>
+                    <div><strong>Gates & Goals:</strong> ${ev.goal_setting ? Number(ev.goal_setting).toFixed(1) : '--'}/5</div>
+                    <div><strong>CBT (5th Gr):</strong> ${ev.cbt_application ? Number(ev.cbt_application).toFixed(1) : '--'}/5</div>
+                    <div><strong>Empathy (SYNAPSE):</strong> ${ev.empathy_and_neutrality ? Number(ev.empathy_and_neutrality).toFixed(1) : '--'}/5</div>
+                    <div><strong>Apricot Data:</strong> ${ev.apricot_data_gathering ? Number(ev.apricot_data_gathering).toFixed(1) : '--'}/5</div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+                    <div style="font-size: 12px; color: #475569; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 75%;">
+                        <strong>Apricot Note Preview:</strong> ${(ev.apricot_notes || '').slice(0, 110)}...
+                    </div>
+                    <button class="btn btn-outline" style="font-size: 11px; padding: 3px 8px;" onclick="document.getElementById('sup-cm-details-${ev.id}')?.classList.toggle('hidden')">
+                        Toggle Full Report ▾
+                    </button>
+                </div>
+
+                <div id="sup-cm-details-${ev.id}" class="hidden" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #e2e8f0;">
+                    <div class="markdown-body" style="font-size: 12.5px; color: #1e293b; line-height: 1.5;">${marked.parse(ev.summary_markdown || 'No summary.')}</div>
+                </div>
+
+                <!-- Hidden elements for transcript download and copying -->
+                <div id="sup-cm-note-${ev.id}" class="hidden">${escapeHtml(ev.apricot_notes || '')}</div>
+                <div id="cm-eval-markdown-${ev.id}" class="hidden">${encodeURIComponent(ev.summary_markdown || '')}</div>
+                <div id="cm-eval-transcript-${ev.id}" class="hidden">${encodeURIComponent(ev.transcript_text || ev.summary_markdown || '')}</div>
+            </div>
+        `;
+    });
+
+    html += `
+            </div>
+        </div>
+    `;
+
+    container.innerHTML = html;
+}
+
+// 9. RENDER ALL PARTICIPANT INTERVIEW SCORINGS ON SUPERVISOR DASHBOARD
+function renderSupervisorAllInterviewScorings(clients, activeParticipants = []) {
+    const container = document.getElementById('sup-all-interview-scoring-container');
+    if (!container) return;
+
+    const clientIds = Object.keys(clients || {});
+    if (clientIds.length === 0) {
+        container.innerHTML = '<div style="background: white; border-radius: 12px; border: 1px solid var(--border); padding: 30px; text-align: center; color: var(--slate);">No interview records found in data directory.</div>';
+        return;
+    }
+
+    let html = `
+        <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,0.05); padding: 22px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; background: #f0fdfa; border: 1.5px solid #99f6e4; padding: 14px 18px; border-radius: 8px;">
+                <div>
+                    <strong style="color: #0f766e; font-size: 14.5px;">🖨️ Standardized LS/CMI Assessment & Documentation Reviews (${clientIds.length} Participants)</strong>
+                    <div style="font-size: 12px; color: #334155; margin-top: 2px;">Print or inspect completed standardized scorings, comprehensive 158-question interview guides, and complete verbatim transcripts.</div>
+                </div>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                    <button class="btn btn-primary" style="background: #0f766e; border-color: #0f766e; font-size: 12px; padding: 7px 16px; font-weight: 700;" onclick="window.open('/api/documents/print-all-scorings?autoprint=true', '_blank')">
+                        🖨️ Batch Print All Participant Scorings
+                    </button>
+                    <button class="btn btn-outline" style="font-size: 12px; padding: 7px 12px; background: white;" onclick="previewDocument('LS_CMI_Scoring_Guide.md')">
+                        📖 Scoring Guide
+                    </button>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 14px;">
+    `;
+
+    clientIds.forEach(clientId => {
+        const files = clients[clientId] || [];
+        const finalScoringFile = files.find(f => f.includes('final_scoring_form.md'));
+        const draftScoringFile = files.find(f => f.includes('draft_scoring_form.md'));
+        const completedScoringFile = finalScoringFile || draftScoringFile;
+        const finalBriefFile = files.find(f => f.includes('final_case_brief.md'));
+        const finalPlanFile = files.find(f => f.includes('participant_case_plan.md'));
+        const criminalHistoryFile = files.find(f => f.includes('criminal_history.md'));
+        const transcriptFile = files.find(f => f.includes('_transcript.txt'));
+
+        const parts = clientId.split('_');
+        const cleanName = parts.map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+
+        const participantOptions = activeParticipants.map(p => 
+            `<option value="${escapeHtml(p.name)}">${escapeHtml(p.name)} (${escapeHtml(p.location || 'Unknown')})</option>`
+        ).join('');
+        
+        const assignDropdownHtml = `<div style="display: flex; align-items: center; gap: 6px; margin-top: 6px;">
+            <select id="sup-assign-scoring-${clientId}" style="font-size: 11px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+                <option value="">Link to Active Participant...</option>
+                ${participantOptions}
+            </select>
+            <button class="btn btn-outline" style="font-size: 10px; padding: 4px 8px;" onclick="assignScoring('${clientId}')">🔗 Link</button>
+        </div>`;
+
+        html += `
+            <div style="background: #ffffff; border: 1px solid var(--border); border-left: 5px solid #0f766e; border-radius: 8px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;">
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 18px;">⚖️</span>
+                            <h4 style="margin: 0; font-size: 15.5px; font-weight: 700; color: #0f172a;">${escapeHtml(cleanName)}</h4>
+                        </div>
+                        ${assignDropdownHtml}
+                    </div>
+                    <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                        ${completedScoringFile ? `
+                            <button class="btn btn-primary" style="font-size: 11.5px; padding: 5px 12px; background: #0f766e; border-color: #0f766e;" onclick="previewDocument('${completedScoringFile}')">🖨️ View & Print Scoring</button>
+                        ` : ''}
+                        ${finalBriefFile ? `
+                            <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 10px; background: white;" onclick="previewDocument('${finalBriefFile}')">📑 Case Brief</button>
+                        ` : ''}
+                        ${finalPlanFile ? `
+                            <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 10px; background: white;" onclick="previewDocument('${finalPlanFile}')">🎯 Case Plan</button>
+                        ` : ''}
+                        ${criminalHistoryFile ? `
+                            <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 10px; background: white;" onclick="previewDocument('${criminalHistoryFile}')">📜 Criminal History</button>
+                        ` : ''}
+                        ${transcriptFile ? `
+                            <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 10px; color: #0369a1; border-color: #bae6fd; background: #f0f9ff;" onclick="previewDocument('${transcriptFile}')">📝 Transcript</button>
+                        ` : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    html += `
+            </div>
+        </div>
+    `;
+
+    container.innerHTML = html;
 }
 
 // =========================================================================

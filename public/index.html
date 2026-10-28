@@ -537,10 +537,24 @@
                     </div>
 
                     <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                        <!-- Daily/Weekly Apricot Report Upload Button -->
-                        <button class="btn btn-primary" onclick="triggerApricotWorkbookUpload()" style="background: #0f766e; border-color: #0f766e; font-size: 12.5px; padding: 8px 14px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 5px rgba(15,118,110,0.2);">
-                            📤 Upload Daily Apricot Report (.xlsx)
-                        </button>
+                        <!-- Daily/Weekly Apricot Report Upload Button & Action Controls -->
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                            <button class="btn btn-primary" onclick="triggerApricotWorkbookUpload()" style="background: #0f766e; border-color: #0f766e; font-size: 12px; padding: 7px 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 5px rgba(15,118,110,0.2);">
+                                📤 Upload Apricot Report (.xlsx)
+                            </button>
+                            <button class="btn btn-primary" onclick="openCmEvalModal()" style="background: #4f46e5; border-color: #4f46e5; font-size: 12px; padding: 7px 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+                                🎙️ Upload CM Recording
+                            </button>
+                            <button class="btn btn-outline" onclick="openFacilitationModal()" style="background: white; border-color: #cbd5e1; font-size: 12px; padding: 7px 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+                                🎤 Evaluate Class
+                            </button>
+                            <button class="btn btn-outline" onclick="openInterviewModal()" style="background: white; border-color: #cbd5e1; font-size: 12px; padding: 7px 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+                                🔴 Live Interview
+                            </button>
+                            <button class="btn btn-outline" onclick="openManualInterviewModal()" style="background: white; border-color: #cbd5e1; font-size: 12px; padding: 7px 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+                                📤 Import Interview
+                            </button>
+                        </div>
 
                         <!-- 1-Click Center Switcher -->
                         <div style="display: flex; align-items: center; gap: 6px; background: #f8fafc; padding: 6px 12px; border-radius: 8px; border: 1px solid #cbd5e1;">
@@ -563,7 +577,9 @@
                     <button id="sup-tab-btn-coaching" class="btn btn-outline" onclick="switchSupervisorReportTab('coaching')" style="font-size: 12.5px; padding: 7px 14px; font-weight: 700;">🎯 4. Case Plan & Briefcase Feedback</button>
                     <button id="sup-tab-btn-employment" class="btn btn-outline" onclick="switchSupervisorReportTab('employment')" style="font-size: 12.5px; padding: 7px 14px; font-weight: 700;">💼 5. Employment & Retention</button>
                     <button id="sup-tab-btn-referrals" class="btn btn-outline" onclick="switchSupervisorReportTab('referrals')" style="font-size: 12.5px; padding: 7px 14px; font-weight: 700;">🤝 6. Referrals & Credentials</button>
-                    <button id="sup-tab-btn-evals" class="btn btn-outline" onclick="switchSupervisorReportTab('evals')" style="font-size: 12.5px; padding: 7px 14px; font-weight: 700;">🎤 7. Class & CM Evaluations</button>
+                    <button id="sup-tab-btn-evals" class="btn btn-outline" onclick="switchSupervisorReportTab('evals')" style="font-size: 12.5px; padding: 7px 14px; font-weight: 700;">🎤 7. Class Evaluations</button>
+                    <button id="sup-tab-btn-cmevals" class="btn btn-outline" onclick="switchSupervisorReportTab('cmevals')" style="font-size: 12.5px; padding: 7px 14px; font-weight: 700;">🎙️ 8. Case Management Evaluations</button>
+                    <button id="sup-tab-btn-interview-scoring" class="btn btn-outline" onclick="switchSupervisorReportTab('interview_scoring')" style="font-size: 12.5px; padding: 7px 14px; font-weight: 700;">📝 9. Interview Scoring & LS/CMI Reviews</button>
                 </div>
             </div>
 
@@ -628,8 +644,20 @@
                     </div>
                 </div>
 
-                <!-- SECTION 7: ALL CENTERS CLASS & CM EVALUATIONS + QA ALERTS -->
+                <!-- SECTION 7: ALL CENTERS CLASS FACILITATION EVALUATIONS + QA ALERTS -->
                 <div id="sup-sec-evals" class="sup-report-section" style="margin-bottom: 28px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; background: white; border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px;">
+                        <div>
+                            <h2 style="margin: 0; font-size: 18px; font-weight: 800; color: #0f172a;">🎤 All Centers Class Facilitation Evaluations</h2>
+                            <p style="margin: 4px 0 0 0; font-size: 13px; color: #64748b;">Direct supervisor review, scoring approval (🟢 Published / 🟡 Needs Review), verbatim transcript download, and Turn90 Facilitator Scoring Guide adherence.</p>
+                        </div>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; background: white;" onclick="previewDocument('Facilitator_Scoring_Guide.md')" title="Open 20-Item Turn90 Facilitator Scoring Guide">📋 Facilitator Guide</button>
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; background: white;" onclick="forceSyncEvaluations()">🔄 Fetch Missing Dropbox Classes</button>
+                            <button class="btn btn-primary" style="font-size: 12px; padding: 6px 14px; font-weight: 700;" onclick="openFacilitationModal()">🎤 + Evaluate Class Session</button>
+                        </div>
+                    </div>
+
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
                         <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,0.05); padding: 20px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid var(--border); padding-bottom: 10px;">
@@ -645,7 +673,42 @@
                             <div id="sup-triage-cases-list"></div>
                         </div>
                     </div>
+
                     <div id="sup-all-class-evals-container"></div>
+                </div>
+
+                <!-- SECTION 8: ALL CENTERS CASE MANAGEMENT EVALUATIONS & APRICOT NOTES -->
+                <div id="sup-sec-cmevals" class="sup-report-section" style="margin-bottom: 28px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; background: white; border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px;">
+                        <div>
+                            <h2 style="margin: 0; font-size: 18px; font-weight: 800; color: #0f172a;">🎙️ All Centers Case Management Recordings & Apricot Notes</h2>
+                            <p style="margin: 4px 0 0 0; font-size: 13px; color: #64748b;">Direct supervisor access to 1-on-1 CM session evaluations, copyable Apricot notes, scoring deduction rationales, and "What to Work on Next" continuous coaching.</p>
+                        </div>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                            <button class="btn btn-primary" style="background: #4f46e5; border-color: #4f46e5; font-size: 12px; padding: 7px 14px; font-weight: 700;" onclick="openCmEvalModal()">🎙️ + Upload CM Recording (Apricot Note + Next Steps)</button>
+                        </div>
+                    </div>
+
+                    <div id="sup-all-cm-evals-container"></div>
+                </div>
+
+                <!-- SECTION 9: STANDARDIZED LS/CMI INTERVIEW SCORING & DRAFT REVIEWS -->
+                <div id="sup-sec-interview-scoring" class="sup-report-section" style="margin-bottom: 28px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; background: white; border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px;">
+                        <div>
+                            <h2 style="margin: 0; font-size: 18px; font-weight: 800; color: #0f172a;">📝 Human-in-the-Loop LS/CMI Scoring Reviews & Assessments</h2>
+                            <p style="margin: 4px 0 0 0; font-size: 13px; color: #64748b;">Review AI-generated draft scoring forms, cross-reference the official LS/CMI Scoring Guide, provide supervisor feedback, record live interviews, or import audio.</p>
+                        </div>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; background: white;" onclick="previewDocument('LS_CMI_Scoring_Guide.md')" title="Open LS/CMI Assessment Scoring Guide">📖 LS/CMI Scoring Guide</button>
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; background: white;" onclick="printActiveDraftDocument('LS_CMI_Scoring_Guide.md')" title="Print LS/CMI Scoring Guide">🖨️ Print Guide</button>
+                            <a href="/api/documents/raw/LS_CMI_Scoring_Manual_Guide.pdf" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; text-decoration: none; background: white;" title="Open Official 37-Page PDF">📄 PDF Manual</a>
+                            <button class="btn btn-primary" style="font-size: 12px; padding: 6px 14px;" onclick="openInterviewModal()">🔴 Record Live Interview</button>
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 14px; background: white;" onclick="openManualInterviewModal()">📤 Import Recording</button>
+                        </div>
+                    </div>
+
+                    <div id="sup-all-interview-scoring-container"></div>
                 </div>
 
             </div>

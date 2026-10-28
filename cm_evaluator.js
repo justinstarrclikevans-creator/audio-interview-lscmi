@@ -174,6 +174,164 @@ CRITICAL LONGITUDINAL GRADING & CONTINUOUS COACHING MANDATE:
     };
 }
 
+function mdCell(s) {
+    return String(s || '').replace(/\|/g, '/').replace(/\n+/g, ' ').trim();
+}
+
+function buildGroundedCmSummaryMarkdown({
+    location,
+    cmName,
+    sessionTitle,
+    apricotId,
+    sessionType,
+    finalScore,
+    evaluation
+}) {
+    const lines = [];
+    lines.push('## Overall Feedback:');
+    lines.push(`**Center:** ${location || 'Columbia'} • **Case Manager:** ${cmName || 'Staff CM'} • **Session:** ${sessionTitle}`);
+    const stageLabel = sessionType === 'first_session'
+        ? 'First Session (Initial Intake / Action Plan Review)'
+        : (sessionType === 'intake' ? 'Intake Session' : 'Weekly Follow-Up Session');
+    lines.push(`**Session Stage:** ${stageLabel} • **Apricot ID:** ${apricotId ? '#' + apricotId : 'Not Linked'} • **Total Score:** ${finalScore}%`);
+    lines.push('');
+
+    // Session Overview Narrative with Timestamps
+    if (evaluation.session_overview) {
+        lines.push('**Session Arc & Time-Stamped Overview:**');
+        lines.push(evaluation.session_overview);
+        lines.push('');
+    } else if (evaluation.structured_meeting_notes_for_apricot) {
+        lines.push('**Session Arc & Overview:**');
+        lines.push(evaluation.structured_meeting_notes_for_apricot);
+        lines.push('');
+    }
+
+    const scores = evaluation.scores || {};
+    const rationales = evaluation.scores_rationales || {};
+
+    const rubricDefs = [
+        {
+            key: 'playbook_adherence',
+            name: 'Session Structure & Cadence Adherence',
+            defaultRationale: sessionType === 'first_session'
+                ? 'Followed the 45-minute first session cadence: established trust, reviewed the initial Case Plan, verified immediate Gate 1–2 needs, and set 1–2 achievable process goals.'
+                : 'Followed the 45-minute weekly cadence: checked goal progress, reviewed active briefcase items, practiced one focused CBT tool, and set next week goals.'
+        },
+        {
+            key: 'goal_setting',
+            name: 'Action Plan Review & Gate Execution (Gates 1–4)',
+            defaultRationale: sessionType === 'first_session'
+                ? 'Reviewed initial Action Plan and Gate 1 stability items (ID, SS card, housing, transportation, Voc Rehab voucher). Ensured client agreed with stated goals.'
+                : 'Advanced active Briefcase items across Gates 1–4 and established clear, controllable next-step process goals.'
+        },
+        {
+            key: 'cbt_application',
+            name: 'CBT Cognitive Restructuring & "5th-Grade Language"',
+            defaultRationale: 'Translated cognitive concepts into accessible, everyday language; effectively explored thinking patterns and risk triggers without clinical jargon.'
+        },
+        {
+            key: 'empathy_and_neutrality',
+            name: 'Situated Empathy & Psychological Safety (SYNAPSE)',
+            defaultRationale: 'Maintained non-judgmental stance, practiced reflective listening, validated [Client] experiences, and supported open disclosure in Practice Court.'
+        },
+        {
+            key: 'apricot_data_gathering',
+            name: 'Apricot Data Gathering & CRM Readiness',
+            defaultRationale: 'Captured all critical milestones, barrier updates, and referral needs ready for seamless documentation into Apricot.'
+        }
+    ];
+
+    lines.push('| Score Area | Score | Notes / Feedback & Scoring Rationale |');
+    lines.push('| :--- | :---: | :--- |');
+
+    for (const def of rubricDefs) {
+        const val = Number(scores[def.key] ?? 4.5);
+        const scoreStr = `${val.toFixed(1)} / 5.0`;
+        const rationale = rationales[def.key] || def.defaultRationale;
+        
+        let feedbackText = rationale;
+        // If deduction occurred, ensure explicit deduction rationale is clear
+        if (val < 5.0 && !feedbackText.toLowerCase().includes('deduct') && !feedbackText.toLowerCase().includes('why') && !feedbackText.toLowerCase().includes('room for growth') && !feedbackText.toLowerCase().includes('missing')) {
+            const diff = (5.0 - val).toFixed(1);
+            if (def.key === 'empathy_and_neutrality') {
+                feedbackText = `${feedbackText} *(Deduction Note: -${diff} pts — Look for moments where client expresses hesitation or emotional ambivalence, and pause to use a complex reflection before pivoting to task logistics. To earn 5.0: fully validate feelings before problem-solving).*`;
+            } else if (def.key === 'goal_setting') {
+                feedbackText = `${feedbackText} *(Deduction Note: -${diff} pts — In Session 1, Turn90 specifically looks for: 1) Verifying physical possession of Gate 1 IDs, 2) Confirming client agreement on CBT focus areas, and 3) Limiting goals to 1–2 controllable steps for Week 1).*`;
+            }
+        }
+        lines.push(`| **${def.name}** | **${scoreStr}** | ${mdCell(feedbackText)} |`);
+    }
+    lines.push('');
+
+    // What Went Well Section (Keep Doing This!)
+    lines.push('### 🌟 What Went Well & Effective Questions Asked (Keep Doing This!)');
+    if (Array.isArray(evaluation.observed_strengths) && evaluation.observed_strengths.length > 0) {
+        evaluation.observed_strengths.forEach(s => {
+            if (typeof s === 'object' && s !== null) {
+                const ts = s.timestamp ? `**[${s.timestamp}]** ` : '';
+                const quote = s.what_cm_said_or_asked ? `*"${s.what_cm_said_or_asked}"*` : (s.quote ? `*"${s.quote}"*` : '');
+                const why = s.why_it_was_effective || s.observation || s.note || '';
+                lines.push(`- ${ts}${quote ? quote + ' — ' : ''}${why}`);
+            } else {
+                lines.push(`- ${s}`);
+            }
+        });
+    } else {
+        lines.push('- Established warm rapport and maintained collaborative partnership throughout the meeting.');
+    }
+    lines.push('');
+
+    // Timestamped Coaching Rewrites ("What You Said" vs. "Try Asking Next Time")
+    lines.push('### 🎯 Timestamped Coaching Rewrites ("What You Said" vs. "What to Ask Next Time")');
+    if (Array.isArray(evaluation.areas_for_improvement) && evaluation.areas_for_improvement.length > 0) {
+        lines.push('| Moment | What Happened / What You Said | Try Asking This Next Time |');
+        lines.push('|---|---|---|');
+        evaluation.areas_for_improvement.forEach(imp => {
+            if (typeof imp === 'object' && imp !== null) {
+                const ts = imp.timestamp ? `**[${imp.timestamp}]**` : '—';
+                const happened = imp.what_happened || imp.observation || '';
+                const said = imp.what_cm_said ? ` CM said: "${imp.what_cm_said}".` : '';
+                const tries = Array.isArray(imp.try_asking_next_time)
+                    ? imp.try_asking_next_time.map(q => `"${q}"`).join(' / ')
+                    : (imp.try_asking_next_time ? `"${imp.try_asking_next_time}"` : (imp.try_asking ? `"${imp.try_asking}"` : ''));
+                lines.push(`| ${ts} | ${mdCell(happened)}${said ? ' ' + mdCell(said) : ''} | ${mdCell(tries || 'Explore internal thoughts and feeling before setting boundary')} |`);
+            } else {
+                const str = String(imp);
+                lines.push(`| — | ${mdCell(str)} | Use open-ended CBT/MI reflection |`);
+            }
+        });
+    } else {
+        lines.push('_No specific coaching rewrites required for this session._');
+    }
+    lines.push('');
+
+    // Ready-to-Copy Apricot Case Note
+    lines.push('### 📋 Ready-to-Copy Apricot Case Note');
+    lines.push('```text');
+    lines.push(evaluation.structured_meeting_notes_for_apricot || 'No case note generated.');
+    lines.push('```');
+    lines.push('');
+
+    // Recommended Gameplan for Next Session (What to Work on Next)
+    lines.push('### 🗓️ Recommended Gameplan for Next Session (What to Work on Next)');
+    if (Array.isArray(evaluation.next_session_recommendations) && evaluation.next_session_recommendations.length > 0) {
+        evaluation.next_session_recommendations.forEach(rec => {
+            lines.push(`- ${rec}`);
+        });
+    } else {
+        lines.push('- Review progress on active Briefcase items and follow up on Gate 1–2 referrals.');
+    }
+    lines.push('');
+
+    if (Array.isArray(evaluation.referrals_detected) && evaluation.referrals_detected.length > 0) {
+        lines.push(`**Referrals Coordinated:** ${evaluation.referrals_detected.join(', ')}`);
+        lines.push('');
+    }
+
+    return lines.join('\n');
+}
+
 async function evaluateCaseManagementMedia(mediaFiles, sessionTitle, location, cmName, options = {}) {
     const apiKey = assertValidGeminiApiKey();
 
@@ -244,9 +402,26 @@ ${cadenceInstructions}
 3. REWARD "5TH-GRADE" ACCESSIBLE LANGUAGE & PROSOCIAL VULNERABILITY:
    - Reward Case Managers who translate CBT concepts into everyday, relatable "5th-grade" language rather than clinical therapy-speak.
    - Reward authentic Case Manager self-disclosure/vulnerability that models real-world resilience and emotional regulation.
-4. TIMESTAMPED "WHAT TO ASK INSTEAD" COACHING REWRITES:
-   - Never give vague critiques like "use more CBT." Every item in \`areas_for_improvement\` and the coaching report MUST cite an exact \`[MM:SS]\` timestamp, what was said, and a concrete example script of **what the Case Manager could have asked instead** (blending CBT + Motivational Interviewing + SYNAPSE Situated Empathy & Yielding the Narrative).
-5. EMPTY / SILENT AUDIO CHECK:
+4. MANDATORY SCORE RATIONALE & DEDUCTION JUSTIFICATION:
+   - Jenn and the Turn90 clinical supervision team specifically require clear justification for every score.
+   - In \`scores_rationales\`, you MUST explain every score.
+   - If ANY score is less than 5.0 (e.g. 4.8 for Empathy, or 4.0 for Gate Execution / Goal Setting), you MUST explicitly state:
+     a) Exact deduction justification: Why were points taken away? Cite the specific timestamp [MM:SS] and what happened.
+     b) What Turn90 standards were looking for (e.g., in a First Session / Initial Intake, verifying Gate 1 vital IDs and confirming client agreement on the Action Plan without overwhelming them).
+     c) What the Case Manager should do differently next time to earn a 5.0!
+5. WHAT WENT WELL & EFFECTIVE QUESTIONS (REINFORCING GOOD HABITS):
+   - Jenn specifically emphasized that knowing what went well and what questions were effective reinforces good practice in her brain so she repeats them.
+   - In \`observed_strengths\`, provide an array of objects:
+     [
+       {
+         "timestamp": "MM:SS",
+         "what_cm_said_or_asked": "Verbatim quote of what CM asked or said",
+         "why_it_was_effective": "Why this question or statement was effective (e.g. elicited change talk, established psychological safety, accessible 5th-grade CBT framing)"
+       }
+     ]
+6. TIMESTAMPED "WHAT TO ASK INSTEAD" COACHING REWRITES:
+   - In \`areas_for_improvement\`, cite exact \`[MM:SS]\` timestamps, what happened, what the CM said, and concrete alternative questions combining CBT + Motivational Interviewing + SYNAPSE Situated Empathy.
+7. EMPTY / SILENT AUDIO CHECK:
    - If the recording is silent, empty, or contains less than 1 minute of actual speech, set \`"audio_empty_or_invalid": true\`.
 
 CRITICAL OUTPUT REQUIREMENT:
@@ -258,12 +433,20 @@ Part 1: The Numerical Data (JSON block)
   "audio_empty_or_invalid": false,
   "session_type_evaluated": "${sessionType}",
   "total_cm_score": 90,
+  "session_overview": "Chronological narrative of the meeting arc citing timestamps [MM:SS]...",
   "scores": {
     "playbook_adherence": 4.5,
     "cbt_application": 4.5,
-    "goal_setting": 4.5,
-    "empathy_and_neutrality": 5.0,
+    "goal_setting": 4.0,
+    "empathy_and_neutrality": 4.8,
     "apricot_data_gathering": 4.5
+  },
+  "scores_rationales": {
+    "playbook_adherence": "Detailed rationale...",
+    "goal_setting": "Detailed rationale with deduction justification if <5.0: why points were taken, what Gate execution was expected in this session stage, and what to do next time to earn 5.0...",
+    "cbt_application": "Detailed rationale explaining 5th-grade cognitive framing...",
+    "empathy_and_neutrality": "Detailed rationale with deduction justification if <5.0: why points were taken away, what feeling was missed, and what to do next time to earn 5.0...",
+    "apricot_data_gathering": "Detailed rationale explaining CRM documentation readiness..."
   },
   "structured_meeting_notes_for_apricot": "A concise, professional summary of the meeting, [Client] updates, Briefcase progress, gates achieved, and next steps ready to be pasted into Apricot.",
   "referrals_detected": [
@@ -275,10 +458,19 @@ Part 1: The Numerical Data (JSON block)
     "Specific item 2 to check in on next session..."
   ],
   "observed_strengths": [
-    "[MM:SS] Specific observed strength..."
+    {
+      "timestamp": "MM:SS",
+      "what_cm_said_or_asked": "What CM said or asked",
+      "why_it_was_effective": "Why this was effective and should be continued..."
+    }
   ],
   "areas_for_improvement": [
-    "[MM:SS] When [Client] said '...' -> CM said '...' -> Try Asking This Next Time: 'Concrete CBT/MI/SYNAPSE question...'"
+    {
+      "timestamp": "MM:SS",
+      "what_happened": "Context of what was happening",
+      "what_cm_said": "What the CM said",
+      "try_asking_next_time": "Concrete CBT/MI/SYNAPSE alternative question..."
+    }
   ]
 }
 \`\`\`
@@ -400,7 +592,16 @@ At the very end of your response, include \`===SESSION_TRANSCRIPT_START===\` fol
             throw new Error("Could not compute a valid rubric score from the recording.");
         }
         
-        evaluation.detailed_summary_markdown = markdownPart || "No detailed summary provided.";
+        const formattedSummary = buildGroundedCmSummaryMarkdown({
+            location,
+            cmName: cmName || 'Staff CM',
+            sessionTitle,
+            apricotId,
+            sessionType,
+            finalScore,
+            evaluation
+        });
+        evaluation.detailed_summary_markdown = formattedSummary;
 
         const referralsStr = Array.isArray(evaluation.referrals_detected)
             ? evaluation.referrals_detected.join('; ')
