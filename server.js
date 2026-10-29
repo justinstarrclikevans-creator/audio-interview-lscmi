@@ -22,7 +22,7 @@ const { analyzeReentrySession } = require('./services/reentry_session_analyzer')
 const { runPhase1, runPhase1WithAudio, runPhase2, adjustActionPlan, safeJsonParse } = require('./llm_pipeline');
 const { convertSingleMdToPdf } = require('./convert_md_to_pdf');
 const { convertSingleMdToDocx } = require('./convert_md_to_docx');
-const { evaluateClassTranscript, evaluateClassMedia } = require('./facilitation_evaluator');
+const { evaluateClassTranscript, evaluateClassMedia, regenerateClassEvaluation } = require('./facilitation_evaluator');
 const { evaluateCaseManagementMedia } = require('./cm_evaluator');
 const { 
     generateMondayNeedsReport, 
@@ -2902,6 +2902,17 @@ app.patch('/api/admin/evaluations/:id/status', authenticateToken, requireRole('p
         db.prepare('UPDATE class_facilitation_evaluations SET status = ? WHERE id = ?').run(status, id);
         res.json({ success: true, status });
     } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/admin/evaluations/:id/regenerate', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), async (req, res) => {
+    try {
+        const id = Number(req.params.id);
+        const updated = await regenerateClassEvaluation(id);
+        res.json({ success: true, evaluation: updated });
+    } catch (err) {
+        console.error(`[Class Eval Regenerate Error] ID ${req.params.id}:`, err);
         res.status(500).json({ error: err.message });
     }
 });

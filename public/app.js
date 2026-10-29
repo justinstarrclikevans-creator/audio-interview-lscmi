@@ -4040,6 +4040,7 @@ async function loadFacilitationEvaluations() {
                             <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                                 <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: ${e.status === 'needs_review' ? '#166534' : '#854d0e'}; border-color: ${e.status === 'needs_review' ? '#bbf7d0' : '#fef08a'}; background: ${e.status === 'needs_review' ? '#f0fdf4' : '#fefce8'};" onclick="toggleClassEvalStatus(${e.id}, '${e.status || 'published'}')">${e.status === 'needs_review' ? '✅ Approve' : '⏸️ Flag Review'}</button>
                                 <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px;" onclick="printClassEvaluation(${e.id})">🖨️ View & Print Report</button>
+                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: #0284c7; border-color: #bae6fd; background: #f0f9ff;" onclick="regenerateClassEvaluation(${e.id})">🔄 Regenerate</button>
                                 <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: #0f766e; border-color: #99f6e4; background: #f0fdfa;" onclick="downloadClassEvaluationTranscript(${e.id}, '${safeTitle}', '${safeFacName}')">📥 Download Transcript</button>
                                 <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: #4338ca; border-color: #c7d2fe;" onclick="editClassEvaluationScore(${e.id}, ${Number(e.total_score)}, '${safeFacName}', '${safeTitle}')">✏️ Edit Score</button>
                                 <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: #ef4444; border-color: #fca5a5;" onclick="deleteClassEvaluation(${e.id})">🗑️ Delete</button>
@@ -4119,6 +4120,44 @@ window.editClassEvaluationScore = async function(id, currentScore, currentFacili
     }
 };
 
+window.regenerateClassEvaluation = async function(id) {
+    if (!confirm(`Re-evaluate this classroom session against the updated 20-item Turn90 Scoring Rubric and Trainer Workbooks? This will re-analyze the verified transcript and regenerate the report.`)) {
+        return;
+    }
+
+    const token = localStorage.getItem('fs_token');
+    if (!token) return alert('Session expired. Please log in again.');
+
+    const notifyEl = document.createElement('div');
+    notifyEl.id = 're-eval-spinner';
+    notifyEl.style.cssText = 'position: fixed; bottom: 20px; right: 20px; background: #0f172a; color: white; padding: 14px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.25); z-index: 99999; display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600;';
+    notifyEl.innerHTML = '<span style="animation: spin 1s linear infinite; display: inline-block;">⏳</span> Re-evaluating classroom session against Turn90 Trainer Workbooks...';
+    document.body.appendChild(notifyEl);
+
+    try {
+        const res = await fetch(`/api/admin/evaluations/${id}/regenerate`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to regenerate evaluation');
+
+        notifyEl.style.background = '#16a34a';
+        notifyEl.innerHTML = '✅ Evaluation successfully regenerated with the 20-item Turn90 rubric!';
+        setTimeout(() => notifyEl.remove(), 3500);
+
+        if (typeof loadFacilitationEvaluations === 'function') loadFacilitationEvaluations();
+        if (typeof loadSupervisorDashboard === 'function') loadSupervisorDashboard();
+    } catch (err) {
+        notifyEl.style.background = '#dc2626';
+        notifyEl.innerHTML = `❌ Error: ${escapeHtml(err.message)}`;
+        setTimeout(() => notifyEl.remove(), 5000);
+    }
+};
+
 window.moveClassEvalToCm = async function(id) {
     const apricotId = prompt('Moving 1-on-1 Session to Case Management Evaluations.\nOptional — Enter Participant Apricot ID (or leave blank):', '');
     if (apricotId === null) return;
@@ -4178,6 +4217,10 @@ function printClassEvaluation(id) {
                 body { font-family: 'Inter', -apple-system, sans-serif; padding: 0; color: #1e293b; line-height: 1.6; margin: 0; background: #f1f5f9; }
                 .content-wrapper { max-width: 850px; margin: 20px auto; background: white; padding: 40px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
                 h1, h2, h3 { color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; }
+                table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 13px; }
+                th, td { border: 1px solid #cbd5e1; padding: 10px 12px; text-align: left; vertical-align: top; }
+                th { background: #f8fafc; font-weight: 700; color: #0f172a; }
+                tr:nth-child(even) td { background: #fcfcfd; }
                 .metric-box { background: #f8fafc; border: 1px solid #cbd5e1; padding: 16px; border-radius: 8px; margin-bottom: 20px; }
                 .print-toolbar { position: sticky; top: 0; background: #1e293b; color: white; padding: 10px 18px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
                 .print-btn { background: #0f766e; color: white; border: none; padding: 8px 18px; font-weight: 700; border-radius: 4px; cursor: pointer; }
@@ -11274,6 +11317,7 @@ function renderSupervisorAllClassEvals(facEvals) {
                             ${isNeedsReview ? '✅ Approve' : '⏸️ Flag Review'}
                         </button>
                         <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 9px;" onclick="printClassEvaluation(${e.id})">🖨️ View & Print</button>
+                        <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 9px; color: #0284c7; border-color: #bae6fd; background: #f0f9ff;" onclick="regenerateClassEvaluation(${e.id})">🔄 Regenerate</button>
                         <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 9px; color: #0f766e; border-color: #99f6e4; background: #f0fdfa;" onclick="downloadClassEvaluationTranscript(${e.id}, '${safeTitle}', '${safeFacName}')">📥 Transcript</button>
                         <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 9px; color: #4338ca; border-color: #c7d2fe;" onclick="editClassEvaluationScore(${e.id}, ${Number(e.total_score)}, '${safeFacName}', '${safeTitle}')">✏️ Edit</button>
                         <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 9px; color: #ef4444; border-color: #fca5a5;" onclick="deleteClassEvaluation(${e.id})">🗑️</button>
