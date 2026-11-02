@@ -3931,6 +3931,54 @@ async function forceSyncEvaluations() {
     }
 }
 
+window.stripScoresForStaff = function(markdown) {
+    if (!markdown) return '';
+    let cleaned = String(markdown);
+
+    // Remove Total Score from header lines
+    cleaned = cleaned.replace(/•\s*\*\*Total Score:\*\*\s*[0-9.]+%/gi, '');
+    cleaned = cleaned.replace(/\*\*Total Score:\*\*\s*[0-9.]+%/gi, '');
+    cleaned = cleaned.replace(/•\s*\*\*Total Score:\*\*\s*[0-9.]+/gi, '');
+    cleaned = cleaned.replace(/\*\*Total Score:\*\*\s*[0-9.]+/gi, '');
+
+    // Clean section headers in tables
+    cleaned = cleaned.replace(/\|\s*\*\*Yes\/No Basics\s*\([^)]*\)\*\*\s*\|\s*\|\s*\|/gi, '| **Classroom Basics & Punctuality** | |');
+    cleaned = cleaned.replace(/\|\s*\*\*Core Facilitation Performance\*\*\s*\|\s*\|\s*\|/gi, '| **Core Facilitation Performance & Coaching** | |');
+
+    // Clean table header
+    cleaned = cleaned.replace(/\|\s*Score Area\s*\|\s*Score\s*\|\s*Notes \/ Feedback & Scoring Rationale\s*\|/gi, '| Competency Area | Facilitator Feedback & Practice Coaching |');
+    cleaned = cleaned.replace(/\|\s*:---\s*\|\s*:---:\s*\|\s*:---\s*\|/gi, '| :--- | :--- |');
+
+    const lines = cleaned.split('\n');
+    const newLines = lines.map(line => {
+        const trimmed = line.trim();
+        if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
+            const parts = line.split('|');
+            if (parts.length === 5) {
+                const col1 = parts[1].trim();
+                const col2 = parts[2].trim();
+                let col3 = parts[3].trim();
+
+                if (!col2 && !col3) {
+                    return `| ${col1} | |`;
+                }
+
+                // Remove point deductions and score phrasing
+                col3 = col3.replace(/-\s*[0-9.]+\s*pts\s*—\s*/gi, '');
+                col3 = col3.replace(/-\s*[0-9.]+\s*pts\s*-\s*/gi, '');
+                col3 = col3.replace(/Deduction Note:/gi, 'Coaching Note:');
+                col3 = col3.replace(/To earn 5\.0 next time:/gi, 'Focus for next session:');
+                col3 = col3.replace(/To earn 5\.0 next time/gi, 'Focus for next session');
+
+                return `| ${col1} | ${col3} |`;
+            }
+        }
+        return line;
+    });
+
+    return newLines.join('\n');
+};
+
 window.filterFacilitationByCenter = function(center) {
     window.facilitationCenterFilter = center;
     loadFacilitationEvaluations();
@@ -3942,6 +3990,8 @@ async function loadFacilitationEvaluations() {
     if (!container) return;
 
     try {
+        const isSupervisor = currentUser && (currentUser.role === 'director' || currentUser.portal_type === 'supervisor');
+
         // Fetch both evals and 2-week stats
         const [evalsRes, statsRes] = await Promise.all([
             fetch('/api/admin/evaluations', { headers: { 'Authorization': `Bearer ${token}` } }),
@@ -3975,18 +4025,18 @@ async function loadFacilitationEvaluations() {
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 16px;">
                 <div onclick="filterFacilitationByCenter('Charleston')" style="cursor: pointer; background: #f0fdf4; border: 2px solid ${activeFilter === 'Charleston' ? '#15803d' : '#bbf7d0'}; padding: 16px; border-radius: 8px; text-align: center; transition: all 0.2s; box-shadow: ${activeFilter === 'Charleston' ? '0 4px 6px -1px rgba(22, 101, 52, 0.15)' : 'none'};">
                     <div style="font-size: 13px; color: #166534; font-weight: bold; text-transform: uppercase;">Charleston</div>
-                    <div style="font-size: 28px; font-weight: 900; color: #15803d; margin-top: 4px;">${getStat('Charleston')}</div>
-                    <div style="font-size: 11px; color: #166534; margin-top: 2px;">14-Day Average (${countChs} Evals)</div>
+                    <div style="font-size: ${isSupervisor ? '28px' : '22px'}; font-weight: 900; color: #15803d; margin-top: 4px;">${isSupervisor ? getStat('Charleston') : `${countChs} Classes`}</div>
+                    <div style="font-size: 11px; color: #166534; margin-top: 2px;">${isSupervisor ? `14-Day Average (${countChs} Evals)` : 'Facilitator Feedback & Coaching'}</div>
                 </div>
                 <div onclick="filterFacilitationByCenter('Columbia')" style="cursor: pointer; background: #eff6ff; border: 2px solid ${activeFilter === 'Columbia' ? '#1d4ed8' : '#bfdbfe'}; padding: 16px; border-radius: 8px; text-align: center; transition: all 0.2s; box-shadow: ${activeFilter === 'Columbia' ? '0 4px 6px -1px rgba(29, 78, 216, 0.15)' : 'none'};">
                     <div style="font-size: 13px; color: #1e3a8a; font-weight: bold; text-transform: uppercase;">Columbia</div>
-                    <div style="font-size: 28px; font-weight: 900; color: #1d4ed8; margin-top: 4px;">${getStat('Columbia')}</div>
-                    <div style="font-size: 11px; color: #1e3a8a; margin-top: 2px;">14-Day Average (${countCol} Evals)</div>
+                    <div style="font-size: ${isSupervisor ? '28px' : '22px'}; font-weight: 900; color: #1d4ed8; margin-top: 4px;">${isSupervisor ? getStat('Columbia') : `${countCol} Classes`}</div>
+                    <div style="font-size: 11px; color: #1e3a8a; margin-top: 2px;">${isSupervisor ? `14-Day Average (${countCol} Evals)` : 'Facilitator Feedback & Coaching'}</div>
                 </div>
                 <div onclick="filterFacilitationByCenter('Spartanburg')" style="cursor: pointer; background: #fdf4ff; border: 2px solid ${activeFilter === 'Spartanburg' ? '#be185d' : '#fbcfe8'}; padding: 16px; border-radius: 8px; text-align: center; transition: all 0.2s; box-shadow: ${activeFilter === 'Spartanburg' ? '0 4px 6px -1px rgba(190, 24, 93, 0.15)' : 'none'};">
                     <div style="font-size: 13px; color: #831843; font-weight: bold; text-transform: uppercase;">Spartanburg</div>
-                    <div style="font-size: 28px; font-weight: 900; color: #be185d; margin-top: 4px;">${getStat('Spartanburg')}</div>
-                    <div style="font-size: 11px; color: #831843; margin-top: 2px;">14-Day Average (${countSpb} Evals)</div>
+                    <div style="font-size: ${isSupervisor ? '28px' : '22px'}; font-weight: 900; color: #be185d; margin-top: 4px;">${isSupervisor ? getStat('Spartanburg') : `${countSpb} Classes`}</div>
+                    <div style="font-size: 11px; color: #831843; margin-top: 2px;">${isSupervisor ? `14-Day Average (${countSpb} Evals)` : 'Facilitator Feedback & Coaching'}</div>
                 </div>
             </div>
 
@@ -4017,6 +4067,7 @@ async function loadFacilitationEvaluations() {
                     const safeFacName = (e.facilitator_name || '').replace(/'/g, "\\'");
                     const safeTitle = (e.session_title || '').replace(/'/g, "\\'");
                     const isCmMisupload = e.detected_session_type === 'case_management';
+                    const staffFeedbackMarkdown = e.staff_summary_markdown || (typeof window.stripScoresForStaff === 'function' ? window.stripScoresForStaff(e.summary_markdown || '') : (e.summary_markdown || ''));
                     return `
                     <div style="background: #ffffff; border: 1px solid var(--border); border-left: 4px solid ${locColor}; border-radius: 8px; padding: 16px;">
                         ${isCmMisupload ? `
@@ -4038,29 +4089,61 @@ async function loadFacilitationEvaluations() {
                                 <div style="font-size: 12px; color: var(--slate);">Facilitator: <strong>${e.facilitator_name}</strong> • Date: ${e.class_date}</div>
                             </div>
                             <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: ${e.status === 'needs_review' ? '#166534' : '#854d0e'}; border-color: ${e.status === 'needs_review' ? '#bbf7d0' : '#fef08a'}; background: ${e.status === 'needs_review' ? '#f0fdf4' : '#fefce8'};" onclick="toggleClassEvalStatus(${e.id}, '${e.status || 'published'}')">${e.status === 'needs_review' ? '✅ Approve' : '⏸️ Flag Review'}</button>
-                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px;" onclick="printClassEvaluation(${e.id})">🖨️ View & Print Report</button>
+                                ${isSupervisor ? `<button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: ${e.status === 'needs_review' ? '#166534' : '#854d0e'}; border-color: ${e.status === 'needs_review' ? '#bbf7d0' : '#fef08a'}; background: ${e.status === 'needs_review' ? '#f0fdf4' : '#fefce8'};" onclick="toggleClassEvalStatus(${e.id}, '${e.status || 'published'}')">${e.status === 'needs_review' ? '✅ Approve' : '⏸️ Flag Review'}</button>` : ''}
+                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px;" onclick="printClassEvaluation(${e.id}, ${isSupervisor})">🖨️ ${isSupervisor ? 'View & Print Report' : 'View & Print Feedback'}</button>
                                 <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: #0284c7; border-color: #bae6fd; background: #f0f9ff;" onclick="regenerateClassEvaluation(${e.id})">🔄 Regenerate</button>
                                 <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: #0f766e; border-color: #99f6e4; background: #f0fdfa;" onclick="downloadClassEvaluationTranscript(${e.id}, '${safeTitle}', '${safeFacName}')">📥 Download Transcript</button>
-                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: #4338ca; border-color: #c7d2fe;" onclick="editClassEvaluationScore(${e.id}, ${Number(e.total_score)}, '${safeFacName}', '${safeTitle}')">✏️ Edit Score</button>
-                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: #ef4444; border-color: #fca5a5;" onclick="deleteClassEvaluation(${e.id})">🗑️ Delete</button>
+                                ${isSupervisor ? `
+                                    <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: #4338ca; border-color: #c7d2fe;" onclick="editClassEvaluationScore(${e.id}, ${Number(e.total_score)}, '${safeFacName}', '${safeTitle}')">✏️ Edit Score</button>
+                                    <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: #ef4444; border-color: #fca5a5;" onclick="deleteClassEvaluation(${e.id})">🗑️ Delete</button>
+                                ` : ''}
                                 <div style="text-align: right; margin-left: 6px;">
-                                    <div style="font-size: 22px; font-weight: 800; color: ${e.total_score >= 85 ? 'var(--success)' : (e.total_score >= 70 ? '#1d4ed8' : 'var(--warning)')};">${Number(e.total_score).toFixed(1)} / 100</div>
-                                    <div style="font-size: 11px; color: var(--slate);">Rubric Score</div>
+                                    ${isSupervisor && e.total_score !== null ? `
+                                        <div style="font-size: 22px; font-weight: 800; color: ${e.total_score >= 85 ? 'var(--success)' : (e.total_score >= 70 ? '#1d4ed8' : 'var(--warning)')};">${Number(e.total_score).toFixed(1)} / 100</div>
+                                        <div style="font-size: 11px; color: var(--slate);">Rubric Score</div>
+                                    ` : `
+                                        <span style="display: inline-flex; align-items: center; gap: 4px; padding: 5px 12px; border-radius: 6px; background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; font-size: 12px; font-weight: 700;">
+                                            📋 Feedback Ready
+                                        </span>
+                                    `}
                                 </div>
                             </div>
                         </div>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; background: #f8fafc; padding: 10px; border-radius: 6px; font-size: 12px; margin-bottom: 10px;">
-                            <div><strong>Neutrality:</strong> ${e.modeling_neutrality_score ? Number(e.modeling_neutrality_score).toFixed(1) : '--'}/5</div>
-                            <div><strong>Lesson Plan:</strong> ${e.lesson_plan_adherence_score ? Number(e.lesson_plan_adherence_score).toFixed(1) : '--'}/5</div>
-                            <div><strong>Reflective Listening:</strong> ${e.reflective_listening_score ? Number(e.reflective_listening_score).toFixed(1) : '--'}/5</div>
-                            <div><strong>Confrontation Avoidance:</strong> ${e.avoiding_confrontation_score ? Number(e.avoiding_confrontation_score).toFixed(1) : '--'}/5</div>
+
+                        ${isSupervisor ? `
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; background: #f8fafc; padding: 10px; border-radius: 6px; font-size: 12px; margin-bottom: 10px; border: 1px solid #e2e8f0;">
+                                <div><strong>Neutrality:</strong> ${e.modeling_neutrality_score ? Number(e.modeling_neutrality_score).toFixed(1) : '--'}/5</div>
+                                <div><strong>Lesson Plan:</strong> ${e.lesson_plan_adherence_score ? Number(e.lesson_plan_adherence_score).toFixed(1) : '--'}/5</div>
+                                <div><strong>Reflective Listening:</strong> ${e.reflective_listening_score ? Number(e.reflective_listening_score).toFixed(1) : '--'}/5</div>
+                                <div><strong>Confrontation Avoidance:</strong> ${e.avoiding_confrontation_score ? Number(e.avoiding_confrontation_score).toFixed(1) : '--'}/5</div>
+                            </div>
+                        ` : `
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; background: #f8fafc; padding: 10px; border-radius: 6px; font-size: 12px; margin-bottom: 10px; border: 1px solid #e2e8f0;">
+                                <div><strong>Focus 1:</strong> Modeling Neutrality</div>
+                                <div><strong>Focus 2:</strong> Lesson Plan Structure</div>
+                                <div><strong>Focus 3:</strong> Reflective Listening</div>
+                                <div><strong>Focus 4:</strong> Low-Confrontation Culture</div>
+                            </div>
+                        `}
+
+                        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-left: 4px solid #16a34a; padding: 12px 14px; border-radius: 6px; font-size: 13px; color: #166534; line-height: 1.5; margin-bottom: 10px;">
+                            <strong>🎯 Core Coaching Feedback:</strong> ${escapeHtml(e.coaching_feedback || 'Excellent adherence to lesson structure and neutrality.')}
                         </div>
-                        <div style="font-size: 13px; color: #334155;">
-                            <strong>Coaching Feedback:</strong> ${e.coaching_feedback || 'Excellent adherence to lesson structure and neutrality.'}
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+                            <span style="font-size: 12px; color: #64748b; font-weight: 600;">Facilitation Practice Notes, What Went Well & Coaching Rewrites:</span>
+                            <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 12px; color: #0f766e; border-color: #99f6e4; background: #f0fdfa; font-weight: 700;" onclick="document.getElementById('staff-feedback-details-${e.id}')?.classList.toggle('hidden')">
+                                📋 View Complete Facilitation Feedback &amp; Practice Notes ▾
+                            </button>
                         </div>
+
+                        <div id="staff-feedback-details-${e.id}" class="hidden" style="margin-top: 12px; padding: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+                            <div class="markdown-body" style="font-size: 12.5px; color: #1e293b; line-height: 1.6;">${marked.parse(isSupervisor ? (e.summary_markdown || '') : staffFeedbackMarkdown)}</div>
+                        </div>
+
                         <!-- Hidden data for printing & transcript download -->
-                        <div id="eval-markdown-${e.id}" class="hidden">${encodeURIComponent(e.summary_markdown || '')}</div>
+                        <div id="eval-markdown-admin-${e.id}" class="hidden">${encodeURIComponent(e.summary_markdown || '')}</div>
+                        <div id="eval-markdown-${e.id}" class="hidden">${encodeURIComponent(isSupervisor ? (e.summary_markdown || '') : staffFeedbackMarkdown)}</div>
                         <div id="eval-transcript-${e.id}" class="hidden">${encodeURIComponent(e.transcript_text || e.summary_markdown || '')}</div>
                     </div>
                 `}).join('')}
@@ -4201,18 +4284,25 @@ window.toggleClassEvalStatus = async function(id, currentStatus) {
     }
 };
 
-function printClassEvaluation(id) {
-    const rawData = document.getElementById(`eval-markdown-${id}`);
+function printClassEvaluation(id, forceAdmin = null) {
+    const isSupervisor = forceAdmin !== null ? forceAdmin : (currentUser && (currentUser.role === 'director' || currentUser.portal_type === 'supervisor'));
+    const adminEl = document.getElementById(`eval-markdown-admin-${id}`);
+    const staffEl = document.getElementById(`eval-markdown-${id}`);
+    const rawData = (isSupervisor && adminEl) ? adminEl : (staffEl || adminEl);
     if (!rawData) return;
     
-    const markdownText = decodeURIComponent(rawData.innerHTML);
+    let markdownText = decodeURIComponent(rawData.innerHTML);
+    if (!isSupervisor && typeof window.stripScoresForStaff === 'function') {
+        markdownText = window.stripScoresForStaff(markdownText);
+    }
     const htmlContent = marked.parse(markdownText);
+    const reportTitle = isSupervisor ? 'Turn90 Class Facilitation Evaluation & QA Scoring Report' : 'Turn90 Class Facilitation Feedback & Practice Coaching Report';
     
     const printWindow = window.open('', '_blank');
     printWindow.document.write(`
         <html>
         <head>
-            <title>Class Facilitation Evaluation</title>
+            <title>${reportTitle}</title>
             <style>
                 body { font-family: 'Inter', -apple-system, sans-serif; padding: 0; color: #1e293b; line-height: 1.6; margin: 0; background: #f1f5f9; }
                 .content-wrapper { max-width: 850px; margin: 20px auto; background: white; padding: 40px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
@@ -4234,7 +4324,7 @@ function printClassEvaluation(id) {
         </head>
         <body>
             <div class="print-toolbar">
-                <div><strong>Class Facilitation Evaluation</strong></div>
+                <div><strong>${reportTitle}</strong></div>
                 <div>
                     <button class="print-btn" onclick="window.print()">🖨️ Print Report</button>
                     <button class="print-btn" style="background: transparent; border: 1px solid #64748b; margin-left: 10px;" onclick="window.close()">✕ Close</button>
@@ -10214,7 +10304,7 @@ window.loadSupervisorDashboard = async function() {
             evalReport.referralsAndCredentials = evalJson?.referralsAndCredentials || evalReport.referralsAndCredentials;
         }
 
-        const facEvals = facRes.ok ? await facRes.json() : [];
+        const facEvals = facRes.ok ? await facRes.json() : (supData.classEvaluations || []);
         const cmEvals = (cmRes && cmRes.ok) ? await cmRes.json() : [];
         const cmStats = (cmStatsRes && cmStatsRes.ok) ? await cmStatsRes.json() : [];
         const interviewClients = (interviewsRes && interviewsRes.ok) ? await interviewsRes.json() : {};
@@ -11251,6 +11341,18 @@ window.filterSupClassByLocation = function(loc) {
     renderSupervisorAllClassEvals(window.latestSupervisorFacEvals || []);
 };
 
+window.toggleAllSupClassReports = function() {
+    const details = document.querySelectorAll('.sup-class-report-collapse');
+    if (!details.length) return;
+    const anyHidden = Array.from(details).some(d => d.classList.contains('hidden'));
+    details.forEach(d => {
+        if (anyHidden) d.classList.remove('hidden');
+        else d.classList.add('hidden');
+    });
+    const btn = document.getElementById('sup-class-expand-all-btn');
+    if (btn) btn.innerText = anyHidden ? '📁 Collapse All Reports' : '📂 Expand All Reports';
+};
+
 function renderSupervisorAllClassEvals(facEvals) {
     const container = document.getElementById('sup-all-class-evals-container');
     if (!container) return;
@@ -11277,10 +11379,13 @@ function renderSupervisorAllClassEvals(facEvals) {
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; border-bottom: 2px solid #f1f5f9; padding-bottom: 14px;">
                 <div>
                     <h3 style="margin: 0; font-size: 16.5px; font-weight: 800; color: #0f172a;">All Centers Class Facilitation Evaluations (${filtered.length} of ${facEvals.length})</h3>
-                    <div style="font-size: 12px; color: #64748b; margin-top: 2px;">Review 20-item Turn90 rubric scores, print reports, download transcripts, and toggle approval status.</div>
+                    <div style="font-size: 12px; color: #64748b; margin-top: 2px;">Admin Command: Complete 20-item Turn90 rubric scores, deduction rationales, verified quotes, coaching rewrites, and approval status.</div>
                 </div>
-                <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
-                    <span style="font-size: 11.5px; font-weight: 800; color: var(--slate); text-transform: uppercase; margin-right: 4px;">Filter:</span>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                    <button id="sup-class-expand-all-btn" class="btn btn-outline" style="font-size: 11.5px; padding: 4px 10px; font-weight: 700; color: #4338ca; border-color: #c7d2fe; background: #eef2ff;" onclick="toggleAllSupClassReports()">
+                        📂 Expand All Reports
+                    </button>
+                    <span style="font-size: 11.5px; font-weight: 800; color: var(--slate); text-transform: uppercase; margin-left: 4px; margin-right: 4px;">Filter:</span>
                     <button class="btn ${loc === 'all' ? 'btn-primary' : 'btn-outline'}" style="font-size: 11.5px; padding: 4px 10px;" onclick="filterSupClassByLocation('all')">🏢 All (${centerCounts.all})</button>
                     <button class="btn ${loc === 'charleston' ? 'btn-primary' : 'btn-outline'}" style="font-size: 11.5px; padding: 4px 10px;" onclick="filterSupClassByLocation('charleston')">📍 Charleston (${centerCounts.charleston})</button>
                     <button class="btn ${loc === 'columbia' ? 'btn-primary' : 'btn-outline'}" style="font-size: 11.5px; padding: 4px 10px;" onclick="filterSupClassByLocation('columbia')">📍 Columbia (${centerCounts.columbia})</button>
@@ -11300,13 +11405,13 @@ function renderSupervisorAllClassEvals(facEvals) {
             : `<span style="display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; background: #dcfce7; color: #166534; border: 1px solid #86efac;">🟢 Published</span>`;
 
         html += `
-            <div style="background: #ffffff; border: 1px solid ${isNeedsReview ? '#fde047' : 'var(--border)'}; border-left: 5px solid ${e.total_score >= 80 ? '#16a34a' : '#d97706'}; border-radius: 8px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 10px;">
+            <div style="background: #ffffff; border: 1px solid ${isNeedsReview ? '#fde047' : 'var(--border)'}; border-left: 5px solid ${e.total_score >= 80 ? '#16a34a' : '#d97706'}; border-radius: 8px; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 12px;">
                     <div>
                         <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                             <span style="font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 4px; background: #e0f2fe; color: #0369a1; text-transform: uppercase;">${escapeHtml(e.location || 'Center')}</span>
                             ${statusBadge}
-                            <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #0f172a;">${escapeHtml(e.session_title)}</h4>
+                            <h4 style="margin: 0; font-size: 15.5px; font-weight: 700; color: #0f172a;">${escapeHtml(e.session_title)}</h4>
                         </div>
                         <div style="font-size: 12px; color: var(--slate); margin-top: 3px;">
                             Facilitator: <strong>${escapeHtml(e.facilitator_name || 'Staff')}</strong> • Date: ${e.class_date || (e.created_at ? new Date(e.created_at).toLocaleDateString() : '—')}
@@ -11316,37 +11421,41 @@ function renderSupervisorAllClassEvals(facEvals) {
                         <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 9px; color: ${isNeedsReview ? '#166534' : '#854d0e'}; border-color: ${isNeedsReview ? '#bbf7d0' : '#fef08a'}; background: ${isNeedsReview ? '#f0fdf4' : '#fefce8'};" onclick="toggleClassEvalStatus(${e.id}, '${e.status || 'published'}')">
                             ${isNeedsReview ? '✅ Approve' : '⏸️ Flag Review'}
                         </button>
-                        <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 9px;" onclick="printClassEvaluation(${e.id})">🖨️ View & Print</button>
+                        <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 9px;" onclick="printClassEvaluation(${e.id}, true)">🖨️ View & Print Full Report</button>
                         <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 9px; color: #0284c7; border-color: #bae6fd; background: #f0f9ff;" onclick="regenerateClassEvaluation(${e.id})">🔄 Regenerate</button>
                         <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 9px; color: #0f766e; border-color: #99f6e4; background: #f0fdfa;" onclick="downloadClassEvaluationTranscript(${e.id}, '${safeTitle}', '${safeFacName}')">📥 Transcript</button>
-                        <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 9px; color: #4338ca; border-color: #c7d2fe;" onclick="editClassEvaluationScore(${e.id}, ${Number(e.total_score)}, '${safeFacName}', '${safeTitle}')">✏️ Edit</button>
+                        <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 9px; color: #4338ca; border-color: #c7d2fe;" onclick="editClassEvaluationScore(${e.id}, ${Number(e.total_score)}, '${safeFacName}', '${safeTitle}')">✏️ Edit Score</button>
                         <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 9px; color: #ef4444; border-color: #fca5a5;" onclick="deleteClassEvaluation(${e.id})">🗑️</button>
-                        <div style="text-align: right; margin-left: 4px;">
-                            <div style="font-size: 20px; font-weight: 800; color: ${e.total_score >= 80 ? 'var(--success)' : '#d97706'};">${Number(e.total_score).toFixed(1)}%</div>
+                        <div style="text-align: right; margin-left: 6px;">
+                            <div style="font-size: 24px; font-weight: 900; color: ${e.total_score >= 80 ? 'var(--success)' : '#d97706'};">${Number(e.total_score).toFixed(1)}%</div>
+                            <div style="font-size: 11px; color: var(--slate); font-weight: 700;">Rubric Score</div>
                         </div>
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; background: #f8fafc; padding: 8px 12px; border-radius: 6px; font-size: 11.5px; margin-bottom: 8px;">
-                    <div><strong>Neutrality:</strong> ${e.modeling_neutrality_score ? Number(e.modeling_neutrality_score).toFixed(1) : '--'}/5</div>
-                    <div><strong>Lesson Plan:</strong> ${e.lesson_plan_adherence_score ? Number(e.lesson_plan_adherence_score).toFixed(1) : '--'}/5</div>
-                    <div><strong>Reflection:</strong> ${e.reflective_listening_score ? Number(e.reflective_listening_score).toFixed(1) : '--'}/5</div>
-                    <div><strong>Confrontation:</strong> ${e.avoiding_confrontation_score ? Number(e.avoiding_confrontation_score).toFixed(1) : '--'}/5</div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; background: #f8fafc; padding: 10px 14px; border-radius: 8px; font-size: 12px; margin-bottom: 10px; border: 1px solid #e2e8f0;">
+                    <div><strong>Neutrality:</strong> <span style="font-weight: 800; color: #0284c7;">${e.modeling_neutrality_score ? Number(e.modeling_neutrality_score).toFixed(1) : '--'}/5.0</span></div>
+                    <div><strong>Lesson Plan:</strong> <span style="font-weight: 800; color: #0284c7;">${e.lesson_plan_adherence_score ? Number(e.lesson_plan_adherence_score).toFixed(1) : '--'}/5.0</span></div>
+                    <div><strong>Reflection:</strong> <span style="font-weight: 800; color: #0284c7;">${e.reflective_listening_score ? Number(e.reflective_listening_score).toFixed(1) : '--'}/5.0</span></div>
+                    <div><strong>Confrontation:</strong> <span style="font-weight: 800; color: #0284c7;">${e.avoiding_confrontation_score ? Number(e.avoiding_confrontation_score).toFixed(1) : '--'}/5.0</span></div>
                 </div>
 
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
-                    <div style="font-size: 12px; color: #475569; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 75%;">
-                        <strong>Feedback:</strong> ${escapeHtml(e.coaching_feedback || 'Turn90 Facilitator standard adherence.')}
-                    </div>
-                    <button class="btn btn-outline" style="font-size: 11px; padding: 3px 8px;" onclick="document.getElementById('sup-class-details-${e.id}')?.classList.toggle('hidden')">
-                        Toggle Full Report ▾
+                <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-left: 4px solid #2563eb; padding: 12px 14px; border-radius: 6px; font-size: 13px; color: #1e40af; line-height: 1.5; margin-bottom: 12px;">
+                    <strong>🎯 Core Coaching Feedback:</strong> ${escapeHtml(e.coaching_feedback || 'Turn90 Facilitator standard adherence.')}
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+                    <span style="font-size: 12px; color: #64748b; font-weight: 600;">20-Item Scored Rubric, Deduction Rationales, Verified Quotes &amp; Rewrites:</span>
+                    <button class="btn btn-outline" style="font-size: 11.5px; padding: 4px 10px; font-weight: 700; color: #1e40af; border-color: #93c5fd; background: #eff6ff;" onclick="document.getElementById('sup-class-details-${e.id}')?.classList.toggle('hidden')">
+                        📋 Full Rubric Feedback &amp; Scores ▾
                     </button>
                 </div>
 
-                <div id="sup-class-details-${e.id}" class="hidden" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #e2e8f0;">
-                    <div class="markdown-body" style="font-size: 12.5px; color: #1e293b; line-height: 1.5;">${marked.parse(e.summary_markdown || 'No summary.')}</div>
+                <div id="sup-class-details-${e.id}" class="sup-class-report-collapse hidden" style="margin-top: 12px; padding: 16px; border: 1px solid #e2e8f0; border-radius: 8px; background: #fafafa;">
+                    <div class="markdown-body" style="font-size: 12.5px; color: #1e293b; line-height: 1.6;">${marked.parse(e.summary_markdown || 'No summary.')}</div>
                 </div>
 
+                <div id="eval-markdown-admin-${e.id}" class="hidden">${encodeURIComponent(e.summary_markdown || '')}</div>
                 <div id="eval-markdown-${e.id}" class="hidden">${encodeURIComponent(e.summary_markdown || '')}</div>
                 <div id="eval-transcript-${e.id}" class="hidden">${encodeURIComponent(e.transcript_text || e.summary_markdown || '')}</div>
             </div>

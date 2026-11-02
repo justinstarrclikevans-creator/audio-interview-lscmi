@@ -1096,6 +1096,54 @@ function buildGroundedSummaryMarkdown({ location, facilitator, sessionTitle, mod
     return lines.join('\n');
 }
 
+function formatStaffFeedbackMarkdown(markdown) {
+    if (!markdown) return '';
+    let cleaned = String(markdown);
+
+    // Remove Total Score from header lines
+    cleaned = cleaned.replace(/•\s*\*\*Total Score:\*\*\s*[0-9.]+%/gi, '');
+    cleaned = cleaned.replace(/\*\*Total Score:\*\*\s*[0-9.]+%/gi, '');
+    cleaned = cleaned.replace(/•\s*\*\*Total Score:\*\*\s*[0-9.]+/gi, '');
+    cleaned = cleaned.replace(/\*\*Total Score:\*\*\s*[0-9.]+/gi, '');
+
+    // Clean section headers in tables
+    cleaned = cleaned.replace(/\|\s*\*\*Yes\/No Basics\s*\([^)]*\)\*\*\s*\|\s*\|\s*\|/gi, '| **Classroom Basics & Punctuality** | |');
+    cleaned = cleaned.replace(/\|\s*\*\*Core Facilitation Performance\*\*\s*\|\s*\|\s*\|/gi, '| **Core Facilitation Performance & Coaching** | |');
+
+    // Clean table header
+    cleaned = cleaned.replace(/\|\s*Score Area\s*\|\s*Score\s*\|\s*Notes \/ Feedback & Scoring Rationale\s*\|/gi, '| Competency Area | Facilitator Feedback & Practice Coaching |');
+    cleaned = cleaned.replace(/\|\s*:---\s*\|\s*:---:\s*\|\s*:---\s*\|/gi, '| :--- | :--- |');
+
+    const lines = cleaned.split('\n');
+    const newLines = lines.map(line => {
+        const trimmed = line.trim();
+        if (trimmed.startsWith('|') && trimmed.endsWith('|')) {
+            const parts = line.split('|');
+            if (parts.length === 5) {
+                const col1 = parts[1].trim();
+                const col2 = parts[2].trim();
+                let col3 = parts[3].trim();
+
+                if (!col2 && !col3) {
+                    return `| ${col1} | |`;
+                }
+
+                // Remove point deductions and score phrasing
+                col3 = col3.replace(/-\s*[0-9.]+\s*pts\s*—\s*/gi, '');
+                col3 = col3.replace(/-\s*[0-9.]+\s*pts\s*-\s*/gi, '');
+                col3 = col3.replace(/Deduction Note:/gi, 'Coaching Note:');
+                col3 = col3.replace(/To earn 5\.0 next time:/gi, 'Focus for next session:');
+                col3 = col3.replace(/To earn 5\.0 next time/gi, 'Focus for next session');
+
+                return `| ${col1} | ${col3} |`;
+            }
+        }
+        return line;
+    });
+
+    return newLines.join('\n');
+}
+
 async function generateEvaluationJson(prompt) {
     let lastErr;
     for (let attempt = 1; attempt <= 3; attempt++) {
@@ -1852,6 +1900,7 @@ module.exports = {
     evaluateClassTranscriptCore,
     regenerateClassEvaluation,
     buildGroundedSummaryMarkdown,
+    formatStaffFeedbackMarkdown,
     evaluateClassMedia, 
     computeDeterministicClassScore,
     computeDeterministicMilestoneScores,

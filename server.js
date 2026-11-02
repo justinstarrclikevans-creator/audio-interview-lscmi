@@ -22,7 +22,7 @@ const { analyzeReentrySession } = require('./services/reentry_session_analyzer')
 const { runPhase1, runPhase1WithAudio, runPhase2, adjustActionPlan, safeJsonParse } = require('./llm_pipeline');
 const { convertSingleMdToPdf } = require('./convert_md_to_pdf');
 const { convertSingleMdToDocx } = require('./convert_md_to_docx');
-const { evaluateClassTranscript, evaluateClassMedia, regenerateClassEvaluation } = require('./facilitation_evaluator');
+const { evaluateClassTranscript, evaluateClassMedia, regenerateClassEvaluation, formatStaffFeedbackMarkdown } = require('./facilitation_evaluator');
 const { evaluateCaseManagementMedia } = require('./cm_evaluator');
 const { 
     generateMondayNeedsReport, 
@@ -2858,7 +2858,7 @@ app.get('/api/cm/evaluations/stats', authenticateToken, requireRole('program_man
 });
 
 // Class Facilitation Evaluations API
-app.get('/api/admin/evaluations', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
+const handleGetClassEvaluations = (req, res) => {
     const location = req.query.location;
     let query = 'SELECT * FROM class_facilitation_evaluations';
     const params = [];
@@ -2866,12 +2866,51 @@ app.get('/api/admin/evaluations', authenticateToken, requireRole('program_manage
         query += ' WHERE LOWER(location) = LOWER(?)';
         params.push(location);
     }
-    query += ' ORDER BY created_at DESC LIMIT 50';
+    query += ' ORDER BY created_at DESC LIMIT 60';
     const evals = db.prepare(query).all(...params);
-    res.json(evals);
-});
 
-app.patch('/api/admin/evaluations/:id/score', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
+    const isStaff = req.user && req.user.role !== 'director' && req.user.role !== 'admin' && req.user.portal_type !== 'supervisor';
+    if (isStaff) {
+        // Staff Dashboard: Completely remove scores and provide feedback only
+        const sanitized = evals.map(e => ({
+            id: e.id,
+            location: e.location,
+            session_title: e.session_title,
+            facilitator_name: e.facilitator_name,
+            evaluator_name: e.evaluator_name,
+            class_date: e.class_date,
+            class_headcount: e.class_headcount,
+            detected_session_type: e.detected_session_type,
+            status: e.status,
+            created_at: e.created_at,
+            coaching_feedback: e.coaching_feedback,
+            summary_markdown: formatStaffFeedbackMarkdown(e.summary_markdown),
+            staff_summary_markdown: formatStaffFeedbackMarkdown(e.summary_markdown),
+            transcript_text: e.transcript_text,
+            // Explicitly nullify all scores for staff dashboards
+            total_score: null,
+            starting_score: null,
+            modeling_neutrality_score: null,
+            lesson_plan_adherence_score: null,
+            reflective_listening_score: null,
+            avoiding_confrontation_score: null,
+            scores_json: null
+        }));
+        return res.json(sanitized);
+    }
+
+    // Admin / Supervisor Dashboard: Include all scores and all feedback
+    const enhanced = evals.map(e => ({
+        ...e,
+        staff_summary_markdown: formatStaffFeedbackMarkdown(e.summary_markdown)
+    }));
+    res.json(enhanced);
+};
+
+app.get('/api/admin/evaluations', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), handleGetClassEvaluations);
+app.get('/api/facilitation/evaluations', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), handleGetClassEvaluations);
+
+app.patch('/api/admin/evaluations/:id/score', authenticateToken, requireRole('admin', 'director'), (req, res) => {
     try {
         const id = req.params.id;
         const { totalScore, facilitatorName, sessionTitle } = req.body;
@@ -2989,6 +3028,15 @@ app.get('/api/admin/evaluations/stats', authenticateToken, requireRole('program_
             WHERE (detected_session_type = 'class' OR detected_session_type IS NULL)
             GROUP BY location
         `).all();
+    }
+    const isStaff = req.user && req.user.role !== 'director' && req.user.role !== 'admin' && req.user.portal_type !== 'supervisor';
+    if (isStaff) {
+        // Remove scores from stats for staff dashboards
+        stats = stats.map(s => ({
+            location: s.location,
+            eval_count: s.eval_count,
+            avg_score: null
+        }));
     }
     res.json(stats);
 });
@@ -4479,7 +4527,7 @@ app.get('/api/supervisor/overview', authenticateToken, requireRole('director', '
         }
 
         const allClassEvaluations = db.prepare(`
-            SELECT id, facilitator_name, location, session_title, total_score, created_at, summary_markdown
+            SELECT *
             FROM class_facilitation_evaluations
             ORDER BY created_at DESC
             LIMIT 60
