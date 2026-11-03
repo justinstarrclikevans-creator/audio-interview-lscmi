@@ -1591,12 +1591,18 @@
                 <button class="modal-close" onclick="closeModal('modal-interview')">&times;</button>
             </div>
             <div class="interview-container">
-                <div class="form-row" style="margin-bottom: 16px; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid var(--border);">
-                    <div class="form-group" style="flex: 2;">
-                        <label>Participant Full Name <span class="text-danger">*</span></label>
-                        <input type="text" id="live-interview-name" required placeholder="e.g. Lawrence Pervue" class="form-control" style="font-size: 14px;">
+                <div class="form-row" style="margin-bottom: 12px; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid var(--border); flex-wrap: wrap; gap: 10px;">
+                    <div class="form-group" style="flex: 2; min-width: 220px;">
+                        <label>Quick-Select Participant (Recent Consultations &amp; Active First Shift)</label>
+                        <select id="live-interview-candidate-select" class="form-control" style="font-size: 13px;" onchange="handleSelectConsultationCandidate('live', this.value)">
+                            <option value="">-- Select Participant from Apricot Consultation Roster --</option>
+                        </select>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" style="flex: 2; min-width: 200px;">
+                        <label>Participant Full Name <span class="text-danger">*</span></label>
+                        <input type="text" id="live-interview-name" required placeholder="e.g. Carl Allen" class="form-control" style="font-size: 14px;" onchange="loadInterviewConsultationSummary('live', this.value)">
+                    </div>
+                    <div class="form-group" style="flex: 1; min-width: 140px;">
                         <label>Turn90 Center Location</label>
                         <select id="live-interview-location" class="form-control" style="font-size: 14px;">
                             <option value="Charleston">Charleston</option>
@@ -1605,6 +1611,7 @@
                         </select>
                     </div>
                 </div>
+                <div id="live-consultation-summary-box" class="hidden" style="margin-bottom: 14px; background: #eff6ff; border: 1.5px solid #93c5fd; border-radius: 8px; padding: 12px 14px; font-size: 12.5px;"></div>
                 <div class="interview-progress-bar">
                     <div id="int-progress-fill" class="progress-fill" style="width: 2%;"></div>
                 </div>
@@ -2058,32 +2065,44 @@
 
     <!-- Manual / External Interview Entry Modal (for Lawrence, Isiah, etc.) -->
     <div id="modal-manual-interview" class="modal hidden">
-        <div class="modal-content">
+        <div class="modal-content modal-lg" style="max-width: 820px;">
             <div class="modal-header">
-                <h3>🎙️ Add / Import Intake Interview</h3>
+                <h3>🎙️ Add / Import Intake Interview &amp; Consultation Collateral</h3>
                 <button class="modal-close" onclick="closeModal('modal-manual-interview')">&times;</button>
             </div>
             <form id="form-manual-interview" onsubmit="handleManualInterviewSubmit(event)">
-                <div class="form-group">
-                    <label>Participant Full Name <span class="text-danger">*</span></label>
-                    <input type="text" id="man-interview-name" required placeholder="e.g. Lawrence or Isaiah Pervue" class="form-control">
-                </div>
-                <div class="form-group mt-3">
-                    <label>Turn90 Center Location</label>
-                    <select id="man-interview-location" class="form-control">
-                        <option value="Charleston">Charleston</option>
-                        <option value="Columbia">Columbia</option>
-                        <option value="Spartanburg">Spartanburg</option>
+                <div class="form-group" style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 10px 12px; border-radius: 8px; margin-bottom: 12px;">
+                    <label style="color: #1e40af; font-weight: 700;">📋 Quick-Link Apricot Consultation / First Shift Participant</label>
+                    <select id="man-interview-candidate-select" class="form-control" style="margin-top: 4px; font-size: 13px;" onchange="handleSelectConsultationCandidate('manual', this.value)">
+                        <option value="">-- Select Participant to Auto-Load Consultation &amp; Case Notes --</option>
                     </select>
                 </div>
+                <div class="form-row" style="gap: 12px;">
+                    <div class="form-group" style="flex: 2;">
+                        <label>Participant Full Name <span class="text-danger">*</span></label>
+                        <input type="text" id="man-interview-name" required placeholder="e.g. Carl Allen or Jayhova Freeman" class="form-control" onchange="loadInterviewConsultationSummary('manual', this.value)">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>Turn90 Center Location</label>
+                        <select id="man-interview-location" class="form-control">
+                            <option value="Charleston">Charleston</option>
+                            <option value="Columbia">Columbia</option>
+                            <option value="Spartanburg">Spartanburg</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="man-consultation-summary-box" class="hidden" style="margin-top: 10px; margin-bottom: 10px; background: #f8fafc; border: 1.5px solid #93c5fd; border-radius: 8px; padding: 12px 14px; font-size: 12.5px;"></div>
                 <div class="form-group mt-3">
                     <label>Interview Audio Recording (Optional)</label>
                     <input type="file" id="man-interview-audio" accept="audio/*,.webm,.mp3,.m4a,.wav" class="form-control">
-                    <small class="text-slate" style="display: block; margin-top: 4px; font-size: 11px;">Attach audio recording if available (.webm, .mp3, .m4a, .wav)</small>
+                    <small class="text-slate" style="display: block; margin-top: 4px; font-size: 11px;">Attach audio recording if available (.webm, .mp3, .m4a, .wav). Any linked Apricot Consultation &amp; Case Notes will automatically be included as collateral verification.</small>
                 </div>
                 <div class="form-group mt-3">
-                    <label>Interview Transcript / Notes</label>
-                    <textarea id="man-interview-transcript" rows="6" class="form-control" placeholder="Paste full interview transcript or intake conversation notes here. The AI will automatically extract responses for the 158-question LS/CMI Interview Guide and generate the Phase 1 Draft Scoring Form..."></textarea>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <label style="margin: 0;">Interview Transcript / Consultation Collateral Notes</label>
+                        <button type="button" id="btn-insert-consult-collateral" class="btn btn-outline hidden" style="padding: 2px 8px; font-size: 11px; color: #1d4ed8; border-color: #93c5fd; background: #eff6ff;" onclick="insertConsultationCollateralIntoManualBox()">📥 Insert Linked Apricot Consultation Notes</button>
+                    </div>
+                    <textarea id="man-interview-transcript" rows="6" class="form-control" placeholder="Paste interview transcript or leave blank to score directly from linked Apricot Consultation &amp; Case Notes..."></textarea>
                 </div>
                 <div id="man-interview-status" class="mt-2 text-slate" style="font-size: 12px;"></div>
                 <div class="modal-footer mt-4">

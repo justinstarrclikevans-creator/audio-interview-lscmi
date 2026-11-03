@@ -2599,6 +2599,337 @@ function getParticipantCoachingContext(recordIdOrName) {
 }
 
 /**
+ * Normalize a participant name or clientId (e.g., "Jayhova_Freeman_Spartanburg" -> "Jayhova Freeman")
+ */
+function normalizeParticipantQuery(rawQuery) {
+    if (!rawQuery) return '';
+    let s = String(rawQuery).trim();
+    if (/^\d+$/.test(s)) return s; // Record ID
+    const parts = s.split(/[_\s]+/).filter(Boolean);
+    if (parts.length > 1 && /^\d{10,}$/.test(parts[0])) parts.shift();
+    if (parts.length > 1 && ['charleston', 'columbia', 'spartanburg'].includes(parts[parts.length - 1].toLowerCase())) {
+        parts.pop();
+    }
+    return parts.join(' ').trim();
+}
+
+/**
+ * Retrieve cached sheet rows from apricot_sheet_cache
+ */
+function getCachedSheetRows(sheetKey) {
+    try {
+        const row = db.prepare(`SELECT rows_json FROM apricot_sheet_cache WHERE sheet_key = ?`).get(sheetKey);
+        if (row && row.rows_json) return JSON.parse(row.rows_json);
+    } catch (e) {}
+    return [];
+}
+
+/**
+ * Build comprehensive Consultation & Case Management Collateral Context for LS/CMI Interviewing & AI Scoring.
+ * Connects Reentry Consultation / Intake Screening notes, Briefcase Gates 1–4, and Case Plans directly to LS/CMI Sections 1–5.
+ */
+function getParticipantConsultationLscmiContext(recordIdOrName) {
+    getApricotEvalReport(); // ensure initialized
+    const cleanQuery = normalizeParticipantQuery(recordIdOrName);
+    if (!cleanQuery) return null;
+
+    const isNumericId = /^\d+$/.test(cleanQuery);
+    let recordId = isNumericId ? cleanQuery : null;
+    let fullName = '';
+    let center = '';
+    let program = '';
+
+    // 1. Check apricot_participant_evaluations first
+    let evalRow = db.prepare(`
+        SELECT * FROM apricot_participant_evaluations
+        WHERE record_id = ? OR LOWER(full_name) = LOWER(?) OR LOWER(full_name) LIKE LOWER(?)
+        ORDER BY CASE WHEN LOWER(full_name) = LOWER(?) THEN 0 ELSE 1 END
+        LIMIT 1
+    `).get(cleanQuery, cleanQuery, `%${cleanQuery}%`, cleanQuery);
+
+    if (evalRow) {
+        recordId = String(evalRow.record_id);
+        fullName = evalRow.full_name;
+        center = evalRow.center || '';
+        program = evalRow.program || '';
+    }
+
+    // 2. If not in evaluations, search apricot_processed_notes by record_id or first+last name
+    if (!recordId) {
+        const nameParts = cleanQuery.toLowerCase().split(/\s+/).filter(Boolean);
+        let noteMatch = null;
+        if (nameParts.length >= 2) {
+            noteMatch = db.prepare(`
+                SELECT record_id, first_name, last_name, center_location, program_enrollment
+                FROM apricot_processed_notes
+                WHERE LOWER(first_name) LIKE ? AND LOWER(last_name) LIKE ?
+                ORDER BY activity_date DESC LIMIT 1
+            `).get(`${nameParts[0]}%`, `${nameParts[nameParts.length - 1]}%`);
+        }
+        if (!noteMatch) {
+            noteMatch = db.prepare(`
+                SELECT record_id, first_name, last_name, center_location, program_enrollment
+                FROM apricot_processed_notes
+                WHERE LOWER(first_name || ' ' || last_name) LIKE ?
+                ORDER BY activity_date DESC LIMIT 1
+            `).get(`%${cleanQuery.toLowerCase()}%`);
+        }
+        if (noteMatch) {
+            recordId = String(noteMatch.record_id);
+            fullName = `${noteMatch.first_name || ''} ${noteMatch.last_name || ''}`.trim();
+            center = noteMatch.center_location || '';
+            program = noteMatch.program_enrollment || '';
+        }
+    }
+
+    // 3. Also check cached consultations & lscmi sheets if still not found
+    const consultSheet = getCachedSheet('consultations');
+    const lscmiSheet = getCachedSheet('lscmi');
+    const orientSheet = getCachedSheet('orientation');
+    const briefcaseSheet = getCachedSheet('briefcase');
+    const fsPlanSheet = getCachedSheet('fsCasePlan');
+    const rnPlanSheet = getCachedSheet('rnCasePlan');
+    const credsSheet = getCachedSheet('credentials');
+    const empHistSheet = getCachedSheet('employmentHist');
+
+    if (!recordId) {
+        const qLower = cleanQuery.toLowerCase();
+        const cMatch = consultSheet.find(r => `${r.First || ''} ${r.Last || ''}`.trim().toLowerCase().includes(qLower) || String(r['Record ID']) === cleanQuery);
+        if (cMatch) {
+            recordId = String(cMatch['Record ID']);
+            fullName = `${cMatch.First || ''} ${cMatch.Last || ''}`.trim();
+            center = cMatch['Preferred enrollment location'] || '';
+        }
+    }
+
+    if (!recordId) return null;
+
+    // Fetch all deduplicated notes for this participant
+    const rawNotes = db.prepare(`
+        SELECT activity_date, staff_name, service_context, interaction_type, note_text, center_location, program_enrollment
+        FROM apricot_processed_notes
+        WHERE record_id = ?
+        ORDER BY activity_date ASC, id ASC
+    `).all(recordId);
+
+    const seenText = new Set();
+    const allNotes = [];
+    for (const n of rawNotes) {
+        const txt = String(n.note_text || '').trim();
+        if (!txt && !String(n.interaction_type || '').includes('COMPLETED')) continue;
+        const sig = `${n.activity_date}_${txt.slice(0, 120)}`;
+        if (seenText.has(sig)) continue;
+        seenText.add(sig);
+        allNotes.push(n);
+        if (!center && n.center_location) center = n.center_location;
+        if (!program && n.program_enrollment) program = n.program_enrollment;
+    }
+
+    const consultRow = consultSheet.find(r => String(r['Record ID']) === recordId) || null;
+    const lscmiRow = lscmiSheet.find(r => String(r['Record ID']) === recordId) || null;
+    const orientRow = orientSheet.find(r => String(r['Record ID']) === recordId) || null;
+    const bcRow = briefcaseSheet.find(r => String(r['Record ID']) === recordId) || null;
+    const fsPlanRow = fsPlanSheet.find(r => String(r['Record ID']) === recordId) || null;
+    const rnPlanRow = rnPlanSheet.find(r => String(r['Record ID']) === recordId) || null;
+    const participantCreds = credsSheet.filter(r => String(r['Record ID']) === recordId).map(r => r['Credential Earned']).filter(Boolean);
+    const participantJobs = empHistSheet.filter(r => String(r['Record ID']) === recordId);
+
+    if (!fullName && lscmiRow) fullName = `${lscmiRow.First || ''} ${lscmiRow.Last || ''}`.trim();
+    if (!fullName && consultRow) fullName = `${consultRow.First || ''} ${consultRow.Last || ''}`.trim();
+    if (!center && lscmiRow && lscmiRow['At which Turn90 Center is the client...']) center = lscmiRow['At which Turn90 Center is the client...'];
+    if (!center && consultRow && consultRow['Preferred enrollment location']) center = consultRow['Preferred enrollment location'];
+    if (!center) center = 'Columbia';
+    if (!program) program = lscmiRow ? 'First Shift' : 'Reentry Navigation';
+
+    // Separate Consultation / Intake notes vs Ongoing Case Management notes
+    const consultationNotes = allNotes.filter(n =>
+        /intake appointment|reentry consultation|intake screening|phone consultation|initial intake|session:\s*1|first session|initial case management/i.test(
+            `${n.service_context || ''} ${n.interaction_type || ''} ${(n.note_text || '').slice(0, 250)}`
+        )
+    );
+    const caseManagementNotes = allNotes.filter(n => !consultationNotes.includes(n));
+
+    const combinedText = allNotes.map(n => n.note_text || '').join('\n\n');
+
+    // Extract structured LS/CMI domain highlights from Consultation & Case Notes
+    function matchLine(regex, fallback = 'Verify during interview') {
+        const m = combinedText.match(regex);
+        return m ? m[0].replace(/\s+/g, ' ').trim() : fallback;
+    }
+
+    const domainCrosswalk = {
+        criminalHistory: {
+            domainTitle: 'Section 1.1: Criminal History (Static Baseline)',
+            firstArrest: matchLine(/(?:age at )?first arrest:?[^.\n]*/i, 'Check juvenile/first arrest age'),
+            arrestsAndConvictions: matchLine(/(?:total arrests|\d+\s*[-–]?\s*\d*\s*total arrests|arrested\s+(?:twice|\d+\s*times)|\d+\s*[-–]?\s*\d*\s*convictions|released from (?:scdc|prison|county jail|jail|seddc))[^.\n]*/i, 'Review prior arrests & convictions'),
+            supervisionStatus: matchLine(/(?:on\s+(?:federal|state)?\s*(?:probation|parole|supervision)|residing in a federal halfway house|currently on probation)[^.\n]*/i, 'Verify current supervision / compliance'),
+            pendingCharges: matchLine(/(?:no )?pending charges:?[^.\n]*/i, 'None reported in consultation')
+        },
+        educationEmployment: {
+            domainTitle: 'Section 1.2: Education / Employment',
+            education: matchLine(/(?:highest education(?:\s+completed)?:?|completed\s+(?:up to the\s+)?\d+th\s+grade|education:\s*[^\n.]+|holds a ged)[^.\n]*/i, 'Verify highest grade / GED status'),
+            workHistory: matchLine(/(?:work history:?[^\n]+|longest job:?[^\n.]+|self-employed in[^\n.]+|worked at[^\n.]+|employed at[^\n.]+)/i, participantJobs.length ? `Historical jobs logged (${participantJobs.length})` : 'Review longest job & termination reasons'),
+            certifications: participantCreds.length > 0
+                ? participantCreds.join(', ')
+                : matchLine(/(?:current )?certifications?:?\s*[^\n.]+/i, 'None verified yet')
+        },
+        familyMarital: {
+            domainTitle: 'Section 1.3: Family / Marital & Support',
+            livingAndFamily: matchLine(/(?:living in[^\n.]+|living with[^\n.]+|lives in[^\n.]+|currently staying with[^\n.]+|stays with[^\n.]+|resides with[^\n.]+|residing in[^\n.]+)/i, 'Review family support & household dynamics'),
+            childSupport: matchLine(/(?:owes\s+no\s+child support|no child support|child support:?\s*[^\n.]+|owes\s+\$[\d,.]+\s+of child support)/i, 'Verify child support obligations'),
+            parentalRecord: matchLine(/(?:biological parent[^\n.]+|neither parent has a criminal record|father has an extensive record[^\n.]*)/i, 'Verify family criminal record (Item 21)')
+        },
+        companionsAndLeisure: {
+            domainTitle: 'Sections 1.4 & 1.5: Leisure/Recreation & Companions',
+            socialAndRoutine: matchLine(/(?:living at turn 12[^\n.]*|jumpstart[^\n.]*|oxford house[^\n.]*|staying out of the mix[^\n.]*|setting boundaries[^\n.]*|avoiding negative peers[^\n.]*|stay away from negative influences[^\n.]*)/i, 'Probe peer associations & unstructured time')
+        },
+        alcoholDrug: {
+            domainTitle: 'Section 1.6: Alcohol / Drug Problem',
+            substanceSummary: matchLine(/(?:history of (?:long-term )?meth[^\n.]+|meth addiction[^\n.]+|previously incarcerated due to meth[^\n.]+|past methamphetamine use[^\n.]+|used marijuana only[^\n.]+|marijuana as his only[^\n.]+|no history of drugs or alcohol[^\n.]+|completed a \d+ week substance[^\n.]+|suboxone prescription[^\n.]+)/i, 'Review historical vs. current substance use')
+        },
+        cbtAndAttitudes: {
+            domainTitle: 'Sections 1.7 & 1.8: Thinking Patterns & Self-Control',
+            focusAreas: fsPlanRow && (fsPlanRow['Focus Area 1'] || fsPlanRow['Focus Area 2'])
+                ? `${fsPlanRow['Focus Area 1'] || 'TBD'} | ${fsPlanRow['Focus Area 2'] || 'TBD'}`
+                : (evalRow?.focus_areas_or_goals && !evalRow.focus_areas_or_goals.includes('No Case Plan') ? evalRow.focus_areas_or_goals : 'Identify Top 2 Dynamic Criminogenic Focus Areas'),
+            triggersAndPatterns: matchLine(/(?:identified (?:workplace )?triggers[^\n.]+|moving too fast[^\n.]+|responding versus reacting[^\n.]+|stop and think[^\n.]+|shutting down\/leaving[^\n.]+)/i, 'Probe workplace & interpersonal triggers')
+        },
+        responsivityAndBriefcase: {
+            domainTitle: 'Sections 2–5: Specific Barriers & Briefcase Gates 1–4',
+            gateSummary: evalRow ? `Gate 1: ${evalRow.gate1_pct}% | Gate 2: ${evalRow.gate2_pct}% | Gate 3: ${evalRow.gate3_pct}% | Gate 4: ${evalRow.gate4_pct}%` : 'Briefcase baseline captured in consultation',
+            documentsAndDl: matchLine(/(?:driver’s license:?\s*[^\n.]+|driver's license:?\s*[^\n.]+|owes\s+\$[\d,.]+\s+in\s+(?:dmv\s+)?reinstatement[^\n.]+|has state id[^\n.]+|needs to take adsap[^\n.]+)/i, bcRow?.['Section 1 Notes'] || 'Check IDs & DL status'),
+            goals90Day: bcRow?.['90 Day Goal'] || rnPlanRow?.['Case Plan'] || 'Complete First Shift & secure full-time employment'
+        }
+    };
+
+    // Build rich Collateral Prompt Text for LLM Phase 1 & Phase 2 Scoring
+    let collateralLines = [];
+    collateralLines.push(`=== APRICOT REENTRY CONSULTATION, BRIEFCASE & CASE MANAGEMENT COLLATERAL RECORD ===`);
+    collateralLines.push(`Participant: ${fullName} (Apricot Record ID: #${recordId}) | Center: ${center} | Program Track: ${program}`);
+    if (lscmiRow && lscmiRow['Enrollment Start Date:']) {
+        collateralLines.push(`First Shift Enrollment Start Date: ${lscmiRow['Enrollment Start Date:']} | Apricot Recorded LS/CMI Score: ${lscmiRow['Total LS/CMI Score (from Section 1)'] || 'Pending (0)'}`);
+    }
+    if (consultRow) {
+        collateralLines.push(`Reentry Consultation Date: ${consultRow['Date of Reentry Consultation'] || 'Recorded'} | First Shift Eligible: ${consultRow['Elgible for First Shift?'] || 'Yes'} | Referral Source: ${consultRow['Referral Source'] || 'Self/Community'}`);
+    }
+    if (orientRow) {
+        collateralLines.push(`First Shift Orientation Date: ${orientRow['Date of Orientation']} | Completed: ${orientRow['Did they successfully complete orientation?'] || 'Scheduled/Attended'}`);
+    }
+    if (fsPlanRow) {
+        collateralLines.push(`First Shift Case Plan Focus Areas: 1) ${fsPlanRow['Focus Area 1'] || 'None'} (${fsPlanRow['Focus Area 1 Situation'] || 'No situation text'}) | 2) ${fsPlanRow['Focus Area 2'] || 'None'}`);
+    }
+    if (rnPlanRow && rnPlanRow['Case Plan']) {
+        collateralLines.push(`Reentry Navigation Case Plan Goals:\n${rnPlanRow['Case Plan']}`);
+    }
+    if (bcRow) {
+        collateralLines.push(`Briefcase 90-Day Goal: ${bcRow['90 Day Goal'] || 'N/A'}`);
+        collateralLines.push(`Gate 1 Verified Items: ${bcRow['Gate 1 Checklist'] || 'None'} | Notes: ${bcRow['Section 1 Notes'] || 'None'}`);
+        collateralLines.push(`Gate 2 Verified Items: ${bcRow['Gate 2 Checklist'] || 'None'} | Notes: ${bcRow['Section 2 Notes'] || 'None'}`);
+    }
+    if (participantCreds.length > 0) {
+        collateralLines.push(`Verified Credentials Earned: ${participantCreds.join(', ')}`);
+    }
+
+    if (consultationNotes.length > 0) {
+        collateralLines.push(`\n--- REENTRY CONSULTATION & INTAKE SCREENING NOTES (${consultationNotes.length}) ---`);
+        for (const cn of consultationNotes) {
+            collateralLines.push(`[${cn.activity_date || 'Intake'}] Staff: ${cn.staff_name || 'Turn90 Staff'} (${cn.service_context || 'Intake'} - ${cn.interaction_type || 'Consultation'}):\n${cn.note_text || ''}`);
+        }
+    }
+
+    if (caseManagementNotes.length > 0) {
+        collateralLines.push(`\n--- ONGOING CASE MANAGEMENT & COACHING COLLATERAL NOTES (${caseManagementNotes.length}) ---`);
+        for (const cm of caseManagementNotes) {
+            collateralLines.push(`[${cm.activity_date || 'Session'}] Staff: ${cm.staff_name || 'Case Manager'} (${cm.service_context || 'CM'} - ${cm.interaction_type || 'Check-in'}):\n${cm.note_text || ''}`);
+        }
+    }
+
+    return {
+        recordId,
+        fullName,
+        center,
+        program,
+        enrollmentStartDate: lscmiRow?.['Enrollment Start Date:'] || '',
+        consultationDate: consultRow?.['Date of Reentry Consultation'] || consultationNotes[0]?.activity_date || '',
+        orientationDate: orientRow?.['Date of Orientation'] || '',
+        currentApricotLscmiScore: lscmiRow ? Number(lscmiRow['Total LS/CMI Score (from Section 1)'] || 0) : 0,
+        consultationNotesCount: consultationNotes.length,
+        caseManagementNotesCount: caseManagementNotes.length,
+        totalNotesCount: allNotes.length,
+        consultationNotes,
+        caseManagementNotes,
+        domainCrosswalk,
+        collateralPromptText: collateralLines.join('\n')
+    };
+}
+
+/**
+ * List participants who recently completed their Reentry Consultation, Orientation, or First Shift Intake Interview
+ * so staff can 1-click load their Consultation context into the LS/CMI Interview & Scoring workflow.
+ */
+function listConsultationLscmiCandidates() {
+    getApricotEvalReport();
+    const lscmiSheet = getCachedSheet('lscmi');
+    const consultSheet = getCachedSheet('consultations');
+    const orientSheet = getCachedSheet('orientation');
+
+    const candidateIds = new Set();
+    const candidates = [];
+
+    // 1. All Active First Shift participants (prioritizing current cohort / pending LS/CMI scores)
+    for (const row of lscmiSheet) {
+        if (row['Date enrollment ended:']) continue;
+        const id = String(row['Record ID'] || '').trim();
+        if (!id || candidateIds.has(id)) continue;
+        candidateIds.add(id);
+        const ctx = getParticipantConsultationLscmiContext(id);
+        if (ctx) {
+            candidates.push({
+                recordId: id,
+                fullName: ctx.fullName,
+                center: ctx.center,
+                program: 'First Shift',
+                enrollmentStartDate: ctx.enrollmentStartDate,
+                consultationDate: ctx.consultationDate,
+                orientationDate: ctx.orientationDate,
+                currentApricotLscmiScore: ctx.currentApricotLscmiScore,
+                notesCount: ctx.totalNotesCount,
+                category: (ctx.enrollmentStartDate >= '10/26/2026' || ctx.enrollmentStartDate.startsWith('11/'))
+                    ? 'This Week First Shift Cohort'
+                    : 'Active First Shift'
+            });
+        }
+    }
+
+    // 2. Recent Orientation & Reentry Consultation completions from this week (10/26/2026 - 11/03/2026)
+    for (const row of consultSheet.slice().reverse()) {
+        const id = String(row['Record ID'] || '').trim();
+        const cDate = String(row['Date of Reentry Consultation'] || '').trim();
+        if (!id || candidateIds.has(id)) continue;
+        if (cDate.startsWith('10/26') || cDate.startsWith('10/27') || cDate.startsWith('10/28') || cDate.startsWith('10/29') || cDate.startsWith('10/30') || cDate.startsWith('11/')) {
+            candidateIds.add(id);
+            const ctx = getParticipantConsultationLscmiContext(id);
+            if (ctx && ctx.totalNotesCount > 0) {
+                candidates.push({
+                    recordId: id,
+                    fullName: ctx.fullName,
+                    center: ctx.center,
+                    program: ctx.program || 'Reentry Consultation',
+                    enrollmentStartDate: ctx.enrollmentStartDate,
+                    consultationDate: cDate,
+                    orientationDate: ctx.orientationDate,
+                    currentApricotLscmiScore: ctx.currentApricotLscmiScore,
+                    notesCount: ctx.totalNotesCount,
+                    category: 'Completed Consultation This Week'
+                });
+            }
+        }
+    }
+
+    return candidates;
+}
+
+/**
  * Export the Previous Week's First Shift Payment Report in .xlsx, .csv, or printable HTML
  */
 function exportPreviousWeekPayReport(format = 'xlsx') {
@@ -2792,6 +3123,8 @@ module.exports = {
     recomputeFullApricotReport,
     getApricotEvalReport,
     getParticipantCoachingContext,
+    getParticipantConsultationLscmiContext,
+    listConsultationLscmiCandidates,
     registerProcessedCaseNote,
     exportPreviousWeekPayReport,
     APRICOT_GATE_DEFINITIONS,

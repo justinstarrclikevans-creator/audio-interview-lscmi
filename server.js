@@ -6,6 +6,8 @@ const {
     registerProcessedCaseNote,
     getApricotEvalReport,
     getParticipantCoachingContext,
+    getParticipantConsultationLscmiContext,
+    listConsultationLscmiCandidates,
     exportPreviousWeekPayReport
 } = require('./services/apricot_eval_engine');
 const express = require('express');
@@ -2606,12 +2608,35 @@ app.get('/api/participant/case-plan', authenticateToken, handleGetCasePlan);
 // Staff Endpoint: Fetch Participant Case Plan directly by userId
 app.get('/api/pm/case-plan/:userId', authenticateToken, handleGetCasePlan);
 
+// Consultation -> LS/CMI Collateral Endpoints
+app.get('/api/interviews/consultation-candidates', (req, res) => {
+    try {
+        const candidates = listConsultationLscmiCandidates();
+        res.json({ success: true, candidates });
+    } catch (err) {
+        console.error('Error listing consultation candidates:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
 
+app.get('/api/interviews/consultation-context', (req, res) => {
+    try {
+        const query = req.query.query || req.query.name || req.query.recordId || '';
+        const context = getParticipantConsultationLscmiContext(query);
+        if (!context) {
+            return res.status(404).json({ found: false, message: 'No matching Apricot Consultation record found.' });
+        }
+        res.json({ found: true, context });
+    } catch (err) {
+        console.error('Error fetching consultation context:', err);
+        res.status(500).json({ error: err.message });
+    }
+});
 
 app.post('/api/interviews/manual-entry', memoryUpload.single('audio'), async (req, res) => {
     try {
         const name = req.body.participantName;
-        const location = req.body.participantLocation || 'Charleston';
+        let location = req.body.participantLocation || 'Charleston';
         let transcriptText = req.body.transcript || '';
 
         if (!name || !name.trim()) {
@@ -2619,6 +2644,12 @@ app.post('/api/interviews/manual-entry', memoryUpload.single('audio'), async (re
         }
 
         const cleanName = name.trim();
+        // Auto-lookup Apricot Consultation & Collateral context for this participant
+        const consultCtx = getParticipantConsultationLscmiContext(cleanName);
+        if (consultCtx && consultCtx.center && (!req.body.participantLocation || req.body.participantLocation === 'Unknown')) {
+            location = consultCtx.center;
+        }
+
         const safeName = cleanName.replace(/[^a-zA-Z0-9]/g, '_');
         const clientId = `${safeName}_${location}`;
 
@@ -2629,14 +2660,15 @@ app.post('/api/interviews/manual-entry', memoryUpload.single('audio'), async (re
 
         // If audio recording was uploaded, transcribe and score directly via Gemini Audio LLM
         if (req.file && req.file.buffer && getGeminiApiKey()) {
-            console.log(`Processing uploaded audio interview for ${cleanName} with Gemini...`);
+            console.log(`Processing uploaded audio interview for ${cleanName} with Gemini (Consultation Collateral Linked: ${!!consultCtx})...`);
             try {
+                const collateralNotes = [transcriptText, consultCtx?.collateralPromptText || ''].filter(Boolean).join('\n\n');
                 results = await runPhase1WithAudio(
                     req.file.buffer, 
                     req.file.mimetype || 'audio/webm', 
                     cleanName, 
                     location, 
-                    transcriptText
+                    collateralNotes
                 );
 
                 if (results.transcript && results.transcript.trim()) {
@@ -2661,16 +2693,22 @@ app.post('/api/interviews/manual-entry', memoryUpload.single('audio'), async (re
                 throw new Error(`Audio processing error: ${audioLlmErr.message}`);
             }
         } else if (getGeminiApiKey()) {
-            // Text-only transcript submitted
+            // Text-only transcript or Consultation-driven assessment submitted
             if (!transcriptText || !transcriptText.trim()) {
-                transcriptText = `Assessment interview conducted with ${cleanName} at Turn90 ${location} center. Participant discussed employment history, education, family/support networks, legal background, and personal goals for stability.`;
+                if (consultCtx && consultCtx.collateralPromptText) {
+                    transcriptText = consultCtx.collateralPromptText;
+                } else {
+                    transcriptText = `Assessment interview conducted with ${cleanName} at Turn90 ${location} center. Participant discussed employment history, education, family/support networks, legal background, and personal goals for stability.`;
+                }
+            } else if (consultCtx && consultCtx.collateralPromptText && !transcriptText.includes('APRICOT REENTRY CONSULTATION')) {
+                transcriptText = `${transcriptText}\n\n${consultCtx.collateralPromptText}`;
             }
 
             const transcriptPath = path.join(dataDir, `${clientId}_transcript.txt`);
             fs.writeFileSync(transcriptPath, transcriptText);
 
             try {
-                results = await runPhase1(transcriptText, cleanName, location);
+                results = await runPhase1(transcriptText, cleanName, location, consultCtx?.collateralPromptText || '');
                 const guidePath = path.join(dataDir, `${clientId}_interview_guide.md`);
                 const draftPath = path.join(dataDir, `${clientId}_draft_scoring_form.md`);
                 
@@ -2688,7 +2726,9 @@ app.post('/api/interviews/manual-entry', memoryUpload.single('audio'), async (re
             }
         } else {
             if (!transcriptText || !transcriptText.trim()) {
-                transcriptText = `Assessment interview conducted with ${cleanName} at Turn90 ${location} center.`;
+                transcriptText = (consultCtx && consultCtx.collateralPromptText)
+                    ? consultCtx.collateralPromptText
+                    : `Assessment interview conducted with ${cleanName} at Turn90 ${location} center.`;
             }
             fs.writeFileSync(path.join(dataDir, `${clientId}_transcript.txt`), transcriptText);
         }
@@ -2698,8 +2738,9 @@ app.post('/api/interviews/manual-entry', memoryUpload.single('audio'), async (re
             clientId,
             cleanName,
             hasDraft: !!results,
+            consultationLinked: !!consultCtx,
             message: results 
-                ? `Interview and Phase 1 Draft Scoring Form created for ${cleanName}.` 
+                ? `Interview and Phase 1 Draft Scoring Form created for ${cleanName}${consultCtx ? ' (with Apricot Consultation collateral linked)' : ''}.` 
                 : `Interview saved for ${cleanName}. Ready for AI scoring.`
         });
     } catch(err) {
@@ -7477,12 +7518,17 @@ app.post('/api/participant/habit', authenticateToken, (req, res) => {
 app.listen(PORT, async () => {
     console.log(`🚀 Unified First Shift & Re-entry App running at http://localhost:${PORT}`);
     try {
-        const hasApricotState = db.prepare(`SELECT COUNT(*) AS c FROM apricot_workbook_state WHERE id = 1`).get()?.c || 0;
+        const apricotState = db.prepare(`SELECT total_unique_notes FROM apricot_workbook_state WHERE id = 1`).get();
         const masterApricotPath = path.join(dataDir, 'apricot_master_report.xlsx');
-        if (!hasApricotState && fs.existsSync(masterApricotPath)) {
-            console.log('🔄 Initializing Apricot Eval Engine from bundled master report...');
-            const initRes = processApricotWorkbook(masterApricotPath, { filename: 'apricot_master_report.xlsx' });
-            console.log(`✅ Apricot Eval Engine initialized: ${initRes.newNotesProcessed} notes, ${initRes.activeFirstShiftCount} FS, ${initRes.activeReentryNavCount} RN.`);
+        if ((!apricotState || Number(apricotState.total_unique_notes || 0) < 857) && fs.existsSync(masterApricotPath)) {
+            console.log('🔄 Synchronizing Apricot Eval Engine from latest bundled master report...');
+            const initRes = processApricotWorkbook(masterApricotPath, { filename: "Justin's_Main_report_(9).xlsx" });
+            console.log(`✅ Apricot Eval Engine synchronized: ${initRes.newNotesProcessed} new notes (${initRes.totalUniqueNotes} total), ${initRes.activeFirstShiftCount} FS, ${initRes.activeReentryNavCount} RN.`);
+        }
+
+        if (!fs.existsSync(path.join(dataDir, 'Jayhova_Freeman_Spartanburg_final_scoring_form.md'))) {
+            const { generateWeeklyConsultationLscmiPackets } = require('./generate_weekly_consultation_lscmi_packets');
+            await generateWeeklyConsultationLscmiPackets();
         }
 
         // Initialize Dropbox class evaluation cron jobs

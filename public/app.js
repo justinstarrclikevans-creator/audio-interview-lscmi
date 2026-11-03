@@ -3224,14 +3224,184 @@ async function triggerGenerateAiDraft(clientId, cleanName) {
     }
 }
 
+let activeConsultationCollateralCache = null;
+
+async function populateConsultationCandidateSelects() {
+    try {
+        const res = await fetch('/api/interviews/consultation-candidates');
+        if (!res.ok) return;
+        const data = await res.json();
+        const candidates = data.candidates || [];
+
+        const buildOptions = (defaultLabel) => {
+            const groups = {};
+            candidates.forEach(c => {
+                const cat = c.category || 'Apricot Participants';
+                if (!groups[cat]) groups[cat] = [];
+                groups[cat].push(c);
+            });
+            let html = `<option value="">${defaultLabel}</option>`;
+            for (const [cat, list] of Object.entries(groups)) {
+                html += `<optgroup label="${cat}">`;
+                list.forEach(c => {
+                    const scoreBadge = c.currentApricotLscmiScore > 0 ? `LS/CMI: ${c.currentApricotLscmiScore}` : 'LS/CMI: Pending (0)';
+                    const dateInfo = c.enrollmentStartDate ? `Start: ${c.enrollmentStartDate}` : (c.consultationDate ? `Consult: ${c.consultationDate}` : '');
+                    html += `<option value="${c.fullName}" data-center="${c.center || 'Columbia'}" data-record-id="${c.recordId}">${c.fullName} (#${c.recordId} - ${c.center || 'T90'}) [${ dateInfo ? dateInfo + ' | ' : '' }${scoreBadge}]</option>`;
+                });
+                html += `</optgroup>`;
+            }
+            return html;
+        };
+
+        const liveSelect = document.getElementById('live-interview-candidate-select');
+        if (liveSelect) liveSelect.innerHTML = buildOptions('-- Select Participant from Apricot Consultation Roster --');
+
+        const manSelect = document.getElementById('man-interview-candidate-select');
+        if (manSelect) manSelect.innerHTML = buildOptions('-- Select Participant to Auto-Load Consultation & Case Notes --');
+    } catch (e) {
+        console.warn('Could not load consultation candidates:', e);
+    }
+}
+
+async function handleSelectConsultationCandidate(mode, selectedName) {
+    if (!selectedName) return;
+    const selectId = mode === 'live' ? 'live-interview-candidate-select' : 'man-interview-candidate-select';
+    const nameInputId = mode === 'live' ? 'live-interview-name' : 'man-interview-name';
+    const locSelectId = mode === 'live' ? 'live-interview-location' : 'man-interview-location';
+
+    const selectEl = document.getElementById(selectId);
+    const opt = selectEl ? selectEl.options[selectEl.selectedIndex] : null;
+    const center = opt ? opt.getAttribute('data-center') : '';
+
+    const nameInput = document.getElementById(nameInputId);
+    if (nameInput) nameInput.value = selectedName;
+
+    const locSelect = document.getElementById(locSelectId);
+    if (locSelect && center && ['Charleston', 'Columbia', 'Spartanburg'].includes(center)) {
+        locSelect.value = center;
+    }
+
+    await loadInterviewConsultationSummary(mode, selectedName);
+}
+
+async function loadInterviewConsultationSummary(mode, queryName) {
+    const boxId = mode === 'live' ? 'live-consultation-summary-box' : 'man-consultation-summary-box';
+    const box = document.getElementById(boxId);
+    const insertBtn = document.getElementById('btn-insert-consult-collateral');
+    if (!box) return;
+
+    const q = (queryName || '').trim();
+    if (!q || q.length < 3) {
+        box.classList.add('hidden');
+        if (mode === 'manual' && insertBtn) insertBtn.classList.add('hidden');
+        return;
+    }
+
+    try {
+        const res = await fetch(`/api/interviews/consultation-context?query=${encodeURIComponent(q)}`);
+        if (!res.ok) {
+            box.classList.add('hidden');
+            if (mode === 'manual' && insertBtn) insertBtn.classList.add('hidden');
+            return;
+        }
+        const data = await res.json();
+        if (!data.found || !data.context) {
+            box.classList.add('hidden');
+            if (mode === 'manual' && insertBtn) insertBtn.classList.add('hidden');
+            return;
+        }
+
+        const ctx = data.context;
+        activeConsultationCollateralCache = ctx;
+        const cw = ctx.domainCrosswalk || {};
+
+        const locSelectId = mode === 'live' ? 'live-interview-location' : 'man-interview-location';
+        const locSelect = document.getElementById(locSelectId);
+        if (locSelect && ctx.center && ['Charleston', 'Columbia', 'Spartanburg'].includes(ctx.center)) {
+            locSelect.value = ctx.center;
+        }
+
+        if (mode === 'manual' && insertBtn) {
+            insertBtn.classList.remove('hidden');
+        }
+
+        box.classList.remove('hidden');
+        box.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; border-bottom: 1px solid #bfdbfe; padding-bottom: 6px;">
+                <div>
+                    <strong style="color: #1e3a8a; font-size: 13.5px;">✅ Linked Apricot Consultation &amp; Collateral: ${ctx.fullName} (#${ctx.recordId})</strong>
+                    <span style="margin-left: 8px; font-size: 11.5px; color: #475569;">
+                        Center: <strong>${ctx.center}</strong> &bull; Consult Date: <strong>${ctx.consultationDate || 'On File'}</strong> &bull; Notes Linked: <strong>${ctx.totalNotesCount}</strong>
+                    </span>
+                </div>
+                <span style="background: #dbeafe; color: #1d4ed8; font-weight: 700; font-size: 11px; padding: 2px 8px; border-radius: 999px;">
+                    Auto-Injected into AI LS/CMI Scorer
+                </span>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; font-size: 11.5px; color: #1e293b;">
+                <div style="background: white; padding: 7px 9px; border-radius: 6px; border: 1px solid #dbeafe;">
+                    <strong style="color: #1e40af; display: block;">⚖️ Sec 1.1 Criminal History</strong>
+                    <div>1st Arrest: ${cw.criminalHistory?.firstArrest || 'Verify'}</div>
+                    <div>Record: ${cw.criminalHistory?.arrestsAndConvictions || 'Verify'}</div>
+                    <div>Supervision: ${cw.criminalHistory?.supervisionStatus || 'Verify'}</div>
+                </div>
+                <div style="background: white; padding: 7px 9px; border-radius: 6px; border: 1px solid #dbeafe;">
+                    <strong style="color: #1e40af; display: block;">💼 Sec 1.2 Edu / Employment</strong>
+                    <div>Edu: ${cw.educationEmployment?.education || 'Verify'}</div>
+                    <div>Work: ${cw.educationEmployment?.workHistory || 'Verify'}</div>
+                    <div>Certs: ${cw.educationEmployment?.certifications || 'None'}</div>
+                </div>
+                <div style="background: white; padding: 7px 9px; border-radius: 6px; border: 1px solid #dbeafe;">
+                    <strong style="color: #1e40af; display: block;">🏠 Sec 1.3 Family / Support</strong>
+                    <div>Living: ${cw.familyMarital?.livingAndFamily || 'Verify'}</div>
+                    <div>Child Support: ${cw.familyMarital?.childSupport || 'Verify'}</div>
+                    <div>Parent Record: ${cw.familyMarital?.parentalRecord || 'Verify'}</div>
+                </div>
+                <div style="background: white; padding: 7px 9px; border-radius: 6px; border: 1px solid #dbeafe;">
+                    <strong style="color: #1e40af; display: block;">🍷 Sec 1.6 Substance / Recovery</strong>
+                    <div>${cw.alcoholDrug?.substanceSummary || 'Verify historical & current use'}</div>
+                </div>
+                <div style="background: white; padding: 7px 9px; border-radius: 6px; border: 1px solid #dbeafe;">
+                    <strong style="color: #1e40af; display: block;">🧠 Sec 1.7–1.8 CBT &amp; Triggers</strong>
+                    <div>Focus: ${cw.cbtAndAttitudes?.focusAreas || 'TBD'}</div>
+                    <div>Triggers: ${cw.cbtAndAttitudes?.triggersAndPatterns || 'Probe in interview'}</div>
+                </div>
+                <div style="background: white; padding: 7px 9px; border-radius: 6px; border: 1px solid #dbeafe;">
+                    <strong style="color: #1e40af; display: block;">🧰 Sec 2–5 Briefcase &amp; IDs</strong>
+                    <div>${cw.responsivityAndBriefcase?.documentsAndDl || 'Check IDs/DL'}</div>
+                    <div>90d Goal: ${cw.responsivityAndBriefcase?.goals90Day || 'Employment'}</div>
+                </div>
+            </div>
+        `;
+    } catch (e) {
+        console.warn('Consultation context lookup error:', e);
+    }
+}
+
+function insertConsultationCollateralIntoManualBox() {
+    if (!activeConsultationCollateralCache || !activeConsultationCollateralCache.collateralPromptText) return;
+    const box = document.getElementById('man-interview-transcript');
+    if (!box) return;
+    if (box.value.trim()) {
+        box.value = box.value.trim() + '\n\n' + activeConsultationCollateralCache.collateralPromptText;
+    } else {
+        box.value = activeConsultationCollateralCache.collateralPromptText;
+    }
+}
+
 function openManualInterviewModal() {
     document.getElementById('form-manual-interview').reset();
     document.getElementById('man-interview-status').innerText = '';
+    const sumBox = document.getElementById('man-consultation-summary-box');
+    if (sumBox) sumBox.classList.add('hidden');
+    const insertBtn = document.getElementById('btn-insert-consult-collateral');
+    if (insertBtn) insertBtn.classList.add('hidden');
     const btn = document.getElementById('btn-man-interview-submit');
     if (btn) {
         btn.disabled = false;
         btn.innerText = '🚀 Generate AI Assessment & Scoring';
     }
+    populateConsultationCandidateSelects();
     openModal('modal-manual-interview');
 }
 
@@ -4692,7 +4862,10 @@ async function loadInterviewQuestions() {
 function openInterviewModal() {
     currentQuestionIndex = 0;
     fullTranscript = '';
+    const sumBox = document.getElementById('live-consultation-summary-box');
+    if (sumBox) sumBox.classList.add('hidden');
     displayCurrentQuestion();
+    populateConsultationCandidateSelects();
     openModal('modal-interview');
 }
 

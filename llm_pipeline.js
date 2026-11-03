@@ -114,9 +114,23 @@ async function runPhase1(transcriptText, clientName, location = "", additionalNo
     assertValidGeminiApiKey();
     const model = getPipelineModel();
 
+    // Auto-resolve Apricot Consultation & Case Management Collateral Context if available
+    let consultationCollateral = "";
+    try {
+        const { getParticipantConsultationLscmiContext } = require('./services/apricot_eval_engine');
+        const ctx = getParticipantConsultationLscmiContext(clientName);
+        if (ctx && ctx.collateralPromptText) {
+            consultationCollateral = ctx.collateralPromptText;
+        }
+    } catch (e) {
+        console.warn('[LLM Phase 1] Could not auto-load Apricot consultation context:', e.message);
+    }
+
+    const combinedCollateral = [additionalNotes, consultationCollateral].filter(s => s && s.trim()).join('\n\n');
+
     const manuals = loadManuals();
     const systemPrompt = `You are an expert case manager and LS/CMI assessor for First Shift / Turn90.
-Phase 1 Task: Based on the provided LS/CMI interview transcript and assessment scoring manuals, produce:
+Phase 1 Task: Based on the provided LS/CMI interview transcript, Apricot Reentry Consultation / Intake Screening collateral notes, and assessment scoring manuals, produce:
 1. "interview_guide": The COMPLETE, UNABBREVIATED 158-question LS/CMI Interview Guide.
    - You MUST include and answer ALL questions from the standard 158-question Interview Guide covering all domains:
      * Domain 1: Administrative & Identification
@@ -131,15 +145,16 @@ Phase 1 Task: Based on the provided LS/CMI interview transcript and assessment s
      * Domain 10: Specific Risk/Need & Personal Barrier Factors
    - For each question:
      - Bold the question title.
-     - Provide the participant's direct quotes and evidence from the transcript.
+     - Provide the participant's direct quotes and evidence from the transcript AND/OR verified collateral from their Reentry Consultation / Intake Screening notes.
+     - CRITICAL COLLATERAL PRE-FILL RULE: Official LS/CMI rules require synthesizing interview responses with collateral file review. Whenever an item (such as age at first arrest, total arrests/convictions, supervision status, education/GED, employment history, substance use history, parental criminal record, housing, or IDs/DL status) is documented in the Apricot Reentry Consultation / Intake Screening notes, use that verified information to answer the question and cite "[Verified via Reentry Consultation / Collateral Record]" if not repeated verbatim in the audio transcript.
      - CRITICAL: Interviewers rarely read the questions verbatim. They often paraphrase, ask conversational questions, or do rapid-fire Yes/No checklists. You MUST intelligently map their conversational answers to the appropriate LS/CMI questions. 
-     - ONLY say "Not explicitly discussed in intake interview" if the entire topic or domain was completely skipped. If they discussed the topic (e.g., family relationships, school suspensions, drug use) in ANY way, use that context to answer the related questions.
+     - ONLY say "Not explicitly discussed in intake interview" if the entire topic or domain was completely absent from BOTH the interview transcript and the Consultation collateral notes.
    - DO NOT truncate, skip, or summarize questions. Provide all questions systematically.
    - Do NOT use the word "clinical". Use "behavioral health", "support", or "assessment" instead.
    - Do NOT reference Route 66.
-2. "draft_scoring_form": The comprehensive Phase 1 DRAFT LS/CMI Scoring Form evaluating all 8 Section 1 subcomponents (Criminal History, Education/Employment, Family/Marital, Leisure/Recreation, Companions, Alcohol/Drug Problem, Procriminal Attitude/Orientation, Antisocial Pattern) and Section 2-6 factors strictly following the scoring rules in the manual, identifying clear strengths (rated 0) and high risk/needs (rated 2 or 3). Include subcomponent scores, total score, and risk category.
+2. "draft_scoring_form": The comprehensive Phase 1 DRAFT LS/CMI Scoring Form evaluating all 8 Section 1 subcomponents (Criminal History, Education/Employment, Family/Marital, Leisure/Recreation, Companions, Alcohol/Drug Problem, Procriminal Attitude/Orientation, Antisocial Pattern) and Section 2-6 factors strictly following the scoring rules in the manual, triangulating self-report with the Reentry Consultation & Case Management collateral notes, and identifying clear strengths (rated 0) and high risk/needs (rated 2 or 3). Include subcomponent scores, total score, and risk category.
 
-${additionalNotes && additionalNotes.trim() ? `Additional Intake Notes:\n${additionalNotes}\n\n` : ''}
+${combinedCollateral ? `Apricot Reentry Consultation & Collateral Intake Notes:\n${combinedCollateral}\n\n` : ''}
 
 Reference Manuals:
 ${manuals}
@@ -280,6 +295,19 @@ async function runPhase2(transcriptText, clientName, draftScoringForm, feedback,
     assertValidGeminiApiKey();
     const model = getPipelineModel();
 
+    // Auto-resolve Apricot Consultation & Case Management Collateral Context
+    let consultationCollateral = "";
+    try {
+        const { getParticipantConsultationLscmiContext } = require('./services/apricot_eval_engine');
+        const ctx = getParticipantConsultationLscmiContext(clientName);
+        if (ctx && ctx.collateralPromptText) {
+            consultationCollateral = ctx.collateralPromptText;
+        }
+    } catch (e) {
+        console.warn('[LLM Phase 2] Could not auto-load Apricot consultation context:', e.message);
+    }
+    const combinedCollateral = [criminalHistoryText, consultationCollateral].filter(s => s && s.trim()).join('\n\n');
+
     const manuals = loadManuals();
     const csvHeader = getCsvHeader();
     
@@ -353,7 +381,7 @@ async function runPhase2(transcriptText, clientName, draftScoringForm, feedback,
       "briefcase_autofill": { ... }
     }`;
 
-    const prompt = `${systemPrompt}\n\nClient Name: ${clientName}\n\nTranscript:\n${transcriptText}\n\nDraft Scoring Form:\n${draftScoringForm}\n\nSupervisor Review Feedback:\n${feedback || 'Approved as drafted.'}\n\nCriminal History Record Text:\n${criminalHistoryText || 'None provided; inferred from interview.'}`;
+    const prompt = `${systemPrompt}\n\nClient Name: ${clientName}\n\nTranscript:\n${transcriptText}\n\nDraft Scoring Form:\n${draftScoringForm}\n\nSupervisor Review Feedback:\n${feedback || 'Approved as drafted.'}\n\nCriminal History & Apricot Consultation Collateral Record:\n${combinedCollateral || 'None provided; inferred from interview.'}`;
 
     const result = await model.generateContent(prompt);
     const responseText = result.response.text();
