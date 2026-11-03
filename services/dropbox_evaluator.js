@@ -35,15 +35,21 @@ async function listFilesByDate(dbx, folderPath, dateStrs) {
             for (const entry of entries) {
                 if (entry['.tag'] !== 'file') continue;
                 
-                // Exclude obvious non-media files (optional, but good safety)
+                // Exclude obvious non-media files
                 if (entry.name.startsWith('.')) continue;
+
+                // Exclude empty recordings / aborted clips under 1MB (e.g. 150KB stubs with no audio)
+                if (entry.size !== undefined && entry.size < 1024 * 1024) {
+                    console.log(`[Dropbox Evaluator] Skipping tiny recording stub (${entry.name}, ${(entry.size / 1024).toFixed(1)} KB)`);
+                    continue;
+                }
 
                 // Check date string (YYYY-MM-DD) from server_modified AND filename
                 const modDateUtc = new Date(entry.server_modified).toISOString().split('T')[0];
                 const matchDate = entry.name.match(/(\d{2})(\d{2})(\d{2})/);
                 const fnDate = matchDate ? `20${matchDate[1]}-${matchDate[2]}-${matchDate[3]}` : null;
 
-                if (dateStrs.includes(modDateUtc) || (fnDate && dateStrs.includes(fnDate))) {
+                if (!dateStrs || dateStrs === 'all' || dateStrs.includes(modDateUtc) || (fnDate && dateStrs.includes(fnDate))) {
                     matchedFiles.push(entry);
                 }
             }
@@ -143,11 +149,11 @@ async function runDailyEvaluation(targetDates = null) {
         refreshToken: process.env.DROPBOX_REFRESH_TOKEN
     });
 
-    // Check target dates if provided, or check recent 5 days to ensure no missed classes
+    // Check target dates if provided, or scan last 30 days so active monthly cohorts are completely evaluated and no morning or afternoon sessions are missed
     const checkDates = Array.isArray(targetDates) && targetDates.length > 0 ? targetDates : [];
     if (checkDates.length === 0) {
         const today = new Date();
-        for (let i = 0; i <= 5; i++) {
+        for (let i = 0; i <= 30; i++) {
             const d = new Date(today);
             d.setDate(d.getDate() - i);
             checkDates.push(d.toISOString().split('T')[0]);
@@ -197,11 +203,28 @@ async function runDailyEvaluation(targetDates = null) {
                 defaultFacilitator = 'TB (Charleston)';
             }
 
-            // Check if already evaluated in database (matches exact title, old format, or title with detected module)
+            // Check if already evaluated as an actual classroom session in database
             const basePrefix = `${center.name} ${shift} - ${fileDateStr}`;
-            const existingEval = db.prepare('SELECT id FROM class_facilitation_evaluations WHERE (session_title = ? OR session_title LIKE ? OR session_title LIKE ?) AND location = ?').get(sessionTitle, `${basePrefix}%`, `${sessionTitle}%`, center.name);
+            const existingEval = db.prepare(`
+                SELECT id FROM class_facilitation_evaluations 
+                WHERE (session_title = ? OR session_title LIKE ? OR session_title LIKE ?) 
+                  AND location = ?
+                  AND (detected_session_type = 'class' OR detected_session_type IS NULL)
+            `).get(sessionTitle, `${basePrefix}%`, `${sessionTitle}%`, center.name);
             if (existingEval) {
-                console.log(`[Dropbox Evaluator] Skipping ${sessionTitle} (${center.name}) - already evaluated.`);
+                console.log(`[Dropbox Evaluator] Skipping ${sessionTitle} (${center.name}) - already evaluated as class.`);
+                results.skipped++;
+                continue;
+            }
+
+            // Check if already evaluated as case management
+            const existingCm = db.prepare(`
+                SELECT id FROM case_management_evaluations 
+                WHERE (session_title = ? OR session_title LIKE ? OR session_title LIKE ?) 
+                  AND location = ?
+            `).get(sessionTitle, `${basePrefix}%`, `${sessionTitle}%`, center.name);
+            if (existingCm) {
+                console.log(`[Dropbox Evaluator] Skipping ${sessionTitle} (${center.name}) - already evaluated as case management.`);
                 results.skipped++;
                 continue;
             }

@@ -3866,7 +3866,11 @@ async function forceSyncEvaluations() {
         const cleanToken = token ? token.replace(/[\r\n]/g, '') : '';
         const res = await fetch('/api/admin/evaluations/force-sync', {
             method: 'POST',
-            headers: { 'Authorization': `Bearer ${cleanToken}` }
+            headers: { 
+                'Authorization': `Bearer ${cleanToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ days: 30 })
         });
         const data = await res.json();
         if (data.success) {
@@ -11607,6 +11611,35 @@ function renderSupervisorAllCmEvals(cmEvals, stats = []) {
 }
 
 // 9. RENDER ALL PARTICIPANT INTERVIEW SCORINGS ON SUPERVISOR DASHBOARD
+// 9. RENDER ALL PARTICIPANT INTERVIEW SCORINGS ON SUPERVISOR DASHBOARD (WITH HUMAN-IN-THE-LOOP OPTIONS)
+window.insertSupervisorOverrideTag = function(domainName) {
+    const txtArea = document.getElementById('sup-feedback-text');
+    if (!txtArea) return;
+    const current = (txtArea.value || '').trim();
+    const tag = `Override ${domainName}: Set score to [score] because [clinical justification].`;
+    if (!current || current === 'No changes needed. The draft scoring form is accurate.' || current === 'Approved as drafted. Clinical findings align with LS/CMI guidelines.') {
+        txtArea.value = tag;
+    } else {
+        txtArea.value = current + '\n' + tag;
+    }
+    txtArea.focus();
+};
+
+window.setSupervisorApproveAsIs = function() {
+    const txtArea = document.getElementById('sup-feedback-text');
+    if (txtArea) {
+        txtArea.value = 'Approved as drafted. Clinical findings align with LS/CMI guidelines.';
+    }
+};
+
+window.clearSupervisorFeedback = function() {
+    const txtArea = document.getElementById('sup-feedback-text');
+    if (txtArea) {
+        txtArea.value = '';
+        txtArea.focus();
+    }
+};
+
 function renderSupervisorAllInterviewScorings(clients, activeParticipants = []) {
     const container = document.getElementById('sup-all-interview-scoring-container');
     if (!container) return;
@@ -11619,17 +11652,20 @@ function renderSupervisorAllInterviewScorings(clients, activeParticipants = []) 
 
     let html = `
         <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,0.05); padding: 22px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; background: #f0fdfa; border: 1.5px solid #99f6e4; padding: 14px 18px; border-radius: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px; background: #f0fdfa; border: 1.5px solid #99f6e4; padding: 14px 18px; border-radius: 8px;">
                 <div>
-                    <strong style="color: #0f766e; font-size: 14.5px;">🖨️ Standardized LS/CMI Assessment & Documentation Reviews (${clientIds.length} Participants)</strong>
-                    <div style="font-size: 12px; color: #334155; margin-top: 2px;">Print or inspect completed standardized scorings, comprehensive 158-question interview guides, and complete verbatim transcripts.</div>
+                    <strong style="color: #0f766e; font-size: 15px;">📝 Human-in-the-Loop LS/CMI Scoring Reviews & Clinical Approvals (${clientIds.length} Participants)</strong>
+                    <div style="font-size: 12px; color: #334155; margin-top: 3px;">Inspect draft scoring forms, provide supervisor overrides with clinical justifications, conduct side-by-side evidence reviews, adjust action plans, or finalize official documentation.</div>
                 </div>
                 <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
                     <button class="btn btn-primary" style="background: #0f766e; border-color: #0f766e; font-size: 12px; padding: 7px 16px; font-weight: 700;" onclick="window.open('/api/documents/print-all-scorings?autoprint=true', '_blank')">
-                        🖨️ Batch Print All Participant Scorings
+                        🖨️ Batch Print All Scorings
                     </button>
                     <button class="btn btn-outline" style="font-size: 12px; padding: 7px 12px; background: white;" onclick="previewDocument('LS_CMI_Scoring_Guide.md')">
                         📖 Scoring Guide
+                    </button>
+                    <button class="btn btn-outline" style="font-size: 12px; padding: 7px 12px; background: white;" onclick="openManualInterviewModal()">
+                        📤 Import Recording
                     </button>
                 </div>
             </div>
@@ -11645,10 +11681,26 @@ function renderSupervisorAllInterviewScorings(clients, activeParticipants = []) 
         const finalBriefFile = files.find(f => f.includes('final_case_brief.md'));
         const finalPlanFile = files.find(f => f.includes('participant_case_plan.md'));
         const criminalHistoryFile = files.find(f => f.includes('criminal_history.md'));
-        const transcriptFile = files.find(f => f.includes('_transcript.txt'));
+        const transcriptFile = files.find(f => f.includes('_transcript.txt') || f.includes('transcript.txt'));
+        const interviewGuideFile = files.find(f => f.includes('interview_guide.md'));
+        const hasDraft = !!draftScoringFile || !!finalScoringFile;
 
         const parts = clientId.split('_');
         const cleanName = parts.map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+
+        // Status Badge & Border indicator
+        let statusBadgeHtml = '';
+        let borderLeftColor = '#0f766e';
+        if (finalScoringFile) {
+            borderLeftColor = '#10b981';
+            statusBadgeHtml = `<span class="badge" style="background: #ecfdf5; color: #065f46; border: 1.5px solid #10b981; font-size: 11.5px; padding: 3px 9px; border-radius: 999px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">🟢 Approved & Finalized (Phase 2 Complete)</span>`;
+        } else if (draftScoringFile) {
+            borderLeftColor = '#f59e0b';
+            statusBadgeHtml = `<span class="badge" style="background: #fffbeb; color: #92400e; border: 1.5px solid #f59e0b; font-size: 11.5px; padding: 3px 9px; border-radius: 999px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">🟡 Needs Clinical Review (Phase 1 Draft Ready)</span>`;
+        } else {
+            borderLeftColor = '#94a3b8';
+            statusBadgeHtml = `<span class="badge" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; font-size: 11.5px; padding: 3px 9px; border-radius: 999px; display: inline-flex; align-items: center; gap: 4px;">⚪ Audio / Intake Recorded</span>`;
+        }
 
         const participantOptions = activeParticipants.map(p => 
             `<option value="${escapeHtml(p.name)}">${escapeHtml(p.name)} (${escapeHtml(p.location || 'Unknown')})</option>`
@@ -11663,31 +11715,91 @@ function renderSupervisorAllInterviewScorings(clients, activeParticipants = []) 
         </div>`;
 
         html += `
-            <div style="background: #ffffff; border: 1px solid var(--border); border-left: 5px solid #0f766e; border-radius: 8px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px;">
+            <div style="background: #ffffff; border: 1px solid var(--border); border-left: 5px solid ${borderLeftColor}; border-radius: 8px; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 14px;">
                     <div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                             <span style="font-size: 18px;">⚖️</span>
-                            <h4 style="margin: 0; font-size: 15.5px; font-weight: 700; color: #0f172a;">${escapeHtml(cleanName)}</h4>
+                            <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #0f172a;">${escapeHtml(cleanName)}</h4>
+                            ${statusBadgeHtml}
                         </div>
+                        <div style="font-size: 11.5px; color: #64748b; margin-top: 4px;">ID: ${escapeHtml(clientId)} • Documents: ${files.length} files available</div>
                         ${assignDropdownHtml}
                     </div>
+
+                    <!-- HUMAN IN THE LOOP & DOCUMENT ACTIONS -->
                     <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                        <!-- Primary HITL Decision Actions -->
+                        ${draftScoringFile && !finalScoringFile ? `
+                            <button class="btn btn-primary" style="font-size: 12px; padding: 6px 14px; background: #0f766e; border-color: #0f766e; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.1);" onclick="openSupervisorReviewModal('${clientId}', '${cleanName}')" title="Conduct Clinical Review, Apply Overrides, & Finalize Phase 2">
+                                ✍️ Review & Approve (Phase 2 HITL)
+                            </button>
+                        ` : ''}
+
+                        ${finalScoringFile ? `
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; color: #0f766e; border-color: #0f766e; font-weight: 600; background: #f0fdfa;" onclick="openSupervisorReviewModal('${clientId}', '${cleanName}')" title="Adjust scores, clinical rationale, and re-generate final documents">
+                                ✏️ Supervisor Override / Edit Scores (HITL)
+                            </button>
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; color: #059669; border-color: #a7f3d0; background: #ecfdf5; font-weight: 600;" onclick="openAdjustActionPlanModal('${clientId}', '${cleanName}')" title="Adjust participant action plan focus, CBT tools, and goals">
+                                🎯 Adjust Action Plan
+                            </button>
+                        ` : (completedScoringFile ? `
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; color: #059669; border-color: #a7f3d0; background: #ecfdf5; font-weight: 600;" onclick="openAdjustActionPlanModal('${clientId}', '${cleanName}')" title="Generate or adjust participant action plan">
+                                🎯 Adjust Action Plan
+                            </button>
+                        ` : '')}
+
+                        ${!hasDraft ? `
+                            <button class="btn btn-primary" id="btn-gen-draft-${clientId}" style="font-size: 12px; padding: 6px 14px; background: #0284c7; border-color: #0284c7; font-weight: 700;" onclick="triggerGenerateAiDraft('${clientId}', '${cleanName}')">
+                                ⚡ Generate AI Scoring Draft
+                            </button>
+                        ` : ''}
+
                         ${completedScoringFile ? `
-                            <button class="btn btn-primary" style="font-size: 11.5px; padding: 5px 12px; background: #0f766e; border-color: #0f766e;" onclick="previewDocument('${completedScoringFile}')">🖨️ View & Print Scoring</button>
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; color: #4338ca; border-color: #c7d2fe; background: #eef2ff; font-weight: 600;" onclick="previewScoringWithGuide('${clientId}', '${cleanName}')" title="Dual view: Phase 1 scoring form side-by-side with participant interview guide responses">
+                                ⚖️ Side-by-Side Review
+                            </button>
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; color: #0f766e; border-color: #0f766e;" onclick="previewDocument('${completedScoringFile}')" title="View Scoring Form">
+                                📊 ${finalScoringFile ? 'Final Scoring' : 'Draft Scoring'}
+                            </button>
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; background: white;" onclick="printActiveDraftDocument('${completedScoringFile}')" title="Print Scoring Form">
+                                🖨️ Print
+                            </button>
                         ` : ''}
+
                         ${finalBriefFile ? `
-                            <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 10px; background: white;" onclick="previewDocument('${finalBriefFile}')">📑 Case Brief</button>
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; background: white;" onclick="previewDocument('${finalBriefFile}')" title="View PM Case Brief">
+                                📑 Case Brief
+                            </button>
                         ` : ''}
+
                         ${finalPlanFile ? `
-                            <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 10px; background: white;" onclick="previewDocument('${finalPlanFile}')">🎯 Case Plan</button>
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; background: white;" onclick="previewDocument('${finalPlanFile}')" title="View Participant Action Plan">
+                                🎯 Action Plan
+                            </button>
                         ` : ''}
+
                         ${criminalHistoryFile ? `
-                            <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 10px; background: white;" onclick="previewDocument('${criminalHistoryFile}')">📜 Criminal History</button>
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; background: white;" onclick="previewDocument('${criminalHistoryFile}')" title="View Criminal History Record">
+                                📜 Criminal History
+                            </button>
                         ` : ''}
+
+                        ${interviewGuideFile ? `
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; background: white;" onclick="previewDocument('${interviewGuideFile}')" title="View 158-Question Interview Guide Responses">
+                                🎙️ Guide
+                            </button>
+                        ` : ''}
+
                         ${transcriptFile ? `
-                            <button class="btn btn-outline" style="font-size: 11.5px; padding: 5px 10px; color: #0369a1; border-color: #bae6fd; background: #f0f9ff;" onclick="previewDocument('${transcriptFile}')">📝 Transcript</button>
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: #0369a1; border-color: #bae6fd; background: #f0f9ff;" onclick="previewDocument('${transcriptFile}')" title="View Full Verbatim Transcript">
+                                📝 Transcript
+                            </button>
                         ` : ''}
+
+                        <button class="btn btn-outline" style="font-size: 12px; padding: 6px 9px; color: #dc2626; border-color: #fca5a5; background: #fff5f5;" onclick="deleteInterviewRecord('${clientId}', '${cleanName}')" title="Delete participant interview and scoring records">
+                            🗑️ Delete
+                        </button>
                     </div>
                 </div>
             </div>

@@ -3051,7 +3051,17 @@ app.post('/api/admin/evaluations/force-sync', authenticateToken, requireRole('pr
         
         const { runDailyEvaluation } = require('./services/dropbox_evaluator');
         global.syncStatus = { running: true, log: "Starting sync...", results: null };
-        const targetDates = req.body?.dates || (req.body?.date ? [req.body.date] : null);
+        let targetDates = req.body?.dates || (req.body?.date ? [req.body.date] : null);
+        if (!targetDates) {
+            const numDays = req.body?.days ? parseInt(req.body.days, 10) : 30;
+            targetDates = [];
+            const today = new Date();
+            for (let i = 0; i <= numDays; i++) {
+                const d = new Date(today);
+                d.setDate(d.getDate() - i);
+                targetDates.push(d.toISOString().split('T')[0]);
+            }
+        }
         
         // Fire and forget
         runDailyEvaluation(targetDates).then(result => {

@@ -1629,14 +1629,15 @@ async function evaluateClassTranscript(location, sessionTitle, facilitatorName, 
         return evaluation;
     }
 
+    const finalClassDate = sessionDate || new Date().toISOString().split('T')[0];
     const stmt = db.prepare(`
         INSERT INTO class_facilitation_evaluations (
             location, session_title, facilitator_name, total_score,
             modeling_neutrality_score, lesson_plan_adherence_score,
             reflective_listening_score, avoiding_confrontation_score,
             summary_markdown, scores_json, coaching_feedback,
-            class_headcount, transcript_text, detected_session_type, status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            class_headcount, transcript_text, detected_session_type, status, class_date
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     const info = stmt.run(
@@ -1654,7 +1655,8 @@ async function evaluateClassTranscript(location, sessionTitle, facilitatorName, 
         evaluation.estimated_headcount,
         transcriptText,
         'class',
-        evaluation.status
+        evaluation.status,
+        finalClassDate
     );
 
     evaluation.id = info.lastInsertRowid;

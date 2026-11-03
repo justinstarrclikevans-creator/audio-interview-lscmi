@@ -1977,8 +1977,25 @@
                 </div>
 
                 <div class="form-group mt-4">
-                    <label><strong>2. Supervisor Corrections & Case Guidance</strong></label>
-                    <textarea id="sup-feedback-text" rows="3" placeholder="Enter supervisor corrections (e.g. adjust family score to 2 due to domestic stability, focus case plan on anti-social attitudes and substance recovery)..."></textarea>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 8px;">
+                        <label style="margin: 0;"><strong>2. Supervisor Clinical Corrections & Score Overrides (HITL)</strong></label>
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                            <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 2px 8px; color: #059669; border-color: #a7f3d0; background: #ecfdf5; font-weight: 700;" onclick="setSupervisorApproveAsIs()">✅ Approve As-Is</button>
+                            <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 2px 8px; color: #dc2626; border-color: #fecaca; background: #fef2f2;" onclick="clearSupervisorFeedback()">🔄 Clear</button>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 8px; align-items: center;">
+                        <span style="font-size: 11.5px; color: var(--slate); font-weight: 600;">Click to Override Domain:</span>
+                        <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 2px 7px;" onclick="insertSupervisorOverrideTag('Criminal History (Domain 1)')">⚖️ Crim History</button>
+                        <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 2px 7px;" onclick="insertSupervisorOverrideTag('Education/Employment (Domain 2)')">💼 Edu/Emp</button>
+                        <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 2px 7px;" onclick="insertSupervisorOverrideTag('Family/Marital (Domain 3)')">🏠 Family</button>
+                        <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 2px 7px;" onclick="insertSupervisorOverrideTag('Leisure/Recreation (Domain 4)')">🎯 Leisure</button>
+                        <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 2px 7px;" onclick="insertSupervisorOverrideTag('Companions (Domain 5)')">👥 Companions</button>
+                        <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 2px 7px;" onclick="insertSupervisorOverrideTag('Alcohol/Drug (Domain 6)')">🍷 Alcohol/Drug</button>
+                        <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 2px 7px;" onclick="insertSupervisorOverrideTag('Procriminal Attitude (Domain 7)')">🧠 Attitude</button>
+                        <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 2px 7px;" onclick="insertSupervisorOverrideTag('Antisocial Pattern (Domain 8)')">⚠️ Antisocial</button>
+                    </div>
+                    <textarea id="sup-feedback-text" rows="3" placeholder="Enter supervisor corrections (e.g. Override Domain 3: Set Family score to 2 due to domestic stability, focus case plan on anti-social attitudes and substance recovery)..."></textarea>
                 </div>
 
                 <div class="mt-4" style="background: #eef2ff; padding: 12px; border-radius: 6px; font-size: 13px;">
