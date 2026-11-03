@@ -3360,31 +3360,46 @@ async function previewDocument(filename) {
             lines.forEach((line) => {
                 const trimmed = line.trim();
                 if (!trimmed) return;
+
+                if (trimmed.startsWith('#') || trimmed.startsWith('===')) {
+                    turnsHtml += `
+                        <div style="background: #e2e8f0; border-radius: 6px; padding: 8px 14px; margin: 12px 0 10px 0; font-weight: 700; color: #1e293b; font-size: 13px;">
+                            📌 ${escapeHtml(trimmed.replace(/^#+\s*/, ''))}
+                        </div>
+                    `;
+                    return;
+                }
+
                 dialogueCount++;
-                if (trimmed.startsWith('Interviewer:')) {
-                    const speech = trimmed.replace(/^Interviewer:\s*/i, '');
-                    turnsHtml += `
-                        <div class="transcript-line transcript-turn-interviewer" data-speaker="interviewer" style="margin-bottom: 10px; padding: 10px 14px; background: #f0f9ff; border-left: 4px solid #0284c7; border-radius: 0 6px 6px 0;">
-                            <div style="font-size: 11px; font-weight: 800; color: #0369a1; text-transform: uppercase; margin-bottom: 3px; display: flex; justify-content: space-between;">
-                                <span>🎙️ Interviewer</span>
-                                <span style="font-size: 10px; font-weight: normal; color: #64748b;">Turn #${dialogueCount}</span>
+                const speakerMatch = trimmed.match(/^(?:\[(\d{1,2}:\d{2}(?::\d{2})?)\]\s*)?(?:\*\*|\*|_)?([A-Za-z0-9\s\.\(\)\/\x27-]+?)(?:\*\*|\*|_)?:\s*(?:\*\*|\*|_)?(.*)$/);
+
+                if (speakerMatch) {
+                    const time = speakerMatch[1] ? ` • ${speakerMatch[1]}` : '';
+                    const rawSpeaker = speakerMatch[2].trim();
+                    const speech = speakerMatch[3].trim().replace(/^(\*\*|\*|_)|(\*\*|\*|_)$/g, '');
+                    const isInterviewer = /^(interviewer|i|facilitator|case manager|staff|assessor|navigator|trainer)$/i.test(rawSpeaker.replace(/\s*\(.*?\)/, '').trim());
+
+                    if (isInterviewer) {
+                        turnsHtml += `
+                            <div class="transcript-line transcript-turn-interviewer" data-speaker="interviewer" style="margin-bottom: 10px; padding: 10px 14px; background: #f0f9ff; border-left: 4px solid #0284c7; border-radius: 0 6px 6px 0;">
+                                <div style="font-size: 11px; font-weight: 800; color: #0369a1; text-transform: uppercase; margin-bottom: 3px; display: flex; justify-content: space-between;">
+                                    <span>🎙️ ${escapeHtml(rawSpeaker)}</span>
+                                    <span style="font-size: 10px; font-weight: normal; color: #64748b;">Turn #${dialogueCount}${time}</span>
+                                </div>
+                                <div class="transcript-text" style="font-size: 13px; color: #0f172a; line-height: 1.6;">${escapeHtml(speech)}</div>
                             </div>
-                            <div class="transcript-text" style="font-size: 13px; color: #0f172a; line-height: 1.6;">${escapeHtml(speech)}</div>
-                        </div>
-                    `;
-                } else if (/^[A-Za-z\s]+:/.test(trimmed)) {
-                    const colonIdx = trimmed.indexOf(':');
-                    const speaker = trimmed.substring(0, colonIdx);
-                    const speech = trimmed.substring(colonIdx + 1).trim();
-                    turnsHtml += `
-                        <div class="transcript-line transcript-turn-participant" data-speaker="participant" style="margin-bottom: 12px; padding: 12px 16px; background: #ffffff; border: 1px solid #cbd5e1; border-left: 4px solid #0f766e; border-radius: 0 6px 6px 0; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
-                            <div style="font-size: 11px; font-weight: 800; color: #0f766e; text-transform: uppercase; margin-bottom: 3px; display: flex; justify-content: space-between;">
-                                <span>👤 ${escapeHtml(speaker)}</span>
-                                <span style="font-size: 10px; font-weight: normal; color: #64748b;">Turn #${dialogueCount}</span>
+                        `;
+                    } else {
+                        turnsHtml += `
+                            <div class="transcript-line transcript-turn-participant" data-speaker="participant" style="margin-bottom: 12px; padding: 12px 16px; background: #ffffff; border: 1px solid #cbd5e1; border-left: 4px solid #0f766e; border-radius: 0 6px 6px 0; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+                                <div style="font-size: 11px; font-weight: 800; color: #0f766e; text-transform: uppercase; margin-bottom: 3px; display: flex; justify-content: space-between;">
+                                    <span>👤 ${escapeHtml(rawSpeaker)}</span>
+                                    <span style="font-size: 10px; font-weight: normal; color: #64748b;">Turn #${dialogueCount}${time}</span>
+                                </div>
+                                <div class="transcript-text" style="font-size: 13px; color: #1e293b; line-height: 1.6;">${escapeHtml(speech)}</div>
                             </div>
-                            <div class="transcript-text" style="font-size: 13px; color: #1e293b; line-height: 1.6;">${escapeHtml(speech)}</div>
-                        </div>
-                    `;
+                        `;
+                    }
                 } else {
                     turnsHtml += `
                         <div class="transcript-line" data-speaker="note" style="font-size: 12.5px; color: #64748b; font-style: italic; padding: 4px 12px; margin-bottom: 6px;">
@@ -3522,7 +3537,29 @@ async function previewScoringWithGuide(clientId, cleanName) {
         if (resGuide.ok) {
             try {
                 const dataG = await resGuide.json();
-                guideMarkdown = typeof marked !== 'undefined' ? marked.parse(dataG.content) : dataG.content.replace(/\n/g, '<br>');
+                if (guideFileName.endsWith('.txt') || guideFileName.includes('transcript')) {
+                    const lines = (dataG.content || '').split('\n');
+                    let tHtml = '';
+                    lines.forEach(line => {
+                        const trimmed = line.trim();
+                        if (!trimmed) return;
+                        const m = trimmed.match(/^(?:\[(\d{1,2}:\d{2}(?::\d{2})?)\]\s*)?(?:\*\*|\*|_)?([A-Za-z0-9\s\.\(\)\/\x27-]+?)(?:\*\*|\*|_)?:\s*(?:\*\*|\*|_)?(.*)$/);
+                        if (m) {
+                            const rawSpeaker = m[2].trim();
+                            const speech = m[3].trim().replace(/^(\*\*|\*|_)|(\*\*|\*|_)$/g, '');
+                            const isInt = /^(interviewer|i|facilitator|case manager|staff|assessor|navigator|trainer)$/i.test(rawSpeaker.replace(/\s*\(.*?\)/, '').trim());
+                            tHtml += `<div style="margin-bottom: 8px; padding: 6px 10px; background: ${isInt ? '#f0f9ff' : '#ffffff'}; border: 1px solid ${isInt ? '#bae6fd' : '#e2e8f0'}; border-left: 3px solid ${isInt ? '#0284c7' : '#0f766e'}; border-radius: 4px;">
+                                <strong style="font-size: 11px; color: ${isInt ? '#0369a1' : '#0f766e'}; text-transform: uppercase;">${escapeHtml(rawSpeaker)}:</strong>
+                                <div style="font-size: 12px; color: #1e293b; margin-top: 2px;">${escapeHtml(speech)}</div>
+                            </div>`;
+                        } else {
+                            tHtml += `<div style="font-size: 11.5px; color: #64748b; font-style: italic; margin-bottom: 4px;">${escapeHtml(trimmed)}</div>`;
+                        }
+                    });
+                    guideMarkdown = tHtml;
+                } else {
+                    guideMarkdown = typeof marked !== 'undefined' ? marked.parse(dataG.content.replace(/^\s*(\d+)\.\s+/gm, '**$1)** ')) : dataG.content.replace(/\n/g, '<br>');
+                }
             } catch(e) {
                 guideMarkdown = '<p class="text-slate">Interview guide response could not be parsed.</p>';
             }
@@ -3665,8 +3702,30 @@ async function openSupervisorReviewModal(clientId, cleanName) {
         if (resGuide.ok) {
             try {
                 const data = await resGuide.json();
-                let mdContent = data.content.replace(/^\s*(\d+)\.\s+/gm, '**$1)** ');
-                guideContent.innerHTML = '<div style="padding-left: 15px !important; margin-left: 10px !important; list-style-position: inside !important;">' + marked.parse(mdContent) + '</div>';
+                if (guideFileName.endsWith('.txt') || guideFileName.includes('transcript')) {
+                    const lines = (data.content || '').split('\n');
+                    let tHtml = '';
+                    lines.forEach(line => {
+                        const trimmed = line.trim();
+                        if (!trimmed) return;
+                        const m = trimmed.match(/^(?:\[(\d{1,2}:\d{2}(?::\d{2})?)\]\s*)?(?:\*\*|\*|_)?([A-Za-z0-9\s\.\(\)\/\x27-]+?)(?:\*\*|\*|_)?:\s*(?:\*\*|\*|_)?(.*)$/);
+                        if (m) {
+                            const rawSpeaker = m[2].trim();
+                            const speech = m[3].trim().replace(/^(\*\*|\*|_)|(\*\*|\*|_)$/g, '');
+                            const isInt = /^(interviewer|i|facilitator|case manager|staff|assessor|navigator|trainer)$/i.test(rawSpeaker.replace(/\s*\(.*?\)/, '').trim());
+                            tHtml += `<div style="margin-bottom: 8px; padding: 6px 10px; background: ${isInt ? '#f0f9ff' : '#ffffff'}; border: 1px solid ${isInt ? '#bae6fd' : '#e2e8f0'}; border-left: 3px solid ${isInt ? '#0284c7' : '#0f766e'}; border-radius: 4px;">
+                                <strong style="font-size: 11px; color: ${isInt ? '#0369a1' : '#0f766e'}; text-transform: uppercase;">${escapeHtml(rawSpeaker)}:</strong>
+                                <div style="font-size: 12px; color: #1e293b; margin-top: 2px;">${escapeHtml(speech)}</div>
+                            </div>`;
+                        } else {
+                            tHtml += `<div style="font-size: 11.5px; color: #64748b; font-style: italic; margin-bottom: 4px;">${escapeHtml(trimmed)}</div>`;
+                        }
+                    });
+                    guideContent.innerHTML = '<div style="padding-left: 10px !important;">' + tHtml + '</div>';
+                } else {
+                    let mdContent = data.content.replace(/^\s*(\d+)\.\s+/gm, '**$1)** ');
+                    guideContent.innerHTML = '<div style="padding-left: 15px !important; margin-left: 10px !important; list-style-position: inside !important;">' + marked.parse(mdContent) + '</div>';
+                }
             } catch (pe) {
                 guideContent.innerHTML = '<p class="text-slate">Interview guide response could not be parsed.</p>';
             }
@@ -9825,7 +9884,8 @@ function renderFolderSessions(sessions) {
 
     timeline.innerHTML = sessions.map((s, idx) => {
         const ai = s.ai_analysis || {};
-        const apricotNote = ai.apricot_case_note || ai.session_summary || s.transcript_text || '';
+        const sessionText = s.transcript_text || s.notes_text || '';
+        const apricotNote = ai.apricot_case_note || ai.session_summary || sessionText || '';
         const nextSteps = Array.isArray(ai.what_to_work_on_next) ? ai.what_to_work_on_next : [];
         const noteBoxId = `rn-session-apricot-note-${s.id || idx}`;
         return `
@@ -9866,11 +9926,11 @@ function renderFolderSessions(sessions) {
                     </div>
                 ` : ''}
 
-                ${s.transcript_text ? `
+                ${sessionText ? `
                     <details style="font-size: 12px; color: #64748b; margin-top: 8px;">
                         <summary style="cursor: pointer; font-weight: 600; color: #0284c7;">View Transcript / Meeting Notes</summary>
                         <div style="background: white; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px; margin-top: 6px; white-space: pre-wrap; font-family: monospace; font-size: 11.5px; max-height: 200px; overflow-y: auto;">
-                            ${escapeHtml(s.transcript_text)}
+                            ${escapeHtml(sessionText)}
                         </div>
                     </details>
                 ` : ''}

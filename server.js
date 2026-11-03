@@ -1942,26 +1942,43 @@ function buildPrintableDocumentHtml(filename, content, isBatch = false) {
     } else if (isTranscript) {
         const lines = content.split('\n');
         let dialogueHtml = '';
+        let dialogueCount = 0;
         lines.forEach(line => {
             const trimmed = line.trim();
             if (!trimmed) return;
-            if (trimmed.startsWith('Interviewer:')) {
+
+            if (trimmed.startsWith('#') || trimmed.startsWith('===')) {
                 dialogueHtml += `
-                    <div style="margin-bottom: 10px; padding: 6px 12px; background: #f8fafc; border-left: 3px solid #0284c7; border-radius: 0 4px 4px 0; page-break-inside: avoid;">
-                        <strong style="color: #0369a1; font-size: 9.5pt; text-transform: uppercase;">🎙️ Interviewer</strong>
-                        <div style="font-size: 10pt; color: #0f172a; margin-top: 2px;">${trimmed.replace(/^Interviewer:\s*/i, '')}</div>
+                    <div style="background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 4px; padding: 6px 12px; margin: 10px 0; font-weight: 700; color: #0f172a; font-size: 10.5pt;">
+                        ${trimmed.replace(/^#+\s*/, '')}
                     </div>
                 `;
-            } else if (/^[A-Za-z\s]+:/.test(trimmed)) {
-                const colonIdx = trimmed.indexOf(':');
-                const speaker = trimmed.substring(0, colonIdx);
-                const speech = trimmed.substring(colonIdx + 1).trim();
-                dialogueHtml += `
-                    <div style="margin-bottom: 12px; padding: 8px 14px; background: #ffffff; border-left: 3px solid #0f766e; border-radius: 0 4px 4px 0; border: 1px solid #e2e8f0; border-left-width: 3px; page-break-inside: avoid;">
-                        <strong style="color: #0f766e; font-size: 9.5pt; text-transform: uppercase;">👤 ${speaker}</strong>
-                        <div style="font-size: 10pt; color: #1e293b; margin-top: 2px;">${speech}</div>
-                    </div>
-                `;
+                return;
+            }
+
+            dialogueCount++;
+            const speakerMatch = trimmed.match(/^(?:\[(\d{1,2}:\d{2}(?::\d{2})?)\]\s*)?(?:\*\*|\*|_)?([A-Za-z0-9\s\.\(\)\/\x27-]+?)(?:\*\*|\*|_)?:\s*(?:\*\*|\*|_)?(.*)$/);
+            if (speakerMatch) {
+                const time = speakerMatch[1] ? ` • ${speakerMatch[1]}` : '';
+                const rawSpeaker = speakerMatch[2].trim();
+                const speech = speakerMatch[3].trim().replace(/^(\*\*|\*|_)|(\*\*|\*|_)$/g, '');
+                const isInterviewer = /^(interviewer|i|facilitator|case manager|staff|assessor|navigator|trainer)$/i.test(rawSpeaker.replace(/\s*\(.*?\)/, '').trim());
+
+                if (isInterviewer) {
+                    dialogueHtml += `
+                        <div style="margin-bottom: 10px; padding: 6px 12px; background: #f8fafc; border-left: 3px solid #0284c7; border-radius: 0 4px 4px 0; page-break-inside: avoid;">
+                            <strong style="color: #0369a1; font-size: 9.5pt; text-transform: uppercase;">🎙️ ${rawSpeaker}${time}</strong>
+                            <div style="font-size: 10pt; color: #0f172a; margin-top: 2px;">${speech}</div>
+                        </div>
+                    `;
+                } else {
+                    dialogueHtml += `
+                        <div style="margin-bottom: 12px; padding: 8px 14px; background: #ffffff; border-left: 3px solid #0f766e; border-radius: 0 4px 4px 0; border: 1px solid #e2e8f0; border-left-width: 3px; page-break-inside: avoid;">
+                            <strong style="color: #0f766e; font-size: 9.5pt; text-transform: uppercase;">👤 ${rawSpeaker}${time}</strong>
+                            <div style="font-size: 10pt; color: #1e293b; margin-top: 2px;">${speech}</div>
+                        </div>
+                    `;
+                }
             } else {
                 dialogueHtml += `<div style="font-size: 9.5pt; color: #475569; font-style: italic; margin-bottom: 6px;">${trimmed}</div>`;
             }
