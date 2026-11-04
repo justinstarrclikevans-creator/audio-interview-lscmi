@@ -2886,182 +2886,196 @@ async function savePersonalTriggerSituations() {
 // -------------------------------------------------------------
 // DRAFT SCORING PREVIEWS & SUPERVISOR REVIEW (PHASE 2)
 // -------------------------------------------------------------
+function buildInterviewScoringCardsHtml(clients, activeParticipants = [], selectIdPrefix = 'assign-scoring') {
+    const clientIds = Object.keys(clients || {});
+    if (clientIds.length === 0) {
+        return '<p class="text-slate">No interview records found in data directory.</p>';
+    }
+
+    let html = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; background: #f0fdfa; border: 1.5px solid #99f6e4; padding: 14px 18px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+            <div>
+                <strong style="color: #0f766e; font-size: 14.5px;">🖨️ Standardized LS/CMI Scoring & Documentation Center</strong>
+                <div style="font-size: 12px; color: #334155; margin-top: 2px;">Print or inspect completed standardized scorings, comprehensive 158-question interview guides, and complete verbatim transcripts.</div>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                <button class="btn btn-primary" style="background: #0f766e; border-color: #0f766e; font-size: 12px; padding: 7px 16px; font-weight: 700; box-shadow: 0 1px 2px rgba(0,0,0,0.08);" onclick="window.open('/api/documents/print-all-scorings?autoprint=true', '_blank')">
+                    🖨️ Batch Print All Participant Scorings
+                </button>
+                <button class="btn btn-outline" style="font-size: 12px; padding: 7px 12px; background: white;" onclick="previewDocument('LS_CMI_Scoring_Guide.md')">
+                    📖 Scoring Guide
+                </button>
+            </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+    `;
+
+    const participantOptions = (Array.isArray(activeParticipants) ? activeParticipants : []).map(p => 
+        `<option value="${escapeHtml(p.name)}">${escapeHtml(p.name)} (${escapeHtml(p.location || 'Unknown')})</option>`
+    ).join('');
+
+    clientIds.forEach(clientId => {
+        const files = clients[clientId] || [];
+        const finalScoringFile = files.find(f => f.includes('final_scoring_form.md'));
+        const draftScoringFile = files.find(f => f.includes('draft_scoring_form.md'));
+        const completedScoringFile = finalScoringFile || draftScoringFile;
+
+        const hasDraft = files.some(f => f.includes('draft_scoring_form.md'));
+        const draftFile = draftScoringFile;
+        const finalBriefFile = files.find(f => f.includes('final_case_brief.md'));
+        const finalPlanFile = files.find(f => f.includes('participant_case_plan.md'));
+        const criminalHistoryFile = files.find(f => f.includes('criminal_history.md'));
+        const parts = clientId.split('_');
+        const cleanName = parts.map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+
+        const selectDomId = `${selectIdPrefix}-${clientId}`;
+        const assignDropdownHtml = `<div style="display: flex; align-items: center; gap: 6px; margin-top: 8px;">
+            <select id="${selectDomId}" style="font-size: 11px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
+                <option value="">Link to Participant...</option>
+                ${participantOptions}
+            </select>
+            <button class="btn btn-outline" style="font-size: 10px; padding: 4px 8px;" onclick="assignScoring('${clientId}', '${selectDomId}')">🔗 Link</button>
+        </div>`;
+
+        html += `
+            <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 8px; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <strong style="font-size: 16px; color: var(--primary);">${cleanName}</strong>
+                            <span class="badge ${finalScoringFile ? 'badge-green' : (hasDraft ? 'badge-pending' : 'badge-slate')}">
+                                ${finalScoringFile ? '✅ Scoring Completed & Approved' : (hasDraft ? '⏳ Phase 1 Draft Ready for Review' : 'Interview Recorded')}
+                            </span>
+                        </div>
+                        <div style="font-size: 11px; color: var(--slate); margin-top: 3px;">ID: ${clientId} • Files: ${files.length} documents</div>
+                        ${assignDropdownHtml}
+                    </div>
+
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                        <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: var(--danger); border-color: #fca5a5;" onclick="deleteInterviewRecord('${clientId}', '${cleanName}')" title="Delete this person's scoring eval records">🗑️ Delete</button>
+                        ${completedScoringFile ? `
+                            <button class="btn btn-primary" style="font-size: 12px; padding: 6px 14px; background: #0f766e; border-color: #0f766e; font-weight: 700; display: inline-flex; align-items: center; gap: 5px;" onclick="printActiveDraftDocument('${completedScoringFile}')" title="Print Official LS/CMI Scoring Form">
+                                🖨️ Print Completed Scoring
+                            </button>
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; color: #0f766e; border-color: #0f766e;" onclick="previewDocument('${completedScoringFile}')" title="View Scoring Form">
+                                📊 ${finalScoringFile ? 'Final Scoring' : 'Draft Scoring'}
+                            </button>
+                        ` : ''}
+
+                        ${!hasDraft ? `
+                            <button class="btn btn-primary" id="btn-gen-draft-${clientId}" style="font-size: 12px; padding: 6px 14px; background: #0284c7; border-color: #0284c7;" onclick="triggerGenerateAiDraft('${clientId}', '${cleanName}')">
+                                ⚡ Generate AI Scoring Review
+                            </button>
+                        ` : ''}
+
+                        ${files.some(f => f.includes('transcript.txt')) ? `
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="previewDocument('${files.find(f => f.includes('transcript.txt'))}')">
+                                📝 View Transcript
+                            </button>
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px;" onclick="printActiveDraftDocument('${files.find(f => f.includes('transcript.txt'))}')" title="Print Verbatim Transcript">
+                                🖨️ Print Transcript
+                            </button>
+                        ` : ''}
+
+                        ${draftFile ? `
+                            <button class="btn btn-primary" style="font-size: 12px; padding: 6px 14px; background: #4338ca; border-color: #4338ca;" onclick="previewScoringWithGuide('${clientId}', '${cleanName}')">
+                                ⚖️ Dual Review: Scoring & Guide
+                            </button>
+                        ` : ''}
+
+                        ${files.some(f => f.includes('interview_guide.md')) ? `
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="previewDocument('${files.find(f => f.includes('interview_guide.md'))}')">
+                                🎙️ Interview Guide
+                            </button>
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px;" onclick="printActiveDraftDocument('${files.find(f => f.includes('interview_guide.md'))}')" title="Print Full Interview Guide">
+                                🖨️ Print Guide
+                            </button>
+                        ` : ''}
+
+                        ${hasDraft && !finalScoringFile ? `
+                            <button class="btn btn-primary" style="font-size: 12px; padding: 6px 14px;" onclick="openSupervisorReviewModal('${clientId}', '${cleanName}')">
+                                ✍️ Review & Approve (Phase 2)
+                            </button>
+                        ` : ''}
+
+                        ${finalBriefFile ? `
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="previewDocument('${finalBriefFile}')">
+                                📄 PM Brief
+                            </button>
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px;" onclick="printActiveDraftDocument('${finalBriefFile}')" title="Print PM Brief">
+                                🖨️ Print Brief
+                            </button>
+                        ` : ''}
+
+                        ${criminalHistoryFile ? `
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; color: #1e293b; border-color: #94a3b8; background: #f8fafc; font-weight: 600;" onclick="previewDocument('${criminalHistoryFile}')" title="View Chronological Criminal History">
+                                ⚖️ Criminal History
+                            </button>
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: #1e293b; border-color: #94a3b8; background: #f8fafc;" onclick="printActiveDraftDocument('${criminalHistoryFile}')" title="Print Clean Chronological Criminal History Report">
+                                🖨️ Print Record
+                            </button>
+                        ` : ''}
+
+                        ${finalPlanFile ? `
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; color: var(--success); border-color: #86efac;" onclick="previewDocument('${finalPlanFile}')">
+                                🎯 Action Plan
+                            </button>
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: var(--success); border-color: #86efac;" onclick="printActiveDraftDocument('${finalPlanFile}')" title="Print Participant Action Plan">
+                                🖨️ Print Plan
+                            </button>
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: #059669; border-color: #059669; font-weight: 600;" onclick="openAdjustActionPlanModal('${clientId}', '${cleanName}')" title="Adjust and update only the participant action plan">
+                                🎯 Adjust Action Plan
+                            </button>
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: var(--primary); border-color: var(--primary);" onclick="openSupervisorReviewModal('${clientId}', '${cleanName}')" title="Adjust full scoring, brief, and case documents">
+                                ✍️ Adjust Feedback
+                            </button>
+                        ` : (completedScoringFile ? `
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: #059669; border-color: #059669; font-weight: 600;" onclick="openAdjustActionPlanModal('${clientId}', '${cleanName}')" title="Generate or adjust participant action plan">
+                                🎯 Adjust Action Plan
+                            </button>
+                        ` : '')}
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    html += '</div>';
+    return html;
+}
+
 async function loadPmDrafts() {
     window.loadDraftAssessments = loadPmDrafts;
     const list = document.getElementById('pm-drafts-list');
+    const supList = document.getElementById('sup-all-interview-scoring-container');
     try {
         const res = await fetch('/api/interviews');
         const clients = await res.json();
         currentInterviewsData = clients;
+        window.latestSupervisorInterviews = clients;
 
-        const clientIds = Object.keys(clients);
-        if (clientIds.length === 0) {
-            list.innerHTML = '<p class="text-slate">No interview records found in data directory.</p>';
-            return;
+        let activeParticipants = window.latestSupervisorActiveParticipants || [];
+        try {
+            const token = localStorage.getItem('fs_token');
+            const resCaseload = await fetch('/api/admin/caseload?location=all', { headers: { 'Authorization': 'Bearer ' + token } });
+            if (resCaseload.ok) {
+                activeParticipants = await resCaseload.json();
+                window.latestSupervisorActiveParticipants = activeParticipants;
+            }
+        } catch(e) {}
+
+        if (list) {
+            list.innerHTML = buildInterviewScoringCardsHtml(clients, activeParticipants, 'assign-scoring');
+        }
+        if (supList) {
+            supList.innerHTML = buildInterviewScoringCardsHtml(clients, activeParticipants, 'sup-assign-scoring');
         }
 
-        // Fetch active participants for the assignment dropdown
-    let activeParticipants = [];
-    try {
-        const token = localStorage.getItem('fs_token');
-        const res = await fetch('/api/admin/caseload?location=all', { headers: { 'Authorization': 'Bearer ' + token } });
-        activeParticipants = await res.json();
-    } catch(e) {}
-    
-    let html = `
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; background: #f0fdfa; border: 1.5px solid #99f6e4; padding: 14px 18px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
-                <div>
-                    <strong style="color: #0f766e; font-size: 14.5px;">🖨️ Standardized LS/CMI Scoring & Documentation Center</strong>
-                    <div style="font-size: 12px; color: #334155; margin-top: 2px;">Print or inspect completed standardized scorings, comprehensive 158-question interview guides, and complete verbatim transcripts.</div>
-                </div>
-                <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
-                    <button class="btn btn-primary" style="background: #0f766e; border-color: #0f766e; font-size: 12px; padding: 7px 16px; font-weight: 700; box-shadow: 0 1px 2px rgba(0,0,0,0.08);" onclick="window.open('/api/documents/print-all-scorings?autoprint=true', '_blank')">
-                        🖨️ Batch Print All Participant Scorings
-                    </button>
-                    <button class="btn btn-outline" style="font-size: 12px; padding: 7px 12px; background: white;" onclick="previewDocument('LS_CMI_Scoring_Guide.md')">
-                        📖 Scoring Guide
-                    </button>
-                </div>
-            </div>
-            <div style="display: flex; flex-direction: column; gap: 12px;">
-        `;
-
-        clientIds.forEach(clientId => {
-            const files = clients[clientId];
-            const finalScoringFile = files.find(f => f.includes('final_scoring_form.md'));
-            const draftScoringFile = files.find(f => f.includes('draft_scoring_form.md'));
-            const completedScoringFile = finalScoringFile || draftScoringFile;
-
-            const hasDraft = files.some(f => f.includes('draft_scoring_form.md'));
-            const hasFinalBrief = files.some(f => f.includes('final_case_brief.md'));
-            const draftFile = draftScoringFile;
-            const finalBriefFile = files.find(f => f.includes('final_case_brief.md'));
-            const finalPlanFile = files.find(f => f.includes('participant_case_plan.md'));
-            const criminalHistoryFile = files.find(f => f.includes('criminal_history.md'));
-            const parts = clientId.split('_');
-            const cleanName = parts.map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-
-    const participantOptions = activeParticipants.map(p => 
-        `<option value="${p.name}">${p.name} (${p.location || 'Unknown'})</option>`
-    ).join('');
-    
-    const assignDropdownHtml = `<div style="display: flex; align-items: center; gap: 6px; margin-top: 8px;">
-        <select id="assign-scoring-${clientId}" style="font-size: 11px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
-            <option value="">Link to Participant...</option>
-            ${participantOptions}
-        </select>
-        <button class="btn btn-outline" style="font-size: 10px; padding: 4px 8px;" onclick="assignScoring('${clientId}')">🔗 Link</button>
-    </div>`;
-
-            html += `
-                <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 8px; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-                        <div>
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <strong style="font-size: 16px; color: var(--primary);">${cleanName}</strong>
-                                <span class="badge ${finalScoringFile ? 'badge-green' : (hasDraft ? 'badge-pending' : 'badge-slate')}">
-                                    ${finalScoringFile ? '✅ Scoring Completed & Approved' : (hasDraft ? '⏳ Phase 1 Draft Ready for Review' : 'Interview Recorded')}
-                                </span>
-                            </div>
-                            <div style="font-size: 11px; color: var(--slate); margin-top: 3px;">ID: ${clientId} • Files: ${files.length} documents</div>
-                            ${assignDropdownHtml}
-                        </div>
-
-                        <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
-                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: var(--danger); border-color: #fca5a5;" onclick="deleteInterviewRecord('${clientId}', '${cleanName}')" title="Delete this person's scoring eval records">🗑️ Delete</button>
-                            ${completedScoringFile ? `
-                                <button class="btn btn-primary" style="font-size: 12px; padding: 6px 14px; background: #0f766e; border-color: #0f766e; font-weight: 700; display: inline-flex; align-items: center; gap: 5px;" onclick="printActiveDraftDocument('${completedScoringFile}')" title="Print Official LS/CMI Scoring Form">
-                                    🖨️ Print Completed Scoring
-                                </button>
-                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; color: #0f766e; border-color: #0f766e;" onclick="previewDocument('${completedScoringFile}')" title="View Scoring Form">
-                                    📊 ${finalScoringFile ? 'Final Scoring' : 'Draft Scoring'}
-                                </button>
-                            ` : ''}
-
-                            ${!hasDraft ? `
-                                <button class="btn btn-primary" id="btn-gen-draft-${clientId}" style="font-size: 12px; padding: 6px 14px; background: #0284c7; border-color: #0284c7;" onclick="triggerGenerateAiDraft('${clientId}', '${cleanName}')">
-                                    ⚡ Generate AI Scoring Review
-                                </button>
-                            ` : ''}
-
-                            ${files.some(f => f.includes('transcript.txt')) ? `
-                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="previewDocument('${files.find(f => f.includes('transcript.txt'))}')">
-                                    📝 View Transcript
-                                </button>
-                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px;" onclick="printActiveDraftDocument('${files.find(f => f.includes('transcript.txt'))}')" title="Print Verbatim Transcript">
-                                    🖨️ Print Transcript
-                                </button>
-                            ` : ''}
-
-                            ${draftFile ? `
-                                <button class="btn btn-primary" style="font-size: 12px; padding: 6px 14px; background: #4338ca; border-color: #4338ca;" onclick="previewScoringWithGuide('${clientId}', '${cleanName}')">
-                                    ⚖️ Dual Review: Scoring & Guide
-                                </button>
-                            ` : ''}
-
-                            ${files.some(f => f.includes('interview_guide.md')) ? `
-                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="previewDocument('${files.find(f => f.includes('interview_guide.md'))}')">
-                                    🎙️ Interview Guide
-                                </button>
-                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px;" onclick="printActiveDraftDocument('${files.find(f => f.includes('interview_guide.md'))}')" title="Print Full Interview Guide">
-                                    🖨️ Print Guide
-                                </button>
-                            ` : ''}
-
-                            ${hasDraft && !finalScoringFile ? `
-                                <button class="btn btn-primary" style="font-size: 12px; padding: 6px 14px;" onclick="openSupervisorReviewModal('${clientId}', '${cleanName}')">
-                                    ✍️ Review & Approve (Phase 2)
-                                </button>
-                            ` : ''}
-
-                            ${finalBriefFile ? `
-                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="previewDocument('${finalBriefFile}')">
-                                    📄 PM Brief
-                                </button>
-                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px;" onclick="printActiveDraftDocument('${finalBriefFile}')" title="Print PM Brief">
-                                    🖨️ Print Brief
-                                </button>
-                            ` : ''}
-
-                            ${criminalHistoryFile ? `
-                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; color: #1e293b; border-color: #94a3b8; background: #f8fafc; font-weight: 600;" onclick="previewDocument('${criminalHistoryFile}')" title="View Chronological Criminal History">
-                                    ⚖️ Criminal History
-                                </button>
-                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: #1e293b; border-color: #94a3b8; background: #f8fafc;" onclick="printActiveDraftDocument('${criminalHistoryFile}')" title="Print Clean Chronological Criminal History Report">
-                                    🖨️ Print Record
-                                </button>
-                            ` : ''}
-
-                            ${finalPlanFile ? `
-                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; color: var(--success); border-color: #86efac;" onclick="previewDocument('${finalPlanFile}')">
-                                    🎯 Action Plan
-                                </button>
-                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: var(--success); border-color: #86efac;" onclick="printActiveDraftDocument('${finalPlanFile}')" title="Print Participant Action Plan">
-                                    🖨️ Print Plan
-                                </button>
-                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: #059669; border-color: #059669; font-weight: 600;" onclick="openAdjustActionPlanModal('${clientId}', '${cleanName}')" title="Adjust and update only the participant action plan">
-                                    🎯 Adjust Action Plan
-                                </button>
-                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: var(--primary); border-color: var(--primary);" onclick="openSupervisorReviewModal('${clientId}', '${cleanName}')" title="Adjust full scoring, brief, and case documents">
-                                    ✍️ Adjust Feedback
-                                </button>
-                            ` : (completedScoringFile ? `
-                                <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: #059669; border-color: #059669; font-weight: 600;" onclick="openAdjustActionPlanModal('${clientId}', '${cleanName}')" title="Generate or adjust participant action plan">
-                                    🎯 Adjust Action Plan
-                                </button>
-                            ` : '')}
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
-
-        html += '</div>';
-        list.innerHTML = html;
         loadFacilitationEvaluations();
         if (typeof window.loadCmEvaluations === 'function') window.loadCmEvaluations();
     } catch (e) {
-        list.innerHTML = '<p>Unable to load drafts: ' + e.message + '</p>';
+        if (list) list.innerHTML = '<p>Unable to load drafts: ' + e.message + '</p>';
+        if (supList) supList.innerHTML = '<p>Unable to load drafts: ' + e.message + '</p>';
     }
 }
 
@@ -8069,8 +8083,11 @@ async function updateSkillcat(userId, engagement) {
 }
 
 
-async function assignScoring(clientId) {
-    const participantName = document.getElementById('assign-scoring-' + clientId).value;
+async function assignScoring(clientId, selectDomId) {
+    const sel = (selectDomId && document.getElementById(selectDomId))
+        || document.getElementById('assign-scoring-' + clientId)
+        || document.getElementById('sup-assign-scoring-' + clientId);
+    const participantName = sel ? sel.value : '';
     if (!participantName) return alert('Select a participant to link to.');
     
     if (!confirm('Link scoring records for "' + clientId + '" to participant "' + participantName + '"? This will rename the files.')) return;
@@ -11877,174 +11894,8 @@ function renderSupervisorAllInterviewScorings(clients, activeParticipants = []) 
     const container = document.getElementById('sup-all-interview-scoring-container');
     if (!container) return;
 
-    const clientIds = Object.keys(clients || {});
-    if (clientIds.length === 0) {
-        container.innerHTML = '<div style="background: white; border-radius: 12px; border: 1px solid var(--border); padding: 30px; text-align: center; color: var(--slate);">No interview records found in data directory.</div>';
-        return;
-    }
-
-    let html = `
-        <div style="background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,0.05); padding: 22px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 12px; background: #f0fdfa; border: 1.5px solid #99f6e4; padding: 14px 18px; border-radius: 8px;">
-                <div>
-                    <strong style="color: #0f766e; font-size: 15px;">📝 Human-in-the-Loop LS/CMI Scoring Reviews & Clinical Approvals (${clientIds.length} Participants)</strong>
-                    <div style="font-size: 12px; color: #334155; margin-top: 3px;">Inspect draft scoring forms, provide supervisor overrides with clinical justifications, conduct side-by-side evidence reviews, adjust action plans, or finalize official documentation.</div>
-                </div>
-                <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
-                    <button class="btn btn-primary" style="background: #0f766e; border-color: #0f766e; font-size: 12px; padding: 7px 16px; font-weight: 700;" onclick="window.open('/api/documents/print-all-scorings?autoprint=true', '_blank')">
-                        🖨️ Batch Print All Scorings
-                    </button>
-                    <button class="btn btn-outline" style="font-size: 12px; padding: 7px 12px; background: white;" onclick="previewDocument('LS_CMI_Scoring_Guide.md')">
-                        📖 Scoring Guide
-                    </button>
-                    <button class="btn btn-outline" style="font-size: 12px; padding: 7px 12px; background: white;" onclick="openManualInterviewModal()">
-                        📤 Import Recording
-                    </button>
-                </div>
-            </div>
-
-            <div style="display: flex; flex-direction: column; gap: 14px;">
-    `;
-
-    clientIds.forEach(clientId => {
-        const files = clients[clientId] || [];
-        const finalScoringFile = files.find(f => f.includes('final_scoring_form.md'));
-        const draftScoringFile = files.find(f => f.includes('draft_scoring_form.md'));
-        const completedScoringFile = finalScoringFile || draftScoringFile;
-        const finalBriefFile = files.find(f => f.includes('final_case_brief.md'));
-        const finalPlanFile = files.find(f => f.includes('participant_case_plan.md'));
-        const criminalHistoryFile = files.find(f => f.includes('criminal_history.md'));
-        const transcriptFile = files.find(f => f.includes('_transcript.txt') || f.includes('transcript.txt'));
-        const interviewGuideFile = files.find(f => f.includes('interview_guide.md'));
-        const hasDraft = !!draftScoringFile || !!finalScoringFile;
-
-        const parts = clientId.split('_');
-        const cleanName = parts.map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-
-        // Status Badge & Border indicator
-        let statusBadgeHtml = '';
-        let borderLeftColor = '#0f766e';
-        if (finalScoringFile) {
-            borderLeftColor = '#10b981';
-            statusBadgeHtml = `<span class="badge" style="background: #ecfdf5; color: #065f46; border: 1.5px solid #10b981; font-size: 11.5px; padding: 3px 9px; border-radius: 999px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">🟢 Approved & Finalized (Phase 2 Complete)</span>`;
-        } else if (draftScoringFile) {
-            borderLeftColor = '#f59e0b';
-            statusBadgeHtml = `<span class="badge" style="background: #fffbeb; color: #92400e; border: 1.5px solid #f59e0b; font-size: 11.5px; padding: 3px 9px; border-radius: 999px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">🟡 Needs Clinical Review (Phase 1 Draft Ready)</span>`;
-        } else {
-            borderLeftColor = '#94a3b8';
-            statusBadgeHtml = `<span class="badge" style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; font-size: 11.5px; padding: 3px 9px; border-radius: 999px; display: inline-flex; align-items: center; gap: 4px;">⚪ Audio / Intake Recorded</span>`;
-        }
-
-        const participantOptions = activeParticipants.map(p => 
-            `<option value="${escapeHtml(p.name)}">${escapeHtml(p.name)} (${escapeHtml(p.location || 'Unknown')})</option>`
-        ).join('');
-        
-        const assignDropdownHtml = `<div style="display: flex; align-items: center; gap: 6px; margin-top: 6px;">
-            <select id="sup-assign-scoring-${clientId}" style="font-size: 11px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px;">
-                <option value="">Link to Active Participant...</option>
-                ${participantOptions}
-            </select>
-            <button class="btn btn-outline" style="font-size: 10px; padding: 4px 8px;" onclick="assignScoring('${clientId}')">🔗 Link</button>
-        </div>`;
-
-        html += `
-            <div style="background: #ffffff; border: 1px solid var(--border); border-left: 5px solid ${borderLeftColor}; border-radius: 8px; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 14px;">
-                    <div>
-                        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                            <span style="font-size: 18px;">⚖️</span>
-                            <h4 style="margin: 0; font-size: 16px; font-weight: 700; color: #0f172a;">${escapeHtml(cleanName)}</h4>
-                            ${statusBadgeHtml}
-                        </div>
-                        <div style="font-size: 11.5px; color: #64748b; margin-top: 4px;">ID: ${escapeHtml(clientId)} • Documents: ${files.length} files available</div>
-                        ${assignDropdownHtml}
-                    </div>
-
-                    <!-- HUMAN IN THE LOOP & DOCUMENT ACTIONS -->
-                    <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
-                        <!-- Primary HITL Decision Actions -->
-                        ${draftScoringFile && !finalScoringFile ? `
-                            <button class="btn btn-primary" style="font-size: 12px; padding: 6px 14px; background: #0f766e; border-color: #0f766e; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.1);" onclick="openSupervisorReviewModal('${clientId}', '${cleanName}')" title="Conduct Clinical Review, Apply Overrides, & Finalize Phase 2">
-                                ✍️ Review & Approve (Phase 2 HITL)
-                            </button>
-                        ` : ''}
-
-                        ${finalScoringFile ? `
-                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; color: #0f766e; border-color: #0f766e; font-weight: 600; background: #f0fdfa;" onclick="openSupervisorReviewModal('${clientId}', '${cleanName}')" title="Adjust scores, clinical rationale, and re-generate final documents">
-                                ✏️ Supervisor Override / Edit Scores (HITL)
-                            </button>
-                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; color: #059669; border-color: #a7f3d0; background: #ecfdf5; font-weight: 600;" onclick="openAdjustActionPlanModal('${clientId}', '${cleanName}')" title="Adjust participant action plan focus, CBT tools, and goals">
-                                🎯 Adjust Action Plan
-                            </button>
-                        ` : (completedScoringFile ? `
-                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; color: #059669; border-color: #a7f3d0; background: #ecfdf5; font-weight: 600;" onclick="openAdjustActionPlanModal('${clientId}', '${cleanName}')" title="Generate or adjust participant action plan">
-                                🎯 Adjust Action Plan
-                            </button>
-                        ` : '')}
-
-                        ${!hasDraft ? `
-                            <button class="btn btn-primary" id="btn-gen-draft-${clientId}" style="font-size: 12px; padding: 6px 14px; background: #0284c7; border-color: #0284c7; font-weight: 700;" onclick="triggerGenerateAiDraft('${clientId}', '${cleanName}')">
-                                ⚡ Generate AI Scoring Draft
-                            </button>
-                        ` : ''}
-
-                        ${completedScoringFile ? `
-                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; color: #4338ca; border-color: #c7d2fe; background: #eef2ff; font-weight: 600;" onclick="previewScoringWithGuide('${clientId}', '${cleanName}')" title="Dual view: Phase 1 scoring form side-by-side with participant interview guide responses">
-                                ⚖️ Side-by-Side Review
-                            </button>
-                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; color: #0f766e; border-color: #0f766e;" onclick="previewDocument('${completedScoringFile}')" title="View Scoring Form">
-                                📊 ${finalScoringFile ? 'Final Scoring' : 'Draft Scoring'}
-                            </button>
-                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; background: white;" onclick="printActiveDraftDocument('${completedScoringFile}')" title="Print Scoring Form">
-                                🖨️ Print
-                            </button>
-                        ` : ''}
-
-                        ${finalBriefFile ? `
-                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; background: white;" onclick="previewDocument('${finalBriefFile}')" title="View PM Case Brief">
-                                📑 Case Brief
-                            </button>
-                        ` : ''}
-
-                        ${finalPlanFile ? `
-                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; background: white;" onclick="previewDocument('${finalPlanFile}')" title="View Participant Action Plan">
-                                🎯 Action Plan
-                            </button>
-                        ` : ''}
-
-                        ${criminalHistoryFile ? `
-                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; background: white;" onclick="previewDocument('${criminalHistoryFile}')" title="View Criminal History Record">
-                                📜 Criminal History
-                            </button>
-                        ` : ''}
-
-                        ${interviewGuideFile ? `
-                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; background: white;" onclick="previewDocument('${interviewGuideFile}')" title="View 158-Question Interview Guide Responses">
-                                🎙️ Guide
-                            </button>
-                        ` : ''}
-
-                        ${transcriptFile ? `
-                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: #0369a1; border-color: #bae6fd; background: #f0f9ff;" onclick="previewDocument('${transcriptFile}')" title="View Full Verbatim Transcript">
-                                📝 Transcript
-                            </button>
-                        ` : ''}
-
-                        <button class="btn btn-outline" style="font-size: 12px; padding: 6px 9px; color: #dc2626; border-color: #fca5a5; background: #fff5f5;" onclick="deleteInterviewRecord('${clientId}', '${cleanName}')" title="Delete participant interview and scoring records">
-                            🗑️ Delete
-                        </button>
-                    </div>
-                </div>
-            </div>
-        `;
-    });
-
-    html += `
-            </div>
-        </div>
-    `;
-
-    container.innerHTML = html;
+    currentInterviewsData = clients || {};
+    container.innerHTML = buildInterviewScoringCardsHtml(clients, activeParticipants, 'sup-assign-scoring');
 }
 
 // =========================================================================

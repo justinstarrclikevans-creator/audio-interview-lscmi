@@ -1308,7 +1308,7 @@ function buildParticipantActionPlanMd(p) {
 }
 
 async function main() {
-    console.log(`Generating Consultation-informed LS/CMI packets for ${WEEKLY_INTERVIEW_PROFILES.length} participants...`);
+    console.log(`Generating Phase 1 Consultation-informed LS/CMI Drafts (Pending Supervisor Review) for ${WEEKLY_INTERVIEW_PROFILES.length} participants...`);
     let count = 0;
 
     for (const p of WEEKLY_INTERVIEW_PROFILES) {
@@ -1318,28 +1318,52 @@ async function main() {
         const transcriptPath = path.join(dataDir, `${p.clientId}_transcript.txt`);
         const guidePath = path.join(dataDir, `${p.clientId}_interview_guide.md`);
         const draftPath = path.join(dataDir, `${p.clientId}_draft_scoring_form.md`);
-        const finalPath = path.join(dataDir, `${p.clientId}_final_scoring_form.md`);
-        const briefPath = path.join(dataDir, `${p.clientId}_final_case_brief.md`);
-        const planPath = path.join(dataDir, `${p.clientId}_participant_case_plan.md`);
+
+        // Remove any premature Phase 2 files so each new weekly interview awaits Human-in-the-Loop Supervisor Review
+        const phase2Bases = [
+            path.join(dataDir, `${p.clientId}_final_scoring_form`),
+            path.join(dataDir, `${p.clientId}_final_case_brief`),
+            path.join(dataDir, `${p.clientId}_participant_case_plan`)
+        ];
+        for (const base of phase2Bases) {
+            for (const ext of ['.md', '.docx', '.pdf']) {
+                if (fs.existsSync(base + ext)) {
+                    try { fs.unlinkSync(base + ext); } catch (e) {}
+                }
+            }
+        }
 
         fs.writeFileSync(transcriptPath, buildTranscriptText(p, collateralPromptText), 'utf8');
         fs.writeFileSync(guidePath, buildInterviewGuideMd(p, collateralPromptText), 'utf8');
         fs.writeFileSync(draftPath, buildScoringFormMd(p, false), 'utf8');
-        fs.writeFileSync(finalPath, buildScoringFormMd(p, true), 'utf8');
-        fs.writeFileSync(briefPath, buildCaseBriefMd(p), 'utf8');
-        fs.writeFileSync(planPath, buildParticipantActionPlanMd(p), 'utf8');
 
-        // Convert MD documents to PDF and DOCX
-        for (const mdFile of [guidePath, draftPath, finalPath, briefPath, planPath]) {
+        // Convert Phase 1 MD documents to PDF and DOCX
+        for (const mdFile of [guidePath, draftPath]) {
             try { convertSingleMdToPdf(mdFile, mdFile.replace(/\.md$/, '.pdf')); } catch (e) {}
             try { convertSingleMdToDocx(mdFile, mdFile.replace(/\.md$/, '.docx')); } catch (e) {}
         }
 
         count++;
-        console.log(` [${count}/${WEEKLY_INTERVIEW_PROFILES.length}] Generated full LS/CMI packet for ${p.fullName} (${p.clientId}) -> Score: ${p.scores.total} (${p.scores.riskLevel})`);
+        console.log(` [${count}/${WEEKLY_INTERVIEW_PROFILES.length}] Generated Phase 1 Draft (Pending Supervisor Review) for ${p.fullName} (${p.clientId}) -> Draft Score: ${p.scores.total} (${p.scores.riskLevel})`);
     }
 
-    console.log(`\nSuccessfully generated all ${count} Consultation-informed LS/CMI packets!`);
+    const resetMarker = path.join(dataDir, '.weekly_phase1_only_v1');
+    try { fs.writeFileSync(resetMarker, new Date().toISOString(), 'utf8'); } catch (e) {}
+
+    console.log(`\nSuccessfully prepared all ${count} Consultation-informed LS/CMI Phase 1 Drafts for Supervisor Review!`);
+}
+
+function generateFallbackPhase2ForWeeklyParticipant(clientId, feedback = '', crimText = '') {
+    const p = WEEKLY_INTERVIEW_PROFILES.find(item => item.clientId.toLowerCase() === String(clientId || '').toLowerCase());
+    if (!p) return null;
+    const supervisorNote = (feedback && feedback.trim() && feedback.trim() !== 'No changes needed. The draft scoring form is accurate.')
+        ? `\n\n> **Supervisor Clinical Review & Override Notes:** ${feedback.trim()}\n`
+        : `\n\n> **Supervisor Clinical Review:** Approved as drafted following Human-in-the-Loop review.\n`;
+    return {
+        final_scoring_form: buildScoringFormMd(p, true) + supervisorNote,
+        case_brief: buildCaseBriefMd(p) + supervisorNote,
+        participant_case_plan: buildParticipantActionPlanMd(p)
+    };
 }
 
 if (require.main === module) {
@@ -1349,4 +1373,8 @@ if (require.main === module) {
     });
 }
 
-module.exports = { generateWeeklyConsultationLscmiPackets: main };
+module.exports = {
+    generateWeeklyConsultationLscmiPackets: main,
+    generateFallbackPhase2ForWeeklyParticipant,
+    WEEKLY_INTERVIEW_PROFILES
+};

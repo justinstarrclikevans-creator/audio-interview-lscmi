@@ -693,16 +693,17 @@
                 </div>
 
                 <!-- SECTION 9: STANDARDIZED LS/CMI INTERVIEW SCORING & DRAFT REVIEWS -->
-                <div id="sup-sec-interview-scoring" class="sup-report-section" style="margin-bottom: 28px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; background: white; border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px;">
+                <div id="sup-sec-interview-scoring" class="sup-report-section section-card" style="margin-bottom: 28px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 14px;">
                         <div>
-                            <h2 style="margin: 0; font-size: 18px; font-weight: 800; color: #0f172a;">📝 Human-in-the-Loop LS/CMI Scoring Reviews & Assessments</h2>
-                            <p style="margin: 4px 0 0 0; font-size: 13px; color: #64748b;">Review AI-generated draft scoring forms, cross-reference the official LS/CMI Scoring Guide, provide supervisor feedback, record live interviews, or import audio.</p>
+                            <h2 style="margin: 0; font-size: 20px; color: var(--dark);">Human-in-the-Loop Scoring Reviews (Phase 1 &rarr; Phase 2)</h2>
+                            <p style="margin: 4px 0 0 0; font-size: 13px;" class="text-slate">Review AI-generated draft scoring forms, cross-reference the official LS/CMI Scoring Guide, provide supervisor feedback, and print assessment documentation.</p>
                         </div>
                         <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
                             <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; background: white;" onclick="previewDocument('LS_CMI_Scoring_Guide.md')" title="Open LS/CMI Assessment Scoring Guide">📖 LS/CMI Scoring Guide</button>
                             <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; background: white;" onclick="printActiveDraftDocument('LS_CMI_Scoring_Guide.md')" title="Print LS/CMI Scoring Guide">🖨️ Print Guide</button>
                             <a href="/api/documents/raw/LS_CMI_Scoring_Manual_Guide.pdf" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; text-decoration: none; background: white;" title="Open Official 37-Page PDF">📄 PDF Manual</a>
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; background: white;" onclick="previewDocument('Facilitator_Scoring_Guide.md')" title="Open 20-Item Turn90 Facilitator Scoring Guide">📋 Facilitator Guide</button>
                             <button class="btn btn-primary" style="font-size: 12px; padding: 6px 14px;" onclick="openInterviewModal()">🔴 Record Live Interview</button>
                             <button class="btn btn-outline" style="font-size: 12px; padding: 6px 14px; background: white;" onclick="openManualInterviewModal()">📤 Import Recording</button>
                         </div>

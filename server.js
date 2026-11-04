@@ -3248,7 +3248,15 @@ app.post('/api/submit-feedback', memoryUpload.single('criminalHistoryFile'), asy
         }
 
         console.log(`Starting Phase 2 generation for ${participantName} (${clientId})...`);
-        const results = await runPhase2(transcript, participantName, draft, feedback || 'Approved as drafted', crimText);
+        let results = null;
+        try {
+            results = await runPhase2(transcript, participantName, draft, feedback || 'Approved as drafted', crimText);
+        } catch (phase2Err) {
+            console.warn(`Phase 2 LLM fallback triggered for ${clientId}:`, phase2Err.message);
+            const { generateFallbackPhase2ForWeeklyParticipant } = require('./generate_weekly_consultation_lscmi_packets');
+            results = generateFallbackPhase2ForWeeklyParticipant(clientId, feedback, crimText);
+            if (!results) throw phase2Err;
+        }
         
         const finalScoringPath = path.join(dataDir, `${clientId}_final_scoring_form.md`);
         const finalBriefPath = path.join(dataDir, `${clientId}_final_case_brief.md`);
@@ -7526,7 +7534,7 @@ app.listen(PORT, async () => {
             console.log(`✅ Apricot Eval Engine synchronized: ${initRes.newNotesProcessed} new notes (${initRes.totalUniqueNotes} total), ${initRes.activeFirstShiftCount} FS, ${initRes.activeReentryNavCount} RN.`);
         }
 
-        if (!fs.existsSync(path.join(dataDir, 'Jayhova_Freeman_Spartanburg_final_scoring_form.md'))) {
+        if (!fs.existsSync(path.join(dataDir, '.weekly_phase1_only_v1')) || !fs.existsSync(path.join(dataDir, 'Jayhova_Freeman_Spartanburg_draft_scoring_form.md'))) {
             const { generateWeeklyConsultationLscmiPackets } = require('./generate_weekly_consultation_lscmi_packets');
             await generateWeeklyConsultationLscmiPackets();
         }
