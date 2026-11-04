@@ -1880,7 +1880,7 @@ function buildPrintableDocumentHtml(filename, content, isBatch = false) {
 
         // Clean markdown content: strip leading title and Section 1 header to avoid duplication with executive top box
         let cleanedContent = content;
-        cleanedContent = cleanedContent.replace(/^#\s*LS\/?CMI\s*Scoring\s*Form\s*\n+/i, '');
+        cleanedContent = cleanedContent.replace(/^#\s*LS\/?CMI[^\n]*Scoring\s*Form[^\n]*\n+/i, '');
         cleanedContent = cleanedContent.replace(/^(?:##|\*\*)\s*Section\s*1:\s*General\s*Risk\/Need\s*Factors\s*(?:\*\*)?\s*\n+/im, '');
         // Standardize subsection headers
         cleanedContent = cleanedContent.replace(/^[*_]{2}(\d+\.\d+\s+[^*\n]+)[*_]{2}\s*$/gm, '### $1');
@@ -2854,7 +2854,7 @@ app.post('/api/interviews/manual-entry', memoryUpload.single('audio'), async (re
     }
 });
 
-// Trigger / Retry AI Draft Scoring on Existing Interview (e.g. Isiah)
+// Trigger / Retry AI Draft Scoring on Existing Interview
 app.post('/api/interviews/generate-draft', async (req, res) => {
     try {
         const { clientId, clientName } = req.body;
@@ -2866,18 +2866,50 @@ app.post('/api/interviews/generate-draft', async (req, res) => {
         }
 
         const transcriptText = fs.readFileSync(transcriptFile, 'utf8');
-        const name = clientName || clientId.split('_')[0];
+        const cleanParts = String(clientId).replace(/^\d+_+/, '').split('_');
+        let center = 'Charleston';
+        let derivedName = cleanParts.join(' ');
+        if (['Charleston', 'Columbia', 'Spartanburg'].includes(cleanParts[cleanParts.length - 1])) {
+            center = cleanParts[cleanParts.length - 1];
+            derivedName = cleanParts.slice(0, -1).join(' ');
+        }
+        const name = clientName || derivedName || clientId.split('_')[0];
+
+        const crimPath = path.join(dataDir, `${clientId}_criminal_history.md`);
+        const crimText = fs.existsSync(crimPath) ? fs.readFileSync(crimPath, 'utf8') : '';
+        const guidePath = path.join(dataDir, `${clientId}_interview_guide.md`);
+        const existingGuide = fs.existsSync(guidePath) ? fs.readFileSync(guidePath, 'utf8') : '';
+        const draftPath = path.join(dataDir, `${clientId}_draft_scoring_form.md`);
+
+        const consultCtx = getParticipantConsultationLscmiContext(name);
+        const collateralText = [
+            consultCtx ? consultCtx.collateralPromptText : '',
+            existingGuide
+        ].filter(Boolean).join('\n\n');
 
         if (!getGeminiApiKey()) {
             return res.status(500).json({ error: 'GEMINI_API_KEY is not configured or is invalid. Please verify Render Environment Variables.' });
         }
 
-        const results = await runPhase1(transcriptText, name);
-        const guidePath = path.join(dataDir, `${clientId}_interview_guide.md`);
-        const draftPath = path.join(dataDir, `${clientId}_draft_scoring_form.md`);
+        const results = await runPhase1(transcriptText, name, center, crimText, collateralText);
+        const resolvedBio = resolveParticipantDobAndAge(consultCtx ? consultCtx.recordId : name, [transcriptText, existingGuide, crimText, collateralText]);
+        const headerMeta = {
+            fullName: name,
+            recordId: consultCtx ? consultCtx.recordId : '',
+            dob: resolvedBio.dob,
+            age: resolvedBio.age,
+            center
+        };
 
-        fs.writeFileSync(guidePath, results.interview_guide);
-        fs.writeFileSync(draftPath, results.draft_scoring_form);
+        const finalGuide = ensureScoringHeaderHasDobAndAge(results.interview_guide || existingGuide, headerMeta);
+        const { validateAndNormalizeLscmiScoringForm } = require('./llm_pipeline');
+        const finalDraft = validateAndNormalizeLscmiScoringForm(
+            ensureScoringHeaderHasDobAndAge(results.draft_scoring_form, headerMeta),
+            headerMeta
+        );
+
+        fs.writeFileSync(guidePath, finalGuide);
+        fs.writeFileSync(draftPath, finalDraft);
 
         convertSingleMdToPdf(guidePath, guidePath.replace(/\.md$/, '.pdf'));
         convertSingleMdToPdf(draftPath, draftPath.replace(/\.md$/, '.pdf'));
@@ -7664,7 +7696,7 @@ app.listen(PORT, async () => {
             console.log(`✅ Apricot Eval Engine synchronized: ${initRes.newNotesProcessed} new notes (${initRes.totalUniqueNotes} total), ${initRes.activeFirstShiftCount} FS, ${initRes.activeReentryNavCount} RN.`);
         }
 
-        if (!fs.existsSync(path.join(dataDir, '.weekly_dedup_dob_v3')) || !fs.existsSync(path.join(dataDir, 'Reante_Baylock_Charleston_draft_scoring_form.md'))) {
+        if (!fs.existsSync(path.join(dataDir, '.weekly_scoring_fixed_v4')) || !fs.existsSync(path.join(dataDir, 'Reante_Baylock_Charleston_draft_scoring_form.md'))) {
             const { generateWeeklyConsultationLscmiPackets } = require('./generate_weekly_consultation_lscmi_packets');
             await generateWeeklyConsultationLscmiPackets();
         } else {

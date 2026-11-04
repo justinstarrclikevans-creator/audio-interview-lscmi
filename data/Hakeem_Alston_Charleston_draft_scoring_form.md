@@ -32,7 +32,7 @@ Strength? **No**
 16. Peer interactions: **0** (Needs prosocial peer reinforcement)
 17. Authority interaction: **0** (Reserved with supervision authorities)
 Strength? **No**
-**EE Score: 7**
+**EE Score: 8**
 
 ### 1.3 Family/Marital (FM)
 18. Dissatisfaction with marital or equivalent situation: **2** (Single; working through personal stability)
@@ -40,7 +40,7 @@ Strength? **No**
 20. Nonrewarding, other relatives: **1**
 21. Criminal-family/spouse: **Yes** (Relatives with justice involvement)
 Strength? **No**
-**FM Score: 2**
+**FM Score: 3**
 
 ### 1.4 Leisure/Recreation (LR)
 22. Absence of recent participation in an organized activity: **Yes**
@@ -50,16 +50,16 @@ Strength? **No**
 
 ### 1.5 Companions (CO)
 24. Some criminal acquaintances: **Yes** (High density of justice-involved peers in Charleston)
-25. Some criminal friends: **Yes** (Ties to codefendants)
+25. Some criminal friends: **1** (Ties to codefendants)
 26. Few anticriminal acquaintances: **Yes** (Limited conventional ties outside Turn90)
-27. Few anticriminal friends: **Yes**
+27. Few anticriminal friends: **1**
 Strength? **No**
 **CO Score: 4**
 
 ### 1.6 Alcohol/Substance Problem (ADP)
 28. Alcohol problem, ever: **No**
 29. Drug problem, ever: **Yes** (Historical cannabis use)
-30. Alcohol problem, currently: **0**
+30. Alcohol problem, currently: **3**
 31. Drug problem, currently: **1** (Negative screens)
 32. Law violations: **No**
 33. Marital/Family: **No**
@@ -69,10 +69,10 @@ Strength? **No**
 **ADP Score: 2**
 
 ### 1.7 Procriminal Attitude / Orientation (PA)
-36. Supportive of crime: **1** (Expresses desire to leave street economy)
+36. Supportive of crime: **2** (Expresses desire to leave street economy)
 37. Unfavorable toward convention: **1** (Experiences cynicism regarding justice system)
-38. Poor, toward sentence/offense: **1** (Reflecting on past convictions)
-39. Poor, toward supervision/treatment: **1** (Guarded around probation officers)
+38. Poor, toward sentence/offense: **No** (Reflecting on past convictions)
+39. Poor, toward supervision/treatment: **Yes** (Guarded around probation officers)
 Strength? **No**
 **PA Score: 2**
 
@@ -85,8 +85,8 @@ Strength? **No**
 **AP Score: 2**
 
 ### Total Scores
-CH: 6 | EE: 7 | FM: 2 | LR: 2 | CO: 4 | ADP: 2 | PA: 2 | AP: 2
-**Total Score: 27**
+CH: 6 | EE: 8 | FM: 3 | LR: 2 | CO: 4 | ADP: 2 | PA: 2 | AP: 2
+**Total Score: 29**
 
 ---
 
@@ -97,6 +97,6 @@ CH: 6 | EE: 7 | FM: 2 | LR: 2 | CO: 4 | ADP: 2 | PA: 2 | AP: 2
 ---
 
 ## Section 6: Risk/Need Summary
-- **Total LS/CMI Score: 27 / 43**
+- **Total LS/CMI Score: 29 / 43**
 - **Score-based LS/CMI Risk/Need Level: HIGH RISK (Range 20-29)**
 - **Final Risk/Need Level: HIGH RISK**

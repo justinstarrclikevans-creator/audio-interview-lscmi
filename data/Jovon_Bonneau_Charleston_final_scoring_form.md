@@ -28,39 +28,39 @@
 12. Less than regular grade 10 or equivalent? **No**
 13. Less than regular grade 12 or equivalent? **No**
 14. Suspended or expelled at least once. **No**
-15. Participation/Performance. **Rate 0**
-16. Peer interactions. **Rate 0**
-17. Authority interaction. **Rate 0**
+15. Participation/Performance. **0**
+16. Peer interactions. **0**
+17. Authority interaction. **0**
 *Strength?* **No**
 **EE Score: 4**
 
 **1.3 Family/Marital (FM)**
-18. Dissatisfaction with marital or equivalent situation. **Rate 3**
-19. Nonrewarding, parental. **Rate 3**
-20. Nonrewarding, other relatives. **Rate 3**
+18. Dissatisfaction with marital or equivalent situation. **3**
+19. Nonrewarding, parental. **3**
+20. Nonrewarding, other relatives. **3**
 21. Criminal-family/spouse. **No**
 *Strength?* **Yes**
 **FM Score: 0**
 
 **1.4 Leisure/Recreation (LR)**
 22. Absence of recent participation in an organized activity. **No**
-23. Could make better use of time. **Rate 3**
+23. Could make better use of time. **3**
 *Strength?* **Yes**
 **LR Score: 0**
 
 **1.5 Companions (CO)**
 24. Some criminal acquaintances. **Yes**
-25. Some criminal friends. **Rate 3**
+25. Some criminal friends. **3**
 26. Few anticriminal acquaintances. **No**
-27. Few anticriminal friends. **Rate 3**
+27. Few anticriminal friends. **3**
 *Strength?* **Yes**
 **CO Score: 1**
 
 **1.6 Alcohol/Drug Problem (ADP)**
 28. Alcohol problem, ever. **Yes**
 29. Drug problem, ever. **No**
-30. Alcohol problem, currently. **Rate 1**
-31. Drug problem, currently. **Rate 3**
+30. Alcohol problem, currently. **1**
+31. Drug problem, currently. **3**
 32. Law violations. **Yes**
 33. Marital/Family. **No**
 34. School/Work. **Yes**
@@ -69,8 +69,8 @@
 **ADP Score: 4**
 
 **1.7 Procriminal Attitude/Orientation (PA)**
-36. Supportive of crime. **Rate 3**
-37. Unfavorable toward convention. **Rate 3**
+36. Supportive of crime. **3**
+37. Unfavorable toward convention. **3**
 38. Poor, toward sentence/offense. **No**
 39. Poor, toward supervision/treatment. **No**
 *Strength?* **Yes**

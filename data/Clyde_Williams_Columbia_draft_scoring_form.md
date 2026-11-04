@@ -32,7 +32,7 @@ Strength? **No**
 16. Peer interactions: **0** (Unemployed/available)
 17. Authority interaction: **0** (Unemployed/available)
 Strength? **No**
-**EE Score: 7**
+**EE Score: 8**
 
 ### 1.3 Family/Marital (FM)
 18. Dissatisfaction with marital or equivalent situation: **3** (Resides with girlfriend in clean, peaceful residential home)
@@ -44,15 +44,15 @@ Strength? **Yes** (Favorable domestic stability with partner)
 
 ### 1.4 Leisure/Recreation (LR)
 22. Absence of recent participation in an organized activity: **Yes** (Lacks formal community club or sports participation)
-23. Could make better use of time: **0** (Daily schedule focused on transit navigation, budgeting, and routine)
+23. Could make better use of time: **3** (Daily schedule focused on transit navigation, budgeting, and routine)
 Strength? **No**
 **LR Score: 1**
 
 ### 1.5 Companions (CO)
 24. Some criminal acquaintances: **Yes** (90% of past social network involved in criminal activity)
-25. Some criminal friends: **Yes** (Maintains contact with justice-involved peers)
+25. Some criminal friends: **1** (Maintains contact with justice-involved peers)
 26. Few anticriminal acquaintances: **No** (Managing through defensive selective isolation: "I do not have friends, I do not talk to strangers")
-27. Few anticriminal friends: **No**
+27. Few anticriminal friends: **2**
 Strength? **No**
 **CO Score: 2**
 
@@ -74,7 +74,7 @@ Strength? **Yes** (Lifelong drug abstinence and sobriety)
 38. Poor, toward sentence/offense: **Yes** (Views past burglary as a "selfish learning stage")
 39. Poor, toward supervision/treatment: **No** (Compliant with reporting requirements despite frustration)
 Strength? **No**
-**PA Score: 1**
+**PA Score: 2**
 
 ### 1.8 Antisocial Pattern (AP)
 40. Specialized assessment for antisocial pattern: **Yes** (Ingrained antisocial pattern identified; high-stress "cut-off" default tendency)
@@ -85,8 +85,8 @@ Strength? **No**
 **AP Score: 3**
 
 ### Total Scores
-CH: 6 | EE: 7 | FM: 1 | LR: 1 | CO: 2 | ADP: 0 | PA: 1 | AP: 3
-**Total Score: 21**
+CH: 6 | EE: 8 | FM: 1 | LR: 1 | CO: 2 | ADP: 0 | PA: 2 | AP: 3
+**Total Score: 23**
 
 ---
 
@@ -98,6 +98,6 @@ CH: 6 | EE: 7 | FM: 1 | LR: 1 | CO: 2 | ADP: 0 | PA: 1 | AP: 3
 ---
 
 ## Section 6: Risk/Need Summary
-- **Total LS/CMI Score: 21 / 43**
+- **Total LS/CMI Score: 23 / 43**
 - **Score-based LS/CMI Risk/Need Level: HIGH RISK (Range 20-29)**
 - **Final Risk/Need Level: HIGH RISK**

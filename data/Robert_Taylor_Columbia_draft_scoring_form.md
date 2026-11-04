@@ -1,4 +1,4 @@
-# LS/CMI Draft Scoring Form (Phase 1 — Consultation Linked)
+# LS/CMI Scoring Form
 
 **Participant Name:** Robert Taylor (Apricot ID: #77653)  
 **Date of Birth (DOB):** Pending Entry in Apricot Bio Info (Verify on State ID) | **Age:** Pending DOB Verification on State ID  
@@ -11,90 +11,134 @@
 
 ### 1.1 Criminal History (CH)
 1. Any prior youth dispositions or adult convictions? **Yes** (Multiple prior convictions; released from SCDC on December 31, 2025)
-2. Two or more prior youth/adult dispositions/convictions? **Yes**
-3. Three or more prior youth/adult dispositions/convictions? **Yes**
+2. Two or more prior youth/adult dispositions/convictions? **Yes** (2 or more prior dispositions/convictions documented)
+3. Three or more prior youth/adult dispositions/convictions? **Yes** (3 or more prior convictions on record)
 4. Three or more present offenses? **No** (No pending criminal charges; traffic tickets/reinstatement fees only.)
-5. Arrested or charged under age 16? **No** (First arrest: Young adulthood)
+5. Arrested or charged under age 16? **No** (First arrest age: Young adulthood)
 6. Ever incarcerated upon conviction? **Yes** (Yes, served state prison sentence in SCDC, released December 31, 2025.)
 7. Ever punished for institutional misconduct or a behavior report? **No** (None reported.)
-8. Charge laid, probation breached, or parole suspended during prior community supervision? **Yes** (Had an initial false start in June 2026 due to a failed preliminary UA before stabilizing and passing orientation drug testing on 10/30/2026.)
-Strength? **No**
-**CH Score: 5**
+8. Charge laid, probation breached, or parole suspended during prior community supervision? **No** (Had an initial false start in June 2026 due to a failed preliminary UA before stabilizing and passing orientation drug testing on 10/30/2026.)
+*Strength?* **No**
+**CH Score: 4**
 
 ### 1.2 Education/Employment (EE)
 9. Currently unemployed? **Yes** (No, only intermittent temp work since SCDC release; started First Shift Columbia on 11/02/2026.)
-10. Frequently unemployed? **Yes** (Intermittent temporary labor assignments between January and October 2026.)
-11. Never employed for a full year? **Yes** (Longest job: Approximately 1 year in warehouse/general labor prior to SCDC sentence.)
-12. Less than regular grade 10 or equivalent? **No** (High School / GED equivalent.)
-13. Less than regular grade 12 or equivalent? **No** (Yes.)
-14. Suspended or expelled at least once? **Yes**
-15. Participation/Performance: **1** (Completed Turn90 Resume with Daisy Boynton on 10/20/2026; pursuing Forklift & SkillCat credentials.)
-16. Peer interactions: **1** (Engaged in Turn90 / Reentry Navigation)
-17. Authority interaction: **1** (Temp assignments ended due to short contracts, lack of driver’s license, and background barriers at Walmart/Amazon.)
-Strength? **No**
-**EE Score: 4**
+10. Frequently unemployed? **Yes** (Past 12 months: Intermittent temporary labor assignments between January and October 2026.)
+11. Never employed for a full year? **No** (Longest continuous job: Approximately 1 year in warehouse/general labor prior to SCDC sentence.)
+12. Less than regular grade 10 or equivalent? **No** (Highest grade: High School / GED equivalent.)
+13. Less than regular grade 12 or equivalent? **No** (High School / GED status: Yes.)
+14. Suspended or expelled at least once? **No** (No school expulsion history reported)
+15. Participation/Performance: **1** (Transitioning from unemployment into structured First Shift workforce training (Completed Turn90 Resume with Daisy Boynton on 10/20/2026; pursuing Forklift & SkillCat credentials.))
+16. Peer interactions: **2** (Constructive, cooperative peer interactions in Turn90 cohort)
+17. Authority interaction: **2** (Respectful with staff and supervisors (Temp assignments ended due to short contracts, lack of driver’s license, and background barriers at Walmart/Amazon.))
+*Strength?* **No**
+**EE Score: 3**
 
 ### 1.3 Family/Marital (FM)
-18. Dissatisfaction with marital or equivalent situation: **1** (Single; resides with his mother; father to 4 children (not on court-ordered child support).)
-19. Nonrewarding, parental: **1** (Staying with his mother in Columbia, SC (1.5 miles from Turn90 Columbia Center))
-20. Nonrewarding, other relatives: **1**
-21. Criminal-family/spouse: **No** (Mother provides stable prosocial housing.)
-Strength? **No**
+18. Dissatisfaction with marital or equivalent situation: **2** (Single; resides with his mother; father to 4 children (not on court-ordered child support).)
+19. Nonrewarding, parental: **2** (Supportive family ties and stable living arrangement (Staying with his mother in Columbia, SC (1.5 miles from Turn90 Columbia Center)))
+20. Nonrewarding, other relatives: **2** (Positive extended family support network)
+21. Criminal-family/spouse: **Yes** (Family criminal history: Mother provides stable prosocial housing.)
+*Strength?* **No**
 **FM Score: 1**
 
 ### 1.4 Leisure/Recreation (LR)
 22. Absence of recent participation in an organized activity: **Yes** (Walking, job searching, spending time with mother and children.)
-23. Could make better use of time: **1**
-Strength? **No**
+23. Could make better use of time: **2** (Structured daily routine centered on First Shift attendance, family, and job readiness)
+*Strength?* **No**
 **LR Score: 1**
 
 ### 1.5 Companions (CO)
-24. Some criminal acquaintances: **Yes** (Historical justice/community exposure)
-25. Some criminal friends: **No**
-26. Few anticriminal acquaintances: **No** (Connected to Turn90 staff, family, and prosocial housing)
-27. Few anticriminal friends: **No**
-Strength? **Yes**
+24. Some criminal acquaintances: **Yes** (Prior neighborhood or justice-involved acquaintances)
+25. Some criminal friends: **2** (Actively distancing from past justice-involved peers)
+26. Few anticriminal acquaintances: **No** (Connected to Turn90 staff, mentors, and prosocial community contacts)
+27. Few anticriminal friends: **2** (Maintains prosocial family and peer support system)
+*Strength?* **No**
 **CO Score: 1**
 
-### 1.6 Alcohol/Substance Problem (ADP)
-28. Alcohol problem, ever: **No**
+### 1.6 Alcohol/Drug Problem (ADP)
+28. Alcohol problem, ever: **No** (No lifetime alcohol dependency reported)
 29. Drug problem, ever: **Yes** (Failed a preliminary UA in June 2026 which delayed First Shift entry; re-engaged in October 2026, passed orientation drug testing, and is maintaining sobriety.)
-30. Alcohol problem, currently: **0**
-31. Drug problem, currently: **2**
-32. Law violations: **Yes**
-33. Marital/Family: **No**
-34. School/Work: **Yes**
+30. Alcohol problem, currently: **3** (No current alcohol impairment; compliant with program standards)
+31. Drug problem, currently: **1** (Early remission / recent history requiring relapse prevention support)
+32. Law violations: **Yes** (Prior substance-related offense or legal involvement)
+33. Marital/Family: **No** (No active substance-related family conflict)
+34. School/Work: **Yes** (Past employment disruption impacted by substance history)
 35. Medical or other health/behavioral indicators? **No**
-Strength? **No**
-**ADP Score: 3**
+*Strength?* **No**
+**ADP Score: 4**
 
-### 1.7 Procriminal Attitude / Orientation (PA)
-36. Supportive of crime: **1** (Committed to prosocial employment and Turn90 participation)
-37. Unfavorable toward convention: **1**
-38. Poor, toward sentence/offense: **No** (Expresses accountability for past choices)
+### 1.7 Procriminal Attitude/Orientation (PA)
+36. Supportive of crime: **2** (Rejects criminal behavior; committed to legitimate employment and family stability)
+37. Unfavorable toward convention: **1** (Working on patience with institutional/workplace rules (Becoming discouraged after repeated online job rejections (Amazon, Walmart, warehouses) and slipping into frustration or substance coping.))
+38. Poor, toward sentence/offense: **No** (Expresses accountability for past choices and focus on moving forward)
 39. Poor, toward supervision/treatment: **No** (Post-release SCDC community reintegration.)
-Strength? **Yes**
+*Strength?* **No**
 **PA Score: 1**
 
 ### 1.8 Antisocial Pattern (AP)
 40. Specialized assessment for antisocial pattern: **No**
-41. Early and diverse antisocial behavior: **No**
-42. Criminal attitude: **No**
-43. Pattern of generalized trouble: **No**
-Strength? **No**
+41. Early and diverse antisocial behavior: **No** (Does not meet dual criteria for early (<16) and diverse antisocial conduct (First arrest: Young adulthood))
+42. Criminal attitude: **Yes** (Cognitive restructuring focus on frustration tolerance and rule adherence)
+43. Pattern of generalized trouble: **No** (Fewer than 4 generalized trouble indicators (1/8: Financial barriers during reentry))
+*Strength?* **No**
 **AP Score: 1**
 
 ### Total Scores
-CH: 5 | EE: 4 | FM: 1 | LR: 1 | CO: 1 | ADP: 3 | PA: 1 | AP: 1
-**Total Score: 17**
+CH: 4 | EE: 3 | FM: 1 | LR: 1 | CO: 1 | ADP: 4 | PA: 1 | AP: 1
+**Total Section 1 Score: 16**
+**Strengths:** None formally scored as Section 1 domain override
 
 ---
 
-## Section 2: Specific Risk/Need & Briefcase Responsivity Factors (Sections 2–5)
-- **Top Dynamic Criminogenic Domains:**
-  1. Work and Follow-Through (Transitioning from Temp Labor to Permanent Career)
-  2. Substance Use & Accountability (Maintaining Clean Weekly UAs Under Stress)
-  3. Time and Structure (Executing DMV Reinstatement & Independent Housing Plan)
+## Section 2: Specific Risk/Need Factors
+
+### 2.1 Personal Problems with Criminogenic Potential
+1. Clear problems of compliance (specific conditions): **No** (Had an initial false start in June 2026 due to a failed preliminary UA before stabilizing and passing orientation drug testing on 10/30/2026.)
+2. Diagnosis of "psychopathy": **No**
+3. Diagnosis of other personality disorder: **No**
+4. Threat from third party: **No**
+5. Problem-solving/self-management skill deficits: **Yes** (Becoming discouraged after repeated online job rejections (Amazon, Walmart, warehouses) and slipping into frustration or substance coping.)
+6. Anger management deficits: **No**
+7. Intimidating/controlling: **No**
+8. Inappropriate sexual activity: **No**
+9. Poor social skills: **No**
+10. Peers outside of age range: **No**
+11. Racist/sexist behavior: **No**
+12. Underachievement: **Yes** (Transitioning to full-time career track via Turn90 First Shift)
+13. Outstanding charges: **No** (No pending criminal charges; traffic tickets/reinstatement fees only.)
+14. Other: **No**
+
+### 2.2 History of Perpetration
+*Sexual Assault (Items 1–7):* All **No**
+*Nonsexual Physical Assault and Other Forms of Violence (Items 8–14):*
+8. Physical assault, extrafamilial - adult victim: **No**
+13. Weapon use: **No**
+*(All other violence items 9–12, 14: **No**)*
+*Other Forms of Antisocial Behavior (Items 15–21):*
+15. Impaired driving: **No**
+16. Shoplifting / Property offense: **No**
+*(Items 17–21 White collar, Gang, Organized crime, Hate crime, Terrorist activity: All **No**)*
+
+---
+
+## Section 4: Other Client Issues
+1. Financial problems: **Yes** (Reentry income transition, resolving fines/fees: Suspended Driver’s License ($1,900 in DMV reinstatement fees plus traffic tickets; candidate for Rainy Day Fund))
+2. Homeless or transient: **No** (Current housing: Staying with his mother in Columbia, SC (1.5 miles from Turn90 Columbia Center))
+3. Accommodation problems: **No**
+4. Immigration issues: **No**
+5. Parenting / Child Support concerns: **Yes** (Has 4 children; not under court-ordered child support arrears.)
+6–15. Health, physical/learning disability, emotional distress indicators: **No**
+16–20. Victimization items: **No**
+21. Other: **No**
+
+---
+
+## Section 5: Special Responsivity Considerations
+1. Motivation as a barrier: **No** (Demonstrates high motivation in First Shift orientation and daily attendance)
+2. Engages in denial/minimization: **No**
+3. Interpersonally anxious / guarded: **No**
+4–10. Gender, cultural, low intelligence, communication, or severe mental disorder barriers: **No**
 - **Briefcase Gate 1 (Vital IDs & Prescriptions):** State ID, Social Security Card, Birth Certificate, and active Welvista prescription coverage
 - **Briefcase Gate 2 (Driver's License, Housing & Legal):** Suspended Driver’s License ($1,900 in DMV reinstatement fees plus traffic tickets; candidate for Rainy Day Fund) | Housing: Staying with his mother in Columbia, SC (1.5 miles from Turn90 Columbia Center)
 - **Briefcase Gate 3 (Child Support & Health/Recovery):** Has 4 children; not under court-ordered child support arrears. | Failed a preliminary UA in June 2026 which delayed First Shift entry; re-engaged in October 2026, passed orientation drug testing, and is maintaining sobriety.
@@ -102,7 +146,71 @@ CH: 5 | EE: 4 | FM: 1 | LR: 1 | CO: 1 | ADP: 3 | PA: 1 | AP: 1
 
 ---
 
-## Section 6: Risk/Need Summary
-- **Total LS/CMI Score: 17 / 43**
-- **Score-based LS/CMI Risk/Need Level: MEDIUM RISK**
-- **Final Risk/Need Level: MEDIUM RISK**
+## Section 6: Risk/Need Summary and Override
+**6.1 Score-Based Risk/Need Level**
+* Total LS/CMI Score: **16 / 43**
+* Score-based LS/CMI Risk/Need Level: **Medium (16)**
+
+**6.2 Assessor/Staff Override**
+* Use the Assessor/Staff Override? **No**
+
+**6.3 Administrative/Policy Override**
+* Use the administration/policy override? **No**
+
+**6.4 Final LS/CMI Risk/Need Level**
+* Final Risk/Need Level: **Medium**
+
+---
+
+## Section 7: Risk/Need Profile
+* **Criminal History (CH):** 4 / 8 (Medium)
+* **Education/Employment (EE):** 3 / 9 (Low)
+* **Family/Marital (FM):** 1 / 4 (Low)
+* **Leisure/Recreation (LR):** 1 / 2 (Medium)
+* **Companions (CO):** 1 / 4 (Low)
+* **Alcohol/Drug Problem (ADP):** 4 / 8 (Medium)
+* **Procriminal Attitude (PA):** 1 / 4 (Low)
+* **Antisocial Pattern (AP):** 1 / 4 (Low)
+* **Overall Classification:** **Medium Risk/Need (16 / 43)**
+
+=================================================================
+
+# CASE MANAGEMENT BRIEF
+
+**1. Risk Profile**
+* **Overall risk level:** Medium (16 / 43)
+* **Top 3 dynamic criminogenic domains:**
+  1. Work and Follow-Through (Transitioning from Temp Labor to Permanent Career)
+  2. Substance Use & Accountability (Maintaining Clean Weekly UAs Under Stress)
+  3. Time and Structure (Executing DMV Reinstatement & Independent Housing Plan)
+* **Domain indicators:**
+  - **Education/Employment (Score 3/9):** No, only intermittent temp work since SCDC release; started First Shift Columbia on 11/02/2026.. Past 12 months: Intermittent temporary labor assignments between January and October 2026.. Longest job: Approximately 1 year in warehouse/general labor prior to SCDC sentence. (Temp assignments ended due to short contracts, lack of driver’s license, and background barriers at Walmart/Amazon.). Education: High School / GED equivalent. (Yes.). Pursuing: Completed Turn90 Resume with Daisy Boynton on 10/20/2026; pursuing Forklift & SkillCat credentials..
+  - **Alcohol/Drug & Recovery (Score 4/8):** Failed a preliminary UA in June 2026 which delayed First Shift entry; re-engaged in October 2026, passed orientation drug testing, and is maintaining sobriety.
+  - **Attitudes, Companions & Self-Management (PA: 1/4, CO: 1/4, AP: 1/4):** Becoming discouraged after repeated online job rejections (Amazon, Walmart, warehouses) and slipping into frustration or substance coping.
+
+**2. Behavioral Indicators**
+* **Primary personal pattern:** Becoming discouraged after repeated online job rejections (Amazon, Walmart, warehouses) and slipping into frustration or substance coping.
+* **Secondary pattern:** Waiting until housing or financial stress reaches an emergency point before communicating with support staff.
+* **Stabilization & follow-through pattern:** Letting the size of his DMV reinstatement balance ($1,900) feel insurmountable instead of tackling it step-by-step through RDF and program milestones.
+
+**3. Pattern Over Time**
+* **Age at first justice involvement:** Young adulthood
+* **Conviction & incarceration history:** Multiple prior convictions; released from SCDC on December 31, 2025. Yes, served state prison sentence in SCDC, released December 31, 2025.
+* **Institutional & supervision history:** Misconduct: None reported.. Supervision breaches: Had an initial false start in June 2026 due to a failed preliminary UA before stabilizing and passing orientation drug testing on 10/30/2026.. Current supervision: Post-release SCDC community reintegration..
+
+**4. Acute / Immediate Stabilization Needs**
+* **Briefcase Gate 1 (Vital IDs):** State ID, Social Security Card, Birth Certificate, and active Welvista prescription coverage
+* **Briefcase Gate 2 (Driver's License & Fines):** Suspended Driver’s License ($1,900 in DMV reinstatement fees plus traffic tickets; candidate for Rainy Day Fund)
+
+**5. Stability Factors**
+* **Housing stability:** Staying with his mother in Columbia, SC (1.5 miles from Turn90 Columbia Center)
+* **Transportation plan:** Lives 1.5 miles from the Columbia center; receives rides when available and walks on days rides are unavailable.
+* **Education & trade credentials:** High School / GED equivalent. (Yes.) | Completed Turn90 Resume with Daisy Boynton on 10/20/2026; pursuing Forklift & SkillCat credentials.
+* **Family & child support:** Single; resides with his mother; father to 4 children (not on court-ordered child support). | Child Support: Has 4 children; not under court-ordered child support arrears.
+
+**6. Legal & Placement Constraints**
+* **Pending charges:** No pending criminal charges; traffic tickets/reinstatement fees only.
+* **Supervision obligations:** Post-release SCDC community reintegration.
+
+**7. Responsivity & Engagement Profile**
+* **Coaching approach:** Responds best to structured, respectful coaching, clear daily expectations, and Turn90 CBT skills (*Stop & Think*, *Problem Solving 4-Step Method*, *Modeling Neutrality*, and *Asking for Help*).

@@ -28,15 +28,15 @@ Strength? **No**
 12. Less than regular grade 10 or equivalent? **No**
 13. Less than regular grade 12 or equivalent? **No** (Earned Associate's Degree in Accounting from Midlands Technical College)
 14. Suspended or expelled at least once? **Yes** (School suspensions in youth)
-15. Participation/Performance: **1** (Skilled trades: commercial gutters, heavy machinery, forklift, mulch manufacturing)
-16. Peer interactions: **1** (Positive communication with coworkers and supervisors)
-17. Authority interaction: **1** (Respectful and open with case managers)
+15. Participation/Performance: **2** (Skilled trades: commercial gutters, heavy machinery, forklift, mulch manufacturing)
+16. Peer interactions: **2** (Positive communication with coworkers and supervisors)
+17. Authority interaction: **2** (Respectful and open with case managers)
 Strength? **Yes** (Associate's degree in accounting and multi-trade technical capability)
 **EE Score: 3**
 
 ### 1.3 Family/Marital (FM)
 18. Dissatisfaction with marital or equivalent situation: **2** (Engaged, shares 6 children with fiancee; works through blended family financial stressors)
-19. Nonrewarding, parental: **1** (Constructive family communication)
+19. Nonrewarding, parental: **2** (Constructive family communication)
 20. Nonrewarding, other relatives: **1**
 21. Criminal-family/spouse: **No**
 Strength? **No**
@@ -44,15 +44,15 @@ Strength? **No**
 
 ### 1.4 Leisure/Recreation (LR)
 22. Absence of recent participation in an organized activity: **Yes**
-23. Could make better use of time: **1** (Active recovery in Oxford House, parenting, and job searching)
+23. Could make better use of time: **2** (Active recovery in Oxford House, parenting, and job searching)
 Strength? **No**
 **LR Score: 1**
 
 ### 1.5 Companions (CO)
 24. Some criminal acquaintances: **Yes** (Past substance-using associates from workplace and community)
-25. Some criminal friends: **No** (Defensively managing recovery network in Oxford House)
+25. Some criminal friends: **2** (Defensively managing recovery network in Oxford House)
 26. Few anticriminal acquaintances: **No** (Active participation in recovery community)
-27. Few anticriminal friends: **No**
+27. Few anticriminal friends: **2**
 Strength? **No**
 **CO Score: 1**
 
@@ -69,12 +69,12 @@ Strength? **No**
 **ADP Score: 5**
 
 ### 1.7 Procriminal Attitude / Orientation (PA)
-36. Supportive of crime: **1** (Strongly denounces criminal offending; focuses on accountability)
-37. Unfavorable toward convention: **1** (Believes in hard work and legitimate child support resolution)
+36. Supportive of crime: **2** (Strongly denounces criminal offending; focuses on accountability)
+37. Unfavorable toward convention: **2** (Believes in hard work and legitimate child support resolution)
 38. Poor, toward sentence/offense: **No** (Full ownership: "Every job I ever lost was my own fault relapsing")
 39. Poor, toward supervision/treatment: **No** (Values structured accountability)
 Strength? **Yes** (Demonstrates high internal motivation and moral accountability)
-**PA Score: 1**
+**PA Score: 0**
 
 ### 1.8 Antisocial Pattern (AP)
 40. Specialized assessment for antisocial pattern: **No**
@@ -85,8 +85,8 @@ Strength? **No**
 **AP Score: 1**
 
 ### Total Scores
-CH: 5 | EE: 3 | FM: 1 | LR: 1 | CO: 1 | ADP: 5 | PA: 1 | AP: 1
-**Total Score: 18**
+CH: 5 | EE: 3 | FM: 1 | LR: 1 | CO: 1 | ADP: 5 | PA: 0 | AP: 1
+**Total Score: 17**
 
 ---
 
@@ -97,6 +97,6 @@ CH: 5 | EE: 3 | FM: 1 | LR: 1 | CO: 1 | ADP: 5 | PA: 1 | AP: 1
 ---
 
 ## Section 6: Risk/Need Summary
-- **Total LS/CMI Score: 18 / 43**
+- **Total LS/CMI Score: 17 / 43**
 - **Score-based LS/CMI Risk/Need Level: MEDIUM RISK (Range 11-19)**
 - **Final Risk/Need Level: MEDIUM RISK**

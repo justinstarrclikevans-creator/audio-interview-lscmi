@@ -32,7 +32,7 @@ Strength? **No**
 16. Peer interactions: **1** (Adequate peer relationships in structured work settings)
 17. Authority interaction: **0** (Friction with supervisory authority under stress)
 Strength? **No**
-**EE Score: 6**
+**EE Score: 7**
 
 ### 1.3 Family/Marital (FM)
 18. Dissatisfaction with marital or equivalent situation: **2** (Unpartnered / navigating dating relationships)
@@ -46,13 +46,13 @@ Strength? **No**
 22. Absence of recent participation in an organized activity: **Yes** (Lacks structured prosocial sports, civic, or hobby groups)
 23. Could make better use of time: **0** (Unstructured daily free time during transition)
 Strength? **No**
-**LR Score: 1**
+**LR Score: 2**
 
 ### 1.5 Companions (CO)
 24. Some criminal acquaintances: **Yes** (Associates from North Charleston and incarceration)
-25. Some criminal friends: **Yes** (Co-defendants on past property/robbery offenses)
+25. Some criminal friends: **1** (Co-defendants on past property/robbery offenses)
 26. Few anticriminal acquaintances: **Yes** (Few conventional prosocial peers)
-27. Few anticriminal friends: **Yes** (Relies heavily on justice-involved social network)
+27. Few anticriminal friends: **1** (Relies heavily on justice-involved social network)
 Strength? **No**
 **CO Score: 4**
 
@@ -74,7 +74,7 @@ Strength? **No**
 38. Poor, toward sentence/offense: **Yes** (Minimizes impact of past robbery/conspiracy involvement)
 39. Poor, toward supervision/treatment: **Yes** (Frustration with supervision requirements and SCDPPP restrictions)
 Strength? **No**
-**PA Score: 2**
+**PA Score: 4**
 
 ### 1.8 Antisocial Pattern (AP)
 40. Specialized assessment for antisocial pattern: **No**
@@ -85,8 +85,8 @@ Strength? **No**
 **AP Score: 3**
 
 ### Total Scores
-CH: 7 | EE: 6 | FM: 2 | LR: 1 | CO: 4 | ADP: 2 | PA: 2 | AP: 3
-**Total Score: 27**
+CH: 7 | EE: 7 | FM: 2 | LR: 2 | CO: 4 | ADP: 2 | PA: 4 | AP: 3
+**Total Score: 31**
 
 ---
 
@@ -98,6 +98,6 @@ CH: 7 | EE: 6 | FM: 2 | LR: 1 | CO: 4 | ADP: 2 | PA: 2 | AP: 3
 ---
 
 ## Section 6: Risk/Need Summary
-- **Total LS/CMI Score: 27 / 43**
+- **Total LS/CMI Score: 31 / 43**
 - **Score-based LS/CMI Risk/Need Level: HIGH RISK (Range 20-29)**
 - **Final Risk/Need Level: HIGH RISK**

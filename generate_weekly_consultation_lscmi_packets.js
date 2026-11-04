@@ -1141,9 +1141,142 @@ function buildInterviewGuideMd(p, collateralPromptText) {
     return lines.join('\n');
 }
 
-function buildScoringFormMd(p, isFinal = true) {
-    const s = p.scores;
-    const title = isFinal ? `# LS/CMI Final Scoring Form (Consultation & Intake Triangulated)` : `# LS/CMI Draft Scoring Form (Phase 1 — Consultation Linked)`;
+function buildScoringFormMd(p, isFinal = false, extraTexts = []) {
+    const combinedText = [
+        p.adultConvictions, p.incarceratedEver, p.instMisconduct, p.supervisionBreach,
+        p.supervisionDetails, p.pendingCharges, p.employedNow, p.monthsWorked12,
+        p.longestJob, p.whyJobsEnded, p.gradeCompleted, p.hasGedOrHs, p.substanceHistory,
+        p.parentCriminalRecord, p.personalPattern1, p.personalPattern2, p.personalPattern3,
+        ...(Array.isArray(extraTexts) ? extraTexts : [])
+    ].join(' \n ');
+
+    // --- 1.1 Criminal History (CH: Items 1–8) ---
+    const ch1 = true; // All Turn90 First Shift participants have at least 1 prior justice conviction/disposition
+    const has3PlusConv = /\b([3-9]|\d{2,})\s*(?:prior|adult|felony|misdemeanor|conviction|arrest|charge)|multiple\s+(?:prior\s+)?(?:felony|adult|conviction)|extensive/i.test(p.adultConvictions) || (p.scores && p.scores.ch >= 5);
+    const has2PlusConv = has3PlusConv || /\b2\s*(?:prior|adult|conviction|charge)|two|multiple|prior\s+adult\s+convictions/i.test(p.adultConvictions) || (p.scores && p.scores.ch >= 3);
+    const ch2 = !!has2PlusConv;
+    const ch3 = !!has3PlusConv;
+    const ch4 = /\b([3-9])\s*(?:present|current|pending)\s*(?:offense|charge|count)/i.test(p.pendingCharges);
+    const ch5 = /\b(10|11|12|13|14|15)\b/.test(String(p.firstArrestAge || ''));
+    const ch6 = !/\bnever incarcerated\b/i.test(String(p.incarceratedEver || ''));
+    const ch7 = /\b(yes|infraction|misconduct|disciplinary|segregation|lockup|write-?up|report)\b/i.test(String(p.instMisconduct || '')) && !/\b(no\b|none|no major|clean disciplinary)\b/i.test(String(p.instMisconduct || ''));
+    const ch8 = /\b(yes|breach|violat|revok|suspended|technical|hold)\b/i.test(String(p.supervisionBreach || '')) && !/\b(no\b|none|compliant)\b/i.test(String(p.supervisionBreach || ''));
+
+    const chScore = [ch1, ch2, ch3, ch4, ch5, ch6, ch7, ch8].filter(Boolean).length;
+
+    // --- 1.2 Education/Employment (EE: Items 9–17) ---
+    const ee9 = !/^yes\b/i.test(String(p.employedNow || '').trim());
+    const ee10 = /\b(0|1|2|3|4|5)\s*month|sporadic|unemployed|transitioning|interrupted|incarcerated/i.test(String(p.monthsWorked12 || '')) || ee9;
+    const hasFullYearJob = /\b([1-9]\d*)\+?\s*year|12\s*month|18\s*month|24\s*month|over\s+a\s+year|full\s+year/i.test(String(p.longestJob || '')) && !/\b(under\s+1\s+year|less\s+than\s+1\s+year|< ?1\s+year)\b/i.test(String(p.longestJob || ''));
+    const ee11 = !hasFullYearJob;
+    const hasHsOrGed = /^yes\b|\b(ged|high school diploma|hs diploma|graduated|associate|college)\b/i.test(String(p.hasGedOrHs || '')) && !/^no\b/i.test(String(p.hasGedOrHs || '').trim());
+    const ee12 = !hasHsOrGed && /\b(6th|7th|8th|9th)\b/i.test(String(p.gradeCompleted || ''));
+    const ee13 = !hasHsOrGed;
+    const ee14 = /\b(suspend|expel)\b/i.test(combinedText) || (p.scores && p.scores.ee >= 5);
+
+    // Items 15–17 (Rated 3 to 0: 3=Satisfactory [0 pts], 2=Relatively Satisfactory [0 pts], 1=Relatively Unsatisfactory [+1 pt], 0=Very Unsatisfactory/Unemployed [+1 pt])
+    // In Turn90 First Shift, participants are actively enrolled in structured paid workforce readiness training (15 & 16 rated 2 unless acute barrier; 17 rated 1 if authority/feedback friction or 2 if cooperative)
+    const ee15Rating = ee9 && (p.scores && p.scores.ee >= 6) ? 0 : ((p.scores && p.scores.ee >= 4 && !ee11 && !ee13) ? 1 : 2);
+    const ee16Rating = (p.scores && p.scores.ee >= 7) ? 1 : 2;
+    const hasWorkplaceFriction = /\b(conflict|anger|argu|authority|walked off|quit|fired|attendance|frustrat)\b/i.test(String(p.whyJobsEnded || '') + ' ' + String(p.personalPattern1 || ''));
+    const ee17Rating = hasWorkplaceFriction ? 1 : 2;
+
+    const eeScore = [ee9, ee10, ee11, ee12, ee13, ee14].filter(Boolean).length
+        + [ee15Rating, ee16Rating, ee17Rating].filter(r => r <= 1).length;
+
+    // --- 1.3 Family/Marital (FM: Items 18–21) ---
+    const hasPartnerStrain = /\b(strain|conflict|divorc|separat|unstable|argument|stress)\b/i.test(String(p.maritalStatus || ''));
+    const fm18Rating = hasPartnerStrain ? 1 : 2;
+    const hasFamilyStrain = /\b(transitional|shelter|motel|strain|tension|limited|estranged)\b/i.test(String(p.address || '') + ' ' + String(p.personalPattern2 || ''));
+    const fm19Rating = hasFamilyStrain ? 1 : 2;
+    const fm20Rating = (p.scores && p.scores.fm >= 2) ? 1 : 2;
+    const fm21 = /\b(yes|prior|extensive|family member|brother|father|mother|parent|cousin)\b/i.test(String(p.parentCriminalRecord || '')) && !/^(no\b|none)/i.test(String(p.parentCriminalRecord || '').trim());
+
+    const fmScore = [fm18Rating, fm19Rating, fm20Rating].filter(r => r <= 1).length + (fm21 ? 1 : 0);
+
+    // --- 1.4 Leisure/Recreation (LR: Items 22–23) ---
+    const hasOrganizedActivity = /\b(church|gym|sports|league|club|ministry|oxford house|volunteer)\b/i.test(String(p.freeTime || ''));
+    const lr22 = !hasOrganizedActivity;
+    const lr23Rating = (p.scores && p.scores.lr >= 2) ? 1 : 2;
+    const lrScore = (lr22 ? 1 : 0) + (lr23Rating <= 1 ? 1 : 0);
+
+    // --- 1.5 Companions (CO: Items 24–27) ---
+    const co24 = true; // Historical justice/community acquaintances
+    const co25Rating = (p.scores && p.scores.co >= 2) ? 1 : 2;
+    const co26 = (p.scores && p.scores.co >= 4) ? true : false;
+    const co27Rating = (p.scores && p.scores.co >= 3) ? 1 : 2;
+    const coScore = (co24 ? 1 : 0) + (co25Rating <= 1 ? 1 : 0) + (co26 ? 1 : 0) + (co27Rating <= 1 ? 1 : 0);
+
+    // --- 1.6 Alcohol/Drug Problem (ADP: Items 28–35) ---
+    const subText = String(p.substanceHistory || '');
+    const noSubEver = /\b(no history of substance|denies substance|lifelong abstainer|never used|no alcohol or drug)\b/i.test(subText) && (p.scores && p.scores.adp === 0);
+    const adp28 = !noSubEver && /\b(alcohol|drinking|beer|liquor|dui)\b/i.test(subText);
+    const adp29 = !noSubEver && (!adp28 || /\b(marijuana|cannabis|thc|weed|drug|cocaine|opioid|meth|pill|substance|possession|pwisd|recovery|screen)\b/i.test(subText));
+    const adp30Rating = adp28 ? ((p.scores && p.scores.adp >= 4) ? 1 : 2) : 3;
+    const adp31Rating = adp29 ? ((p.scores && p.scores.adp >= 3) ? 1 : 2) : 3;
+    const adp32 = (adp28 || adp29) && (/\b(possession|pwisd|distribution|trafficking|drug|dui|charge|arrest|law)\b/i.test(subText + ' ' + p.adultConvictions) || (p.scores && p.scores.adp >= 2));
+    const adp33 = (adp28 || adp29) && (p.scores && p.scores.adp >= 4);
+    const adp34 = (adp28 || adp29) && (p.scores && p.scores.adp >= 3);
+    const adp35 = false;
+    const adpScore = [adp28, adp29, adp32, adp33, adp34, adp35].filter(Boolean).length
+        + [adp30Rating, adp31Rating].filter(r => r <= 1).length;
+
+    // --- 1.7 Procriminal Attitude / Orientation (PA: Items 36–39) ---
+    const pa36Rating = (p.scores && p.scores.pa >= 2) ? 1 : 2;
+    const pa37Rating = (p.scores && p.scores.pa >= 1) ? 1 : 2;
+    const pa38 = false;
+    const pa39 = false;
+    const paScore = [pa36Rating, pa37Rating].filter(r => r <= 1).length + (pa38 ? 1 : 0) + (pa39 ? 1 : 0);
+
+    // --- 1.8 Antisocial Pattern (AP: Items 40–43) ---
+    const ap40 = false;
+    const ap41 = ch5 && (ch8 || /\b(assault|robbery|weapon|violence|burglary)\b/i.test(String(p.adultConvictions || '')));
+    const ap42 = (pa36Rating <= 1 || pa37Rating <= 1 || pa39);
+    // Count 43a–43h risk items (43a=Financial problems [true for reentry], 43b=3+ address changes [false], 43c=ee11, 43d=ee12, 43e=ee14, 43f=fm19<=1, 43g=lr23<=1, 43h=co27<=1)
+    const troubleItems = [];
+    troubleItems.push('Financial barriers during reentry');
+    if (ee11) troubleItems.push('Never employed full year (Item 11)');
+    if (ee12) troubleItems.push('Less than grade 10 (Item 12)');
+    if (ee14) troubleItems.push('School suspension history (Item 14)');
+    if (fm19Rating <= 1) troubleItems.push('Parental/family strain (Item 19)');
+    if (lr23Rating <= 1) troubleItems.push('Unstructured time (Item 23)');
+    if (co27Rating <= 1) troubleItems.push('Limited anticriminal friends (Item 27)');
+    const ap43 = troubleItems.length >= 4;
+    const apScore = [ap40, ap41, ap42, ap43].filter(Boolean).length;
+
+    const totalScore = chScore + eeScore + fmScore + lrScore + coScore + adpScore + paScore + apScore;
+    const riskLevel = totalScore >= 30 ? 'Very High' : (totalScore >= 20 ? 'High' : (totalScore >= 11 ? 'Medium' : (totalScore >= 5 ? 'Low' : 'Very Low')));
+
+    // Keep p.scores synchronized with the exact item-level math
+    p.scores = {
+        ch: chScore,
+        ee: eeScore,
+        fm: fmScore,
+        lr: lrScore,
+        co: coScore,
+        adp: adpScore,
+        pa: paScore,
+        ap: apScore,
+        total: totalScore,
+        riskLevel: `${riskLevel.toUpperCase()} RISK`
+    };
+
+    const strengthsList = [];
+    if (chScore === 0) strengthsList.push('CH');
+    if (eeScore <= 1 && ee15Rating >= 2 && ee16Rating >= 2 && ee17Rating >= 2) strengthsList.push('EE');
+    if (fmScore === 0) strengthsList.push('FM');
+    if (lrScore === 0) strengthsList.push('LR');
+    if (coScore === 0) strengthsList.push('CO');
+    if (adpScore === 0) strengthsList.push('ADP');
+    if (paScore === 0) strengthsList.push('PA');
+    if (apScore === 0) strengthsList.push('AP');
+
+    const hasAssault = /\b(assault|battery|abh|abhan|domestic|fighting|violence|manslaughter)\b/i.test(p.adultConvictions);
+    const hasWeapon = /\b(weapon|firearm|gun|handgun|pistol|armed)\b/i.test(p.adultConvictions);
+    const hasDui = /\b(dui|driving under|impaired)\b/i.test(p.adultConvictions);
+    const hasProperty = /\b(shoplift|larceny|burglary|theft|breaking|stolen|property)\b/i.test(p.adultConvictions);
+
+    const title = `# LS/CMI Scoring Form`;
     return `${title}
 
 **Participant Name:** ${p.fullName} (Apricot ID: #${p.recordId})  
@@ -1156,91 +1289,135 @@ function buildScoringFormMd(p, isFinal = true) {
 ## Section 1: General Risk/Need Factors
 
 ### 1.1 Criminal History (CH)
-1. Any prior youth dispositions or adult convictions? **Yes** (${p.adultConvictions})
-2. Two or more prior youth/adult dispositions/convictions? **${s.ch >= 3 ? 'Yes' : 'No'}**
-3. Three or more prior youth/adult dispositions/convictions? **${s.ch >= 5 ? 'Yes' : 'No'}**
-4. Three or more present offenses? **No** (${p.pendingCharges})
-5. Arrested or charged under age 16? **${/13|14|15/.test(p.firstArrestAge) ? 'Yes' : 'No'}** (First arrest: ${p.firstArrestAge})
-6. Ever incarcerated upon conviction? **Yes** (${p.incarceratedEver})
-7. Ever punished for institutional misconduct or a behavior report? **${s.ch >= 6 ? 'Yes' : 'No'}** (${p.instMisconduct})
-8. Charge laid, probation breached, or parole suspended during prior community supervision? **${s.ch >= 4 ? 'Yes' : 'No'}** (${p.supervisionBreach})
-Strength? **No**
-**CH Score: ${s.ch}**
+1. Any prior youth dispositions or adult convictions? **${ch1 ? 'Yes' : 'No'}** (${p.adultConvictions})
+2. Two or more prior youth/adult dispositions/convictions? **${ch2 ? 'Yes' : 'No'}** (${ch2 ? '2 or more prior dispositions/convictions documented' : 'Single primary conviction history'})
+3. Three or more prior youth/adult dispositions/convictions? **${ch3 ? 'Yes' : 'No'}** (${ch3 ? '3 or more prior convictions on record' : 'Fewer than 3 prior convictions'})
+4. Three or more present offenses? **${ch4 ? 'Yes' : 'No'}** (${p.pendingCharges})
+5. Arrested or charged under age 16? **${ch5 ? 'Yes' : 'No'}** (First arrest age: ${p.firstArrestAge})
+6. Ever incarcerated upon conviction? **${ch6 ? 'Yes' : 'No'}** (${p.incarceratedEver})
+7. Ever punished for institutional misconduct or a behavior report? **${ch7 ? 'Yes' : 'No'}** (${p.instMisconduct})
+8. Charge laid, probation breached, or parole suspended during prior community supervision? **${ch8 ? 'Yes' : 'No'}** (${p.supervisionBreach})
+*Strength?* **${chScore === 0 ? 'Yes' : 'No'}**
+**CH Score: ${chScore}**
 
 ### 1.2 Education/Employment (EE)
-9. Currently unemployed? **${p.employedNow.startsWith('Yes') ? 'No' : 'Yes'}** (${p.employedNow})
-10. Frequently unemployed? **${s.ee >= 3 ? 'Yes' : 'No'}** (${p.monthsWorked12})
-11. Never employed for a full year? **${s.ee >= 4 ? 'Yes' : 'No'}** (Longest job: ${p.longestJob})
-12. Less than regular grade 10 or equivalent? **${p.gradeCompleted.includes('9th') && !p.hasGedOrHs.includes('Yes') ? 'Yes' : 'No'}** (${p.gradeCompleted})
-13. Less than regular grade 12 or equivalent? **${p.hasGedOrHs.startsWith('Yes') ? 'No' : 'Yes'}** (${p.hasGedOrHs})
-14. Suspended or expelled at least once? **${s.ee >= 4 ? 'Yes' : 'No'}**
-15. Participation/Performance: **1** (${p.certifications})
-16. Peer interactions: **1** (Engaged in Turn90 / Reentry Navigation)
-17. Authority interaction: **${s.pa >= 2 ? '2' : '1'}** (${p.whyJobsEnded})
-Strength? **${s.ee <= 2 ? 'Yes' : 'No'}**
-**EE Score: ${s.ee}**
+9. Currently unemployed? **${ee9 ? 'Yes' : 'No'}** (${p.employedNow})
+10. Frequently unemployed? **${ee10 ? 'Yes' : 'No'}** (Past 12 months: ${p.monthsWorked12})
+11. Never employed for a full year? **${ee11 ? 'Yes' : 'No'}** (Longest continuous job: ${p.longestJob})
+12. Less than regular grade 10 or equivalent? **${ee12 ? 'Yes' : 'No'}** (Highest grade: ${p.gradeCompleted})
+13. Less than regular grade 12 or equivalent? **${ee13 ? 'Yes' : 'No'}** (High School / GED status: ${p.hasGedOrHs})
+14. Suspended or expelled at least once? **${ee14 ? 'Yes' : 'No'}** (${ee14 ? 'Prior school disciplinary suspension reported' : 'No school expulsion history reported'})
+15. Participation/Performance: **${ee15Rating}** (${ee15Rating >= 2 ? `Engaged in Turn90 First Shift workforce readiness and pursuing credentials (${p.certifications})` : `Transitioning from unemployment into structured First Shift workforce training (${p.certifications})`})
+16. Peer interactions: **${ee16Rating}** (${ee16Rating >= 2 ? 'Constructive, cooperative peer interactions in Turn90 cohort' : 'Developing prosocial workplace peer communication skills'})
+17. Authority interaction: **${ee17Rating}** (${ee17Rating >= 2 ? `Respectful with staff and supervisors (${p.whyJobsEnded})` : `Practicing Modeling Neutrality and accepting feedback under stress (${p.whyJobsEnded})`})
+*Strength?* **${eeScore <= 1 && ee15Rating >= 2 ? 'Yes' : 'No'}**
+**EE Score: ${eeScore}**
 
 ### 1.3 Family/Marital (FM)
-18. Dissatisfaction with marital or equivalent situation: **${s.fm >= 2 ? '2' : '1'}** (${p.maritalStatus})
-19. Nonrewarding, parental: **${s.fm >= 2 ? '2' : '1'}** (${p.address})
-20. Nonrewarding, other relatives: **1**
-21. Criminal-family/spouse: **${/yes|extensive/i.test(p.parentCriminalRecord) ? 'Yes' : 'No'}** (${p.parentCriminalRecord})
-Strength? **${s.fm === 0 ? 'Yes' : 'No'}**
-**FM Score: ${s.fm}**
+18. Dissatisfaction with marital or equivalent situation: **${fm18Rating}** (${p.maritalStatus})
+19. Nonrewarding, parental: **${fm19Rating}** (${fm19Rating >= 2 ? `Supportive family ties and stable living arrangement (${p.address})` : `Navigating reentry stabilization and family expectations (${p.address})`})
+20. Nonrewarding, other relatives: **${fm20Rating}** (${fm20Rating >= 2 ? 'Positive extended family support network' : 'Limited extended kin financial/logistical buffer'})
+21. Criminal-family/spouse: **${fm21 ? 'Yes' : 'No'}** (Family criminal history: ${p.parentCriminalRecord})
+*Strength?* **${fmScore === 0 ? 'Yes' : 'No'}**
+**FM Score: ${fmScore}**
 
 ### 1.4 Leisure/Recreation (LR)
-22. Absence of recent participation in an organized activity: **${s.lr >= 1 ? 'Yes' : 'No'}** (${p.freeTime})
-23. Could make better use of time: **${s.lr >= 2 ? '2' : (s.lr === 1 ? '1' : '0')}**
-Strength? **${s.lr === 0 ? 'Yes' : 'No'}**
-**LR Score: ${s.lr}**
+22. Absence of recent participation in an organized activity: **${lr22 ? 'Yes' : 'No'}** (${p.freeTime})
+23. Could make better use of time: **${lr23Rating}** (${lr23Rating >= 2 ? 'Structured daily routine centered on First Shift attendance, family, and job readiness' : 'Needs structured prosocial leisure activities outside work hours'})
+*Strength?* **${lrScore === 0 ? 'Yes' : 'No'}**
+**LR Score: ${lrScore}**
 
 ### 1.5 Companions (CO)
-24. Some criminal acquaintances: **Yes** (Historical justice/community exposure)
-25. Some criminal friends: **${s.co >= 2 ? 'Yes' : 'No'}**
-26. Few anticriminal acquaintances: **No** (Connected to Turn90 staff, family, and prosocial housing)
-27. Few anticriminal friends: **${s.co >= 3 ? 'Yes' : 'No'}**
-Strength? **${s.co <= 1 ? 'Yes' : 'No'}**
-**CO Score: ${s.co}**
+24. Some criminal acquaintances: **${co24 ? 'Yes' : 'No'}** (Prior neighborhood or justice-involved acquaintances)
+25. Some criminal friends: **${co25Rating}** (${co25Rating >= 2 ? 'Actively distancing from past justice-involved peers' : 'Has prior justice-involved peers in social circle; establishing boundaries'})
+26. Few anticriminal acquaintances: **${co26 ? 'Yes' : 'No'}** (Connected to Turn90 staff, mentors, and prosocial community contacts)
+27. Few anticriminal friends: **${co27Rating}** (${co27Rating >= 2 ? 'Maintains prosocial family and peer support system' : 'Small prosocial circle; building positive peer network in First Shift'})
+*Strength?* **${coScore === 0 ? 'Yes' : 'No'}**
+**CO Score: ${coScore}**
 
-### 1.6 Alcohol/Substance Problem (ADP)
-28. Alcohol problem, ever: **No**
-29. Drug problem, ever: **${s.adp >= 1 ? 'Yes' : 'No'}** (${p.substanceHistory})
-30. Alcohol problem, currently: **0**
-31. Drug problem, currently: **${s.adp >= 3 ? '2' : (s.adp >= 1 ? '1' : '0')}**
-32. Law violations: **${s.adp >= 2 ? 'Yes' : 'No'}**
-33. Marital/Family: **No**
-34. School/Work: **${s.adp >= 3 ? 'Yes' : 'No'}**
-35. Medical or other health/behavioral indicators? **No**
-Strength? **${s.adp === 0 ? 'Yes' : 'No'}**
-**ADP Score: ${s.adp}**
+### 1.6 Alcohol/Drug Problem (ADP)
+28. Alcohol problem, ever: **${adp28 ? 'Yes' : 'No'}** (${adp28 ? 'Historical alcohol use noted' : 'No lifetime alcohol dependency reported'})
+29. Drug problem, ever: **${adp29 ? 'Yes' : 'No'}** (${p.substanceHistory})
+30. Alcohol problem, currently: **${adp30Rating}** (${adp30Rating >= 2 ? 'No current alcohol impairment; compliant with program standards' : 'Requires ongoing sobriety monitoring'})
+31. Drug problem, currently: **${adp31Rating}** (${adp31Rating >= 2 ? 'Abstinent / sustained remission; compliant with Turn90 drug screening' : 'Early remission / recent history requiring relapse prevention support'})
+32. Law violations: **${adp32 ? 'Yes' : 'No'}** (${adp32 ? 'Prior substance-related offense or legal involvement' : 'No current substance-related law violations'})
+33. Marital/Family: **${adp33 ? 'Yes' : 'No'}** (${adp33 ? 'Past relationship strain associated with substance use' : 'No active substance-related family conflict'})
+34. School/Work: **${adp34 ? 'Yes' : 'No'}** (${adp34 ? 'Past employment disruption impacted by substance history' : 'No active substance-related work impairment'})
+35. Medical or other health/behavioral indicators? **${adp35 ? 'Yes' : 'No'}**
+*Strength?* **${adpScore === 0 ? 'Yes' : 'No'}**
+**ADP Score: ${adpScore}**
 
-### 1.7 Procriminal Attitude / Orientation (PA)
-36. Supportive of crime: **1** (Committed to prosocial employment and Turn90 participation)
-37. Unfavorable toward convention: **${s.pa >= 2 ? '2' : '1'}**
-38. Poor, toward sentence/offense: **No** (Expresses accountability for past choices)
-39. Poor, toward supervision/treatment: **No** (${p.supervisionDetails})
-Strength? **${s.pa <= 1 ? 'Yes' : 'No'}**
-**PA Score: ${s.pa}**
+### 1.7 Procriminal Attitude/Orientation (PA)
+36. Supportive of crime: **${pa36Rating}** (${pa36Rating >= 2 ? 'Rejects criminal behavior; committed to legitimate employment and family stability' : 'Historical rationalization under financial or peer stress; addressing via CBT'})
+37. Unfavorable toward convention: **${pa37Rating}** (${pa37Rating >= 2 ? 'Values steady employment, trade credentials, and lawful stability' : `Working on patience with institutional/workplace rules (${p.personalPattern1})`})
+38. Poor, toward sentence/offense: **${pa38 ? 'Yes' : 'No'}** (Expresses accountability for past choices and focus on moving forward)
+39. Poor, toward supervision/treatment: **${pa39 ? 'Yes' : 'No'}** (${p.supervisionDetails})
+*Strength?* **${paScore === 0 ? 'Yes' : 'No'}**
+**PA Score: ${paScore}**
 
 ### 1.8 Antisocial Pattern (AP)
-40. Specialized assessment for antisocial pattern: **No**
-41. Early and diverse antisocial behavior: **${/13|14|15/.test(p.firstArrestAge) ? 'Yes' : 'No'}**
-42. Criminal attitude: **No**
-43. Pattern of generalized trouble: **${s.ap >= 2 ? 'Yes' : 'No'}**
-Strength? **${s.ap === 0 ? 'Yes' : 'No'}**
-**AP Score: ${s.ap}**
+40. Specialized assessment for antisocial pattern: **${ap40 ? 'Yes' : 'No'}**
+41. Early and diverse antisocial behavior: **${ap41 ? 'Yes' : 'No'}** (${ap41 ? `Early justice contact (${p.firstArrestAge}) and prior justice history` : `Does not meet dual criteria for early (<16) and diverse antisocial conduct (First arrest: ${p.firstArrestAge})`})
+42. Criminal attitude: **${ap42 ? 'Yes' : 'No'}** (${ap42 ? 'Cognitive restructuring focus on frustration tolerance and rule adherence' : 'Prosocial attitude toward employment, supervision, and Turn90 participation'})
+43. Pattern of generalized trouble: **${ap43 ? 'Yes' : 'No'}** (${ap43 ? `${troubleItems.length} of 8 generalized trouble indicators present: ${troubleItems.join(', ')}` : `Fewer than 4 generalized trouble indicators (${troubleItems.length}/8: ${troubleItems.join(', ')})`})
+*Strength?* **${apScore === 0 ? 'Yes' : 'No'}**
+**AP Score: ${apScore}**
 
 ### Total Scores
-CH: ${s.ch} | EE: ${s.ee} | FM: ${s.fm} | LR: ${s.lr} | CO: ${s.co} | ADP: ${s.adp} | PA: ${s.pa} | AP: ${s.ap}
-**Total Score: ${s.total}**
+CH: ${chScore} | EE: ${eeScore} | FM: ${fmScore} | LR: ${lrScore} | CO: ${coScore} | ADP: ${adpScore} | PA: ${paScore} | AP: ${apScore}
+**Total Section 1 Score: ${totalScore}**
+**Strengths:** ${strengthsList.length > 0 ? strengthsList.join(', ') : 'None formally scored as Section 1 domain override'}
 
 ---
 
-## Section 2: Specific Risk/Need & Briefcase Responsivity Factors (Sections 2–5)
-- **Top Dynamic Criminogenic Domains:**
-  1. ${p.cbtFocus1}
-  2. ${p.cbtFocus2}
-  3. ${p.cbtFocus3}
+## Section 2: Specific Risk/Need Factors
+
+### 2.1 Personal Problems with Criminogenic Potential
+1. Clear problems of compliance (specific conditions): **${ch8 ? 'Yes' : 'No'}** (${p.supervisionBreach})
+2. Diagnosis of "psychopathy": **No**
+3. Diagnosis of other personality disorder: **No**
+4. Threat from third party: **No**
+5. Problem-solving/self-management skill deficits: **Yes** (${p.personalPattern1})
+6. Anger management deficits: **${hasAssault || /anger|temper|confrontation/i.test(p.personalPattern1) ? 'Yes' : 'No'}**
+7. Intimidating/controlling: **No**
+8. Inappropriate sexual activity: **No**
+9. Poor social skills: **No**
+10. Peers outside of age range: **No**
+11. Racist/sexist behavior: **No**
+12. Underachievement: **${ee10 || ee11 ? 'Yes' : 'No'}** (Transitioning to full-time career track via Turn90 First Shift)
+13. Outstanding charges: **${!/\b(no pending|none)\b/i.test(p.pendingCharges) && /pending|court|charge/i.test(p.pendingCharges) ? 'Yes' : 'No'}** (${p.pendingCharges})
+14. Other: **No**
+
+### 2.2 History of Perpetration
+*Sexual Assault (Items 1–7):* All **No**
+*Nonsexual Physical Assault and Other Forms of Violence (Items 8–14):*
+8. Physical assault, extrafamilial - adult victim: **${hasAssault ? 'Yes' : 'No'}**
+13. Weapon use: **${hasWeapon ? 'Yes' : 'No'}**
+*(All other violence items 9–12, 14: **No**)*
+*Other Forms of Antisocial Behavior (Items 15–21):*
+15. Impaired driving: **${hasDui ? 'Yes' : 'No'}**
+16. Shoplifting / Property offense: **${hasProperty ? 'Yes' : 'No'}**
+*(Items 17–21 White collar, Gang, Organized crime, Hate crime, Terrorist activity: All **No**)*
+
+---
+
+## Section 4: Other Client Issues
+1. Financial problems: **Yes** (Reentry income transition, resolving fines/fees: ${p.dlStatus})
+2. Homeless or transient: **${/shelter|transitional|motel|homeless/i.test(p.address) ? 'Yes' : 'No'}** (Current housing: ${p.address})
+3. Accommodation problems: **No**
+4. Immigration issues: **No**
+5. Parenting / Child Support concerns: **${/arrear|behind|obligat|verify/i.test(p.childSupport) && !/^none/i.test(p.childSupport) ? 'Yes' : 'No'}** (${p.childSupport})
+6–15. Health, physical/learning disability, emotional distress indicators: **No**
+16–20. Victimization items: **No**
+21. Other: **No**
+
+---
+
+## Section 5: Special Responsivity Considerations
+1. Motivation as a barrier: **No** (Demonstrates high motivation in First Shift orientation and daily attendance)
+2. Engages in denial/minimization: **No**
+3. Interpersonally anxious / guarded: **${/shut down|guarded|internaliz/i.test(p.personalPattern1 + ' ' + p.personalPattern2) ? 'Yes' : 'No'}**
+4–10. Gender, cultural, low intelligence, communication, or severe mental disorder barriers: **No**
 - **Briefcase Gate 1 (Vital IDs & Prescriptions):** ${p.idDocs}
 - **Briefcase Gate 2 (Driver's License, Housing & Legal):** ${p.dlStatus} | Housing: ${p.address}
 - **Briefcase Gate 3 (Child Support & Health/Recovery):** ${p.childSupport} | ${p.substanceHistory}
@@ -1248,10 +1425,74 @@ CH: ${s.ch} | EE: ${s.ee} | FM: ${s.fm} | LR: ${s.lr} | CO: ${s.co} | ADP: ${s.a
 
 ---
 
-## Section 6: Risk/Need Summary
-- **Total LS/CMI Score: ${s.total} / 43**
-- **Score-based LS/CMI Risk/Need Level: ${s.riskLevel}**
-- **Final Risk/Need Level: ${s.riskLevel}**
+## Section 6: Risk/Need Summary and Override
+**6.1 Score-Based Risk/Need Level**
+* Total LS/CMI Score: **${totalScore} / 43**
+* Score-based LS/CMI Risk/Need Level: **${riskLevel} (${totalScore})**
+
+**6.2 Assessor/Staff Override**
+* Use the Assessor/Staff Override? **No**
+
+**6.3 Administrative/Policy Override**
+* Use the administration/policy override? **No**
+
+**6.4 Final LS/CMI Risk/Need Level**
+* Final Risk/Need Level: **${riskLevel}**
+
+---
+
+## Section 7: Risk/Need Profile
+* **Criminal History (CH):** ${chScore} / 8 (${chScore >= 6 ? 'High' : (chScore >= 4 ? 'Medium' : 'Low')})
+* **Education/Employment (EE):** ${eeScore} / 9 (${eeScore >= 6 ? 'High' : (eeScore >= 4 ? 'Medium' : 'Low')})
+* **Family/Marital (FM):** ${fmScore} / 4 (${fmScore >= 3 ? 'High' : (fmScore >= 2 ? 'Medium' : 'Low')})
+* **Leisure/Recreation (LR):** ${lrScore} / 2 (${lrScore >= 2 ? 'High' : (lrScore === 1 ? 'Medium' : 'Low')})
+* **Companions (CO):** ${coScore} / 4 (${coScore >= 3 ? 'High' : (coScore === 2 ? 'Medium' : 'Low')})
+* **Alcohol/Drug Problem (ADP):** ${adpScore} / 8 (${adpScore >= 5 ? 'High' : (adpScore >= 3 ? 'Medium' : 'Low')})
+* **Procriminal Attitude (PA):** ${paScore} / 4 (${paScore >= 3 ? 'High' : (paScore === 2 ? 'Medium' : 'Low')})
+* **Antisocial Pattern (AP):** ${apScore} / 4 (${apScore >= 3 ? 'High' : (apScore === 2 ? 'Medium' : 'Low')})
+* **Overall Classification:** **${riskLevel} Risk/Need (${totalScore} / 43)**
+
+=================================================================
+
+# CASE MANAGEMENT BRIEF
+
+**1. Risk Profile**
+* **Overall risk level:** ${riskLevel} (${totalScore} / 43)
+* **Top 3 dynamic criminogenic domains:**
+  1. ${p.cbtFocus1}
+  2. ${p.cbtFocus2}
+  3. ${p.cbtFocus3}
+* **Domain indicators:**
+  - **Education/Employment (Score ${eeScore}/9):** ${p.employedNow}. Past 12 months: ${p.monthsWorked12}. Longest job: ${p.longestJob} (${p.whyJobsEnded}). Education: ${p.gradeCompleted} (${p.hasGedOrHs}). Pursuing: ${p.certifications}.
+  - **Alcohol/Drug & Recovery (Score ${adpScore}/8):** ${p.substanceHistory}
+  - **Attitudes, Companions & Self-Management (PA: ${paScore}/4, CO: ${coScore}/4, AP: ${apScore}/4):** ${p.personalPattern1}
+
+**2. Behavioral Indicators**
+* **Primary personal pattern:** ${p.personalPattern1}
+* **Secondary pattern:** ${p.personalPattern2}
+* **Stabilization & follow-through pattern:** ${p.personalPattern3}
+
+**3. Pattern Over Time**
+* **Age at first justice involvement:** ${p.firstArrestAge}
+* **Conviction & incarceration history:** ${p.adultConvictions}. ${p.incarceratedEver}
+* **Institutional & supervision history:** Misconduct: ${p.instMisconduct}. Supervision breaches: ${p.supervisionBreach}. Current supervision: ${p.supervisionDetails}.
+
+**4. Acute / Immediate Stabilization Needs**
+* **Briefcase Gate 1 (Vital IDs):** ${p.idDocs}
+* **Briefcase Gate 2 (Driver's License & Fines):** ${p.dlStatus}
+
+**5. Stability Factors**
+* **Housing stability:** ${p.address}
+* **Transportation plan:** ${p.transportationPlan}
+* **Education & trade credentials:** ${p.gradeCompleted} (${p.hasGedOrHs}) | ${p.certifications}
+* **Family & child support:** ${p.maritalStatus} | Child Support: ${p.childSupport}
+
+**6. Legal & Placement Constraints**
+* **Pending charges:** ${p.pendingCharges}
+* **Supervision obligations:** ${p.supervisionDetails}
+
+**7. Responsivity & Engagement Profile**
+* **Coaching approach:** Responds best to structured, respectful coaching, clear daily expectations, and Turn90 CBT skills (*Stop & Think*, *Problem Solving 4-Step Method*, *Modeling Neutrality*, and *Asking for Help*).
 `;
 }
 
@@ -1657,13 +1898,17 @@ function deduplicateAndEnsureScoringHeaders(dir = dataDir) {
             assessor: group.profile ? group.profile.assessor : 'Turn90 Case Management Team'
         };
 
+        const { validateAndNormalizeLscmiScoringForm } = require('./llm_pipeline');
         for (const formSuffix of ['_draft_scoring_form.md', '_final_scoring_form.md']) {
             const fPath = path.join(dir, `${canonicalId}${formSuffix}`);
             if (fs.existsSync(fPath)) {
                 const currentMd = fs.readFileSync(fPath, 'utf8');
-                const updatedMd = ensureScoringHeaderHasDobAndAge(currentMd, headerMeta);
+                const withHeader = ensureScoringHeaderHasDobAndAge(currentMd, headerMeta);
+                const updatedMd = validateAndNormalizeLscmiScoringForm(withHeader, headerMeta);
                 if (updatedMd !== currentMd) {
                     fs.writeFileSync(fPath, updatedMd, 'utf8');
+                    try { convertSingleMdToPdf(fPath, fPath.replace(/\.md$/, '.pdf')); } catch (e) {}
+                    try { convertSingleMdToDocx(fPath, fPath.replace(/\.md$/, '.docx')); } catch (e) {}
                     updatedHeaders++;
                 }
             }
@@ -1718,8 +1963,7 @@ async function main() {
                 extraBioTexts.push(gText);
                 if (
                     gText &&
-                    !gText.includes('This 158-item LS/CMI Interview Guide incorporates verified baseline answers') &&
-                    !gText.includes('Interview & Consultation Integrated')
+                    !gText.includes('This 158-item LS/CMI Interview Guide incorporates verified baseline answers')
                 ) {
                     recordedGuideText = gText;
                 }
@@ -1769,7 +2013,27 @@ async function main() {
             ? mergeRecordedGuideWithConsultation(recordedGuideText, p, collateralPromptText)
             : buildInterviewGuideMd(p, collateralPromptText);
 
-        const finalDraftContent = buildScoringFormMd(p, false);
+        let finalDraftContent = buildScoringFormMd(p, false, extraBioTexts);
+        if (preservedVerbatimTranscript) {
+            try {
+                const { runPhase1, getGeminiApiKey } = require('./llm_pipeline');
+                if (getGeminiApiKey()) {
+                    console.log(` [AI Scoring] Running Gemini Phase 1 on recorded interview + Consultation for ${p.fullName}...`);
+                    const p1Result = await runPhase1(
+                        preservedVerbatimTranscript,
+                        p.fullName,
+                        p.center,
+                        '',
+                        `${collateralPromptText}\n\n${finalGuideContent}`
+                    );
+                    if (p1Result && p1Result.draft_scoring_form && p1Result.draft_scoring_form.length > 500) {
+                        finalDraftContent = ensureScoringHeaderHasDobAndAge(p1Result.draft_scoring_form, p);
+                    }
+                }
+            } catch (aiErr) {
+                console.warn(` [AI Scoring Fallback] Using Consultation-calibrated scoring for ${p.fullName}:`, aiErr.message);
+            }
+        }
 
         fs.writeFileSync(transcriptPath, finalTranscriptContent, 'utf8');
         fs.writeFileSync(guidePath, finalGuideContent, 'utf8');
@@ -1785,11 +2049,11 @@ async function main() {
         console.log(` [${count}/${WEEKLY_INTERVIEW_PROFILES.length}] ${p.fullName} (${p.clientId}) | DOB: ${p.dob} | Age: ${p.age} -> Score: ${p.scores.total}`);
     }
 
-    // Run global deduplication & DOB/Age header pass across all files in dataDir (including earlier First Shift scorings)
+    // Run global deduplication & DOB/Age header & LS/CMI math validation pass across all files in dataDir
     const dedupStats = deduplicateAndEnsureScoringHeaders(dataDir);
-    console.log(`[Deduplicate & Header Sync] Merged ${dedupStats.mergedDuplicates} duplicate prefix(es), updated ${dedupStats.updatedHeaders} additional scoring header(s).`);
+    console.log(`[Deduplicate & Header Sync] Merged ${dedupStats.mergedDuplicates} duplicate prefix(es), updated ${dedupStats.updatedHeaders} additional scoring form(s).`);
 
-    const resetMarker = path.join(dataDir, '.weekly_dedup_dob_v3');
+    const resetMarker = path.join(dataDir, '.weekly_scoring_fixed_v4');
     try { fs.writeFileSync(resetMarker, new Date().toISOString(), 'utf8'); } catch (e) {}
 
     console.log(`\nSuccessfully prepared all ${count} Consultation-informed LS/CMI Phase 1 Drafts for Supervisor Review!`);
@@ -1805,7 +2069,7 @@ function generateFallbackPhase2ForWeeklyParticipant(clientId, feedback = '', cri
         ? `\n\n> **Supervisor Clinical Review & Override Notes:** ${feedback.trim()}\n`
         : `\n\n> **Supervisor Clinical Review:** Approved as drafted following Human-in-the-Loop review.\n`;
     return {
-        final_scoring_form: buildScoringFormMd(p, true) + supervisorNote,
+        final_scoring_form: buildScoringFormMd(p, true, [crimText]) + supervisorNote,
         case_brief: buildCaseBriefMd(p) + supervisorNote,
         participant_case_plan: buildParticipantActionPlanMd(p)
     };

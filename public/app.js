@@ -3072,7 +3072,11 @@ function buildInterviewScoringCardsHtml(clients, activeParticipants = [], select
                             <button class="btn btn-primary" id="btn-gen-draft-${clientId}" style="font-size: 12px; padding: 6px 14px; background: #0284c7; border-color: #0284c7;" onclick="triggerGenerateAiDraft('${clientId}', '${cleanName}')">
                                 ⚡ Generate AI Scoring Review
                             </button>
-                        ` : ''}
+                        ` : `
+                            <button class="btn btn-outline" id="btn-gen-draft-${clientId}" style="font-size: 12px; padding: 6px 12px; color: #0284c7; border-color: #7dd3fc; background: #f0f9ff; font-weight: 600;" onclick="triggerGenerateAiDraft('${clientId}', '${cleanName}')" title="Re-run AI LS/CMI Scoring on Transcript + Consultation Collateral">
+                                🔄 Re-Score with AI
+                            </button>
+                        `}
 
                         ${files.some(f => f.includes('transcript.txt')) ? `
                             <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px;" onclick="previewDocument('${files.find(f => f.includes('transcript.txt'))}')">

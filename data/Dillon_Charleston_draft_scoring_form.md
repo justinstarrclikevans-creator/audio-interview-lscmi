@@ -154,12 +154,10 @@ CH: 3 | EE: 6 | FM: 1 | LR: 1 | CO: 1 | ADP: 7 | PA: 0 | AP: 0
 ---
 
 ## Section 6: Risk/Need Summary and Override
-**Score-based LS/CMI Risk/Need Level:** Medium (19)
+**Score-based LS/CMI Risk/Need Level:** **Medium (19)**
 **Assessor/Staff Override:** No
 **Administrative/Policy Override:** No
-**Final LS/CMI Risk/Need Level:** Medium
-
-=================================================================
+**Final LS/CMI Risk/Need Level:** **Medium**=================================================================
 
 # CASE MANAGEMENT BRIEF
 

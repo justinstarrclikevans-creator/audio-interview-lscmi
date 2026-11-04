@@ -154,7 +154,7 @@ CH: 3 | EE: 6 | FM: 1 | LR: 1 | CO: 1 | ADP: 5 | PA: 2 | AP: 1
 ---
 
 ## Section 6: Risk/Need Summary and Override
-**Score-based LS/CMI Risk/Need Level:** High (20)
+**Score-based LS/CMI Risk/Need Level:** **High (20)**
 **Assessor/Staff Override:** No
 **Administrative/Policy Override:** No
-**Final LS/CMI Risk/Need Level:** High
+**Final LS/CMI Risk/Need Level:** **High**

@@ -29,7 +29,7 @@ Strength? **No**
 13. Less than regular grade 12 or equivalent? **Yes** (Currently preparing for GED examination in Columbia)
 14. Suspended or expelled at least once? **No**
 15. Participation/Performance: **0** (Currently unemployed / enrolled in First Shift workforce training)
-16. Peer interactions: **1** (Positive, respectful peer interactions in Turn90 classroom)
+16. Peer interactions: **2** (Positive, respectful peer interactions in Turn90 classroom)
 17. Authority interaction: **0** (Reserved and guarded around institutional authority figures)
 Strength? **No**
 **EE Score: 6**
@@ -44,15 +44,15 @@ Strength? **No**
 
 ### 1.4 Leisure/Recreation (LR)
 22. Absence of recent participation in an organized activity: **Yes** (Currently lacks involvement in structured community/civic activities)
-23. Could make better use of time: **0** (Daily schedule focused on transit, training, and reentry goals)
+23. Could make better use of time: **3** (Daily schedule focused on transit, training, and reentry goals)
 Strength? **No**
 **LR Score: 1**
 
 ### 1.5 Companions (CO)
 24. Some criminal acquaintances: **Yes** (Acquaintances from prior institutionalization)
-25. Some criminal friends: **Yes** (Past ties to justice-involved individuals in neighborhood)
+25. Some criminal friends: **1** (Past ties to justice-involved individuals in neighborhood)
 26. Few anticriminal acquaintances: **Yes** (Building new conventional contacts through Turn90)
-27. Few anticriminal friends: **No** (Reconnecting with prosocial family members)
+27. Few anticriminal friends: **2** (Reconnecting with prosocial family members)
 Strength? **No**
 **CO Score: 3**
 
@@ -74,7 +74,7 @@ Strength? **No**
 38. Poor, toward sentence/offense: **Yes** (Remorseful regarding past violent outcomes while reflecting on conflict escalation)
 39. Poor, toward supervision/treatment: **Yes** (Experiences anxiety and frustration regarding probation surveillance)
 Strength? **No**
-**PA Score: 2**
+**PA Score: 3**
 
 ### 1.8 Antisocial Pattern (AP)
 40. Specialized assessment for antisocial pattern: **No**
@@ -85,8 +85,8 @@ Strength? **No**
 **AP Score: 2**
 
 ### Total Scores
-CH: 6 | EE: 6 | FM: 1 | LR: 1 | CO: 3 | ADP: 2 | PA: 2 | AP: 2
-**Total Score: 23**
+CH: 6 | EE: 6 | FM: 1 | LR: 1 | CO: 3 | ADP: 2 | PA: 3 | AP: 2
+**Total Score: 24**
 
 ---
 
@@ -98,6 +98,6 @@ CH: 6 | EE: 6 | FM: 1 | LR: 1 | CO: 3 | ADP: 2 | PA: 2 | AP: 2
 ---
 
 ## Section 6: Risk/Need Summary
-- **Total LS/CMI Score: 23 / 43**
+- **Total LS/CMI Score: 24 / 43**
 - **Score-based LS/CMI Risk/Need Level: HIGH RISK (Range 20-29)**
 - **Final Risk/Need Level: HIGH RISK**
