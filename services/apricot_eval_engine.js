@@ -2725,6 +2725,7 @@ function getParticipantConsultationLscmiContext(recordIdOrName) {
         if (!program && n.program_enrollment) program = n.program_enrollment;
     }
 
+    const pointsSheet = getCachedSheet('points');
     const consultRow = consultSheet.find(r => String(r['Record ID']) === recordId) || null;
     const lscmiRow = lscmiSheet.find(r => String(r['Record ID']) === recordId) || null;
     const orientRow = orientSheet.find(r => String(r['Record ID']) === recordId) || null;
@@ -2733,13 +2734,22 @@ function getParticipantConsultationLscmiContext(recordIdOrName) {
     const rnPlanRow = rnPlanSheet.find(r => String(r['Record ID']) === recordId) || null;
     const participantCreds = credsSheet.filter(r => String(r['Record ID']) === recordId).map(r => r['Credential Earned']).filter(Boolean);
     const participantJobs = empHistSheet.filter(r => String(r['Record ID']) === recordId);
+    const participantPoints = pointsSheet.filter(r => String(r['Record ID']) === recordId);
 
     if (!fullName && lscmiRow) fullName = `${lscmiRow.First || ''} ${lscmiRow.Last || ''}`.trim();
     if (!fullName && consultRow) fullName = `${consultRow.First || ''} ${consultRow.Last || ''}`.trim();
+    if (!fullName && orientRow) fullName = `${orientRow.First || ''} ${orientRow.Last || ''}`.trim();
     if (!center && lscmiRow && lscmiRow['At which Turn90 Center is the client...']) center = lscmiRow['At which Turn90 Center is the client...'];
+    if (!center && participantPoints.length && participantPoints[0]['At which Turn90 Center is the client...']) center = participantPoints[0]['At which Turn90 Center is the client...'];
     if (!center && consultRow && consultRow['Preferred enrollment location']) center = consultRow['Preferred enrollment location'];
     if (!center) center = 'Columbia';
-    if (!program) program = lscmiRow ? 'First Shift' : 'Reentry Navigation';
+    if (!program) {
+        if (lscmiRow || (orientRow && String(orientRow['Did they successfully complete orientation?']).toLowerCase() === 'yes') || participantPoints.length > 0) {
+            program = lscmiRow ? 'First Shift' : 'First Shift (Enrollment Pending in Apricot)';
+        } else {
+            program = 'Reentry Navigation';
+        }
+    }
 
     // Separate Consultation / Intake notes vs Ongoing Case Management notes
     const consultationNotes = allNotes.filter(n =>
@@ -2815,6 +2825,10 @@ function getParticipantConsultationLscmiContext(recordIdOrName) {
     if (orientRow) {
         collateralLines.push(`First Shift Orientation Date: ${orientRow['Date of Orientation']} | Completed: ${orientRow['Did they successfully complete orientation?'] || 'Scheduled/Attended'}`);
     }
+    if (participantPoints.length > 0) {
+        const ptsSummary = participantPoints.map(pt => `${pt.Date}: ${pt.Points} pts (${pt['At which Turn90 Center is the client...'] || center})`).join(', ');
+        collateralLines.push(`First Shift Daily Attendance & Points Recorded: ${ptsSummary}`);
+    }
     if (fsPlanRow) {
         collateralLines.push(`First Shift Case Plan Focus Areas: 1) ${fsPlanRow['Focus Area 1'] || 'None'} (${fsPlanRow['Focus Area 1 Situation'] || 'No situation text'}) | 2) ${fsPlanRow['Focus Area 2'] || 'None'}`);
     }
@@ -2844,12 +2858,15 @@ function getParticipantConsultationLscmiContext(recordIdOrName) {
         }
     }
 
+    const inferredStartDate = lscmiRow?.['Enrollment Start Date:']
+        || (participantPoints.length > 0 ? participantPoints[0].Date : '');
+
     return {
         recordId,
         fullName,
         center,
         program,
-        enrollmentStartDate: lscmiRow?.['Enrollment Start Date:'] || '',
+        enrollmentStartDate: inferredStartDate || '',
         consultationDate: consultRow?.['Date of Reentry Consultation'] || consultationNotes[0]?.activity_date || '',
         orientationDate: orientRow?.['Date of Orientation'] || '',
         currentApricotLscmiScore: lscmiRow ? Number(lscmiRow['Total LS/CMI Score (from Section 1)'] || 0) : 0,
@@ -2872,6 +2889,7 @@ function listConsultationLscmiCandidates() {
     const lscmiSheet = getCachedSheet('lscmi');
     const consultSheet = getCachedSheet('consultations');
     const orientSheet = getCachedSheet('orientation');
+    const pointsSheet = getCachedSheet('points');
 
     const candidateIds = new Set();
     const candidates = [];
@@ -2898,6 +2916,33 @@ function listConsultationLscmiCandidates() {
                     ? 'This Week First Shift Cohort'
                     : 'Active First Shift'
             });
+        }
+    }
+
+    // 1B. Participants who completed Orientation or earned First Shift points this week but do not have an Apricot Enrollment row yet (e.g., Reante Baylock #46026)
+    for (const row of orientSheet) {
+        const id = String(row['Record ID'] || '').trim();
+        const oDate = String(row['Date of Orientation'] || '').trim();
+        const completed = String(row['Did they successfully complete orientation?'] || '').trim().toLowerCase();
+        if (!id || candidateIds.has(id)) continue;
+        const hasRecentPts = pointsSheet.some(pt => String(pt['Record ID'] || '').trim() === id && String(pt.Date || '').startsWith('11/'));
+        if ((oDate.startsWith('10/23') || oDate.startsWith('10/30') || oDate.startsWith('11/')) && (completed === 'yes' || hasRecentPts)) {
+            candidateIds.add(id);
+            const ctx = getParticipantConsultationLscmiContext(id);
+            if (ctx) {
+                candidates.push({
+                    recordId: id,
+                    fullName: ctx.fullName,
+                    center: ctx.center,
+                    program: ctx.program || 'First Shift (Enrollment Pending)',
+                    enrollmentStartDate: ctx.enrollmentStartDate || '11/02/2026',
+                    consultationDate: ctx.consultationDate,
+                    orientationDate: oDate,
+                    currentApricotLscmiScore: ctx.currentApricotLscmiScore,
+                    notesCount: ctx.totalNotesCount,
+                    category: 'This Week First Shift Cohort'
+                });
+            }
         }
     }
 

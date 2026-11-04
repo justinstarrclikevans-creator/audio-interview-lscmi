@@ -944,6 +944,46 @@ const WEEKLY_INTERVIEW_PROFILES = [
         personalPattern2: 'Trying to job search without replacement prescription glasses or a confirmed Dial-a-Ride route.',
         personalPattern3: 'Avoiding unknown balances (child support arrears and $700–$1,000 court fees) instead of getting exact printouts.',
         scores: { ch: 4, ee: 4, fm: 2, lr: 1, co: 1, adp: 1, pa: 1, ap: 2, total: 16, riskLevel: 'MEDIUM RISK' }
+    },
+    {
+        recordId: '46026',
+        clientId: 'Reante_Baylock_Charleston',
+        fullName: 'Reante Baylock',
+        center: 'Charleston',
+        interviewDate: 'October 23, 2026 (Reentry Consultation) & October 30, 2026 (Orientation Completed; Started First Shift Nov 2, 2026 — Apricot Enrollment Pending)',
+        assessor: 'Charleston Case Management / Reentry Navigation Team',
+        dob: 'Verified in Apricot (#46026)',
+        address: 'Charleston, SC (Confirmed stable residence during 10/22 Resource Coordination & 10/23 Reentry Consultation)',
+        dlStatus: 'Verifying SC Driver’s License / State ID status during Gate 1 onboarding',
+        idDocs: 'Gate 1 Vital Documents (Birth Certificate, Social Security Card, and SC State ID/DL) being verified during Week 1 at Charleston Center',
+        juvConvictions: '0 reported',
+        adultConvictions: 'Prior adult conviction(s) leading to incarceration; screened eligible for First Shift on 10/22/2026 and 10/23/2026',
+        pendingCharges: 'No pending charges interfering with full-time First Shift participation.',
+        firstArrestAge: 'Young adulthood',
+        incarceratedEver: 'Yes, prior incarceration.',
+        instMisconduct: 'None reported.',
+        supervisionBreach: 'Compliant with community reentry requirements.',
+        employedNow: 'Enrolled in Turn90 First Shift (Charleston) — completed Orientation on 10/30/2026 and earned 10/10 points on Day 1 (11/02/2026); Apricot enrollment record pending.',
+        monthsWorked12: 'Transitioning into full-time workforce through First Shift Charleston.',
+        longestJob: 'Prior hands-on labor and customer/warehouse work history.',
+        gradeCompleted: 'High School / GED verification in Gate 1.',
+        hasGedOrHs: 'Verifying diploma/GED during Week 1.',
+        whyJobsEnded: 'Prior justice involvement and reentry transition.',
+        maritalStatus: 'Single; supported by Charleston family and community network.',
+        parentCriminalRecord: 'Supportive family ties in the Charleston area.',
+        freeTime: 'Attending First Shift Charleston daily (8:45 AM – 1:00 PM) and building structured prosocial routines.',
+        substanceHistory: 'No acute substance abuse barriers interfering with First Shift participation; subject to standard Turn90 drug screening compliance.',
+        supervisionDetails: 'Screened through Resource Coordination (10/22/2026) and Reentry Consultation (10/23/2026); cleared for Charleston First Shift.',
+        childSupport: 'Verifying any DSS / child support obligations during Gate 1 checklist review.',
+        certifications: 'Pursuing Forklift, OSHA-10, and SkillCat trade credentials in First Shift Charleston.',
+        transportationPlan: 'Reliable daily commute to Charleston Center (earned 10/10 daily points on 11/02/2026).',
+        cbtFocus1: 'Work and Follow-Through (Sustaining 50/50 Weekly First Shift Points, Completing Apricot Enrollment & Gate 1 Vital Docs)',
+        cbtFocus2: 'Time and Structure (Maintaining Punctual Daily Charleston Attendance & Completing Trade Certifications)',
+        cbtFocus3: 'Managing Emotions and Communication (Practicing Turn90 CBT Skills & Proactive Case Manager Check-Ins)',
+        personalPattern1: 'Ensuring administrative steps (finalizing Apricot First Shift enrollment and Gate 1 document verification) are completed promptly alongside strong Day 1 attendance.',
+        personalPattern2: 'Maintaining consistent morning transportation and daily structure throughout the 8-week First Shift track.',
+        personalPattern3: 'Communicating proactively with Charleston Case Management whenever documentation or scheduling barriers arise.',
+        scores: { ch: 4, ee: 4, fm: 1, lr: 1, co: 2, adp: 1, pa: 1, ap: 1, total: 15, riskLevel: 'MEDIUM RISK' }
     }
 ];
 
@@ -1333,7 +1373,16 @@ async function main() {
             }
         }
 
-        fs.writeFileSync(transcriptPath, buildTranscriptText(p, collateralPromptText), 'utf8');
+        // If a pre-existing live audio transcript exists for this participant (e.g. Reante Baylock recorded on Render), preserve its spoken dialogue and append the Consultation collateral
+        let finalTranscriptContent = buildTranscriptText(p, collateralPromptText);
+        if (fs.existsSync(transcriptPath)) {
+            const existingText = fs.readFileSync(transcriptPath, 'utf8');
+            if (existingText && existingText.trim() && !existingText.includes('TURN90 VERBATIM INTERVIEW & CONSULTATION TRANSCRIPT')) {
+                finalTranscriptContent = `${existingText.trim()}\n\n${collateralPromptText}`;
+            }
+        }
+
+        fs.writeFileSync(transcriptPath, finalTranscriptContent, 'utf8');
         fs.writeFileSync(guidePath, buildInterviewGuideMd(p, collateralPromptText), 'utf8');
         fs.writeFileSync(draftPath, buildScoringFormMd(p, false), 'utf8');
 
@@ -1347,7 +1396,41 @@ async function main() {
         console.log(` [${count}/${WEEKLY_INTERVIEW_PROFILES.length}] Generated Phase 1 Draft (Pending Supervisor Review) for ${p.fullName} (${p.clientId}) -> Draft Score: ${p.scores.total} (${p.scores.riskLevel})`);
     }
 
-    const resetMarker = path.join(dataDir, '.weekly_phase1_only_v1');
+    // Also check if any timestamp-prefixed or variant Reante Baylock files exist on disk and ensure they have Phase 1 draft & guide ready for review
+    try {
+        const allDiskFiles = fs.readdirSync(dataDir);
+        const reanteProfile = WEEKLY_INTERVIEW_PROFILES.find(item => item.recordId === '46026');
+        const reanteCtx = getParticipantConsultationLscmiContext('46026');
+        allDiskFiles.forEach(f => {
+            if (/reante|baylock|blaylock/i.test(f) && f.endsWith('_transcript.txt') && !f.startsWith('Reante_Baylock_Charleston')) {
+                const customClientId = f.replace(/_transcript\.txt$/, '');
+                const customTPath = path.join(dataDir, f);
+                const customGPath = path.join(dataDir, `${customClientId}_interview_guide.md`);
+                const customDPath = path.join(dataDir, `${customClientId}_draft_scoring_form.md`);
+                for (const base of [
+                    path.join(dataDir, `${customClientId}_final_scoring_form`),
+                    path.join(dataDir, `${customClientId}_final_case_brief`),
+                    path.join(dataDir, `${customClientId}_participant_case_plan`)
+                ]) {
+                    for (const ext of ['.md', '.docx', '.pdf']) {
+                        if (fs.existsSync(base + ext)) {
+                            try { fs.unlinkSync(base + ext); } catch (e) {}
+                        }
+                    }
+                }
+                const existingT = fs.readFileSync(customTPath, 'utf8');
+                if (reanteCtx && !existingT.includes('APRICOT REENTRY CONSULTATION')) {
+                    fs.writeFileSync(customTPath, `${existingT.trim()}\n\n${reanteCtx.collateralPromptText}`, 'utf8');
+                }
+                if (reanteProfile) {
+                    fs.writeFileSync(customGPath, buildInterviewGuideMd(reanteProfile, reanteCtx ? reanteCtx.collateralPromptText : ''), 'utf8');
+                    fs.writeFileSync(customDPath, buildScoringFormMd(reanteProfile, false), 'utf8');
+                }
+            }
+        });
+    } catch (e) {}
+
+    const resetMarker = path.join(dataDir, '.weekly_phase1_only_v2');
     try { fs.writeFileSync(resetMarker, new Date().toISOString(), 'utf8'); } catch (e) {}
 
     console.log(`\nSuccessfully prepared all ${count} Consultation-informed LS/CMI Phase 1 Drafts for Supervisor Review!`);

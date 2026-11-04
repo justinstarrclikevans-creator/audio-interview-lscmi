@@ -7587,7 +7587,7 @@ app.listen(PORT, async () => {
             console.log(`✅ Apricot Eval Engine synchronized: ${initRes.newNotesProcessed} new notes (${initRes.totalUniqueNotes} total), ${initRes.activeFirstShiftCount} FS, ${initRes.activeReentryNavCount} RN.`);
         }
 
-        if (!fs.existsSync(path.join(dataDir, '.weekly_phase1_only_v1')) || !fs.existsSync(path.join(dataDir, 'Jayhova_Freeman_Spartanburg_draft_scoring_form.md'))) {
+        if (!fs.existsSync(path.join(dataDir, '.weekly_phase1_only_v2')) || !fs.existsSync(path.join(dataDir, 'Reante_Baylock_Charleston_draft_scoring_form.md'))) {
             const { generateWeeklyConsultationLscmiPackets } = require('./generate_weekly_consultation_lscmi_packets');
             await generateWeeklyConsultationLscmiPackets();
         }
