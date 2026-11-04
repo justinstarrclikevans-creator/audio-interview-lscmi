@@ -30,14 +30,26 @@ Brandon Jones: First arrested or charged around Adulthood.
 Interviewer: Were you ever incarcerated as a result of a conviction?
 Brandon Jones: Yes, completing federal sentence at Columbia Halfway House.
 
+Interviewer: Have you had any behavior reports or reports while in prison?
+Brandon Jones: None reported.
+
 Interviewer: Have you ever had your probation or parole suspended (or revoked) while you were under any kind of community supervision?
+Brandon Jones: In full compliance at Federal Halfway House.
+
+Interviewer: Have you ever been arrested while you were under any kind of community supervision?
 Brandon Jones: In full compliance at Federal Halfway House.
 
 Interviewer: Are you currently employed?
 Brandon Jones: Attending job interviews (Warehouse Technician & SCOUT Motors job fair); solid prior work history as machine operator, forklift operator, and truck driver.
 
+Interviewer: How many months did you work a payroll job in the last 12 months?
+Brandon Jones: Completing federal sentence; strong historical employment.
+
 Interviewer: What is the longest period of time that you have been employed for?
 Brandon Jones: Multiple years as machine operator, forklift operator, and truck driver.
+
+Interviewer: Have you ever been unemployed in the community during a 12-month period?
+Brandon Jones: Yes, experienced periods of unemployment during incarceration and reentry transition.
 
 Interviewer: What is the last grade that you have successfully completed in academic or technical high school?
 Brandon Jones: High School / GED.
@@ -45,56 +57,347 @@ Brandon Jones: High School / GED.
 Interviewer: Have you completed a high school diploma or GED?
 Brandon Jones: Yes.
 
+Interviewer: Have you ever been suspended or expelled?
+Brandon Jones: No major expulsions reported.
+
+Interviewer: Please give feedback on the work you have done. Did you like the job, how did you like your boss and coworkers.
+Brandon Jones: I enjoy hands-on work where expectations are clear and I can stay productive. Multiple years as machine operator, forklift operator, and truck driver.
+
 Interviewer: Why did you leave any of the jobs you have had?
 Brandon Jones: Federal incarceration.
 
 Interviewer: Are you single or in a relationship?
 Brandon Jones: Married; his wife provides current transportation and he will move in with family upon halfway house discharge in 50 days.
 
+Interviewer: How do you feel about being single or in a relationship?
+Brandon Jones: Focused on maintaining supportive, low-conflict family relationships while building financial stability.
+
+Interviewer: Please describe your relationship with your parents (the people who actually raised you).
+Brandon Jones: None reported. Married; his wife provides current transportation and he will move in with family upon halfway house discharge in 50 days.
+
+Interviewer: Please describe your relationship with other relatives.
+Brandon Jones: Maintains contact with supportive relatives who assist with transportation and housing stability.
+
 Interviewer: Does anyone in your family, including spouse and close relatives, have a criminal record? Who?
 Brandon Jones: None reported.
+
+Interviewer: What kind of organizations or clubs have you belonged to over the past year (or in the year prior to your incarceration)?
+Brandon Jones: Participates in Turn90 / Reentry Navigation and structured community/recovery support.
 
 Interviewer: How do you usually spend your free time?
 Brandon Jones: Job interviewing, vehicle title/insurance transfer, halfway house compliance.
 
+Interviewer: What kind of satisfaction do you get from your free time?
+Brandon Jones: Staying productive and focused on family, work preparation, and staying out of trouble.
+
+Interviewer: Do you know many people who have been in trouble with the law?
+Brandon Jones: Yes, from past neighborhoods and incarceration, but actively distancing from them.
+
 Interviewer: Have many of your friends been in trouble with the law?
 Brandon Jones: In the past yes; currently setting firm boundaries to avoid negative peers.
+
+Interviewer: How seriously or often have they been involved with the law?
+Brandon Jones: Past acquaintances had criminal histories, which is why I am staying focused on prosocial routines.
+
+Interviewer: Do you know many people who are NOT involved in crime?
+Brandon Jones: Yes, family members, Turn90 staff, and prosocial peers.
+
+Interviewer: Do you have many friends who are not at all involved in criminal activities?
+Brandon Jones: Yes, building a circle focused on work and sobriety.
 
 Interviewer: Please describe your use of alcohol and drugs.
 Brandon Jones: No active substance abuse barriers; passes halfway house drug screens.
 
+Interviewer: Have you had any medical problems due to drug or alcohol use?
+Brandon Jones: No active substance abuse barriers; passes halfway house drug screens.
+
+Interviewer: Have you experienced any financial difficulties because of alcohol or drug use?
+Brandon Jones: No financial difficulties from alcohol or drug use.
+
+Interviewer: How does your family feel about your use?
+Brandon Jones: My family is proud when I stay clean, focused, and working toward my goals.
+
 Interviewer: How do you feel about the crimes you've committed?
 Brandon Jones: I take responsibility for my past choices and am tired of the consequences that affected my freedom and family.
+
+Interviewer: Do you think the crimes were wrong?
+Brandon Jones: Yes, I recognize the harm and cost of past offenses.
 
 Interviewer: Would you like to lead a life without crime?
 Brandon Jones: Yes, 100% committed to living a crime-free, financially independent life.
 
+Interviewer: Do you think your sentence was appropriate and fair?
+Brandon Jones: I accept that I served my time and am focused on moving forward.
+
+Interviewer: Do you think that you had a choice in getting involved in crime?
+Brandon Jones: Yes, I had choices and I am now choosing a different path through Turn90.
+
 Interviewer: Do you feel that the supervision you are being placed under is appropriate and fair?
 Brandon Jones: Federal Halfway House (50 days remaining) followed by federal supervision.
 
+Interviewer: Have you ever been assessed by a psychiatrist or psychologist?
+Brandon Jones: No formal psychiatric evaluations or hospitalizations reported; reports stable behavioral health.
+
+Interviewer: Were you ever removed from your home by DSS when you were young?
+Brandon Jones: No, never removed from the home by DSS as a youth.
+
+Interviewer: Did you ever run away from home?
+Brandon Jones: No history of running away from home during youth.
+
+Interviewer: Did your parents have a lot of trouble raising you?
+Brandon Jones: No severe behavioral trouble reported in the home.
+
+Interviewer: Do you have any convictions for violent offenses?
+Brandon Jones: Prior conviction history includes offenses as reviewed in background; committed to prosocial conflict resolution.
+
+Interviewer: Have you had any history of escape or attempted escape from a youth or adult institutional facility?
+Brandon Jones: No history of escape or attempted escape from any correctional or youth facility.
+
+Interviewer: What are the sources of Income for your household and what would you estimate is the annual income?
+Brandon Jones: Currently relying on family/household support and Turn90 weekly training stipend ($450/week) during reentry transition.
+
+Interviewer: Does the household sometimes receive government assistance or other forms of assistance?
+Brandon Jones: Eligible for SNAP food assistance; receiving structured supportive assistance during program enrollment.
+
+Interviewer: Are you worried about having sufficient money to pay debts?
+Brandon Jones: Focused on managing financial obligations (Married, supportive family.; Valid Temporary Paper Driver’s License (not suspended); transferring title and insurance for his personal vehicle) through earnings and budgeting at Turn90.
+
+Interviewer: Do you have a bank account (savings or checking)?
+Brandon Jones: Verified in Briefcase: Birth Certificate (Yes), Social Security Card (Yes), Valid Temporary Paper Driver’s License (Yes); establishing direct deposit account with Case Management.
+
+Interviewer: Do you know your credit score and, if so, what is it?
+Brandon Jones: Working to establish or rebuild personal credit history during First Shift financial literacy module.
+
+Interviewer: Have you had any phone calls, letters, or personal visits from creditors requesting payment of past due accounts?
+Brandon Jones: No active creditor harassment reported; addressing fines and license reinstatement systematically.
+
 Interviewer: Do you have any existing debts? If yes, how much and to who?
-Brandon Jones: Valid Temporary Paper Driver’s License (not suspended); transferring title and insurance for his personal vehicle | Married, supportive family.
+Brandon Jones: Valid Temporary Paper Driver’s License (not suspended); transferring title and insurance for his personal vehicle | Child Support: Married, supportive family.
+
+Interviewer: Do you have a personal budget?
+Brandon Jones: Developing a structured personal budget with Case Management during First Shift financial literacy.
+
+Interviewer: Do you follow your budget, or do you have problems following your budget?
+Brandon Jones: Following structured weekly spending guided by Turn90 stipend allocation.
+
+Interviewer: Are you worried about sufficient income to meet your basic needs?
+Brandon Jones: Turn90 weekly stipend provides baseline stability while preparing for permanent full-time employment.
 
 Interviewer: What is your current living situation?
 Brandon Jones: Federal Halfway House, Columbia, SC (~50 days remaining before discharge to family home)
 
+Interviewer: How do you like where you live?
+Brandon Jones: Federal Halfway House, Columbia, SC (~50 days remaining before discharge to family home)
+
+Interviewer: Is your probation/parole officer or worker fair and reasonable?
+Brandon Jones: Federal Halfway House (50 days remaining) followed by federal supervision.
+
+Interviewer: Are you afraid of anyone harming you?
+Brandon Jones: No, feels safe in current living environment and community routines.
+
 Interviewer: Do you often act before thinking?
-Brandon Jones: Working on slowing down and using Stop & Think: Managing the administrative transition from federal halfway house rules to independent family household routines.
+Brandon Jones: Working on slowing down and using CBT Stop & Think: Managing the administrative transition from federal halfway house rules to independent family household routines.
+
+Interviewer: Do you set goals for yourself?
+Brandon Jones: Yes, actively working on my Turn90 Case Plan and Briefcase Gates 1–4.
+
+Interviewer: Do you make plans?
+Brandon Jones: Yes, actively working on my Turn90 Case Plan and Briefcase Gates 1–4.
+
+Interviewer: Do you check to see if you are following your plans?
+Brandon Jones: Yes, actively working on my Turn90 Case Plan and Briefcase Gates 1–4.
+
+Interviewer: Do you get into trouble almost by accident?
+Brandon Jones: Practicing cognitive awareness to identify thinking traps and avoid high-risk people or places.
+
+Interviewer: Do you have frequent arguments with friends?
+Brandon Jones: No, keeping circle small and maintaining low-conflict relationships.
+
+Interviewer: Do you find yourself arguing with strangers?
+Brandon Jones: No, practicing emotional regulation and walking away from petty disputes.
+
+Interviewer: Do you get into physical fights with people?
+Brandon Jones: No physical altercations; focused on prosocial conflict resolution and de-escalation.
+
+Interviewer: Do you often become impatient with others?
+Brandon Jones: Working on patience and active listening skills through daily Turn90 classroom sessions.
+
+Interviewer: Have you ever physically hurt your partner?
+Brandon Jones: No history of domestic violence or intimate partner harm.
+
+Interviewer: Have you ever threatened someone?
+Brandon Jones: No active threatening behaviors; using CBT to manage frustration constructively.
+
+Interviewer: Have you ever sexually assaulted anyone?
+Brandon Jones: No history of sexual offenses.
+
+Interviewer: Have you ever drugged someone to have sex?
+Brandon Jones: No.
+
+Interviewer: Do you frequent prostitutes?
+Brandon Jones: No.
+
+Interviewer: Do you have difficulty making friends?
+Brandon Jones: Able to connect with positive peers in structured work and recovery environments.
+
+Interviewer: Please share your opinions on “Wokeness.”
+Brandon Jones: Focused on personal accountability, self-awareness, and doing what is right for my family and future.
 
 Interviewer: Do you have any pending charges?
 Brandon Jones: No pending charges.
 
-Interviewer: Parole - The release of a person to supervision in the community before completion of their sentence. Are you on parole?
+Interviewer: Have you ever been in a fight with a police officer, correctional staff, teacher, employer, or other person in authority?
+Brandon Jones: No history of physical fights with authority figures; respectful with Turn90 staff and supervision officers.
+
+Interviewer: Have you ever kept contacting someone against his or her will?
+Brandon Jones: No history of stalking or non-consensual contact.
+
+Interviewer: Have you ever used a weapon to commit a crime or threaten someone?
+Brandon Jones: No weapon offenses reported.
+
+Interviewer: Have you ever intentionally set a fire to destroy property or harm someone?
+Brandon Jones: No history of arson or property destruction.
+
+Interviewer: Have you ever been convicted of driving under the influence?
+Brandon Jones: No active DUI barriers.
+
+Interviewer: Have you ever shoplifted?
+Brandon Jones: No pattern of retail theft or shoplifting.
+
+Interviewer: Do you belong to a gang? Do you and your friends wear colors?
+Brandon Jones: No gang affiliation or gang involvement.
+
+Interviewer: Have you ever been arrested/convicted for a hate crime?
+Brandon Jones: No history of hate crimes.
+
+Interviewer: Are you a citizen of this country?
+Brandon Jones: Yes, US Citizen.
+
+Interviewer: Do you have some health problems that are a concern to you?
+Brandon Jones: Physical health stable; able to perform physical work tasks at Turn90.
+
+Interviewer: Do you feel depressed?
+Brandon Jones: Mood is stable; motivated and focused on completing First Shift.
+
+Interviewer: Do you think about committing suicide?
+Brandon Jones: No history or thoughts of suicide or self-harm.
+
+Interviewer: Are you unhappy with yourself?
+Brandon Jones: Reflecting on past mistakes and determined to build a successful, independent life.
+
+Interviewer: Have you been considering going to see a psychologist or psychiatrist?
+Brandon Jones: Open to supportive counseling if helpful for reentry goals; currently stable.
+
+Interviewer: Are you taking any medications?
+Brandon Jones: No daily psychiatric medications reported; medically cleared for work.
+
+Interviewer: Have you ever been abused by a family member?
+Brandon Jones: No history of familial abuse reported.
+
+Interviewer: Are you presently being abused?
+Brandon Jones: No, living in a safe, secure environment.
+
+Interviewer: Do you have any health problems that we have not yet discussed?
+Brandon Jones: No other health concerns; physically capable of warehouse and manufacturing work.
+
+Interviewer: Do you have any mental health (or psychiatric) problems that we have not yet discussed?
+Brandon Jones: Behavioral health is stable; engaged in Turn90 CBT curriculum.
+
+Interviewer: Do you have any personal needs that we have not yet discussed?
+Brandon Jones: Primary needs are driver's license reinstatement (Valid Temporary Paper Driver’s License (not suspended); transferring title and insurance for his personal vehicle), career certifications (OSHA-10 Certification; experienced Forklift Operator, Machine Operator, and Truck Driver.), and long-term job placement.
+
+Interviewer: Do you follow any specific cultural or religious traditions involving diet, appearance, clothing, or special or sacred activities?
+Brandon Jones: Personal spiritual faith; no restrictions interfering with 9am–3pm program schedule.
+
+Interviewer: Do you belong to an ethnic/racial group?
+Brandon Jones: Identified in demographic record; supportive of diverse workplace team.
+
+Interviewer: Is there anything else that will hinder or hold back your progress in programs?
+Brandon Jones: Reliable daily attendance (Wife provides reliable transportation while he completes title transfer and insurance on his own vehicle.) and maintaining focus on Case Plan goals are primary focus.
+
+Interviewer: What is your social security number?
+Brandon Jones: Social Security card verified on file with Case Management: Birth Certificate (Yes), Social Security Card (Yes), Valid Temporary Paper Driver’s License (Yes).
+
+Interviewer: Emergency needs are things that must be addressed immediately for you to succeed. Let us know if any of the following applies. Do you have any emergency needs?
+Brandon Jones: No unaddressed emergency blockades preventing Turn90 participation; active barriers routed to Briefcase Gates 1–4.
+
+Interviewer: For the following questions about supervision, just say 'Does not apply' if they don't apply.
+Brandon Jones: Understood; will answer applicable supervision items.
+
+Interviewer: What is your projected release date from the Federal halfway house?
 Brandon Jones: Federal Halfway House (50 days remaining) followed by federal supervision.
 
+Interviewer: Parole - The release of a person to supervision in the community before completion of their sentence. Are you on parole?
+Brandon Jones: No, not on parole.
+
+Interviewer: When is the projected end date of your parole?
+Brandon Jones: Does not apply.
+
+Interviewer: Are you in compliance with the terms of your parole?
+Brandon Jones: Does not apply.
+
+Interviewer: Is Turn90 a condition of your parole?
+Brandon Jones: Voluntary enrollment / recommended prosocial activity approved by supervision.
+
+Interviewer: How many months did you have remaining on your prison sentence?
+Brandon Jones: Yes, completing federal sentence at Columbia Halfway House.
+
+Interviewer: State Supervision-Did you receive a Diverted sentence? – you were facing criminal charges that carried a prison sentence, but was diverted away from prison, remaining in the community to complete Turn90 as part of a plea agreement and a condition of probation.
+Brandon Jones: No diverted sentence.
+
+Interviewer: How many months was your diverted state sentence?
+Brandon Jones: Does not apply.
+
+Interviewer: What is the projected end date of your state probation/community supervision?
+Brandon Jones: Does not apply.
+
+Interviewer: Are you in compliance with the terms of your state supervision?
+Brandon Jones: Does not apply.
+
+Interviewer: What is the projected end date of your federal supervision?
+Brandon Jones: Federal Halfway House (50 days remaining) followed by federal supervision.
+
+Interviewer: Are you in compliance with the terms of your federal supervision?
+Brandon Jones: Yes, in full compliance with federal supervision.
+
+Interviewer: Federal-Did you receive a Diverted sentence? – you were facing federal criminal charges that carried a prison sentence, but was diverted away from prison, remaining in the community to complete Turn90 as part of a plea agreement and a condition of probation.
+Brandon Jones: No diverted federal sentence.
+
+Interviewer: How many months was your diverted federal sentence?
+Brandon Jones: Does not apply.
+
+Interviewer: Do you have an official agreement with the government to complete Turn90 in exchange for a lesser sentence or dismissed charges in court?
+Brandon Jones: No formal plea exchange agreement; voluntary enrollment for workforce development.
+
 Interviewer: Date of your most recent release from incarceration?
-Brandon Jones: No pending charges. | Yes, completing federal sentence at Columbia Halfway House.
+Brandon Jones: No pending charges.
+
+Interviewer: Were you most recently released from jail or prison?
+Brandon Jones: County detention facility / jail.
+
+Interviewer: What was the length of your most recent incarceration?
+Brandon Jones: Yes, completing federal sentence at Columbia Halfway House.
+
+Interviewer: Have you ever been charged or convicted of a sex offense?
+Brandon Jones: No, never charged or convicted of a sex offense.
+
+Interviewer: Did your most recent criminal conviction include drug trafficking?
+Brandon Jones: No, most recent conviction did not include drug trafficking.
+
+Interviewer: Did your most recent criminal conviction include possession of a firearm?
+Brandon Jones: No, most recent conviction did not include unlawful firearm possession.
 
 Interviewer: Does your mother or father have a criminal record?
 Brandon Jones: None reported.
 
 Interviewer: Do you have a history of major drug use? Illegal drug use that caused major life disruptions, problems in relationships, and led to criminal actions.
-Brandon Jones: No active substance abuse barriers; passes halfway house drug screens.
+Brandon Jones: No history of major illicit drug addiction.
+
+Interviewer: Do you have a history of major alcohol use? Alcohol use that caused major life disruptions, problems in relationships, and led to criminal actions.
+Brandon Jones: No history of major alcohol abuse.
+
+Interviewer: Do you use marijuana but no other drugs?
+Brandon Jones: No marijuana use.
 
 Interviewer: When was your last drug use?
 Brandon Jones: No active substance abuse barriers; passes halfway house drug screens.
@@ -102,35 +405,80 @@ Brandon Jones: No active substance abuse barriers; passes halfway house drug scr
 Interviewer: Obligations to support children. Someone who is on court ordered child support OR has an agreement to pay a set amount to support a child OR reports financially helping out regularly, even without an official agreement, this includes paying for birthday parties, clothes, and school supplies. Do you financially support any biological children?
 Brandon Jones: Married, supportive family.
 
+Interviewer: Are you court ordered to pay child support?
+Brandon Jones: No court-ordered child support arrears.
+
+Interviewer: Have you been in contact with child support enforcement to make sure you are current?
+Brandon Jones: Confirmed $0 arrears or in contact with enforcement.
+
+Interviewer: Who do you spend most of your time with?
+Brandon Jones: Job interviewing, vehicle title/insurance transfer, halfway house compliance.
+
 Interviewer: How do you usually respond when someone disrespects you or challenges you?
 Brandon Jones: Practicing CBT skills (Stop & Think, Modeling Neutrality) to counter: Managing the administrative transition from federal halfway house rules to independent family household routines.
 
+Interviewer: Have you ever had a payroll job?
+Brandon Jones: Yes, have held payroll jobs.
+
+Interviewer: How much total work experience do you have?
+Brandon Jones: Multiple years as machine operator, forklift operator, and truck driver.
+
 Interviewer: What is the longest period of time you have stayed at one job?
-Brandon Jones: Multiple years as machine operator, forklift operator, and truck driver. | Reason jobs ended: Federal incarceration.
+Brandon Jones: Multiple years as machine operator, forklift operator, and truck driver.
+
+Interviewer: What types of jobs have you had?
+Brandon Jones: Multiple years as machine operator, forklift operator, and truck driver.
+
+Interviewer: Do you have any physical or personal limitations that could affect the type of work you can do?
+Brandon Jones: No physical or medical limitations affecting work capacity.
+
+Interviewer: What work skills do you have?
+Brandon Jones: OSHA-10 Certification; experienced Forklift Operator, Machine Operator, and Truck Driver. and hands-on production skills.
 
 Interviewer: What usually caused jobs to end for you?
-Brandon Jones: Multiple years as machine operator, forklift operator, and truck driver. | Reason jobs ended: Federal incarceration.
+Brandon Jones: Federal incarceration.
 
 Interviewer: Do you currently have any certifications or job training?
 Brandon Jones: OSHA-10 Certification; experienced Forklift Operator, Machine Operator, and Truck Driver.
 
+Interviewer: What certifications do you have?
+Brandon Jones: OSHA-10 Certification; experienced Forklift Operator, Machine Operator, and Truck Driver.
+
+Interviewer: What certifications are you interested in?
+Brandon Jones: Forklift, OSHA-10, and SkillCat trade certifications.
+
 Interviewer: What is the highest level of education you have completed?
-Brandon Jones: High School / GED. (Yes.)
+Brandon Jones: High School / GED.
+
+Interviewer: Are you currently working on your GED?
+Brandon Jones: Already completed (Yes.).
 
 Interviewer: Do you have a drivers license in good standing?
 Brandon Jones: Valid Temporary Paper Driver’s License (not suspended); transferring title and insurance for his personal vehicle
 
 Interviewer: Do you have reliable transportation to attend everyday?
-Brandon Jones: Wife provides reliable transportation while he completes title transfer and insurance on his own vehicle.
+Brandon Jones: Yes, reliable transportation plan confirmed.
 
 Interviewer: What is your reliable transportation?
 Brandon Jones: Wife provides reliable transportation while he completes title transfer and insurance on his own vehicle.
 
+Interviewer: Do you have any regular obligations that could affect your ability to attend daily or work a full shift? (This could include court obligations, child care, sick family members who need care, your own medical issues)
+Brandon Jones: No conflicting regular obligations; fully available for 9am–3pm schedule.
+
+Interviewer: What might make it hard for you to attend every day?
+Brandon Jones: Managing daily transportation (Wife provides reliable transportation while he completes title transfer and insurance on his own vehicle.) and schedule punctuality.
+
 Interviewer: What are you hoping to get out of this program?
-Brandon Jones: Focused on completing Turn90, earning OSHA-10 Certification; experienced Forklift Operator, Machine Operator, and Truck Driver., resolving Briefcase barriers (Valid Temporary Paper Driver’s License (not suspended); transferring title and insurance for his personal vehicle), and securing stable full-time employment.
+Brandon Jones: Complete First Shift, earn credentials, clear barriers (Valid Temporary Paper Driver’s License (not suspended); transferring title and insurance for his personal vehicle), and secure full-time employment.
 
 Interviewer: What type of job would you like?
-Brandon Jones: Focused on completing Turn90, earning OSHA-10 Certification; experienced Forklift Operator, Machine Operator, and Truck Driver., resolving Briefcase barriers (Valid Temporary Paper Driver’s License (not suspended); transferring title and insurance for his personal vehicle), and securing stable full-time employment.
+Brandon Jones: Manufacturing, logistics, warehousing, or skilled trade with growth potential.
+
+Interviewer: What are the two most important to you in a job?
+Brandon Jones: Fair pay with career stability and a positive, supportive work environment.
+
+Interviewer: Is there anything else you'd like us to know?
+Brandon Jones: Motivated and ready to work hard every day to achieve long-term success.
 
 ==========================================================
 Interviewer: [Collateral File Review — Linked Apricot Consultation & Case Management Notes]

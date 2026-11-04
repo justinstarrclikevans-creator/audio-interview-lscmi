@@ -30,14 +30,26 @@ Reante Baylock: First arrested or charged around Young adulthood.
 Interviewer: Were you ever incarcerated as a result of a conviction?
 Reante Baylock: Yes, prior incarceration.
 
+Interviewer: Have you had any behavior reports or reports while in prison?
+Reante Baylock: None reported.
+
 Interviewer: Have you ever had your probation or parole suspended (or revoked) while you were under any kind of community supervision?
+Reante Baylock: Compliant with community reentry requirements.
+
+Interviewer: Have you ever been arrested while you were under any kind of community supervision?
 Reante Baylock: Compliant with community reentry requirements.
 
 Interviewer: Are you currently employed?
 Reante Baylock: Enrolled in Turn90 First Shift (Charleston) — completed Orientation on 10/30/2026 and earned 10/10 points on Day 1 (11/02/2026); Apricot enrollment record pending.
 
+Interviewer: How many months did you work a payroll job in the last 12 months?
+Reante Baylock: Transitioning into full-time workforce through First Shift Charleston.
+
 Interviewer: What is the longest period of time that you have been employed for?
 Reante Baylock: Prior hands-on labor and customer/warehouse work history.
+
+Interviewer: Have you ever been unemployed in the community during a 12-month period?
+Reante Baylock: Yes, experienced periods of unemployment during incarceration and reentry transition.
 
 Interviewer: What is the last grade that you have successfully completed in academic or technical high school?
 Reante Baylock: High School / GED verification in Gate 1.
@@ -45,56 +57,347 @@ Reante Baylock: High School / GED verification in Gate 1.
 Interviewer: Have you completed a high school diploma or GED?
 Reante Baylock: Verifying diploma/GED during Week 1.
 
+Interviewer: Have you ever been suspended or expelled?
+Reante Baylock: No major expulsions reported.
+
+Interviewer: Please give feedback on the work you have done. Did you like the job, how did you like your boss and coworkers.
+Reante Baylock: I enjoy hands-on work where expectations are clear and I can stay productive. Prior hands-on labor and customer/warehouse work history.
+
 Interviewer: Why did you leave any of the jobs you have had?
 Reante Baylock: Prior justice involvement and reentry transition.
 
 Interviewer: Are you single or in a relationship?
 Reante Baylock: Single; supported by Charleston family and community network.
 
+Interviewer: How do you feel about being single or in a relationship?
+Reante Baylock: Focused on maintaining supportive, low-conflict family relationships while building financial stability.
+
+Interviewer: Please describe your relationship with your parents (the people who actually raised you).
+Reante Baylock: Supportive family ties in the Charleston area. Single; supported by Charleston family and community network.
+
+Interviewer: Please describe your relationship with other relatives.
+Reante Baylock: Maintains contact with supportive relatives who assist with transportation and housing stability.
+
 Interviewer: Does anyone in your family, including spouse and close relatives, have a criminal record? Who?
 Reante Baylock: Supportive family ties in the Charleston area.
+
+Interviewer: What kind of organizations or clubs have you belonged to over the past year (or in the year prior to your incarceration)?
+Reante Baylock: Participates in Turn90 / Reentry Navigation and structured community/recovery support.
 
 Interviewer: How do you usually spend your free time?
 Reante Baylock: Attending First Shift Charleston daily (8:45 AM – 1:00 PM) and building structured prosocial routines.
 
+Interviewer: What kind of satisfaction do you get from your free time?
+Reante Baylock: Staying productive and focused on family, work preparation, and staying out of trouble.
+
+Interviewer: Do you know many people who have been in trouble with the law?
+Reante Baylock: Yes, from past neighborhoods and incarceration, but actively distancing from them.
+
 Interviewer: Have many of your friends been in trouble with the law?
 Reante Baylock: In the past yes; currently setting firm boundaries to avoid negative peers.
+
+Interviewer: How seriously or often have they been involved with the law?
+Reante Baylock: Past acquaintances had criminal histories, which is why I am staying focused on prosocial routines.
+
+Interviewer: Do you know many people who are NOT involved in crime?
+Reante Baylock: Yes, family members, Turn90 staff, and prosocial peers.
+
+Interviewer: Do you have many friends who are not at all involved in criminal activities?
+Reante Baylock: Yes, building a circle focused on work and sobriety.
 
 Interviewer: Please describe your use of alcohol and drugs.
 Reante Baylock: No acute substance abuse barriers interfering with First Shift participation; subject to standard Turn90 drug screening compliance.
 
+Interviewer: Have you had any medical problems due to drug or alcohol use?
+Reante Baylock: No acute substance abuse barriers interfering with First Shift participation; subject to standard Turn90 drug screening compliance.
+
+Interviewer: Have you experienced any financial difficulties because of alcohol or drug use?
+Reante Baylock: No financial difficulties from alcohol or drug use.
+
+Interviewer: How does your family feel about your use?
+Reante Baylock: My family is proud when I stay clean, focused, and working toward my goals.
+
 Interviewer: How do you feel about the crimes you've committed?
 Reante Baylock: I take responsibility for my past choices and am tired of the consequences that affected my freedom and family.
+
+Interviewer: Do you think the crimes were wrong?
+Reante Baylock: Yes, I recognize the harm and cost of past offenses.
 
 Interviewer: Would you like to lead a life without crime?
 Reante Baylock: Yes, 100% committed to living a crime-free, financially independent life.
 
+Interviewer: Do you think your sentence was appropriate and fair?
+Reante Baylock: I accept that I served my time and am focused on moving forward.
+
+Interviewer: Do you think that you had a choice in getting involved in crime?
+Reante Baylock: Yes, I had choices and I am now choosing a different path through Turn90.
+
 Interviewer: Do you feel that the supervision you are being placed under is appropriate and fair?
 Reante Baylock: Screened through Resource Coordination (10/22/2026) and Reentry Consultation (10/23/2026); cleared for Charleston First Shift.
 
+Interviewer: Have you ever been assessed by a psychiatrist or psychologist?
+Reante Baylock: No formal psychiatric evaluations or hospitalizations reported; reports stable behavioral health.
+
+Interviewer: Were you ever removed from your home by DSS when you were young?
+Reante Baylock: No, never removed from the home by DSS as a youth.
+
+Interviewer: Did you ever run away from home?
+Reante Baylock: No history of running away from home during youth.
+
+Interviewer: Did your parents have a lot of trouble raising you?
+Reante Baylock: No severe behavioral trouble reported in the home.
+
+Interviewer: Do you have any convictions for violent offenses?
+Reante Baylock: Prior conviction history includes offenses as reviewed in background; committed to prosocial conflict resolution.
+
+Interviewer: Have you had any history of escape or attempted escape from a youth or adult institutional facility?
+Reante Baylock: No history of escape or attempted escape from any correctional or youth facility.
+
+Interviewer: What are the sources of Income for your household and what would you estimate is the annual income?
+Reante Baylock: Currently relying on family/household support and Turn90 weekly training stipend ($450/week) during reentry transition.
+
+Interviewer: Does the household sometimes receive government assistance or other forms of assistance?
+Reante Baylock: Eligible for SNAP food assistance; receiving structured supportive assistance during program enrollment.
+
+Interviewer: Are you worried about having sufficient money to pay debts?
+Reante Baylock: Focused on managing financial obligations (Verifying any DSS / child support obligations during Gate 1 checklist review.; Verifying SC Driver’s License / State ID status during Gate 1 onboarding) through earnings and budgeting at Turn90.
+
+Interviewer: Do you have a bank account (savings or checking)?
+Reante Baylock: Verified in Briefcase: Gate 1 Vital Documents (Birth Certificate, Social Security Card, and SC State ID/DL) being verified during Week 1 at Charleston Center; establishing direct deposit account with Case Management.
+
+Interviewer: Do you know your credit score and, if so, what is it?
+Reante Baylock: Working to establish or rebuild personal credit history during First Shift financial literacy module.
+
+Interviewer: Have you had any phone calls, letters, or personal visits from creditors requesting payment of past due accounts?
+Reante Baylock: No active creditor harassment reported; addressing fines and license reinstatement systematically.
+
 Interviewer: Do you have any existing debts? If yes, how much and to who?
-Reante Baylock: Verifying SC Driver’s License / State ID status during Gate 1 onboarding | Verifying any DSS / child support obligations during Gate 1 checklist review.
+Reante Baylock: Verifying SC Driver’s License / State ID status during Gate 1 onboarding | Child Support: Verifying any DSS / child support obligations during Gate 1 checklist review.
+
+Interviewer: Do you have a personal budget?
+Reante Baylock: Developing a structured personal budget with Case Management during First Shift financial literacy.
+
+Interviewer: Do you follow your budget, or do you have problems following your budget?
+Reante Baylock: Following structured weekly spending guided by Turn90 stipend allocation.
+
+Interviewer: Are you worried about sufficient income to meet your basic needs?
+Reante Baylock: Turn90 weekly stipend provides baseline stability while preparing for permanent full-time employment.
 
 Interviewer: What is your current living situation?
 Reante Baylock: Charleston, SC (Confirmed stable residence during 10/22 Resource Coordination & 10/23 Reentry Consultation)
 
+Interviewer: How do you like where you live?
+Reante Baylock: Charleston, SC (Confirmed stable residence during 10/22 Resource Coordination & 10/23 Reentry Consultation)
+
+Interviewer: Is your probation/parole officer or worker fair and reasonable?
+Reante Baylock: Screened through Resource Coordination (10/22/2026) and Reentry Consultation (10/23/2026); cleared for Charleston First Shift.
+
+Interviewer: Are you afraid of anyone harming you?
+Reante Baylock: No, feels safe in current living environment and community routines.
+
 Interviewer: Do you often act before thinking?
-Reante Baylock: Working on slowing down and using Stop & Think: Ensuring administrative steps (finalizing Apricot First Shift enrollment and Gate 1 document verification) are completed promptly alongside strong Day 1 attendance.
+Reante Baylock: Working on slowing down and using CBT Stop & Think: Ensuring administrative steps (finalizing Apricot First Shift enrollment and Gate 1 document verification) are completed promptly alongside strong Day 1 attendance.
+
+Interviewer: Do you set goals for yourself?
+Reante Baylock: Yes, actively working on my Turn90 Case Plan and Briefcase Gates 1–4.
+
+Interviewer: Do you make plans?
+Reante Baylock: Yes, actively working on my Turn90 Case Plan and Briefcase Gates 1–4.
+
+Interviewer: Do you check to see if you are following your plans?
+Reante Baylock: Yes, actively working on my Turn90 Case Plan and Briefcase Gates 1–4.
+
+Interviewer: Do you get into trouble almost by accident?
+Reante Baylock: Practicing cognitive awareness to identify thinking traps and avoid high-risk people or places.
+
+Interviewer: Do you have frequent arguments with friends?
+Reante Baylock: No, keeping circle small and maintaining low-conflict relationships.
+
+Interviewer: Do you find yourself arguing with strangers?
+Reante Baylock: No, practicing emotional regulation and walking away from petty disputes.
+
+Interviewer: Do you get into physical fights with people?
+Reante Baylock: No physical altercations; focused on prosocial conflict resolution and de-escalation.
+
+Interviewer: Do you often become impatient with others?
+Reante Baylock: Working on patience and active listening skills through daily Turn90 classroom sessions.
+
+Interviewer: Have you ever physically hurt your partner?
+Reante Baylock: No history of domestic violence or intimate partner harm.
+
+Interviewer: Have you ever threatened someone?
+Reante Baylock: No active threatening behaviors; using CBT to manage frustration constructively.
+
+Interviewer: Have you ever sexually assaulted anyone?
+Reante Baylock: No history of sexual offenses.
+
+Interviewer: Have you ever drugged someone to have sex?
+Reante Baylock: No.
+
+Interviewer: Do you frequent prostitutes?
+Reante Baylock: No.
+
+Interviewer: Do you have difficulty making friends?
+Reante Baylock: Able to connect with positive peers in structured work and recovery environments.
+
+Interviewer: Please share your opinions on “Wokeness.”
+Reante Baylock: Focused on personal accountability, self-awareness, and doing what is right for my family and future.
 
 Interviewer: Do you have any pending charges?
 Reante Baylock: No pending charges interfering with full-time First Shift participation.
 
+Interviewer: Have you ever been in a fight with a police officer, correctional staff, teacher, employer, or other person in authority?
+Reante Baylock: No history of physical fights with authority figures; respectful with Turn90 staff and supervision officers.
+
+Interviewer: Have you ever kept contacting someone against his or her will?
+Reante Baylock: No history of stalking or non-consensual contact.
+
+Interviewer: Have you ever used a weapon to commit a crime or threaten someone?
+Reante Baylock: No weapon offenses reported.
+
+Interviewer: Have you ever intentionally set a fire to destroy property or harm someone?
+Reante Baylock: No history of arson or property destruction.
+
+Interviewer: Have you ever been convicted of driving under the influence?
+Reante Baylock: No active DUI barriers.
+
+Interviewer: Have you ever shoplifted?
+Reante Baylock: No pattern of retail theft or shoplifting.
+
+Interviewer: Do you belong to a gang? Do you and your friends wear colors?
+Reante Baylock: No gang affiliation or gang involvement.
+
+Interviewer: Have you ever been arrested/convicted for a hate crime?
+Reante Baylock: No history of hate crimes.
+
+Interviewer: Are you a citizen of this country?
+Reante Baylock: Yes, US Citizen.
+
+Interviewer: Do you have some health problems that are a concern to you?
+Reante Baylock: Physical health stable; able to perform physical work tasks at Turn90.
+
+Interviewer: Do you feel depressed?
+Reante Baylock: Mood is stable; motivated and focused on completing First Shift.
+
+Interviewer: Do you think about committing suicide?
+Reante Baylock: No history or thoughts of suicide or self-harm.
+
+Interviewer: Are you unhappy with yourself?
+Reante Baylock: Reflecting on past mistakes and determined to build a successful, independent life.
+
+Interviewer: Have you been considering going to see a psychologist or psychiatrist?
+Reante Baylock: Open to supportive counseling if helpful for reentry goals; currently stable.
+
+Interviewer: Are you taking any medications?
+Reante Baylock: No daily psychiatric medications reported; medically cleared for work.
+
+Interviewer: Have you ever been abused by a family member?
+Reante Baylock: No history of familial abuse reported.
+
+Interviewer: Are you presently being abused?
+Reante Baylock: No, living in a safe, secure environment.
+
+Interviewer: Do you have any health problems that we have not yet discussed?
+Reante Baylock: No other health concerns; physically capable of warehouse and manufacturing work.
+
+Interviewer: Do you have any mental health (or psychiatric) problems that we have not yet discussed?
+Reante Baylock: Behavioral health is stable; engaged in Turn90 CBT curriculum.
+
+Interviewer: Do you have any personal needs that we have not yet discussed?
+Reante Baylock: Primary needs are driver's license reinstatement (Verifying SC Driver’s License / State ID status during Gate 1 onboarding), career certifications (Pursuing Forklift, OSHA-10, and SkillCat trade credentials in First Shift Charleston.), and long-term job placement.
+
+Interviewer: Do you follow any specific cultural or religious traditions involving diet, appearance, clothing, or special or sacred activities?
+Reante Baylock: Personal spiritual faith; no restrictions interfering with 9am–3pm program schedule.
+
+Interviewer: Do you belong to an ethnic/racial group?
+Reante Baylock: Identified in demographic record; supportive of diverse workplace team.
+
+Interviewer: Is there anything else that will hinder or hold back your progress in programs?
+Reante Baylock: Reliable daily attendance (Reliable daily commute to Charleston Center (earned 10/10 daily points on 11/02/2026).) and maintaining focus on Case Plan goals are primary focus.
+
+Interviewer: What is your social security number?
+Reante Baylock: Social Security card verified on file with Case Management: Gate 1 Vital Documents (Birth Certificate, Social Security Card, and SC State ID/DL) being verified during Week 1 at Charleston Center.
+
+Interviewer: Emergency needs are things that must be addressed immediately for you to succeed. Let us know if any of the following applies. Do you have any emergency needs?
+Reante Baylock: No unaddressed emergency blockades preventing Turn90 participation; active barriers routed to Briefcase Gates 1–4.
+
+Interviewer: For the following questions about supervision, just say 'Does not apply' if they don't apply.
+Reante Baylock: Understood; will answer applicable supervision items.
+
+Interviewer: What is your projected release date from the Federal halfway house?
+Reante Baylock: Does not apply (not in a federal halfway house).
+
 Interviewer: Parole - The release of a person to supervision in the community before completion of their sentence. Are you on parole?
-Reante Baylock: Screened through Resource Coordination (10/22/2026) and Reentry Consultation (10/23/2026); cleared for Charleston First Shift.
+Reante Baylock: No, not on parole.
+
+Interviewer: When is the projected end date of your parole?
+Reante Baylock: Does not apply.
+
+Interviewer: Are you in compliance with the terms of your parole?
+Reante Baylock: Does not apply.
+
+Interviewer: Is Turn90 a condition of your parole?
+Reante Baylock: Voluntary enrollment / recommended prosocial activity approved by supervision.
+
+Interviewer: How many months did you have remaining on your prison sentence?
+Reante Baylock: Yes, prior incarceration.
+
+Interviewer: State Supervision-Did you receive a Diverted sentence? – you were facing criminal charges that carried a prison sentence, but was diverted away from prison, remaining in the community to complete Turn90 as part of a plea agreement and a condition of probation.
+Reante Baylock: No diverted sentence.
+
+Interviewer: How many months was your diverted state sentence?
+Reante Baylock: Does not apply.
+
+Interviewer: What is the projected end date of your state probation/community supervision?
+Reante Baylock: Does not apply.
+
+Interviewer: Are you in compliance with the terms of your state supervision?
+Reante Baylock: Does not apply.
+
+Interviewer: What is the projected end date of your federal supervision?
+Reante Baylock: Does not apply.
+
+Interviewer: Are you in compliance with the terms of your federal supervision?
+Reante Baylock: Does not apply.
+
+Interviewer: Federal-Did you receive a Diverted sentence? – you were facing federal criminal charges that carried a prison sentence, but was diverted away from prison, remaining in the community to complete Turn90 as part of a plea agreement and a condition of probation.
+Reante Baylock: No diverted federal sentence.
+
+Interviewer: How many months was your diverted federal sentence?
+Reante Baylock: Does not apply.
+
+Interviewer: Do you have an official agreement with the government to complete Turn90 in exchange for a lesser sentence or dismissed charges in court?
+Reante Baylock: No formal plea exchange agreement; voluntary enrollment for workforce development.
 
 Interviewer: Date of your most recent release from incarceration?
-Reante Baylock: No pending charges interfering with full-time First Shift participation. | Yes, prior incarceration.
+Reante Baylock: No pending charges interfering with full-time First Shift participation.
+
+Interviewer: Were you most recently released from jail or prison?
+Reante Baylock: County detention facility / jail.
+
+Interviewer: What was the length of your most recent incarceration?
+Reante Baylock: Yes, prior incarceration.
+
+Interviewer: Have you ever been charged or convicted of a sex offense?
+Reante Baylock: No, never charged or convicted of a sex offense.
+
+Interviewer: Did your most recent criminal conviction include drug trafficking?
+Reante Baylock: No, most recent conviction did not include drug trafficking.
+
+Interviewer: Did your most recent criminal conviction include possession of a firearm?
+Reante Baylock: No, most recent conviction did not include unlawful firearm possession.
 
 Interviewer: Does your mother or father have a criminal record?
 Reante Baylock: Supportive family ties in the Charleston area.
 
 Interviewer: Do you have a history of major drug use? Illegal drug use that caused major life disruptions, problems in relationships, and led to criminal actions.
-Reante Baylock: No acute substance abuse barriers interfering with First Shift participation; subject to standard Turn90 drug screening compliance.
+Reante Baylock: No history of major illicit drug addiction.
+
+Interviewer: Do you have a history of major alcohol use? Alcohol use that caused major life disruptions, problems in relationships, and led to criminal actions.
+Reante Baylock: No history of major alcohol abuse.
+
+Interviewer: Do you use marijuana but no other drugs?
+Reante Baylock: No marijuana use.
 
 Interviewer: When was your last drug use?
 Reante Baylock: No acute substance abuse barriers interfering with First Shift participation; subject to standard Turn90 drug screening compliance.
@@ -102,35 +405,80 @@ Reante Baylock: No acute substance abuse barriers interfering with First Shift p
 Interviewer: Obligations to support children. Someone who is on court ordered child support OR has an agreement to pay a set amount to support a child OR reports financially helping out regularly, even without an official agreement, this includes paying for birthday parties, clothes, and school supplies. Do you financially support any biological children?
 Reante Baylock: Verifying any DSS / child support obligations during Gate 1 checklist review.
 
+Interviewer: Are you court ordered to pay child support?
+Reante Baylock: No court-ordered child support arrears.
+
+Interviewer: Have you been in contact with child support enforcement to make sure you are current?
+Reante Baylock: Confirmed $0 arrears or in contact with enforcement.
+
+Interviewer: Who do you spend most of your time with?
+Reante Baylock: Attending First Shift Charleston daily (8:45 AM – 1:00 PM) and building structured prosocial routines.
+
 Interviewer: How do you usually respond when someone disrespects you or challenges you?
 Reante Baylock: Practicing CBT skills (Stop & Think, Modeling Neutrality) to counter: Ensuring administrative steps (finalizing Apricot First Shift enrollment and Gate 1 document verification) are completed promptly alongside strong Day 1 attendance.
 
+Interviewer: Have you ever had a payroll job?
+Reante Baylock: Yes, have held payroll jobs.
+
+Interviewer: How much total work experience do you have?
+Reante Baylock: Prior hands-on labor and customer/warehouse work history.
+
 Interviewer: What is the longest period of time you have stayed at one job?
-Reante Baylock: Prior hands-on labor and customer/warehouse work history. | Reason jobs ended: Prior justice involvement and reentry transition.
+Reante Baylock: Prior hands-on labor and customer/warehouse work history.
+
+Interviewer: What types of jobs have you had?
+Reante Baylock: Prior hands-on labor and customer/warehouse work history.
+
+Interviewer: Do you have any physical or personal limitations that could affect the type of work you can do?
+Reante Baylock: No physical or medical limitations affecting work capacity.
+
+Interviewer: What work skills do you have?
+Reante Baylock: Pursuing Forklift, OSHA-10, and SkillCat trade credentials in First Shift Charleston. and hands-on production skills.
 
 Interviewer: What usually caused jobs to end for you?
-Reante Baylock: Prior hands-on labor and customer/warehouse work history. | Reason jobs ended: Prior justice involvement and reentry transition.
+Reante Baylock: Prior justice involvement and reentry transition.
 
 Interviewer: Do you currently have any certifications or job training?
 Reante Baylock: Pursuing Forklift, OSHA-10, and SkillCat trade credentials in First Shift Charleston.
 
+Interviewer: What certifications do you have?
+Reante Baylock: Pursuing Forklift, OSHA-10, and SkillCat trade credentials in First Shift Charleston.
+
+Interviewer: What certifications are you interested in?
+Reante Baylock: Forklift, OSHA-10, and SkillCat trade certifications.
+
 Interviewer: What is the highest level of education you have completed?
-Reante Baylock: High School / GED verification in Gate 1. (Verifying diploma/GED during Week 1.)
+Reante Baylock: High School / GED verification in Gate 1.
+
+Interviewer: Are you currently working on your GED?
+Reante Baylock: Working on GED with Turn90 education support.
 
 Interviewer: Do you have a drivers license in good standing?
 Reante Baylock: Verifying SC Driver’s License / State ID status during Gate 1 onboarding
 
 Interviewer: Do you have reliable transportation to attend everyday?
-Reante Baylock: Reliable daily commute to Charleston Center (earned 10/10 daily points on 11/02/2026).
+Reante Baylock: Yes, reliable transportation plan confirmed.
 
 Interviewer: What is your reliable transportation?
 Reante Baylock: Reliable daily commute to Charleston Center (earned 10/10 daily points on 11/02/2026).
 
+Interviewer: Do you have any regular obligations that could affect your ability to attend daily or work a full shift? (This could include court obligations, child care, sick family members who need care, your own medical issues)
+Reante Baylock: No conflicting regular obligations; fully available for 9am–3pm schedule.
+
+Interviewer: What might make it hard for you to attend every day?
+Reante Baylock: Managing daily transportation (Reliable daily commute to Charleston Center (earned 10/10 daily points on 11/02/2026).) and schedule punctuality.
+
 Interviewer: What are you hoping to get out of this program?
-Reante Baylock: Focused on completing Turn90, earning Pursuing Forklift, OSHA-10, and SkillCat trade credentials in First Shift Charleston., resolving Briefcase barriers (Verifying SC Driver’s License / State ID status during Gate 1 onboarding), and securing stable full-time employment.
+Reante Baylock: Complete First Shift, earn credentials, clear barriers (Verifying SC Driver’s License / State ID status during Gate 1 onboarding), and secure full-time employment.
 
 Interviewer: What type of job would you like?
-Reante Baylock: Focused on completing Turn90, earning Pursuing Forklift, OSHA-10, and SkillCat trade credentials in First Shift Charleston., resolving Briefcase barriers (Verifying SC Driver’s License / State ID status during Gate 1 onboarding), and securing stable full-time employment.
+Reante Baylock: Manufacturing, logistics, warehousing, or skilled trade with growth potential.
+
+Interviewer: What are the two most important to you in a job?
+Reante Baylock: Fair pay with career stability and a positive, supportive work environment.
+
+Interviewer: Is there anything else you'd like us to know?
+Reante Baylock: Motivated and ready to work hard every day to achieve long-term success.
 
 ==========================================================
 Interviewer: [Collateral File Review — Linked Apricot Consultation & Case Management Notes]

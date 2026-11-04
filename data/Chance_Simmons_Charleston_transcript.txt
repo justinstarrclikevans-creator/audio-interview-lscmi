@@ -30,14 +30,26 @@ Chance Simmons: First arrested or charged around Late teens.
 Interviewer: Were you ever incarcerated as a result of a conviction?
 Chance Simmons: Yes, served 20 years in prison prior to July 2026 intake.
 
+Interviewer: Have you had any behavior reports or reports while in prison?
+Chance Simmons: Completed institutional trade work (brick masonry, carpentry, basic plumbing, kitchen, janitorial) during sentence.
+
 Interviewer: Have you ever had your probation or parole suspended (or revoked) while you were under any kind of community supervision?
+Chance Simmons: Compliant with post-release community expectations.
+
+Interviewer: Have you ever been arrested while you were under any kind of community supervision?
 Chance Simmons: Compliant with post-release community expectations.
 
 Interviewer: Are you currently employed?
 Chance Simmons: No prior formal community W-2 payroll jobs due to 20-year sentence; enrolled in Turn90 First Shift (Charleston) on 10/26/2026.
 
+Interviewer: How many months did you work a payroll job in the last 12 months?
+Chance Simmons: 0 months formal payroll work in past 12 months.
+
 Interviewer: What is the longest period of time that you have been employed for?
 Chance Simmons: Extensive institutional work (2010–2015 trade exposure in masonry, carpentry, plumbing); building first community payroll record.
+
+Interviewer: Have you ever been unemployed in the community during a 12-month period?
+Chance Simmons: Yes, experienced periods of unemployment during incarceration and reentry transition.
 
 Interviewer: What is the last grade that you have successfully completed in academic or technical high school?
 Chance Simmons: High School / GED and institutional trade coursework.
@@ -45,56 +57,347 @@ Chance Simmons: High School / GED and institutional trade coursework.
 Interviewer: Have you completed a high school diploma or GED?
 Chance Simmons: Yes.
 
+Interviewer: Have you ever been suspended or expelled?
+Chance Simmons: Yes, experienced school disciplinary action during youth.
+
+Interviewer: Please give feedback on the work you have done. Did you like the job, how did you like your boss and coworkers.
+Chance Simmons: I enjoy hands-on work where expectations are clear and I can stay productive. Extensive institutional work (2010–2015 trade exposure in masonry, carpentry, plumbing); building first community payroll record.
+
 Interviewer: Why did you leave any of the jobs you have had?
 Chance Simmons: Incarceration (20-year sentence).
 
 Interviewer: Are you single or in a relationship?
 Chance Simmons: Single; rebuilding community and family support network in Charleston.
 
+Interviewer: How do you feel about being single or in a relationship?
+Chance Simmons: Focused on maintaining supportive, low-conflict family relationships while building financial stability.
+
+Interviewer: Please describe your relationship with your parents (the people who actually raised you).
+Chance Simmons: None active. Single; rebuilding community and family support network in Charleston.
+
+Interviewer: Please describe your relationship with other relatives.
+Chance Simmons: Maintains contact with supportive relatives who assist with transportation and housing stability.
+
 Interviewer: Does anyone in your family, including spouse and close relatives, have a criminal record? Who?
 Chance Simmons: None active.
+
+Interviewer: What kind of organizations or clubs have you belonged to over the past year (or in the year prior to your incarceration)?
+Chance Simmons: Participates in Turn90 / Reentry Navigation and structured community/recovery support.
 
 Interviewer: How do you usually spend your free time?
 Chance Simmons: Attending First Shift classes, practicing CBT accountability skills, exploring HVAC/plumbing trade pathways.
 
+Interviewer: What kind of satisfaction do you get from your free time?
+Chance Simmons: Staying productive and focused on family, work preparation, and staying out of trouble.
+
+Interviewer: Do you know many people who have been in trouble with the law?
+Chance Simmons: Yes, from past neighborhoods and incarceration, but actively distancing from them.
+
 Interviewer: Have many of your friends been in trouble with the law?
 Chance Simmons: In the past yes; currently setting firm boundaries to avoid negative peers.
+
+Interviewer: How seriously or often have they been involved with the law?
+Chance Simmons: Past acquaintances had criminal histories, which is why I am staying focused on prosocial routines.
+
+Interviewer: Do you know many people who are NOT involved in crime?
+Chance Simmons: Yes, family members, Turn90 staff, and prosocial peers.
+
+Interviewer: Do you have many friends who are not at all involved in criminal activities?
+Chance Simmons: Yes, building a circle focused on work and sobriety.
 
 Interviewer: Please describe your use of alcohol and drugs.
 Chance Simmons: Addressed in First Shift Case Plan Focus Area 2 (Substance Use & Relapse Prevention); passing program drug tests.
 
+Interviewer: Have you had any medical problems due to drug or alcohol use?
+Chance Simmons: Addressed in First Shift Case Plan Focus Area 2 (Substance Use & Relapse Prevention); passing program drug tests.
+
+Interviewer: Have you experienced any financial difficulties because of alcohol or drug use?
+Chance Simmons: Past substance use contributed to legal and financial setbacks, motivating my current sobriety.
+
+Interviewer: How does your family feel about your use?
+Chance Simmons: My family is proud when I stay clean, focused, and working toward my goals.
+
 Interviewer: How do you feel about the crimes you've committed?
 Chance Simmons: I take responsibility for my past choices and am tired of the consequences that affected my freedom and family.
+
+Interviewer: Do you think the crimes were wrong?
+Chance Simmons: Yes, I recognize the harm and cost of past offenses.
 
 Interviewer: Would you like to lead a life without crime?
 Chance Simmons: Yes, 100% committed to living a crime-free, financially independent life.
 
+Interviewer: Do you think your sentence was appropriate and fair?
+Chance Simmons: I accept that I served my time and am focused on moving forward.
+
+Interviewer: Do you think that you had a choice in getting involved in crime?
+Chance Simmons: Yes, I had choices and I am now choosing a different path through Turn90.
+
 Interviewer: Do you feel that the supervision you are being placed under is appropriate and fair?
 Chance Simmons: Post-release supervision in Charleston.
 
+Interviewer: Have you ever been assessed by a psychiatrist or psychologist?
+Chance Simmons: No formal psychiatric evaluations or hospitalizations reported; reports stable behavioral health.
+
+Interviewer: Were you ever removed from your home by DSS when you were young?
+Chance Simmons: No, never removed from the home by DSS as a youth.
+
+Interviewer: Did you ever run away from home?
+Chance Simmons: No history of running away from home during youth.
+
+Interviewer: Did your parents have a lot of trouble raising you?
+Chance Simmons: Experienced adolescent adjustment challenges and behavioral conflict during teenage years.
+
+Interviewer: Do you have any convictions for violent offenses?
+Chance Simmons: Prior conviction history includes offenses as reviewed in background; committed to prosocial conflict resolution.
+
+Interviewer: Have you had any history of escape or attempted escape from a youth or adult institutional facility?
+Chance Simmons: No history of escape or attempted escape from any correctional or youth facility.
+
+Interviewer: What are the sources of Income for your household and what would you estimate is the annual income?
+Chance Simmons: Currently relying on family/household support and Turn90 weekly training stipend ($450/week) during reentry transition.
+
+Interviewer: Does the household sometimes receive government assistance or other forms of assistance?
+Chance Simmons: Eligible for SNAP food assistance; receiving structured supportive assistance during program enrollment.
+
+Interviewer: Are you worried about having sufficient money to pay debts?
+Chance Simmons: Focused on managing financial obligations (None.; Has access to a vehicle/ride ("car out front"); working on licensing & Briefcase Gates) through earnings and budgeting at Turn90.
+
+Interviewer: Do you have a bank account (savings or checking)?
+Chance Simmons: Verified in Briefcase: State ID, Social Security Card, Birth Certificate; establishing direct deposit account with Case Management.
+
+Interviewer: Do you know your credit score and, if so, what is it?
+Chance Simmons: Working to establish or rebuild personal credit history during First Shift financial literacy module.
+
+Interviewer: Have you had any phone calls, letters, or personal visits from creditors requesting payment of past due accounts?
+Chance Simmons: No active creditor harassment reported; addressing fines and license reinstatement systematically.
+
 Interviewer: Do you have any existing debts? If yes, how much and to who?
-Chance Simmons: Has access to a vehicle/ride ("car out front"); working on licensing & Briefcase Gates | None.
+Chance Simmons: Has access to a vehicle/ride ("car out front"); working on licensing & Briefcase Gates | Child Support: None.
+
+Interviewer: Do you have a personal budget?
+Chance Simmons: Developing a structured personal budget with Case Management during First Shift financial literacy.
+
+Interviewer: Do you follow your budget, or do you have problems following your budget?
+Chance Simmons: Following structured weekly spending guided by Turn90 stipend allocation.
+
+Interviewer: Are you worried about sufficient income to meet your basic needs?
+Chance Simmons: Turn90 weekly stipend provides baseline stability while preparing for permanent full-time employment.
 
 Interviewer: What is your current living situation?
 Chance Simmons: 1774 Hay Rd, Johns Island, SC 29455
 
+Interviewer: How do you like where you live?
+Chance Simmons: 1774 Hay Rd, Johns Island, SC 29455
+
+Interviewer: Is your probation/parole officer or worker fair and reasonable?
+Chance Simmons: Post-release supervision in Charleston.
+
+Interviewer: Are you afraid of anyone harming you?
+Chance Simmons: No, feels safe in current living environment and community routines.
+
 Interviewer: Do you often act before thinking?
-Chance Simmons: Working on slowing down and using Stop & Think: Carrying survival mindsets or institutional defensiveness from a 20-year prison sentence into everyday workplace and community interactions.
+Chance Simmons: Working on slowing down and using CBT Stop & Think: Carrying survival mindsets or institutional defensiveness from a 20-year prison sentence into everyday workplace and community interactions.
+
+Interviewer: Do you set goals for yourself?
+Chance Simmons: Yes, actively working on my Turn90 Case Plan and Briefcase Gates 1–4.
+
+Interviewer: Do you make plans?
+Chance Simmons: Yes, actively working on my Turn90 Case Plan and Briefcase Gates 1–4.
+
+Interviewer: Do you check to see if you are following your plans?
+Chance Simmons: Yes, actively working on my Turn90 Case Plan and Briefcase Gates 1–4.
+
+Interviewer: Do you get into trouble almost by accident?
+Chance Simmons: Practicing cognitive awareness to identify thinking traps and avoid high-risk people or places.
+
+Interviewer: Do you have frequent arguments with friends?
+Chance Simmons: No, keeping circle small and maintaining low-conflict relationships.
+
+Interviewer: Do you find yourself arguing with strangers?
+Chance Simmons: No, practicing emotional regulation and walking away from petty disputes.
+
+Interviewer: Do you get into physical fights with people?
+Chance Simmons: No physical altercations; focused on prosocial conflict resolution and de-escalation.
+
+Interviewer: Do you often become impatient with others?
+Chance Simmons: Working on patience and active listening skills through daily Turn90 classroom sessions.
+
+Interviewer: Have you ever physically hurt your partner?
+Chance Simmons: No history of domestic violence or intimate partner harm.
+
+Interviewer: Have you ever threatened someone?
+Chance Simmons: No active threatening behaviors; using CBT to manage frustration constructively.
+
+Interviewer: Have you ever sexually assaulted anyone?
+Chance Simmons: No history of sexual offenses.
+
+Interviewer: Have you ever drugged someone to have sex?
+Chance Simmons: No.
+
+Interviewer: Do you frequent prostitutes?
+Chance Simmons: No.
+
+Interviewer: Do you have difficulty making friends?
+Chance Simmons: Able to connect with positive peers in structured work and recovery environments.
+
+Interviewer: Please share your opinions on “Wokeness.”
+Chance Simmons: Focused on personal accountability, self-awareness, and doing what is right for my family and future.
 
 Interviewer: Do you have any pending charges?
 Chance Simmons: No pending charges.
 
+Interviewer: Have you ever been in a fight with a police officer, correctional staff, teacher, employer, or other person in authority?
+Chance Simmons: No history of physical fights with authority figures; respectful with Turn90 staff and supervision officers.
+
+Interviewer: Have you ever kept contacting someone against his or her will?
+Chance Simmons: No history of stalking or non-consensual contact.
+
+Interviewer: Have you ever used a weapon to commit a crime or threaten someone?
+Chance Simmons: Past justice involvement evaluated during intake; currently zero weapons and fully disarmed.
+
+Interviewer: Have you ever intentionally set a fire to destroy property or harm someone?
+Chance Simmons: No history of arson or property destruction.
+
+Interviewer: Have you ever been convicted of driving under the influence?
+Chance Simmons: No active DUI barriers.
+
+Interviewer: Have you ever shoplifted?
+Chance Simmons: No pattern of retail theft or shoplifting.
+
+Interviewer: Do you belong to a gang? Do you and your friends wear colors?
+Chance Simmons: No gang affiliation or gang involvement.
+
+Interviewer: Have you ever been arrested/convicted for a hate crime?
+Chance Simmons: No history of hate crimes.
+
+Interviewer: Are you a citizen of this country?
+Chance Simmons: Yes, US Citizen.
+
+Interviewer: Do you have some health problems that are a concern to you?
+Chance Simmons: Physical health stable; able to perform physical work tasks at Turn90.
+
+Interviewer: Do you feel depressed?
+Chance Simmons: Mood is stable; motivated and focused on completing First Shift.
+
+Interviewer: Do you think about committing suicide?
+Chance Simmons: No history or thoughts of suicide or self-harm.
+
+Interviewer: Are you unhappy with yourself?
+Chance Simmons: Reflecting on past mistakes and determined to build a successful, independent life.
+
+Interviewer: Have you been considering going to see a psychologist or psychiatrist?
+Chance Simmons: Open to supportive counseling if helpful for reentry goals; currently stable.
+
+Interviewer: Are you taking any medications?
+Chance Simmons: No daily psychiatric medications reported; medically cleared for work.
+
+Interviewer: Have you ever been abused by a family member?
+Chance Simmons: No history of familial abuse reported.
+
+Interviewer: Are you presently being abused?
+Chance Simmons: No, living in a safe, secure environment.
+
+Interviewer: Do you have any health problems that we have not yet discussed?
+Chance Simmons: No other health concerns; physically capable of warehouse and manufacturing work.
+
+Interviewer: Do you have any mental health (or psychiatric) problems that we have not yet discussed?
+Chance Simmons: Behavioral health is stable; engaged in Turn90 CBT curriculum.
+
+Interviewer: Do you have any personal needs that we have not yet discussed?
+Chance Simmons: Primary needs are driver's license reinstatement (Has access to a vehicle/ride ("car out front"); working on licensing & Briefcase Gates), career certifications (Practical institutional trade skills in brick masonry, carpentry, and plumbing; pursuing Forklift, OSHA-10, and SkillCat HVAC/Plumbing.), and long-term job placement.
+
+Interviewer: Do you follow any specific cultural or religious traditions involving diet, appearance, clothing, or special or sacred activities?
+Chance Simmons: Personal spiritual faith; no restrictions interfering with 9am–3pm program schedule.
+
+Interviewer: Do you belong to an ethnic/racial group?
+Chance Simmons: Identified in demographic record; supportive of diverse workplace team.
+
+Interviewer: Is there anything else that will hinder or hold back your progress in programs?
+Chance Simmons: Reliable daily attendance (Has reliable access to a vehicle/ride to the Charleston center.) and maintaining focus on Case Plan goals are primary focus.
+
+Interviewer: What is your social security number?
+Chance Simmons: Social Security card verified on file with Case Management: State ID, Social Security Card, Birth Certificate.
+
+Interviewer: Emergency needs are things that must be addressed immediately for you to succeed. Let us know if any of the following applies. Do you have any emergency needs?
+Chance Simmons: No unaddressed emergency blockades preventing Turn90 participation; active barriers routed to Briefcase Gates 1–4.
+
+Interviewer: For the following questions about supervision, just say 'Does not apply' if they don't apply.
+Chance Simmons: Understood; will answer applicable supervision items.
+
+Interviewer: What is your projected release date from the Federal halfway house?
+Chance Simmons: Does not apply (not in a federal halfway house).
+
 Interviewer: Parole - The release of a person to supervision in the community before completion of their sentence. Are you on parole?
-Chance Simmons: Post-release supervision in Charleston.
+Chance Simmons: No, not on parole.
+
+Interviewer: When is the projected end date of your parole?
+Chance Simmons: Does not apply.
+
+Interviewer: Are you in compliance with the terms of your parole?
+Chance Simmons: Does not apply.
+
+Interviewer: Is Turn90 a condition of your parole?
+Chance Simmons: Voluntary enrollment / recommended prosocial activity approved by supervision.
+
+Interviewer: How many months did you have remaining on your prison sentence?
+Chance Simmons: Yes, served 20 years in prison prior to July 2026 intake.
+
+Interviewer: State Supervision-Did you receive a Diverted sentence? – you were facing criminal charges that carried a prison sentence, but was diverted away from prison, remaining in the community to complete Turn90 as part of a plea agreement and a condition of probation.
+Chance Simmons: No diverted sentence.
+
+Interviewer: How many months was your diverted state sentence?
+Chance Simmons: Does not apply.
+
+Interviewer: What is the projected end date of your state probation/community supervision?
+Chance Simmons: Does not apply.
+
+Interviewer: Are you in compliance with the terms of your state supervision?
+Chance Simmons: Does not apply.
+
+Interviewer: What is the projected end date of your federal supervision?
+Chance Simmons: Does not apply.
+
+Interviewer: Are you in compliance with the terms of your federal supervision?
+Chance Simmons: Does not apply.
+
+Interviewer: Federal-Did you receive a Diverted sentence? – you were facing federal criminal charges that carried a prison sentence, but was diverted away from prison, remaining in the community to complete Turn90 as part of a plea agreement and a condition of probation.
+Chance Simmons: No diverted federal sentence.
+
+Interviewer: How many months was your diverted federal sentence?
+Chance Simmons: Does not apply.
+
+Interviewer: Do you have an official agreement with the government to complete Turn90 in exchange for a lesser sentence or dismissed charges in court?
+Chance Simmons: No formal plea exchange agreement; voluntary enrollment for workforce development.
 
 Interviewer: Date of your most recent release from incarceration?
-Chance Simmons: No pending charges. | Yes, served 20 years in prison prior to July 2026 intake.
+Chance Simmons: No pending charges.
+
+Interviewer: Were you most recently released from jail or prison?
+Chance Simmons: State prison.
+
+Interviewer: What was the length of your most recent incarceration?
+Chance Simmons: Yes, served 20 years in prison prior to July 2026 intake.
+
+Interviewer: Have you ever been charged or convicted of a sex offense?
+Chance Simmons: No, never charged or convicted of a sex offense.
+
+Interviewer: Did your most recent criminal conviction include drug trafficking?
+Chance Simmons: No, most recent conviction did not include drug trafficking.
+
+Interviewer: Did your most recent criminal conviction include possession of a firearm?
+Chance Simmons: No, most recent conviction did not include unlawful firearm possession.
 
 Interviewer: Does your mother or father have a criminal record?
 Chance Simmons: None active.
 
 Interviewer: Do you have a history of major drug use? Illegal drug use that caused major life disruptions, problems in relationships, and led to criminal actions.
-Chance Simmons: Addressed in First Shift Case Plan Focus Area 2 (Substance Use & Relapse Prevention); passing program drug tests.
+Chance Simmons: No history of major illicit drug addiction.
+
+Interviewer: Do you have a history of major alcohol use? Alcohol use that caused major life disruptions, problems in relationships, and led to criminal actions.
+Chance Simmons: No history of major alcohol abuse.
+
+Interviewer: Do you use marijuana but no other drugs?
+Chance Simmons: No marijuana use.
 
 Interviewer: When was your last drug use?
 Chance Simmons: Addressed in First Shift Case Plan Focus Area 2 (Substance Use & Relapse Prevention); passing program drug tests.
@@ -102,35 +405,80 @@ Chance Simmons: Addressed in First Shift Case Plan Focus Area 2 (Substance Use &
 Interviewer: Obligations to support children. Someone who is on court ordered child support OR has an agreement to pay a set amount to support a child OR reports financially helping out regularly, even without an official agreement, this includes paying for birthday parties, clothes, and school supplies. Do you financially support any biological children?
 Chance Simmons: None.
 
+Interviewer: Are you court ordered to pay child support?
+Chance Simmons: No court-ordered child support arrears.
+
+Interviewer: Have you been in contact with child support enforcement to make sure you are current?
+Chance Simmons: Confirmed $0 arrears or in contact with enforcement.
+
+Interviewer: Who do you spend most of your time with?
+Chance Simmons: Attending First Shift classes, practicing CBT accountability skills, exploring HVAC/plumbing trade pathways.
+
 Interviewer: How do you usually respond when someone disrespects you or challenges you?
 Chance Simmons: Practicing CBT skills (Stop & Think, Modeling Neutrality) to counter: Carrying survival mindsets or institutional defensiveness from a 20-year prison sentence into everyday workplace and community interactions.
 
+Interviewer: Have you ever had a payroll job?
+Chance Simmons: Yes, have held payroll jobs.
+
+Interviewer: How much total work experience do you have?
+Chance Simmons: Extensive institutional work (2010–2015 trade exposure in masonry, carpentry, plumbing); building first community payroll record.
+
 Interviewer: What is the longest period of time you have stayed at one job?
-Chance Simmons: Extensive institutional work (2010–2015 trade exposure in masonry, carpentry, plumbing); building first community payroll record. | Reason jobs ended: Incarceration (20-year sentence).
+Chance Simmons: Extensive institutional work (2010–2015 trade exposure in masonry, carpentry, plumbing); building first community payroll record.
+
+Interviewer: What types of jobs have you had?
+Chance Simmons: Extensive institutional work (2010–2015 trade exposure in masonry, carpentry, plumbing); building first community payroll record.
+
+Interviewer: Do you have any physical or personal limitations that could affect the type of work you can do?
+Chance Simmons: No physical or medical limitations affecting work capacity.
+
+Interviewer: What work skills do you have?
+Chance Simmons: Practical institutional trade skills in brick masonry, carpentry, and plumbing; pursuing Forklift, OSHA-10, and SkillCat HVAC/Plumbing. and hands-on production skills.
 
 Interviewer: What usually caused jobs to end for you?
-Chance Simmons: Extensive institutional work (2010–2015 trade exposure in masonry, carpentry, plumbing); building first community payroll record. | Reason jobs ended: Incarceration (20-year sentence).
+Chance Simmons: Incarceration (20-year sentence).
 
 Interviewer: Do you currently have any certifications or job training?
 Chance Simmons: Practical institutional trade skills in brick masonry, carpentry, and plumbing; pursuing Forklift, OSHA-10, and SkillCat HVAC/Plumbing.
 
+Interviewer: What certifications do you have?
+Chance Simmons: Practical institutional trade skills in brick masonry, carpentry, and plumbing; pursuing Forklift, OSHA-10, and SkillCat HVAC/Plumbing.
+
+Interviewer: What certifications are you interested in?
+Chance Simmons: Forklift, OSHA-10, and SkillCat trade certifications.
+
 Interviewer: What is the highest level of education you have completed?
-Chance Simmons: High School / GED and institutional trade coursework. (Yes.)
+Chance Simmons: High School / GED and institutional trade coursework.
+
+Interviewer: Are you currently working on your GED?
+Chance Simmons: Already completed (Yes.).
 
 Interviewer: Do you have a drivers license in good standing?
 Chance Simmons: Has access to a vehicle/ride ("car out front"); working on licensing & Briefcase Gates
 
 Interviewer: Do you have reliable transportation to attend everyday?
-Chance Simmons: Has reliable access to a vehicle/ride to the Charleston center.
+Chance Simmons: Yes, reliable transportation plan confirmed.
 
 Interviewer: What is your reliable transportation?
 Chance Simmons: Has reliable access to a vehicle/ride to the Charleston center.
 
+Interviewer: Do you have any regular obligations that could affect your ability to attend daily or work a full shift? (This could include court obligations, child care, sick family members who need care, your own medical issues)
+Chance Simmons: No conflicting regular obligations; fully available for 9am–3pm schedule.
+
+Interviewer: What might make it hard for you to attend every day?
+Chance Simmons: Managing daily transportation (Has reliable access to a vehicle/ride to the Charleston center.) and schedule punctuality.
+
 Interviewer: What are you hoping to get out of this program?
-Chance Simmons: Focused on completing Turn90, earning Practical institutional trade skills in brick masonry, carpentry, and plumbing; pursuing Forklift, OSHA-10, and SkillCat HVAC/Plumbing., resolving Briefcase barriers (Has access to a vehicle/ride ("car out front"); working on licensing & Briefcase Gates), and securing stable full-time employment.
+Chance Simmons: Complete First Shift, earn credentials, clear barriers (Has access to a vehicle/ride ("car out front"); working on licensing & Briefcase Gates), and secure full-time employment.
 
 Interviewer: What type of job would you like?
-Chance Simmons: Focused on completing Turn90, earning Practical institutional trade skills in brick masonry, carpentry, and plumbing; pursuing Forklift, OSHA-10, and SkillCat HVAC/Plumbing., resolving Briefcase barriers (Has access to a vehicle/ride ("car out front"); working on licensing & Briefcase Gates), and securing stable full-time employment.
+Chance Simmons: Manufacturing, logistics, warehousing, or skilled trade with growth potential.
+
+Interviewer: What are the two most important to you in a job?
+Chance Simmons: Fair pay with career stability and a positive, supportive work environment.
+
+Interviewer: Is there anything else you'd like us to know?
+Chance Simmons: Motivated and ready to work hard every day to achieve long-term success.
 
 ==========================================================
 Interviewer: [Collateral File Review — Linked Apricot Consultation & Case Management Notes]

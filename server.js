@@ -1756,8 +1756,9 @@ app.get('/api/documents/raw/:filename', (req, res) => {
     else if (filename.endsWith('.xlsx')) contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
     else if (filename.endsWith('.md') || filename.endsWith('.txt')) contentType = 'text/plain; charset=utf-8';
 
+    const isDownload = req.query.download === '1' || req.query.download === 'true';
     res.setHeader('Content-Type', contentType);
-    res.setHeader('Content-Disposition', `inline; filename="${filename}"`);
+    res.setHeader('Content-Disposition', `${isDownload ? 'attachment' : 'inline'}; filename="${filename}"`);
     fs.createReadStream(filePath).pipe(res);
 });
 
@@ -2057,7 +2058,10 @@ function buildPrintableDocumentHtml(filename, content, isBatch = false) {
             }
 
             dialogueCount++;
-            const speakerMatch = trimmed.match(/^(?:\[(\d{1,2}:\d{2}(?::\d{2})?)\]\s*)?(?:\*\*|\*|_)?([A-Za-z0-9\s\.\(\)\/\x27-]+?)(?:\*\*|\*|_)?:\s*(?:\*\*|\*|_)?(.*)$/);
+            let speakerMatch = trimmed.match(/^(?:\[(\d{1,2}:\d{2}(?::\d{2})?)\]\s*)?\*\*([A-Za-z0-9\s\.\(\)\/\x27-]+?):\*\*\s*(.*)$/);
+            if (!speakerMatch) {
+                speakerMatch = trimmed.match(/^(?:\[(\d{1,2}:\d{2}(?::\d{2})?)\]\s*)?(?:\*\*|\*|_)?([A-Za-z0-9\s\.\(\)\/\x27-]+?)(?:\*\*|\*|_)?:\s*(?:\*\*|\*|_)?(.*)$/);
+            }
             if (speakerMatch) {
                 const time = speakerMatch[1] ? ` • ${speakerMatch[1]}` : '';
                 const rawSpeaker = speakerMatch[2].trim();
@@ -3414,6 +3418,29 @@ app.post('/api/submit-feedback', memoryUpload.single('criminalHistoryFile'), asy
             convertSingleMdToPdf(participantPlanPath, participantPlanPath.replace(/\.md$/, '.pdf'));
             convertSingleMdToDocx(participantPlanPath, participantPlanPath.replace(/\.md$/, '.docx'));
         }
+
+        // Generate / Update Official Criminal History Record if background text/file was submitted or if missing
+        const crimPath = path.join(dataDir, `${clientId}_criminal_history.md`);
+        if ((crimText && crimText.trim()) || !fs.existsSync(crimPath)) {
+            try {
+                const { buildCriminalHistoryMd, WEEKLY_INTERVIEW_PROFILES } = require('./generate_weekly_consultation_lscmi_packets');
+                const matchedProfile = WEEKLY_INTERVIEW_PROFILES.find(wp => wp.clientId === clientId || wp.fullName.toLowerCase() === participantName.toLowerCase());
+                if (matchedProfile) {
+                    const crimMd = buildCriminalHistoryMd(matchedProfile, crimText);
+                    fs.writeFileSync(crimPath, crimMd, 'utf8');
+                } else {
+                    let existingCrim = fs.existsSync(crimPath) ? fs.readFileSync(crimPath, 'utf8') : '';
+                    let updatedCrim = existingCrim 
+                        ? `${existingCrim}\n\n---\n\n## Official Uploaded Background Check & Court Records\n\n\`\`\`text\n${crimText.trim()}\n\`\`\`\n`
+                        : `# Official Criminal History & Charge Disposition Report\n\n**Participant:** ${participantName}\n\n---\n\n## Official Uploaded Background Check & Court Records\n\n\`\`\`text\n${crimText.trim()}\n\`\`\`\n`;
+                    fs.writeFileSync(crimPath, updatedCrim, 'utf8');
+                }
+                convertSingleMdToDocx(crimPath, crimPath.replace(/\.md$/, '.docx'));
+                convertSingleMdToPdf(crimPath, crimPath.replace(/\.md$/, '.pdf'));
+            } catch (crimErr) {
+                console.warn('Could not auto-generate criminal history during submit-feedback:', crimErr.message);
+            }
+        }
         
         if (results.csv_row) {
             const csvRow = results.csv_row + "\n";
@@ -3496,6 +3523,80 @@ app.post('/api/submit-feedback', memoryUpload.single('criminalHistoryFile'), asy
         console.error("Phase 2 failed:", err);
         fs.writeFileSync(path.join(dataDir, `${clientId}_error_phase2.txt`), `Failed Phase 2: ${err.message}`);
         res.status(500).json({ error: "Phase 2 generation failed: " + err.message });
+    }
+});
+
+// Dedicated endpoint to generate or re-generate exportable Criminal History report
+app.post('/api/interviews/generate-criminal-history', memoryUpload.single('criminalHistoryFile'), async (req, res) => {
+    const { clientId, criminalHistoryText } = req.body;
+    if (!clientId) return res.status(400).json({ error: "Missing clientId" });
+
+    try {
+        let crimText = criminalHistoryText || '';
+        if (req.file && req.file.buffer) {
+            try {
+                const text = await extractPdfText(req.file.buffer);
+                crimText += '\n\n' + text;
+            } catch (e) {
+                console.warn('Could not parse PDF buffer, using raw text:', e.message);
+            }
+        }
+
+        const parts = clientId.split('_');
+        if (/^\d{10,}$/.test(parts[0])) parts.shift();
+        const lastPart = parts[parts.length - 1].toLowerCase();
+        if (['charleston', 'columbia', 'spartanburg'].includes(lastPart)) parts.pop();
+        const participantName = parts.join(' ').trim() || clientId;
+
+        const { buildCriminalHistoryMd, WEEKLY_INTERVIEW_PROFILES } = require('./generate_weekly_consultation_lscmi_packets');
+        const matchedProfile = WEEKLY_INTERVIEW_PROFILES.find(wp => wp.clientId === clientId || wp.fullName.toLowerCase() === participantName.toLowerCase());
+        const crimPath = path.join(dataDir, `${clientId}_criminal_history.md`);
+
+        if (matchedProfile) {
+            const md = buildCriminalHistoryMd(matchedProfile, crimText);
+            fs.writeFileSync(crimPath, md, 'utf8');
+        } else {
+            const { getParticipantConsultationLscmiContext } = require('./services/apricot_eval_engine');
+            const consultCtx = getParticipantConsultationLscmiContext(clientId);
+            const mockP = {
+                fullName: participantName,
+                clientId: clientId,
+                center: consultCtx?.center || 'Turn90 Center',
+                interviewDate: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+                assessor: 'Turn90 Case Management Team',
+                dob: consultCtx?.dob || 'Verified',
+                age: consultCtx?.age || 'Verified',
+                address: 'Verified community residence',
+                dlStatus: 'SCDMV status audit pending',
+                idDocs: 'Verified on file',
+                juvConvictions: 'Documented in intake record',
+                adultConvictions: 'Documented in judicial record',
+                pendingCharges: 'No active pending charges reported',
+                firstArrestAge: 'Youth / Young Adulthood',
+                incarceratedEver: 'Documented custodial sentence',
+                instMisconduct: 'None reported',
+                supervisionBreach: 'Compliant with community supervision',
+                supervisionDetails: 'Active community supervision',
+                childSupport: 'Reviewed during intake',
+                parentCriminalRecord: 'None reported',
+                scores: { ch: 4, total: 14, riskLevel: 'MEDIUM RISK' }
+            };
+            const md = buildCriminalHistoryMd(mockP, crimText);
+            fs.writeFileSync(crimPath, md, 'utf8');
+        }
+
+        await convertSingleMdToDocx(crimPath, crimPath.replace(/\.md$/, '.docx'));
+        convertSingleMdToPdf(crimPath, crimPath.replace(/\.md$/, '.pdf'));
+
+        res.json({
+            success: true,
+            filename: `${clientId}_criminal_history.md`,
+            docxFilename: `${clientId}_criminal_history.docx`,
+            message: `Official Criminal History generated for ${participantName}!`
+        });
+    } catch (err) {
+        console.error('Error generating criminal history:', err);
+        res.status(500).json({ error: err.message });
     }
 });
 

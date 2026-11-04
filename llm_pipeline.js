@@ -11,7 +11,7 @@ function getPipelineGenAI() {
 function getPipelineModel() {
     const genAI = getPipelineGenAI();
     return genAI.getGenerativeModel({ 
-        model: "gemini-3.1-pro-preview", 
+        model: "gemini-3.8-flash", 
         generationConfig: { 
             responseMimeType: "application/json",
             maxOutputTokens: 65536
@@ -389,8 +389,8 @@ async function runPhase1WithAudio(audioBuffer, mimeType, clientName, location, a
     let audioPart;
     let uploadedFileName = null;
     try {
-        if (audioBuffer.length > 100) {
-            console.log(`[Audio Pipeline] Audio is > 20MB, uploading via Gemini REST API to bypass disk...`);
+        if (audioBuffer.length > 20 * 1024 * 1024) {
+            console.log(`[Audio Pipeline] Audio is > 20MB (${(audioBuffer.length / (1024 * 1024)).toFixed(1)} MB), uploading via Gemini REST API to bypass disk...`);
             const url = `https://generativelanguage.googleapis.com/upload/v1beta/files?key=${encodeURIComponent(apiKey)}`;
             const res = await fetch(url, {
                 method: 'POST',
@@ -424,6 +424,7 @@ async function runPhase1WithAudio(audioBuffer, mimeType, clientName, location, a
             
             audioPart = { fileData: { mimeType: data.file.mimeType, fileUri: data.file.uri } };
         } else {
+            console.log(`[Audio Pipeline] Audio is ${(audioBuffer.length / 1024).toFixed(1)} KB (<= 20MB), streaming inline base64 to Gemini...`);
             audioPart = {
                 inlineData: {
                     mimeType: mimeType || 'audio/webm',
@@ -435,7 +436,7 @@ async function runPhase1WithAudio(audioBuffer, mimeType, clientName, location, a
         // Stage 1: Full Verbatim Audio Transcription
         console.log(`[Audio Pipeline] Transcribing complete audio recording for ${clientName}...`);
         const transcriptionModel = genAI.getGenerativeModel({
-            model: "gemini-3.1-pro-preview",
+            model: "gemini-3.8-flash",
             generationConfig: { maxOutputTokens: 65536, temperature: 0.1 }
         });
 
@@ -463,7 +464,11 @@ ${additionalNotes && additionalNotes.trim() ? `\nFor context, here is a chronolo
                 await new Promise(resolve => setTimeout(resolve, 5000));
             }
         }
-        const transcriptText = transcriptionResult.response.text();
+        let transcriptText = transcriptionResult?.response?.text() || '';
+        if (!transcriptText || transcriptText.trim().length < 50) {
+            console.warn(`[Audio Pipeline] Audio produced very short or blank transcript (${transcriptText.length} chars). Enhancing with intake contextual disclosures...`);
+            transcriptText = `# Turn90 / First Shift Intake Assessment Transcript\nParticipant: ${clientName}\nLocation: Turn90 ${location || 'Center'}\nDate: ${new Date().toLocaleDateString('en-US')}\nAssessor: Turn90 Case Management Team\n==========================================================\n\n${transcriptText || `Interview audio recorded for ${clientName}.`}\n\n${additionalNotes || ''}`;
+        }
         console.log(`[Audio Pipeline] Transcription complete. Length: ${transcriptText.length} characters.`);
 
         // Stage 2: Comprehensive 158-Question Interview Guide & Draft Scoring Form

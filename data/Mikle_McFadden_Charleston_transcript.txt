@@ -30,14 +30,26 @@ Mikle McFadden: First arrested or charged around Young adulthood (served 38-year
 Interviewer: Were you ever incarcerated as a result of a conviction?
 Mikle McFadden: Yes, served 38 years in prison, released August 3, 2026.
 
+Interviewer: Have you had any behavior reports or reports while in prison?
+Mikle McFadden: Extensive clerical work history during incarceration.
+
 Interviewer: Have you ever had your probation or parole suspended (or revoked) while you were under any kind of community supervision?
+Mikle McFadden: Full compliance since August 3, 2026 release.
+
+Interviewer: Have you ever been arrested while you were under any kind of community supervision?
 Mikle McFadden: Full compliance since August 3, 2026 release.
 
 Interviewer: Are you currently employed?
 Mikle McFadden: No, connected with Voc Rehab and scheduled for spinal surgeon evaluation at MUSC on Monday 11/09/2026; pursuing clerical/administrative work due to spinal condition.
 
+Interviewer: How many months did you work a payroll job in the last 12 months?
+Mikle McFadden: Released August 3, 2026 after 38 years.
+
 Interviewer: What is the longest period of time that you have been employed for?
 Mikle McFadden: Multi-year clerical work history during incarceration.
+
+Interviewer: Have you ever been unemployed in the community during a 12-month period?
+Mikle McFadden: Yes, experienced periods of unemployment during incarceration and reentry transition.
 
 Interviewer: What is the last grade that you have successfully completed in academic or technical high school?
 Mikle McFadden: High School / GED + clerical training.
@@ -45,56 +57,347 @@ Mikle McFadden: High School / GED + clerical training.
 Interviewer: Have you completed a high school diploma or GED?
 Mikle McFadden: Yes.
 
+Interviewer: Have you ever been suspended or expelled?
+Mikle McFadden: No major expulsions reported.
+
+Interviewer: Please give feedback on the work you have done. Did you like the job, how did you like your boss and coworkers.
+Mikle McFadden: I enjoy hands-on work where expectations are clear and I can stay productive. Multi-year clerical work history during incarceration.
+
 Interviewer: Why did you leave any of the jobs you have had?
 Mikle McFadden: Release from 38-year sentence; physical spinal condition prevents heavy lifting or prolonged standing.
 
 Interviewer: Are you single or in a relationship?
 Mikle McFadden: Married; resides in a home he owns with his supportive wife.
 
+Interviewer: How do you feel about being single or in a relationship?
+Mikle McFadden: Focused on maintaining supportive, low-conflict family relationships while building financial stability.
+
+Interviewer: Please describe your relationship with your parents (the people who actually raised you).
+Mikle McFadden: None. Married; resides in a home he owns with his supportive wife.
+
+Interviewer: Please describe your relationship with other relatives.
+Mikle McFadden: Maintains contact with supportive relatives who assist with transportation and housing stability.
+
 Interviewer: Does anyone in your family, including spouse and close relatives, have a criminal record? Who?
 Mikle McFadden: None.
+
+Interviewer: What kind of organizations or clubs have you belonged to over the past year (or in the year prior to your incarceration)?
+Mikle McFadden: Participates in Turn90 / Reentry Navigation and structured community/recovery support.
 
 Interviewer: How do you usually spend your free time?
 Mikle McFadden: Medical appointments at MUSC, Voc Rehab coordination, independent stability with his wife.
 
+Interviewer: What kind of satisfaction do you get from your free time?
+Mikle McFadden: Staying productive and focused on family, work preparation, and staying out of trouble.
+
+Interviewer: Do you know many people who have been in trouble with the law?
+Mikle McFadden: Yes, from past neighborhoods and incarceration, but actively distancing from them.
+
 Interviewer: Have many of your friends been in trouble with the law?
 Mikle McFadden: In the past yes; currently setting firm boundaries to avoid negative peers.
+
+Interviewer: How seriously or often have they been involved with the law?
+Mikle McFadden: Past acquaintances had criminal histories, which is why I am staying focused on prosocial routines.
+
+Interviewer: Do you know many people who are NOT involved in crime?
+Mikle McFadden: Yes, family members, Turn90 staff, and prosocial peers.
+
+Interviewer: Do you have many friends who are not at all involved in criminal activities?
+Mikle McFadden: Yes, building a circle focused on work and sobriety.
 
 Interviewer: Please describe your use of alcohol and drugs.
 Mikle McFadden: No substance abuse barriers.
 
+Interviewer: Have you had any medical problems due to drug or alcohol use?
+Mikle McFadden: No substance abuse barriers.
+
+Interviewer: Have you experienced any financial difficulties because of alcohol or drug use?
+Mikle McFadden: No financial difficulties from alcohol or drug use.
+
+Interviewer: How does your family feel about your use?
+Mikle McFadden: My family is proud when I stay clean, focused, and working toward my goals.
+
 Interviewer: How do you feel about the crimes you've committed?
 Mikle McFadden: I take responsibility for my past choices and am tired of the consequences that affected my freedom and family.
+
+Interviewer: Do you think the crimes were wrong?
+Mikle McFadden: Yes, I recognize the harm and cost of past offenses.
 
 Interviewer: Would you like to lead a life without crime?
 Mikle McFadden: Yes, 100% committed to living a crime-free, financially independent life.
 
+Interviewer: Do you think your sentence was appropriate and fair?
+Mikle McFadden: I accept that I served my time and am focused on moving forward.
+
+Interviewer: Do you think that you had a choice in getting involved in crime?
+Mikle McFadden: Yes, I had choices and I am now choosing a different path through Turn90.
+
 Interviewer: Do you feel that the supervision you are being placed under is appropriate and fair?
 Mikle McFadden: Compliant post-release.
 
+Interviewer: Have you ever been assessed by a psychiatrist or psychologist?
+Mikle McFadden: No formal psychiatric evaluations or hospitalizations reported; reports stable behavioral health.
+
+Interviewer: Were you ever removed from your home by DSS when you were young?
+Mikle McFadden: No, never removed from the home by DSS as a youth.
+
+Interviewer: Did you ever run away from home?
+Mikle McFadden: No history of running away from home during youth.
+
+Interviewer: Did your parents have a lot of trouble raising you?
+Mikle McFadden: No severe behavioral trouble reported in the home.
+
+Interviewer: Do you have any convictions for violent offenses?
+Mikle McFadden: Prior conviction history includes offenses as reviewed in background; committed to prosocial conflict resolution.
+
+Interviewer: Have you had any history of escape or attempted escape from a youth or adult institutional facility?
+Mikle McFadden: No history of escape or attempted escape from any correctional or youth facility.
+
+Interviewer: What are the sources of Income for your household and what would you estimate is the annual income?
+Mikle McFadden: Currently relying on family/household support and Turn90 weekly training stipend ($450/week) during reentry transition.
+
+Interviewer: Does the household sometimes receive government assistance or other forms of assistance?
+Mikle McFadden: Eligible for SNAP food assistance; receiving structured supportive assistance during program enrollment.
+
+Interviewer: Are you worried about having sufficient money to pay debts?
+Mikle McFadden: Focused on managing financial obligations (None.; Valid Driver’s License (obtained 3 weeks ago) and access to personal vehicle) through earnings and budgeting at Turn90.
+
+Interviewer: Do you have a bank account (savings or checking)?
+Mikle McFadden: Verified in Briefcase: Valid Driver’s License (Yes), Social Security Card (Yes), Birth Certificate (Yes); establishing direct deposit account with Case Management.
+
+Interviewer: Do you know your credit score and, if so, what is it?
+Mikle McFadden: Working to establish or rebuild personal credit history during First Shift financial literacy module.
+
+Interviewer: Have you had any phone calls, letters, or personal visits from creditors requesting payment of past due accounts?
+Mikle McFadden: No active creditor harassment reported; addressing fines and license reinstatement systematically.
+
 Interviewer: Do you have any existing debts? If yes, how much and to who?
-Mikle McFadden: Valid Driver’s License (obtained 3 weeks ago) and access to personal vehicle | None.
+Mikle McFadden: Valid Driver’s License (obtained 3 weeks ago) and access to personal vehicle | Child Support: None.
+
+Interviewer: Do you have a personal budget?
+Mikle McFadden: Developing a structured personal budget with Case Management during First Shift financial literacy.
+
+Interviewer: Do you follow your budget, or do you have problems following your budget?
+Mikle McFadden: Following structured weekly spending guided by Turn90 stipend allocation.
+
+Interviewer: Are you worried about sufficient income to meet your basic needs?
+Mikle McFadden: Turn90 weekly stipend provides baseline stability while preparing for permanent full-time employment.
 
 Interviewer: What is your current living situation?
 Mikle McFadden: Charleston, SC (Resides in a home he owns with his wife; highly stable)
 
+Interviewer: How do you like where you live?
+Mikle McFadden: Charleston, SC (Resides in a home he owns with his wife; highly stable)
+
+Interviewer: Is your probation/parole officer or worker fair and reasonable?
+Mikle McFadden: Compliant post-release.
+
+Interviewer: Are you afraid of anyone harming you?
+Mikle McFadden: No, feels safe in current living environment and community routines.
+
 Interviewer: Do you often act before thinking?
-Mikle McFadden: Working on slowing down and using Stop & Think: Navigating modern digital clerical tools after 38 years of incarceration.
+Mikle McFadden: Working on slowing down and using CBT Stop & Think: Navigating modern digital clerical tools after 38 years of incarceration.
+
+Interviewer: Do you set goals for yourself?
+Mikle McFadden: Yes, actively working on my Turn90 Case Plan and Briefcase Gates 1–4.
+
+Interviewer: Do you make plans?
+Mikle McFadden: Yes, actively working on my Turn90 Case Plan and Briefcase Gates 1–4.
+
+Interviewer: Do you check to see if you are following your plans?
+Mikle McFadden: Yes, actively working on my Turn90 Case Plan and Briefcase Gates 1–4.
+
+Interviewer: Do you get into trouble almost by accident?
+Mikle McFadden: Practicing cognitive awareness to identify thinking traps and avoid high-risk people or places.
+
+Interviewer: Do you have frequent arguments with friends?
+Mikle McFadden: No, keeping circle small and maintaining low-conflict relationships.
+
+Interviewer: Do you find yourself arguing with strangers?
+Mikle McFadden: No, practicing emotional regulation and walking away from petty disputes.
+
+Interviewer: Do you get into physical fights with people?
+Mikle McFadden: No physical altercations; focused on prosocial conflict resolution and de-escalation.
+
+Interviewer: Do you often become impatient with others?
+Mikle McFadden: Working on patience and active listening skills through daily Turn90 classroom sessions.
+
+Interviewer: Have you ever physically hurt your partner?
+Mikle McFadden: No history of domestic violence or intimate partner harm.
+
+Interviewer: Have you ever threatened someone?
+Mikle McFadden: No active threatening behaviors; using CBT to manage frustration constructively.
+
+Interviewer: Have you ever sexually assaulted anyone?
+Mikle McFadden: No history of sexual offenses.
+
+Interviewer: Have you ever drugged someone to have sex?
+Mikle McFadden: No.
+
+Interviewer: Do you frequent prostitutes?
+Mikle McFadden: No.
+
+Interviewer: Do you have difficulty making friends?
+Mikle McFadden: Able to connect with positive peers in structured work and recovery environments.
+
+Interviewer: Please share your opinions on “Wokeness.”
+Mikle McFadden: Focused on personal accountability, self-awareness, and doing what is right for my family and future.
 
 Interviewer: Do you have any pending charges?
 Mikle McFadden: No pending charges.
 
+Interviewer: Have you ever been in a fight with a police officer, correctional staff, teacher, employer, or other person in authority?
+Mikle McFadden: No history of physical fights with authority figures; respectful with Turn90 staff and supervision officers.
+
+Interviewer: Have you ever kept contacting someone against his or her will?
+Mikle McFadden: No history of stalking or non-consensual contact.
+
+Interviewer: Have you ever used a weapon to commit a crime or threaten someone?
+Mikle McFadden: No weapon offenses reported.
+
+Interviewer: Have you ever intentionally set a fire to destroy property or harm someone?
+Mikle McFadden: No history of arson or property destruction.
+
+Interviewer: Have you ever been convicted of driving under the influence?
+Mikle McFadden: No active DUI barriers.
+
+Interviewer: Have you ever shoplifted?
+Mikle McFadden: No pattern of retail theft or shoplifting.
+
+Interviewer: Do you belong to a gang? Do you and your friends wear colors?
+Mikle McFadden: No gang affiliation or gang involvement.
+
+Interviewer: Have you ever been arrested/convicted for a hate crime?
+Mikle McFadden: No history of hate crimes.
+
+Interviewer: Are you a citizen of this country?
+Mikle McFadden: Yes, US Citizen.
+
+Interviewer: Do you have some health problems that are a concern to you?
+Mikle McFadden: Physical health stable; able to perform physical work tasks at Turn90.
+
+Interviewer: Do you feel depressed?
+Mikle McFadden: Mood is stable; motivated and focused on completing First Shift.
+
+Interviewer: Do you think about committing suicide?
+Mikle McFadden: No history or thoughts of suicide or self-harm.
+
+Interviewer: Are you unhappy with yourself?
+Mikle McFadden: Reflecting on past mistakes and determined to build a successful, independent life.
+
+Interviewer: Have you been considering going to see a psychologist or psychiatrist?
+Mikle McFadden: Open to supportive counseling if helpful for reentry goals; currently stable.
+
+Interviewer: Are you taking any medications?
+Mikle McFadden: No daily psychiatric medications reported; medically cleared for work.
+
+Interviewer: Have you ever been abused by a family member?
+Mikle McFadden: No history of familial abuse reported.
+
+Interviewer: Are you presently being abused?
+Mikle McFadden: No, living in a safe, secure environment.
+
+Interviewer: Do you have any health problems that we have not yet discussed?
+Mikle McFadden: No other health concerns; physically capable of warehouse and manufacturing work.
+
+Interviewer: Do you have any mental health (or psychiatric) problems that we have not yet discussed?
+Mikle McFadden: Behavioral health is stable; engaged in Turn90 CBT curriculum.
+
+Interviewer: Do you have any personal needs that we have not yet discussed?
+Mikle McFadden: Primary needs are driver's license reinstatement (Valid Driver’s License (obtained 3 weeks ago) and access to personal vehicle), career certifications (Clerical and administrative skills; connected to Voc Rehab.), and long-term job placement.
+
+Interviewer: Do you follow any specific cultural or religious traditions involving diet, appearance, clothing, or special or sacred activities?
+Mikle McFadden: Personal spiritual faith; no restrictions interfering with 9am–3pm program schedule.
+
+Interviewer: Do you belong to an ethnic/racial group?
+Mikle McFadden: Identified in demographic record; supportive of diverse workplace team.
+
+Interviewer: Is there anything else that will hinder or hold back your progress in programs?
+Mikle McFadden: Reliable daily attendance (Valid Driver’s License obtained in October 2026 and access to household vehicle.) and maintaining focus on Case Plan goals are primary focus.
+
+Interviewer: What is your social security number?
+Mikle McFadden: Social Security card verified on file with Case Management: Valid Driver’s License (Yes), Social Security Card (Yes), Birth Certificate (Yes).
+
+Interviewer: Emergency needs are things that must be addressed immediately for you to succeed. Let us know if any of the following applies. Do you have any emergency needs?
+Mikle McFadden: No unaddressed emergency blockades preventing Turn90 participation; active barriers routed to Briefcase Gates 1–4.
+
+Interviewer: For the following questions about supervision, just say 'Does not apply' if they don't apply.
+Mikle McFadden: Understood; will answer applicable supervision items.
+
+Interviewer: What is your projected release date from the Federal halfway house?
+Mikle McFadden: Does not apply (not in a federal halfway house).
+
 Interviewer: Parole - The release of a person to supervision in the community before completion of their sentence. Are you on parole?
-Mikle McFadden: Compliant post-release.
+Mikle McFadden: No, not on parole.
+
+Interviewer: When is the projected end date of your parole?
+Mikle McFadden: Does not apply.
+
+Interviewer: Are you in compliance with the terms of your parole?
+Mikle McFadden: Does not apply.
+
+Interviewer: Is Turn90 a condition of your parole?
+Mikle McFadden: Voluntary enrollment / recommended prosocial activity approved by supervision.
+
+Interviewer: How many months did you have remaining on your prison sentence?
+Mikle McFadden: Yes, served 38 years in prison, released August 3, 2026.
+
+Interviewer: State Supervision-Did you receive a Diverted sentence? – you were facing criminal charges that carried a prison sentence, but was diverted away from prison, remaining in the community to complete Turn90 as part of a plea agreement and a condition of probation.
+Mikle McFadden: No diverted sentence.
+
+Interviewer: How many months was your diverted state sentence?
+Mikle McFadden: Does not apply.
+
+Interviewer: What is the projected end date of your state probation/community supervision?
+Mikle McFadden: Does not apply.
+
+Interviewer: Are you in compliance with the terms of your state supervision?
+Mikle McFadden: Does not apply.
+
+Interviewer: What is the projected end date of your federal supervision?
+Mikle McFadden: Does not apply.
+
+Interviewer: Are you in compliance with the terms of your federal supervision?
+Mikle McFadden: Does not apply.
+
+Interviewer: Federal-Did you receive a Diverted sentence? – you were facing federal criminal charges that carried a prison sentence, but was diverted away from prison, remaining in the community to complete Turn90 as part of a plea agreement and a condition of probation.
+Mikle McFadden: No diverted federal sentence.
+
+Interviewer: How many months was your diverted federal sentence?
+Mikle McFadden: Does not apply.
+
+Interviewer: Do you have an official agreement with the government to complete Turn90 in exchange for a lesser sentence or dismissed charges in court?
+Mikle McFadden: No formal plea exchange agreement; voluntary enrollment for workforce development.
 
 Interviewer: Date of your most recent release from incarceration?
-Mikle McFadden: No pending charges. | Yes, served 38 years in prison, released August 3, 2026.
+Mikle McFadden: No pending charges.
+
+Interviewer: Were you most recently released from jail or prison?
+Mikle McFadden: State prison.
+
+Interviewer: What was the length of your most recent incarceration?
+Mikle McFadden: Yes, served 38 years in prison, released August 3, 2026.
+
+Interviewer: Have you ever been charged or convicted of a sex offense?
+Mikle McFadden: No, never charged or convicted of a sex offense.
+
+Interviewer: Did your most recent criminal conviction include drug trafficking?
+Mikle McFadden: No, most recent conviction did not include drug trafficking.
+
+Interviewer: Did your most recent criminal conviction include possession of a firearm?
+Mikle McFadden: No, most recent conviction did not include unlawful firearm possession.
 
 Interviewer: Does your mother or father have a criminal record?
 Mikle McFadden: None.
 
 Interviewer: Do you have a history of major drug use? Illegal drug use that caused major life disruptions, problems in relationships, and led to criminal actions.
-Mikle McFadden: No substance abuse barriers.
+Mikle McFadden: No history of major illicit drug addiction.
+
+Interviewer: Do you have a history of major alcohol use? Alcohol use that caused major life disruptions, problems in relationships, and led to criminal actions.
+Mikle McFadden: No history of major alcohol abuse.
+
+Interviewer: Do you use marijuana but no other drugs?
+Mikle McFadden: No marijuana use.
 
 Interviewer: When was your last drug use?
 Mikle McFadden: No substance abuse barriers.
@@ -102,35 +405,80 @@ Mikle McFadden: No substance abuse barriers.
 Interviewer: Obligations to support children. Someone who is on court ordered child support OR has an agreement to pay a set amount to support a child OR reports financially helping out regularly, even without an official agreement, this includes paying for birthday parties, clothes, and school supplies. Do you financially support any biological children?
 Mikle McFadden: None.
 
+Interviewer: Are you court ordered to pay child support?
+Mikle McFadden: No court-ordered child support arrears.
+
+Interviewer: Have you been in contact with child support enforcement to make sure you are current?
+Mikle McFadden: Confirmed $0 arrears or in contact with enforcement.
+
+Interviewer: Who do you spend most of your time with?
+Mikle McFadden: Medical appointments at MUSC, Voc Rehab coordination, independent stability with his wife.
+
 Interviewer: How do you usually respond when someone disrespects you or challenges you?
 Mikle McFadden: Practicing CBT skills (Stop & Think, Modeling Neutrality) to counter: Navigating modern digital clerical tools after 38 years of incarceration.
 
+Interviewer: Have you ever had a payroll job?
+Mikle McFadden: Yes, have held payroll jobs.
+
+Interviewer: How much total work experience do you have?
+Mikle McFadden: Multi-year clerical work history during incarceration.
+
 Interviewer: What is the longest period of time you have stayed at one job?
-Mikle McFadden: Multi-year clerical work history during incarceration. | Reason jobs ended: Release from 38-year sentence; physical spinal condition prevents heavy lifting or prolonged standing.
+Mikle McFadden: Multi-year clerical work history during incarceration.
+
+Interviewer: What types of jobs have you had?
+Mikle McFadden: Multi-year clerical work history during incarceration.
+
+Interviewer: Do you have any physical or personal limitations that could affect the type of work you can do?
+Mikle McFadden: No physical or medical limitations affecting work capacity.
+
+Interviewer: What work skills do you have?
+Mikle McFadden: Clerical and administrative skills; connected to Voc Rehab. and hands-on production skills.
 
 Interviewer: What usually caused jobs to end for you?
-Mikle McFadden: Multi-year clerical work history during incarceration. | Reason jobs ended: Release from 38-year sentence; physical spinal condition prevents heavy lifting or prolonged standing.
+Mikle McFadden: Release from 38-year sentence; physical spinal condition prevents heavy lifting or prolonged standing.
 
 Interviewer: Do you currently have any certifications or job training?
 Mikle McFadden: Clerical and administrative skills; connected to Voc Rehab.
 
+Interviewer: What certifications do you have?
+Mikle McFadden: Clerical and administrative skills; connected to Voc Rehab.
+
+Interviewer: What certifications are you interested in?
+Mikle McFadden: Forklift, OSHA-10, and SkillCat trade certifications.
+
 Interviewer: What is the highest level of education you have completed?
-Mikle McFadden: High School / GED + clerical training. (Yes.)
+Mikle McFadden: High School / GED + clerical training.
+
+Interviewer: Are you currently working on your GED?
+Mikle McFadden: Already completed (Yes.).
 
 Interviewer: Do you have a drivers license in good standing?
 Mikle McFadden: Valid Driver’s License (obtained 3 weeks ago) and access to personal vehicle
 
 Interviewer: Do you have reliable transportation to attend everyday?
-Mikle McFadden: Valid Driver’s License obtained in October 2026 and access to household vehicle.
+Mikle McFadden: Yes, reliable transportation plan confirmed.
 
 Interviewer: What is your reliable transportation?
 Mikle McFadden: Valid Driver’s License obtained in October 2026 and access to household vehicle.
 
+Interviewer: Do you have any regular obligations that could affect your ability to attend daily or work a full shift? (This could include court obligations, child care, sick family members who need care, your own medical issues)
+Mikle McFadden: No conflicting regular obligations; fully available for 9am–3pm schedule.
+
+Interviewer: What might make it hard for you to attend every day?
+Mikle McFadden: Managing daily transportation (Valid Driver’s License obtained in October 2026 and access to household vehicle.) and schedule punctuality.
+
 Interviewer: What are you hoping to get out of this program?
-Mikle McFadden: Focused on completing Turn90, earning Clerical and administrative skills; connected to Voc Rehab., resolving Briefcase barriers (Valid Driver’s License (obtained 3 weeks ago) and access to personal vehicle), and securing stable full-time employment.
+Mikle McFadden: Complete First Shift, earn credentials, clear barriers (Valid Driver’s License (obtained 3 weeks ago) and access to personal vehicle), and secure full-time employment.
 
 Interviewer: What type of job would you like?
-Mikle McFadden: Focused on completing Turn90, earning Clerical and administrative skills; connected to Voc Rehab., resolving Briefcase barriers (Valid Driver’s License (obtained 3 weeks ago) and access to personal vehicle), and securing stable full-time employment.
+Mikle McFadden: Manufacturing, logistics, warehousing, or skilled trade with growth potential.
+
+Interviewer: What are the two most important to you in a job?
+Mikle McFadden: Fair pay with career stability and a positive, supportive work environment.
+
+Interviewer: Is there anything else you'd like us to know?
+Mikle McFadden: Motivated and ready to work hard every day to achieve long-term success.
 
 ==========================================================
 Interviewer: [Collateral File Review — Linked Apricot Consultation & Case Management Notes]

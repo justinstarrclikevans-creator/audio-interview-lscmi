@@ -3124,7 +3124,14 @@ function buildInterviewScoringCardsHtml(clients, activeParticipants = [], select
                             <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: #1e293b; border-color: #94a3b8; background: #f8fafc;" onclick="printActiveDraftDocument('${criminalHistoryFile}')" title="Print Clean Chronological Criminal History Report">
                                 🖨️ Print Record
                             </button>
-                        ` : ''}
+                            <a class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: #0284c7; border-color: #7dd3fc; background: #f0f9ff; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center;" href="/api/documents/raw/${criminalHistoryFile.replace('.md', '.docx')}?download=1" title="Download Word (.docx) Format" download>
+                                📑 Export Word
+                            </a>
+                        ` : `
+                            <button class="btn btn-outline" style="font-size: 11px; padding: 5px 9px; color: #475569; border-color: #cbd5e1;" onclick="quickGenerateCriminalHistory('${clientId}', '${cleanName}')" title="Generate Official Criminal History Record">
+                                ⚖️ + Criminal History
+                            </button>
+                        `}
 
                         ${finalPlanFile ? `
                             <button class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; color: var(--success); border-color: #86efac;" onclick="previewDocument('${finalPlanFile}')">
@@ -3210,6 +3217,32 @@ function openActiveDraftPdf(targetFilename) {
     const file = targetFilename || currentActiveDraftFile;
     if (!file) return;
     window.open(`/api/documents/print/${encodeURIComponent(file)}`, '_blank');
+}
+
+function downloadActiveDraftDocx(targetFilename) {
+    const file = targetFilename || currentActiveDraftFile;
+    if (!file) return;
+    const docxFile = file.replace(/\.md$/, '.docx');
+    window.open(`/api/documents/raw/${encodeURIComponent(docxFile)}?download=1`, '_blank');
+}
+
+async function quickGenerateCriminalHistory(clientId, clientName) {
+    if (!confirm(`Generate official exportable Criminal History for ${clientName}?`)) return;
+    try {
+        const formData = new FormData();
+        formData.append('clientId', clientId);
+        const res = await fetch('/api/interviews/generate-criminal-history', {
+            method: 'POST',
+            body: formData
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Generation failed');
+        alert(data.message || `Criminal history created for ${clientName}!`);
+        loadPmDrafts();
+        previewDocument(data.filename);
+    } catch (err) {
+        alert('Could not generate criminal history: ' + err.message);
+    }
 }
 
 function openPrintableTab(targetFilename) {
@@ -3594,6 +3627,9 @@ async function previewDocument(filename) {
     } else if (filename === 'Facilitator_Scoring_Guide.md') {
         displayTitle = '📋 Turn90 Class Facilitator Scoring Guide';
         if (subtitle) subtitle.innerText = '20-Item Fidelity & Delivery Scoring Standard';
+    } else if (filename.includes('criminal_history')) {
+        displayTitle = '⚖️ Official Criminal History & Chronological Disposition Record';
+        if (subtitle) subtitle.innerText = 'Verified Arrest Chronology, Charge Dispositions & Supervision Risk Profile';
     } else {
         if (subtitle) subtitle.innerText = 'Human-in-the-Loop Document Assessment';
     }
@@ -3602,6 +3638,15 @@ async function previewDocument(filename) {
     if (btnPdf) {
         btnPdf.style.display = 'inline-block';
         btnPdf.onclick = () => openActiveDraftPdf(filename);
+    }
+    const btnDocx = document.getElementById('btn-draft-docx-top');
+    if (btnDocx) {
+        if (filename && filename.endsWith('.md')) {
+            btnDocx.style.display = 'inline-block';
+            btnDocx.onclick = () => downloadActiveDraftDocx(filename);
+        } else {
+            btnDocx.style.display = 'none';
+        }
     }
     if (btnPrint) {
         btnPrint.onclick = () => printActiveDraftDocument(filename);
@@ -3665,7 +3710,10 @@ async function previewDocument(filename) {
                 }
 
                 dialogueCount++;
-                const speakerMatch = trimmed.match(/^(?:\[(\d{1,2}:\d{2}(?::\d{2})?)\]\s*)?(?:\*\*|\*|_)?([A-Za-z0-9\s\.\(\)\/\x27-]+?)(?:\*\*|\*|_)?:\s*(?:\*\*|\*|_)?(.*)$/);
+                let speakerMatch = trimmed.match(/^(?:\[(\d{1,2}:\d{2}(?::\d{2})?)\]\s*)?\*\*([A-Za-z0-9\s\.\(\)\/\x27-]+?):\*\*\s*(.*)$/);
+                if (!speakerMatch) {
+                    speakerMatch = trimmed.match(/^(?:\[(\d{1,2}:\d{2}(?::\d{2})?)\]\s*)?(?:\*\*|\*|_)?([A-Za-z0-9\s\.\(\)\/\x27-]+?)(?:\*\*|\*|_)?:\s*(?:\*\*|\*|_)?(.*)$/);
+                }
 
                 if (speakerMatch) {
                     const time = speakerMatch[1] ? ` • ${speakerMatch[1]}` : '';
@@ -3732,6 +3780,28 @@ async function previewDocument(filename) {
                     </div>
                 </div>
                 <div id="guide-content-container" class="markdown-preview" style="line-height: 1.6; font-size: 13.5px; color: #1e293b; max-height: 70vh; overflow-y: auto;">
+                    ${typeof marked !== 'undefined' ? marked.parse(fileContent.replace(/^\s*(\d+)\.\s+/gm, '**$1)** ')) : fileContent.replace(/\n/g, '<br>')}
+                </div>
+            `;
+        } else if (filename.includes('criminal_history')) {
+            const docxFile = filename.replace(/\.md$/, '.docx');
+            body.innerHTML = `
+                <div style="background: #f1f5f9; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 14px 18px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+                    <div>
+                        <div style="font-size: 11px; font-weight: 800; color: #0f766e; text-transform: uppercase; letter-spacing: 0.8px;">TURN90 • VERIFIED JUDICIAL RECORD</div>
+                        <strong style="color: #0f172a; font-size: 14.5px;">⚖️ Official Criminal History & Chronological Disposition Record</strong>
+                        <div style="font-size: 12px; color: #475569; margin-top: 2px;">Synthesized from verified SLED/court backgrounds, Reentry Consultation intake screening, and client interview disclosures.</div>
+                    </div>
+                    <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                        <button class="btn btn-primary" style="font-size: 12px; padding: 6px 14px; background: #0f172a; border-color: #0f172a;" onclick="printActiveDraftDocument('${filename}')">
+                            🖨️ Print / Save PDF
+                        </button>
+                        <a class="btn btn-outline" style="font-size: 12px; padding: 6px 12px; color: #0284c7; border-color: #7dd3fc; background: #f0f9ff; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center;" href="/api/documents/raw/${docxFile}?download=1" download>
+                            📑 Export Word (.docx)
+                        </a>
+                    </div>
+                </div>
+                <div id="crim-content-container" class="markdown-preview" style="line-height: 1.6; font-size: 13.5px; color: #1e293b; max-height: 70vh; overflow-y: auto;">
                     ${typeof marked !== 'undefined' ? marked.parse(fileContent.replace(/^\s*(\d+)\.\s+/gm, '**$1)** ')) : fileContent.replace(/\n/g, '<br>')}
                 </div>
             `;
@@ -3971,6 +4041,21 @@ async function openSupervisorReviewModal(clientId, cleanName) {
     const files = (currentInterviewsData && currentInterviewsData[clientId]) || [];
     const scoringFileName = files.find(f => f.includes('draft_scoring_form.md')) || `${clientId}_draft_scoring_form.md`;
     const guideFileName = files.find(f => f.includes('interview_guide.md')) || files.find(f => f.includes('transcript.txt')) || `${clientId}_interview_guide.md`;
+    const existingCrimFile = files.find(f => f.includes('criminal_history.md'));
+
+    const crimActionBox = document.getElementById('sup-existing-crim-actions');
+    if (crimActionBox) {
+        if (existingCrimFile) {
+            crimActionBox.innerHTML = `
+                <span style="font-size: 11px; font-weight: 700; color: #0f766e; background: #ccfbf1; padding: 3px 8px; border-radius: 4px;">⚖️ Record Generated</span>
+                <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 3px 8px;" onclick="previewDocument('${existingCrimFile}')">👁️ View</button>
+                <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 3px 8px;" onclick="printActiveDraftDocument('${existingCrimFile}')">🖨️ Print</button>
+                <a class="btn btn-outline" style="font-size: 11px; padding: 3px 8px; color: #0284c7; text-decoration: none;" href="/api/documents/raw/${existingCrimFile.replace('.md', '.docx')}?download=1" download>📑 Export Word</a>
+            `;
+        } else {
+            crimActionBox.innerHTML = '';
+        }
+    }
 
     // Fetch Draft Scoring Form
     try {

@@ -30,14 +30,26 @@ Nathaniel Outin Jr.: First arrested or charged around Adulthood.
 Interviewer: Were you ever incarcerated as a result of a conviction?
 Nathaniel Outin Jr.: Yes, prior incarceration.
 
+Interviewer: Have you had any behavior reports or reports while in prison?
+Nathaniel Outin Jr.: None reported.
+
 Interviewer: Have you ever had your probation or parole suspended (or revoked) while you were under any kind of community supervision?
+Nathaniel Outin Jr.: Compliant.
+
+Interviewer: Have you ever been arrested while you were under any kind of community supervision?
 Nathaniel Outin Jr.: Compliant.
 
 Interviewer: Are you currently employed?
 Nathaniel Outin Jr.: Yes — currently working a 3rd-shift sanitation job, seeking higher-paying daytime career in electrical/carpentry trades or warehouse (applied to Gregory Electric apprenticeship & Trane Technologies $21–$25/hr).
 
+Interviewer: How many months did you work a payroll job in the last 12 months?
+Nathaniel Outin Jr.: Employed in 3rd-shift sanitation.
+
 Interviewer: What is the longest period of time that you have been employed for?
 Nathaniel Outin Jr.: Over 1 year.
+
+Interviewer: Have you ever been unemployed in the community during a 12-month period?
+Nathaniel Outin Jr.: Yes, experienced periods of unemployment during incarceration and reentry transition.
 
 Interviewer: What is the last grade that you have successfully completed in academic or technical high school?
 Nathaniel Outin Jr.: High School / GED.
@@ -45,56 +57,347 @@ Nathaniel Outin Jr.: High School / GED.
 Interviewer: Have you completed a high school diploma or GED?
 Nathaniel Outin Jr.: Yes.
 
+Interviewer: Have you ever been suspended or expelled?
+Nathaniel Outin Jr.: No major expulsions reported.
+
+Interviewer: Please give feedback on the work you have done. Did you like the job, how did you like your boss and coworkers.
+Nathaniel Outin Jr.: I enjoy hands-on work where expectations are clear and I can stay productive. Over 1 year.
+
 Interviewer: Why did you leave any of the jobs you have had?
 Nathaniel Outin Jr.: Currently employed; seeking upward mobility out of 3rd-shift sanitation.
 
 Interviewer: Are you single or in a relationship?
 Nathaniel Outin Jr.: Resides with his mother; active father who coordinated with his children’s mother on 10/30 to resolve his 2:30 PM school pickup conflict.
 
+Interviewer: How do you feel about being single or in a relationship?
+Nathaniel Outin Jr.: Focused on maintaining supportive, low-conflict family relationships while building financial stability.
+
+Interviewer: Please describe your relationship with your parents (the people who actually raised you).
+Nathaniel Outin Jr.: Mother owns family properties that Nathaniel wants to help renovate. Resides with his mother; active father who coordinated with his children’s mother on 10/30 to resolve his 2:30 PM school pickup conflict.
+
+Interviewer: Please describe your relationship with other relatives.
+Nathaniel Outin Jr.: Maintains contact with supportive relatives who assist with transportation and housing stability.
+
 Interviewer: Does anyone in your family, including spouse and close relatives, have a criminal record? Who?
 Nathaniel Outin Jr.: Mother owns family properties that Nathaniel wants to help renovate.
+
+Interviewer: What kind of organizations or clubs have you belonged to over the past year (or in the year prior to your incarceration)?
+Nathaniel Outin Jr.: Participates in Turn90 / Reentry Navigation and structured community/recovery support.
 
 Interviewer: How do you usually spend your free time?
 Nathaniel Outin Jr.: Caring for his children, working 3rd shift, pursuing electrical/carpentry training.
 
+Interviewer: What kind of satisfaction do you get from your free time?
+Nathaniel Outin Jr.: Staying productive and focused on family, work preparation, and staying out of trouble.
+
+Interviewer: Do you know many people who have been in trouble with the law?
+Nathaniel Outin Jr.: Yes, from past neighborhoods and incarceration, but actively distancing from them.
+
 Interviewer: Have many of your friends been in trouble with the law?
 Nathaniel Outin Jr.: In the past yes; currently setting firm boundaries to avoid negative peers.
+
+Interviewer: How seriously or often have they been involved with the law?
+Nathaniel Outin Jr.: Past acquaintances had criminal histories, which is why I am staying focused on prosocial routines.
+
+Interviewer: Do you know many people who are NOT involved in crime?
+Nathaniel Outin Jr.: Yes, family members, Turn90 staff, and prosocial peers.
+
+Interviewer: Do you have many friends who are not at all involved in criminal activities?
+Nathaniel Outin Jr.: Yes, building a circle focused on work and sobriety.
 
 Interviewer: Please describe your use of alcohol and drugs.
 Nathaniel Outin Jr.: No substance abuse barriers.
 
+Interviewer: Have you had any medical problems due to drug or alcohol use?
+Nathaniel Outin Jr.: No substance abuse barriers.
+
+Interviewer: Have you experienced any financial difficulties because of alcohol or drug use?
+Nathaniel Outin Jr.: No financial difficulties from alcohol or drug use.
+
+Interviewer: How does your family feel about your use?
+Nathaniel Outin Jr.: My family is proud when I stay clean, focused, and working toward my goals.
+
 Interviewer: How do you feel about the crimes you've committed?
 Nathaniel Outin Jr.: I take responsibility for my past choices and am tired of the consequences that affected my freedom and family.
+
+Interviewer: Do you think the crimes were wrong?
+Nathaniel Outin Jr.: Yes, I recognize the harm and cost of past offenses.
 
 Interviewer: Would you like to lead a life without crime?
 Nathaniel Outin Jr.: Yes, 100% committed to living a crime-free, financially independent life.
 
+Interviewer: Do you think your sentence was appropriate and fair?
+Nathaniel Outin Jr.: I accept that I served my time and am focused on moving forward.
+
+Interviewer: Do you think that you had a choice in getting involved in crime?
+Nathaniel Outin Jr.: Yes, I had choices and I am now choosing a different path through Turn90.
+
 Interviewer: Do you feel that the supervision you are being placed under is appropriate and fair?
 Nathaniel Outin Jr.: Compliant.
 
+Interviewer: Have you ever been assessed by a psychiatrist or psychologist?
+Nathaniel Outin Jr.: No formal psychiatric evaluations or hospitalizations reported; reports stable behavioral health.
+
+Interviewer: Were you ever removed from your home by DSS when you were young?
+Nathaniel Outin Jr.: No, never removed from the home by DSS as a youth.
+
+Interviewer: Did you ever run away from home?
+Nathaniel Outin Jr.: No history of running away from home during youth.
+
+Interviewer: Did your parents have a lot of trouble raising you?
+Nathaniel Outin Jr.: No severe behavioral trouble reported in the home.
+
+Interviewer: Do you have any convictions for violent offenses?
+Nathaniel Outin Jr.: Prior conviction history includes offenses as reviewed in background; committed to prosocial conflict resolution.
+
+Interviewer: Have you had any history of escape or attempted escape from a youth or adult institutional facility?
+Nathaniel Outin Jr.: No history of escape or attempted escape from any correctional or youth facility.
+
+Interviewer: What are the sources of Income for your household and what would you estimate is the annual income?
+Nathaniel Outin Jr.: Currently relying on family/household support and Turn90 weekly training stipend ($450/week) during reentry transition.
+
+Interviewer: Does the household sometimes receive government assistance or other forms of assistance?
+Nathaniel Outin Jr.: Eligible for SNAP food assistance; receiving structured supportive assistance during program enrollment.
+
+Interviewer: Are you worried about having sufficient money to pay debts?
+Nathaniel Outin Jr.: Focused on managing financial obligations (Active hands-on father; coordinated childcare schedule with children’s mother.; Valid Driver’s License and owns a personal vehicle) through earnings and budgeting at Turn90.
+
+Interviewer: Do you have a bank account (savings or checking)?
+Nathaniel Outin Jr.: Verified in Briefcase: Birth Certificate (Yes), Social Security Card (Yes), State ID (Yes), Valid Driver’s License (Yes), Completed Resume (Yes); establishing direct deposit account with Case Management.
+
+Interviewer: Do you know your credit score and, if so, what is it?
+Nathaniel Outin Jr.: Working to establish or rebuild personal credit history during First Shift financial literacy module.
+
+Interviewer: Have you had any phone calls, letters, or personal visits from creditors requesting payment of past due accounts?
+Nathaniel Outin Jr.: No active creditor harassment reported; addressing fines and license reinstatement systematically.
+
 Interviewer: Do you have any existing debts? If yes, how much and to who?
-Nathaniel Outin Jr.: Valid Driver’s License and owns a personal vehicle | Active hands-on father; coordinated childcare schedule with children’s mother.
+Nathaniel Outin Jr.: Valid Driver’s License and owns a personal vehicle | Child Support: Active hands-on father; coordinated childcare schedule with children’s mother.
+
+Interviewer: Do you have a personal budget?
+Nathaniel Outin Jr.: Developing a structured personal budget with Case Management during First Shift financial literacy.
+
+Interviewer: Do you follow your budget, or do you have problems following your budget?
+Nathaniel Outin Jr.: Following structured weekly spending guided by Turn90 stipend allocation.
+
+Interviewer: Are you worried about sufficient income to meet your basic needs?
+Nathaniel Outin Jr.: Turn90 weekly stipend provides baseline stability while preparing for permanent full-time employment.
 
 Interviewer: What is your current living situation?
 Nathaniel Outin Jr.: Columbia, SC (Resides with his mother; stable housing)
 
+Interviewer: How do you like where you live?
+Nathaniel Outin Jr.: Columbia, SC (Resides with his mother; stable housing)
+
+Interviewer: Is your probation/parole officer or worker fair and reasonable?
+Nathaniel Outin Jr.: Compliant.
+
+Interviewer: Are you afraid of anyone harming you?
+Nathaniel Outin Jr.: No, feels safe in current living environment and community routines.
+
 Interviewer: Do you often act before thinking?
-Nathaniel Outin Jr.: Working on slowing down and using Stop & Think: Overextending himself across 3rd-shift sanitation hours and daytime family responsibilities.
+Nathaniel Outin Jr.: Working on slowing down and using CBT Stop & Think: Overextending himself across 3rd-shift sanitation hours and daytime family responsibilities.
+
+Interviewer: Do you set goals for yourself?
+Nathaniel Outin Jr.: Yes, actively working on my Turn90 Case Plan and Briefcase Gates 1–4.
+
+Interviewer: Do you make plans?
+Nathaniel Outin Jr.: Yes, actively working on my Turn90 Case Plan and Briefcase Gates 1–4.
+
+Interviewer: Do you check to see if you are following your plans?
+Nathaniel Outin Jr.: Yes, actively working on my Turn90 Case Plan and Briefcase Gates 1–4.
+
+Interviewer: Do you get into trouble almost by accident?
+Nathaniel Outin Jr.: Practicing cognitive awareness to identify thinking traps and avoid high-risk people or places.
+
+Interviewer: Do you have frequent arguments with friends?
+Nathaniel Outin Jr.: No, keeping circle small and maintaining low-conflict relationships.
+
+Interviewer: Do you find yourself arguing with strangers?
+Nathaniel Outin Jr.: No, practicing emotional regulation and walking away from petty disputes.
+
+Interviewer: Do you get into physical fights with people?
+Nathaniel Outin Jr.: No physical altercations; focused on prosocial conflict resolution and de-escalation.
+
+Interviewer: Do you often become impatient with others?
+Nathaniel Outin Jr.: Working on patience and active listening skills through daily Turn90 classroom sessions.
+
+Interviewer: Have you ever physically hurt your partner?
+Nathaniel Outin Jr.: No history of domestic violence or intimate partner harm.
+
+Interviewer: Have you ever threatened someone?
+Nathaniel Outin Jr.: No active threatening behaviors; using CBT to manage frustration constructively.
+
+Interviewer: Have you ever sexually assaulted anyone?
+Nathaniel Outin Jr.: No history of sexual offenses.
+
+Interviewer: Have you ever drugged someone to have sex?
+Nathaniel Outin Jr.: No.
+
+Interviewer: Do you frequent prostitutes?
+Nathaniel Outin Jr.: No.
+
+Interviewer: Do you have difficulty making friends?
+Nathaniel Outin Jr.: Able to connect with positive peers in structured work and recovery environments.
+
+Interviewer: Please share your opinions on “Wokeness.”
+Nathaniel Outin Jr.: Focused on personal accountability, self-awareness, and doing what is right for my family and future.
 
 Interviewer: Do you have any pending charges?
 Nathaniel Outin Jr.: No pending charges.
 
+Interviewer: Have you ever been in a fight with a police officer, correctional staff, teacher, employer, or other person in authority?
+Nathaniel Outin Jr.: No history of physical fights with authority figures; respectful with Turn90 staff and supervision officers.
+
+Interviewer: Have you ever kept contacting someone against his or her will?
+Nathaniel Outin Jr.: No history of stalking or non-consensual contact.
+
+Interviewer: Have you ever used a weapon to commit a crime or threaten someone?
+Nathaniel Outin Jr.: No weapon offenses reported.
+
+Interviewer: Have you ever intentionally set a fire to destroy property or harm someone?
+Nathaniel Outin Jr.: No history of arson or property destruction.
+
+Interviewer: Have you ever been convicted of driving under the influence?
+Nathaniel Outin Jr.: No active DUI barriers.
+
+Interviewer: Have you ever shoplifted?
+Nathaniel Outin Jr.: No pattern of retail theft or shoplifting.
+
+Interviewer: Do you belong to a gang? Do you and your friends wear colors?
+Nathaniel Outin Jr.: No gang affiliation or gang involvement.
+
+Interviewer: Have you ever been arrested/convicted for a hate crime?
+Nathaniel Outin Jr.: No history of hate crimes.
+
+Interviewer: Are you a citizen of this country?
+Nathaniel Outin Jr.: Yes, US Citizen.
+
+Interviewer: Do you have some health problems that are a concern to you?
+Nathaniel Outin Jr.: Physical health stable; able to perform physical work tasks at Turn90.
+
+Interviewer: Do you feel depressed?
+Nathaniel Outin Jr.: Mood is stable; motivated and focused on completing First Shift.
+
+Interviewer: Do you think about committing suicide?
+Nathaniel Outin Jr.: No history or thoughts of suicide or self-harm.
+
+Interviewer: Are you unhappy with yourself?
+Nathaniel Outin Jr.: Reflecting on past mistakes and determined to build a successful, independent life.
+
+Interviewer: Have you been considering going to see a psychologist or psychiatrist?
+Nathaniel Outin Jr.: Open to supportive counseling if helpful for reentry goals; currently stable.
+
+Interviewer: Are you taking any medications?
+Nathaniel Outin Jr.: No daily psychiatric medications reported; medically cleared for work.
+
+Interviewer: Have you ever been abused by a family member?
+Nathaniel Outin Jr.: No history of familial abuse reported.
+
+Interviewer: Are you presently being abused?
+Nathaniel Outin Jr.: No, living in a safe, secure environment.
+
+Interviewer: Do you have any health problems that we have not yet discussed?
+Nathaniel Outin Jr.: No other health concerns; physically capable of warehouse and manufacturing work.
+
+Interviewer: Do you have any mental health (or psychiatric) problems that we have not yet discussed?
+Nathaniel Outin Jr.: Behavioral health is stable; engaged in Turn90 CBT curriculum.
+
+Interviewer: Do you have any personal needs that we have not yet discussed?
+Nathaniel Outin Jr.: Primary needs are driver's license reinstatement (Valid Driver’s License and owns a personal vehicle), career certifications (Pursuing CDL, electrical apprenticeship (Gregory Electric), and carpentry training.), and long-term job placement.
+
+Interviewer: Do you follow any specific cultural or religious traditions involving diet, appearance, clothing, or special or sacred activities?
+Nathaniel Outin Jr.: Personal spiritual faith; no restrictions interfering with 9am–3pm program schedule.
+
+Interviewer: Do you belong to an ethnic/racial group?
+Nathaniel Outin Jr.: Identified in demographic record; supportive of diverse workplace team.
+
+Interviewer: Is there anything else that will hinder or hold back your progress in programs?
+Nathaniel Outin Jr.: Reliable daily attendance (Owns his own vehicle and holds a valid Driver’s License.) and maintaining focus on Case Plan goals are primary focus.
+
+Interviewer: What is your social security number?
+Nathaniel Outin Jr.: Social Security card verified on file with Case Management: Birth Certificate (Yes), Social Security Card (Yes), State ID (Yes), Valid Driver’s License (Yes), Completed Resume (Yes).
+
+Interviewer: Emergency needs are things that must be addressed immediately for you to succeed. Let us know if any of the following applies. Do you have any emergency needs?
+Nathaniel Outin Jr.: No unaddressed emergency blockades preventing Turn90 participation; active barriers routed to Briefcase Gates 1–4.
+
+Interviewer: For the following questions about supervision, just say 'Does not apply' if they don't apply.
+Nathaniel Outin Jr.: Understood; will answer applicable supervision items.
+
+Interviewer: What is your projected release date from the Federal halfway house?
+Nathaniel Outin Jr.: Does not apply (not in a federal halfway house).
+
 Interviewer: Parole - The release of a person to supervision in the community before completion of their sentence. Are you on parole?
-Nathaniel Outin Jr.: Compliant.
+Nathaniel Outin Jr.: No, not on parole.
+
+Interviewer: When is the projected end date of your parole?
+Nathaniel Outin Jr.: Does not apply.
+
+Interviewer: Are you in compliance with the terms of your parole?
+Nathaniel Outin Jr.: Does not apply.
+
+Interviewer: Is Turn90 a condition of your parole?
+Nathaniel Outin Jr.: Voluntary enrollment / recommended prosocial activity approved by supervision.
+
+Interviewer: How many months did you have remaining on your prison sentence?
+Nathaniel Outin Jr.: Yes, prior incarceration.
+
+Interviewer: State Supervision-Did you receive a Diverted sentence? – you were facing criminal charges that carried a prison sentence, but was diverted away from prison, remaining in the community to complete Turn90 as part of a plea agreement and a condition of probation.
+Nathaniel Outin Jr.: No diverted sentence.
+
+Interviewer: How many months was your diverted state sentence?
+Nathaniel Outin Jr.: Does not apply.
+
+Interviewer: What is the projected end date of your state probation/community supervision?
+Nathaniel Outin Jr.: Does not apply.
+
+Interviewer: Are you in compliance with the terms of your state supervision?
+Nathaniel Outin Jr.: Does not apply.
+
+Interviewer: What is the projected end date of your federal supervision?
+Nathaniel Outin Jr.: Does not apply.
+
+Interviewer: Are you in compliance with the terms of your federal supervision?
+Nathaniel Outin Jr.: Does not apply.
+
+Interviewer: Federal-Did you receive a Diverted sentence? – you were facing federal criminal charges that carried a prison sentence, but was diverted away from prison, remaining in the community to complete Turn90 as part of a plea agreement and a condition of probation.
+Nathaniel Outin Jr.: No diverted federal sentence.
+
+Interviewer: How many months was your diverted federal sentence?
+Nathaniel Outin Jr.: Does not apply.
+
+Interviewer: Do you have an official agreement with the government to complete Turn90 in exchange for a lesser sentence or dismissed charges in court?
+Nathaniel Outin Jr.: No formal plea exchange agreement; voluntary enrollment for workforce development.
 
 Interviewer: Date of your most recent release from incarceration?
-Nathaniel Outin Jr.: No pending charges. | Yes, prior incarceration.
+Nathaniel Outin Jr.: No pending charges.
+
+Interviewer: Were you most recently released from jail or prison?
+Nathaniel Outin Jr.: County detention facility / jail.
+
+Interviewer: What was the length of your most recent incarceration?
+Nathaniel Outin Jr.: Yes, prior incarceration.
+
+Interviewer: Have you ever been charged or convicted of a sex offense?
+Nathaniel Outin Jr.: No, never charged or convicted of a sex offense.
+
+Interviewer: Did your most recent criminal conviction include drug trafficking?
+Nathaniel Outin Jr.: No, most recent conviction did not include drug trafficking.
+
+Interviewer: Did your most recent criminal conviction include possession of a firearm?
+Nathaniel Outin Jr.: No, most recent conviction did not include unlawful firearm possession.
 
 Interviewer: Does your mother or father have a criminal record?
 Nathaniel Outin Jr.: Mother owns family properties that Nathaniel wants to help renovate.
 
 Interviewer: Do you have a history of major drug use? Illegal drug use that caused major life disruptions, problems in relationships, and led to criminal actions.
-Nathaniel Outin Jr.: No substance abuse barriers.
+Nathaniel Outin Jr.: No history of major illicit drug addiction.
+
+Interviewer: Do you have a history of major alcohol use? Alcohol use that caused major life disruptions, problems in relationships, and led to criminal actions.
+Nathaniel Outin Jr.: No history of major alcohol abuse.
+
+Interviewer: Do you use marijuana but no other drugs?
+Nathaniel Outin Jr.: No marijuana use.
 
 Interviewer: When was your last drug use?
 Nathaniel Outin Jr.: No substance abuse barriers.
@@ -102,35 +405,80 @@ Nathaniel Outin Jr.: No substance abuse barriers.
 Interviewer: Obligations to support children. Someone who is on court ordered child support OR has an agreement to pay a set amount to support a child OR reports financially helping out regularly, even without an official agreement, this includes paying for birthday parties, clothes, and school supplies. Do you financially support any biological children?
 Nathaniel Outin Jr.: Active hands-on father; coordinated childcare schedule with children’s mother.
 
+Interviewer: Are you court ordered to pay child support?
+Nathaniel Outin Jr.: No court-ordered child support arrears.
+
+Interviewer: Have you been in contact with child support enforcement to make sure you are current?
+Nathaniel Outin Jr.: Confirmed $0 arrears or in contact with enforcement.
+
+Interviewer: Who do you spend most of your time with?
+Nathaniel Outin Jr.: Caring for his children, working 3rd shift, pursuing electrical/carpentry training.
+
 Interviewer: How do you usually respond when someone disrespects you or challenges you?
 Nathaniel Outin Jr.: Practicing CBT skills (Stop & Think, Modeling Neutrality) to counter: Overextending himself across 3rd-shift sanitation hours and daytime family responsibilities.
 
+Interviewer: Have you ever had a payroll job?
+Nathaniel Outin Jr.: Yes, have held payroll jobs.
+
+Interviewer: How much total work experience do you have?
+Nathaniel Outin Jr.: Over 1 year.
+
 Interviewer: What is the longest period of time you have stayed at one job?
-Nathaniel Outin Jr.: Over 1 year. | Reason jobs ended: Currently employed; seeking upward mobility out of 3rd-shift sanitation.
+Nathaniel Outin Jr.: Over 1 year.
+
+Interviewer: What types of jobs have you had?
+Nathaniel Outin Jr.: Over 1 year.
+
+Interviewer: Do you have any physical or personal limitations that could affect the type of work you can do?
+Nathaniel Outin Jr.: No physical or medical limitations affecting work capacity.
+
+Interviewer: What work skills do you have?
+Nathaniel Outin Jr.: Pursuing CDL, electrical apprenticeship (Gregory Electric), and carpentry training. and hands-on production skills.
 
 Interviewer: What usually caused jobs to end for you?
-Nathaniel Outin Jr.: Over 1 year. | Reason jobs ended: Currently employed; seeking upward mobility out of 3rd-shift sanitation.
+Nathaniel Outin Jr.: Currently employed; seeking upward mobility out of 3rd-shift sanitation.
 
 Interviewer: Do you currently have any certifications or job training?
 Nathaniel Outin Jr.: Pursuing CDL, electrical apprenticeship (Gregory Electric), and carpentry training.
 
+Interviewer: What certifications do you have?
+Nathaniel Outin Jr.: Pursuing CDL, electrical apprenticeship (Gregory Electric), and carpentry training.
+
+Interviewer: What certifications are you interested in?
+Nathaniel Outin Jr.: Forklift, OSHA-10, and SkillCat trade certifications.
+
 Interviewer: What is the highest level of education you have completed?
-Nathaniel Outin Jr.: High School / GED. (Yes.)
+Nathaniel Outin Jr.: High School / GED.
+
+Interviewer: Are you currently working on your GED?
+Nathaniel Outin Jr.: Already completed (Yes.).
 
 Interviewer: Do you have a drivers license in good standing?
 Nathaniel Outin Jr.: Valid Driver’s License and owns a personal vehicle
 
 Interviewer: Do you have reliable transportation to attend everyday?
-Nathaniel Outin Jr.: Owns his own vehicle and holds a valid Driver’s License.
+Nathaniel Outin Jr.: Yes, reliable transportation plan confirmed.
 
 Interviewer: What is your reliable transportation?
 Nathaniel Outin Jr.: Owns his own vehicle and holds a valid Driver’s License.
 
+Interviewer: Do you have any regular obligations that could affect your ability to attend daily or work a full shift? (This could include court obligations, child care, sick family members who need care, your own medical issues)
+Nathaniel Outin Jr.: No conflicting regular obligations; fully available for 9am–3pm schedule.
+
+Interviewer: What might make it hard for you to attend every day?
+Nathaniel Outin Jr.: Managing daily transportation (Owns his own vehicle and holds a valid Driver’s License.) and schedule punctuality.
+
 Interviewer: What are you hoping to get out of this program?
-Nathaniel Outin Jr.: Focused on completing Turn90, earning Pursuing CDL, electrical apprenticeship (Gregory Electric), and carpentry training., resolving Briefcase barriers (Valid Driver’s License and owns a personal vehicle), and securing stable full-time employment.
+Nathaniel Outin Jr.: Complete First Shift, earn credentials, clear barriers (Valid Driver’s License and owns a personal vehicle), and secure full-time employment.
 
 Interviewer: What type of job would you like?
-Nathaniel Outin Jr.: Focused on completing Turn90, earning Pursuing CDL, electrical apprenticeship (Gregory Electric), and carpentry training., resolving Briefcase barriers (Valid Driver’s License and owns a personal vehicle), and securing stable full-time employment.
+Nathaniel Outin Jr.: Manufacturing, logistics, warehousing, or skilled trade with growth potential.
+
+Interviewer: What are the two most important to you in a job?
+Nathaniel Outin Jr.: Fair pay with career stability and a positive, supportive work environment.
+
+Interviewer: Is there anything else you'd like us to know?
+Nathaniel Outin Jr.: Motivated and ready to work hard every day to achieve long-term success.
 
 ==========================================================
 Interviewer: [Collateral File Review — Linked Apricot Consultation & Case Management Notes]

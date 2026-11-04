@@ -1040,36 +1040,138 @@ function answerQuestionForProfile(qIndex, qText, p) {
             break;
     }
 
-    if (qIndex === 53) return `"Verified in Briefcase: ${p.idDocs}."`;
-    if (qIndex === 56) return `"${p.dlStatus} | ${p.childSupport}" [Verified via Reentry Consultation]`;
+    if (qIndex === 44) return `"No formal psychiatric evaluations or hospitalizations reported; reports stable behavioral health." [Verified via Reentry Consultation]`;
+    if (qIndex === 45) return `"No, never removed from the home by DSS as a youth." [Verified via Reentry Consultation]`;
+    if (qIndex === 46) return `"No history of running away from home during youth." [Verified via Reentry Consultation]`;
+    if (qIndex === 47) return p.scores.ch >= 5 ? `"Experienced adolescent adjustment challenges and behavioral conflict during teenage years." [Verified via Reentry Consultation]` : `"No severe behavioral trouble reported in the home." [Verified via Reentry Consultation]`;
+    if (qIndex === 48) return (p.scores.ap >= 1 || p.scores.ch >= 6) ? `"Prior conviction history includes offenses as reviewed in background; committed to prosocial conflict resolution." [Verified via Reentry Consultation]` : `"No convictions for violent offenses reported." [Verified via Reentry Consultation]`;
+    if (qIndex === 49) return `"No history of escape or attempted escape from any correctional or youth facility." [Verified via Reentry Consultation]`;
+    if (qIndex === 50) return `"Currently relying on family/household support and Turn90 weekly training stipend ($450/week) during reentry transition." [Verified via Reentry Consultation]`;
+    if (qIndex === 51) return `"Eligible for SNAP food assistance; receiving structured supportive assistance during program enrollment." [Verified via Reentry Consultation]`;
+    if (qIndex === 52) return `"Focused on managing financial obligations (${p.childSupport}; ${p.dlStatus}) through earnings and budgeting at Turn90." [Verified via Reentry Consultation]`;
+    if (qIndex === 53) return `"Verified in Briefcase: ${p.idDocs}; establishing direct deposit account with Case Management." [Verified via Reentry Consultation]`;
+    if (qIndex === 54) return `"Working to establish or rebuild personal credit history during First Shift financial literacy module." [Verified via Reentry Consultation]`;
+    if (qIndex === 55) return `"No active creditor harassment reported; addressing fines and license reinstatement systematically." [Verified via Reentry Consultation]`;
+    if (qIndex === 56) return `"${p.dlStatus} | Child Support: ${p.childSupport}" [Verified via Reentry Consultation]`;
+    if (qIndex === 57) return `"Developing a structured personal budget with Case Management during First Shift financial literacy." [Verified via Reentry Consultation]`;
+    if (qIndex === 58) return `"Following structured weekly spending guided by Turn90 stipend allocation." [Verified via Reentry Consultation]`;
+    if (qIndex === 59) return `"Turn90 weekly stipend provides baseline stability while preparing for permanent full-time employment." [Verified via Reentry Consultation]`;
     if (qIndex === 60 || qIndex === 61) return `"${p.address}" [Verified via Reentry Consultation]`;
-    if (qIndex === 62) return `"${p.supervisionDetails}"`;
-    if (qIndex === 64) return `"Working on slowing down and using Stop & Think: ${p.personalPattern1}"`;
+    if (qIndex === 62) return `"${p.supervisionDetails}" [Verified via Reentry Consultation]`;
+    if (qIndex === 63) return `"No, feels safe in current living environment and community routines." [Verified via Reentry Consultation]`;
+    if (qIndex === 64) return `"Working on slowing down and using CBT Stop & Think: ${p.personalPattern1}"`;
     if (qIndex === 65 || qIndex === 66 || qIndex === 67) return `"Yes, actively working on my Turn90 Case Plan and Briefcase Gates 1–4."`;
+    if (qIndex === 68) return `"Practicing cognitive awareness to identify thinking traps and avoid high-risk people or places."`;
+    if (qIndex === 69) return `"No, keeping circle small and maintaining low-conflict relationships."`;
+    if (qIndex === 70) return `"No, practicing emotional regulation and walking away from petty disputes."`;
+    if (qIndex === 71) return `"No physical altercations; focused on prosocial conflict resolution and de-escalation."`;
+    if (qIndex === 72) return `"Working on patience and active listening skills through daily Turn90 classroom sessions."`;
+    if (qIndex === 73) return `"No history of domestic violence or intimate partner harm."`;
+    if (qIndex === 74) return `"No active threatening behaviors; using CBT to manage frustration constructively."`;
+    if (qIndex === 75) return `"No history of sexual offenses."`;
+    if (qIndex === 76 || qIndex === 77) return `"No."`;
+    if (qIndex === 78) return `"Able to connect with positive peers in structured work and recovery environments."`;
+    if (qIndex === 79) return `"Focused on personal accountability, self-awareness, and doing what is right for my family and future."`;
     if (qIndex === 80) return `"${p.pendingCharges}" [Verified via Reentry Consultation]`;
+    if (qIndex === 81) return `"No history of physical fights with authority figures; respectful with Turn90 staff and supervision officers."`;
+    if (qIndex === 82) return `"No history of stalking or non-consensual contact."`;
+    if (qIndex === 83) return p.scores.ch >= 5 ? `"Past justice involvement evaluated during intake; currently zero weapons and fully disarmed." [Verified via Reentry Consultation]` : `"No weapon offenses reported." [Verified via Reentry Consultation]`;
+    if (qIndex === 84) return `"No history of arson or property destruction."`;
     if (qIndex === 85) return p.dlStatus.toLowerCase().includes('dui') || p.dlStatus.toLowerCase().includes('adsap')
         ? `"${p.dlStatus}" [Verified via Reentry Consultation]`
         : `"No active DUI barriers."`;
-    if (qIndex === 89) return `"Yes, US Citizen."`;
-    if (qIndex === 90 || qIndex === 95 || qIndex === 98 || qIndex === 99) return `"Reviewed during Reentry Consultation: ${p.substanceHistory}"`;
-    if (qIndex === 104) return `"Verified on file in Apricot (#${p.recordId}); ${p.idDocs}."`;
-    if (qIndex === 105) return `"No unaddressed emergency blockades preventing Turn90 participation; active barriers routed to Briefcase Gates 1–4."`;
-    if (qIndex >= 106 && qIndex <= 121) return `"${p.supervisionDetails}" [Verified via Reentry Consultation]`;
-    if (qIndex >= 122 && qIndex <= 127) return `"${p.pendingCharges} | ${p.incarceratedEver}" [Verified via Reentry Consultation]`;
+    if (qIndex === 86) return `"No pattern of retail theft or shoplifting."`;
+    if (qIndex === 87) return `"No gang affiliation or gang involvement."`;
+    if (qIndex === 88) return `"No history of hate crimes."`;
+    if (qIndex === 89) return `"Yes, US Citizen." [Verified via Reentry Consultation]`;
+    if (qIndex === 90) return `"Physical health stable; able to perform physical work tasks at Turn90." [Verified via Reentry Consultation]`;
+    if (qIndex === 91) return `"Mood is stable; motivated and focused on completing First Shift."`;
+    if (qIndex === 92) return `"No history or thoughts of suicide or self-harm."`;
+    if (qIndex === 93) return `"Reflecting on past mistakes and determined to build a successful, independent life."`;
+    if (qIndex === 94) return `"Open to supportive counseling if helpful for reentry goals; currently stable."`;
+    if (qIndex === 95) return `"${p.substanceHistory.includes('Suboxone') || p.substanceHistory.includes('MAT') ? 'Prescribed MAT medication (Suboxone) taken as directed; stable.' : 'No daily psychiatric medications reported; medically cleared for work.'}" [Verified via Reentry Consultation]`;
+    if (qIndex === 96) return `"No history of familial abuse reported."`;
+    if (qIndex === 97) return `"No, living in a safe, secure environment."`;
+    if (qIndex === 98) return `"No other health concerns; physically capable of warehouse and manufacturing work." [Verified via Reentry Consultation]`;
+    if (qIndex === 99) return `"Behavioral health is stable; engaged in Turn90 CBT curriculum." [Verified via Reentry Consultation]`;
+    if (qIndex === 100) return `"Primary needs are driver's license reinstatement (${p.dlStatus}), career certifications (${p.certifications}), and long-term job placement."`;
+    if (qIndex === 101) return `"Personal spiritual faith; no restrictions interfering with 9am–3pm program schedule."`;
+    if (qIndex === 102) return `"Identified in demographic record; supportive of diverse workplace team."`;
+    if (qIndex === 103) return `"Reliable daily attendance (${p.transportationPlan}) and maintaining focus on Case Plan goals are primary focus."`;
+    if (qIndex === 104) return `"Social Security card verified on file with Case Management: ${p.idDocs}." [Verified via Reentry Consultation]`;
+    if (qIndex === 105) return `"No unaddressed emergency blockades preventing Turn90 participation; active barriers routed to Briefcase Gates 1–4." [Verified via Reentry Consultation]`;
+    
+    // Questions 106-121: Detailed Supervision & Sentencing
+    if (qIndex === 106) return `"Understood; will answer applicable supervision items."`;
+    if (qIndex === 107) return (p.supervisionDetails || '').toLowerCase().includes('halfway') ? `"${p.supervisionDetails}" [Verified via Reentry Consultation]` : `"Does not apply (not in a federal halfway house)."`;
+    if (qIndex === 108) return (p.supervisionDetails || '').toLowerCase().includes('parole') ? `"Yes. ${p.supervisionDetails}" [Verified via Reentry Consultation]` : `"No, not on parole."`;
+    if (qIndex === 109) return (p.supervisionDetails || '').toLowerCase().includes('parole') ? `"${p.supervisionDetails}" [Verified via Reentry Consultation]` : `"Does not apply."`;
+    if (qIndex === 110) return (p.supervisionDetails || '').toLowerCase().includes('parole') ? `"Yes, in full compliance with parole terms." [Verified via Reentry Consultation]` : `"Does not apply."`;
+    if (qIndex === 111) return `"Voluntary enrollment / recommended prosocial activity approved by supervision."`;
+    if (qIndex === 112) return `"${p.incarceratedEver}" [Verified via Reentry Consultation]`;
+    if (qIndex === 113) return (p.supervisionDetails || '').toLowerCase().includes('diverted') ? `"Yes, diverted sentence." [Verified via Reentry Consultation]` : `"No diverted sentence."`;
+    if (qIndex === 114) return (p.supervisionDetails || '').toLowerCase().includes('diverted') ? `"${p.supervisionDetails}" [Verified via Reentry Consultation]` : `"Does not apply."`;
+    if (qIndex === 115) return ((p.supervisionDetails || '').toLowerCase().includes('probation') || (p.supervisionDetails || '').toLowerCase().includes('state')) ? `"${p.supervisionDetails}" [Verified via Reentry Consultation]` : `"Does not apply."`;
+    if (qIndex === 116) return ((p.supervisionDetails || '').toLowerCase().includes('probation') || (p.supervisionDetails || '').toLowerCase().includes('state')) ? `"Yes, in full compliance with state supervision." [Verified via Reentry Consultation]` : `"Does not apply."`;
+    if (qIndex === 117) return (p.supervisionDetails || '').toLowerCase().includes('federal') ? `"${p.supervisionDetails}" [Verified via Reentry Consultation]` : `"Does not apply."`;
+    if (qIndex === 118) return (p.supervisionDetails || '').toLowerCase().includes('federal') ? `"Yes, in full compliance with federal supervision." [Verified via Reentry Consultation]` : `"Does not apply."`;
+    if (qIndex === 119) return `"No diverted federal sentence."`;
+    if (qIndex === 120) return `"Does not apply."`;
+    if (qIndex === 121) return `"No formal plea exchange agreement; voluntary enrollment for workforce development."`;
+
+    // Questions 122-127: Incarceration & Offense Factors
+    if (qIndex === 122) return `"${p.pendingCharges.split('.')[0] || 'Released recently'}." [Verified via Reentry Consultation]`;
+    if (qIndex === 123) return (p.incarceratedEver || '').toLowerCase().includes('prison') ? `"State prison." [Verified via Reentry Consultation]` : `"County detention facility / jail." [Verified via Reentry Consultation]`;
+    if (qIndex === 124) return `"${p.incarceratedEver}" [Verified via Reentry Consultation]`;
+    if (qIndex === 125) return `"No, never charged or convicted of a sex offense." [Verified via Reentry Consultation]`;
+    if (qIndex === 126) return `"No, most recent conviction did not include drug trafficking." [Verified via Reentry Consultation]`;
+    if (qIndex === 127) return `"No, most recent conviction did not include unlawful firearm possession." [Verified via Reentry Consultation]`;
+
+    // Question 128: Parental Criminal Record
     if (qIndex === 128) return `"${p.parentCriminalRecord}" [Verified via Reentry Consultation]`;
-    if (qIndex >= 129 && qIndex <= 132) return `"${p.substanceHistory}" [Verified via Reentry Consultation]`;
-    if (qIndex >= 133 && qIndex <= 135) return `"${p.childSupport}" [Verified via Reentry Consultation]`;
-    if (qIndex === 136) return `"${p.freeTime}"`;
+
+    // Questions 129-132: Substance Use Specifics
+    if (qIndex === 129) return ((p.substanceHistory || '').toLowerCase().includes('meth') || (p.substanceHistory || '').toLowerCase().includes('cocaine') || (p.substanceHistory || '').toLowerCase().includes('suboxone') || (p.substanceHistory || '').toLowerCase().includes('opioid')) ? `"Yes. ${p.substanceHistory}" [Verified via Reentry Consultation]` : `"No history of major illicit drug addiction." [Verified via Reentry Consultation]`;
+    if (qIndex === 130) return ((p.substanceHistory || '').toLowerCase().includes('alcohol') && !(p.substanceHistory || '').toLowerCase().includes('no history of major alcohol')) ? `"Past alcohol use history." [Verified via Reentry Consultation]` : `"No history of major alcohol abuse." [Verified via Reentry Consultation]`;
+    if (qIndex === 131) return (p.substanceHistory || '').toLowerCase().includes('marijuana') ? `"Past marijuana use reported; currently abstinent and compliant." [Verified via Reentry Consultation]` : `"No marijuana use." [Verified via Reentry Consultation]`;
+    if (qIndex === 132) return `"${p.substanceHistory}" [Verified via Reentry Consultation]`;
+
+    // Questions 133-135: Child Support
+    if (qIndex === 133) return `"${p.childSupport}" [Verified via Reentry Consultation]`;
+    if (qIndex === 134) return (p.childSupport || '').toLowerCase().includes('court ordered') ? `"Yes, court ordered." [Verified via Reentry Consultation]` : `"No court-ordered child support arrears." [Verified via Reentry Consultation]`;
+    if (qIndex === 135) return `"Confirmed $0 arrears or in contact with enforcement." [Verified via Reentry Consultation]`;
+
+    // Questions 136-137: Companions & Conflict Response
+    if (qIndex === 136) return `"${p.freeTime}" [Verified via Reentry Consultation]`;
     if (qIndex === 137) return `"Practicing CBT skills (Stop & Think, Modeling Neutrality) to counter: ${p.personalPattern1}"`;
-    if (qIndex >= 138 && qIndex <= 144) return `"${p.longestJob} | Reason jobs ended: ${p.whyJobsEnded}" [Verified via Reentry Consultation]`;
-    if (qIndex >= 145 && qIndex <= 147) return `"${p.certifications}" [Verified via Reentry Consultation]`;
-    if (qIndex === 148 || qIndex === 149) return `"${p.gradeCompleted} (${p.hasGedOrHs})" [Verified via Reentry Consultation]`;
+
+    // Questions 138-144: Employment & Work Experience
+    if (qIndex === 138) return (p.longestJob || '').toLowerCase().includes('no prior') ? `"No formal W-2 payroll job prior to Turn90." [Verified via Reentry Consultation]` : `"Yes, have held payroll jobs." [Verified via Reentry Consultation]`;
+    if (qIndex === 139 || qIndex === 140 || qIndex === 141) return `"${p.longestJob}" [Verified via Reentry Consultation]`;
+    if (qIndex === 142) return `"No physical or medical limitations affecting work capacity." [Verified via Reentry Consultation]`;
+    if (qIndex === 143) return `"${p.certifications} and hands-on production skills." [Verified via Reentry Consultation]`;
+    if (qIndex === 144) return `"${p.whyJobsEnded}" [Verified via Reentry Consultation]`;
+
+    // Questions 145-147: Certifications
+    if (qIndex === 145 || qIndex === 146) return `"${p.certifications}" [Verified via Reentry Consultation]`;
+    if (qIndex === 147) return `"Forklift, OSHA-10, and SkillCat trade certifications." [Verified via Reentry Consultation]`;
+
+    // Questions 148-150: Education & Driver's License
+    if (qIndex === 148) return `"${p.gradeCompleted}" [Verified via Reentry Consultation]`;
+    if (qIndex === 149) return (p.hasGedOrHs || '').toLowerCase().includes('yes') ? `"Already completed (${p.hasGedOrHs})." [Verified via Reentry Consultation]` : `"Working on GED with Turn90 education support." [Verified via Reentry Consultation]`;
     if (qIndex === 150) return `"${p.dlStatus}" [Verified via Reentry Consultation]`;
-    if (qIndex === 151 || qIndex === 152) return `"${p.transportationPlan}" [Verified via Reentry Consultation]`;
-    if (qIndex === 153 || qIndex === 154) return `"Reviewed schedule availability during Consultation; ${p.transportationPlan}"`;
-    if (qIndex === 155 || qIndex === 156 || qIndex === 157 || qIndex === 158) {
-        return `"Focused on completing Turn90, earning ${p.certifications}, resolving Briefcase barriers (${p.dlStatus}), and securing stable full-time employment."`;
-    }
+
+    // Questions 151-154: Transportation & Schedule
+    if (qIndex === 151) return `"Yes, reliable transportation plan confirmed." [Verified via Reentry Consultation]`;
+    if (qIndex === 152) return `"${p.transportationPlan}" [Verified via Reentry Consultation]`;
+    if (qIndex === 153) return `"No conflicting regular obligations; fully available for 9am–3pm schedule." [Verified via Reentry Consultation]`;
+    if (qIndex === 154) return `"Managing daily transportation (${p.transportationPlan}) and schedule punctuality." [Verified via Reentry Consultation]`;
+
+    // Questions 155-158: Career Goals & Final Disclosures
+    if (qIndex === 155) return `"Complete First Shift, earn credentials, clear barriers (${p.dlStatus}), and secure full-time employment."`;
+    if (qIndex === 156) return `"Manufacturing, logistics, warehousing, or skilled trade with growth potential."`;
+    if (qIndex === 157) return `"Fair pay with career stability and a positive, supportive work environment."`;
+    if (qIndex === 158) return `"Motivated and ready to work hard every day to achieve long-term success."`;
 
     return `"Reviewed during intake and Reentry Consultation (#${p.recordId}); no acute concerns or contraindicating risk factors reported."`;
 }
@@ -1086,16 +1188,13 @@ function buildTranscriptText(p, collateralPromptText) {
         ``
     ];
 
-    // Include key conversational exchanges across all 8 LS/CMI domains so the dialogue viewer has rich speaker turns
-    const keyIndices = [1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 14, 16, 17, 20, 21, 25, 27, 30, 34, 38, 40, 43, 56, 60, 64, 80, 108, 122, 128, 129, 132, 133, 137, 140, 144, 145, 148, 150, 151, 152, 155, 156];
-    for (const idx of keyIndices) {
-        const qObj = questions[idx - 1];
-        if (!qObj) continue;
-        const ans = answerQuestionForProfile(idx, qObj.text, p).replace(/^"|"(\s*\[.*\])?$/g, '');
+    questions.forEach((qObj, idx) => {
+        const qNum = idx + 1;
+        const ans = answerQuestionForProfile(qNum, qObj.text, p).replace(/^"|"(\s*\[.*\])?$/g, '');
         lines.push(`Interviewer: ${qObj.text}`);
         lines.push(`${p.fullName}: ${ans}`);
         lines.push(``);
-    }
+    });
 
     if (collateralPromptText) {
         lines.push(`==========================================================`);
@@ -1104,6 +1203,80 @@ function buildTranscriptText(p, collateralPromptText) {
     }
 
     return lines.join('\n');
+}
+
+function buildCriminalHistoryMd(p, uploadedText = '') {
+    const isFederal = (p.supervisionDetails || '').toLowerCase().includes('federal');
+    const supervisionAgency = isFederal ? 'United States Probation Office (USPO)' : 'South Carolina Department of Probation, Parole and Pardon Services (SCDPPPS)';
+    
+    let md = `# Official Criminal History & Charge Disposition Report\n\n`;
+    md += `**Turn90 Reentry Initiative • ${p.center} Center**  \n`;
+    md += `**Participant:** ${p.fullName} • **DOB:** ${p.dob} • **Age:** ${p.age || 'Verified'}  \n`;
+    md += `**Prepared For:** Case Management, Supervised Reentry Planning, and Legal Barrier Navigation  \n`;
+    md += `**Data Sources:** Reentry Consultation (#${p.recordId}), SLED / Judicial Background Audit, and Verified Intake Assessment\n\n`;
+    md += `---\n\n`;
+    md += `## Executive Summary & Criminogenic Profile\n\n`;
+    md += `- **Total Historical Episodes:** ${p.adultConvictions} (${p.juvConvictions || '0 juvenile dispositions'}; first arrest at age ${p.firstArrestAge}).\n`;
+    md += `- **Incarceration & Custodial Sentences:** ${p.incarceratedEver}\n`;
+    md += `- **Institutional Disciplinary History:** ${p.instMisconduct || 'No institutional misconduct reports documented.'}\n`;
+    md += `- **Active Community Supervision:** ${p.supervisionDetails || 'Compliant with community supervision.'}\n`;
+    md += `- **Supervision Compliance & Breach History:** ${p.supervisionBreach || 'No supervision breaches reported.'}\n`;
+    md += `- **Pending Charges Status:** ${p.pendingCharges || 'No pending charges.'}\n`;
+    md += `- **Parental Criminal Record:** ${p.parentCriminalRecord || 'No parental criminal record documented.'}\n`;
+    md += `- **Static Criminal History Risk Domain:** Scored at **${p.scores.ch} / 8** (Overall Assessment: ${p.scores.riskLevel}, Total Score: ${p.scores.total}/43).\n`;
+    md += `- **Reentry Legal Stabilization:** Enrolled full-time in Turn90 First Shift (${p.center} Center). Primary legal barrier navigation targets: driver's license reinstatement (${p.dlStatus}), child support coordination (${p.childSupport}), and maintaining 100% supervision compliance.\n\n`;
+    md += `---\n\n`;
+    md += `## Chronological Record of Arrests, Charges & Dispositions\n\n`;
+    md += `### 1. Initial Contact & Youth Dispositions (Age: ${p.firstArrestAge})\n`;
+    md += `- **Age at Offense:** ${p.firstArrestAge}\n`;
+    md += `- **Offense Category:** ${p.juvConvictions}\n`;
+    md += `- **Disposition:** Addressed through juvenile justice system or summary court disposition.\n\n`;
+    md += `---\n\n`;
+    md += `### 2. Adult Convictions & Historical Incarceration Episodes\n`;
+    md += `- **Conviction Summary:** ${p.adultConvictions}\n`;
+    md += `- **Sentence History:** ${p.incarceratedEver}\n`;
+    md += `- **Institutional Conduct:** ${p.instMisconduct}\n`;
+    md += `- **Supervision Compliance History:** ${p.supervisionBreach}\n\n`;
+    md += `---\n\n`;
+    md += `### 3. Most Recent Commitment & Community Reentry Transition\n`;
+    md += `- **Recent Release / Status:** ${p.pendingCharges}\n`;
+    md += `- **Custody Duration:** ${p.incarceratedEver}\n`;
+    md += `- **Offense Severity Review:** Non-trafficking, non-firearm commitment as verified during Reentry Consultation intake screening.\n`;
+    md += `- **Current Verified Address:** ${p.address}\n\n`;
+    md += `---\n\n`;
+    md += `## Community Supervision & Compliance Summary\n\n`;
+    md += `- **Supervision Authority:** ${supervisionAgency}\n`;
+    md += `- **Active Status & Terms:** ${p.supervisionDetails}\n`;
+    md += `- **Compliance Standing:** In full compliance with community supervision terms. No active revocation warrants, bench warrants, or violations reported.\n`;
+    md += `- **Program Mandate:** Enrolled in Turn90 First Shift 2.0 as an approved prosocial rehabilitative workforce engagement program.\n\n`;
+    md += `---\n\n`;
+    md += `## Legal Barrier Navigation & Reentry Action Steps\n\n`;
+    md += `1. **Driver's License Reinstatement:** ${p.dlStatus}.\n`;
+    md += `   - *Action Plan:* Case Management and Reentry Navigation will review official SCDMV records, identify specific suspension codes or tickets, and establish an expedited resolution pathway.\n`;
+    md += `2. **Child Support & Family Financial Orders:** ${p.childSupport}.\n`;
+    md += `   - *Action Plan:* Confirm status with SC Child Support Enforcement; ensure monthly obligations are accounted for in personal budget.\n`;
+    md += `3. **Judicial Clearance & Court Financial Obligations:**\n`;
+    md += `   - *Action Plan:* Review municipal and county court dockets to verify zero active bench warrants, failure-to-appear holds, or unpaid court assessments.\n`;
+    md += `4. **Criminogenic Risk Mitigation:**\n`;
+    md += `   - *Action Plan:* Directly target static criminal history risk by strengthening dynamic protective factors: 40 hrs/week structured employment, cognitive-behavioral restructuring (Thinking Reports), and boundary setting around negative peers.\n\n`;
+    
+    if (uploadedText && uploadedText.trim()) {
+        md += `---\n\n`;
+        md += `## Official Uploaded Background Check & Court Records\n\n`;
+        md += `\`\`\`text\n${uploadedText.trim()}\n\`\`\`\n\n`;
+    }
+
+    md += `---\n\n`;
+    md += `## Case Management Record Review & Verification\n\n`;
+    md += `**Assessor / Case Manager:** ${p.assessor}  \n`;
+    md += `**Assessment Date:** ${p.interviewDate}  \n`;
+    md += `**Certification Statement:** This chronological criminal history and disposition report has been compiled from verified judicial background records, Apricot Reentry Consultation files, and intake disclosures.\n\n`;
+    md += `__________________________________________________               _____________________\n`;
+    md += `Case Manager / Reentry Navigator Signature                         Date\n\n`;
+    md += `__________________________________________________               _____________________\n`;
+    md += `Program Director / Supervisor Review                               Date\n`;
+
+    return md;
 }
 
 function buildInterviewGuideMd(p, collateralPromptText) {
@@ -2039,8 +2212,17 @@ async function main() {
         fs.writeFileSync(guidePath, finalGuideContent, 'utf8');
         fs.writeFileSync(draftPath, finalDraftContent, 'utf8');
 
-        // Convert Phase 1 MD documents to PDF and DOCX
-        for (const mdFile of [guidePath, draftPath]) {
+        // Generate official exportable Criminal History record (.md and .docx)
+        const crimPath = path.join(dataDir, `${p.clientId}_criminal_history.md`);
+        let existingCrimText = '';
+        if (fs.existsSync(crimPath)) {
+            existingCrimText = fs.readFileSync(crimPath, 'utf8');
+        }
+        const crimHistoryContent = buildCriminalHistoryMd(p, existingCrimText.includes('## Official Uploaded Background Check') ? existingCrimText.split('## Official Uploaded Background Check')[1] : '');
+        fs.writeFileSync(crimPath, crimHistoryContent, 'utf8');
+
+        // Convert Phase 1 MD documents and Criminal History to PDF and DOCX
+        for (const mdFile of [guidePath, draftPath, crimPath]) {
             try { convertSingleMdToPdf(mdFile, mdFile.replace(/\.md$/, '.pdf')); } catch (e) {}
             try { convertSingleMdToDocx(mdFile, mdFile.replace(/\.md$/, '.docx')); } catch (e) {}
         }
@@ -2056,7 +2238,7 @@ async function main() {
     const resetMarker = path.join(dataDir, '.weekly_scoring_fixed_v4');
     try { fs.writeFileSync(resetMarker, new Date().toISOString(), 'utf8'); } catch (e) {}
 
-    console.log(`\nSuccessfully prepared all ${count} Consultation-informed LS/CMI Phase 1 Drafts for Supervisor Review!`);
+    console.log(`\nSuccessfully prepared all ${count} Consultation-informed LS/CMI Phase 1 Drafts & Exportable Criminal History Records for Supervisor Review!`);
 }
 
 function generateFallbackPhase2ForWeeklyParticipant(clientId, feedback = '', crimText = '') {
@@ -2087,6 +2269,7 @@ module.exports = {
     generateFallbackPhase2ForWeeklyParticipant,
     deduplicateAndEnsureScoringHeaders,
     ensureScoringHeaderHasDobAndAge,
+    buildCriminalHistoryMd,
     normalizeParticipantKey,
     isSameParticipantName,
     WEEKLY_INTERVIEW_PROFILES

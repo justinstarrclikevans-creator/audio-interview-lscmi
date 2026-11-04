@@ -1908,6 +1908,7 @@
                 <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
                     <div id="draft-viewer-controls" style="display: flex; gap: 6px;"></div>
                     <button class="btn btn-primary" id="btn-draft-print-top" style="font-size: 12px; padding: 6px 12px;" onclick="printActiveDraftDocument()">🖨️ Print Document</button>
+                    <button class="btn btn-outline" id="btn-draft-docx-top" style="font-size: 12px; padding: 6px 12px; color: #0284c7; border-color: #7dd3fc; background: #f0f9ff; display: none;" onclick="downloadActiveDraftDocx()">📑 Export Word</button>
                     <button class="btn btn-outline" id="btn-draft-pdf-top" style="font-size: 12px; padding: 6px 12px; display: none;" onclick="openActiveDraftPdf()">📄 View PDF</button>
                     <button class="btn btn-outline" id="btn-draft-print-tab" style="font-size: 12px; padding: 6px 12px;" onclick="openPrintableTab()">🌐 Printable Page</button>
                     <button class="modal-close" onclick="closeModal('modal-draft-viewer')">&times;</button>
@@ -1975,7 +1976,10 @@
                 </div>
                 
                 <div class="report-summary-box">
-                    <h4 style="color: var(--primary);">1. Criminal History PDF Record (Optional Attachment)</h4>
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                        <h4 style="color: var(--primary); margin: 0;">1. Criminal History PDF Record (Optional Attachment)</h4>
+                        <div id="sup-existing-crim-actions" style="display: flex; gap: 6px; align-items: center;"></div>
+                    </div>
                     <p style="font-size: 12px; color: var(--slate); margin: 4px 0 8px 0;">Upload a SLED/court summary PDF to synthesize criminal history with the interview for the final case brief and scoring.</p>
                     <input type="file" id="sup-crim-file" accept=".pdf,.txt">
                     <div class="form-group mt-2">
