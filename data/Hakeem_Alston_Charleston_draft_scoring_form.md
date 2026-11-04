@@ -1,5 +1,12 @@
 # LS/CMI Scoring Form
 
+**Participant Name:** Hakeem Alston (Apricot ID: #78871)  
+**Date of Birth (DOB):** 04/28/1997 | **Age:** 29 years old  
+**Center Location:** Turn90 Charleston  
+**Assessment Date:** October – November 2026 | **Assessor:** Turn90 Case Management Team  
+
+---
+
 ## Section 1: General Risk/Need Factors
 
 ### 1.1 Criminal History (CH)

@@ -1,8 +1,8 @@
 ### Turn90 / First Shift LS/CMI Assessment Interview Guide (Consultation-Informed)
 
 **Participant Name:** Kwatez Carter (Apricot ID: #81443)  
-**Date of Birth:** Verified in Apricot (#81443)  
-**Center Location:** Columbia  
+**Date of Birth (DOB):** 08/03/2000 | **Age:** 26 years old  
+**Center Location:** Turn90 Columbia  
 **Assessor:** Jenn Jeanquart & Daisy Boynton  
 **Assessment Date:** October 29, 2026 (Initial First Shift Case Management Session & Consultation Synthesis)  
 
@@ -11,7 +11,7 @@
 ---
 
 1. **What is your full name, date of birth, and current address?**  
-   **Participant Answer:** "Kwatez Carter. Date of birth: Verified in Apricot (#81443). Current address: Lexington, SC (Resides with mother and stepfather)." [Verified via Reentry Consultation]
+   **Participant Answer:** "Kwatez Carter. Date of Birth (DOB): 08/03/2000 (Age: 26 years old). Current address: Lexington, SC (Resides with mother and stepfather)." [Verified via Reentry Consultation & Bio Info]
 
 2. **What is your license status?**  
    **Participant Answer:** "No current license; owes ~$300–$845 in DMV reinstatement/ticket fees; studying in computer lab for beginner’s permit test." [Verified via Reentry Consultation]
@@ -489,9 +489,12 @@
 ```text
 === APRICOT REENTRY CONSULTATION, BRIEFCASE & CASE MANAGEMENT COLLATERAL RECORD ===
 Participant: Kwatez Carter (Apricot Record ID: #81443) | Center: Columbia | Program Track: First Shift
+Date of Birth (DOB): 08/03/2000 | Current Age: 26 years old
+Verified Address: 1218 Bull Street, Columbia, SC 29201 | Phone: 803.873.4686.
 First Shift Enrollment Start Date: 10/26/2026 | Apricot Recorded LS/CMI Score: Pending (0)
 Reentry Consultation Date: 10/08/2026 | First Shift Eligible: Yes | Referral Source: Federal Halfway House
 First Shift Orientation Date: 10/23/2026 | Completed: Yes
+First Shift Daily Attendance & Points Recorded: 10/26/2026: 10 pts (Columbia), 10/27/2026: 10 pts (Columbia), 10/28/2026: 10 pts (Columbia), 10/29/2026: 10 pts (Columbia), 10/30/2026: 10 pts (Columbia), 10/31/2026: 10 pts (Columbia), 11/02/2026: 10 pts (Columbia)
 First Shift Case Plan Focus Areas: 1) Work and Follow-Through (Employment/Education) (- When I'm getting talked over
 - When I'm frustrated - disrespected
 - When I'm overworked, given 10 tasks when I'm already doing something and it's 10 minutes before my shift ends) | 2) People and Influence (Peer Associations)

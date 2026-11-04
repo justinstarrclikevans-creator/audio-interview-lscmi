@@ -1,8 +1,8 @@
 ### Turn90 / First Shift LS/CMI Assessment Interview Guide (Consultation-Informed)
 
 **Participant Name:** Justin Dahl (Apricot ID: #81816)  
-**Date of Birth:** Verified in Apricot (#81816)  
-**Center Location:** Columbia  
+**Date of Birth (DOB):** 04/09/1993 | **Age:** 33 years old  
+**Center Location:** Turn90 Columbia  
 **Assessor:** Daisy Boynton & Jenn Jeanquart  
 **Assessment Date:** October 23 – November 2, 2026  
 
@@ -11,7 +11,7 @@
 ---
 
 1. **What is your full name, date of birth, and current address?**  
-   **Participant Answer:** "Justin Dahl. Date of birth: Verified in Apricot (#81816). Current address: Columbia, SC." [Verified via Reentry Consultation]
+   **Participant Answer:** "Justin Dahl. Date of Birth (DOB): 04/09/1993 (Age: 33 years old). Current address: 216 Sycamore Tree Road, Lexington, SC 29073." [Verified via Reentry Consultation & Bio Info]
 
 2. **What is your license status?**  
    **Participant Answer:** "Suspended pending ADSAP enrollment (DUI charge was dropped, but DMV still requires ADSAP proof of enrollment)." [Verified via Reentry Consultation]
@@ -188,10 +188,10 @@
    **Participant Answer:** "Reviewed during intake and Reentry Consultation (#81816); no acute concerns or contraindicating risk factors reported."
 
 60. **What is your current living situation?**  
-   **Participant Answer:** "Columbia, SC" [Verified via Reentry Consultation]
+   **Participant Answer:** "216 Sycamore Tree Road, Lexington, SC 29073" [Verified via Reentry Consultation]
 
 61. **How do you like where you live?**  
-   **Participant Answer:** "Columbia, SC" [Verified via Reentry Consultation]
+   **Participant Answer:** "216 Sycamore Tree Road, Lexington, SC 29073" [Verified via Reentry Consultation]
 
 62. **Is your probation/parole officer or worker fair and reasonable?**  
    **Participant Answer:** "Needs ADSAP class enrollment to clear DMV administrative hold."
@@ -489,9 +489,12 @@
 ```text
 === APRICOT REENTRY CONSULTATION, BRIEFCASE & CASE MANAGEMENT COLLATERAL RECORD ===
 Participant: Justin Dahl (Apricot Record ID: #81816) | Center: Columbia | Program Track: First Shift
+Date of Birth (DOB): 04/09/1993 | Current Age: 33 years old
+Verified Address: 216 Sycamore Tree Road, Lexington, SC 29073 | Phone: 803.530.8387.
 First Shift Enrollment Start Date: 11/02/2026 | Apricot Recorded LS/CMI Score: Pending (0)
 Reentry Consultation Date: 10/08/2026 | First Shift Eligible: Yes | Referral Source: Letter to Prison
 First Shift Orientation Date: 10/23/2026 | Completed: Yes
+First Shift Daily Attendance & Points Recorded: 11/02/2026: 10 pts (Columbia)
 
 --- REENTRY CONSULTATION & INTAKE SCREENING NOTES (1) ---
 [2026-10-08] Staff: Daisy Boynton (Intake Appointment - Intake Appointment COMPLETED):

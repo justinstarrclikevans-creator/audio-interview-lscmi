@@ -1,9 +1,9 @@
 # LS/CMI Draft Scoring Form (Phase 1 — Consultation Linked)
 
-**Participant:** Stephen Lazenby (Apricot ID: #79879)  
+**Participant Name:** Stephen Lazenby (Apricot ID: #79879)  
+**Date of Birth (DOB):** 1990 (Verified Age 36 in Apricot #79879) | **Age:** 36 years old  
 **Center Location:** Turn90 Charleston  
-**Assessment Date:** October 20–27, 2026 (Initial Official Case Management & Re-Entry Planning)  
-**Assessor:** Terrence Brown & Daisy Boynton  
+**Assessment Date:** October 20–27, 2026 (Initial Official Case Management & Re-Entry Planning) | **Assessor:** Terrence Brown & Daisy Boynton  
 
 ---
 

@@ -1,9 +1,9 @@
 # LS/CMI Draft Scoring Form (Phase 1 — Consultation Linked)
 
-**Participant:** William Belk (Apricot ID: #80797)  
+**Participant Name:** William Belk (Apricot ID: #80797)  
+**Date of Birth (DOB):** Pending Entry in Apricot Bio Info (Verify on State ID) | **Age:** Pending DOB Verification on State ID  
 **Center Location:** Turn90 Columbia  
-**Assessment Date:** October 15–27, 2026 (First Shift Intake & Case Management Synthesis)  
-**Assessor:** Jenn Jeanquart, Justin Evans & Daisy Boynton  
+**Assessment Date:** October 15–27, 2026 (First Shift Intake & Case Management Synthesis) | **Assessor:** Jenn Jeanquart, Justin Evans & Daisy Boynton  
 
 ---
 

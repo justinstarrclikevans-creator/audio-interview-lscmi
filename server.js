@@ -8,8 +8,13 @@ const {
     getParticipantCoachingContext,
     getParticipantConsultationLscmiContext,
     listConsultationLscmiCandidates,
-    exportPreviousWeekPayReport
+    exportPreviousWeekPayReport,
+    resolveParticipantDobAndAge
 } = require('./services/apricot_eval_engine');
+const {
+    deduplicateAndEnsureScoringHeaders,
+    ensureScoringHeaderHasDobAndAge
+} = require('./generate_weekly_consultation_lscmi_packets');
 const express = require('express');
 const cors = require('cors');
 const multer = require('multer');
@@ -1536,8 +1541,15 @@ app.post('/api/admin/scoring/assign', authenticateToken, requireRole('program_ma
     const { clientId, participantName } = req.body;
     if (!clientId || !participantName) return res.status(400).json({ error: 'clientId and participantName required' });
     
-    // Generate new prefix based on participant name (e.g., "John Doe" -> "John_Doe")
-    const newPrefix = participantName.replace(/[^a-zA-Z0-9]/g, '_');
+    // Resolve canonical center from Apricot Consultation context so we never create a second prefix without _Center
+    let consultCtx = null;
+    try {
+        consultCtx = getParticipantConsultationLscmiContext(participantName);
+    } catch (e) { /* ignore */ }
+    const canonicalName = (consultCtx && consultCtx.fullName) ? consultCtx.fullName : participantName.trim();
+    const canonicalCenter = (consultCtx && consultCtx.center) ? consultCtx.center : 'Charleston';
+    const safeName = canonicalName.replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+    const newPrefix = safeName.endsWith(`_${canonicalCenter}`) ? safeName : `${safeName}_${canonicalCenter}`;
     
     try {
         const files = fs.readdirSync(dataDir);
@@ -1547,11 +1559,19 @@ app.post('/api/admin/scoring/assign', authenticateToken, requireRole('program_ma
                 const suffix = f.substring(clientId.length);
                 const oldPath = path.join(dataDir, f);
                 const newPath = path.join(dataDir, newPrefix + suffix);
-                fs.renameSync(oldPath, newPath);
+                // If target already exists (e.g., Consultation packet), deduplicateAndEnsureScoringHeaders will merge them
+                if (!fs.existsSync(newPath)) {
+                    fs.renameSync(oldPath, newPath);
+                }
                 renamedCount++;
             }
         });
-        res.json({ message: `Successfully renamed ${renamedCount} files to link with ${participantName}` });
+        try {
+            deduplicateAndEnsureScoringHeaders(dataDir);
+        } catch (dedupErr) {
+            console.warn('Assign deduplication warning:', dedupErr.message);
+        }
+        res.json({ message: `Successfully linked ${renamedCount} files with ${canonicalName} (${canonicalCenter})` });
     } catch(err) {
         res.status(500).json({ error: 'Failed to rename scoring files: ' + err.message });
     }
@@ -1639,6 +1659,11 @@ app.post('/api/interviews/:clientId/archive', authenticateToken, requireRole('pr
 
 app.get('/api/interviews', (req, res) => {
     try {
+        try {
+            deduplicateAndEnsureScoringHeaders(dataDir);
+        } catch (dedupErr) {
+            console.warn('Deduplication on /api/interviews warning:', dedupErr.message);
+        }
         const files = fs.readdirSync(dataDir);
         const SUFFIXES = ['_draft_scoring_form', '_final_scoring_form', '_final_case_brief', '_interview_guide', '_transcript.txt', '_participant_case_plan', '_criminal_history', '_archived.flag'];
         const clients = {};
@@ -1693,7 +1718,15 @@ app.get('/api/file-content', (req, res) => {
     }
 
     try {
-        const content = fs.readFileSync(filePath, 'utf8');
+        let content = fs.readFileSync(filePath, 'utf8');
+        if (filename.includes('scoring_form') && !content.includes('Date of Birth (DOB):')) {
+            try {
+                const nameMatch = content.match(/\*\*(?:Participant Name|Participant|Client):\*\*\s*([^\n|*]+)/i);
+                const inferredName = nameMatch ? nameMatch[1].trim() : filename.replace(/_(draft|final)_scoring_form.*$/i, '').replace(/_(Charleston|Columbia|Spartanburg)$/i, '').replace(/_/g, ' ');
+                const resolvedBio = resolveParticipantDobAndAge(inferredName, [content]);
+                content = ensureScoringHeaderHasDobAndAge(content, inferredName, 'Turn90', resolvedBio.dob, resolvedBio.age);
+            } catch (e) { /* ignore */ }
+        }
         return res.json({ content, filename });
     } catch(err) {
         return res.status(500).json({ error: `Failed to read file "${filename}": ${err.message}` });
@@ -1767,7 +1800,7 @@ function buildPrintableDocumentHtml(filename, content, isBatch = false) {
     } else if (cleanFilename.toLowerCase().includes('alston') || cleanFilename.toLowerCase().includes('hakeem')) {
         clientName = 'Hakeem Markus Alston';
         location = 'Charleston';
-    } else if (cleanFilename.toLowerCase().includes('clyde') || cleanFilename.toLowerCase().includes('williams')) {
+    } else if (cleanFilename.toLowerCase().includes('clyde')) {
         clientName = 'Clyde Williams';
         location = 'Columbia';
     } else {
@@ -1787,7 +1820,25 @@ function buildPrintableDocumentHtml(filename, content, isBatch = false) {
             }
         }
     }
+    const headerNameMatch = String(content || '').match(/\*\*(?:Participant Name|Participant|Client):\*\*\s*([^\n|*]+)/i);
+    if (headerNameMatch && headerNameMatch[1] && headerNameMatch[1].trim() && clientName === 'Participant') {
+        clientName = headerNameMatch[1].trim();
+    }
     clientName = clientName.replace(/keyzelle limamauel curtis thomas/gi, 'Keyzelle Thomas');
+
+    const headerDobMatch = String(content || '').match(/\*\*(?:Date of Birth\s*\(DOB\)|Date of Birth|DOB|Birthdate):\*\*\s*([^\n|*]+)/i);
+    const headerAgeMatch = String(content || '').match(/\*\*(?:Current Age|Age):\*\*\s*([^\n|*]+)/i);
+    let participantDob = headerDobMatch && headerDobMatch[1] ? headerDobMatch[1].trim() : '';
+    let participantAge = headerAgeMatch && headerAgeMatch[1] ? headerAgeMatch[1].trim() : '';
+    if (!participantDob || !participantAge || /Verify/i.test(participantDob)) {
+        try {
+            const resolvedBio = resolveParticipantDobAndAge(clientName, [content]);
+            if ((!participantDob || /Verify/i.test(participantDob)) && resolvedBio.dob) participantDob = resolvedBio.dob;
+            if ((!participantAge || /Verify/i.test(participantAge)) && resolvedBio.age) participantAge = resolvedBio.age;
+        } catch (e) { /* ignore */ }
+    }
+    if (!participantDob) participantDob = 'Verify on SC ID / Intake Packet';
+    if (!participantAge) participantAge = 'Verify at Intake';
 
     let bodyHtml = '';
 
@@ -1869,11 +1920,12 @@ function buildPrintableDocumentHtml(filename, content, isBatch = false) {
                 </div>
 
                 <!-- Participant Metadata Grid -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px; margin-bottom: 18px; font-size: 10pt;">
+                <div style="display: grid; grid-template-columns: 1.3fr 1fr 0.8fr 1fr 1fr; gap: 10px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px; margin-bottom: 18px; font-size: 10pt;">
                     <div><span style="color: #64748b; font-size: 9pt; display: block; text-transform: uppercase; font-weight: 700;">Participant Name</span><strong style="font-size: 11.5pt; color: #0f172a;">${clientName}</strong></div>
+                    <div><span style="color: #64748b; font-size: 9pt; display: block; text-transform: uppercase; font-weight: 700;">Date of Birth (DOB)</span><strong style="font-size: 11pt; color: #0f766e;">${participantDob}</strong></div>
+                    <div><span style="color: #64748b; font-size: 9pt; display: block; text-transform: uppercase; font-weight: 700;">Current Age</span><strong style="font-size: 11pt; color: #0f766e;">${participantAge}</strong></div>
                     <div><span style="color: #64748b; font-size: 9pt; display: block; text-transform: uppercase; font-weight: 700;">Program Center</span><strong>Turn90 ${location}</strong></div>
                     <div><span style="color: #64748b; font-size: 9pt; display: block; text-transform: uppercase; font-weight: 700;">Assessment Tool</span><strong>LS/CMI Section 1-8</strong></div>
-                    <div><span style="color: #64748b; font-size: 9pt; display: block; text-transform: uppercase; font-weight: 700;">Assessor / Reviewer</span><strong>Case Management Team</strong></div>
                 </div>
 
                 <!-- Executive Scorecard Summary Table -->
@@ -4837,34 +4889,59 @@ app.post('/api/upload-audio', memoryUpload.single('audio'), async (req, res) => 
 
         const audioBuffer = req.file.buffer;
         const originalName = req.file.originalname || 'interview_recording.webm';
-        const name = req.body.participantName || 'Unknown';
-        const location = req.body.participantLocation || 'Unknown';
+        const rawName = (req.body.participantName || 'Unknown').trim();
+        const rawLocation = (req.body.participantLocation || '').trim();
         const transcriptText = req.body.transcript || 'No transcript available.';
         const isTranscriptOnly = req.body.transcriptOnly === 'true';
+
+        // Automatically look up Apricot Consultation collateral & canonical center so we never create duplicate cards
+        let consultCtx = null;
+        try {
+            if (rawName && rawName !== 'Unknown') {
+                consultCtx = getParticipantConsultationLscmiContext(rawName);
+            }
+        } catch (e) { /* ignore */ }
+
+        const name = (consultCtx && consultCtx.fullName) ? consultCtx.fullName : rawName;
+        const location = (rawLocation && rawLocation !== 'Unknown') ? rawLocation : ((consultCtx && consultCtx.center) ? consultCtx.center : 'Charleston');
+        const collateralText = (consultCtx && consultCtx.collateralPromptText) ? consultCtx.collateralPromptText : '';
         
         const audioSizeMB = (audioBuffer.length / (1024 * 1024)).toFixed(2);
-        console.log(`Upload received: ${name} (${location}) | Audio: ${audioSizeMB} MB | Transcript-only: ${isTranscriptOnly}`);
+        console.log(`Upload received: ${name} (${location}) | Audio: ${audioSizeMB} MB | Transcript-only: ${isTranscriptOnly} | Consultation Collateral: ${collateralText ? 'YES' : 'NO'}`);
 
-        const timestamp = Date.now();
-        const safeName = name.replace(/[^a-zA-Z0-9]/g, '');
-        const filePrefix = `${timestamp}_${safeName}`;
+        const safeName = name.replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+        const filePrefix = (name && name !== 'Unknown')
+            ? (safeName.endsWith(`_${location}`) ? safeName : `${safeName}_${location}`)
+            : `${Date.now()}_Unknown`;
 
         // We no longer save audio locally to prevent ENOSPC.
         if (!isTranscriptOnly && audioBuffer.length > 200) {
             console.log(`Received audio buffer of length ${audioBuffer.length}, skipping disk write.`);
         }
-        fs.writeFileSync(path.join(dataDir, `${filePrefix}_transcript.txt`), transcriptText);
+        const initialTranscriptToSave = collateralText && !transcriptText.includes('APRICOT CONSULTATION & INTAKE COLLATERAL')
+            ? `${transcriptText}\n\n${collateralText}`
+            : transcriptText;
+        fs.writeFileSync(path.join(dataDir, `${filePrefix}_transcript.txt`), initialTranscriptToSave);
         
         res.status(200).json({ message: 'Audio uploaded successfully. Processing in background...', filePrefix });
 
         if (getGeminiApiKey()) {
-            console.log(`Starting LLM Phase 1 for ${name}...`);
+            console.log(`Starting LLM Phase 1 for ${name} (${filePrefix})...`);
             try {
                 const results = (!isTranscriptOnly && audioBuffer && audioBuffer.length > 200) 
-                    ? await runPhase1WithAudio(audioBuffer, req.file.mimetype || 'audio/webm', name, location, transcriptText)
-                    : await runPhase1(transcriptText, name, location);
+                    ? await runPhase1WithAudio(audioBuffer, req.file.mimetype || 'audio/webm', name, location, transcriptText, '', collateralText)
+                    : await runPhase1(transcriptText, name, location, '', collateralText);
+                if (results.transcript && results.transcript.trim()) {
+                    const finalTranscript = collateralText && !results.transcript.includes('APRICOT CONSULTATION & INTAKE COLLATERAL')
+                        ? `${results.transcript.trim()}\n\n${collateralText}`
+                        : results.transcript.trim();
+                    fs.writeFileSync(path.join(dataDir, `${filePrefix}_transcript.txt`), finalTranscript);
+                }
                 fs.writeFileSync(path.join(dataDir, `${filePrefix}_interview_guide.md`), results.interview_guide);
                 fs.writeFileSync(path.join(dataDir, `${filePrefix}_draft_scoring_form.md`), results.draft_scoring_form);
+                try {
+                    deduplicateAndEnsureScoringHeaders(dataDir);
+                } catch (dedupErr) { /* ignore */ }
                 console.log(`LLM Phase 1 finished for ${name}. Pending review.`);
             } catch (llmErr) {
                 console.error("LLM Phase 1 failed:", llmErr);
@@ -7587,9 +7664,11 @@ app.listen(PORT, async () => {
             console.log(`✅ Apricot Eval Engine synchronized: ${initRes.newNotesProcessed} new notes (${initRes.totalUniqueNotes} total), ${initRes.activeFirstShiftCount} FS, ${initRes.activeReentryNavCount} RN.`);
         }
 
-        if (!fs.existsSync(path.join(dataDir, '.weekly_phase1_only_v2')) || !fs.existsSync(path.join(dataDir, 'Reante_Baylock_Charleston_draft_scoring_form.md'))) {
+        if (!fs.existsSync(path.join(dataDir, '.weekly_dedup_dob_v3')) || !fs.existsSync(path.join(dataDir, 'Reante_Baylock_Charleston_draft_scoring_form.md'))) {
             const { generateWeeklyConsultationLscmiPackets } = require('./generate_weekly_consultation_lscmi_packets');
             await generateWeeklyConsultationLscmiPackets();
+        } else {
+            deduplicateAndEnsureScoringHeaders(dataDir);
         }
 
         // Initialize Dropbox class evaluation cron jobs

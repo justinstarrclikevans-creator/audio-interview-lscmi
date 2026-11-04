@@ -1,9 +1,9 @@
 # LS/CMI Draft Scoring Form (Phase 1 — Consultation Linked)
 
-**Participant:** Harold Williams (Apricot ID: #82456)  
+**Participant Name:** Harold Williams (Apricot ID: #82456)  
+**Date of Birth (DOB):** Pending Entry in Apricot Bio Info (Verify on State ID) | **Age:** Pending DOB Verification on State ID  
 **Center Location:** Turn90 Charleston  
-**Assessment Date:** October 27, 2026 (Reentry Consultation Completed)  
-**Assessor:** Daisy Boynton  
+**Assessment Date:** October 27, 2026 (Reentry Consultation Completed) | **Assessor:** Daisy Boynton  
 
 ---
 

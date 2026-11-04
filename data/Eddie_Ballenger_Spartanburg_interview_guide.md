@@ -1,8 +1,8 @@
 ### Turn90 / First Shift LS/CMI Assessment Interview Guide (Consultation-Informed)
 
 **Participant Name:** Eddie Ballenger (Apricot ID: #80088)  
-**Date of Birth:** Verified in Apricot (#80088)  
-**Center Location:** Spartanburg  
+**Date of Birth (DOB):** 08/07/1983 | **Age:** 43 years old  
+**Center Location:** Turn90 Spartanburg  
 **Assessor:** Diyoung Dantzler & Matt Carlisle  
 **Assessment Date:** November 2, 2026 (Re-Enrollment & Case Review)  
 
@@ -11,7 +11,7 @@
 ---
 
 1. **What is your full name, date of birth, and current address?**  
-   **Participant Answer:** "Eddie Ballenger. Date of birth: Verified in Apricot (#80088). Current address: Spartanburg, SC (Resides with supportive family/fiancée)." [Verified via Reentry Consultation]
+   **Participant Answer:** "Eddie Ballenger. Date of Birth (DOB): 08/07/1983 (Age: 43 years old). Current address: Spartanburg, SC (Resides with supportive family/fiancée)." [Verified via Reentry Consultation & Bio Info]
 
 2. **What is your license status?**  
    **Participant Answer:** "Suspended due to a $400 unpaid traffic ticket; actively saving to pay ticket and visit DMV." [Verified via Reentry Consultation]
@@ -489,7 +489,10 @@
 ```text
 === APRICOT REENTRY CONSULTATION, BRIEFCASE & CASE MANAGEMENT COLLATERAL RECORD ===
 Participant: Eddie Ballenger (Apricot Record ID: #80088) | Center: Spartanburg | Program Track: First Shift
+Date of Birth (DOB): 08/07/1983 | Current Age: 43 years old
+Verified Address: 408 Abner Road, Apt # D-4, Spartanburg, SC 29301 | Phone: 864.804.2024.
 First Shift Enrollment Start Date: 11/02/2026 | Apricot Recorded LS/CMI Score: Pending (0)
+First Shift Daily Attendance & Points Recorded: 10/02/2026: 10 pts (Spartanburg), 10/05/2026: 10 pts (Spartanburg), 10/06/2026: 10 pts (Spartanburg), 10/07/2026: 10 pts (Spartanburg), 10/09/2026: 10 pts (Spartanburg), 10/12/2026: 10 pts (Spartanburg), 10/13/2026: 10 pts (Spartanburg), 10/15/2026: 4 pts (Spartanburg), 10/08/2026: 0 pts (Spartanburg), 10/16/2026: 7 pts (Spartanburg), 11/03/2026: 10 pts (Spartanburg)
 First Shift Case Plan Focus Areas: 1) Work and Follow-Through (Employment/Education) (No situation text) | 2) People and Influence (Peer Associations)
 Briefcase 90-Day Goal: Get dl
 GED 

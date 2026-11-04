@@ -1,8 +1,8 @@
 ### Turn90 / First Shift LS/CMI Assessment Interview Guide (Consultation-Informed)
 
 **Participant Name:** Melvin Brown (Apricot ID: #80978)  
-**Date of Birth:** Verified in Apricot (#80978)  
-**Center Location:** Columbia  
+**Date of Birth (DOB):** Pending Entry in Apricot Bio Info (Verify on State ID) | **Age:** Pending DOB Verification on State ID  
+**Center Location:** Turn90 Columbia  
 **Assessor:** Jenn Jeanquart, Justin Evans & Daisy Boynton  
 **Assessment Date:** October 28, 2026 (Initial First Shift Session 1 & Consultation Synthesis)  
 
@@ -11,7 +11,7 @@
 ---
 
 1. **What is your full name, date of birth, and current address?**  
-   **Participant Answer:** "Melvin Brown. Date of birth: Verified in Apricot (#80978). Current address: Lexington / Columbia, SC (Residing with family; father provides reliable daily transportation)." [Verified via Reentry Consultation]
+   **Participant Answer:** "Melvin Brown. Date of Birth (DOB): Pending Entry in Apricot Bio Info (Verify on State ID) (Age: Pending DOB Verification on State ID). Current address: Lexington / Columbia, SC (Residing with family; father provides reliable daily transportation)." [Verified via Reentry Consultation & Bio Info]
 
 2. **What is your license status?**  
    **Participant Answer:** "Suspended due to DUS, traffic tickets, and disorderly conduct (no DUIs); owes $1,740 with a concrete payment plan set for week of Nov 9 ($400 sister, $1,040 support, $300 client)." [Verified via Reentry Consultation]
@@ -489,9 +489,11 @@
 ```text
 === APRICOT REENTRY CONSULTATION, BRIEFCASE & CASE MANAGEMENT COLLATERAL RECORD ===
 Participant: Melvin Brown (Apricot Record ID: #80978) | Center: Columbia | Program Track: First Shift
+Date of Birth (DOB): Pending Entry in Apricot Bio Info (Verify on State ID) | Current Age: Pending DOB Verification on State ID
 First Shift Enrollment Start Date: 10/26/2026 | Apricot Recorded LS/CMI Score: Pending (0)
 Reentry Consultation Date: 09/22/2026 | First Shift Eligible: Yes | Referral Source: Self/Community
 First Shift Orientation Date: 10/23/2026 | Completed: Yes
+First Shift Daily Attendance & Points Recorded: 10/26/2026: 10 pts (Columbia), 10/27/2026: 10 pts (Columbia), 10/28/2026: 10 pts (Columbia), 10/29/2026: 10 pts (Columbia), 10/30/2026: 10 pts (Columbia), 10/31/2026: 10 pts (Columbia), 11/02/2026: 10 pts (Columbia)
 
 --- REENTRY CONSULTATION & INTAKE SCREENING NOTES (2) ---
 [2026-09-22] Staff: Justin Evans (Intake Appointment - Intake Appointment COMPLETED):

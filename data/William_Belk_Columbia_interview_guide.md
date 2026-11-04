@@ -1,8 +1,8 @@
 ### Turn90 / First Shift LS/CMI Assessment Interview Guide (Consultation-Informed)
 
 **Participant Name:** William Belk (Apricot ID: #80797)  
-**Date of Birth:** Verified in Apricot (#80797)  
-**Center Location:** Columbia  
+**Date of Birth (DOB):** Pending Entry in Apricot Bio Info (Verify on State ID) | **Age:** Pending DOB Verification on State ID  
+**Center Location:** Turn90 Columbia  
 **Assessor:** Jenn Jeanquart, Justin Evans & Daisy Boynton  
 **Assessment Date:** October 15–27, 2026 (First Shift Intake & Case Management Synthesis)  
 
@@ -11,7 +11,7 @@
 ---
 
 1. **What is your full name, date of birth, and current address?**  
-   **Participant Answer:** "William Belk. Date of birth: Verified in Apricot (#80797). Current address: Federal Halfway House, Columbia, SC (Originally from Lancaster/Monroe, NC; relocating permanently to Columbia for a fresh start)." [Verified via Reentry Consultation]
+   **Participant Answer:** "William Belk. Date of Birth (DOB): Pending Entry in Apricot Bio Info (Verify on State ID) (Age: Pending DOB Verification on State ID). Current address: Federal Halfway House, Columbia, SC (Originally from Lancaster/Monroe, NC; relocating permanently to Columbia for a fresh start)." [Verified via Reentry Consultation & Bio Info]
 
 2. **What is your license status?**  
    **Participant Answer:** "Reinstatement in final stage: Turn90 paid $800 toward his $1,000 DMV reinstatement fees on 10/19; Permit test Wed, Driving test Thu, License pickup Fri to drive his own vehicle." [Verified via Reentry Consultation]
@@ -489,8 +489,10 @@
 ```text
 === APRICOT REENTRY CONSULTATION, BRIEFCASE & CASE MANAGEMENT COLLATERAL RECORD ===
 Participant: William Belk (Apricot Record ID: #80797) | Center: Columbia | Program Track: First Shift
+Date of Birth (DOB): Pending Entry in Apricot Bio Info (Verify on State ID) | Current Age: Pending DOB Verification on State ID
 First Shift Enrollment Start Date: 10/12/2026 | Apricot Recorded LS/CMI Score: Pending (0)
 Reentry Consultation Date: 09/17/2026 | First Shift Eligible: Yes | Referral Source: Self/Community
+First Shift Daily Attendance & Points Recorded: 10/12/2026: 10 pts (Columbia), 10/14/2026: 10 pts (Columbia), 10/15/2026: 10 pts (Columbia), 10/16/2026: 10 pts (Columbia), 10/19/2026: 10 pts (Columbia), 10/20/2026: 0 pts (Columbia), 10/13/2026: 10 pts (Columbia), 10/22/2026: 10 pts (Columbia), 10/21/2026: 10 pts (Columbia), 10/23/2026: 10 pts (Columbia), 10/26/2026: 10 pts (Columbia), 10/27/2026: 10 pts (Columbia), 10/28/2026: 10 pts (Columbia), 10/29/2026: 10 pts (Columbia), 10/30/2026: 10 pts (Columbia), 10/31/2026: 10 pts (Columbia), 11/02/2026: 10 pts (Columbia)
 
 --- REENTRY CONSULTATION & INTAKE SCREENING NOTES (1) ---
 [2026-09-17] Staff: Justin Evans (Intake Appointment - Intake Appointment COMPLETED):

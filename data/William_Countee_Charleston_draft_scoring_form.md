@@ -1,5 +1,12 @@
 # LS/CMI Scoring Form
 
+**Participant Name:** William Countee (Apricot ID: #66058)  
+**Date of Birth (DOB):** 05/18/1995 | **Age:** 31 years old  
+**Center Location:** Turn90 Charleston  
+**Assessment Date:** October – November 2026 | **Assessor:** Turn90 Case Management Team  
+
+---
+
 ## Section 1: General Risk/Need Factors
 
 ### 1.1 Criminal History (CH)

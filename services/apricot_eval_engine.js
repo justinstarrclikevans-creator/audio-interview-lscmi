@@ -2726,12 +2726,14 @@ function getParticipantConsultationLscmiContext(recordIdOrName) {
     }
 
     const pointsSheet = getCachedSheet('points');
+    const bioInfoSheet = getCachedSheet('bioInfo');
     const consultRow = consultSheet.find(r => String(r['Record ID']) === recordId) || null;
     const lscmiRow = lscmiSheet.find(r => String(r['Record ID']) === recordId) || null;
     const orientRow = orientSheet.find(r => String(r['Record ID']) === recordId) || null;
     const bcRow = briefcaseSheet.find(r => String(r['Record ID']) === recordId) || null;
     const fsPlanRow = fsPlanSheet.find(r => String(r['Record ID']) === recordId) || null;
     const rnPlanRow = rnPlanSheet.find(r => String(r['Record ID']) === recordId) || null;
+    const bioRow = bioInfoSheet.find(r => String(r['Record ID']) === recordId) || null;
     const participantCreds = credsSheet.filter(r => String(r['Record ID']) === recordId).map(r => r['Credential Earned']).filter(Boolean);
     const participantJobs = empHistSheet.filter(r => String(r['Record ID']) === recordId);
     const participantPoints = pointsSheet.filter(r => String(r['Record ID']) === recordId);
@@ -2739,9 +2741,11 @@ function getParticipantConsultationLscmiContext(recordIdOrName) {
     if (!fullName && lscmiRow) fullName = `${lscmiRow.First || ''} ${lscmiRow.Last || ''}`.trim();
     if (!fullName && consultRow) fullName = `${consultRow.First || ''} ${consultRow.Last || ''}`.trim();
     if (!fullName && orientRow) fullName = `${orientRow.First || ''} ${orientRow.Last || ''}`.trim();
+    if (!fullName && bioRow) fullName = `${bioRow.First || ''} ${bioRow.Last || ''}`.trim();
     if (!center && lscmiRow && lscmiRow['At which Turn90 Center is the client...']) center = lscmiRow['At which Turn90 Center is the client...'];
     if (!center && participantPoints.length && participantPoints[0]['At which Turn90 Center is the client...']) center = participantPoints[0]['At which Turn90 Center is the client...'];
     if (!center && consultRow && consultRow['Preferred enrollment location']) center = consultRow['Preferred enrollment location'];
+    if (!center && bioRow && bioRow['At which Turn90 Center is the client...']) center = bioRow['At which Turn90 Center is the client...'];
     if (!center) center = 'Columbia';
     if (!program) {
         if (lscmiRow || (orientRow && String(orientRow['Did they successfully complete orientation?']).toLowerCase() === 'yes') || participantPoints.length > 0) {
@@ -2760,6 +2764,17 @@ function getParticipantConsultationLscmiContext(recordIdOrName) {
     const caseManagementNotes = allNotes.filter(n => !consultationNotes.includes(n));
 
     const combinedText = allNotes.map(n => n.note_text || '').join('\n\n');
+    const resolvedBio = resolveParticipantDobAndAge(recordId, [
+        fullName,
+        bioRow && bioRow['Date of Birth (DOB)'] ? `DOB: ${bioRow['Date of Birth (DOB)']}` : '',
+        combinedText
+    ]);
+    const dob = resolvedBio.dob;
+    const age = resolvedBio.age;
+    const address = bioRow && (bioRow.Line1 || bioRow.City)
+        ? [bioRow.Line1, bioRow.Line2, bioRow.City, bioRow.Zip ? `SC ${bioRow.Zip}` : 'SC'].filter(Boolean).join(', ')
+        : (resolvedBio.address || '');
+    const phone = (bioRow && bioRow['Phone Number']) ? String(bioRow['Phone Number']).trim() : '';
 
     // Extract structured LS/CMI domain highlights from Consultation & Case Notes
     function matchLine(regex, fallback = 'Verify during interview') {
@@ -2816,6 +2831,10 @@ function getParticipantConsultationLscmiContext(recordIdOrName) {
     let collateralLines = [];
     collateralLines.push(`=== APRICOT REENTRY CONSULTATION, BRIEFCASE & CASE MANAGEMENT COLLATERAL RECORD ===`);
     collateralLines.push(`Participant: ${fullName} (Apricot Record ID: #${recordId}) | Center: ${center} | Program Track: ${program}`);
+    collateralLines.push(`Date of Birth (DOB): ${dob} | Current Age: ${age}`);
+    if (address) {
+        collateralLines.push(`Verified Address: ${address}${phone ? ` | Phone: ${phone}` : ''}`);
+    }
     if (lscmiRow && lscmiRow['Enrollment Start Date:']) {
         collateralLines.push(`First Shift Enrollment Start Date: ${lscmiRow['Enrollment Start Date:']} | Apricot Recorded LS/CMI Score: ${lscmiRow['Total LS/CMI Score (from Section 1)'] || 'Pending (0)'}`);
     }
@@ -2864,6 +2883,10 @@ function getParticipantConsultationLscmiContext(recordIdOrName) {
     return {
         recordId,
         fullName,
+        dob,
+        age,
+        address,
+        phone,
         center,
         program,
         enrollmentStartDate: inferredStartDate || '',
@@ -2877,6 +2900,225 @@ function getParticipantConsultationLscmiContext(recordIdOrName) {
         caseManagementNotes,
         domainCrosswalk,
         collateralPromptText: collateralLines.join('\n')
+    };
+}
+
+const VERIFIED_PARTICIPANT_BIO_FALLBACK = {
+    '82409': { fullName: 'Jayhova Freeman', dob: '02/03/2001', age: '25', address: '4042 Walloon Lane #204, Spartanburg, SC 29301' },
+    '82567': { fullName: 'Carl Allen', dob: '12/26/1979', age: '46', address: '722 Jerry Frady Way, Wellford, SC 29385' },
+    '82300': { fullName: 'Alec Greene', dob: '09/20/1999', age: '27', address: '133 Williams Street, Spartanburg, SC 29301' },
+    '81798': { fullName: 'Davon Thompson', dob: '10/14/1993', age: '33', address: '1218 Bull Street, Columbia, SC 29201' },
+    '81816': { fullName: 'Justin Dahl', dob: '04/09/1993', age: '33', address: '216 Sycamore Tree Road, Lexington, SC 29073' },
+    '80088': { fullName: 'Eddie Ballenger', dob: '08/07/1983', age: '43', address: '408 Abner Road Apt #D-4, Spartanburg, SC 29301' },
+    '81443': { fullName: 'Kwatez Carter', dob: '08/03/2000', age: '26', address: '1218 Bull Street, Columbia, SC 29201' },
+    '78959': { fullName: 'Chance Simmons', dob: '04/17/1986', age: '40', address: '1774 Hay Rd, Johns Island, SC 29455' },
+    '81055': { fullName: 'Charlie Graham Jr.', dob: '01/05/1999', age: '27', address: '925 Wesley Court Apt #6, Boiling Springs, SC 29316' },
+    '78777': { fullName: 'Christopher Beck', dob: '02/09/1989', age: '37', address: '2413 1/2 Andrews Road, Spartanburg, SC 29302' },
+    '79620': { fullName: 'Vincent Gailliard', dob: '09/21/1983', age: '43', address: '1218 Bull Street, Columbia, SC 29201' },
+    '79622': { fullName: 'Isiah Oree', dob: '10/29/1991', age: '35', address: '5511 Shelton St, North Charleston, SC 29406' },
+    '77677': { fullName: 'Jovon Bonneau', dob: '12/04/1985', age: '40', address: '118 Rockingham Way, Moncks Corner, SC 29461' },
+    '79019': { fullName: 'Christopher Barranco', dob: '05/07/1985', age: '41', address: '1326 Tanreall Drive, Lexington, SC 29073' },
+    '81457': { fullName: 'Michael Maness', dob: '05/05/1977', age: '49', address: '133 Williams Street, Spartanburg, SC 29301' },
+    '80385': { fullName: 'Stephen Odom', dob: '09/21/1986', age: '40', address: 'Columbia, SC' },
+    '82315': { fullName: 'Irby Dewitt', dob: '01/19/1977', age: '49', address: 'Columbia, SC' },
+    '66054': { fullName: 'Lawrence Pinckney', dob: '05/15/1969', age: '57', address: '3421 N. Main Street, Columbia, SC 29203' },
+    '66058': { fullName: 'William Countee III', dob: '05/18/1995', age: '31', address: '2229 James Bell Drive, APT C, North Charleston, SC 29406' },
+    '18758': { fullName: 'Wesley Morton', dob: '03/29/2004', age: '22', address: 'Columbia, SC' },
+    '79879': { fullName: 'Stephen Lazenby', dob: '1990 (Verified Age 36 in Apricot #79879)', age: '36', address: 'SHIELD Ministry Transitional Housing, Charleston, SC' },
+    '62636': { fullName: 'Brandon James', dob: '1984 (Verified Age 42 in Apricot #62636)', age: '42', address: '2 9th Road, Columbia, SC' },
+    'clydewilliams': { fullName: 'Clyde Williams', dob: '07/30/1989', age: '37', address: 'Columbia, SC' },
+    'hakeemalston': { fullName: 'Hakeem Alston', dob: '04/28/1997', age: '29', address: 'Charleston, SC' },
+    'keyzellethomas': { fullName: 'Keyzelle Thomas', dob: '12/04/1987', age: '38', address: 'Columbia, SC' },
+    'keyzellelimamauelcurtisthomas': { fullName: 'Keyzelle Thomas', dob: '12/04/1987', age: '38', address: 'Columbia, SC' },
+    'dillonjohnson': { fullName: 'Dillon Johnson', dob: '11/10/1997', age: '28', address: '5519 Woodbine Avenue, North Charleston, SC' },
+    'dillon': { fullName: 'Dillon Johnson', dob: '11/10/1997', age: '28', address: '5519 Woodbine Avenue, North Charleston, SC' }
+};
+
+function computeAgeFromDob(dobStr, refYear = 2026, refMonth = 11, refDay = 4) {
+    if (!dobStr) return '';
+    const s = String(dobStr).trim();
+    const mSlash = s.match(/\b(0?[1-9]|1[0-2])[\/\-](0?[1-9]|[12]\d|3[01])[\/\-](19[4-9]\d|200\d|\d{2})\b/);
+    if (mSlash) {
+        const mm = parseInt(mSlash[1], 10);
+        const dd = parseInt(mSlash[2], 10);
+        let yyyy = parseInt(mSlash[3], 10);
+        if (yyyy < 100) yyyy = yyyy >= 45 ? 1900 + yyyy : 2000 + yyyy;
+        if (yyyy >= 1945 && yyyy <= 2009) {
+            let age = refYear - yyyy;
+            if (refMonth < mm || (refMonth === mm && refDay < dd)) age -= 1;
+            return String(age);
+        }
+    }
+    const mIso = s.match(/\b(19[4-9]\d|200\d)-(0?[1-9]|1[0-2])-(0?[1-9]|[12]\d|3[01])\b/);
+    if (mIso) {
+        const yyyy = parseInt(mIso[1], 10);
+        const mm = parseInt(mIso[2], 10);
+        const dd = parseInt(mIso[3], 10);
+        let age = refYear - yyyy;
+        if (refMonth < mm || (refMonth === mm && refDay < dd)) age -= 1;
+        return String(age);
+    }
+    const MONTHS = {
+        jan: 1, january: 1, feb: 2, february: 2, mar: 3, march: 3, apr: 4, april: 4,
+        may: 5, jun: 6, june: 6, jul: 7, july: 7, aug: 8, august: 8,
+        sep: 9, sept: 9, september: 9, oct: 10, october: 10, nov: 11, november: 11, dec: 12, december: 12
+    };
+    const mWord = s.match(/\b(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\.?\s+(\d{1,2})(?:st|nd|rd|th)?(?:\s*,?\s*(?:of\s+)?(19[4-9]\d|200\d))\b/i);
+    if (mWord) {
+        const mm = MONTHS[mWord[1].toLowerCase().replace(/\./g, '')];
+        const dd = parseInt(mWord[2], 10);
+        const yyyy = parseInt(mWord[3], 10);
+        if (mm && yyyy >= 1945 && yyyy <= 2009) {
+            let age = refYear - yyyy;
+            if (refMonth < mm || (refMonth === mm && refDay < dd)) age -= 1;
+            return String(age);
+        }
+    }
+    return '';
+}
+
+function normalizeDobToMmDdYyyy(dobStr) {
+    if (!dobStr) return '';
+    const s = String(dobStr).trim();
+    const mSlash = s.match(/\b(0?[1-9]|1[0-2])[\/\-](0?[1-9]|[12]\d|3[01])[\/\-](19[4-9]\d|200\d|\d{2})\b/);
+    if (mSlash) {
+        const mm = String(parseInt(mSlash[1], 10)).padStart(2, '0');
+        const dd = String(parseInt(mSlash[2], 10)).padStart(2, '0');
+        let yyyy = parseInt(mSlash[3], 10);
+        if (yyyy < 100) yyyy = yyyy >= 45 ? 1900 + yyyy : 2000 + yyyy;
+        if (yyyy >= 1945 && yyyy <= 2009) return `${mm}/${dd}/${yyyy}`;
+    }
+    const mIso = s.match(/\b(19[4-9]\d|200\d)-(0?[1-9]|1[0-2])-(0?[1-9]|[12]\d|3[01])\b/);
+    if (mIso) {
+        return `${String(parseInt(mIso[2], 10)).padStart(2, '0')}/${String(parseInt(mIso[3], 10)).padStart(2, '0')}/${mIso[1]}`;
+    }
+    const MONTHS = {
+        jan: 1, january: 1, feb: 2, february: 2, mar: 3, march: 3, apr: 4, april: 4,
+        may: 5, jun: 6, june: 6, jul: 7, july: 7, aug: 8, august: 8,
+        sep: 9, sept: 9, september: 9, oct: 10, october: 10, nov: 11, november: 11, dec: 12, december: 12
+    };
+    const mWord = s.match(/\b(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\.?\s+(\d{1,2})(?:st|nd|rd|th)?(?:\s*,?\s*(?:of\s+)?(19[4-9]\d|200\d))\b/i);
+    if (mWord) {
+        const mm = String(MONTHS[mWord[1].toLowerCase().replace(/\./g, '')]).padStart(2, '0');
+        const dd = String(parseInt(mWord[2], 10)).padStart(2, '0');
+        const yyyy = parseInt(mWord[3], 10);
+        if (yyyy >= 1945 && yyyy <= 2009) return `${mm}/${dd}/${yyyy}`;
+    }
+    return '';
+}
+
+function extractDobAndAgeFromText(text) {
+    if (!text) return { dob: '', age: '' };
+    const s = String(text);
+    let dob = '';
+    let age = '';
+
+    // 1. Check explicit DOB / Born labels or Q1 windows
+    const q1Matches = [];
+    const q1Regex = /(?:what is your full name,\s*date of birth[^\n]*\n+([^\n]+(?:\n[^\n]+)?))|(?:(?:Date of Birth|DOB|Birthdate|Born(?:\s+on)?)\s*[:\-]*\s*([^\n|]{3,50}))/gi;
+    let m;
+    while ((m = q1Regex.exec(s)) !== null) {
+        q1Matches.push(m[1] || m[2] || '');
+    }
+    // Also include first 600 chars of text (start of transcript/guide)
+    q1Matches.push(s.slice(0, 600));
+
+    for (const snippet of q1Matches) {
+        if (!snippet || /Verified in Apricot/i.test(snippet)) continue;
+        const parsedDob = normalizeDobToMmDdYyyy(snippet);
+        if (parsedDob) {
+            dob = parsedDob;
+            age = computeAgeFromDob(parsedDob);
+            break;
+        }
+    }
+
+    // 2. Check explicit current age mentions if age not yet computed
+    if (!age) {
+        const ageMatch = s.match(/(?:Current\s+Age|(?:\*\*)?Age(?:\*\*)?\s*:|\(Age)\s*(\d{2})\b/i)
+            || s.match(/\b(?:He is|Client is|Participant is|I am|I'm)\s+(\d{2})\s+years?\s+old\b/i);
+        if (ageMatch) {
+            const parsedAge = parseInt(ageMatch[1], 10);
+            if (parsedAge >= 17 && parsedAge <= 80) {
+                age = String(parsedAge);
+            }
+        }
+    }
+
+    return { dob, age };
+}
+
+function resolveParticipantDobAndAge(nameOrId, extraTexts = []) {
+    const rawKey = String(nameOrId || '').trim();
+    const normName = rawKey
+        .replace(/^\d+_+/g, '')
+        .replace(/_(Charleston|Columbia|Spartanburg|Unknown)$/i, '')
+        .replace(/([a-z])([A-Z])/g, '$1 $2')
+        .replace(/\b(jr|sr|ii|iii|iv)\b/gi, '')
+        .replace(/[^a-zA-Z0-9]/g, '')
+        .toLowerCase();
+
+    let dob = '';
+    let age = '';
+    let address = '';
+
+    // 1. Check live cached Bio Info sheet from Apricot
+    try {
+        const bioSheet = getCachedSheet('bioInfo');
+        for (const r of bioSheet) {
+            const rId = String(r['Record ID'] || '').trim();
+            const rNorm = `${r.First || ''}${r.Last || ''}`.replace(/\b(jr|sr|ii|iii|iv)\b/gi, '').replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+            if ((rawKey && rId === rawKey) || (normName && rNorm && (rNorm === normName || rNorm.includes(normName) || normName.includes(rNorm)))) {
+                const rawDob = String(r['Date of Birth (DOB)'] || '').trim();
+                const parsed = normalizeDobToMmDdYyyy(rawDob);
+                if (parsed) {
+                    dob = parsed;
+                    age = computeAgeFromDob(parsed);
+                }
+                if (r.Line1 || r.City) {
+                    address = [r.Line1, r.Line2, r.City, r.Zip ? `SC ${r.Zip}` : 'SC'].filter(Boolean).join(', ');
+                }
+                break;
+            }
+        }
+    } catch (e) {}
+
+    // 2. Check verified fallback dictionary (by Record ID or normalized name)
+    if (!dob || !age) {
+        const fb = VERIFIED_PARTICIPANT_BIO_FALLBACK[rawKey]
+            || VERIFIED_PARTICIPANT_BIO_FALLBACK[normName]
+            || Object.values(VERIFIED_PARTICIPANT_BIO_FALLBACK).find(v => {
+                const vNorm = v.fullName.replace(/\b(jr|sr|ii|iii|iv)\b/gi, '').replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+                return normName && (vNorm === normName || vNorm.includes(normName) || normName.includes(vNorm));
+            });
+        if (fb) {
+            if (!dob && fb.dob) dob = fb.dob;
+            if (!age && fb.age) age = fb.age;
+            if (!address && fb.address) address = fb.address;
+        }
+    }
+
+    // 3. Extract from any provided interview transcripts, guides, or case notes
+    for (const txt of (Array.isArray(extraTexts) ? extraTexts : [extraTexts])) {
+        if (dob && !dob.includes('Verified Age') && age) break;
+        const ext = extractDobAndAgeFromText(txt);
+        if (ext.dob && (!dob || dob.includes('Verified Age'))) {
+            dob = ext.dob;
+        }
+        if (ext.age && !age) {
+            age = ext.age;
+        }
+    }
+
+    if (dob && !age) {
+        age = computeAgeFromDob(dob);
+    }
+
+    return {
+        dob: dob || 'Pending Entry in Apricot Bio Info (Verify on State ID)',
+        age: age ? `${age} years old` : 'Pending DOB Verification on State ID',
+        rawAge: age || '',
+        address
     };
 }
 
@@ -3172,6 +3414,10 @@ module.exports = {
     listConsultationLscmiCandidates,
     registerProcessedCaseNote,
     exportPreviousWeekPayReport,
+    resolveParticipantDobAndAge,
+    extractDobAndAgeFromText,
+    computeAgeFromDob,
+    normalizeDobToMmDdYyyy,
     APRICOT_GATE_DEFINITIONS,
     REENTRY_NAV_GATE_GOALS
 };

@@ -1,8 +1,8 @@
 ### Turn90 / First Shift LS/CMI Assessment Interview Guide (Consultation-Informed)
 
 **Participant Name:** Chance Simmons (Apricot ID: #78959)  
-**Date of Birth:** Verified in Apricot (#78959)  
-**Center Location:** Charleston  
+**Date of Birth (DOB):** 04/17/1986 | **Age:** 40 years old  
+**Center Location:** Turn90 Charleston  
 **Assessor:** Terrence Brown & Justin Evans  
 **Assessment Date:** October 29 – November 2, 2026 (First Shift Case Plan Review & Consultation Synthesis)  
 
@@ -11,7 +11,7 @@
 ---
 
 1. **What is your full name, date of birth, and current address?**  
-   **Participant Answer:** "Chance Simmons. Date of birth: Verified in Apricot (#78959). Current address: Charleston, SC." [Verified via Reentry Consultation]
+   **Participant Answer:** "Chance Simmons. Date of Birth (DOB): 04/17/1986 (Age: 40 years old). Current address: 1774 Hay Rd, Johns Island, SC 29455." [Verified via Reentry Consultation & Bio Info]
 
 2. **What is your license status?**  
    **Participant Answer:** "Has access to a vehicle/ride ("car out front"); working on licensing & Briefcase Gates." [Verified via Reentry Consultation]
@@ -188,10 +188,10 @@
    **Participant Answer:** "Reviewed during intake and Reentry Consultation (#78959); no acute concerns or contraindicating risk factors reported."
 
 60. **What is your current living situation?**  
-   **Participant Answer:** "Charleston, SC" [Verified via Reentry Consultation]
+   **Participant Answer:** "1774 Hay Rd, Johns Island, SC 29455" [Verified via Reentry Consultation]
 
 61. **How do you like where you live?**  
-   **Participant Answer:** "Charleston, SC" [Verified via Reentry Consultation]
+   **Participant Answer:** "1774 Hay Rd, Johns Island, SC 29455" [Verified via Reentry Consultation]
 
 62. **Is your probation/parole officer or worker fair and reasonable?**  
    **Participant Answer:** "Post-release supervision in Charleston."
@@ -489,8 +489,11 @@
 ```text
 === APRICOT REENTRY CONSULTATION, BRIEFCASE & CASE MANAGEMENT COLLATERAL RECORD ===
 Participant: Chance Simmons (Apricot Record ID: #78959) | Center: Charleston | Program Track: First Shift
+Date of Birth (DOB): 04/17/1986 | Current Age: 40 years old
+Verified Address: 1774 Hay Rd, Johns Island, SC 29455 | Phone: 843.302.6522.
 First Shift Enrollment Start Date: 10/26/2026 | Apricot Recorded LS/CMI Score: Pending (0)
 First Shift Orientation Date: 10/23/2026 | Completed: Yes
+First Shift Daily Attendance & Points Recorded: 10/26/2026: 10 pts (Charleston), 10/27/2026: 10 pts (Charleston), 10/28/2026: 10 pts (Charleston), 10/29/2026: 10 pts (Charleston), 10/30/2026: 10 pts (Charleston), 11/02/2026: 10 pts (Charleston)
 First Shift Case Plan Focus Areas: 1) Thinking Patterns (Procriminal Attitudes) (No situation text) | 2) Substance Use
 Verified Credentials Earned: Forklift
 

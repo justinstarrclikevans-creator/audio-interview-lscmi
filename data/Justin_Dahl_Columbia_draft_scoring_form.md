@@ -1,9 +1,9 @@
 # LS/CMI Draft Scoring Form (Phase 1 — Consultation Linked)
 
-**Participant:** Justin Dahl (Apricot ID: #81816)  
+**Participant Name:** Justin Dahl (Apricot ID: #81816)  
+**Date of Birth (DOB):** 04/09/1993 | **Age:** 33 years old  
 **Center Location:** Turn90 Columbia  
-**Assessment Date:** October 23 – November 2, 2026  
-**Assessor:** Daisy Boynton & Jenn Jeanquart  
+**Assessment Date:** October 23 – November 2, 2026 | **Assessor:** Daisy Boynton & Jenn Jeanquart  
 
 ---
 
@@ -36,7 +36,7 @@ Strength? **No**
 
 ### 1.3 Family/Marital (FM)
 18. Dissatisfaction with marital or equivalent situation: **1** (Single.)
-19. Nonrewarding, parental: **1** (Columbia, SC)
+19. Nonrewarding, parental: **1** (216 Sycamore Tree Road, Lexington, SC 29073)
 20. Nonrewarding, other relatives: **1**
 21. Criminal-family/spouse: **No** (None reported.)
 Strength? **No**
@@ -96,7 +96,7 @@ CH: 4 | EE: 3 | FM: 1 | LR: 1 | CO: 1 | ADP: 2 | PA: 1 | AP: 1
   2. Substance Recovery Maintenance (Building Long-Term Career Stability on Multi-Year Sobriety)
   3. Time and Structure (Consistent Communication & Follow-Through on Appointments)
 - **Briefcase Gate 1 (Vital IDs & Prescriptions):** State ID (obtained October 2026), Social Security Card, Birth Certificate
-- **Briefcase Gate 2 (Driver's License, Housing & Legal):** Suspended pending ADSAP enrollment (DUI charge was dropped, but DMV still requires ADSAP proof of enrollment) | Housing: Columbia, SC
+- **Briefcase Gate 2 (Driver's License, Housing & Legal):** Suspended pending ADSAP enrollment (DUI charge was dropped, but DMV still requires ADSAP proof of enrollment) | Housing: 216 Sycamore Tree Road, Lexington, SC 29073
 - **Briefcase Gate 3 (Child Support & Health/Recovery):** None reported. | History of methamphetamine addiction in the past; completed a 6-week residential treatment program at Pavilion (NC) and has been clean and sober for several years.
 - **Briefcase Gate 4 (Transportation & Career Credentials):** Local rides/transit while saving First Shift stipends to enroll in ADSAP and immediately reinstate his Driver’s License. | Completed 6-week Pavilion recovery program; completed Turn90 resume on 10/12/2026; pursuing Forklift & SkillCat credentials.
 

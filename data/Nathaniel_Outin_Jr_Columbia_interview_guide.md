@@ -1,8 +1,8 @@
 ### Turn90 / First Shift LS/CMI Assessment Interview Guide (Consultation-Informed)
 
 **Participant Name:** Nathaniel Outin Jr. (Apricot ID: #82416)  
-**Date of Birth:** Verified in Apricot (#82416)  
-**Center Location:** Columbia  
+**Date of Birth (DOB):** Pending Entry in Apricot Bio Info (Verify on State ID) | **Age:** Pending DOB Verification on State ID  
+**Center Location:** Turn90 Columbia  
 **Assessor:** Daisy Boynton  
 **Assessment Date:** October 26, 2026 (Reentry Consultation Completed)  
 
@@ -11,7 +11,7 @@
 ---
 
 1. **What is your full name, date of birth, and current address?**  
-   **Participant Answer:** "Nathaniel Outin Jr.. Date of birth: Verified in Apricot (#82416). Current address: Columbia, SC (Resides with his mother; stable housing)." [Verified via Reentry Consultation]
+   **Participant Answer:** "Nathaniel Outin Jr.. Date of Birth (DOB): Pending Entry in Apricot Bio Info (Verify on State ID) (Age: Pending DOB Verification on State ID). Current address: Columbia, SC (Resides with his mother; stable housing)." [Verified via Reentry Consultation & Bio Info]
 
 2. **What is your license status?**  
    **Participant Answer:** "Valid Driver’s License and owns a personal vehicle." [Verified via Reentry Consultation]
@@ -489,6 +489,7 @@
 ```text
 === APRICOT REENTRY CONSULTATION, BRIEFCASE & CASE MANAGEMENT COLLATERAL RECORD ===
 Participant: Nathaniel Outin Jr. (Apricot Record ID: #82416) | Center: Columbia | Program Track: Reentry Navigation
+Date of Birth (DOB): Pending Entry in Apricot Bio Info (Verify on State ID) | Current Age: Pending DOB Verification on State ID
 Reentry Consultation Date: 10/26/2026 | First Shift Eligible: No | Referral Source: Flyer or Event
 Reentry Navigation Case Plan Goals:
 Look for carpentry and electrical training programs

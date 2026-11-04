@@ -1,8 +1,8 @@
 ### Turn90 / First Shift LS/CMI Assessment Interview Guide (Consultation-Informed)
 
 **Participant Name:** Tikita Foster (Apricot ID: #82719)  
-**Date of Birth:** Verified in Apricot (#82719)  
-**Center Location:** Spartanburg  
+**Date of Birth (DOB):** Pending Entry in Apricot Bio Info (Verify on State ID) | **Age:** Pending DOB Verification on State ID  
+**Center Location:** Turn90 Spartanburg  
 **Assessor:** Daisy Boynton  
 **Assessment Date:** November 3, 2026 (Reentry Consultation Completed)  
 
@@ -11,7 +11,7 @@
 ---
 
 1. **What is your full name, date of birth, and current address?**  
-   **Participant Answer:** "Tikita Foster. Date of birth: Verified in Apricot (#82719). Current address: Spartanburg, SC (Temporarily staying with mother; reports arrangement is precarious / "basically homeless")." [Verified via Reentry Consultation]
+   **Participant Answer:** "Tikita Foster. Date of Birth (DOB): Pending Entry in Apricot Bio Info (Verify on State ID) (Age: Pending DOB Verification on State ID). Current address: Spartanburg, SC (Temporarily staying with mother; reports arrangement is precarious / "basically homeless")." [Verified via Reentry Consultation & Bio Info]
 
 2. **What is your license status?**  
    **Participant Answer:** "Has a Driver’s License that requires SR-22 insurance to become valid; lacks State ID." [Verified via Reentry Consultation]
@@ -489,6 +489,7 @@
 ```text
 === APRICOT REENTRY CONSULTATION, BRIEFCASE & CASE MANAGEMENT COLLATERAL RECORD ===
 Participant: Tikita Foster (Apricot Record ID: #82719) | Center: Spartanburg | Program Track: Reentry Navigation
+Date of Birth (DOB): Pending Entry in Apricot Bio Info (Verify on State ID) | Current Age: Pending DOB Verification on State ID
 Reentry Consultation Date: 11/03/2026 | First Shift Eligible: No | Referral Source: Letter to Prison
 Reentry Navigation Case Plan Goals:
 Find stable housing and transportation. Get State ID and prescriptions glasses (he lost his).

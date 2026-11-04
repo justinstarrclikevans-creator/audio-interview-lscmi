@@ -1,8 +1,8 @@
 ### Turn90 / First Shift LS/CMI Assessment Interview Guide (Consultation-Informed)
 
 **Participant Name:** Davon Thompson (Apricot ID: #81798)  
-**Date of Birth:** Verified in Apricot (#81798)  
-**Center Location:** Columbia  
+**Date of Birth (DOB):** 10/14/1993 | **Age:** 33 years old  
+**Center Location:** Turn90 Columbia  
 **Assessor:** Daisy Boynton & Jenn Jeanquart  
 **Assessment Date:** October 23–30, 2026  
 
@@ -11,7 +11,7 @@
 ---
 
 1. **What is your full name, date of birth, and current address?**  
-   **Participant Answer:** "Davon Thompson. Date of birth: Verified in Apricot (#81798). Current address: Columbia, SC (Bus-accessible to Turn90 Center)." [Verified via Reentry Consultation]
+   **Participant Answer:** "Davon Thompson. Date of Birth (DOB): 10/14/1993 (Age: 33 years old). Current address: Columbia, SC (Bus-accessible to Turn90 Center)." [Verified via Reentry Consultation & Bio Info]
 
 2. **What is your license status?**  
    **Participant Answer:** "Holds a valid Learner’s Permit; has never held a driver’s license and owes $0 in DMV fines." [Verified via Reentry Consultation]
@@ -489,9 +489,12 @@
 ```text
 === APRICOT REENTRY CONSULTATION, BRIEFCASE & CASE MANAGEMENT COLLATERAL RECORD ===
 Participant: Davon Thompson (Apricot Record ID: #81798) | Center: Columbia | Program Track: First Shift
+Date of Birth (DOB): 10/14/1993 | Current Age: 33 years old
+Verified Address: 1218 Bull Street, Columbia, SC 29201 | Phone: 803.659.9968.
 First Shift Enrollment Start Date: 11/02/2026 | Apricot Recorded LS/CMI Score: Pending (0)
 Reentry Consultation Date: 10/09/2026 | First Shift Eligible: Yes | Referral Source: Federal Halfway House
 First Shift Orientation Date: 10/30/2026 | Completed: Yes
+First Shift Daily Attendance & Points Recorded: 11/02/2026: 10 pts (Columbia)
 
 --- REENTRY CONSULTATION & INTAKE SCREENING NOTES (1) ---
 [2026-10-09] Staff: Daisy Boynton (Intake Appointment - Intake Appointment COMPLETED):

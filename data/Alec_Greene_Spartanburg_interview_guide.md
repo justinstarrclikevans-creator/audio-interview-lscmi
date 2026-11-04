@@ -1,8 +1,8 @@
 ### Turn90 / First Shift LS/CMI Assessment Interview Guide (Consultation-Informed)
 
 **Participant Name:** Alec Greene (Apricot ID: #82300)  
-**Date of Birth:** Verified in Apricot (#82300)  
-**Center Location:** Spartanburg  
+**Date of Birth (DOB):** 09/20/1999 | **Age:** 27 years old  
+**Center Location:** Turn90 Spartanburg  
 **Assessor:** Daisy Boynton, Matt Carlisle & Diyoung Dantzler  
 **Assessment Date:** October 22–30, 2026  
 
@@ -11,7 +11,7 @@
 ---
 
 1. **What is your full name, date of birth, and current address?**  
-   **Participant Answer:** "Alec Greene. Date of birth: Verified in Apricot (#82300). Current address: Turn 12 Sober Living, Spartanburg, SC (Stable Recovery Housing)." [Verified via Reentry Consultation]
+   **Participant Answer:** "Alec Greene. Date of Birth (DOB): 09/20/1999 (Age: 27 years old). Current address: Turn 12 Sober Living, Spartanburg, SC (Stable Recovery Housing)." [Verified via Reentry Consultation & Bio Info]
 
 2. **What is your license status?**  
    **Participant Answer:** "No current driver’s license (held one in the past, needs DMV status check)." [Verified via Reentry Consultation]
@@ -489,9 +489,12 @@
 ```text
 === APRICOT REENTRY CONSULTATION, BRIEFCASE & CASE MANAGEMENT COLLATERAL RECORD ===
 Participant: Alec Greene (Apricot Record ID: #82300) | Center: Spartanburg | Program Track: First Shift
+Date of Birth (DOB): 09/20/1999 | Current Age: 27 years old
+Verified Address: 133 Williams Street, Spartanburg, SC 29301 | Phone: 864.319.5420.
 First Shift Enrollment Start Date: 11/02/2026 | Apricot Recorded LS/CMI Score: 16
 Reentry Consultation Date: 10/22/2026 | First Shift Eligible: Yes | Referral Source: Community Organization
 First Shift Orientation Date: 10/30/2026 | Completed: Scheduled/Attended
+First Shift Daily Attendance & Points Recorded: 11/02/2026: 10 pts (Spartanburg), 11/03/2026: 10 pts (Spartanburg)
 First Shift Case Plan Focus Areas: 1) None (No situation text) | 2) None
 
 --- REENTRY CONSULTATION & INTAKE SCREENING NOTES (1) ---

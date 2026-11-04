@@ -1,5 +1,12 @@
 # LS/CMI Scoring Form
 
+**Participant Name:** Lawrence Pinckney (Apricot ID: #66054)  
+**Date of Birth (DOB):** 05/15/1969 | **Age:** 57 years old  
+**Center Location:** Turn90 Columbia  
+**Assessment Date:** October – November 2026 | **Assessor:** Turn90 Case Management Team  
+
+---
+
 ## Section 1: General Risk/Need Factors
 
 ### 1.1 Criminal History (CH)

@@ -1,9 +1,9 @@
 # LS/CMI Draft Scoring Form (Phase 1 — Consultation Linked)
 
-**Participant:** Tikita Foster (Apricot ID: #82719)  
+**Participant Name:** Tikita Foster (Apricot ID: #82719)  
+**Date of Birth (DOB):** Pending Entry in Apricot Bio Info (Verify on State ID) | **Age:** Pending DOB Verification on State ID  
 **Center Location:** Turn90 Spartanburg  
-**Assessment Date:** November 3, 2026 (Reentry Consultation Completed)  
-**Assessor:** Daisy Boynton  
+**Assessment Date:** November 3, 2026 (Reentry Consultation Completed) | **Assessor:** Daisy Boynton  
 
 ---
 

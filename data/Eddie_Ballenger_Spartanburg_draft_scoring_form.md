@@ -1,9 +1,9 @@
 # LS/CMI Draft Scoring Form (Phase 1 — Consultation Linked)
 
-**Participant:** Eddie Ballenger (Apricot ID: #80088)  
+**Participant Name:** Eddie Ballenger (Apricot ID: #80088)  
+**Date of Birth (DOB):** 08/07/1983 | **Age:** 43 years old  
 **Center Location:** Turn90 Spartanburg  
-**Assessment Date:** November 2, 2026 (Re-Enrollment & Case Review)  
-**Assessor:** Diyoung Dantzler & Matt Carlisle  
+**Assessment Date:** November 2, 2026 (Re-Enrollment & Case Review) | **Assessor:** Diyoung Dantzler & Matt Carlisle  
 
 ---
 

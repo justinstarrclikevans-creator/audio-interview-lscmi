@@ -1,9 +1,9 @@
 # LS/CMI Draft Scoring Form (Phase 1 — Consultation Linked)
 
-**Participant:** Brandon James (Apricot ID: #62636)  
+**Participant Name:** Brandon James (Apricot ID: #62636)  
+**Date of Birth (DOB):** 1984 (Verified Age 42 in Apricot #62636) | **Age:** 42 years old  
 **Center Location:** Turn90 Columbia  
-**Assessment Date:** October 27, 2026 (Reentry Consultation Completed)  
-**Assessor:** Daisy Boynton  
+**Assessment Date:** October 27, 2026 (Reentry Consultation Completed) | **Assessor:** Daisy Boynton  
 
 ---
 

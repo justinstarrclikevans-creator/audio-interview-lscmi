@@ -1,5 +1,12 @@
 # LS/CMI Scoring Form
 
+**Participant Name:** Christopher Barranco (Apricot ID: #79019)  
+**Date of Birth (DOB):** 05/07/1985 | **Age:** 41 years old  
+**Center Location:** Turn90 Columbia  
+**Assessment Date:** October – November 2026 | **Assessor:** Turn90 Case Management Team  
+
+---
+
 ## Section 1: General Risk/Need Factors
 
 ### 1.1 Criminal History (CH)

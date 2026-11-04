@@ -1,9 +1,9 @@
 # LS/CMI Draft Scoring Form (Phase 1 — Consultation Linked)
 
-**Participant:** Jayhova Freeman (Apricot ID: #82409)  
+**Participant Name:** Jayhova Freeman (Apricot ID: #82409)  
+**Date of Birth (DOB):** 02/03/2001 | **Age:** 25 years old  
 **Center Location:** Turn90 Spartanburg  
-**Assessment Date:** October 26–30, 2026  
-**Assessor:** Daisy Boynton & Matt Carlisle  
+**Assessment Date:** October 26–30, 2026 | **Assessor:** Daisy Boynton & Matt Carlisle  
 
 ---
 

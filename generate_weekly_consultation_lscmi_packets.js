@@ -10,7 +10,10 @@
 
 const fs = require('fs');
 const path = require('path');
-const { getParticipantConsultationLscmiContext } = require('./services/apricot_eval_engine');
+const {
+    getParticipantConsultationLscmiContext,
+    resolveParticipantDobAndAge
+} = require('./services/apricot_eval_engine');
 const { convertSingleMdToPdf } = require('./convert_md_to_pdf');
 const { convertSingleMdToDocx } = require('./convert_md_to_docx');
 
@@ -990,7 +993,7 @@ const WEEKLY_INTERVIEW_PROFILES = [
 function answerQuestionForProfile(qIndex, qText, p) {
     const q = qText.toLowerCase();
     switch (qIndex) {
-        case 1: return `"${p.fullName}. Date of birth: ${p.dob}. Current address: ${p.address}." [Verified via Reentry Consultation]`;
+        case 1: return `"${p.fullName}. Date of Birth (DOB): ${p.dob}${p.age ? ` (Age: ${p.age})` : ''}. Current address: ${p.address}." [Verified via Reentry Consultation & Bio Info]`;
         case 2: return `"${p.dlStatus}." [Verified via Reentry Consultation]`;
         case 3: return `"${p.idDocs}." [Verified via Reentry Consultation]`;
         case 4: return `"${p.juvConvictions}." [Verified via Reentry Consultation]`;
@@ -1108,8 +1111,8 @@ function buildInterviewGuideMd(p, collateralPromptText) {
         `### Turn90 / First Shift LS/CMI Assessment Interview Guide (Consultation-Informed)`,
         ``,
         `**Participant Name:** ${p.fullName} (Apricot ID: #${p.recordId})  `,
-        `**Date of Birth:** ${p.dob}  `,
-        `**Center Location:** ${p.center}  `,
+        `**Date of Birth (DOB):** ${p.dob} | **Age:** ${p.age || 'Pending Verification'}  `,
+        `**Center Location:** Turn90 ${p.center}  `,
         `**Assessor:** ${p.assessor}  `,
         `**Assessment Date:** ${p.interviewDate}  `,
         ``,
@@ -1143,10 +1146,10 @@ function buildScoringFormMd(p, isFinal = true) {
     const title = isFinal ? `# LS/CMI Final Scoring Form (Consultation & Intake Triangulated)` : `# LS/CMI Draft Scoring Form (Phase 1 — Consultation Linked)`;
     return `${title}
 
-**Participant:** ${p.fullName} (Apricot ID: #${p.recordId})  
+**Participant Name:** ${p.fullName} (Apricot ID: #${p.recordId})  
+**Date of Birth (DOB):** ${p.dob} | **Age:** ${p.age || 'Pending Verification'}  
 **Center Location:** Turn90 ${p.center}  
-**Assessment Date:** ${p.interviewDate}  
-**Assessor:** ${p.assessor}  
+**Assessment Date:** ${p.interviewDate} | **Assessor:** ${p.assessor}  
 
 ---
 
@@ -1347,13 +1350,398 @@ function buildParticipantActionPlanMd(p) {
 `;
 }
 
+function normalizeParticipantKey(str) {
+    if (!str) return '';
+    let s = String(str)
+        .replace(/^\d+_+/g, '')
+        .replace(/_(Charleston|Columbia|Spartanburg|Unknown)$/i, '')
+        .replace(/([a-z])([A-Z])/g, '$1 $2')
+        .replace(/[_\-.]+/g, ' ')
+        .replace(/\b(jr|sr|ii|iii|iv)\b/gi, '')
+        .replace(/[^a-zA-Z0-9\s]/g, '')
+        .trim()
+        .toLowerCase();
+
+    const compact = s.replace(/\s+/g, '');
+    const ALIASES = {
+        chrisbarranco: 'christopherbarranco',
+        jevonbunnell: 'jovonbonneau',
+        dylanjohnson: 'dillon',
+        dylan: 'dillon',
+        dillonjohnson: 'dillon',
+        keyzellethomas: 'keyzellelimamauelcurtisthomas',
+        reanteblaylock: 'reantebaylock',
+        alecgreen: 'alecgreene',
+        devonthompson: 'davonthompson',
+        stevenlazenby: 'stephenlazenby',
+        williamcounteeiii: 'williamcountee'
+    };
+    return ALIASES[compact] || compact;
+}
+
+function levenshtein(a, b) {
+    if (a === b) return 0;
+    if (!a.length) return b.length;
+    if (!b.length) return a.length;
+    const matrix = Array.from({ length: b.length + 1 }, (_, i) => [i]);
+    for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+    for (let i = 1; i <= b.length; i++) {
+        for (let j = 1; j <= a.length; j++) {
+            matrix[i][j] = b.charAt(i - 1) === a.charAt(j - 1)
+                ? matrix[i - 1][j - 1]
+                : Math.min(matrix[i - 1][j - 1] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j] + 1);
+        }
+    }
+    return matrix[b.length][a.length];
+}
+
+function isSameParticipantName(idOrNameA, idOrNameB) {
+    const kA = normalizeParticipantKey(idOrNameA);
+    const kB = normalizeParticipantKey(idOrNameB);
+    if (!kA || !kB) return false;
+    if (kA === kB) return true;
+    // Never merge two distinct canonical participants in WEEKLY_INTERVIEW_PROFILES (e.g. Brandon James vs Brandon Jones)
+    const canonKeys = new Set(WEEKLY_INTERVIEW_PROFILES.map(p => normalizeParticipantKey(p.fullName)));
+    if (canonKeys.has(kA) && canonKeys.has(kB) && kA !== kB) return false;
+    if (kA.length >= 10 && kB.length >= 10 && levenshtein(kA, kB) <= 1) return true;
+    return false;
+}
+
+function discoverAllClientIdsInDir(dir = dataDir) {
+    if (!fs.existsSync(dir)) return [];
+    const files = fs.readdirSync(dir);
+    const SUFFIXES = [
+        '_draft_scoring_form.md',
+        '_final_scoring_form.md',
+        '_final_case_brief.md',
+        '_interview_guide.md',
+        '_transcript.txt',
+        '_participant_case_plan.md',
+        '_criminal_history.md',
+        '_archived.flag'
+    ];
+    const ids = new Set();
+    for (const f of files) {
+        if (f.startsWith('.') || f.includes('reentry') || f.includes('.sqlite')) continue;
+        for (const suf of SUFFIXES) {
+            if (f.endsWith(suf)) {
+                ids.add(f.slice(0, -suf.length));
+                break;
+            }
+        }
+    }
+    return Array.from(ids);
+}
+
+function removeClientIdFiles(clientId, dir = dataDir) {
+    if (!clientId || !fs.existsSync(dir)) return 0;
+    const files = fs.readdirSync(dir);
+    let removed = 0;
+    for (const f of files) {
+        if (f.startsWith(`${clientId}_`) && !f.endsWith('.sqlite')) {
+            try {
+                fs.unlinkSync(path.join(dir, f));
+                removed++;
+            } catch (e) {}
+        }
+    }
+    return removed;
+}
+
+function ensureScoringHeaderHasDobAndAge(mdContent, infoOrName = {}, centerArg = '', dobArg = '', ageArg = '') {
+    if (!mdContent || typeof mdContent !== 'string') return mdContent;
+    const info = (typeof infoOrName === 'object' && infoOrName !== null)
+        ? infoOrName
+        : {
+            fullName: infoOrName,
+            center: centerArg,
+            dob: dobArg,
+            age: ageArg
+        };
+    const fullName = info.fullName || 'Participant';
+    const recordId = info.recordId || '';
+    const dob = info.dob || 'Pending Entry in Apricot Bio Info (Verify on State ID)';
+    const age = info.age || 'Pending DOB Verification on State ID';
+    const center = info.center || 'Turn90 Center';
+    const interviewDate = info.interviewDate || 'October – November 2026';
+    const assessor = info.assessor || 'Turn90 Case Management Team';
+
+    const headerBlock = [
+        `**Participant Name:** ${fullName}${recordId ? ` (Apricot ID: #${recordId})` : ''}  `,
+        `**Date of Birth (DOB):** ${dob} | **Age:** ${age}  `,
+        `**Center Location:** ${center.startsWith('Turn90') ? center : `Turn90 ${center}`}  `,
+        `**Assessment Date:** ${interviewDate} | **Assessor:** ${assessor}  `
+    ].join('\n');
+
+    let text = mdContent.trim();
+
+    // Extract title line if present
+    let titleLine = '# LS/CMI Scoring Form';
+    const titleMatch = text.match(/^(#+\s*[^\n]+)\n+/);
+    if (titleMatch) {
+        titleLine = titleMatch[1].trim();
+        text = text.slice(titleMatch[0].length).trim();
+    }
+
+    // Strip any existing participant metadata block before "---" or "## Section 1"
+    const sec1Idx = text.search(/^(?:##|\*\*)\s*Section\s*1:/im);
+    if (sec1Idx !== -1) {
+        const bodyFromSec1 = text.slice(sec1Idx).trim();
+        return `${titleLine}\n\n${headerBlock}\n\n---\n\n${bodyFromSec1}\n`;
+    }
+
+    return `${titleLine}\n\n${headerBlock}\n\n---\n\n${text}\n`;
+}
+
+function mergeRecordedGuideWithConsultation(recordedGuideText, p, collateralPromptText) {
+    const headerLines = [
+        `### Turn90 / First Shift LS/CMI Assessment Interview Guide (Interview & Consultation Integrated)`,
+        ``,
+        `**Participant Name:** ${p.fullName} (Apricot ID: #${p.recordId})  `,
+        `**Date of Birth (DOB):** ${p.dob} | **Age:** ${p.age || 'Pending Verification'}  `,
+        `**Center Location:** Turn90 ${p.center}  `,
+        `**Assessor:** ${p.assessor}  `,
+        `**Assessment Date:** ${p.interviewDate}  `,
+        ``,
+        `> **Collateral Verification Note:** This 158-item LS/CMI Interview Guide combines ${p.fullName}'s recorded interview responses with verified collateral from their Turn90 Reentry Consultation, Briefcase Gate 1–4 screening, and Case Management intake records.`,
+        ``,
+        `---`,
+        ``
+    ].join('\n');
+
+    // Strip any old header or old attached collateral block from recordedGuideText
+    let body = recordedGuideText
+        .replace(/^###\s*Turn90[\s\S]*?---\s*\n+/i, '')
+        .replace(/^#\s*Turn90[\s\S]*?(?=\n(?:###\s*Domain|1\.\s*\*\*|\*\*1\.))/i, '')
+        .replace(/\n---\s*\n### Attached Apricot Consultation[\s\S]*$/i, '')
+        .trim();
+
+    // Replace any "Not explicitly discussed" answers with verified Consultation answers
+    questions.forEach((qObj, idx) => {
+        const qNum = idx + 1;
+        const consultAns = answerQuestionForProfile(qNum, qObj.text, p);
+        const notDiscussedRegex = new RegExp(`((?:^|\\n)\\s*(?:\\*\\*)?${qNum}\\.(?:\\*\\*)?[^\\n]*\\n+\\s*(?:[-*]|\\*\\*Participant Answer:\\*\\*)?\\s*)(?:Not explicitly discussed[^\\n]*|Not discussed[^\\n]*|N\\/A[^\\n]*)`, 'i');
+        if (notDiscussedRegex.test(body)) {
+            body = body.replace(notDiscussedRegex, `$1${consultAns}`);
+        }
+    });
+
+    let result = `${headerLines}\n${body}\n`;
+    if (collateralPromptText && !result.includes('Attached Apricot Consultation & Case Management Collateral')) {
+        result += `\n---\n### Attached Apricot Consultation & Case Management Collateral\n\`\`\`text\n${collateralPromptText}\n\`\`\`\n`;
+    }
+    return result;
+}
+
+function deduplicateAndEnsureScoringHeaders(dir = dataDir) {
+    if (!fs.existsSync(dir)) return { mergedDuplicates: 0, updatedHeaders: 0 };
+    let mergedDuplicates = 0;
+    let updatedHeaders = 0;
+
+    // 1. Group all existing clientIds by normalized participant key
+    const allIds = discoverAllClientIdsInDir(dir);
+    const groups = [];
+    for (const cid of allIds) {
+        let group = groups.find(g => isSameParticipantName(g.keyName, cid));
+        if (!group) {
+            // Also check against WEEKLY_INTERVIEW_PROFILES
+            const matchedProfile = WEEKLY_INTERVIEW_PROFILES.find(wp => isSameParticipantName(wp.fullName, cid) || isSameParticipantName(wp.clientId, cid));
+            group = {
+                keyName: matchedProfile ? matchedProfile.fullName : cid,
+                canonicalId: matchedProfile ? matchedProfile.clientId : null,
+                profile: matchedProfile || null,
+                ids: []
+            };
+            groups.push(group);
+        }
+        group.ids.push(cid);
+    }
+
+    for (const group of groups) {
+        if (!group.canonicalId) {
+            // Choose the cleanest canonical ID: prefer First_Last_Center (no leading timestamp)
+            const sorted = group.ids.slice().sort((a, b) => {
+                const aHasTs = /^\d+_/.test(a) ? 1 : 0;
+                const bHasTs = /^\d+_/.test(b) ? 1 : 0;
+                if (aHasTs !== bHasTs) return aHasTs - bHasTs;
+                const aHasCenter = /_(Charleston|Columbia|Spartanburg)$/i.test(a) ? 0 : 1;
+                const bHasCenter = /_(Charleston|Columbia|Spartanburg)$/i.test(b) ? 0 : 1;
+                if (aHasCenter !== bHasCenter) return aHasCenter - bHasCenter;
+                return b.length - a.length;
+            });
+            group.canonicalId = sorted[0];
+        }
+
+        const canonicalId = group.canonicalId;
+        const duplicateIds = group.ids.filter(id => id !== canonicalId);
+
+        // Collect all texts across canonicalId + duplicateIds to preserve real transcripts and extract spoken DOB/Age
+        const allTranscripts = [];
+        const allGuides = [];
+        const allDrafts = [];
+        const allCrims = [];
+
+        for (const id of [canonicalId, ...duplicateIds]) {
+            const tFile = path.join(dir, `${id}_transcript.txt`);
+            const gFile = path.join(dir, `${id}_interview_guide.md`);
+            const dFile = path.join(dir, `${id}_draft_scoring_form.md`);
+            const cFile = path.join(dir, `${id}_criminal_history.md`);
+            if (fs.existsSync(tFile)) allTranscripts.push({ id, text: fs.readFileSync(tFile, 'utf8') });
+            if (fs.existsSync(gFile)) allGuides.push({ id, text: fs.readFileSync(gFile, 'utf8') });
+            if (fs.existsSync(dFile)) allDrafts.push({ id, text: fs.readFileSync(dFile, 'utf8') });
+            if (fs.existsSync(cFile)) allCrims.push({ id, text: fs.readFileSync(cFile, 'utf8') });
+        }
+
+        // Remove duplicate clientIds after preserving any real recorded transcript/guide
+        if (duplicateIds.length > 0) {
+            const realRecordedTranscript = allTranscripts.find(t =>
+                t.text &&
+                t.text.trim().length > 80 &&
+                !t.text.includes('# Turn90 / First Shift LS/CMI Consultation-Informed Assessment Transcript') &&
+                !/^(No transcript available\.|Audio assessment recorded\.)$/i.test(t.text.trim())
+            );
+            if (realRecordedTranscript) {
+                const cleanVerbatim = realRecordedTranscript.text.split('=== APRICOT REENTRY CONSULTATION')[0].trim();
+                const ctx = getParticipantConsultationLscmiContext(group.profile ? group.profile.recordId : canonicalId);
+                const mergedT = ctx && ctx.collateralPromptText
+                    ? `${cleanVerbatim}\n\n${ctx.collateralPromptText}`
+                    : cleanVerbatim;
+                fs.writeFileSync(path.join(dir, `${canonicalId}_transcript.txt`), mergedT, 'utf8');
+            }
+
+            for (const dupId of duplicateIds) {
+                removeClientIdFiles(dupId, dir);
+                mergedDuplicates++;
+                console.log(`[Deduplicate] Merged & removed duplicate interview prefix "${dupId}" -> "${canonicalId}"`);
+            }
+        }
+
+        // Ensure DOB and Age are clearly stated at the top of scoring forms and interview guides for canonicalId
+        const cleanParts = canonicalId.replace(/^\d+_+/, '').split('_');
+        let center = 'Charleston';
+        let displayName = cleanParts.join(' ');
+        if (['Charleston', 'Columbia', 'Spartanburg'].includes(cleanParts[cleanParts.length - 1])) {
+            center = cleanParts[cleanParts.length - 1];
+            displayName = cleanParts.slice(0, -1).join(' ');
+        }
+        if (group.profile) {
+            displayName = group.profile.fullName;
+            center = group.profile.center;
+        } else if (/keyzelle/i.test(canonicalId)) {
+            displayName = 'Keyzelle Thomas';
+            center = 'Columbia';
+        } else if (/^dillon_charleston$/i.test(canonicalId)) {
+            displayName = 'Dillon Johnson';
+            center = 'Charleston';
+        }
+
+        const ctx = getParticipantConsultationLscmiContext(group.profile ? group.profile.recordId : displayName);
+        const resolvedBio = resolveParticipantDobAndAge(
+            group.profile ? group.profile.recordId : displayName,
+            [
+                ...allTranscripts.map(x => x.text),
+                ...allGuides.map(x => x.text),
+                ...allDrafts.map(x => x.text),
+                ...allCrims.map(x => x.text),
+                ctx ? ctx.collateralPromptText : ''
+            ]
+        );
+
+        const headerMeta = {
+            fullName: displayName,
+            recordId: group.profile ? group.profile.recordId : (ctx ? ctx.recordId : ''),
+            dob: resolvedBio.dob,
+            age: resolvedBio.age,
+            center,
+            interviewDate: group.profile ? group.profile.interviewDate : 'October – November 2026',
+            assessor: group.profile ? group.profile.assessor : 'Turn90 Case Management Team'
+        };
+
+        for (const formSuffix of ['_draft_scoring_form.md', '_final_scoring_form.md']) {
+            const fPath = path.join(dir, `${canonicalId}${formSuffix}`);
+            if (fs.existsSync(fPath)) {
+                const currentMd = fs.readFileSync(fPath, 'utf8');
+                const updatedMd = ensureScoringHeaderHasDobAndAge(currentMd, headerMeta);
+                if (updatedMd !== currentMd) {
+                    fs.writeFileSync(fPath, updatedMd, 'utf8');
+                    updatedHeaders++;
+                }
+            }
+        }
+    }
+
+    return { mergedDuplicates, updatedHeaders };
+}
+
 async function main() {
     console.log(`Generating Phase 1 Consultation-informed LS/CMI Drafts (Pending Supervisor Review) for ${WEEKLY_INTERVIEW_PROFILES.length} participants...`);
     let count = 0;
 
+    // Scan existing clientIds before generating so we can merge any recorded interviews under timestamp/non-center prefixes
+    const preExistingIds = discoverAllClientIdsInDir(dataDir);
+
     for (const p of WEEKLY_INTERVIEW_PROFILES) {
         const ctx = getParticipantConsultationLscmiContext(p.recordId) || getParticipantConsultationLscmiContext(p.fullName);
         const collateralPromptText = ctx ? ctx.collateralPromptText : '';
+
+        // Find all existing clientId prefixes on disk that belong to this participant (e.g. 1793..._ReanteBaylock, Reante_Baylock, etc.)
+        const matchingIds = preExistingIds.filter(cid =>
+            cid === p.clientId ||
+            isSameParticipantName(cid, p.fullName) ||
+            isSameParticipantName(cid, p.clientId)
+        );
+
+        let preservedVerbatimTranscript = '';
+        let recordedGuideText = '';
+        const extraBioTexts = [collateralPromptText];
+
+        for (const mId of matchingIds) {
+            const mTPath = path.join(dataDir, `${mId}_transcript.txt`);
+            const mGPath = path.join(dataDir, `${mId}_interview_guide.md`);
+            const mDPath = path.join(dataDir, `${mId}_draft_scoring_form.md`);
+
+            if (fs.existsSync(mTPath)) {
+                const tText = fs.readFileSync(mTPath, 'utf8');
+                extraBioTexts.push(tText);
+                const cleanT = tText.split('=== APRICOT REENTRY CONSULTATION')[0].trim();
+                if (
+                    cleanT &&
+                    cleanT.length > 80 &&
+                    !cleanT.includes('# Turn90 / First Shift LS/CMI Consultation-Informed Assessment Transcript') &&
+                    !/^(No transcript available\.|Audio assessment recorded\.)$/i.test(cleanT)
+                ) {
+                    preservedVerbatimTranscript = cleanT;
+                }
+            }
+            if (fs.existsSync(mGPath)) {
+                const gText = fs.readFileSync(mGPath, 'utf8');
+                extraBioTexts.push(gText);
+                if (
+                    gText &&
+                    !gText.includes('This 158-item LS/CMI Interview Guide incorporates verified baseline answers') &&
+                    !gText.includes('Interview & Consultation Integrated')
+                ) {
+                    recordedGuideText = gText;
+                }
+            }
+            if (fs.existsSync(mDPath)) {
+                extraBioTexts.push(fs.readFileSync(mDPath, 'utf8'));
+            }
+
+            // Delete non-canonical duplicate prefixes so participant never shows twice
+            if (mId !== p.clientId) {
+                removeClientIdFiles(mId, dataDir);
+                console.log(` [Merged Duplicate] Consolidated "${mId}" into canonical "${p.clientId}"`);
+            }
+        }
+
+        // Resolve authoritative DOB & Age (from Apricot Bio Info + any spoken DOB/Age in recorded interview)
+        const resolvedBio = resolveParticipantDobAndAge(p.recordId || p.fullName, extraBioTexts);
+        p.dob = resolvedBio.dob;
+        p.age = resolvedBio.age;
+        if (resolvedBio.address && (!p.address || p.address.includes('Confirmed stable residence') || p.address === 'Columbia, SC' || p.address === 'Charleston, SC')) {
+            p.address = resolvedBio.address;
+        }
 
         const transcriptPath = path.join(dataDir, `${p.clientId}_transcript.txt`);
         const guidePath = path.join(dataDir, `${p.clientId}_interview_guide.md`);
@@ -1373,18 +1761,19 @@ async function main() {
             }
         }
 
-        // If a pre-existing live audio transcript exists for this participant (e.g. Reante Baylock recorded on Render), preserve its spoken dialogue and append the Consultation collateral
-        let finalTranscriptContent = buildTranscriptText(p, collateralPromptText);
-        if (fs.existsSync(transcriptPath)) {
-            const existingText = fs.readFileSync(transcriptPath, 'utf8');
-            if (existingText && existingText.trim() && !existingText.includes('TURN90 VERBATIM INTERVIEW & CONSULTATION TRANSCRIPT')) {
-                finalTranscriptContent = `${existingText.trim()}\n\n${collateralPromptText}`;
-            }
-        }
+        const finalTranscriptContent = preservedVerbatimTranscript
+            ? `${preservedVerbatimTranscript}\n\n${collateralPromptText}`
+            : buildTranscriptText(p, collateralPromptText);
+
+        const finalGuideContent = recordedGuideText
+            ? mergeRecordedGuideWithConsultation(recordedGuideText, p, collateralPromptText)
+            : buildInterviewGuideMd(p, collateralPromptText);
+
+        const finalDraftContent = buildScoringFormMd(p, false);
 
         fs.writeFileSync(transcriptPath, finalTranscriptContent, 'utf8');
-        fs.writeFileSync(guidePath, buildInterviewGuideMd(p, collateralPromptText), 'utf8');
-        fs.writeFileSync(draftPath, buildScoringFormMd(p, false), 'utf8');
+        fs.writeFileSync(guidePath, finalGuideContent, 'utf8');
+        fs.writeFileSync(draftPath, finalDraftContent, 'utf8');
 
         // Convert Phase 1 MD documents to PDF and DOCX
         for (const mdFile of [guidePath, draftPath]) {
@@ -1393,44 +1782,14 @@ async function main() {
         }
 
         count++;
-        console.log(` [${count}/${WEEKLY_INTERVIEW_PROFILES.length}] Generated Phase 1 Draft (Pending Supervisor Review) for ${p.fullName} (${p.clientId}) -> Draft Score: ${p.scores.total} (${p.scores.riskLevel})`);
+        console.log(` [${count}/${WEEKLY_INTERVIEW_PROFILES.length}] ${p.fullName} (${p.clientId}) | DOB: ${p.dob} | Age: ${p.age} -> Score: ${p.scores.total}`);
     }
 
-    // Also check if any timestamp-prefixed or variant Reante Baylock files exist on disk and ensure they have Phase 1 draft & guide ready for review
-    try {
-        const allDiskFiles = fs.readdirSync(dataDir);
-        const reanteProfile = WEEKLY_INTERVIEW_PROFILES.find(item => item.recordId === '46026');
-        const reanteCtx = getParticipantConsultationLscmiContext('46026');
-        allDiskFiles.forEach(f => {
-            if (/reante|baylock|blaylock/i.test(f) && f.endsWith('_transcript.txt') && !f.startsWith('Reante_Baylock_Charleston')) {
-                const customClientId = f.replace(/_transcript\.txt$/, '');
-                const customTPath = path.join(dataDir, f);
-                const customGPath = path.join(dataDir, `${customClientId}_interview_guide.md`);
-                const customDPath = path.join(dataDir, `${customClientId}_draft_scoring_form.md`);
-                for (const base of [
-                    path.join(dataDir, `${customClientId}_final_scoring_form`),
-                    path.join(dataDir, `${customClientId}_final_case_brief`),
-                    path.join(dataDir, `${customClientId}_participant_case_plan`)
-                ]) {
-                    for (const ext of ['.md', '.docx', '.pdf']) {
-                        if (fs.existsSync(base + ext)) {
-                            try { fs.unlinkSync(base + ext); } catch (e) {}
-                        }
-                    }
-                }
-                const existingT = fs.readFileSync(customTPath, 'utf8');
-                if (reanteCtx && !existingT.includes('APRICOT REENTRY CONSULTATION')) {
-                    fs.writeFileSync(customTPath, `${existingT.trim()}\n\n${reanteCtx.collateralPromptText}`, 'utf8');
-                }
-                if (reanteProfile) {
-                    fs.writeFileSync(customGPath, buildInterviewGuideMd(reanteProfile, reanteCtx ? reanteCtx.collateralPromptText : ''), 'utf8');
-                    fs.writeFileSync(customDPath, buildScoringFormMd(reanteProfile, false), 'utf8');
-                }
-            }
-        });
-    } catch (e) {}
+    // Run global deduplication & DOB/Age header pass across all files in dataDir (including earlier First Shift scorings)
+    const dedupStats = deduplicateAndEnsureScoringHeaders(dataDir);
+    console.log(`[Deduplicate & Header Sync] Merged ${dedupStats.mergedDuplicates} duplicate prefix(es), updated ${dedupStats.updatedHeaders} additional scoring header(s).`);
 
-    const resetMarker = path.join(dataDir, '.weekly_phase1_only_v2');
+    const resetMarker = path.join(dataDir, '.weekly_dedup_dob_v3');
     try { fs.writeFileSync(resetMarker, new Date().toISOString(), 'utf8'); } catch (e) {}
 
     console.log(`\nSuccessfully prepared all ${count} Consultation-informed LS/CMI Phase 1 Drafts for Supervisor Review!`);
@@ -1439,6 +1798,9 @@ async function main() {
 function generateFallbackPhase2ForWeeklyParticipant(clientId, feedback = '', crimText = '') {
     const p = WEEKLY_INTERVIEW_PROFILES.find(item => item.clientId.toLowerCase() === String(clientId || '').toLowerCase());
     if (!p) return null;
+    const resolvedBio = resolveParticipantDobAndAge(p.recordId || p.fullName, [crimText]);
+    p.dob = resolvedBio.dob;
+    p.age = resolvedBio.age;
     const supervisorNote = (feedback && feedback.trim() && feedback.trim() !== 'No changes needed. The draft scoring form is accurate.')
         ? `\n\n> **Supervisor Clinical Review & Override Notes:** ${feedback.trim()}\n`
         : `\n\n> **Supervisor Clinical Review:** Approved as drafted following Human-in-the-Loop review.\n`;
@@ -1459,5 +1821,9 @@ if (require.main === module) {
 module.exports = {
     generateWeeklyConsultationLscmiPackets: main,
     generateFallbackPhase2ForWeeklyParticipant,
+    deduplicateAndEnsureScoringHeaders,
+    ensureScoringHeaderHasDobAndAge,
+    normalizeParticipantKey,
+    isSameParticipantName,
     WEEKLY_INTERVIEW_PROFILES
 };

@@ -116,12 +116,16 @@ async function runPhase1(transcriptText, clientName, location = "", additionalNo
 
     // Auto-resolve Apricot Consultation & Case Management Collateral Context if available
     let consultationCollateral = "";
+    let resolvedBio = { dob: 'Pending Verification', age: 'Pending Verification' };
+    let recordId = '';
     try {
-        const { getParticipantConsultationLscmiContext } = require('./services/apricot_eval_engine');
+        const { getParticipantConsultationLscmiContext, resolveParticipantDobAndAge } = require('./services/apricot_eval_engine');
         const ctx = getParticipantConsultationLscmiContext(clientName);
         if (ctx && ctx.collateralPromptText) {
             consultationCollateral = ctx.collateralPromptText;
+            recordId = ctx.recordId || '';
         }
+        resolvedBio = resolveParticipantDobAndAge(recordId || clientName, [transcriptText, additionalNotes, consultationCollateral]);
     } catch (e) {
         console.warn('[LLM Phase 1] Could not auto-load Apricot consultation context:', e.message);
     }
@@ -132,6 +136,7 @@ async function runPhase1(transcriptText, clientName, location = "", additionalNo
     const systemPrompt = `You are an expert case manager and LS/CMI assessor for First Shift / Turn90.
 Phase 1 Task: Based on the provided LS/CMI interview transcript, Apricot Reentry Consultation / Intake Screening collateral notes, and assessment scoring manuals, produce:
 1. "interview_guide": The COMPLETE, UNABBREVIATED 158-question LS/CMI Interview Guide.
+   - Start at the very top with a header block stating Participant Name, Date of Birth (DOB): ${resolvedBio.dob}, Age: ${resolvedBio.age}, and Center Location.
    - You MUST include and answer ALL questions from the standard 158-question Interview Guide covering all domains:
      * Domain 1: Administrative & Identification
      * Domain 2: Criminal History
@@ -152,7 +157,9 @@ Phase 1 Task: Based on the provided LS/CMI interview transcript, Apricot Reentry
    - DO NOT truncate, skip, or summarize questions. Provide all questions systematically.
    - Do NOT use the word "clinical". Use "behavioral health", "support", or "assessment" instead.
    - Do NOT reference Route 66.
-2. "draft_scoring_form": The comprehensive Phase 1 DRAFT LS/CMI Scoring Form evaluating all 8 Section 1 subcomponents (Criminal History, Education/Employment, Family/Marital, Leisure/Recreation, Companions, Alcohol/Drug Problem, Procriminal Attitude/Orientation, Antisocial Pattern) and Section 2-6 factors strictly following the scoring rules in the manual, triangulating self-report with the Reentry Consultation & Case Management collateral notes, and identifying clear strengths (rated 0) and high risk/needs (rated 2 or 3). Include subcomponent scores, total score, and risk category.
+2. "draft_scoring_form": The comprehensive Phase 1 DRAFT LS/CMI Scoring Form evaluating all 8 Section 1 subcomponents (Criminal History, Education/Employment, Family/Marital, Leisure/Recreation, Companions, Alcohol/Drug Problem, Procriminal Attitude/Orientation, Antisocial Pattern) and Section 2-6 factors strictly following the scoring rules in the manual, triangulating self-report with the Reentry Consultation & Case Management collateral notes, and identifying clear strengths (rated 0) and high risk/needs (rated 2 or 3).
+   - CRITICAL TOP HEADER REQUIREMENT: State the Participant's Name, Date of Birth (DOB): ${resolvedBio.dob}, and Age: ${resolvedBio.age} clearly at the very top of "draft_scoring_form" before Section 1!
+   - Include subcomponent scores, total score, and risk category.
 
 ${combinedCollateral ? `Apricot Reentry Consultation & Collateral Intake Notes:\n${combinedCollateral}\n\n` : ''}
 
@@ -162,18 +169,35 @@ ${manuals}
 You must return a valid JSON object with EXACTLY these two keys:
 {
   "interview_guide": "# Turn90 / First Shift: LS/CMI Standardized Assessment Interview Guide\\n...",
-  "draft_scoring_form": "# LS/CMI Draft Scoring Form\\n..."
+  "draft_scoring_form": "# LS/CMI Draft Scoring Form\\n\\n**Participant Name:** ${clientName}\\n**Date of Birth (DOB):** ${resolvedBio.dob} | **Age:** ${resolvedBio.age}\\n..."
 }
 
 Format requirements:
 - Follow LS/CMI Scoring Manual rules strictly.
 - Be thorough, evidence-based, objective, and complete.`;
 
-    const prompt = `${systemPrompt}\n\nClient Name: ${clientName}\nLocation: ${location || 'Turn90 Center'}\n\nInterview Transcript:\n${transcriptText}`;
+    const prompt = `${systemPrompt}\n\nClient Name: ${clientName}\nDate of Birth (DOB): ${resolvedBio.dob}\nCurrent Age: ${resolvedBio.age}\nLocation: ${location || 'Turn90 Center'}\n\nInterview Transcript:\n${transcriptText}`;
 
     const result = await model.generateContent(prompt);
     const responseText = result.response.text();
-    return safeJsonParse(responseText);
+    const parsed = safeJsonParse(responseText);
+    try {
+        const { ensureScoringHeaderHasDobAndAge } = require('./generate_weekly_consultation_lscmi_packets');
+        const postBio = require('./services/apricot_eval_engine').resolveParticipantDobAndAge(
+            recordId || clientName,
+            [transcriptText, parsed?.interview_guide || '', parsed?.draft_scoring_form || '', combinedCollateral]
+        );
+        if (parsed && parsed.draft_scoring_form) {
+            parsed.draft_scoring_form = ensureScoringHeaderHasDobAndAge(parsed.draft_scoring_form, {
+                fullName: clientName,
+                recordId,
+                dob: postBio.dob,
+                age: postBio.age,
+                center: location || 'Turn90 Center'
+            });
+        }
+    } catch (e) {}
+    return parsed;
 }
 
 // Process Audio Uploads with High-Fidelity 2-Stage Gemini Pipeline
@@ -297,12 +321,18 @@ async function runPhase2(transcriptText, clientName, draftScoringForm, feedback,
 
     // Auto-resolve Apricot Consultation & Case Management Collateral Context
     let consultationCollateral = "";
+    let resolvedBio = { dob: 'Pending Verification', age: 'Pending Verification' };
+    let recordId = '';
+    let center = 'Turn90 Center';
     try {
-        const { getParticipantConsultationLscmiContext } = require('./services/apricot_eval_engine');
+        const { getParticipantConsultationLscmiContext, resolveParticipantDobAndAge } = require('./services/apricot_eval_engine');
         const ctx = getParticipantConsultationLscmiContext(clientName);
         if (ctx && ctx.collateralPromptText) {
             consultationCollateral = ctx.collateralPromptText;
+            recordId = ctx.recordId || '';
+            center = ctx.center || center;
         }
+        resolvedBio = resolveParticipantDobAndAge(recordId || clientName, [transcriptText, draftScoringForm, criminalHistoryText, consultationCollateral]);
     } catch (e) {
         console.warn('[LLM Phase 2] Could not auto-load Apricot consultation context:', e.message);
     }
@@ -315,6 +345,7 @@ async function runPhase2(transcriptText, clientName, draftScoringForm, feedback,
     Phase 2 Task: Incorporate Program Manager review feedback and any Criminal History record into the assessment, and produce:
     
     1. "final_scoring_form": The completed, validated LS/CMI Scoring Form.
+       - CRITICAL TOP HEADER REQUIREMENT: State the Participant's Name, Date of Birth (DOB): ${resolvedBio.dob}, and Age: ${resolvedBio.age} clearly at the very top of "final_scoring_form" before Section 1!
     2. "case_brief": The Program Manager Case Brief.
        - Use the Probation and Parole Treatment Planner & Scoring Manual.
        - Identify the TOP 2-3 Dynamic Criminogenic Need Domains (NEVER choose Criminal History, as it is static).
@@ -381,11 +412,24 @@ async function runPhase2(transcriptText, clientName, draftScoringForm, feedback,
       "briefcase_autofill": { ... }
     }`;
 
-    const prompt = `${systemPrompt}\n\nClient Name: ${clientName}\n\nTranscript:\n${transcriptText}\n\nDraft Scoring Form:\n${draftScoringForm}\n\nSupervisor Review Feedback:\n${feedback || 'Approved as drafted.'}\n\nCriminal History & Apricot Consultation Collateral Record:\n${combinedCollateral || 'None provided; inferred from interview.'}`;
+    const prompt = `${systemPrompt}\n\nClient Name: ${clientName}\nDate of Birth (DOB): ${resolvedBio.dob}\nCurrent Age: ${resolvedBio.age}\n\nTranscript:\n${transcriptText}\n\nDraft Scoring Form:\n${draftScoringForm}\n\nSupervisor Review Feedback:\n${feedback || 'Approved as drafted.'}\n\nCriminal History & Apricot Consultation Collateral Record:\n${combinedCollateral || 'None provided; inferred from interview.'}`;
 
     const result = await model.generateContent(prompt);
     const responseText = result.response.text();
-    return safeJsonParse(responseText);
+    const parsed = safeJsonParse(responseText);
+    try {
+        const { ensureScoringHeaderHasDobAndAge } = require('./generate_weekly_consultation_lscmi_packets');
+        if (parsed && parsed.final_scoring_form) {
+            parsed.final_scoring_form = ensureScoringHeaderHasDobAndAge(parsed.final_scoring_form, {
+                fullName: clientName,
+                recordId,
+                dob: resolvedBio.dob,
+                age: resolvedBio.age,
+                center
+            });
+        }
+    } catch (e) {}
+    return parsed;
 }
 
 async function adjustActionPlan(clientName, existingPlanText, feedback, supportingContext = "") {

@@ -1,9 +1,9 @@
 # LS/CMI Draft Scoring Form (Phase 1 — Consultation Linked)
 
-**Participant:** Charlie Graham Jr. (Apricot ID: #81055)  
+**Participant Name:** Charlie Graham Jr. (Apricot ID: #81055)  
+**Date of Birth (DOB):** 01/05/1999 | **Age:** 27 years old  
 **Center Location:** Turn90 Spartanburg  
-**Assessment Date:** October 22–30, 2026 (Initial Intake & Action Plan Alignment)  
-**Assessor:** Diyoung Dantzler & Matt Carlisle  
+**Assessment Date:** October 22–30, 2026 (Initial Intake & Action Plan Alignment) | **Assessor:** Diyoung Dantzler & Matt Carlisle  
 
 ---
 

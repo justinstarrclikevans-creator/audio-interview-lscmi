@@ -1,9 +1,9 @@
 # LS/CMI Draft Scoring Form (Phase 1 — Consultation Linked)
 
-**Participant:** Carl Allen (Apricot ID: #82567)  
+**Participant Name:** Carl Allen (Apricot ID: #82567)  
+**Date of Birth (DOB):** 12/26/1979 | **Age:** 46 years old  
 **Center Location:** Turn90 Spartanburg  
-**Assessment Date:** October 28–30, 2026  
-**Assessor:** Daisy Boynton & Spartanburg First Shift Team  
+**Assessment Date:** October 28–30, 2026 | **Assessor:** Daisy Boynton & Spartanburg First Shift Team  
 
 ---
 

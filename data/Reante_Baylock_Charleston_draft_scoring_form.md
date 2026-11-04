@@ -1,9 +1,9 @@
 # LS/CMI Draft Scoring Form (Phase 1 — Consultation Linked)
 
-**Participant:** Reante Baylock (Apricot ID: #46026)  
+**Participant Name:** Reante Baylock (Apricot ID: #46026)  
+**Date of Birth (DOB):** Pending Entry in Apricot Bio Info (Verify on State ID) | **Age:** Pending DOB Verification on State ID  
 **Center Location:** Turn90 Charleston  
-**Assessment Date:** October 23, 2026 (Reentry Consultation) & October 30, 2026 (Orientation Completed; Started First Shift Nov 2, 2026 — Apricot Enrollment Pending)  
-**Assessor:** Charleston Case Management / Reentry Navigation Team  
+**Assessment Date:** October 23, 2026 (Reentry Consultation) & October 30, 2026 (Orientation Completed; Started First Shift Nov 2, 2026 — Apricot Enrollment Pending) | **Assessor:** Charleston Case Management / Reentry Navigation Team  
 
 ---
 

@@ -1,8 +1,8 @@
 ### Turn90 / First Shift LS/CMI Assessment Interview Guide (Consultation-Informed)
 
 **Participant Name:** Robert Taylor (Apricot ID: #77653)  
-**Date of Birth:** Verified in Apricot (#77653)  
-**Center Location:** Columbia  
+**Date of Birth (DOB):** Pending Entry in Apricot Bio Info (Verify on State ID) | **Age:** Pending DOB Verification on State ID  
+**Center Location:** Turn90 Columbia  
 **Assessor:** Daisy Boynton & Jenn Jeanquart  
 **Assessment Date:** October 19–30, 2026  
 
@@ -11,7 +11,7 @@
 ---
 
 1. **What is your full name, date of birth, and current address?**  
-   **Participant Answer:** "Robert Taylor. Date of birth: Verified in Apricot (#77653). Current address: Staying with his mother in Columbia, SC (1.5 miles from Turn90 Columbia Center)." [Verified via Reentry Consultation]
+   **Participant Answer:** "Robert Taylor. Date of Birth (DOB): Pending Entry in Apricot Bio Info (Verify on State ID) (Age: Pending DOB Verification on State ID). Current address: Staying with his mother in Columbia, SC (1.5 miles from Turn90 Columbia Center)." [Verified via Reentry Consultation & Bio Info]
 
 2. **What is your license status?**  
    **Participant Answer:** "Suspended Driver’s License ($1,900 in DMV reinstatement fees plus traffic tickets; candidate for Rainy Day Fund)." [Verified via Reentry Consultation]
@@ -489,9 +489,11 @@
 ```text
 === APRICOT REENTRY CONSULTATION, BRIEFCASE & CASE MANAGEMENT COLLATERAL RECORD ===
 Participant: Robert Taylor (Apricot Record ID: #77653) | Center: Columbia | Program Track: First Shift
+Date of Birth (DOB): Pending Entry in Apricot Bio Info (Verify on State ID) | Current Age: Pending DOB Verification on State ID
 First Shift Enrollment Start Date: 11/02/2026 | Apricot Recorded LS/CMI Score: Pending (0)
 Reentry Consultation Date: 10/19/2026 | First Shift Eligible: Yes | Referral Source: Prison / SCDC Facility
 First Shift Orientation Date: 10/30/2026 | Completed: Yes
+First Shift Daily Attendance & Points Recorded: 11/02/2026: 10 pts (Columbia)
 
 --- REENTRY CONSULTATION & INTAKE SCREENING NOTES (3) ---
 [2026-06-02] Staff: Kat Norsworthy (Intake Appointment - Intake Appointment SCHEDULED):

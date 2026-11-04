@@ -1,9 +1,9 @@
 # LS/CMI Draft Scoring Form (Phase 1 — Consultation Linked)
 
-**Participant:** Kwatez Carter (Apricot ID: #81443)  
+**Participant Name:** Kwatez Carter (Apricot ID: #81443)  
+**Date of Birth (DOB):** 08/03/2000 | **Age:** 26 years old  
 **Center Location:** Turn90 Columbia  
-**Assessment Date:** October 29, 2026 (Initial First Shift Case Management Session & Consultation Synthesis)  
-**Assessor:** Jenn Jeanquart & Daisy Boynton  
+**Assessment Date:** October 29, 2026 (Initial First Shift Case Management Session & Consultation Synthesis) | **Assessor:** Jenn Jeanquart & Daisy Boynton  
 
 ---
 

@@ -7,7 +7,7 @@ Source: Synthesized from Completed Reentry Consultation, Orientation & Week 1 Ca
 ==========================================================
 
 Interviewer: What is your full name, date of birth, and current address?
-Reante Baylock: Reante Baylock. Date of birth: Verified in Apricot (#46026). Current address: Charleston, SC (Confirmed stable residence during 10/22 Resource Coordination & 10/23 Reentry Consultation).
+Reante Baylock: Reante Baylock. Date of Birth (DOB): Pending Entry in Apricot Bio Info (Verify on State ID) (Age: Pending DOB Verification on State ID). Current address: Charleston, SC (Confirmed stable residence during 10/22 Resource Coordination & 10/23 Reentry Consultation).
 
 Interviewer: What is your license status?
 Reante Baylock: Verifying SC Driver’s License / State ID status during Gate 1 onboarding.
@@ -134,4 +134,4 @@ Reante Baylock: Focused on completing Turn90, earning Pursuing Forklift, OSHA-10
 
 ==========================================================
 Interviewer: [Collateral File Review — Linked Apricot Consultation & Case Management Notes]
-Reante Baylock: === APRICOT REENTRY CONSULTATION, BRIEFCASE & CASE MANAGEMENT COLLATERAL RECORD === | Participant: Reante Baylock (Apricot Record ID: #46026) | Center: Charleston | Program Track: First Shift (Enrollment Pending in Apricot) | Reentry Consultation Date: 10/23/2026 | First Shift Eligible: Yes | Referral Source: Self/Community | First Shift Orientation Date: 10/30/2026 | Completed: Yes | First Shift Daily Attendance & Points Recorded: 11/02/2026: 10 pts (Charleston)
+Reante Baylock: === APRICOT REENTRY CONSULTATION, BRIEFCASE & CASE MANAGEMENT COLLATERAL RECORD === | Participant: Reante Baylock (Apricot Record ID: #46026) | Center: Charleston | Program Track: First Shift (Enrollment Pending in Apricot) | Date of Birth (DOB): Pending Entry in Apricot Bio Info (Verify on State ID) | Current Age: Pending DOB Verification on State ID | Reentry Consultation Date: 10/23/2026 | First Shift Eligible: Yes | Referral Source: Self/Community | First Shift Orientation Date: 10/30/2026 | Completed: Yes | First Shift Daily Attendance & Points Recorded: 11/02/2026: 10 pts (Charleston)

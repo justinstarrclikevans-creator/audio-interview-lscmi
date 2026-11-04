@@ -1,9 +1,9 @@
 # LS/CMI Draft Scoring Form (Phase 1 — Consultation Linked)
 
-**Participant:** Chance Simmons (Apricot ID: #78959)  
+**Participant Name:** Chance Simmons (Apricot ID: #78959)  
+**Date of Birth (DOB):** 04/17/1986 | **Age:** 40 years old  
 **Center Location:** Turn90 Charleston  
-**Assessment Date:** October 29 – November 2, 2026 (First Shift Case Plan Review & Consultation Synthesis)  
-**Assessor:** Terrence Brown & Justin Evans  
+**Assessment Date:** October 29 – November 2, 2026 (First Shift Case Plan Review & Consultation Synthesis) | **Assessor:** Terrence Brown & Justin Evans  
 
 ---
 
@@ -36,7 +36,7 @@ Strength? **No**
 
 ### 1.3 Family/Marital (FM)
 18. Dissatisfaction with marital or equivalent situation: **1** (Single; rebuilding community and family support network in Charleston.)
-19. Nonrewarding, parental: **1** (Charleston, SC)
+19. Nonrewarding, parental: **1** (1774 Hay Rd, Johns Island, SC 29455)
 20. Nonrewarding, other relatives: **1**
 21. Criminal-family/spouse: **No** (None active.)
 Strength? **No**
@@ -96,7 +96,7 @@ CH: 6 | EE: 4 | FM: 1 | LR: 1 | CO: 2 | ADP: 2 | PA: 2 | AP: 1
   2. Substance Use & Relapse Prevention (Sustaining Clean Community Recovery)
   3. Work and Follow-Through (Translating 20 Years of Practical Trade Skills into Formal W-2 Employment)
 - **Briefcase Gate 1 (Vital IDs & Prescriptions):** State ID, Social Security Card, Birth Certificate
-- **Briefcase Gate 2 (Driver's License, Housing & Legal):** Has access to a vehicle/ride ("car out front"); working on licensing & Briefcase Gates | Housing: Charleston, SC
+- **Briefcase Gate 2 (Driver's License, Housing & Legal):** Has access to a vehicle/ride ("car out front"); working on licensing & Briefcase Gates | Housing: 1774 Hay Rd, Johns Island, SC 29455
 - **Briefcase Gate 3 (Child Support & Health/Recovery):** None. | Addressed in First Shift Case Plan Focus Area 2 (Substance Use & Relapse Prevention); passing program drug tests.
 - **Briefcase Gate 4 (Transportation & Career Credentials):** Has reliable access to a vehicle/ride to the Charleston center. | Practical institutional trade skills in brick masonry, carpentry, and plumbing; pursuing Forklift, OSHA-10, and SkillCat HVAC/Plumbing.
 

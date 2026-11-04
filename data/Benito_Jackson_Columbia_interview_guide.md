@@ -1,8 +1,8 @@
 ### Turn90 / First Shift LS/CMI Assessment Interview Guide (Consultation-Informed)
 
 **Participant Name:** Benito Jackson (Apricot ID: #82379)  
-**Date of Birth:** Verified in Apricot (#82379)  
-**Center Location:** Columbia  
+**Date of Birth (DOB):** Pending Entry in Apricot Bio Info (Verify on State ID) | **Age:** Pending DOB Verification on State ID  
+**Center Location:** Turn90 Columbia  
 **Assessor:** Daisy Boynton  
 **Assessment Date:** October 26, 2026 (Reentry Consultation Completed)  
 
@@ -11,7 +11,7 @@
 ---
 
 1. **What is your full name, date of birth, and current address?**  
-   **Participant Answer:** "Benito Jackson. Date of birth: Verified in Apricot (#82379). Current address: Columbia, SC (Stable Address verified in Gate 2)." [Verified via Reentry Consultation]
+   **Participant Answer:** "Benito Jackson. Date of Birth (DOB): Pending Entry in Apricot Bio Info (Verify on State ID) (Age: Pending DOB Verification on State ID). Current address: Columbia, SC (Stable Address verified in Gate 2)." [Verified via Reentry Consultation & Bio Info]
 
 2. **What is your license status?**  
    **Participant Answer:** "Suspended until November 27, 2026 due to pending DUI; needs SR-22 insurance, $100 fee, and DUI class to reinstate." [Verified via Reentry Consultation]
@@ -489,6 +489,7 @@
 ```text
 === APRICOT REENTRY CONSULTATION, BRIEFCASE & CASE MANAGEMENT COLLATERAL RECORD ===
 Participant: Benito Jackson (Apricot Record ID: #82379) | Center: Columbia | Program Track: Reentry Navigation
+Date of Birth (DOB): Pending Entry in Apricot Bio Info (Verify on State ID) | Current Age: Pending DOB Verification on State ID
 Reentry Consultation Date: 10/26/2026 | First Shift Eligible: Yes | Referral Source: Flyer or Event
 Reentry Navigation Case Plan Goals:
 1. Employment

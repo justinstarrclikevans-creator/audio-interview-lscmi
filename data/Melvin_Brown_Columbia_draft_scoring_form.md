@@ -1,9 +1,9 @@
 # LS/CMI Draft Scoring Form (Phase 1 — Consultation Linked)
 
-**Participant:** Melvin Brown (Apricot ID: #80978)  
+**Participant Name:** Melvin Brown (Apricot ID: #80978)  
+**Date of Birth (DOB):** Pending Entry in Apricot Bio Info (Verify on State ID) | **Age:** Pending DOB Verification on State ID  
 **Center Location:** Turn90 Columbia  
-**Assessment Date:** October 28, 2026 (Initial First Shift Session 1 & Consultation Synthesis)  
-**Assessor:** Jenn Jeanquart, Justin Evans & Daisy Boynton  
+**Assessment Date:** October 28, 2026 (Initial First Shift Session 1 & Consultation Synthesis) | **Assessor:** Jenn Jeanquart, Justin Evans & Daisy Boynton  
 
 ---
 

@@ -1,8 +1,8 @@
 ### Turn90 / First Shift LS/CMI Assessment Interview Guide (Consultation-Informed)
 
 **Participant Name:** Jayhova Freeman (Apricot ID: #82409)  
-**Date of Birth:** Verified in Apricot (#82409)  
-**Center Location:** Spartanburg  
+**Date of Birth (DOB):** 02/03/2001 | **Age:** 25 years old  
+**Center Location:** Turn90 Spartanburg  
 **Assessor:** Daisy Boynton & Matt Carlisle  
 **Assessment Date:** October 26–30, 2026  
 
@@ -11,7 +11,7 @@
 ---
 
 1. **What is your full name, date of birth, and current address?**  
-   **Participant Answer:** "Jayhova Freeman. Date of birth: Verified in Apricot (#82409). Current address: Apartment in Spartanburg, SC (Stable Housing)." [Verified via Reentry Consultation]
+   **Participant Answer:** "Jayhova Freeman. Date of Birth (DOB): 02/03/2001 (Age: 25 years old). Current address: Apartment in Spartanburg, SC (Stable Housing)." [Verified via Reentry Consultation & Bio Info]
 
 2. **What is your license status?**  
    **Participant Answer:** "Suspended due to one unpaid traffic ticket; owns a personal vehicle ready to drive upon reinstatement." [Verified via Reentry Consultation]
@@ -489,9 +489,12 @@
 ```text
 === APRICOT REENTRY CONSULTATION, BRIEFCASE & CASE MANAGEMENT COLLATERAL RECORD ===
 Participant: Jayhova Freeman (Apricot Record ID: #82409) | Center: Spartanburg | Program Track: First Shift
+Date of Birth (DOB): 02/03/2001 | Current Age: 25 years old
+Verified Address: 4042 Walloon Lane, #204, Spartanburg, SC 29301 | Phone: 864.357.1614.
 First Shift Enrollment Start Date: 11/02/2026 | Apricot Recorded LS/CMI Score: Pending (0)
 Reentry Consultation Date: 10/26/2026 | First Shift Eligible: Yes | Referral Source: Probation / Parole Office
 First Shift Orientation Date: 10/30/2026 | Completed: Scheduled/Attended
+First Shift Daily Attendance & Points Recorded: 11/02/2026: 10 pts (Spartanburg), 11/03/2026: 10 pts (Spartanburg)
 
 --- REENTRY CONSULTATION & INTAKE SCREENING NOTES (1) ---
 [2026-10-26] Staff: Daisy Boynton (Intake Appointment - Intake Appointment COMPLETED):

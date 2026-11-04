@@ -1,9 +1,9 @@
 # LS/CMI Draft Scoring Form (Phase 1 — Consultation Linked)
 
-**Participant:** Alec Greene (Apricot ID: #82300)  
+**Participant Name:** Alec Greene (Apricot ID: #82300)  
+**Date of Birth (DOB):** 09/20/1999 | **Age:** 27 years old  
 **Center Location:** Turn90 Spartanburg  
-**Assessment Date:** October 22–30, 2026  
-**Assessor:** Daisy Boynton, Matt Carlisle & Diyoung Dantzler  
+**Assessment Date:** October 22–30, 2026 | **Assessor:** Daisy Boynton, Matt Carlisle & Diyoung Dantzler  
 
 ---
 

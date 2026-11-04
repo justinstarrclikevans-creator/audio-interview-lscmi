@@ -1,8 +1,8 @@
 ### Turn90 / First Shift LS/CMI Assessment Interview Guide (Consultation-Informed)
 
 **Participant Name:** Carl Allen (Apricot ID: #82567)  
-**Date of Birth:** Verified in Apricot (#82567)  
-**Center Location:** Spartanburg  
+**Date of Birth (DOB):** 12/26/1979 | **Age:** 46 years old  
+**Center Location:** Turn90 Spartanburg  
 **Assessor:** Daisy Boynton & Spartanburg First Shift Team  
 **Assessment Date:** October 28–30, 2026  
 
@@ -11,7 +11,7 @@
 ---
 
 1. **What is your full name, date of birth, and current address?**  
-   **Participant Answer:** "Carl Allen. Date of birth: Verified in Apricot (#82567). Current address: Jumpstart Transitional Housing, Spartanburg, SC (Eligible to stay up to 2 years)." [Verified via Reentry Consultation]
+   **Participant Answer:** "Carl Allen. Date of Birth (DOB): 12/26/1979 (Age: 46 years old). Current address: Jumpstart Transitional Housing, Spartanburg, SC (Eligible to stay up to 2 years)." [Verified via Reentry Consultation & Bio Info]
 
 2. **What is your license status?**  
    **Participant Answer:** "Valid Driver’s License in good standing." [Verified via Reentry Consultation]
@@ -489,9 +489,12 @@
 ```text
 === APRICOT REENTRY CONSULTATION, BRIEFCASE & CASE MANAGEMENT COLLATERAL RECORD ===
 Participant: Carl Allen (Apricot Record ID: #82567) | Center: Spartanburg | Program Track: First Shift
+Date of Birth (DOB): 12/26/1979 | Current Age: 46 years old
+Verified Address: 722 Jerry Frady Way, Wellford, SC 29385 | Phone: 864.572.1487.
 First Shift Enrollment Start Date: 11/02/2026 | Apricot Recorded LS/CMI Score: Pending (0)
 Reentry Consultation Date: 10/28/2026 | First Shift Eligible: Yes | Referral Source: Flyer or Event
 First Shift Orientation Date: 10/30/2026 | Completed: Scheduled/Attended
+First Shift Daily Attendance & Points Recorded: 11/02/2026: 10 pts (Spartanburg), 11/03/2026: 10 pts (Spartanburg)
 
 --- REENTRY CONSULTATION & INTAKE SCREENING NOTES (2) ---
 [2026-10-28] Staff: Daisy Boynton (Intake Appointment - Intake Appointment COMPLETED):

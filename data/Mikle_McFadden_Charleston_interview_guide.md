@@ -1,8 +1,8 @@
 ### Turn90 / First Shift LS/CMI Assessment Interview Guide (Consultation-Informed)
 
 **Participant Name:** Mikle McFadden (Apricot ID: #82682)  
-**Date of Birth:** Verified in Apricot (#82682)  
-**Center Location:** Charleston  
+**Date of Birth (DOB):** Pending Entry in Apricot Bio Info (Verify on State ID) | **Age:** Pending DOB Verification on State ID  
+**Center Location:** Turn90 Charleston  
 **Assessor:** Daisy Boynton  
 **Assessment Date:** November 3, 2026 (Reentry Consultation Completed)  
 
@@ -11,7 +11,7 @@
 ---
 
 1. **What is your full name, date of birth, and current address?**  
-   **Participant Answer:** "Mikle McFadden. Date of birth: Verified in Apricot (#82682). Current address: Charleston, SC (Resides in a home he owns with his wife; highly stable)." [Verified via Reentry Consultation]
+   **Participant Answer:** "Mikle McFadden. Date of Birth (DOB): Pending Entry in Apricot Bio Info (Verify on State ID) (Age: Pending DOB Verification on State ID). Current address: Charleston, SC (Resides in a home he owns with his wife; highly stable)." [Verified via Reentry Consultation & Bio Info]
 
 2. **What is your license status?**  
    **Participant Answer:** "Valid Driver’s License (obtained 3 weeks ago) and access to personal vehicle." [Verified via Reentry Consultation]
@@ -489,6 +489,7 @@
 ```text
 === APRICOT REENTRY CONSULTATION, BRIEFCASE & CASE MANAGEMENT COLLATERAL RECORD ===
 Participant: Mikle McFadden (Apricot Record ID: #82682) | Center: Charleston | Program Track: Reentry Navigation
+Date of Birth (DOB): Pending Entry in Apricot Bio Info (Verify on State ID) | Current Age: Pending DOB Verification on State ID
 Reentry Consultation Date: 11/03/2026 | First Shift Eligible: No | Referral Source: Community Organization
 
 --- REENTRY CONSULTATION & INTAKE SCREENING NOTES (2) ---

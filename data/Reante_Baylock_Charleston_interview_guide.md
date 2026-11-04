@@ -1,8 +1,8 @@
 ### Turn90 / First Shift LS/CMI Assessment Interview Guide (Consultation-Informed)
 
 **Participant Name:** Reante Baylock (Apricot ID: #46026)  
-**Date of Birth:** Verified in Apricot (#46026)  
-**Center Location:** Charleston  
+**Date of Birth (DOB):** Pending Entry in Apricot Bio Info (Verify on State ID) | **Age:** Pending DOB Verification on State ID  
+**Center Location:** Turn90 Charleston  
 **Assessor:** Charleston Case Management / Reentry Navigation Team  
 **Assessment Date:** October 23, 2026 (Reentry Consultation) & October 30, 2026 (Orientation Completed; Started First Shift Nov 2, 2026 — Apricot Enrollment Pending)  
 
@@ -11,7 +11,7 @@
 ---
 
 1. **What is your full name, date of birth, and current address?**  
-   **Participant Answer:** "Reante Baylock. Date of birth: Verified in Apricot (#46026). Current address: Charleston, SC (Confirmed stable residence during 10/22 Resource Coordination & 10/23 Reentry Consultation)." [Verified via Reentry Consultation]
+   **Participant Answer:** "Reante Baylock. Date of Birth (DOB): Pending Entry in Apricot Bio Info (Verify on State ID) (Age: Pending DOB Verification on State ID). Current address: Charleston, SC (Confirmed stable residence during 10/22 Resource Coordination & 10/23 Reentry Consultation)." [Verified via Reentry Consultation & Bio Info]
 
 2. **What is your license status?**  
    **Participant Answer:** "Verifying SC Driver’s License / State ID status during Gate 1 onboarding." [Verified via Reentry Consultation]
@@ -489,6 +489,7 @@
 ```text
 === APRICOT REENTRY CONSULTATION, BRIEFCASE & CASE MANAGEMENT COLLATERAL RECORD ===
 Participant: Reante Baylock (Apricot Record ID: #46026) | Center: Charleston | Program Track: First Shift (Enrollment Pending in Apricot)
+Date of Birth (DOB): Pending Entry in Apricot Bio Info (Verify on State ID) | Current Age: Pending DOB Verification on State ID
 Reentry Consultation Date: 10/23/2026 | First Shift Eligible: Yes | Referral Source: Self/Community
 First Shift Orientation Date: 10/30/2026 | Completed: Yes
 First Shift Daily Attendance & Points Recorded: 11/02/2026: 10 pts (Charleston)

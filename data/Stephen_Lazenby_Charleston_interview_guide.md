@@ -1,8 +1,8 @@
 ### Turn90 / First Shift LS/CMI Assessment Interview Guide (Consultation-Informed)
 
 **Participant Name:** Stephen Lazenby (Apricot ID: #79879)  
-**Date of Birth:** Age 36 (Verified in Apricot #79879)  
-**Center Location:** Charleston  
+**Date of Birth (DOB):** 1990 (Verified Age 36 in Apricot #79879) | **Age:** 36 years old  
+**Center Location:** Turn90 Charleston  
 **Assessor:** Terrence Brown & Daisy Boynton  
 **Assessment Date:** October 20–27, 2026 (Initial Official Case Management & Re-Entry Planning)  
 
@@ -11,7 +11,7 @@
 ---
 
 1. **What is your full name, date of birth, and current address?**  
-   **Participant Answer:** "Stephen Lazenby. Date of birth: Age 36 (Verified in Apricot #79879). Current address: SHIELD Ministry Transitional Housing, Charleston, SC." [Verified via Reentry Consultation]
+   **Participant Answer:** "Stephen Lazenby. Date of Birth (DOB): 1990 (Verified Age 36 in Apricot #79879) (Age: 36 years old). Current address: SHIELD Ministry Transitional Housing, Charleston, SC." [Verified via Reentry Consultation & Bio Info]
 
 2. **What is your license status?**  
    **Participant Answer:** "Suspended / Active Goal in Briefcase Gate 2." [Verified via Reentry Consultation]
@@ -489,8 +489,11 @@
 ```text
 === APRICOT REENTRY CONSULTATION, BRIEFCASE & CASE MANAGEMENT COLLATERAL RECORD ===
 Participant: Stephen Lazenby (Apricot Record ID: #79879) | Center: Charleston | Program Track: First Shift
+Date of Birth (DOB): 1990 (Verified Age 36 in Apricot #79879) | Current Age: 36 years old
+Verified Address: SHIELD Ministry Transitional Housing, Charleston, SC | Phone: 854.293.2800.
 First Shift Enrollment Start Date: 10/12/2026 | Apricot Recorded LS/CMI Score: Pending (0)
 Reentry Consultation Date: 08/26/2026 | First Shift Eligible: Yes | Referral Source: Self/Community
+First Shift Daily Attendance & Points Recorded: 10/12/2026: 10 pts (Charleston), 10/13/2026: 10 pts (Charleston), 10/14/2026: 6 pts (Charleston), 10/15/2026: 0 pts (Charleston), 10/16/2026: 10 pts (Charleston), 10/19/2026: 9 pts (Charleston), 10/22/2026: 10 pts (Charleston), 10/20/2026: 10 pts (Charleston), 10/21/2026: 9 pts (Charleston), 10/23/2026: 9 pts (Charleston), 10/26/2026: 10 pts (Charleston), 10/27/2026: 6 pts (Charleston), 10/28/2026: 10 pts (Charleston), 10/29/2026: 10 pts (Charleston), 10/30/2026: 10 pts (Charleston), 11/02/2026: 10 pts (Charleston)
 First Shift Case Plan Focus Areas: 1) People and Influence (Peer Associations) (Being around a negative belligerent person) | 2) Time and Structure (Leisure/Recreation)
 Briefcase 90-Day Goal: To better myself and change my ways of thinking and to find a job
 Gate 1 Verified Items: State ID or Driver’s License: Do they have a valid, unexpired ID? (If no, is a DMV appointment booked?)|Social Security Card: Do they have the physical card or a receipt from the SSA office? (If no, have you booked the appointment?)|Birth Certificate: (If no, have you booked the appointment?)|Supervision information (county, officer name, report dates)|Completed Skillcat Intro|Chose skillcat track | Notes: Has ID but no drivers license. Still has to pay tickets, does not know how much its going to cost but the DL is out of North Carolina.

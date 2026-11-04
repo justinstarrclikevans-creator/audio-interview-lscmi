@@ -1,8 +1,8 @@
 ### Turn90 / First Shift LS/CMI Assessment Interview Guide (Consultation-Informed)
 
 **Participant Name:** Zerrick Morris (Apricot ID: #82496)  
-**Date of Birth:** Verified in Apricot (#82496)  
-**Center Location:** Columbia  
+**Date of Birth (DOB):** Pending Entry in Apricot Bio Info (Verify on State ID) | **Age:** Pending DOB Verification on State ID  
+**Center Location:** Turn90 Columbia  
 **Assessor:** Daisy Boynton  
 **Assessment Date:** October 29, 2026 (Reentry Consultation Completed)  
 
@@ -11,7 +11,7 @@
 ---
 
 1. **What is your full name, date of birth, and current address?**  
-   **Participant Answer:** "Zerrick Morris. Date of birth: Verified in Apricot (#82496). Current address: Currently staying with mother in Sumter, SC; actively seeking transitional housing on Garners Ferry side of Columbia to enroll in First Shift Columbia." [Verified via Reentry Consultation]
+   **Participant Answer:** "Zerrick Morris. Date of Birth (DOB): Pending Entry in Apricot Bio Info (Verify on State ID) (Age: Pending DOB Verification on State ID). Current address: Currently staying with mother in Sumter, SC; actively seeking transitional housing on Garners Ferry side of Columbia to enroll in First Shift Columbia." [Verified via Reentry Consultation & Bio Info]
 
 2. **What is your license status?**  
    **Participant Answer:** "Suspended (2nd suspension in a row) with over $2,000 in traffic tickets; needs DMV reinstatement printout." [Verified via Reentry Consultation]
@@ -489,6 +489,7 @@
 ```text
 === APRICOT REENTRY CONSULTATION, BRIEFCASE & CASE MANAGEMENT COLLATERAL RECORD ===
 Participant: Zerrick Morris (Apricot Record ID: #82496) | Center: Columbia | Program Track: Reentry Navigation
+Date of Birth (DOB): Pending Entry in Apricot Bio Info (Verify on State ID) | Current Age: Pending DOB Verification on State ID
 Reentry Consultation Date: 10/29/2026 | First Shift Eligible: No | Referral Source: Social Media / Web Search
 Reentry Navigation Case Plan Goals:
 1. Find housing in Cola

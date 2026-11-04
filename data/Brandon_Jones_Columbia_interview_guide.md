@@ -1,8 +1,8 @@
 ### Turn90 / First Shift LS/CMI Assessment Interview Guide (Consultation-Informed)
 
 **Participant Name:** Brandon Jones (Apricot ID: #82462)  
-**Date of Birth:** Verified in Apricot (#82462)  
-**Center Location:** Columbia  
+**Date of Birth (DOB):** Pending Entry in Apricot Bio Info (Verify on State ID) | **Age:** Pending DOB Verification on State ID  
+**Center Location:** Turn90 Columbia  
 **Assessor:** Daisy Boynton  
 **Assessment Date:** October 28, 2026 (Reentry Consultation Completed)  
 
@@ -11,7 +11,7 @@
 ---
 
 1. **What is your full name, date of birth, and current address?**  
-   **Participant Answer:** "Brandon Jones. Date of birth: Verified in Apricot (#82462). Current address: Federal Halfway House, Columbia, SC (~50 days remaining before discharge to family home)." [Verified via Reentry Consultation]
+   **Participant Answer:** "Brandon Jones. Date of Birth (DOB): Pending Entry in Apricot Bio Info (Verify on State ID) (Age: Pending DOB Verification on State ID). Current address: Federal Halfway House, Columbia, SC (~50 days remaining before discharge to family home)." [Verified via Reentry Consultation & Bio Info]
 
 2. **What is your license status?**  
    **Participant Answer:** "Valid Temporary Paper Driver’s License (not suspended); transferring title and insurance for his personal vehicle." [Verified via Reentry Consultation]
@@ -489,6 +489,7 @@
 ```text
 === APRICOT REENTRY CONSULTATION, BRIEFCASE & CASE MANAGEMENT COLLATERAL RECORD ===
 Participant: Brandon Jones (Apricot Record ID: #82462) | Center: Columbia | Program Track: Reentry Navigation
+Date of Birth (DOB): Pending Entry in Apricot Bio Info (Verify on State ID) | Current Age: Pending DOB Verification on State ID
 Reentry Consultation Date: 10/28/2026 | First Shift Eligible: Yes | Referral Source: Federal Halfway House
 Reentry Navigation Case Plan Goals:
 Find employment

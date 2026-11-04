@@ -1,8 +1,8 @@
 ### Turn90 / First Shift LS/CMI Assessment Interview Guide (Consultation-Informed)
 
 **Participant Name:** Brandon James (Apricot ID: #62636)  
-**Date of Birth:** Age 42 (Verified in Apricot #62636)  
-**Center Location:** Columbia  
+**Date of Birth (DOB):** 1984 (Verified Age 42 in Apricot #62636) | **Age:** 42 years old  
+**Center Location:** Turn90 Columbia  
 **Assessor:** Daisy Boynton  
 **Assessment Date:** October 27, 2026 (Reentry Consultation Completed)  
 
@@ -11,7 +11,7 @@
 ---
 
 1. **What is your full name, date of birth, and current address?**  
-   **Participant Answer:** "Brandon James. Date of birth: Age 42 (Verified in Apricot #62636). Current address: 2 9th Road, Columbia, SC (Lives in his own home; stable housing)." [Verified via Reentry Consultation]
+   **Participant Answer:** "Brandon James. Date of Birth (DOB): 1984 (Verified Age 42 in Apricot #62636) (Age: 42 years old). Current address: 2 9th Road, Columbia, SC (Lives in his own home; stable housing)." [Verified via Reentry Consultation & Bio Info]
 
 2. **What is your license status?**  
    **Participant Answer:** "Never held a driver’s license (attributes to anxiety); owns a 2021 Acura TLX and is preparing for DMV permit test." [Verified via Reentry Consultation]
@@ -489,6 +489,8 @@
 ```text
 === APRICOT REENTRY CONSULTATION, BRIEFCASE & CASE MANAGEMENT COLLATERAL RECORD ===
 Participant: Brandon James (Apricot Record ID: #62636) | Center: Columbia | Program Track: Reentry Navigation
+Date of Birth (DOB): 1984 (Verified Age 42 in Apricot #62636) | Current Age: 42 years old
+Verified Address: 2 9th Road, Columbia, SC
 Reentry Consultation Date: 10/23/2026 | First Shift Eligible: Yes | Referral Source: Federal Halfway House
 Reentry Navigation Case Plan Goals:
 1. Get DL, birth certificate, and social security card

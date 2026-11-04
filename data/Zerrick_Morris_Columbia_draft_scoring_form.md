@@ -1,9 +1,9 @@
 # LS/CMI Draft Scoring Form (Phase 1 — Consultation Linked)
 
-**Participant:** Zerrick Morris (Apricot ID: #82496)  
+**Participant Name:** Zerrick Morris (Apricot ID: #82496)  
+**Date of Birth (DOB):** Pending Entry in Apricot Bio Info (Verify on State ID) | **Age:** Pending DOB Verification on State ID  
 **Center Location:** Turn90 Columbia  
-**Assessment Date:** October 29, 2026 (Reentry Consultation Completed)  
-**Assessor:** Daisy Boynton  
+**Assessment Date:** October 29, 2026 (Reentry Consultation Completed) | **Assessor:** Daisy Boynton  
 
 ---
 

@@ -1,8 +1,8 @@
 ### Turn90 / First Shift LS/CMI Assessment Interview Guide (Consultation-Informed)
 
 **Participant Name:** DeAndre Martin (Apricot ID: #63905)  
-**Date of Birth:** Verified in Apricot (#63905)  
-**Center Location:** Columbia  
+**Date of Birth (DOB):** Pending Entry in Apricot Bio Info (Verify on State ID) | **Age:** Pending DOB Verification on State ID  
+**Center Location:** Turn90 Columbia  
 **Assessor:** Daisy Boynton  
 **Assessment Date:** October 27, 2026 (Reentry Consultation Completed)  
 
@@ -11,7 +11,7 @@
 ---
 
 1. **What is your full name, date of birth, and current address?**  
-   **Participant Answer:** "DeAndre Martin. Date of birth: Verified in Apricot (#63905). Current address: Columbia, SC (Renting a 3-bedroom house with girlfriend and her children; stable housing)." [Verified via Reentry Consultation]
+   **Participant Answer:** "DeAndre Martin. Date of Birth (DOB): Pending Entry in Apricot Bio Info (Verify on State ID) (Age: Pending DOB Verification on State ID). Current address: Columbia, SC (Renting a 3-bedroom house with girlfriend and her children; stable housing)." [Verified via Reentry Consultation & Bio Info]
 
 2. **What is your license status?**  
    **Participant Answer:** "Valid Driver’s License." [Verified via Reentry Consultation]
@@ -489,6 +489,7 @@
 ```text
 === APRICOT REENTRY CONSULTATION, BRIEFCASE & CASE MANAGEMENT COLLATERAL RECORD ===
 Participant: DeAndre Martin (Apricot Record ID: #63905) | Center: Columbia | Program Track: Reentry Navigation
+Date of Birth (DOB): Pending Entry in Apricot Bio Info (Verify on State ID) | Current Age: Pending DOB Verification on State ID
 Reentry Consultation Date: 10/27/2026 | First Shift Eligible: Yes | Referral Source: Flyer or Event
 Reentry Navigation Case Plan Goals:
 Get dental and medical insurance that will cover his medical needs

@@ -1,8 +1,8 @@
 ### Turn90 / First Shift LS/CMI Assessment Interview Guide (Consultation-Informed)
 
 **Participant Name:** Charlie Graham Jr. (Apricot ID: #81055)  
-**Date of Birth:** January 5, 1999 (Age 27)  
-**Center Location:** Spartanburg  
+**Date of Birth (DOB):** 01/05/1999 | **Age:** 27 years old  
+**Center Location:** Turn90 Spartanburg  
 **Assessor:** Diyoung Dantzler & Matt Carlisle  
 **Assessment Date:** October 22–30, 2026 (Initial Intake & Action Plan Alignment)  
 
@@ -11,7 +11,7 @@
 ---
 
 1. **What is your full name, date of birth, and current address?**  
-   **Participant Answer:** "Charlie Graham Jr.. Date of birth: January 5, 1999 (Age 27). Current address: Spartanburg / Boiling Springs, SC (Staying with mother while paying light bill to move back into apartment with partner and 2 children)." [Verified via Reentry Consultation]
+   **Participant Answer:** "Charlie Graham Jr.. Date of Birth (DOB): 01/05/1999 (Age: 27 years old). Current address: Spartanburg / Boiling Springs, SC (Staying with mother while paying light bill to move back into apartment with partner and 2 children)." [Verified via Reentry Consultation & Bio Info]
 
 2. **What is your license status?**  
    **Participant Answer:** "Driving-related charge history; repairing personal vehicle (2004 Mercedes E320 at Euro mechanic)." [Verified via Reentry Consultation]
@@ -489,7 +489,10 @@
 ```text
 === APRICOT REENTRY CONSULTATION, BRIEFCASE & CASE MANAGEMENT COLLATERAL RECORD ===
 Participant: Charlie Graham Jr. (Apricot Record ID: #81055) | Center: Spartanburg | Program Track: First Shift
+Date of Birth (DOB): 01/05/1999 | Current Age: 27 years old
+Verified Address: 925 Wesley Court, Apartment #6, Boiling Springs, SC 29316 | Phone: 864.453.5452.
 First Shift Enrollment Start Date: 10/12/2026 | Apricot Recorded LS/CMI Score: 24
+First Shift Daily Attendance & Points Recorded: 10/12/2026: 10 pts (Spartanburg), 10/13/2026: 10 pts (Spartanburg), 10/14/2026: 10 pts (Spartanburg), 10/15/2026: 10 pts (Spartanburg), 10/16/2026: 10 pts (Spartanburg), 10/19/2026: 10 pts (Spartanburg), 10/21/2026: 8 pts (Spartanburg), 10/20/2026: 10 pts (Spartanburg), 10/22/2026: 10 pts (Spartanburg), 10/26/2026: 9 pts (Spartanburg), 10/27/2026: 8 pts (Spartanburg), 10/23/2026: 10 pts (Spartanburg), 10/28/2026: 10 pts (Spartanburg), 10/30/2026: 10 pts (Spartanburg), 10/29/2026: 10 pts (Spartanburg), 11/02/2026: 10 pts (Spartanburg), 11/03/2026: 10 pts (Spartanburg)
 First Shift Case Plan Focus Areas: 1) Work and Follow-Through (Employment/Education) (Having problems with setting boundaries or cutting off peers due to the support that he got from that lifestyle) | 2) People and Influence (Peer Associations)
 Briefcase 90-Day Goal: get GED
 GET reliable transportation

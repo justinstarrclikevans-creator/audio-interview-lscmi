@@ -1,8 +1,8 @@
 ### Turn90 / First Shift LS/CMI Assessment Interview Guide (Consultation-Informed)
 
 **Participant Name:** Harold Williams (Apricot ID: #82456)  
-**Date of Birth:** Verified in Apricot (#82456)  
-**Center Location:** Charleston  
+**Date of Birth (DOB):** Pending Entry in Apricot Bio Info (Verify on State ID) | **Age:** Pending DOB Verification on State ID  
+**Center Location:** Turn90 Charleston  
 **Assessor:** Daisy Boynton  
 **Assessment Date:** October 27, 2026 (Reentry Consultation Completed)  
 
@@ -11,7 +11,7 @@
 ---
 
 1. **What is your full name, date of birth, and current address?**  
-   **Participant Answer:** "Harold Williams. Date of birth: Verified in Apricot (#82456). Current address: Bishopville / Hartsville / Sumter area, SC (Stably housed with his girlfriend)." [Verified via Reentry Consultation]
+   **Participant Answer:** "Harold Williams. Date of Birth (DOB): Pending Entry in Apricot Bio Info (Verify on State ID) (Age: Pending DOB Verification on State ID). Current address: Bishopville / Hartsville / Sumter area, SC (Stably housed with his girlfriend)." [Verified via Reentry Consultation & Bio Info]
 
 2. **What is your license status?**  
    **Participant Answer:** "Holds a valid Learner’s Permit; eligible to take road test for full Driver’s License in ~1 month." [Verified via Reentry Consultation]
@@ -489,6 +489,7 @@
 ```text
 === APRICOT REENTRY CONSULTATION, BRIEFCASE & CASE MANAGEMENT COLLATERAL RECORD ===
 Participant: Harold Williams (Apricot Record ID: #82456) | Center: Charleston | Program Track: Reentry Navigation
+Date of Birth (DOB): Pending Entry in Apricot Bio Info (Verify on State ID) | Current Age: Pending DOB Verification on State ID
 Reentry Consultation Date: 10/27/2026 | First Shift Eligible: No | Referral Source: Letter to Prison
 Reentry Navigation Case Plan Goals:
 Find employment
