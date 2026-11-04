@@ -1591,10 +1591,56 @@ app.delete('/api/interviews/:clientId', authenticateToken, requireRole('program_
     }
 });
 
+app.post('/api/interviews/archive-batch', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
+    try {
+        const clientIds = Array.isArray(req.body.clientIds) ? req.body.clientIds : [];
+        const shouldArchive = req.body.archived !== false;
+        let updatedCount = 0;
+        clientIds.forEach(rawId => {
+            const clientId = String(rawId || '').trim();
+            if (!clientId || clientId.includes('..') || clientId.includes('/')) return;
+            const flagPath = path.join(dataDir, `${clientId}_archived.flag`);
+            if (shouldArchive) {
+                fs.writeFileSync(flagPath, JSON.stringify({ archivedAt: new Date().toISOString() }), 'utf8');
+                updatedCount++;
+            } else if (fs.existsSync(flagPath)) {
+                fs.unlinkSync(flagPath);
+                updatedCount++;
+            }
+        });
+        res.json({ success: true, archived: shouldArchive, updatedCount });
+    } catch (err) {
+        console.error('Batch archive error:', err);
+        res.status(500).json({ error: 'Failed to update archive status.' });
+    }
+});
+
+app.post('/api/interviews/:clientId/archive', authenticateToken, requireRole('program_manager', 'admin', 'director', 'staff', 'facilitator'), (req, res) => {
+    try {
+        const clientId = req.params.clientId;
+        if (!clientId || clientId.includes('..') || clientId.includes('/')) return res.status(400).json({ error: 'Invalid client ID' });
+
+        const flagPath = path.join(dataDir, `${clientId}_archived.flag`);
+        const currentlyArchived = fs.existsSync(flagPath);
+        const shouldArchive = typeof req.body.archived === 'boolean' ? req.body.archived : !currentlyArchived;
+
+        if (shouldArchive) {
+            fs.writeFileSync(flagPath, JSON.stringify({ archivedAt: new Date().toISOString() }), 'utf8');
+        } else if (fs.existsSync(flagPath)) {
+            fs.unlinkSync(flagPath);
+        }
+
+        res.json({ success: true, clientId, archived: shouldArchive });
+    } catch (err) {
+        console.error('Archive interview error:', err);
+        res.status(500).json({ error: 'Failed to update archive status.' });
+    }
+});
+
 app.get('/api/interviews', (req, res) => {
     try {
         const files = fs.readdirSync(dataDir);
-        const SUFFIXES = ['_draft_scoring_form', '_final_scoring_form', '_final_case_brief', '_interview_guide', '_transcript.txt', '_participant_case_plan', '_criminal_history'];
+        const SUFFIXES = ['_draft_scoring_form', '_final_scoring_form', '_final_case_brief', '_interview_guide', '_transcript.txt', '_participant_case_plan', '_criminal_history', '_archived.flag'];
         const clients = {};
         files.forEach(f => {
             if (f.endsWith('.sqlite') || f.includes('.sqlite') || f.startsWith('.') || f.includes('reentry')) return;
@@ -2345,10 +2391,17 @@ app.get('/api/documents/print-all-scorings', (req, res) => {
         const files = fs.readdirSync(dataDir);
         const scoringFiles = files.filter(f => f.includes('final_scoring_form.md') || f.includes('draft_scoring_form.md'));
 
-        // Group by client and pick final over draft
+        // Group by client and pick final over draft (respecting archive filter)
+        const filterMode = req.query.filter || 'active';
+        const archivedSet = new Set(
+            files.filter(f => f.endsWith('_archived.flag')).map(f => f.replace(/_archived\.flag$/, ''))
+        );
         const clientScorings = {};
         scoringFiles.forEach(f => {
             const clientId = f.replace(/_(final|draft)_scoring_form\.md$/, '');
+            const isArchived = archivedSet.has(clientId);
+            if (filterMode === 'active' && isArchived) return;
+            if (filterMode === 'archived' && !isArchived) return;
             if (f.includes('final') || !clientScorings[clientId]) {
                 clientScorings[clientId] = f;
             }

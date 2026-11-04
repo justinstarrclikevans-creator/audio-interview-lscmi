@@ -2886,21 +2886,108 @@ async function savePersonalTriggerSituations() {
 // -------------------------------------------------------------
 // DRAFT SCORING PREVIEWS & SUPERVISOR REVIEW (PHASE 2)
 // -------------------------------------------------------------
+window.interviewArchiveFilter = 'active'; // 'active' | 'archived' | 'all'
+
+window.setInterviewArchiveFilter = function(mode) {
+    window.interviewArchiveFilter = mode || 'active';
+    const clients = currentInterviewsData || window.latestSupervisorInterviews || {};
+    const activeParticipants = window.latestSupervisorActiveParticipants || [];
+    const list = document.getElementById('pm-drafts-list');
+    const supList = document.getElementById('sup-all-interview-scoring-container');
+    if (list) list.innerHTML = buildInterviewScoringCardsHtml(clients, activeParticipants, 'assign-scoring');
+    if (supList) supList.innerHTML = buildInterviewScoringCardsHtml(clients, activeParticipants, 'sup-assign-scoring');
+};
+
+window.toggleArchiveInterview = async function(clientId, cleanName, shouldArchive) {
+    const token = localStorage.getItem('fs_token');
+    try {
+        const res = await fetch(`/api/interviews/${encodeURIComponent(clientId)}/archive`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ archived: shouldArchive })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to update archive status.');
+        await loadPmDrafts();
+    } catch (err) {
+        alert('Archive error: ' + err.message);
+    }
+};
+
+window.batchArchiveInterviews = async function(clientIds, shouldArchive, labelText) {
+    if (!Array.isArray(clientIds) || clientIds.length === 0) return;
+    const actionWord = shouldArchive ? 'Archive' : 'Restore';
+    if (!confirm(`${actionWord} ${clientIds.length} ${labelText || 'interview(s)'}? You can access or restore archived interviews anytime from the Archived tab.`)) return;
+
+    const token = localStorage.getItem('fs_token');
+    try {
+        const res = await fetch('/api/interviews/archive-batch', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ clientIds, archived: shouldArchive })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Batch archive failed.');
+        await loadPmDrafts();
+    } catch (err) {
+        alert('Batch archive error: ' + err.message);
+    }
+};
+
 function buildInterviewScoringCardsHtml(clients, activeParticipants = [], selectIdPrefix = 'assign-scoring') {
-    const clientIds = Object.keys(clients || {});
-    if (clientIds.length === 0) {
+    const allClientIds = Object.keys(clients || {});
+    if (allClientIds.length === 0) {
         return '<p class="text-slate">No interview records found in data directory.</p>';
     }
+
+    const filterMode = window.interviewArchiveFilter || 'active';
+    const isClientArchived = (id) => (clients[id] || []).some(f => f.endsWith('_archived.flag'));
+    const isClientApproved = (id) => (clients[id] || []).some(f => f.includes('final_scoring_form.md'));
+
+    const activeClientIds = allClientIds.filter(id => !isClientArchived(id));
+    const archivedClientIds = allClientIds.filter(id => isClientArchived(id));
+    const approvedActiveIds = activeClientIds.filter(id => isClientApproved(id));
+
+    const visibleClientIds = filterMode === 'archived'
+        ? archivedClientIds
+        : (filterMode === 'all' ? allClientIds : activeClientIds);
 
     let html = `
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; background: #f0fdfa; border: 1.5px solid #99f6e4; padding: 14px 18px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
             <div>
                 <strong style="color: #0f766e; font-size: 14.5px;">🖨️ Standardized LS/CMI Scoring & Documentation Center</strong>
                 <div style="font-size: 12px; color: #334155; margin-top: 2px;">Print or inspect completed standardized scorings, comprehensive 158-question interview guides, and complete verbatim transcripts.</div>
+                <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-top: 10px;">
+                    <button class="btn ${filterMode === 'active' ? 'btn-primary' : 'btn-outline'}" style="font-size: 11.5px; padding: 4px 11px; ${filterMode === 'active' ? 'background: #0f766e; border-color: #0f766e;' : 'background: white;'}" onclick="setInterviewArchiveFilter('active')">
+                        📂 Active Interviews (${activeClientIds.length})
+                    </button>
+                    <button class="btn ${filterMode === 'archived' ? 'btn-primary' : 'btn-outline'}" style="font-size: 11.5px; padding: 4px 11px; ${filterMode === 'archived' ? 'background: #475569; border-color: #475569;' : 'background: white;'}" onclick="setInterviewArchiveFilter('archived')">
+                        📦 Archived (${archivedClientIds.length})
+                    </button>
+                    <button class="btn ${filterMode === 'all' ? 'btn-primary' : 'btn-outline'}" style="font-size: 11.5px; padding: 4px 11px; ${filterMode === 'all' ? 'background: #0284c7; border-color: #0284c7;' : 'background: white;'}" onclick="setInterviewArchiveFilter('all')">
+                        🗂️ All (${allClientIds.length})
+                    </button>
+                    ${filterMode === 'active' && approvedActiveIds.length > 0 ? `
+                        <button class="btn btn-outline" style="font-size: 11.5px; padding: 4px 11px; background: white; color: #475569; border-color: #cbd5e1; margin-left: 4px;" onclick='batchArchiveInterviews(${JSON.stringify(approvedActiveIds)}, true, "completed & approved interview(s)")' title="Move all approved & finalized interviews to the Archive tab">
+                            📦 Archive Approved (${approvedActiveIds.length})
+                        </button>
+                    ` : ''}
+                    ${filterMode === 'archived' && archivedClientIds.length > 0 ? `
+                        <button class="btn btn-outline" style="font-size: 11.5px; padding: 4px 11px; background: white; color: #0284c7; border-color: #7dd3fc; margin-left: 4px;" onclick='batchArchiveInterviews(${JSON.stringify(archivedClientIds)}, false, "archived interview(s)")' title="Restore all archived interviews back to Active">
+                            📤 Restore All (${archivedClientIds.length})
+                        </button>
+                    ` : ''}
+                </div>
             </div>
             <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
-                <button class="btn btn-primary" style="background: #0f766e; border-color: #0f766e; font-size: 12px; padding: 7px 16px; font-weight: 700; box-shadow: 0 1px 2px rgba(0,0,0,0.08);" onclick="window.open('/api/documents/print-all-scorings?autoprint=true', '_blank')">
-                    🖨️ Batch Print All Participant Scorings
+                <button class="btn btn-primary" style="background: #0f766e; border-color: #0f766e; font-size: 12px; padding: 7px 16px; font-weight: 700; box-shadow: 0 1px 2px rgba(0,0,0,0.08);" onclick="window.open('/api/documents/print-all-scorings?autoprint=true&filter=${encodeURIComponent(filterMode)}', '_blank')">
+                    🖨️ Batch Print ${filterMode === 'archived' ? 'Archived' : (filterMode === 'all' ? 'All' : 'Active')} Scorings
                 </button>
                 <button class="btn btn-outline" style="font-size: 12px; padding: 7px 12px; background: white;" onclick="previewDocument('LS_CMI_Scoring_Guide.md')">
                     📖 Scoring Guide
@@ -2910,12 +2997,25 @@ function buildInterviewScoringCardsHtml(clients, activeParticipants = [], select
         <div style="display: flex; flex-direction: column; gap: 12px;">
     `;
 
+    if (visibleClientIds.length === 0) {
+        html += `
+            <div style="background: #ffffff; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 28px; text-align: center; color: var(--slate);">
+                ${filterMode === 'archived'
+                    ? '📦 No archived interviews yet. Click <strong>📦 Archive</strong> on any interview card to store it here for future reference.'
+                    : '📂 All interviews are currently archived. Switch to the <strong>📦 Archived</strong> tab above to view or restore them.'}
+            </div>
+        </div>`;
+        return html;
+    }
+
     const participantOptions = (Array.isArray(activeParticipants) ? activeParticipants : []).map(p => 
         `<option value="${escapeHtml(p.name)}">${escapeHtml(p.name)} (${escapeHtml(p.location || 'Unknown')})</option>`
     ).join('');
 
-    clientIds.forEach(clientId => {
-        const files = clients[clientId] || [];
+    visibleClientIds.forEach(clientId => {
+        const rawFiles = clients[clientId] || [];
+        const isArchived = rawFiles.some(f => f.endsWith('_archived.flag'));
+        const files = rawFiles.filter(f => !f.endsWith('_archived.flag'));
         const finalScoringFile = files.find(f => f.includes('final_scoring_form.md'));
         const draftScoringFile = files.find(f => f.includes('draft_scoring_form.md'));
         const completedScoringFile = finalScoringFile || draftScoringFile;
@@ -2938,21 +3038,27 @@ function buildInterviewScoringCardsHtml(clients, activeParticipants = [], select
         </div>`;
 
         html += `
-            <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 8px; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <div style="background: ${isArchived ? '#f8fafc' : '#ffffff'}; border: 1px solid var(--border); border-radius: 8px; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
                     <div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                             <strong style="font-size: 16px; color: var(--primary);">${cleanName}</strong>
                             <span class="badge ${finalScoringFile ? 'badge-green' : (hasDraft ? 'badge-pending' : 'badge-slate')}">
                                 ${finalScoringFile ? '✅ Scoring Completed & Approved' : (hasDraft ? '⏳ Phase 1 Draft Ready for Review' : 'Interview Recorded')}
                             </span>
+                            ${isArchived ? `<span class="badge" style="background: #e2e8f0; color: #334155; border: 1px solid #cbd5e1;">📦 Archived</span>` : ''}
                         </div>
                         <div style="font-size: 11px; color: var(--slate); margin-top: 3px;">ID: ${clientId} • Files: ${files.length} documents</div>
                         ${assignDropdownHtml}
                     </div>
 
                     <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
-                        <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: var(--danger); border-color: #fca5a5;" onclick="deleteInterviewRecord('${clientId}', '${cleanName}')" title="Delete this person's scoring eval records">🗑️ Delete</button>
+                        ${isArchived ? `
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: #0284c7; border-color: #7dd3fc; background: #f0f9ff; font-weight: 700;" onclick="toggleArchiveInterview('${clientId}', '${cleanName}', false)" title="Restore this interview back to the Active list">📤 Restore</button>
+                        ` : `
+                            <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: #475569; border-color: #cbd5e1; background: #f8fafc;" onclick="toggleArchiveInterview('${clientId}', '${cleanName}', true)" title="Archive this interview in case you need it later">📦 Archive</button>
+                        `}
+                        <button class="btn btn-outline" style="font-size: 12px; padding: 6px 10px; color: var(--danger); border-color: #fca5a5;" onclick="deleteInterviewRecord('${clientId}', '${cleanName}')" title="Permanently delete this person's scoring eval records">🗑️ Delete</button>
                         ${completedScoringFile ? `
                             <button class="btn btn-primary" style="font-size: 12px; padding: 6px 14px; background: #0f766e; border-color: #0f766e; font-weight: 700; display: inline-flex; align-items: center; gap: 5px;" onclick="printActiveDraftDocument('${completedScoringFile}')" title="Print Official LS/CMI Scoring Form">
                                 🖨️ Print Completed Scoring
