@@ -1774,6 +1774,8 @@ function buildPrintableDocumentHtml(filename, content, isBatch = false) {
     const isGuide = filename.includes('interview_guide');
     const isCriminal = filename.includes('criminal_history');
     const isFinal = filename.includes('final');
+    const isBrief = filename.includes('case_brief') || filename.includes('final_brief') || filename.includes('pm_brief');
+    const isActionPlan = filename.includes('participant_case_plan') || filename.includes('participant_action_guide') || filename.includes('action_plan') || filename.includes('action_guide') || filename.includes('fresh_start');
 
     // Extract participant and location from filename or header
     let clientName = 'Participant';
@@ -2169,6 +2171,152 @@ function buildPrintableDocumentHtml(filename, content, isBatch = false) {
                 </div>
             </div>
         `;
+    } else if (isBrief) {
+        // Executive formatting for Program Manager Case Briefs
+        let cleanedContent = content;
+        cleanedContent = cleanedContent.replace(/^#\s*(?:CASE\s*MANAGEMENT\s*BRIEF|Case\s*Brief|PM\s*Case\s*Brief)[^\n]*\n+/i, '');
+        cleanedContent = cleanedContent.replace(/^[*_]{2}(?:CASE\s*MANAGEMENT\s*BRIEF|Case\s*Brief)[*_]{2}\s*\n+/i, '');
+        cleanedContent = cleanedContent.replace(/^---\s*\n+/m, '');
+        // Turn bold numbered section headers like **1. Risk Profile** into clean h2 markdown
+        cleanedContent = cleanedContent.replace(/^[*_]{2}(\d+\.\s+[^*\n]+)[*_]{2}\s*$/gm, '## $1');
+
+        const todayStr = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+        let renderedMarkdown = typeof marked !== 'undefined' ? marked.parse(cleanedContent.trim().replace(/^\s*(\d+)\.\s+/gm, '**$1)** ')) : cleanedContent.replace(/\n/g, '<br>');
+
+        bodyHtml = `
+            <div class="case-brief-report-container" style="page-break-after: auto; margin-bottom: 24px; padding: 0 8px; box-sizing: border-box;">
+                <!-- Official Turn90 Case Brief Header -->
+                <div style="border-bottom: 3px solid #0f766e; padding-bottom: 12px; margin-bottom: 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; flex-wrap: wrap;">
+                        <div>
+                            <div style="font-size: 11px; font-weight: 800; color: #0f766e; letter-spacing: 1px; text-transform: uppercase;">
+                                TURN90 • FIRST SHIFT REENTRY INITIATIVE
+                            </div>
+                            <h1 style="margin: 4px 0 2px 0; font-size: 20pt; color: #0f172a; border-bottom: none; padding: 0;">
+                                Case Management Assessment Brief
+                            </h1>
+                            <div style="font-size: 11pt; color: #475569; font-weight: 500;">
+                                Executive Synthesis: Risk Profile, Behavioral Indicators, Stability Factors & Legal Constraints
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <span style="display: inline-block; padding: 6px 12px; border-radius: 4px; font-size: 11pt; font-weight: 800; background: #f0fdf4; color: #166534; border: 1.5px solid #86efac;">
+                                📋 PM CASE BRIEF
+                            </span>
+                            <div style="font-size: 9.5pt; color: #64748b; margin-top: 4px;">Date: ${todayStr}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Participant Metadata Grid -->
+                <div style="display: grid; grid-template-columns: 1.2fr 1fr 0.8fr 1fr 1fr; gap: 10px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px; margin-bottom: 18px; font-size: 10pt;">
+                    <div><span style="color: #64748b; font-size: 9pt; display: block; text-transform: uppercase; font-weight: 700;">Participant Name</span><strong style="font-size: 11.5pt; color: #0f172a;">${clientName}</strong></div>
+                    <div><span style="color: #64748b; font-size: 9pt; display: block; text-transform: uppercase; font-weight: 700;">Date of Birth (DOB)</span><strong style="font-size: 11pt; color: #0f766e;">${participantDob}</strong></div>
+                    <div><span style="color: #64748b; font-size: 9pt; display: block; text-transform: uppercase; font-weight: 700;">Current Age</span><strong style="font-size: 11pt; color: #0f766e;">${participantAge}</strong></div>
+                    <div><span style="color: #64748b; font-size: 9pt; display: block; text-transform: uppercase; font-weight: 700;">Program Center</span><strong>Turn90 ${location}</strong></div>
+                    <div><span style="color: #64748b; font-size: 9pt; display: block; text-transform: uppercase; font-weight: 700;">Assessment Team</span><strong>Reentry Navigation</strong></div>
+                </div>
+
+                <!-- Main Content Body with Safe Margins & Typography -->
+                <div class="brief-body" style="font-size: 10pt; line-height: 1.6; padding: 8px 12px; box-sizing: border-box;">
+                    ${renderedMarkdown}
+                </div>
+
+                <!-- Case Management Review & Verification Block -->
+                <div style="margin-top: 36px; padding-top: 20px; border-top: 2px solid #cbd5e1; page-break-inside: avoid;">
+                    <div style="font-size: 10.5pt; font-weight: 700; color: #0f172a; margin-bottom: 16px;">
+                        CASE MANAGEMENT RECORD REVIEW & DISPOSITION
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                        <div>
+                            <div style="border-bottom: 1.5px solid #0f172a; height: 35px; margin-bottom: 6px;"></div>
+                            <div style="font-size: 10pt; font-weight: 700; color: #0f172a;">Case Manager / Reentry Navigator Signature</div>
+                            <div style="font-size: 9pt; color: #64748b; margin-top: 2px;">Printed Name: _____________________________________</div>
+                            <div style="font-size: 9pt; color: #64748b; margin-top: 2px;">Date: ________________________</div>
+                        </div>
+                        <div>
+                            <div style="border-bottom: 1.5px solid #0f172a; height: 35px; margin-bottom: 6px;"></div>
+                            <div style="font-size: 10pt; font-weight: 700; color: #0f172a;">Program Manager / Leadership Review</div>
+                            <div style="font-size: 9pt; color: #64748b; margin-top: 2px;">Printed Name: _____________________________________</div>
+                            <div style="font-size: 9pt; color: #64748b; margin-top: 2px;">Date: ________________________</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    } else if (isActionPlan) {
+        // Executive formatting for Participant Fresh Start Action Plans
+        let cleanedContent = content;
+        cleanedContent = cleanedContent.replace(/^#\s*(?:My\s*Fresh\s*Start\s*Action|Participant\s*Action\s*Plan|Action\s*&\s*Resource\s*Guide|Action\s*Plan|First\s*Shift\s*Action\s*Plan)[^\n]*\n+/i, '');
+        cleanedContent = cleanedContent.replace(/^[*_]{2}(?:Welcome[^*]+)[*_]{2}\s*/i, '');
+        cleanedContent = cleanedContent.trim();
+
+        const todayStr = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+        let renderedMarkdown = typeof marked !== 'undefined' ? marked.parse(cleanedContent.replace(/^\s*(\d+)\.\s+/gm, '**$1)** ')) : cleanedContent.replace(/\n/g, '<br>');
+
+        bodyHtml = `
+            <div class="action-plan-report-container" style="page-break-after: auto; margin-bottom: 24px; padding: 0 8px; box-sizing: border-box;">
+                <!-- Official Turn90 Action Plan Header -->
+                <div style="border-bottom: 3px solid #16a34a; padding-bottom: 12px; margin-bottom: 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; flex-wrap: wrap;">
+                        <div>
+                            <div style="font-size: 11px; font-weight: 800; color: #16a34a; letter-spacing: 1px; text-transform: uppercase;">
+                                TURN90 • FIRST SHIFT REENTRY INITIATIVE
+                            </div>
+                            <h1 style="margin: 4px 0 2px 0; font-size: 20pt; color: #0f172a; border-bottom: none; padding: 0;">
+                                Participant Fresh Start Action & Resource Plan
+                            </h1>
+                            <div style="font-size: 11pt; color: #475569; font-weight: 500;">
+                                Personalized Career Pathways, Essential Community Resources & Action Milestones
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <span style="display: inline-block; padding: 6px 12px; border-radius: 4px; font-size: 11pt; font-weight: 800; background: #f0fdf4; color: #166534; border: 1.5px solid #86efac;">
+                                🎯 ACTION PLAN
+                            </span>
+                            <div style="font-size: 9.5pt; color: #64748b; margin-top: 4px;">Date: ${todayStr}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Participant Metadata Grid -->
+                <div style="display: grid; grid-template-columns: 1.3fr 1fr 1fr 1fr; gap: 10px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px; margin-bottom: 18px; font-size: 10pt;">
+                    <div><span style="color: #64748b; font-size: 9pt; display: block; text-transform: uppercase; font-weight: 700;">Participant Name</span><strong style="font-size: 11.5pt; color: #0f172a;">${clientName}</strong></div>
+                    <div><span style="color: #64748b; font-size: 9pt; display: block; text-transform: uppercase; font-weight: 700;">Program Center</span><strong>Turn90 ${location}</strong></div>
+                    <div><span style="color: #64748b; font-size: 9pt; display: block; text-transform: uppercase; font-weight: 700;">Focus Area</span><strong style="color: #16a34a;">Career & Community Stabilization</strong></div>
+                    <div><span style="color: #64748b; font-size: 9pt; display: block; text-transform: uppercase; font-weight: 700;">Case Management</span><strong>Reentry Navigation Team</strong></div>
+                </div>
+
+                <!-- Main Action Plan Body with Safe Margins & Typography -->
+                <div class="action-plan-body" style="font-size: 10pt; line-height: 1.6; padding: 8px 12px; box-sizing: border-box;">
+                    ${renderedMarkdown}
+                </div>
+
+                <!-- Participant Commitment & Agreement Block -->
+                <div style="margin-top: 36px; padding-top: 20px; border-top: 2px solid #cbd5e1; page-break-inside: avoid;">
+                    <div style="font-size: 10.5pt; font-weight: 700; color: #0f172a; margin-bottom: 8px;">
+                        PARTICIPANT COMMITMENT & CASE MANAGEMENT AGREEMENT
+                    </div>
+                    <p style="font-size: 9.5pt; color: #475569; margin-bottom: 18px; line-height: 1.5;">
+                        I have reviewed this Action Plan with my Turn90 Case Manager. I understand the steps outlined above and commit to taking proactive action toward my housing, legal, healthcare, and employment goals to maintain my long-term freedom and success.
+                    </p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                        <div>
+                            <div style="border-bottom: 1.5px solid #0f172a; height: 35px; margin-bottom: 6px;"></div>
+                            <div style="font-size: 10pt; font-weight: 700; color: #0f172a;">Participant Signature</div>
+                            <div style="font-size: 9pt; color: #64748b; margin-top: 2px;">Printed Name: <strong>${clientName}</strong></div>
+                            <div style="font-size: 9pt; color: #64748b; margin-top: 2px;">Date: ________________________</div>
+                        </div>
+                        <div>
+                            <div style="border-bottom: 1.5px solid #0f172a; height: 35px; margin-bottom: 6px;"></div>
+                            <div style="font-size: 10pt; font-weight: 700; color: #0f172a;">Reentry Navigator / Case Manager Signature</div>
+                            <div style="font-size: 9pt; color: #64748b; margin-top: 2px;">Printed Name: _____________________________________</div>
+                            <div style="font-size: 9pt; color: #64748b; margin-top: 2px;">Date: ________________________</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
     } else {
         const rendered = typeof marked !== 'undefined' ? marked.parse(content.replace(/^\s*(\d+)\.\s+/gm, '**$1)** ')) : content.replace(/\n/g, '<br>');
         bodyHtml = `
@@ -2177,7 +2325,7 @@ function buildPrintableDocumentHtml(filename, content, isBatch = false) {
                 <h1 style="margin: 4px 0 2px 0; font-size: 18pt; color: #0f172a;">${cleanFilename.replace(/_/g, ' ')}</h1>
                 <div style="font-size: 10pt; color: #64748b;">Participant: <strong>${clientName}</strong> • Location: <strong>${location}</strong></div>
             </div>
-            <div style="font-size: 10pt; line-height: 1.6;">${rendered}</div>
+            <div style="font-size: 10pt; line-height: 1.6; padding: 4px 6px;">${rendered}</div>
         `;
     }
 
@@ -2193,8 +2341,8 @@ function buildPrintablePageHtml(title, docHtml, autoprint = false) {
     <title>Print: ${title}</title>
     <style>
         @page {
-            size: letter;
-            margin: 0.5in 0.6in 0.5in 0.6in;
+            size: letter portrait;
+            margin: 0.75in 0.75in 0.75in 0.75in;
         }
         * {
             box-sizing: border-box;
@@ -2202,11 +2350,11 @@ function buildPrintablePageHtml(title, docHtml, autoprint = false) {
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             font-size: 10.5pt;
-            line-height: 1.5;
+            line-height: 1.55;
             color: #0f172a;
-            background: #ffffff;
+            background: #f1f5f9;
             margin: 0;
-            padding: 24px;
+            padding: 24px 20px;
         }
         .print-toolbar {
             position: sticky;
@@ -2252,8 +2400,14 @@ function buildPrintablePageHtml(title, docHtml, autoprint = false) {
             border-color: #cbd5e1;
         }
         .doc-container {
-            max-width: 850px;
-            margin: 0 auto;
+            max-width: 840px;
+            margin: 16px auto 40px auto;
+            background: #ffffff;
+            padding: 40px 48px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+            border: 1px solid #e2e8f0;
+            box-sizing: border-box;
         }
         h1 {
             font-size: 16pt;
@@ -2330,6 +2484,71 @@ function buildPrintablePageHtml(title, docHtml, autoprint = false) {
             border-top: 1px solid #cbd5e1;
             margin: 16px 0;
         }
+        /* Brief and Action Plan Specific Styles */
+        .brief-body, .action-plan-body {
+            font-size: 10pt;
+            line-height: 1.6;
+            color: #1e293b;
+        }
+        .brief-body h2 {
+            font-size: 12.5pt;
+            color: #0f766e;
+            border-bottom: 2px solid #0f766e;
+            padding-bottom: 4px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            page-break-after: avoid;
+        }
+        .action-plan-body h2 {
+            font-size: 12.5pt;
+            color: #15803d;
+            border-bottom: 2px solid #16a34a;
+            padding-bottom: 4px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            page-break-after: avoid;
+        }
+        .brief-body h3, .action-plan-body h3 {
+            font-size: 11pt;
+            font-weight: 700;
+            color: #0369a1;
+            background: #f0f9ff;
+            border-left: 4px solid #0284c7;
+            padding: 4px 10px;
+            border-radius: 0 4px 4px 0;
+            margin-top: 14px;
+            margin-bottom: 6px;
+            page-break-after: avoid;
+        }
+        .action-plan-body h3 {
+            color: #166534;
+            background: #f0fdf4;
+            border-left-color: #16a34a;
+        }
+        .brief-body ul, .brief-body ol, .action-plan-body ul, .action-plan-body ol {
+            padding-left: 22px;
+            margin: 6px 0 12px 0;
+        }
+        .brief-body li, .action-plan-body li {
+            margin-bottom: 4px;
+            color: #334155;
+            line-height: 1.55;
+        }
+        .brief-body p, .action-plan-body p {
+            margin: 6px 0 10px 0;
+            line-height: 1.6;
+        }
+        .brief-body blockquote, .action-plan-body blockquote {
+            border-left: 3px solid #0f766e;
+            margin: 10px 0;
+            padding: 8px 14px;
+            background: #f8fafc;
+            border-radius: 0 4px 4px 0;
+        }
+        .action-plan-body blockquote {
+            border-left-color: #16a34a;
+            background: #f0fdf4;
+        }
         /* Detailed Scoring Body Styling to match top scorecard */
         .detailed-scoring-body {
             font-size: 10pt;
@@ -2369,17 +2588,39 @@ function buildPrintablePageHtml(title, docHtml, autoprint = false) {
             color: #0f172a;
         }
         @media print {
+            @page {
+                size: letter portrait;
+                margin: 0.75in 0.75in 0.75in 0.75in;
+            }
+            html, body {
+                margin: 0 !important;
+                padding: 0 !important;
+                background: #ffffff !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
             .print-toolbar {
                 display: none !important;
-            }
-            body {
-                padding: 0 !important;
-                background: white !important;
             }
             .doc-container {
                 max-width: 100% !important;
                 width: 100% !important;
-                margin: 0 !important;
+                margin: 0 auto !important;
+                padding: 0.35in 0.45in !important;
+                border: none !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                background: transparent !important;
+                box-sizing: border-box !important;
+            }
+            table {
+                width: 100% !important;
+                max-width: 100% !important;
+                page-break-inside: auto !important;
+            }
+            th, td {
+                word-break: break-word !important;
+                overflow-wrap: break-word !important;
             }
             th {
                 background-color: #f1f5f9 !important;
@@ -2484,15 +2725,15 @@ app.get('/api/documents/print-all-scorings', (req, res) => {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Batch Print: Completed Participant Scorings (${selectedFiles.length})</title>
     <style>
-        @page { size: letter; margin: 0.5in 0.6in 0.5in 0.6in; }
+        @page { size: letter portrait; margin: 0.75in 0.75in 0.75in 0.75in; }
         * { box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10.5pt; line-height: 1.5; color: #0f172a; margin: 0; padding: 24px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10.5pt; line-height: 1.5; color: #0f172a; margin: 0; padding: 24px 20px; background: #f1f5f9; }
         .print-toolbar { position: sticky; top: 0; background: #1e293b; color: white; padding: 10px 18px; display: flex; justify-content: space-between; align-items: center; border-radius: 6px; margin-bottom: 20px; z-index: 1000; }
         .print-btn { background: #0f766e; color: white; border: none; padding: 8px 18px; font-size: 13px; font-weight: 700; border-radius: 4px; cursor: pointer; }
         .close-btn { background: transparent; color: #94a3b8; border: 1px solid #475569; padding: 6px 12px; font-size: 12px; border-radius: 4px; cursor: pointer; }
-        .doc-container { max-width: 850px; margin: 0 auto; }
+        .doc-container { max-width: 850px; margin: 16px auto 40px auto; background: #ffffff; padding: 40px 48px; border-radius: 8px; box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08); border: 1px solid #e2e8f0; box-sizing: border-box; }
         table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 9.5pt; }
-        th, td { border: 1px solid #cbd5e1; padding: 6px 8px; text-align: left; }
+        th, td { border: 1px solid #cbd5e1; padding: 6px 8px; text-align: left; word-break: break-word; }
         th { background-color: #f1f5f9 !important; font-weight: 700; -webkit-print-color-adjust: exact; }
         .detailed-scoring-body { font-size: 10pt; line-height: 1.55; color: #1e293b; }
         .detailed-scoring-body h2 { font-size: 13pt; color: #0f766e; border-bottom: 2px solid #0f766e; padding-bottom: 5px; margin-top: 24px; margin-bottom: 12px; page-break-after: avoid; }
@@ -2501,9 +2742,10 @@ app.get('/api/documents/print-all-scorings', (req, res) => {
         .detailed-scoring-body li { margin-bottom: 4px; color: #334155; }
         .detailed-scoring-body strong { color: #0f172a; }
         @media print {
+            @page { size: letter portrait; margin: 0.75in 0.75in 0.75in 0.75in; }
+            html, body { margin: 0 !important; padding: 0 !important; background: #ffffff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             .print-toolbar { display: none !important; }
-            body { padding: 0 !important; }
-            .doc-container { max-width: 100% !important; width: 100% !important; margin: 0 !important; }
+            .doc-container { max-width: 100% !important; width: 100% !important; margin: 0 auto !important; padding: 0.35in 0.45in !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; background: transparent !important; box-sizing: border-box !important; }
         }
     </style>
 </head>

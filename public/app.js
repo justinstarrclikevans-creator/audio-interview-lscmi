@@ -2565,8 +2565,10 @@ function printStaffCasePlan() {
                 ul, ol { padding-left: 24px; }
                 li { margin-bottom: 4px; }
                 .header-meta { border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 24px; }
+                @page { size: letter portrait; margin: 0.75in 0.75in; }
                 @media print {
-                    body { padding: 0; }
+                    @page { size: letter portrait; margin: 0.75in 0.75in; }
+                    body { padding: 0.4in 0.5in !important; background: #ffffff !important; }
                 }
             </style>
         </head>
@@ -3206,6 +3208,17 @@ function printActiveDraftDocument(targetFilename) {
     }
     const frame = document.getElementById('draft-print-frame');
     if (frame) {
+        frame.onload = function() {
+            try {
+                if (frame.contentWindow) {
+                    frame.contentWindow.focus();
+                    frame.contentWindow.print();
+                }
+            } catch (e) {
+                console.warn("Could not print iframe directly, falling back to new window", e);
+                window.open(`/api/documents/print/${encodeURIComponent(file)}?autoprint=true`, '_blank');
+            }
+        };
         frame.src = `/api/documents/print/${encodeURIComponent(file)}?autoprint=true`;
     } else {
         const printWin = window.open(`/api/documents/print/${encodeURIComponent(file)}?autoprint=true`, '_blank');

@@ -801,8 +801,8 @@ body {
 
 @media print {
     @page {
-        size: letter;
-        margin: 0.5in 0.6in;
+        size: letter portrait;
+        margin: 0.75in 0.75in 0.75in 0.75in;
     }
 
     /* Set clean background and high contrast text */
@@ -810,7 +810,9 @@ body {
         background: #ffffff !important;
         color: #000000 !important;
         font-size: 11pt !important;
-        line-height: 1.45 !important;
+        line-height: 1.5 !important;
+        margin: 0 !important;
+        padding: 0 !important;
     }
 
     /* Modal Draft Viewer Print Mode */
@@ -827,11 +829,12 @@ body {
         top: 0 !important;
         width: 100% !important;
         height: auto !important;
-        background: white !important;
-        padding: 0 !important;
-        margin: 0 !important;
+        background: #ffffff !important;
+        padding: 0.4in 0.5in !important;
+        margin: 0 auto !important;
         display: block !important;
         box-shadow: none !important;
+        box-sizing: border-box !important;
     }
     body:has(#modal-draft-viewer:not(.hidden)) #modal-draft-viewer .modal-content {
         max-width: 100% !important;
@@ -840,11 +843,13 @@ body {
         border: none !important;
         padding: 0 !important;
         margin: 0 !important;
+        box-sizing: border-box !important;
     }
     body:has(#modal-draft-viewer:not(.hidden)) #draft-viewer-body {
         max-height: none !important;
         overflow: visible !important;
-        padding: 0 !important;
+        padding: 0.1in 0.15in !important;
+        box-sizing: border-box !important;
     }
     body:has(#modal-draft-viewer:not(.hidden)) .modal-header,
     body:has(#modal-draft-viewer:not(.hidden)) .modal-footer,
@@ -853,6 +858,50 @@ body {
     body:has(#modal-draft-viewer:not(.hidden)) #btn-draft-print-top,
     body:has(#modal-draft-viewer:not(.hidden)) #btn-draft-pdf-top,
     body:has(#modal-draft-viewer:not(.hidden)) #btn-draft-print-tab {
+        display: none !important;
+    }
+
+    /* Modal Participant Case Plan Print Mode */
+    body:has(#modal-participant-case-plan:not(.hidden)) * {
+        visibility: hidden;
+    }
+    body:has(#modal-participant-case-plan:not(.hidden)) #modal-participant-case-plan,
+    body:has(#modal-participant-case-plan:not(.hidden)) #modal-participant-case-plan * {
+        visibility: visible;
+    }
+    body:has(#modal-participant-case-plan:not(.hidden)) #modal-participant-case-plan {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+        background: #ffffff !important;
+        padding: 0.4in 0.5in !important;
+        margin: 0 auto !important;
+        display: block !important;
+        box-shadow: none !important;
+        box-sizing: border-box !important;
+    }
+    body:has(#modal-participant-case-plan:not(.hidden)) #modal-participant-case-plan .modal-content {
+        max-width: 100% !important;
+        width: 100% !important;
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+    }
+    body:has(#modal-participant-case-plan:not(.hidden)) #participant-case-plan-body {
+        max-height: none !important;
+        overflow: visible !important;
+        padding: 0.1in 0.15in !important;
+        box-sizing: border-box !important;
+    }
+    body:has(#modal-participant-case-plan:not(.hidden)) .modal-header,
+    body:has(#modal-participant-case-plan:not(.hidden)) .modal-footer,
+    body:has(#modal-participant-case-plan:not(.hidden)) .modal-close,
+    body:has(#modal-participant-case-plan:not(.hidden)) #btn-save-triggers,
+    body:has(#modal-participant-case-plan:not(.hidden)) #triggers-save-status {
         display: none !important;
     }
 

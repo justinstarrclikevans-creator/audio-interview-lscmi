@@ -142,8 +142,8 @@ function generateCasePlanHtml(data, options = {}) {
     <title>Living Case Plan - ${escapeHtml(client.first_name)} ${escapeHtml(client.last_name)} | Turn90</title>
     <style>
         @page {
-            size: letter;
-            margin: 0.4in 0.5in;
+            size: letter portrait;
+            margin: 0.75in 0.75in;
         }
         * {
             box-sizing: border-box;
@@ -621,19 +621,29 @@ function generateCasePlanHtml(data, options = {}) {
         }
 
         @media print {
+            @page {
+                size: letter portrait;
+                margin: 0.75in 0.75in;
+            }
             .no-print {
                 display: none !important;
             }
             body {
                 background: #ffffff !important;
+                margin: 0 !important;
+                padding: 0 !important;
                 font-size: 9.5pt;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
             .plan-sheet {
                 box-shadow: none !important;
                 border: none !important;
-                margin: 0 !important;
-                padding: 0 !important;
+                margin: 0 auto !important;
+                padding: 0.35in 0.45in !important;
                 max-width: 100% !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
             }
             .signature-section {
                 page-break-inside: avoid;
@@ -956,7 +966,7 @@ function generateApricotCasePlanHtml(evalContext, options = {}) {
     <meta charset="UTF-8">
     <title>Turn90 Case Plan — ${escapeHtml(evalContext.name)} (#${escapeHtml(evalContext.recordId)})</title>
     <style>
-        @page { size: letter portrait; margin: 0.5in; }
+        @page { size: letter portrait; margin: 0.75in 0.75in; }
         * { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -1081,9 +1091,10 @@ function generateApricotCasePlanHtml(evalContext, options = {}) {
         }
         .sig-line { border-bottom: 1px solid #0f172a; height: 28px; margin-bottom: 5px; }
         @media print {
-            body { background: #fff; }
+            @page { size: letter portrait; margin: 0.75in 0.75in; }
+            body { background: #ffffff !important; margin: 0 !important; padding: 0 !important; }
             .no-print { display: none !important; }
-            .plan-sheet { box-shadow: none; margin: 0; padding: 0; max-width: 100%; }
+            .plan-sheet { box-shadow: none !important; border: none !important; margin: 0 auto !important; padding: 0.35in 0.45in !important; max-width: 100% !important; width: 100% !important; box-sizing: border-box !important; }
         }
     </style>
 </head>
