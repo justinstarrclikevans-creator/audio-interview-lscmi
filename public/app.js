@@ -2565,10 +2565,10 @@ function printStaffCasePlan() {
                 ul, ol { padding-left: 24px; }
                 li { margin-bottom: 4px; }
                 .header-meta { border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 24px; }
-                @page { size: letter portrait; margin: 0.75in 0.75in; }
+                @page { size: letter portrait; margin: 0.85in 0.75in; }
                 @media print {
-                    @page { size: letter portrait; margin: 0.75in 0.75in; }
-                    body { padding: 0.4in 0.5in !important; background: #ffffff !important; }
+                    @page { size: letter portrait; margin: 0.85in 0.75in; }
+                    body { padding: 0.5in 0.6in !important; background: #ffffff !important; }
                 }
             </style>
         </head>
@@ -3199,27 +3199,40 @@ async function loadPmDrafts() {
 }
 
 let currentActiveDraftFile = null;
+let isPrintingDraftDocument = false;
 
 function printActiveDraftDocument(targetFilename) {
+    if (isPrintingDraftDocument) {
+        console.warn("Print already in progress, debouncing duplicate print call.");
+        return;
+    }
     const file = targetFilename || currentActiveDraftFile;
     if (!file) {
         window.print();
         return;
     }
+    isPrintingDraftDocument = true;
+    setTimeout(() => { isPrintingDraftDocument = false; }, 2000);
+
     const frame = document.getElementById('draft-print-frame');
     if (frame) {
+        frame.onload = null;
         frame.onload = function() {
-            try {
-                if (frame.contentWindow) {
-                    frame.contentWindow.focus();
-                    frame.contentWindow.print();
+            frame.onload = null;
+            setTimeout(() => {
+                try {
+                    if (frame.contentWindow) {
+                        frame.contentWindow.focus();
+                        frame.contentWindow.print();
+                    }
+                } catch (e) {
+                    console.warn("Could not print iframe directly, falling back to new window", e);
+                    window.open(`/api/documents/print/${encodeURIComponent(file)}`, '_blank');
                 }
-            } catch (e) {
-                console.warn("Could not print iframe directly, falling back to new window", e);
-                window.open(`/api/documents/print/${encodeURIComponent(file)}?autoprint=true`, '_blank');
-            }
+            }, 250);
         };
-        frame.src = `/api/documents/print/${encodeURIComponent(file)}?autoprint=true`;
+        // Load clean printable document into iframe without autoprint=true to prevent duplicate window.print() calls
+        frame.src = `/api/documents/print/${encodeURIComponent(file)}`;
     } else {
         const printWin = window.open(`/api/documents/print/${encodeURIComponent(file)}?autoprint=true`, '_blank');
         if (printWin) printWin.focus();

@@ -143,7 +143,7 @@ function generateCasePlanHtml(data, options = {}) {
     <style>
         @page {
             size: letter portrait;
-            margin: 0.75in 0.75in;
+            margin: 0.85in 0.75in 0.85in 0.75in;
         }
         * {
             box-sizing: border-box;
@@ -623,7 +623,7 @@ function generateCasePlanHtml(data, options = {}) {
         @media print {
             @page {
                 size: letter portrait;
-                margin: 0.75in 0.75in;
+                margin: 0.85in 0.75in 0.85in 0.75in;
             }
             .no-print {
                 display: none !important;
@@ -640,7 +640,7 @@ function generateCasePlanHtml(data, options = {}) {
                 box-shadow: none !important;
                 border: none !important;
                 margin: 0 auto !important;
-                padding: 0.35in 0.45in !important;
+                padding: 0.45in 0.5in !important;
                 max-width: 100% !important;
                 width: 100% !important;
                 box-sizing: border-box !important;
@@ -925,11 +925,17 @@ function generateCasePlanHtml(data, options = {}) {
 
     ${autoprint ? `
     <script>
-        window.onload = function() {
-            setTimeout(function() {
-                window.print();
-            }, 450);
-        };
+        if (window.self === window.top) {
+            let printed = false;
+            window.addEventListener('load', function() {
+                if (!printed) {
+                    printed = true;
+                    setTimeout(function() {
+                        window.print();
+                    }, 400);
+                }
+            });
+        }
     </script>
     ` : ''}
 
@@ -966,7 +972,7 @@ function generateApricotCasePlanHtml(evalContext, options = {}) {
     <meta charset="UTF-8">
     <title>Turn90 Case Plan — ${escapeHtml(evalContext.name)} (#${escapeHtml(evalContext.recordId)})</title>
     <style>
-        @page { size: letter portrait; margin: 0.75in 0.75in; }
+        @page { size: letter portrait; margin: 0.85in 0.75in 0.85in 0.75in; }
         * { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -1091,10 +1097,10 @@ function generateApricotCasePlanHtml(evalContext, options = {}) {
         }
         .sig-line { border-bottom: 1px solid #0f172a; height: 28px; margin-bottom: 5px; }
         @media print {
-            @page { size: letter portrait; margin: 0.75in 0.75in; }
+            @page { size: letter portrait; margin: 0.85in 0.75in 0.85in 0.75in; }
             body { background: #ffffff !important; margin: 0 !important; padding: 0 !important; }
             .no-print { display: none !important; }
-            .plan-sheet { box-shadow: none !important; border: none !important; margin: 0 auto !important; padding: 0.35in 0.45in !important; max-width: 100% !important; width: 100% !important; box-sizing: border-box !important; }
+            .plan-sheet { box-shadow: none !important; border: none !important; margin: 0 auto !important; padding: 0.45in 0.5in !important; max-width: 100% !important; width: 100% !important; box-sizing: border-box !important; }
         }
     </style>
 </head>
@@ -1238,7 +1244,17 @@ function generateApricotCasePlanHtml(evalContext, options = {}) {
             </div>
         </div>
     </div>
-    ${autoprint ? `<script>window.onload=function(){setTimeout(function(){window.print();},400);};</script>` : ''}
+    ${autoprint ? `<script>
+        if (window.self === window.top) {
+            let printed = false;
+            window.addEventListener('load', function() {
+                if (!printed) {
+                    printed = true;
+                    setTimeout(function() { window.print(); }, 400);
+                }
+            });
+        }
+    </script>` : ''}
 </body>
 </html>`;
 }

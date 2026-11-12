@@ -2112,7 +2112,7 @@ function buildPrintableDocumentHtml(filename, content, isBatch = false) {
         renderedMarkdown = '<div style="padding-left: 15px !important; margin-left: 10px !important; list-style-position: inside !important;">' + renderedMarkdown + '</div>';
 
         bodyHtml = `
-            <div class="criminal-history-report-container" style="page-break-after: always; margin-bottom: 30px;">
+            <div class="criminal-history-report-container" style="page-break-after: always; margin-bottom: 30px; padding: 12px 14px; box-sizing: border-box;">
                 <!-- Official Turn90 Criminal History Header -->
                 <div style="border-bottom: 3px solid #1e293b; padding-bottom: 12px; margin-bottom: 16px;">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start;">
@@ -2184,7 +2184,7 @@ function buildPrintableDocumentHtml(filename, content, isBatch = false) {
         let renderedMarkdown = typeof marked !== 'undefined' ? marked.parse(cleanedContent.trim().replace(/^\s*(\d+)\.\s+/gm, '**$1)** ')) : cleanedContent.replace(/\n/g, '<br>');
 
         bodyHtml = `
-            <div class="case-brief-report-container" style="page-break-after: auto; margin-bottom: 24px; padding: 0 8px; box-sizing: border-box;">
+            <div class="case-brief-report-container" style="page-break-after: auto; margin-bottom: 24px; padding: 12px 14px; box-sizing: border-box;">
                 <!-- Official Turn90 Case Brief Header -->
                 <div style="border-bottom: 3px solid #0f766e; padding-bottom: 12px; margin-bottom: 16px;">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; flex-wrap: wrap;">
@@ -2255,7 +2255,7 @@ function buildPrintableDocumentHtml(filename, content, isBatch = false) {
         let renderedMarkdown = typeof marked !== 'undefined' ? marked.parse(cleanedContent.replace(/^\s*(\d+)\.\s+/gm, '**$1)** ')) : cleanedContent.replace(/\n/g, '<br>');
 
         bodyHtml = `
-            <div class="action-plan-report-container" style="page-break-after: auto; margin-bottom: 24px; padding: 0 8px; box-sizing: border-box;">
+            <div class="action-plan-report-container" style="page-break-after: auto; margin-bottom: 24px; padding: 12px 14px; box-sizing: border-box;">
                 <!-- Official Turn90 Action Plan Header -->
                 <div style="border-bottom: 3px solid #16a34a; padding-bottom: 12px; margin-bottom: 16px;">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; flex-wrap: wrap;">
@@ -2342,7 +2342,7 @@ function buildPrintablePageHtml(title, docHtml, autoprint = false) {
     <style>
         @page {
             size: letter portrait;
-            margin: 0.75in 0.75in 0.75in 0.75in;
+            margin: 0.85in 0.75in 0.85in 0.75in;
         }
         * {
             box-sizing: border-box;
@@ -2355,6 +2355,22 @@ function buildPrintablePageHtml(title, docHtml, autoprint = false) {
             background: #f1f5f9;
             margin: 0;
             padding: 24px 20px;
+        }
+        .print-page-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: none;
+            margin: 0;
+            padding: 0;
+        }
+        .print-page-table > thead,
+        .print-page-table > tfoot {
+            display: none;
+        }
+        .print-content-cell {
+            border: none !important;
+            padding: 0 !important;
+            vertical-align: top;
         }
         .print-toolbar {
             position: sticky;
@@ -2590,10 +2606,15 @@ function buildPrintablePageHtml(title, docHtml, autoprint = false) {
         @media print {
             @page {
                 size: letter portrait;
-                margin: 0.75in 0.75in 0.75in 0.75in;
+                margin: 0.85in 0.75in 0.85in 0.75in;
             }
-            html, body {
+            html {
                 margin: 0 !important;
+                padding: 0 !important;
+                background: #ffffff !important;
+            }
+            body {
+                margin: 0 auto !important;
                 padding: 0 !important;
                 background: #ffffff !important;
                 -webkit-print-color-adjust: exact !important;
@@ -2606,14 +2627,44 @@ function buildPrintablePageHtml(title, docHtml, autoprint = false) {
                 max-width: 100% !important;
                 width: 100% !important;
                 margin: 0 auto !important;
-                padding: 0.35in 0.45in !important;
+                padding: 0.2in 0.25in !important;
                 border: none !important;
                 box-shadow: none !important;
                 border-radius: 0 !important;
                 background: transparent !important;
                 box-sizing: border-box !important;
             }
-            table {
+            .print-page-table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+                border: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            .print-page-table > thead {
+                display: table-header-group !important;
+            }
+            .print-page-table > tfoot {
+                display: table-footer-group !important;
+            }
+            .print-spacer-header {
+                height: 0.35in !important;
+                border: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .print-spacer-footer {
+                height: 0.35in !important;
+                border: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .print-content-cell {
+                border: none !important;
+                padding: 0 !important;
+                vertical-align: top !important;
+            }
+            table:not(.print-page-table) {
                 width: 100% !important;
                 max-width: 100% !important;
                 page-break-inside: auto !important;
@@ -2646,11 +2697,32 @@ function buildPrintablePageHtml(title, docHtml, autoprint = false) {
         </div>
     </div>
     <div class="doc-container">
-        ${docHtml}
+        <table class="print-page-table">
+            <thead>
+                <tr><td class="print-spacer-header"></td></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="print-content-cell">
+                        ${docHtml}
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr><td class="print-spacer-footer"></td></tr>
+            </tfoot>
+        </table>
     </div>
     <script>
-        if (${autoprint} || window.location.search.includes('autoprint=true')) {
-            window.addEventListener('load', () => { setTimeout(() => window.print(), 500); });
+        // Only run auto-print if opened directly in its own tab/window, NEVER inside an iframe
+        if (window.self === window.top && (${autoprint} || window.location.search.includes('autoprint=true'))) {
+            let autoPrinted = false;
+            window.addEventListener('load', () => {
+                if (!autoPrinted) {
+                    autoPrinted = true;
+                    setTimeout(() => window.print(), 400);
+                }
+            });
         }
     </script>
 </body>
@@ -2725,14 +2797,17 @@ app.get('/api/documents/print-all-scorings', (req, res) => {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Batch Print: Completed Participant Scorings (${selectedFiles.length})</title>
     <style>
-        @page { size: letter portrait; margin: 0.75in 0.75in 0.75in 0.75in; }
+        @page { size: letter portrait; margin: 0.85in 0.75in 0.85in 0.75in; }
         * { box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10.5pt; line-height: 1.5; color: #0f172a; margin: 0; padding: 24px 20px; background: #f1f5f9; }
         .print-toolbar { position: sticky; top: 0; background: #1e293b; color: white; padding: 10px 18px; display: flex; justify-content: space-between; align-items: center; border-radius: 6px; margin-bottom: 20px; z-index: 1000; }
         .print-btn { background: #0f766e; color: white; border: none; padding: 8px 18px; font-size: 13px; font-weight: 700; border-radius: 4px; cursor: pointer; }
         .close-btn { background: transparent; color: #94a3b8; border: 1px solid #475569; padding: 6px 12px; font-size: 12px; border-radius: 4px; cursor: pointer; }
         .doc-container { max-width: 850px; margin: 16px auto 40px auto; background: #ffffff; padding: 40px 48px; border-radius: 8px; box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08); border: 1px solid #e2e8f0; box-sizing: border-box; }
-        table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 9.5pt; }
+        .print-page-table { width: 100%; border-collapse: collapse; border: none; margin: 0; padding: 0; }
+        .print-page-table > thead, .print-page-table > tfoot { display: none; }
+        .print-content-cell { border: none !important; padding: 0 !important; vertical-align: top; }
+        table:not(.print-page-table) { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 9.5pt; }
         th, td { border: 1px solid #cbd5e1; padding: 6px 8px; text-align: left; word-break: break-word; }
         th { background-color: #f1f5f9 !important; font-weight: 700; -webkit-print-color-adjust: exact; }
         .detailed-scoring-body { font-size: 10pt; line-height: 1.55; color: #1e293b; }
@@ -2742,10 +2817,18 @@ app.get('/api/documents/print-all-scorings', (req, res) => {
         .detailed-scoring-body li { margin-bottom: 4px; color: #334155; }
         .detailed-scoring-body strong { color: #0f172a; }
         @media print {
-            @page { size: letter portrait; margin: 0.75in 0.75in 0.75in 0.75in; }
-            html, body { margin: 0 !important; padding: 0 !important; background: #ffffff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            @page { size: letter portrait; margin: 0.85in 0.75in 0.85in 0.75in; }
+            html { margin: 0 !important; padding: 0 !important; background: #ffffff !important; }
+            body { margin: 0 auto !important; padding: 0 !important; background: #ffffff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             .print-toolbar { display: none !important; }
-            .doc-container { max-width: 100% !important; width: 100% !important; margin: 0 auto !important; padding: 0.35in 0.45in !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; background: transparent !important; box-sizing: border-box !important; }
+            .doc-container { max-width: 100% !important; width: 100% !important; margin: 0 auto !important; padding: 0.2in 0.25in !important; border: none !important; box-shadow: none !important; border-radius: 0 !important; background: transparent !important; box-sizing: border-box !important; }
+            .print-page-table { width: 100% !important; border-collapse: collapse !important; border: none !important; margin: 0 !important; padding: 0 !important; }
+            .print-page-table > thead { display: table-header-group !important; }
+            .print-page-table > tfoot { display: table-footer-group !important; }
+            .print-spacer-header { height: 0.35in !important; border: none !important; padding: 0 !important; margin: 0 !important; }
+            .print-spacer-footer { height: 0.35in !important; border: none !important; padding: 0 !important; margin: 0 !important; }
+            .print-content-cell { border: none !important; padding: 0 !important; vertical-align: top !important; }
+            table:not(.print-page-table) { width: 100% !important; max-width: 100% !important; page-break-inside: auto !important; }
         }
     </style>
 </head>
@@ -2758,11 +2841,31 @@ app.get('/api/documents/print-all-scorings', (req, res) => {
         </div>
     </div>
     <div class="doc-container">
-        ${combinedHtml}
+        <table class="print-page-table">
+            <thead>
+                <tr><td class="print-spacer-header"></td></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="print-content-cell">
+                        ${combinedHtml}
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr><td class="print-spacer-footer"></td></tr>
+            </tfoot>
+        </table>
     </div>
     <script>
-        if (window.location.search.includes('autoprint=true')) {
-            window.addEventListener('load', () => { setTimeout(() => window.print(), 500); });
+        if (window.self === window.top && window.location.search.includes('autoprint=true')) {
+            let autoPrinted = false;
+            window.addEventListener('load', () => {
+                if (!autoPrinted) {
+                    autoPrinted = true;
+                    setTimeout(() => window.print(), 400);
+                }
+            });
         }
     </script>
 </body>

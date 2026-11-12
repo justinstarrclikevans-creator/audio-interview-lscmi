@@ -799,10 +799,15 @@ body {
     margin-bottom: 20px;
 }
 
+@page {
+    size: letter portrait;
+    margin: 0.85in 0.75in 0.85in 0.75in;
+}
+
 @media print {
     @page {
         size: letter portrait;
-        margin: 0.75in 0.75in 0.75in 0.75in;
+        margin: 0.85in 0.75in 0.85in 0.75in;
     }
 
     /* Set clean background and high contrast text */
@@ -830,7 +835,7 @@ body {
         width: 100% !important;
         height: auto !important;
         background: #ffffff !important;
-        padding: 0.4in 0.5in !important;
+        padding: 0.65in 0.6in !important;
         margin: 0 auto !important;
         display: block !important;
         box-shadow: none !important;
@@ -876,7 +881,7 @@ body {
         width: 100% !important;
         height: auto !important;
         background: #ffffff !important;
-        padding: 0.4in 0.5in !important;
+        padding: 0.65in 0.6in !important;
         margin: 0 auto !important;
         display: block !important;
         box-shadow: none !important;
