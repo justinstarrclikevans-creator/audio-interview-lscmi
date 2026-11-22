@@ -8498,12 +8498,24 @@ app.post('/api/voice/enroll-staff', memoryUpload.single('audio'), (req, res) => 
     }
 });
 
-// 6. Combined Supervision Report (SkillCat Module Pathways + Apricot Reports + Data Eval Flagging Template)
+// 6. Combined Supervision Report (SkillCat Module Pathways + Apricot Reports + Daily Email Archive & Runner)
+const {
+    getSupervisionPipelineDir,
+    getArchiveOverview,
+    readReportMarkdown,
+    getReportPdfPath,
+    getEasternDateString,
+    runSkillCatScrapeNode,
+    dispatchSupervisionEmailsNode,
+    runFullDailySupervisionPipeline,
+    initSupervisionCron
+} = require('./services/supervision_pipeline_runner');
+
 app.get('/api/supervision/combined-report', (req, res) => {
     try {
         const locationFilter = (req.query.location || '').trim().toLowerCase();
         const folders = syncAllParticipantFolders();
-        const supervisionDir = path.resolve(__dirname, '..', '..', '..', 'pipelines', 'supervision-report');
+        const supervisionDir = getSupervisionPipelineDir();
 
         let skillcatHistory = {};
         try {
@@ -8548,7 +8560,7 @@ app.get('/api/supervision/combined-report', (req, res) => {
         }
 
         res.json({
-            report_date: latestDate || new Date().toISOString().split('T')[0],
+            report_date: latestDate || getEasternDateString(),
             skillcat_summary: {
                 snapshot_date: latestDate,
                 total_learners: skillcatLearners.length,
@@ -8562,8 +8574,86 @@ app.get('/api/supervision/combined-report', (req, res) => {
             },
             data_evaluation_flags: dataFlags,
             recent_classroom_coaching: classEvals,
-            recent_cm_template_evals: cmEvals
+            recent_cm_template_evals: cmEvals,
+            reports_archive: getArchiveOverview()
         });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.get('/api/supervision/reports-archive', (req, res) => {
+    try {
+        res.json(getArchiveOverview());
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.get('/api/supervision/report-content', (req, res) => {
+    try {
+        const dateStr = req.query.date || '';
+        const scope = req.query.scope || 'Universal';
+        const markdown = readReportMarkdown(dateStr, scope);
+        const pdfPath = getReportPdfPath(dateStr, scope);
+        if (!markdown && !pdfPath) {
+            return res.status(404).json({ error: `No report found for ${scope} (${dateStr || 'latest'}).` });
+        }
+        res.json({
+            date: dateStr || getArchiveOverview().latest_date,
+            scope,
+            markdown: markdown || '',
+            has_pdf: Boolean(pdfPath && fs.existsSync(pdfPath)),
+            pdf_url: `/api/supervision/report-pdf?date=${encodeURIComponent(dateStr || getArchiveOverview().latest_date)}&scope=${encodeURIComponent(scope)}`
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.get('/api/supervision/report-pdf', (req, res) => {
+    try {
+        const dateStr = req.query.date || '';
+        const scope = req.query.scope || 'Universal';
+        const pdfPath = getReportPdfPath(dateStr, scope);
+        if (!pdfPath || !fs.existsSync(pdfPath)) {
+            return res.status(404).json({ error: `PDF not found for ${scope}.` });
+        }
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `inline; filename="${path.basename(pdfPath)}"`);
+        res.sendFile(pdfPath);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/supervision/run-daily-pipeline', async (req, res) => {
+    try {
+        const {
+            date: reportDate = getEasternDateString(),
+            scrapeApricot = true,
+            scrapeSkillcat = true,
+            sendEmails = false,
+            useAi = true
+        } = req.body || {};
+        const out = await runFullDailySupervisionPipeline({
+            reportDate,
+            scrapeApricot,
+            scrapeSkillcat,
+            sendEmails,
+            useAi
+        });
+        res.json({ success: true, ...out, archive: getArchiveOverview() });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/supervision/send-emails', async (req, res) => {
+    try {
+        const { date: reportDate = null, dryRun = false, scopes = null } = req.body || {};
+        const out = await dispatchSupervisionEmailsNode(reportDate, { dryRun, scopes });
+        res.json({ success: true, ...out });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -8571,24 +8661,9 @@ app.get('/api/supervision/combined-report', (req, res) => {
 
 app.post('/api/supervision/refresh-skillcat', async (req, res) => {
     try {
-        const { execFileSync } = require('child_process');
-        const supervisionDir = path.resolve(__dirname, '..', '..', '..', 'pipelines', 'supervision-report');
-        const pyCode = `
-import sys
-from concurrent.futures import ThreadPoolExecutor
-from datetime import date
-sys.path.insert(0, ${JSON.stringify(supervisionDir)})
-import scrape_skillcat as sc
-html, is_live = sc.fetch_ranked_list_html(interactive_login=False, allow_snapshot_fallback=True, timeout_sec=25)
-emps = sc.parse_training_data_from_html(html, is_live=is_live)
-with ThreadPoolExecutor(max_workers=8) as ex:
-    portfolios = list(ex.map(sc.fetch_employee_portfolio, emps))
-enriched, _ = sc.update_history_and_compute_metrics(portfolios, date.today())
-print(len(enriched))
-`;
-        execFileSync('python3', ['-c', pyCode], { timeout: 45000 });
+        const scRes = await runSkillCatScrapeNode(getEasternDateString());
         const synced = syncAllParticipantFolders();
-        res.json({ success: true, synced_folders: synced.length });
+        res.json({ success: true, skillcat: scRes, synced_folders: synced.length });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -8643,9 +8718,10 @@ app.listen(PORT, async () => {
             deduplicateAndEnsureScoringHeaders(dataDir);
         }
 
-        // Initialize Dropbox class evaluation cron jobs
+        // Initialize Dropbox class evaluation & Daily Apricot/SkillCat Supervision cron jobs
         const { initCronJobs } = require('./services/dropbox_evaluator');
         initCronJobs();
+        initSupervisionCron();
     } catch (e) {
         console.warn('Startup sync notice:', e.message);
     }

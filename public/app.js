@@ -12221,14 +12221,127 @@ window.saveUnifiedBriefcaseChronicToggle = async function(slug, hasChronicVal) {
 };
 
 // ----------------------------------------------------------------------------
-// MODAL 2: COMBINED SUPERVISION REPORT (SKILLCAT PATHWAYS + APRICOT + FLAGS)
+// MODAL 2: COMBINED SUPERVISION REPORT (SKILLCAT PATHWAYS + APRICOT + DAILY EMAIL REPORTS)
 // ----------------------------------------------------------------------------
+window.activeDailyReportState = { date: '', scope: 'Universal' };
+
+window.loadDailySupervisionReportIntoModal = async function(dateStr = null, scope = null) {
+    const viewer = document.getElementById('daily-report-markdown-viewer');
+    const pdfLink = document.getElementById('btn-daily-report-pdf-link');
+    const dateSelect = document.getElementById('daily-report-date-select');
+    if (dateStr) window.activeDailyReportState.date = dateStr;
+    else if (dateSelect && dateSelect.value) window.activeDailyReportState.date = dateSelect.value;
+    if (scope) window.activeDailyReportState.scope = scope;
+
+    const chosenDate = window.activeDailyReportState.date || '';
+    const chosenScope = window.activeDailyReportState.scope || 'Universal';
+
+    document.querySelectorAll('.daily-report-scope-btn').forEach(btn => {
+        const isCur = btn.getAttribute('data-scope') === chosenScope;
+        btn.style.background = isCur ? '#1e3a8a' : '#ffffff';
+        btn.style.color = isCur ? '#ffffff' : '#1e293b';
+        btn.style.borderColor = isCur ? '#1e3a8a' : '#cbd5e1';
+    });
+
+    if (pdfLink) {
+        pdfLink.href = `/api/supervision/report-pdf?date=${encodeURIComponent(chosenDate)}&scope=${encodeURIComponent(chosenScope)}`;
+    }
+    if (!viewer) return;
+    viewer.innerHTML = '<div style="padding: 20px; text-align: center; color: #64748b;">Loading report preview...</div>';
+
+    try {
+        const res = await fetch(`/api/supervision/report-content?date=${encodeURIComponent(chosenDate)}&scope=${encodeURIComponent(chosenScope)}`);
+        const data = await res.json();
+        if (!res.ok) {
+            viewer.innerHTML = `<div style="padding: 16px; color: #b91c1c;">${escapeHtml(data.error || 'Report not found for this date/scope.')}</div>`;
+            return;
+        }
+        if (pdfLink && data.pdf_url) pdfLink.href = data.pdf_url;
+        if (data.markdown) {
+            viewer.innerHTML = typeof marked !== 'undefined'
+                ? marked.parse(data.markdown)
+                : `<pre style="white-space: pre-wrap;">${escapeHtml(data.markdown)}</pre>`;
+        } else {
+            viewer.innerHTML = `<div style="padding: 16px; color: #475569;">PDF report is ready for download using the <strong>Download / View PDF</strong> button above.</div>`;
+        }
+    } catch (err) {
+        viewer.innerHTML = `<div style="padding: 16px; color: #dc2626;">Error loading daily report: ${escapeHtml(err.message)}</div>`;
+    }
+};
+
+window.runDailySupervisionPipelineNow = async function(btn) {
+    const originalText = btn ? btn.innerText : '';
+    const statusEl = document.getElementById('daily-pipeline-action-status');
+    const sendEmailChk = document.getElementById('chk-pipeline-also-email');
+    const sendEmails = Boolean(sendEmailChk && sendEmailChk.checked);
+    if (btn) {
+        btn.disabled = true;
+        btn.innerText = '⏳ Running Apricot + SkillCat + PDFs...';
+    }
+    if (statusEl) statusEl.innerText = 'Scraping Apricot & SkillCat and generating today\'s Universal + Center reports...';
+    try {
+        const res = await fetch('/api/supervision/run-daily-pipeline', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ scrapeApricot: true, scrapeSkillcat: true, sendEmails, useAi: true })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Pipeline run failed');
+        const emailNote = sendEmails
+            ? ` | Emails sent: ${data.emails?.sent_count || 0}${data.emails?.skipped_reason ? ` (${data.emails.skipped_reason})` : ''}`
+            : '';
+        if (statusEl) statusEl.innerText = `✅ Generated ${data.report_date} reports${emailNote}`;
+        window.activeDailyReportState.date = data.report_date;
+        await openCombinedSupervisionReportModal();
+    } catch (err) {
+        if (statusEl) statusEl.innerText = `⚠️ Error: ${err.message}`;
+        alert('Daily pipeline error: ' + err.message);
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerText = originalText;
+        }
+    }
+};
+
+window.sendDailySupervisionEmailsNow = async function(btn) {
+    const originalText = btn ? btn.innerText : '';
+    const statusEl = document.getElementById('daily-pipeline-action-status');
+    const dateVal = document.getElementById('daily-report-date-select')?.value || window.activeDailyReportState.date || '';
+    if (!confirm(`Dispatch the ${dateVal || 'latest'} Supervision PDF reports to all configured team emails now?`)) return;
+    if (btn) {
+        btn.disabled = true;
+        btn.innerText = '📧 Sending Emails...';
+    }
+    try {
+        const res = await fetch('/api/supervision/send-emails', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ date: dateVal })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Email send failed');
+        const msg = data.skipped_reason
+            ? `⚠️ ${data.skipped_reason}`
+            : `✅ Emailed ${data.sent_count} reports for ${data.date}${(data.errors && data.errors.length) ? ` (Warnings: ${data.errors.join('; ')})` : ''}`;
+        if (statusEl) statusEl.innerText = msg;
+        alert(msg);
+    } catch (err) {
+        alert('Email dispatch error: ' + err.message);
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerText = originalText;
+        }
+    }
+};
+
 window.openCombinedSupervisionReportModal = async function() {
     const modal = document.getElementById('modal-combined-supervision-report');
     const body = document.getElementById('combined-supervision-report-body');
     if (modal) modal.classList.remove('hidden');
     if (!body) return;
-    body.innerHTML = '<div style="padding: 30px; text-align: center; color: #64748b;">Loading Combined SkillCat Module Pathways + Apricot + Data Evaluation Flagging Report...</div>';
+    body.innerHTML = '<div style="padding: 30px; text-align: center; color: #64748b;">Loading Combined SkillCat Module Pathways + Apricot + Daily Email Reports...</div>';
 
     try {
         const loc = ['charleston', 'columbia', 'spartanburg'].includes(window.activeSixDashboardKey) ? window.activeSixDashboardKey : 'all';
@@ -12236,9 +12349,24 @@ window.openCombinedSupervisionReportModal = async function() {
         const data = await res.json();
         const scLearners = data.skillcat_summary?.learners || [];
         const flags = data.data_evaluation_flags || [];
+        const archive = data.reports_archive || {};
+        const availDates = archive.available_dates || [];
+
+        if (!window.activeDailyReportState.date || !availDates.includes(window.activeDailyReportState.date)) {
+            window.activeDailyReportState.date = archive.latest_date || availDates[0] || '';
+        }
+        const defaultScopeByLoc = { charleston: 'Charleston', columbia: 'Columbia', spartanburg: 'Spartanburg' };
+        if (defaultScopeByLoc[loc] && !window.activeDailyReportState._manualScopeChosen) {
+            window.activeDailyReportState.scope = defaultScopeByLoc[loc];
+        }
+        const routing = archive.email_routing || {};
+        const routingSummary = Object.entries(routing)
+            .filter(([, list]) => Array.isArray(list) && list.length > 0)
+            .map(([k, list]) => `<strong>${escapeHtml(k)}:</strong> ${escapeHtml(list.join(', '))}`)
+            .join(' &nbsp;|&nbsp; ');
 
         body.innerHTML = `
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 20px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 18px;">
                 <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 14px;">
                     <div style="font-size: 12px; font-weight: 800; color: #1e40af;">🛠️ SKILLCAT LEARNERS SCRAPED</div>
                     <div style="font-size: 26px; font-weight: 800; color: #1e3a8a; margin-top: 4px;">${scLearners.length}</div>
@@ -12259,6 +12387,39 @@ window.openCombinedSupervisionReportModal = async function() {
                     <div style="font-size: 26px; font-weight: 800; color: #d97706; margin-top: 4px;">${flags.length}</div>
                     <div style="font-size: 11.5px; color: #b45309;">Across Waitlist, Feedback Loop, CM & SkillCat</div>
                 </div>
+            </div>
+
+            <!-- DAILY EMAIL REPORTS ARCHIVE & IN-APP VIEWER -->
+            <div style="background: #f8fafc; border: 1.5px solid #93c5fd; border-radius: 10px; padding: 14px 16px; margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
+                    <div>
+                        <h3 style="font-size: 15.5px; font-weight: 800; color: #1e3a8a; margin: 0;">📄 Daily Apricot + SkillCat Email Reports (In-App &amp; Automated Email)</h3>
+                        <div style="font-size: 11.5px; color: #475569; margin-top: 2px;">
+                            Schedule: <strong>${escapeHtml(archive.cron_schedule || '0 21 * * 1-5')} ET (Mon–Fri)</strong> &bull; Gmail SMTP: <strong>${archive.smtp_configured ? '✅ Ready' : '⚠️ Set SMTP env vars on Render'}</strong>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                        <label style="font-size: 11.5px; display: inline-flex; align-items: center; gap: 4px; color: #334155; font-weight: 600;">
+                            <input type="checkbox" id="chk-pipeline-also-email"> Also email after run
+                        </label>
+                        <button type="button" class="btn btn-primary" onclick="runDailySupervisionPipelineNow(this)" style="font-size: 12px; padding: 6px 12px; font-weight: 700;">🔄 Run Daily Scrape &amp; Reports Now</button>
+                        <button type="button" class="btn btn-outline" onclick="sendDailySupervisionEmailsNow(this)" style="font-size: 12px; padding: 6px 12px; font-weight: 700; border-color: #059669; color: #047857; background: #ecfdf5;">📧 Send Daily Emails Now</button>
+                    </div>
+                </div>
+                ${routingSummary ? `<div style="font-size: 11px; color: #334155; background: white; border: 1px solid #dbeafe; border-radius: 6px; padding: 6px 10px; margin-bottom: 10px;"><strong>Email Recipients:</strong> ${routingSummary}</div>` : ''}
+                <div id="daily-pipeline-action-status" style="font-size: 12px; font-weight: 600; color: #1d4ed8; margin-bottom: 8px;"></div>
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;">
+                    <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                        <select id="daily-report-date-select" class="form-control" style="width: auto; font-size: 12.5px; padding: 5px 10px; font-weight: 700;" onchange="loadDailySupervisionReportIntoModal(this.value, null)">
+                            ${availDates.length ? availDates.map(d => `<option value="${escapeHtml(d)}" ${d === window.activeDailyReportState.date ? 'selected' : ''}>${escapeHtml(d)}</option>`).join('') : '<option value="">No reports yet</option>'}
+                        </select>
+                        ${['Universal', 'Charleston', 'Columbia', 'Spartanburg', 'SkillCat'].map(sc => `
+                            <button type="button" class="btn btn-outline daily-report-scope-btn" data-scope="${sc}" onclick="window.activeDailyReportState._manualScopeChosen = true; loadDailySupervisionReportIntoModal(null, '${sc}')" style="font-size: 12px; padding: 5px 10px; font-weight: 700;">${sc}</button>
+                        `).join('')}
+                    </div>
+                    <a id="btn-daily-report-pdf-link" href="/api/supervision/report-pdf?date=${encodeURIComponent(window.activeDailyReportState.date)}&scope=${encodeURIComponent(window.activeDailyReportState.scope)}" target="_blank" rel="noopener" class="btn btn-outline" style="font-size: 12px; padding: 5px 12px; font-weight: 700; text-decoration: none; border-color: #2563eb; color: #1d4ed8; background: white;">↗️ Download / View Exact PDF</a>
+                </div>
+                <div id="daily-report-markdown-viewer" style="background: white; border: 1px solid #cbd5e1; border-radius: 8px; padding: 14px 16px; max-height: 360px; overflow-y: auto; font-size: 12.5px; line-height: 1.5;"></div>
             </div>
 
             <h3 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0 0 10px 0;">🛠️ SkillCat Trade Pathways, Scraped Modules Worked On & Progress Flags</h3>
@@ -12321,6 +12482,7 @@ window.openCombinedSupervisionReportModal = async function() {
                 </table>
             </div>
         `;
+        await loadDailySupervisionReportIntoModal(window.activeDailyReportState.date, window.activeDailyReportState.scope);
     } catch (err) {
         body.innerHTML = `<div style="color: #dc2626; padding: 20px;">Error loading supervision report: ${escapeHtml(err.message)}</div>`;
     }

@@ -4,7 +4,9 @@ const { db } = require('../db');
 
 const dataDir = path.join(__dirname, '..', 'data');
 const participantsRootDir = path.join(dataDir, 'participants');
-const supervisionPipelineDir = path.resolve(__dirname, '..', '..', '..', '..', 'pipelines', 'supervision-report');
+const bundledSupervisionDir = path.join(__dirname, '..', 'supervision_pipeline');
+const externalSupervisionDir = path.resolve(__dirname, '..', '..', '..', '..', 'pipelines', 'supervision-report');
+const supervisionPipelineDir = fs.existsSync(bundledSupervisionDir) ? bundledSupervisionDir : externalSupervisionDir;
 
 if (!fs.existsSync(participantsRootDir)) {
     fs.mkdirSync(participantsRootDir, { recursive: true });
