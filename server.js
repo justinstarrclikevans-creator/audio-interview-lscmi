@@ -45,8 +45,6 @@ const {
 } = require('./reporting_engine');
 const { SC_COMMUNITY_RESOURCES, SC_FAIR_CHANCE_EMPLOYERS } = require('./sc_resource_directory');
 const { loadJobsFromSpreadsheets, getAllReentryJobs, buildGoogleJobsUrl, buildGoogleSearchUrl } = require('./jobs_loader');
-const { getParticipantAiResponse } = require('./ai_assistant');
-const { matchJobsWithAi, generateTailoredResumePoints, generateTurnaroundNarrative } = require('./job_hunting_ai');
 const { runCaseloadMigration, syncParticipantStateToSupabase } = require('./migrate_and_assign_t90_logins');
 const { cbtModules, T90_TRADE_TRACKS } = require('./training_data');
 const pdfParse = require('pdf-parse');
@@ -4083,52 +4081,6 @@ app.get('/api/reentry/participants', authenticateToken, requireRole('program_man
 });
 
 
-// ==========================================
-// PLAYBOOK AI ENDPOINTS
-// ==========================================
-
-app.post('/api/playbook/ask', authenticateToken, requireRole('program_manager', 'director', 'admin'), async (req, res) => {
-    try {
-        const { question } = req.body;
-        const playbookPath = path.join(dataDir, 'Turn90_Playbook.pdf');
-        let playbookText = '';
-        
-        if (fs.existsSync(playbookPath)) {
-            playbookText = await extractPdfText(fs.readFileSync(playbookPath));
-        } else {
-            const fallbackPath = path.join(__dirname, 'manuals', 'Turn90_Playbook.pdf');
-            if (fs.existsSync(fallbackPath)) {
-                playbookText = await extractPdfText(fs.readFileSync(fallbackPath));
-            } else {
-                return res.status(404).json({ error: 'Playbook PDF not found on server.' });
-            }
-        }
-
-        const prompt = `You are an expert on the Turn90 Playbook. Answer the staff member's question strictly using the provided Playbook text below. Do not use outside knowledge. IGNORE ANY SECTIONS LABELED "Changelog" OR "Change log". Keep it concise, helpful, and use markdown formatting.
-
-PLAYBOOK TEXT:
-${playbookText}
-
-QUESTION:
-${question}`;
-
-        assertWithinDailyGeminiCap('playbook_ai');
-        const { GoogleGenerativeAI } = require("@google/generative-ai");
-        const genAI = new GoogleGenerativeAI(assertValidGeminiApiKey());
-        const model = genAI.getGenerativeModel({
-            model: getFastModelName(),
-            generationConfig: buildBudgetGenerationConfig({ role: 'fast', maxOutputTokens: 1024 })
-        });
-        const result = await model.generateContent(prompt);
-        const text = result.response.text();
-
-        res.json({ success: true, answer: text });
-    } catch(e) {
-        console.error('Playbook AI error:', e);
-        res.status(500).json({ error: e.message });
-    }
-});
-
 // 2. Re-entry Navigation Assessment & Profile Linking
 
 
@@ -5542,24 +5494,6 @@ app.post('/api/upload-audio', memoryUpload.single('audio'), async (req, res) => 
 });
 
 // =============================================================
-// PARTICIPANT AI ASSISTANT API
-// =============================================================
-app.post('/api/participant/ai-assistant', authenticateToken, async (req, res) => {
-    const { message, history } = req.body;
-    if (!message || !message.trim()) {
-        return res.status(400).json({ error: 'Message is required.' });
-    }
-
-    try {
-        const reply = await getParticipantAiResponse(message, history || []);
-        res.json({ reply });
-    } catch(err) {
-        console.error('Participant AI Assistant error:', err);
-        res.status(500).json({ error: 'Failed to generate assistant response.' });
-    }
-});
-
-// =============================================================
 // TWO-WAY MESSAGING API (PARTICIPANT <-> PROGRAM MANAGER)
 // =============================================================
 app.post('/api/messages/send', authenticateToken, (req, res) => {
@@ -5717,81 +5651,7 @@ app.post('/api/case-plan-triggers', authenticateToken, (req, res) => {
     }
 });
 
-// =============================================================
-// JOB HUNTING AI API ENDPOINTS
-// =============================================================
-
-// 1. Intelligent AI Job Matcher
-app.post('/api/jobs/ai-match', authenticateToken, async (req, res) => {
-    try {
-        const { query, location, skills, minPay, transit, curfew, participantId } = req.body;
-        const targetUserId = participantId || (req.user.role === 'participant' ? req.user.id : null);
-        
-        let profile = {};
-        if (targetUserId) {
-            const pRow = db.prepare('SELECT p.*, u.name, u.location FROM participant_profiles p JOIN users u ON u.id = p.user_id WHERE p.user_id = ?').get(targetUserId);
-            if (pRow) profile = pRow;
-        }
-
-        const userLoc = profile.location ? `${profile.location}, SC` : 'Charleston, SC';
-        const defaultLocation = location || userLoc;
-        let defaultTransit = transit || profile.transportation_status;
-        if (!defaultTransit) {
-            if (defaultLocation.toLowerCase().includes('columbia')) {
-                defaultTransit = 'The COMET Bus Line Accessible';
-            } else if (defaultLocation.toLowerCase().includes('spartanburg')) {
-                defaultTransit = 'SPARTA Bus Line Accessible';
-            } else {
-                defaultTransit = 'CARTA Bus Line Accessible';
-            }
-        }
-
-        const criteria = {
-            query: query || '',
-            location: defaultLocation,
-            skills: skills || '',
-            minPay: minPay || '$18.00 / hr',
-            transit: defaultTransit,
-            curfew: curfew || ''
-        };
-
-        const result = await matchJobsWithAi(criteria, profile);
-        res.json(result);
-    } catch(err) {
-        console.error('Job AI matching error:', err);
-        res.status(500).json({ error: 'Failed to match jobs: ' + err.message });
-    }
-});
-
-// 2. AI Resume Bullet Points Tailorer
-app.post('/api/jobs/ai-tailor-resume', authenticateToken, async (req, res) => {
-    try {
-        const { jobTitle, company, userSkills, tradeTrack } = req.body;
-        if (!jobTitle || !company) {
-            return res.status(400).json({ error: 'jobTitle and company are required.' });
-        }
-        const bulletPoints = await generateTailoredResumePoints(jobTitle, company, userSkills, tradeTrack);
-        res.json({ bulletPoints });
-    } catch(err) {
-        res.status(500).json({ error: 'Failed to tailor resume: ' + err.message });
-    }
-});
-
-// 3. AI Turnaround Narrative & Background Explanation Coach
-app.post('/api/jobs/ai-interview-prep', authenticateToken, async (req, res) => {
-    try {
-        const { jobTitle, company, backgroundContext } = req.body;
-        if (!jobTitle || !company) {
-            return res.status(400).json({ error: 'jobTitle and company are required.' });
-        }
-        const turnaroundNarrative = await generateTurnaroundNarrative(jobTitle, company, backgroundContext);
-        res.json({ turnaroundNarrative });
-    } catch(err) {
-        res.status(500).json({ error: 'Failed to generate interview prep: ' + err.message });
-    }
-});
-
-// 4. Saved Jobs Pipeline
+// Saved Jobs Pipeline
 app.get('/api/jobs/saved/:userId', authenticateToken, (req, res) => {
     const targetId = parseInt(req.params.userId);
     if (req.user.role === 'participant' && req.user.id !== targetId) {
