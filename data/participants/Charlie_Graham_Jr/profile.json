@@ -1,0 +1,30 @@
+{
+  "participant_key": "Charlie_Graham_Jr",
+  "name": "Charlie Graham Jr.",
+  "location": "Spartanburg",
+  "track": "first_shift",
+  "status": "active",
+  "user_id": 74,
+  "client_id": null,
+  "apricot_id": "81055",
+  "phone": "",
+  "email": "charlie.grahamjr.81055@firstshift.org",
+  "files": [
+    "Charlie_Graham_Jr_Spartanburg_criminal_history.docx",
+    "Charlie_Graham_Jr_Spartanburg_criminal_history.md",
+    "Charlie_Graham_Jr_Spartanburg_draft_scoring_form.docx",
+    "Charlie_Graham_Jr_Spartanburg_draft_scoring_form.md",
+    "Charlie_Graham_Jr_Spartanburg_interview_guide.docx",
+    "Charlie_Graham_Jr_Spartanburg_interview_guide.md",
+    "Charlie_Graham_Jr_Spartanburg_transcript.txt"
+  ],
+  "folder_slug": "Charlie_Graham_Jr",
+  "folder_path": "data/participants/Charlie_Graham_Jr",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": true,
+  "has_action_plan": false,
+  "waitlist_ready": false,
+  "waitlist_met_count": 5,
+  "data_flags_count": 1,
+  "updated_at": "2026-11-22T17:18:01.551Z"
+}

@@ -1,0 +1,22 @@
+{
+  "participant_key": "Khalif_Countee",
+  "name": "Khalif Countee",
+  "location": "Charleston",
+  "track": "first_shift",
+  "status": "archived",
+  "user_id": 51,
+  "client_id": null,
+  "apricot_id": null,
+  "phone": "",
+  "email": "khalifcountee@t90.com",
+  "files": [],
+  "folder_slug": "Khalif_Countee",
+  "folder_path": "data/participants/Khalif_Countee",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": false,
+  "has_action_plan": false,
+  "waitlist_ready": false,
+  "waitlist_met_count": 8,
+  "data_flags_count": 2,
+  "updated_at": "2026-11-22T17:18:01.506Z"
+}

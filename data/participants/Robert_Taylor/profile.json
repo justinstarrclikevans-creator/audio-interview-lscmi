@@ -1,0 +1,30 @@
+{
+  "participant_key": "Robert_Taylor",
+  "name": "Robert Taylor",
+  "location": "Columbia",
+  "track": "first_shift",
+  "status": "active",
+  "user_id": 77,
+  "client_id": 26,
+  "apricot_id": "77653",
+  "phone": "",
+  "email": "robert.taylor.77653@firstshift.org",
+  "files": [
+    "Robert_Taylor_Columbia_criminal_history.docx",
+    "Robert_Taylor_Columbia_criminal_history.md",
+    "Robert_Taylor_Columbia_draft_scoring_form.docx",
+    "Robert_Taylor_Columbia_draft_scoring_form.md",
+    "Robert_Taylor_Columbia_interview_guide.docx",
+    "Robert_Taylor_Columbia_interview_guide.md",
+    "Robert_Taylor_Columbia_transcript.txt"
+  ],
+  "folder_slug": "Robert_Taylor",
+  "folder_path": "data/participants/Robert_Taylor",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": true,
+  "has_action_plan": false,
+  "waitlist_ready": false,
+  "waitlist_met_count": 5,
+  "data_flags_count": 1,
+  "updated_at": "2026-11-22T17:18:01.566Z"
+}

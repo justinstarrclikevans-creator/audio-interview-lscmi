@@ -1,0 +1,30 @@
+{
+  "participant_key": "Alec_Greene",
+  "name": "Alec Greene",
+  "location": "Spartanburg",
+  "track": "first_shift",
+  "status": "active",
+  "user_id": 81,
+  "client_id": null,
+  "apricot_id": "82300",
+  "phone": "",
+  "email": "alec.greene.82300@firstshift.org",
+  "files": [
+    "Alec_Greene_Spartanburg_criminal_history.docx",
+    "Alec_Greene_Spartanburg_criminal_history.md",
+    "Alec_Greene_Spartanburg_draft_scoring_form.docx",
+    "Alec_Greene_Spartanburg_draft_scoring_form.md",
+    "Alec_Greene_Spartanburg_interview_guide.docx",
+    "Alec_Greene_Spartanburg_interview_guide.md",
+    "Alec_Greene_Spartanburg_transcript.txt"
+  ],
+  "folder_slug": "Alec_Greene",
+  "folder_path": "data/participants/Alec_Greene",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": true,
+  "has_action_plan": false,
+  "waitlist_ready": false,
+  "waitlist_met_count": 6,
+  "data_flags_count": 1,
+  "updated_at": "2026-11-22T17:18:01.582Z"
+}

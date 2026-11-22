@@ -1,0 +1,30 @@
+{
+  "participant_key": "Brandon_Jones",
+  "name": "Brandon Jones",
+  "location": "Columbia",
+  "track": "first_shift",
+  "status": "active",
+  "user_id": null,
+  "client_id": 60,
+  "apricot_id": "82462",
+  "phone": "",
+  "email": "",
+  "files": [
+    "Brandon_Jones_Columbia_criminal_history.docx",
+    "Brandon_Jones_Columbia_criminal_history.md",
+    "Brandon_Jones_Columbia_draft_scoring_form.docx",
+    "Brandon_Jones_Columbia_draft_scoring_form.md",
+    "Brandon_Jones_Columbia_interview_guide.docx",
+    "Brandon_Jones_Columbia_interview_guide.md",
+    "Brandon_Jones_Columbia_transcript.txt"
+  ],
+  "folder_slug": "Brandon_Jones",
+  "folder_path": "data/participants/Brandon_Jones",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": true,
+  "has_action_plan": false,
+  "waitlist_ready": true,
+  "waitlist_met_count": 9,
+  "data_flags_count": 1,
+  "updated_at": "2026-11-22T17:18:01.660Z"
+}

@@ -1,0 +1,22 @@
+{
+  "participant_key": "Marcus_McMillian",
+  "name": "Marcus McMillian",
+  "location": "Charleston",
+  "track": "first_shift",
+  "status": "active",
+  "user_id": null,
+  "client_id": null,
+  "apricot_id": null,
+  "phone": "",
+  "email": "",
+  "files": [],
+  "folder_slug": "Marcus_McMillian",
+  "folder_path": "data/participants/Marcus_McMillian",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": false,
+  "has_action_plan": false,
+  "waitlist_ready": false,
+  "waitlist_met_count": 6,
+  "data_flags_count": 3,
+  "updated_at": "2026-11-22T17:18:01.726Z"
+}

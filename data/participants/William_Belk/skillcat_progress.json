@@ -1,0 +1,82 @@
+{
+  "userid": "549485",
+  "pathway": "HVAC",
+  "pathway_breakdown": {
+    "HVAC": 2,
+    "Work_Readiness_General": 9
+  },
+  "learning_plans": [
+    "Week 1 - Turn90"
+  ],
+  "portfolio_link": "https://skillcat.app/local/skillcat/portfolio/?hash=4c62fea4d6f87d6bd48227104f56901f",
+  "last_login": "10 days 2 hours ago",
+  "latest_completion_date": "2026-11-20",
+  "total_hours": 16.5,
+  "completed_count": 11,
+  "completed_last_5_working_days": 3,
+  "daily_delta": 1,
+  "completed_modules": [
+    {
+      "course_name": "Gas Furnace Basics",
+      "completed_date": "2026-11-20",
+      "completed_date_raw": "20 November 2026"
+    },
+    {
+      "course_name": "Nameplate Reading Guide",
+      "completed_date": "2026-11-19",
+      "completed_date_raw": "19 November 2026"
+    },
+    {
+      "course_name": "Refrigeration Equipment",
+      "completed_date": "2026-11-19",
+      "completed_date_raw": "19 November 2026"
+    },
+    {
+      "course_name": "Refrigeration: From Vapor to Liquid",
+      "completed_date": "2026-10-27",
+      "completed_date_raw": "27 October 2026"
+    },
+    {
+      "course_name": "Analog Gauges",
+      "completed_date": "2026-10-26",
+      "completed_date_raw": "26 October 2026"
+    },
+    {
+      "course_name": "Low-Loss Hose Fittings",
+      "completed_date": "2026-10-23",
+      "completed_date_raw": "23 October 2026"
+    },
+    {
+      "course_name": "Split System ID",
+      "completed_date": "2026-10-21",
+      "completed_date_raw": "21 October 2026"
+    },
+    {
+      "course_name": "Refrigeration Components",
+      "completed_date": "2026-10-15",
+      "completed_date_raw": "15 October 2026"
+    },
+    {
+      "course_name": "Heat & Refrigerant Basics",
+      "completed_date": "2026-10-14",
+      "completed_date_raw": "14 October 2026"
+    },
+    {
+      "course_name": "Residential System Types",
+      "completed_date": "2026-10-13",
+      "completed_date_raw": "13 October 2026"
+    },
+    {
+      "course_name": "Reading Pressure & Temp",
+      "completed_date": "2026-10-13",
+      "completed_date_raw": "13 October 2026"
+    }
+  ],
+  "recent_modules_last_5_days": [
+    "Gas Furnace Basics (2026-11-20)",
+    "Nameplate Reading Guide (2026-11-19)",
+    "Refrigeration Equipment (2026-11-19)"
+  ],
+  "stalled": false,
+  "flags": []
+}

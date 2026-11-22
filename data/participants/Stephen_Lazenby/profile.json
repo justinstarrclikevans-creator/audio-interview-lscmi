@@ -1,0 +1,30 @@
+{
+  "participant_key": "Stephen_Lazenby",
+  "name": "Stephen Lazenby",
+  "location": "Charleston",
+  "track": "first_shift",
+  "status": "active",
+  "user_id": 71,
+  "client_id": null,
+  "apricot_id": "79879",
+  "phone": "",
+  "email": "stephen.lazenby.79879@firstshift.org",
+  "files": [
+    "Stephen_Lazenby_Charleston_criminal_history.docx",
+    "Stephen_Lazenby_Charleston_criminal_history.md",
+    "Stephen_Lazenby_Charleston_draft_scoring_form.docx",
+    "Stephen_Lazenby_Charleston_draft_scoring_form.md",
+    "Stephen_Lazenby_Charleston_interview_guide.docx",
+    "Stephen_Lazenby_Charleston_interview_guide.md",
+    "Stephen_Lazenby_Charleston_transcript.txt"
+  ],
+  "folder_slug": "Stephen_Lazenby",
+  "folder_path": "data/participants/Stephen_Lazenby",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": true,
+  "has_action_plan": false,
+  "waitlist_ready": false,
+  "waitlist_met_count": 5,
+  "data_flags_count": 1,
+  "updated_at": "2026-11-22T17:18:01.540Z"
+}

@@ -1,0 +1,116 @@
+{
+  "detected_flags": [
+    {
+      "category": "Cognitive / Attitude",
+      "flag": "Workplace Volatility & Authority Sensitivity",
+      "evidence": "History of losing jobs due to attendance issues and workplace altercations; rapidly escalates when feeling ignored or disrespected.",
+      "severity": "high",
+      "navigator_recommendation": "Utilize CBT Workbook exercises focusing on 'Cut-Off' thinking and cognitive restructuring. Practice Socratic questioning and role-playing workplace scenarios with supervisors without validating anti-social impulses."
+    },
+    {
+      "category": "Substance / Health",
+      "flag": "Recent Relapse & Substance Coping",
+      "evidence": "Recent marijuana/edible use in Early May 2026; history of using substances as a primary coping mechanism causing mental health degradation.",
+      "severity": "high",
+      "navigator_recommendation": "Connect participant immediately to outpatient substance use counseling and establish a relapse prevention plan. Link sobirety directly to keeping freedom and maintaining employment."
+    },
+    {
+      "category": "Stability Risk",
+      "flag": "Transportation Barrier & License Absence",
+      "evidence": "No driver's license; relies exclusively on walking and public transit.",
+      "severity": "medium",
+      "navigator_recommendation": "Target employment options along CARTA transit lines and assist with CARTA pass navigation. Refer to driver's license restoration support."
+    },
+    {
+      "category": "Supervision / Legal",
+      "flag": "Probation Violation Risk & Absconding Pattern",
+      "evidence": "History of repeated probation violations and absconding when confronted by law enforcement or authority figures.",
+      "severity": "high",
+      "navigator_recommendation": "Maintain strict transparency and routine accountability checks. Reframe probation conditions as non-negotiable stepping stones to long-term independence."
+    }
+  ],
+  "top_criminogenic_domains": [
+    "Education/Employment",
+    "Alcohol/Drug Problem",
+    "Procriminal Attitude/Orientation"
+  ],
+  "stability_status": "at_risk",
+  "navigator_case_plan_md": "# Re-entry Navigation Case Plan: Dillon Johnson\n\n## 1. Clinical Overview & Criminogenic Profile\n- **Overall Risk Level:** High\n- **Primary Criminogenic Targets:**\n  1. **Education/Employment:** Unemployed, history of workplace altercations, job loss driven by authority conflict.\n  2. **Alcohol/Drug Problem:** Heavy marijuana/edible use as an unhealthy coping mechanism leading to distress and reckless spending.\n  3. **Procriminal Attitude/Orientation:** 'Cut-Off' thinking, rapid escalation to verbal/property aggression under perceived slights.\n- **Non-Dynamic Baseline:** Justice involvement beginning at age 19, multiple incarcerations, active probation supervision.\n\n## 2. CBT & Facilitation Strategy (Turn90 Standards)\n- **Modeling Neutrality (Standard 1.5):** Staff must refrain from debating or challenging anti-social or externalizing statements. Use neutral curiosity (e.g., 'When you responded that way to your supervisor, how did that impact your paycheck?') to highlight consequences.\n- **Managing Resistance & Buy-In (Standard 3.2 & 18.0):** Directly connect compliance, distress tolerance, and self-regulation to Dillon's stated goals of staying out of jail, earning income, and keeping his housing.\n- **Cognitive Restructuring Targets:** Interrupt 'Cut-Off' thinking during perceived disrespect using de-escalation scripts and time-out protocols.\n\n## 3. Stabilization Roadmap\n- **Substance Recovery:** Enroll in outpatient support at Charleston Center (DAODAS) to build structured coping skills replacing daily marijuana use.\n- **Healthcare Maintenance:** Ensure continuity of anxiety/depression medication (Hydroxyzine) via Fetter Health Care / Welvista.\n- **Transportation Setup:** Map out CARTA transit routes from transitional housing to prospective work sites.\n\n## 4. Supervision & Legal Compliance\n- Maintain weekly communication with PO; reinforce that program participation is Dillon's key mechanism for avoiding probation revocation.",
+  "participant_guide_md": "# My Fresh Start Action & Resource Guide: Dillon Johnson\n\nWelcome to your fresh start roadmap, Dillon. You have expressed a strong commitment to seeing life in a different light, managing your mental health, and securing stable, long-term employment. This guide is built to help you navigate your goals step-by-step while maintaining your independence and success.\n\n---\n\n## Community Resources & Support Services\n\n### Recovery & Behavioral Health\n* **Charleston Center (DAODAS)**\n  * **Services:** Outpatient substance recovery, coping skill groups, and peer support.\n  * **Contact:** (843) 958-3300 | 5 Charleston Center Dr, Charleston, SC 29401\n  * **Links:** [Visit Website](https://charlestoncounty.org/departments/charleston-center/) | [Directions](https://maps.google.com/?q=5+Charleston+Center+Dr,+Charleston,+SC+29401)\n  * **Next Action Step:** Call or visit intake to request an outpatient assessment for relapse prevention.\n\n* **Fetter Health Care Network**\n  * **Services:** Primary healthcare, mental health management, and prescription support.\n  * **Contact:** (843) 722-4112 | 51 Nassau St, Charleston, SC 29403\n  * **Links:** [Visit Website](https://fetterhealthcare.org) | [Directions](https://maps.google.com/?q=51+Nassau+St,+Charleston,+SC+29403)\n  * **Next Action Step:** Schedule an appointment to establish medication management for your anxiety/depression prescription.\n\n### Transportation & Driver's License Assistance\n* **CARTA (Charleston Area Regional Transportation Authority)**\n  * **Services:** Public transit routes and workforce shuttles across Tri-County.\n  * **Contact:** (843) 724-7420\n  * **Links:** [Visit Website](https://ridecarta.com)\n  * **Next Action Step:** Obtain a CARTA monthly bus pass and map route options to target job sites.\n\n* **Father to Father Project / SC Legal Services**\n  * **Services:** Driver's license reinstatement guidance and legal support.\n  * **Contact:** (843) 744-2126 | 4925 Lacross Rd, North Charleston, SC 29406\n  * **Links:** [Visit Website](https://scfathersandfamilies.com) | [Directions](https://maps.google.com/?q=4925+Lacross+Rd,+North+Charleston,+SC+29406)\n  * **Next Action Step:** Schedule a consultation to review steps required for future license restoration.\n\n---\n\n## Recommended Employment Matches\n\n1. **Palmetto Logistics & Distribution Hub**\n   * **Role:** Forklift Driver / Order Selector\n   * **Pay Rate:** $18.00 – $22.50 / hr\n   * **Shift:** Day Shift (6:30 AM – 3:00 PM)\n   * **Why It Fits:** Fair-chance employer located in North Charleston accessible via transit routes. Provides clear daily structure and individual tasks that minimize interpersonal friction.\n   * **Application Link:** [Apply Online / View Careers Page](https://www.indeed.com/jobs?q=warehouse+logistics&l=Charleston%2C+SC)\n\n2. **Carolina Marine & Metal Fabrication**\n   * **Role:** MIG Welder Trainee / Metal Grinder\n   * **Pay Rate:** $20.00 – $26.00 / hr\n   * **Shift:** 1st Shift (7:00 AM – 3:30 PM)\n   * **Why It Fits:** Second-chance partner offering hands-on technical skill building with structured daily outputs.\n   * **Application Link:** [Apply Online / View Careers Page](https://www.indeed.com/jobs?q=welder+metal+fabrication&l=Charleston%2C+SC)\n\n3. **Southern Lumber & Millwork**\n   * **Role:** Machine Operator | Manufacturing\n   * **Pay Rate:** Competitive / Market Rate\n   * **Shift:** First Shift\n   * **Why It Fits:** Local production role with steady full-time hours, suited for focused independent work.\n   * **Application Link:** [Apply Online / View Careers Page](https://solumber.com/careers/)\n\n4. **Brock Cabinets**\n   * **Role:** Delivery Staff I / Warehouse\n   * **Pay Rate:** $17.00 – $19.00 / hr\n   * **Shift:** Daytime\n   * **Why It Fits:** Hands-on warehouse staging and order picking based in North Charleston.\n   * **Application Link:** [Apply Online / View Careers Page](https://www.brockcabinets.com/)\n\n---\n\n## 4-Week Step-by-Step Action Checklist\n\n- [ ] **Week 1: Stabilization & Transit Prep**\n  - Complete outpatient intake appointment at Charleston Center.\n  - Purchase monthly CARTA bus pass and map daily transportation times.\n  - Confirm active medication prescription refill with Fetter Health Care.\n\n- [ ] **Week 2: Application & De-escalation Practice**\n  - Submit applications to Palmetto Logistics and Southern Lumber & Millwork.\n  - Attend Turn90 CBT sessions focused on managing anger triggers and authority communication.\n  - Maintain weekly check-in with Probation Officer.\n\n- [ ] **Week 3: Interviewing & Skill Refinement**\n  - Practice mock interview techniques with Navigator, focusing on positive workplace communication.\n  - Follow up on submitted applications.\n  - Attend community recovery group session.\n\n- [ ] **Week 4: Employment Placement & Long-Term Habits**\n  - Complete onboarding requirements for selected position.\n  - Set up direct deposit and budgeting plan with Navigator.\n  - Review ongoing relapse prevention and self-regulation routine.",
+  "recommended_referrals": [
+    {
+      "resourceName": "Charleston Center (DAODAS)",
+      "category": "Recovery",
+      "contact": "(843) 958-3300 | 5 Charleston Center Dr, Charleston, SC 29401",
+      "websiteUrl": "https://charlestoncounty.org/departments/charleston-center/",
+      "actionStep": "Contact intake to schedule an outpatient alcohol/drug assessment and relapse prevention planning."
+    },
+    {
+      "resourceName": "Fetter Health Care Network",
+      "category": "Healthcare",
+      "contact": "(843) 722-4112 | 51 Nassau St, Charleston, SC 29403",
+      "websiteUrl": "https://fetterhealthcare.org",
+      "actionStep": "Establish primary medical care and secure regular refills for Hydroxyzine."
+    },
+    {
+      "resourceName": "CARTA Public Transit",
+      "category": "Food / Transit",
+      "contact": "(843) 724-7420",
+      "websiteUrl": "https://ridecarta.com",
+      "actionStep": "Obtain transit maps and monthly pass for daily commutes to job sites."
+    },
+    {
+      "resourceName": "Center for Fathering / Father to Father Project",
+      "category": "Legal / ID",
+      "contact": "(843) 744-2126 | 4925 Lacross Rd, North Charleston, SC 29406",
+      "websiteUrl": "https://scfathersandfamilies.com",
+      "actionStep": "Inquire about legal support and driver's license reinstatement assistance."
+    }
+  ],
+  "matched_employers": [
+    {
+      "company": "Palmetto Logistics & Distribution Hub",
+      "role": "Forklift Driver / Order Selector",
+      "pay": "$18.00 – $22.50 / hr",
+      "shift": "Day Shift (6:30 AM – 3:00 PM)",
+      "careersUrl": "https://www.indeed.com/jobs?q=warehouse+logistics&l=Charleston%2C+SC",
+      "matchReason": "Fair-chance employer with day shifts along public transit lines; offers clear task-focused daily structure."
+    },
+    {
+      "company": "Carolina Marine & Metal Fabrication",
+      "role": "MIG Welder Trainee / Metal Grinder",
+      "pay": "$20.00 – $26.00 / hr",
+      "shift": "1st Shift (7:00 AM – 3:30 PM)",
+      "careersUrl": "https://www.indeed.com/jobs?q=welder+metal+fabrication&l=Charleston%2C+SC",
+      "matchReason": "Second-chance partner offering structured technical work and skill advancement."
+    },
+    {
+      "company": "Southern Lumber & Millwork",
+      "role": "Machine Operator | Manufacturing",
+      "pay": "Competitive / Market Rate",
+      "shift": "First Shift",
+      "careersUrl": "https://solumber.com/careers/",
+      "matchReason": "Consistent daytime manufacturing environment that minimizes interpersonal conflict."
+    },
+    {
+      "company": "Brock Cabinets",
+      "role": "Delivery Staff I / Warehouse",
+      "pay": "$17.00 – $19.00 / hr",
+      "shift": "Daytime",
+      "careersUrl": "https://www.brockcabinets.com/",
+      "matchReason": "Entry-level warehouse opportunity in North Charleston utilizing hands-on physical strengths."
+    }
+  ],
+  "assessmentData": {
+    "participantName": "Dillon Johnson",
+    "location": "Charleston",
+    "interviewTranscript": "CASE MANAGEMENT BRIEF\n1. Risk Profile\nOverall risk level: High\nList top 3 criminogenic domains in risk order with top being number 1:\n1. Education/Employment\n2. Alcohol/Drug Problem\n3. Procriminal Attitude/Orientation\nBrief domain indicators:\nEducation/Employment: Currently unemployed with no months worked in the last year; history of losing\njobs due to attendance issues and workplace altercations.\nAlcohol/Drug Problem: History of heavy daily marijuana and edible use that severely degraded mental\nhealth, accompanied by poor financial management driven by drug habits.\nProcriminal Attitude/Orientation: Recently arrested, indicating recent engagement in antisocial behavior;\nexpresses unfavorable attitudes toward convention during periods of distress.\n2. Behavioral Indicators\nTypical triggers: Feeling ignored, disrespected, or facing perceived slights (e.g., waiting at a counter without\neye contact).\nEscalation tendencies: Rapidly escalates from frustration to yelling, verbal threats, property destruction\n(throwing objects), and occasionally physical violence.\nDecision-making patterns: Highly impulsive (\"Cut Off\" thinking); acts before thinking to immediately relieve\nanger or avoid consequences (e.g., fleeing a scene to avoid jail).\nAuthority response style: Argumentative and historically combative with figures of authority (teachers,\nsupervisors).\nSubstance relapse patterns: Uses substances as a coping mechanism, leading to reckless spending and\nworsening of anxiety/depression.\n3. Pattern Over Time\nAge at first justice involvement: 19\nNumber/frequency of incarcerations: At least 2 (one prison stint and recent 1-month jail term).\nRecidivism timing patterns: Struggles significantly with sustained supervision; kept violating probation,\ncausing his sentence to be extended repeatedly.\nEscalation or stability trends: Historical trend of aggressive outbursts and minor violence/property damage,\nthough he currently claims to want a life free of violence and anger.\nSupervision violation history: High rate of probation breaches and absconding when confronted by law\nenforcement.\n4. Acute / Emergency Needs No acute needs identified at intake.\n5. Stability Factors\n\n-- 1 of 2 --\n\nHousing stability level: Stable; currently residing in a structured transitional housing program that he finds\nsupportive.\nDriver’s license status: None; relies exclusively on walking and public transit.\nEducation credential status: High School Diploma obtained.\nRecent substance use: Early May 2026 (recent).\nEmployment history pattern: Sporadic; longest tenure is 2 years. Jobs typically end due to dissatisfaction\nwith pay, negative environments, and interpersonal conflict with management.\nSupervision intensity: Active probation with Turn 90 condition.\n6. Legal & Placement Constraints\nPending charges: None.\nCourt obligations: Standard probation terms and Turn 90 condition.\nSupervision restrictions: Must maintain compliance to avoid further sentence extensions.\nSex Offender Registry requirement: No.\nMovement/contact restrictions: None noted beyond standard probation requirements.\n7. Responsivity & Engagement Profile\nLiteracy limitations: None noted.\nCognitive considerations: Diagnosed with anxiety and depression; currently taking medication (Hydroxyzine).\nTrauma reactivity: Sensitive to feeling marginalized or ignored, which triggers acute anger and impulsivity.\nAuthority sensitivity: History of workplace and school altercations; staff should utilize de-escalation\ntechniques and maintain clear, respectful communication to avoid triggering defiance.\nMotivation style: Intrinsically motivated to \"see life in a different light\" and address his mental health;\nmotivated by financial stability and utilizing his skills.\nLearning preferences: Responds positively to supportive, structured environments, as evidenced by his\nfavorable view of his current transitional program.\n\n-- 2 of 2 --\n\n",
+    "statedGoals": "First Shift graduation, prosocial stabilization, career placement",
+    "identifiedNeeds": [
+      "Prosocial Modeling",
+      "Workplace Stabilization"
+    ],
+    "livingSituation": "Transitional / Community Housing",
+    "legalStatus": "Active Community Supervision"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "participant_key": "Willie_Brown",
+  "name": "Willie Brown",
+  "location": "Columbia",
+  "track": "first_shift",
+  "status": "active",
+  "user_id": null,
+  "client_id": 62,
+  "apricot_id": "82501",
+  "phone": "",
+  "email": "",
+  "files": [
+    "Willie_Brown_Columbia_criminal_history.docx",
+    "Willie_Brown_Columbia_criminal_history.md",
+    "Willie_Brown_Columbia_draft_scoring_form.docx",
+    "Willie_Brown_Columbia_draft_scoring_form.md",
+    "Willie_Brown_Columbia_interview_guide.docx",
+    "Willie_Brown_Columbia_interview_guide.md",
+    "Willie_Brown_Columbia_transcript.txt"
+  ],
+  "folder_slug": "Willie_Brown",
+  "folder_path": "data/participants/Willie_Brown",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": true,
+  "has_action_plan": false,
+  "waitlist_ready": false,
+  "waitlist_met_count": 5,
+  "data_flags_count": 2,
+  "updated_at": "2026-11-22T17:18:01.668Z"
+}

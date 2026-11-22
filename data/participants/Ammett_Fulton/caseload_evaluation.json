@@ -1,0 +1,25 @@
+{
+  "participant_key": "Ammett_Fulton",
+  "participant_name": "Ammett Fulton",
+  "location": "Columbia",
+  "track": "reentry_nav",
+  "folder_path": "data/participants/Ammett_Fulton",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": false,
+  "has_action_plan": false,
+  "action_plan_agreement": "pending_review",
+  "waitlist_ready": false,
+  "waitlist_score": "6/9",
+  "medical_appointments_applicable": false,
+  "skillcat_pathway": "HVAC",
+  "skillcat_modules_completed": 0,
+  "cm_notes_count": 0,
+  "data_evaluation_flags": [
+    {
+      "code": "FLAG-WAITLIST-GAP",
+      "severity": "warning",
+      "message": "6/9 First Shift Waitlist Briefcase items ready. Missing: 1. State ID or Driver's License (DL), 2. Social Security Card, 3. Birth Certificate"
+    }
+  ],
+  "updated_at": "2026-11-22T17:18:01.616Z"
+}

@@ -1,0 +1,22 @@
+{
+  "participant_key": "Lionel_Jenkins",
+  "name": "Lionel Jenkins",
+  "location": "Charleston",
+  "track": "reentry_nav",
+  "status": "active",
+  "user_id": null,
+  "client_id": 52,
+  "apricot_id": "82100",
+  "phone": "",
+  "email": "",
+  "files": [],
+  "folder_slug": "Lionel_Jenkins",
+  "folder_path": "data/participants/Lionel_Jenkins",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": false,
+  "has_action_plan": false,
+  "waitlist_ready": false,
+  "waitlist_met_count": 7,
+  "data_flags_count": 1,
+  "updated_at": "2026-11-22T17:18:01.635Z"
+}

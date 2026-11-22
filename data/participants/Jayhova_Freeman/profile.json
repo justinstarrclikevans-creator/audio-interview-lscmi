@@ -1,0 +1,30 @@
+{
+  "participant_key": "Jayhova_Freeman",
+  "name": "Jayhova Freeman",
+  "location": "Spartanburg",
+  "track": "first_shift",
+  "status": "active",
+  "user_id": 82,
+  "client_id": null,
+  "apricot_id": "82409",
+  "phone": "",
+  "email": "jayhova.freeman.82409@firstshift.org",
+  "files": [
+    "Jayhova_Freeman_Spartanburg_criminal_history.docx",
+    "Jayhova_Freeman_Spartanburg_criminal_history.md",
+    "Jayhova_Freeman_Spartanburg_draft_scoring_form.docx",
+    "Jayhova_Freeman_Spartanburg_draft_scoring_form.md",
+    "Jayhova_Freeman_Spartanburg_interview_guide.docx",
+    "Jayhova_Freeman_Spartanburg_interview_guide.md",
+    "Jayhova_Freeman_Spartanburg_transcript.txt"
+  ],
+  "folder_slug": "Jayhova_Freeman",
+  "folder_path": "data/participants/Jayhova_Freeman",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": true,
+  "has_action_plan": false,
+  "waitlist_ready": false,
+  "waitlist_met_count": 6,
+  "data_flags_count": 1,
+  "updated_at": "2026-11-22T17:18:01.587Z"
+}

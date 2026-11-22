@@ -1,0 +1,30 @@
+{
+  "participant_key": "Reante_Baylock",
+  "name": "Reante Baylock",
+  "location": "Charleston",
+  "track": "first_shift",
+  "status": "active",
+  "user_id": null,
+  "client_id": null,
+  "apricot_id": null,
+  "phone": "",
+  "email": "",
+  "files": [
+    "Reante_Baylock_Charleston_criminal_history.docx",
+    "Reante_Baylock_Charleston_criminal_history.md",
+    "Reante_Baylock_Charleston_draft_scoring_form.docx",
+    "Reante_Baylock_Charleston_draft_scoring_form.md",
+    "Reante_Baylock_Charleston_interview_guide.docx",
+    "Reante_Baylock_Charleston_interview_guide.md",
+    "Reante_Baylock_Charleston_transcript.txt"
+  ],
+  "folder_slug": "Reante_Baylock",
+  "folder_path": "data/participants/Reante_Baylock",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": true,
+  "has_action_plan": false,
+  "waitlist_ready": false,
+  "waitlist_met_count": 5,
+  "data_flags_count": 3,
+  "updated_at": "2026-11-22T17:18:01.706Z"
+}

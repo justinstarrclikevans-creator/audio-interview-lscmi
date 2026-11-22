@@ -1,0 +1,29 @@
+{
+  "case_notes": [
+    {
+      "id": 9,
+      "user_id": 41,
+      "author_id": null,
+      "author_name": "Dillon Johnson",
+      "session_date": "2026-09-08",
+      "note_type": "Individual Session",
+      "category": "Barriers & Stability",
+      "content": "[State Benefits Update] Welvista Medication Assistance Program status updated to: 'IN_PROGRESS'. Case/App #: WEL-88992.   Notes: Fetter Health sent Rx",
+      "apricot_exported": 0,
+      "created_at": "2026-09-08 17:11:51"
+    },
+    {
+      "id": 10,
+      "user_id": 41,
+      "author_id": null,
+      "author_name": "Dillon Johnson",
+      "session_date": "2026-09-08",
+      "note_type": "Individual Session",
+      "category": "Barriers & Stability",
+      "content": "[State Benefits Update] South Carolina SNAP (Food Stamps) status updated to: 'APPROVED'. Case/App #: EBT-SC-4411. Monthly Benefit: / mo.  Notes: Card received and active",
+      "apricot_exported": 0,
+      "created_at": "2026-09-08 17:11:51"
+    }
+  ],
+  "cm_session_evaluations": []
+}

@@ -786,10 +786,19 @@ function seedDefaultAccounts() {
     const PORTAL_SEEDS = [
         {
             login_name: 'supervisor',
-            name: 'Supervisor / Leadership',
+            name: 'Master All-Information Overview',
             email: 'supervisor@turnninety.com',
-            passcode: '9090',
+            passcode: '37655640',
             portal_type: 'supervisor',
+            role: 'director',
+            location: 'All'
+        },
+        {
+            login_name: 'lscmi',
+            name: 'LS/CMI & Screening Assessment',
+            email: 'lscmi@turnninety.com',
+            passcode: '37655640',
+            portal_type: 'lscmi',
             role: 'director',
             location: 'All'
         },
@@ -797,7 +806,7 @@ function seedDefaultAccounts() {
             login_name: 'charleston',
             name: 'Charleston Center',
             email: 'charleston@turnninety.com',
-            passcode: '8431',
+            passcode: '37655640',
             portal_type: 'center',
             role: 'program_manager',
             location: 'Charleston'
@@ -806,7 +815,7 @@ function seedDefaultAccounts() {
             login_name: 'columbia',
             name: 'Columbia Center',
             email: 'columbia@turnninety.com',
-            passcode: '8031',
+            passcode: '37655640',
             portal_type: 'center',
             role: 'program_manager',
             location: 'Columbia'
@@ -815,7 +824,7 @@ function seedDefaultAccounts() {
             login_name: 'spartanburg',
             name: 'Spartanburg Center',
             email: 'spartanburg@turnninety.com',
-            passcode: '8641',
+            passcode: '37655640',
             portal_type: 'center',
             role: 'program_manager',
             location: 'Spartanburg'
@@ -824,7 +833,7 @@ function seedDefaultAccounts() {
             login_name: 'reentry_nav',
             name: 'Reentry Navigation',
             email: 'reentry@turnninety.com',
-            passcode: '7070',
+            passcode: '37655640',
             portal_type: 'reentry_nav',
             role: 'navigator',
             location: 'Statewide'

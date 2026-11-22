@@ -1,57 +1,36 @@
-# FIRST SHIFT BRIEFCASE STRUCTURE & DOMAINS
+# Unified Single-Document Briefcase Specification (No Gates)
 
-## Section 1: Core Identification & Stability
-- State ID
-- Social Security Card
-- Birth Certificate
-- Driver's License (SCDMV status & reinstatement plan)
-- Reliable Phone Number
-- Professional Email Address
-- Library Card
-- Bank Account (Direct Deposit setup)
-- Child Support Contact/Status Reviewed
-- Transportation Plan (Bus/Van/Independent)
-- Housing Plan / Stable Address (60+ days)
+> [!CAUTION]
+> **STRICT ANTI-HALLUCINATION & ZERO-EXAMPLE-LEAKAGE POLICY**
+> 1. **Never pull or cite examples, names, or dialogue from any skill, manual, or reference file** as evidence in a participant or staff evaluation.
+> 2. **Every claim, coaching observation, or behavioral match MUST be grounded in a verbatim quote** (`6–35 words`) with an `[MM:SS]` timestamp from the actual session transcript or explicit intake record.
+> 3. Any quote that fails deterministic substring/trigram verification against the input transcript is immediately stripped.
 
-## Section 2: Employment Readiness
-- Ferguson Career Aptitude Test
-- Career Interest Discussion
-- Professional Email Created
-- Resume Completed (Master Resume in Builder)
-- Workplace References Identified (2-3 verifiable references)
-- Interview Practice Completed (Spoken 60-second conviction explanation & behavioral questions)
-- Interview Clothing
-- Work Tools / Clothing (Steel-toe boots, PPE)
-- Job Applications Submitted
 
-## Section 3: Industry Credentials & Training
-- OSHA-10 Safety Certification
-- Forklift Certification
-- Home Depot Path to Pro Credentials
-- Trade Foundations (Carpentry, Electrical, Plumbing, HVAC, Drywall, Paint, Welding)
+## 1. Design Rules
+- **No Gates:** All 4-week readiness gates and locked progression bars are removed. The Briefcase is **one unified, interactive document** with dropdowns and options.
+- **Auto-Populated from Loaded Information:** Automatically pre-fills from the Screening Consultation, Apricot imports, LS/CMI interview, and Case Management notes.
+- **Conditional Medical Logic (CRITICAL):**
+  - First ask/check: **`has_chronic_health_condition`** (`No Chronic Conditions` vs. `Has Chronic Condition Requiring Treatment/Daily Medication`).
+  - **If `No Chronic Conditions`:** Automatically set medical treatment/medication status to `N/A — No Chronic Conditions`, hide medical appointment scheduling prompts, and **NEVER ask or flag whether the participant needs medical appointments**.
+  - **If `Has Chronic Condition`:** Require dropdown verification of whether the condition is treated and the participant has access to necessary daily medications (`Treated & Has Daily Meds`, `Needs Medical Appointment`, `Needs Rx Refill / Insurance Barrier`).
 
-## Section 4: Health & Wellness Foundation
-- Health Insurance / Coverage Plan
-- Welvista Referral Reviewed (Prescription assistance)
-- Primary Care / Doctor Visit
-- Vision Appointment (Glasses / Eye exam)
-- Prescription Needs Reviewed (Maintenance medications)
-- Mental Health Referral (if requested)
-- Substance Recovery Support Plan (if applicable)
+## 2. The 9 Required Items for the First Shift Waitlist
+A participant is automatically flagged as **`First Shift Waitlist Ready`** when all 9 items below are in a green/compliant state (or `Not Applicable` where conditional):
 
-## Section 5: Financial & Life Stability
-- Bank Account Opened
-- Budget Worksheet Completed
-- Understanding of Paychecks & Taxes (Deductions, W-4 withholdings, net pay)
-- Savings Goal Identified
-- Credit Report Reviewed
-- Child Support Questions Reviewed
-- Probation / Parole Obligations Reviewed
+| # | Waitlist Requirement | Dropdown Options | Waitlist-Ready Values |
+| :--- | :--- | :--- | :--- |
+| **1** | **State ID or Driver's License (DL)** | `Valid Driver's License`, `Valid State ID (No DL)`, `DL Suspended (Has State ID)`, `DL Suspended (No ID)`, `Applied / Receipt in Hand`, `Missing` | `Valid Driver's License`, `Valid State ID (No DL)`, `DL Suspended (Has State ID)` |
+| **2** | **Social Security Card** | `Physical Card Verified`, `Replacement Receipt Verified`, `Applied / Ordered`, `Missing` | `Physical Card Verified`, `Replacement Receipt Verified` |
+| **3** | **Birth Certificate** | `Certified Copy Verified`, `Ordered / In Transit`, `Missing` | `Certified Copy Verified` |
+| **4** | **Chronic Health Issues Treated &/or Access to Necessary Daily Medications** | `No Chronic Conditions (N/A)`, `Treated & Has Daily Medications`, `Needs Medical Appointment`, `Needs Medication Access / Refill` | `No Chronic Conditions (N/A)`, `Treated & Has Daily Medications` |
+| **5** | **Stable Address / Housing** | `Stable Housing Verified`, `Approved Transitional Housing`, `Temporary / Couch Surfing (Needs Stabilization)`, `Unhoused / Shelter` | `Stable Housing Verified`, `Approved Transitional Housing` |
+| **6** | **Reliable Phone Number** | `Active & Reliable Phone Verified`, `Temporary / Wi-Fi Only (Needs Phone)`, `No Phone / Disconnected` | `Active & Reliable Phone Verified` |
+| **7** | **Gone to DMV to Figure Out Why DL is Suspended** *(Conditional on DL status)* | `Not Applicable (DL Valid or Never Issued)`, `Completed DMV Inquiry — Reinstatement Plan Obtained`, `Scheduled / Pending DMV Visit`, `Needs DMV Visit` | `Not Applicable (DL Valid or Never Issued)`, `Completed DMV Inquiry — Reinstatement Plan Obtained` |
+| **8** | **Contact Made with Child Support (if applicable)** | `Not Applicable (No Child Support Case)`, `Contact Made & Compliance Plan Active`, `Current / Paid Up`, `Needs Contact / Unresolved Warrant Risk` | `Not Applicable (No Child Support Case)`, `Contact Made & Compliance Plan Active`, `Current / Paid Up` |
+| **9** | **Supervision Information** | `Not Under Supervision (Maxed Out / Non-Supervised)`, `Active Supervision — Officer & Conditions Logged`, `Pending Charges — PO/PD Written Clearance Received`, `Missing Supervision Info / Unresolved Court Conflict` | `Not Under Supervision (Maxed Out / Non-Supervised)`, `Active Supervision — Officer & Conditions Logged`, `Pending Charges — PO/PD Written Clearance Received` |
 
-## Section 6: Career Planning & Long-Term Growth
-- 90-Day Goal Worksheet
-- Target Industry Identified
-- Entry-Level Job Goal Identified
-- Next Credential Goal Identified
-- 6-Month Goal Written
-- Long-Term Wage Goal Identified
+## 3. Additional Unified Briefcase Dropdown Sections (In the Same Document)
+- **Work Readiness & Documents:** W-9 / Payroll Setup (`Completed`, `In Progress`, `Not Started`), Resume (`Completed`, `Drafted`, `Not Started`), Birth/ID Copies Uploaded to Participant Folder (`Yes`, `Pending`).
+- **SkillCat Pathway & Trade Certifications:** Selected Pathway (`HVAC`, `Electrical`, `Plumbing`, `Facilities Maintenance`, `Commercial/Industrial Safety`, `Undecided`), Current Module Status (`On Track`, `Ahead`, `Stalled — Flagged`, `Not Started`).
+- **Transportation & Benefits:** Primary Commute Plan (`Personal Vehicle`, `Bus Pass / Public Transit`, `Confirmed Ride`, `Needs Transit Plan`), SNAP/Medicaid/Benefits (`Active`, `Applied`, `Not Needed`, `Needs Application`).

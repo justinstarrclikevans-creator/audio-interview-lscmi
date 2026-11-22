@@ -1,0 +1,32 @@
+{
+  "participant_key": "Isiah_Oree",
+  "name": "Isiah Oree",
+  "location": "Charleston",
+  "track": "first_shift",
+  "status": "active",
+  "user_id": 30,
+  "client_id": null,
+  "apricot_id": "79622",
+  "phone": "8542914520",
+  "email": "isiahoree@t90.com",
+  "files": [
+    "Isiah_Oree_Charleston_criminal_history.docx",
+    "Isiah_Oree_Charleston_criminal_history.md",
+    "Isiah_Oree_Charleston_criminal_history.pdf",
+    "Isiah_Oree_Charleston_draft_scoring_form.docx",
+    "Isiah_Oree_Charleston_draft_scoring_form.md",
+    "Isiah_Oree_Charleston_final_scoring_form.docx",
+    "Isiah_Oree_Charleston_final_scoring_form.md",
+    "Isiah_Oree_Charleston_interview_guide.md",
+    "Isiah_Oree_Charleston_transcript.txt"
+  ],
+  "folder_slug": "Isiah_Oree",
+  "folder_path": "data/participants/Isiah_Oree",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": true,
+  "has_action_plan": false,
+  "waitlist_ready": true,
+  "waitlist_met_count": 9,
+  "data_flags_count": 0,
+  "updated_at": "2026-11-22T17:18:01.427Z"
+}

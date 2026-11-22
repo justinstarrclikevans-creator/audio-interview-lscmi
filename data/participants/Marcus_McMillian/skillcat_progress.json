@@ -1,0 +1,68 @@
+{
+  "userid": "562379",
+  "pathway": "HVAC",
+  "pathway_breakdown": {
+    "Commercial_Safety": 1,
+    "HVAC": 3,
+    "Work_Readiness_General": 4
+  },
+  "learning_plans": [
+    "Week 1 - Turn90"
+  ],
+  "portfolio_link": "https://skillcat.app/local/skillcat/portfolio/?hash=123600ba7658309ea4152edc8178e34e",
+  "last_login": "10 days 1 hour ago",
+  "latest_completion_date": "2026-11-18",
+  "total_hours": 12,
+  "completed_count": 8,
+  "completed_last_5_working_days": 1,
+  "daily_delta": 0,
+  "completed_modules": [
+    {
+      "course_name": "Intro to Commercial Driving and Licensing",
+      "completed_date": "2026-11-18",
+      "completed_date_raw": "18 November 2026"
+    },
+    {
+      "course_name": "Introduction to Masonry",
+      "completed_date": "2026-11-12",
+      "completed_date_raw": "12 November 2026"
+    },
+    {
+      "course_name": "Intro to Elevators and Elevator Technicians",
+      "completed_date": "2026-11-12",
+      "completed_date_raw": "12 November 2026"
+    },
+    {
+      "course_name": "Intro to Solar",
+      "completed_date": "2026-11-11",
+      "completed_date_raw": "11 November 2026"
+    },
+    {
+      "course_name": "Intro to Roofing",
+      "completed_date": "2026-11-10",
+      "completed_date_raw": "10 November 2026"
+    },
+    {
+      "course_name": "Intro to Welding",
+      "completed_date": "2026-11-10",
+      "completed_date_raw": "10 November 2026"
+    },
+    {
+      "course_name": "Introduction to being an Electrician Apprentice",
+      "completed_date": "2026-11-10",
+      "completed_date_raw": "10 November 2026"
+    },
+    {
+      "course_name": "Intro to HVAC",
+      "completed_date": "2026-11-10",
+      "completed_date_raw": "10 November 2026"
+    }
+  ],
+  "recent_modules_last_5_days": [
+    "Intro to Commercial Driving and Licensing (2026-11-18)"
+  ],
+  "stalled": true,
+  "flags": [
+    "FLAG-SKILLCAT-STALL: No modules completed in last 2 working days"
+  ]
+}

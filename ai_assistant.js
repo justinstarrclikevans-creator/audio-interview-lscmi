@@ -1,5 +1,5 @@
 // Turn90 Fresh Start Participant AI Assistant Engine
-const { getGeminiApiKey } = require('./env_config');
+const { getGeminiApiKey, getFastModelName, buildBudgetGenerationConfig, assertWithinDailyGeminiCap } = require('./env_config');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const path = require('path');
 const { SC_COMMUNITY_RESOURCES, SC_FAIR_CHANCE_EMPLOYERS } = require('./sc_resource_directory');
@@ -81,7 +81,11 @@ async function getParticipantAiResponse(userMessage, conversationHistory = []) {
     }
 
     try {
-        const model = genAI.getGenerativeModel({ model: "gemini-3.8-flash" });
+        assertWithinDailyGeminiCap('ai_assistant');
+        const model = genAI.getGenerativeModel({
+            model: getFastModelName(),
+            generationConfig: buildBudgetGenerationConfig({ role: 'fast', maxOutputTokens: 1024 })
+        });
         
         let formattedHistory = "";
         if (conversationHistory && conversationHistory.length > 0) {

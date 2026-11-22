@@ -1,0 +1,108 @@
+{
+  "detected_flags": [
+    {
+      "category": "Substance / Health",
+      "flag": "Recurrent Alcohol Misuse / DUI History without Formal Relapse Plan",
+      "evidence": "History of three or more DUIs resulting in job loss and a one-year incarceration; reports currently abstaining/cutting back.",
+      "severity": "high",
+      "navigator_recommendation": "Utilize CBT relapse prevention modules to establish structured coping mechanisms for stress. Connect with Charleston Center (DAODAS) for formal outpatient or peer recovery support rather than relying solely on self-directed cutting back."
+    },
+    {
+      "category": "Stability Risk",
+      "flag": "Driver's License Suspension & Transportation Barrier",
+      "evidence": "Suspended driver's license creates reliance on family for transportation and limits job placement options.",
+      "severity": "high",
+      "navigator_recommendation": "Assist participant in navigating SCDMV reinstatement options (e.g., Route 66 provisional license or payment plan) and Father to Father Project for driver's license restoration support, while mapping out CARTA public transit routes for immediate commutes."
+    },
+    {
+      "category": "Cognitive / Attitude",
+      "flag": "Self-Reported Attitude & Frustration Triggers under Stress",
+      "evidence": "Self-reported 'attitude' identified as a potential barrier to daily consistency when facing stress or irresponsible habits.",
+      "severity": "medium",
+      "navigator_recommendation": "Apply CBT Decisional Balance and Problem-Solving workbooks. Model neutrality when discussing workplace stress or supervisor interactions, linking self-regulation directly to keeping freedom and retaining high-earning employment."
+    }
+  ],
+  "top_criminogenic_domains": [
+    "Education/Employment Deficits (Re-entry post-incarceration)",
+    "Alcohol/Drug Problem (Recurrent DUIs)"
+  ],
+  "stability_status": "at_risk",
+  "navigator_case_plan_md": "# Re-entry Navigation Case Plan: Jovon Bonneau\n\n**Lead Re-entry Navigator & Forensic Clinical Specialist Analysis**\n\n---\n\n### 1. Forensic Assessment & Clinical Summary\n* **Participant:** Jovon Bonneau\n* **Risk Profile:** Medium Risk (LSCMI / Risk Assessment)\n* **Primary Criminogenic Targets:** Education/Employment (Score: 4), Alcohol/Drug Problem (Score: 4)\n* **Static Risk Factors:** Single 1-year incarceration (June 2025 – June 2026), multiple DUI convictions.\n* **Responsivity Assets:** College educated (B.S. Sports Management, Business Minor), robust prior employment (8-9 years Nucor, 8 years Navy Reserve), strong prosocial network, cooperative authority response style.\n\n---\n\n### 2. Stability & Risk Triage\n* **Housing:** Stable (Homeowner). Verify ongoing mortgage/property tax management post-release.\n* **Transportation / Driver's License:** **CRITICAL RISK.** Driver's license suspended due to DUIs. Currently dependent on family. Reinstatement pathway is essential to expand employment reach.\n* **Substance Recovery:** **CRITICAL RISK.** Alcohol misuses directly triggered past incarceration. Needs a structured CBT Relapse Prevention Plan and formal community support network.\n* **Legal / Supervision:** Compliant with SC State Probation (active through 2028) and child support obligations.\n\n---\n\n### 3. Facilitation & CBT Coaching Strategy (Turn90 / First Shift Standards)\n1. **Modeling Neutrality (Standard 1.5):** If Jovon expresses frustration over license restrictions or employment barriers, maintain non-defensive reflective listening. Avoid debating legal outcomes; pivot to neutral curiosity regarding how resolving license hurdles benefits his long-term financial independence.\n2. **Managing Buy-In (Standard 3.2 & 18.0):** Leverage Jovon’s strong internal drive for professional achievement and financial stability. Anchor all requirements (transit planning, relapse check-ins) directly to his target goals: regaining a high-earning career and maintaining long-term freedom.\n3. **CBT Target Workbooks:**\n   * *Relapse Prevention:* Triggers & High-Risk Situations (identifying stress-induced drinking triggers).\n   * *Problem Solving & Decisional Balance:* Managing workplace frustration and daily routine consistency.\n\n---\n\n### 4. Direct Action Plan & Benchmarks\n* **Week 1:** Map out daily CARTA transit/family ride schedules for Turn90 attendance. Initiate license reinstatement eligibility review with SCDMV / Father to Father Project.\n* **Week 2:** Complete CBT Alcohol Relapse Prevention Module; establish referral connection with Charleston Center for outpatient peer support.\n* **Week 3:** Submit applications for matched fair-chance manufacturing and logistics positions that align with past industrial experience.\n* **Week 4:** Conduct mock interviews focusing on framing past justice involvement constructively; secure long-term shift alignment.",
+  "participant_guide_md": "# My Fresh Start Action & Resource Guide: Jovon Bonneau\n\n**Welcome Jovon!** Your strong background—including your Bachelor's degree, military service in the Navy Reserve, and years of skilled industrial experience—provides a solid foundation for your success. This guide is tailored to help you navigate your driver's license restoration, solidify your alcohol-free lifestyle, and secure high-paying employment in the Charleston area.\n\n---\n\n## 1. Priority Community Resources\n\n### 🚗 Driver's License Restoration & Legal Aid\n* **Father to Father Project / Center for Fathering**\n  * **Services:** Driver's license restoration assistance, child support modification support, and fatherhood coaching.\n  * **Address:** 4925 Lacross Rd, North Charleston, SC 29406\n  * **Phone:** (843) 744-2126\n  * **Links:** [Visit Website](https://scfathersandfamilies.com) | [Directions](https://maps.google.com/?q=4925+Lacross+Rd,+North+Charleston,+SC+29406)\n  * **Next Action Step:** Call to schedule an intake appointment regarding your driver's license reinstatement pathway.\n\n* **SCDMV Regional Service Center (Leeds Ave)**\n  * **Services:** Official SCDMV driver records review, Route 66 provisional reinstatement applications, and fee payment plans.\n  * **Address:** 3790 Leeds Ave, North Charleston, SC 29405\n  * **Phone:** (803) 896-5000\n  * **Links:** [Visit Website](https://scdmvonline.com/Driver-Services/Reinstatement) | [Directions](https://maps.google.com/?q=3790+Leeds+Ave,+North+Charleston,+SC+29405)\n  * **Next Action Step:** Request an official Driver Record and reinstatement requirement list.\n\n### 🏥 Substance Recovery & Health\n* **Charleston Center (DAODAS)**\n  * **Services:** Outpatient alcohol recovery programs, medication-assisted recovery, peer support groups, and relapse prevention coaching.\n  * **Address:** 5 Charleston Center Dr, Charleston, SC 29401\n  * **Phone:** (843) 958-3300\n  * **Links:** [Visit Website](https://charlestoncounty.org/departments/charleston-center/) | [Directions](https://maps.google.com/?q=5+Charleston+Center+Dr,+Charleston,+SC+29401)\n  * **Next Action Step:** Contact outpatient services to enroll in weekly peer recovery or individual counseling sessions.\n\n### 🚌 Public Transit & Mobility\n* **CARTA (Charleston Area Regional Transportation Authority)**\n  * **Services:** Local bus routes and express workforce shuttles serving North Charleston, Downtown, and industrial corridors.\n  * **Phone:** (843) 724-7420\n  * **Links:** [Visit Website](https://ridecarta.com)\n  * **Next Action Step:** Download the CARTA transit app to map out routes between your residence, program, and potential job sites.\n\n---\n\n## 2. Fair-Chance Career Opportunities\n\nHere are vetted local fair-chance employers matching your extensive industrial, manufacturing, and leadership background:\n\n1. **Southern Lumber & Millwork — Machine Operator | Manufacturing**\n   * **Location:** Charleston, SC\n   * **Pay Rate:** Competitive / Market Rate\n   * **Shift:** 1st Shift / Day\n   * **Why it fits:** Operates production machinery and supports output quality. Directly leverages your 8+ years of industrial/Nucor manufacturing background and disciplined military mindset.\n   * **How to Apply:** [Apply Online / View Careers Page](https://solumber.com/careers/)\n\n2. **Palmetto Logistics & Distribution Hub — Receiving Specialist / Forklift Driver**\n   * **Location:** North Charleston & Summerville, SC\n   * **Pay Rate:** $18.00 – $22.50 / hr\n   * **Shift:** Day Shift (6:30 AM – 3:00 PM)\n   * **Why it fits:** Active fair-chance partner offering structured warehouse operations, OSHA certifications, and clear advancement into supervisory roles.\n   * **How to Apply:** [Apply Online / View Careers Page](https://www.indeed.com/jobs?q=warehouse+logistics&l=Charleston%2C+SC)\n\n3. **Thomas Concrete — Batch Operator**\n   * **Location:** North Charleston, SC\n   * **Pay Rate:** Competitive / Market Rate\n   * **Shift:** Full-time Day Shift\n   * **Why it fits:** High-level industrial role involving concrete batching, inventory management, and plant safety. Fits your administrative and industrial background without requiring driving.\n   * **How to Apply:** [Apply Online / View Careers Page](https://thomasconcrete.com/career/open-positions/)\n\n4. **Carolina Marine & Metal Fabrication — Fabrication Helper / MIG Welder Trainee**\n   * **Location:** North Charleston, SC\n   * **Pay Rate:** $20.00 – $26.00 / hr\n   * **Shift:** 1st Shift (7:00 AM – 3:30 PM)\n   * **Why it fits:** Second-chance partner emphasizing skill, reliability, and precision work. Includes safety gear and paid AWS certification opportunities.\n   * **How to Apply:** [Apply Online / View Careers Page](https://www.indeed.com/jobs?q=welder+metal+fabrication&l=Charleston%2C+SC)\n\n---\n\n## 3. Your 4-Week Milestone Checklist\n\n- [ ] **Week 1: Transit & License Reinstatement Planning**\n  - [ ] Obtain SCDMV reinstatement requirements printout.\n  - [ ] Schedule consultation with Father to Father Project for driver's license restoration.\n  - [ ] Map out daily travel routes using CARTA bus lines or family transit.\n\n- [ ] **Week 2: Relapse Prevention & Health Foundations**\n  - [ ] Complete the CBT Relapse Prevention workbook with your Navigator.\n  - [ ] Establish outpatient peer recovery support through Charleston Center.\n  - [ ] Verify probation check-in schedules and maintain 100% compliance.\n\n- [ ] **Week 3: Resume Preparation & Job Applications**\n  - [ ] Tailor resume highlighting 8+ years at Nucor, Navy Reserve leadership, and college degree.\n  - [ ] Submit online applications to Southern Lumber, Palmetto Logistics, and Thomas Concrete.\n  - [ ] Practice interviewing responses regarding past justice involvement using the 'Fresh Start' framing.\n\n- [ ] **Week 4: Interviews & Workforce Onboarding**\n  - [ ] Attend target employer interviews with complete application documents.\n  - [ ] Finalize commute plan for early morning shifts.\n  - [ ] Secure full-time placement and set up initial savings/budgeting goals.",
+  "recommended_referrals": [
+    {
+      "resourceName": "Center for Fathering / Father to Father Project",
+      "category": "Legal / ID",
+      "contact": "(843) 744-2126 | 4925 Lacross Rd, North Charleston, SC 29406",
+      "websiteUrl": "https://scfathersandfamilies.com",
+      "actionStep": "Schedule consultation regarding driver's license restoration and Route 66 reinstatement."
+    },
+    {
+      "resourceName": "SCDMV Regional Service Center (Leeds Ave)",
+      "category": "Legal / ID",
+      "contact": "(803) 896-5000 | 3790 Leeds Ave, North Charleston, SC 29405",
+      "websiteUrl": "https://scdmvonline.com/Driver-Services/Reinstatement",
+      "actionStep": "Obtain official driving record printout and official reinstatement fee schedule."
+    },
+    {
+      "resourceName": "Charleston Center (DAODAS)",
+      "category": "Recovery",
+      "contact": "(843) 958-3300 | 5 Charleston Center Dr, Charleston, SC 29401",
+      "websiteUrl": "https://charlestoncounty.org/departments/charleston-center/",
+      "actionStep": "Enroll in outpatient alcohol relapse prevention / peer recovery group sessions."
+    },
+    {
+      "resourceName": "CARTA (Charleston Area Regional Transportation Authority)",
+      "category": "Food / Transit",
+      "contact": "(843) 724-7420 | Charleston Tri-County Region",
+      "websiteUrl": "https://ridecarta.com",
+      "actionStep": "Download transit app and map out workforce shuttle routes to industrial parks in North Charleston."
+    }
+  ],
+  "matched_employers": [
+    {
+      "company": "Southern Lumber & Millwork",
+      "role": "Machine Operator | Manufacturing",
+      "pay": "Competitive / Market Rate",
+      "shift": "1st Shift / Day",
+      "careersUrl": "https://solumber.com/careers/",
+      "matchReason": "Directly leverages 8+ years of skilled industrial experience at Nucor and disciplined Navy Reserve background without requiring driving."
+    },
+    {
+      "company": "Palmetto Logistics & Distribution Hub",
+      "role": "Receiving Specialist / Forklift Driver",
+      "pay": "$18.00 – $22.50 / hr",
+      "shift": "Day Shift (6:30 AM – 3:00 PM)",
+      "careersUrl": "https://www.indeed.com/jobs?q=warehouse+logistics&l=Charleston%2C+SC",
+      "matchReason": "Fair-chance employer with strong growth potential into warehouse supervision matching participant's business minor and leadership experience."
+    },
+    {
+      "company": "Thomas Concrete",
+      "role": "Batch Operator – N Charleston",
+      "pay": "Competitive / Market Rate",
+      "shift": "1st Shift / Day",
+      "careersUrl": "https://thomasconcrete.com/career/open-positions/",
+      "matchReason": "Plant-based manufacturing role managing production, equipment, and quality control; fits high industrial aptitude."
+    },
+    {
+      "company": "Carolina Marine & Metal Fabrication",
+      "role": "Fabrication Helper / MIG Welder Trainee",
+      "pay": "$20.00 – $26.00 / hr",
+      "shift": "1st Shift (7:00 AM – 3:30 PM)",
+      "careersUrl": "https://www.indeed.com/jobs?q=welder+metal+fabrication&l=Charleston%2C+SC",
+      "matchReason": "Second-chance employer offering high hourly wages, structured hands-on work, and paid skill certifications."
+    }
+  ],
+  "assessmentData": {
+    "participantName": "Jovon Bonneau",
+    "location": "Charleston",
+    "interviewTranscript": "CASE MANAGEMENT BRIEF\n1. Risk Profile\nOverall Risk Level: Medium\nTop 3 Criminogenic Domains:\n1. Education/Employment (Score: 4)\n2. Alcohol/Drug Problem (Score: 4)\n3. Companions (Score: 1)\nDomain Indicators:\nEducation/Employment: Currently unemployed with a recent gap due to incarceration; nevertheless,\npossesses a Bachelor's degree and significant stable work history.\nAlcohol/Drug Problem: History of three or more DUIs which directly resulted in job loss and a one-year\nincarceration. Acknowledges alcohol was a problem and reports currently abstaining/cutting back.\nCompanions: Endorses having some criminal acquaintances (likely due to recent incarceration) but maintains a\nrobust network of prosocial, professionally successful friends.\n2. Behavioral Indicators\nTypical Triggers: Stress or irresponsible habits leading to alcohol misuse; self-reported \"attitude\" was\nidentified as a potential barrier to daily consistency.\nEscalation Tendencies: Low risk for escalation or violence; tends to ignore disrespect and avoids physical\nconflict.\nDecision-Making Patterns: Previously demonstrated poor judgment by repeatedly drinking and driving,\nthough generally structured, budget-minded, and goal-oriented in other life areas.\nAuthority Response Style: Cooperative and respectful; extensive history of positive interactions with bosses,\nmilitary authority (Navy Reserve), and community leadership (Methodist men president).\nSubstance Relapse Patterns: Alcohol use has historically led directly to legal consequences (DUIs). No history\nof illicit drug use.\n3. Pattern Over Time\nAge at First Justice Involvement: 27\nNumber/Frequency of Incarcerations: 1 (June 2025 - June 2026).\nRecidivism Timing Patterns: Recurrent DUIs over his adult life prior to his recent incarceration.\n\n-- 1 of 2 --\n\nEscalation or Stability Trends: A highly stable baseline trajectory (college degree, homeownership, long-term\nemployment) that was severely disrupted by a cluster of DUI convictions.\nSupervision Violation History: None; compliant with current state probation and child support.\n4. Acute / Emergency Needs\nNo acute needs identified at intake.\n5. Stability Factors\nHousing Stability Level: Extremely stable; owns his own home.\nDriver’s License Status: Suspended (creates reliance on family for transportation and limits job placement\noptions).\nEducation Credential Status: High (Bachelor's Degree in Sports Management, Business Minor).\nRecent Substance Use: Reports stopping/cutting back on drinking; no drug use history.\nEmployment History Pattern: Highly stable prior to incarceration (8-9 years at Nucor, 8 years Navy Reserve).\nSupervision Intensity: On state probation until 2028.\n6. Legal & Placement Constraints\nPending Charges: None.\nCourt Obligations: Active state probation; court-ordered child support (verified as current and compliant).\nSupervision Restrictions: Standard probation conditions.\nSex Offender Registry Requirement: No.\nMovement/Contact Restrictions: None noted, though lack of a valid driver's license restricts independent\nmobility.\n7. Responsivity & Engagement Profile\nLiteracy Limitations: None; college-educated and proficient in various administrative software programs.\nCognitive Considerations: Intact, highly adaptable, and a self-described quick learner.\nTrauma Reactivity: No signs of trauma reactivity; manages conflict by ignoring instigation.\nAuthority Sensitivity: Responds well to authority and structure; values stability.\nMotivation Style: Goal-oriented, motivated by stability, career growth, and regaining structure in his life after an\nunexpected incarceration.\nLearning Preferences: Capable of self-directed learning and standard instruction; adaptable to both front-\noffice and manufacturing environments.\n\n-- 2 of 2 --\n\n",
+    "statedGoals": "First Shift graduation, prosocial stabilization, career placement",
+    "identifiedNeeds": [
+      "Prosocial Modeling",
+      "Workplace Stabilization"
+    ],
+    "livingSituation": "Transitional / Community Housing",
+    "legalStatus": "Active Community Supervision"
+  }
+}

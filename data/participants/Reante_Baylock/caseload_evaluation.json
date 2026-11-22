@@ -1,0 +1,35 @@
+{
+  "participant_key": "Reante_Baylock",
+  "participant_name": "Reante Baylock",
+  "location": "Charleston",
+  "track": "first_shift",
+  "folder_path": "data/participants/Reante_Baylock",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": true,
+  "has_action_plan": false,
+  "action_plan_agreement": "pending_review",
+  "waitlist_ready": false,
+  "waitlist_score": "5/9",
+  "medical_appointments_applicable": false,
+  "skillcat_pathway": "Unassigned",
+  "skillcat_modules_completed": 0,
+  "cm_notes_count": 0,
+  "data_evaluation_flags": [
+    {
+      "code": "FLAG-WAITLIST-GAP",
+      "severity": "warning",
+      "message": "5/9 First Shift Waitlist Briefcase items ready. Missing: 1. State ID or Driver's License (DL), 2. Social Security Card, 3. Birth Certificate"
+    },
+    {
+      "code": "FLAG-CM-CADENCE",
+      "severity": "warning",
+      "message": "No 1-on-1 Case Management session note logged in participant folder."
+    },
+    {
+      "code": "FLAG-SKILLCAT-STALL",
+      "severity": "warning",
+      "message": "SkillCat stalled on Unassigned pathway (0 modules completed)."
+    }
+  ],
+  "updated_at": "2026-11-22T17:18:01.705Z"
+}

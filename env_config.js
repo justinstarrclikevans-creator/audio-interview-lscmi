@@ -93,8 +93,117 @@ function assertValidGeminiApiKey() {
     return key;
 }
 
+/**
+ * Centralized Cost-Controlled Gemini Model & Budget Helpers
+ * - Heavy audio transcription: gemini-3.8-flash with thinkingBudget: 0 (accurate verbatim transcripts without thinking-token cost bloat)
+ * - Structured feedback / scoring / auditing: gemini-3.8-flash with capped thinkingBudget: 1024 (replaces ~10x pricier pro-preview)
+ * - Live per-turn Q&A, dynamic probes & chat: gemini-3.5-flash-lite (zero thinking-token overhead, lowest cost per call)
+ * - Daily circuit breaker: GEMINI_DAILY_CALL_CAP (default 250 calls/day UTC) prevents runaway loops or unexpected bills.
+ */
+const os = require('os');
+const BUDGET_STATE_PATH = path.join(os.tmpdir(), 'turn90_gemini_daily_budget.json');
+
+function getDailyCallCap() {
+    const raw = parseInt(process.env.GEMINI_DAILY_CALL_CAP || '250', 10);
+    return Number.isFinite(raw) && raw > 0 ? raw : 250;
+}
+
+function getEvalModelName() {
+    return (process.env.GEMINI_EVAL_MODEL || 'gemini-3.8-flash').trim();
+}
+
+function getTranscribeModelName() {
+    return (process.env.GEMINI_TRANSCRIBE_MODEL || 'gemini-3.8-flash').trim();
+}
+
+function getFastModelName() {
+    return (process.env.GEMINI_FAST_MODEL || 'gemini-3.5-flash-lite').trim();
+}
+
+function readBudgetState() {
+    const today = new Date().toISOString().slice(0, 10);
+    try {
+        if (fs.existsSync(BUDGET_STATE_PATH)) {
+            const parsed = JSON.parse(fs.readFileSync(BUDGET_STATE_PATH, 'utf8'));
+            if (parsed && parsed.date === today) return parsed;
+        }
+    } catch (e) { /* ignore corrupt temp file */ }
+    return { date: today, count: 0, byTag: {} };
+}
+
+function assertWithinDailyGeminiCap(tag = 'general') {
+    const cap = getDailyCallCap();
+    const state = readBudgetState();
+    if (state.count >= cap) {
+        throw new Error(
+            `Daily Gemini safety cap reached (${state.count}/${cap} calls on ${state.date}). ` +
+            `Raise GEMINI_DAILY_CALL_CAP in .env/Render if you intentionally need more volume today.`
+        );
+    }
+    state.count += 1;
+    state.byTag[tag] = (state.byTag[tag] || 0) + 1;
+    try {
+        fs.writeFileSync(BUDGET_STATE_PATH, JSON.stringify(state));
+    } catch (e) { /* non-fatal */ }
+    return state;
+}
+
+function getGeminiBudgetStatus() {
+    const state = readBudgetState();
+    return {
+        date: state.date,
+        calls_today: state.count,
+        daily_cap: getDailyCallCap(),
+        eval_model: getEvalModelName(),
+        transcribe_model: getTranscribeModelName(),
+        fast_model: getFastModelName(),
+        by_tag: state.byTag
+    };
+}
+
+function buildBudgetGenerationConfig({
+    role = 'eval',
+    temperature,
+    maxOutputTokens,
+    responseMimeType
+} = {}) {
+    const cfg = {};
+    if (typeof temperature === 'number') cfg.temperature = temperature;
+    if (responseMimeType) cfg.responseMimeType = responseMimeType;
+
+    const modelName = role === 'transcribe'
+        ? getTranscribeModelName()
+        : (role === 'fast' ? getFastModelName() : getEvalModelName());
+
+    if (typeof maxOutputTokens === 'number') {
+        cfg.maxOutputTokens = maxOutputTokens;
+    } else if (role === 'fast') {
+        cfg.maxOutputTokens = 1024;
+    } else if (role === 'transcribe') {
+        cfg.maxOutputTokens = 32768;
+    } else {
+        cfg.maxOutputTokens = 16384;
+    }
+
+    // Apply thinkingBudget caps on Gemini 3.x non-lite models to prevent runaway reasoning-token costs
+    if (!modelName.includes('lite') && (modelName.includes('gemini-3') || modelName.includes('gemini-2.5'))) {
+        if (role === 'transcribe') {
+            cfg.thinkingConfig = { thinkingBudget: 0 };
+        } else if (role === 'eval') {
+            cfg.thinkingConfig = { thinkingBudget: 1024 };
+        }
+    }
+    return cfg;
+}
+
 module.exports = {
     sanitizeApiKey,
     getGeminiApiKey,
-    assertValidGeminiApiKey
+    assertValidGeminiApiKey,
+    getEvalModelName,
+    getTranscribeModelName,
+    getFastModelName,
+    assertWithinDailyGeminiCap,
+    getGeminiBudgetStatus,
+    buildBudgetGenerationConfig
 };

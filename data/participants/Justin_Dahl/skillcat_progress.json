@@ -1,0 +1,118 @@
+{
+  "userid": "559302",
+  "pathway": "HVAC",
+  "pathway_breakdown": {
+    "HVAC": 8,
+    "Electrical": 1,
+    "Facilities_Maintenance": 1,
+    "Work_Readiness_General": 5,
+    "Plumbing": 1,
+    "Commercial_Safety": 1
+  },
+  "learning_plans": [
+    "Week 1 - Turn90"
+  ],
+  "portfolio_link": "https://skillcat.app/local/skillcat/portfolio/?hash=964760e465b0af6a6ad310810eb4e5f8",
+  "last_login": "10 days 1 hour ago",
+  "latest_completion_date": "2026-11-19",
+  "total_hours": 25.5,
+  "completed_count": 17,
+  "completed_last_5_working_days": 5,
+  "daily_delta": 0,
+  "completed_modules": [
+    {
+      "course_name": "HVAC Pre-Maintenance Checklist",
+      "completed_date": "2026-11-19",
+      "completed_date_raw": "19 November 2026"
+    },
+    {
+      "course_name": "Perform a Residential HVAC Tune-Up",
+      "completed_date": "2026-11-19",
+      "completed_date_raw": "19 November 2026"
+    },
+    {
+      "course_name": "Condensate Float Switches",
+      "completed_date": "2026-11-16",
+      "completed_date_raw": "16 November 2026"
+    },
+    {
+      "course_name": "Ductless System Parts",
+      "completed_date": "2026-11-16",
+      "completed_date_raw": "16 November 2026"
+    },
+    {
+      "course_name": "Identifying Fuses & Breakers",
+      "completed_date": "2026-11-16",
+      "completed_date_raw": "16 November 2026"
+    },
+    {
+      "course_name": "Choosing Measurement Tools",
+      "completed_date": "2026-11-11",
+      "completed_date_raw": "11 November 2026"
+    },
+    {
+      "course_name": "Interview Skills",
+      "completed_date": "2026-11-10",
+      "completed_date_raw": "10 November 2026"
+    },
+    {
+      "course_name": "Exploring the Plumbing Trade",
+      "completed_date": "2026-11-10",
+      "completed_date_raw": "10 November 2026"
+    },
+    {
+      "course_name": "HVAC Career Path Intro",
+      "completed_date": "2026-11-10",
+      "completed_date_raw": "10 November 2026"
+    },
+    {
+      "course_name": "Intro to Commercial Driving and Licensing",
+      "completed_date": "2026-11-09",
+      "completed_date_raw": "9 November 2026"
+    },
+    {
+      "course_name": "Introduction to Masonry",
+      "completed_date": "2026-11-09",
+      "completed_date_raw": "9 November 2026"
+    },
+    {
+      "course_name": "Intro to Elevators and Elevator Technicians",
+      "completed_date": "2026-11-05",
+      "completed_date_raw": "5 November 2026"
+    },
+    {
+      "course_name": "Intro to Solar",
+      "completed_date": "2026-11-05",
+      "completed_date_raw": "5 November 2026"
+    },
+    {
+      "course_name": "Intro to Roofing",
+      "completed_date": "2026-11-04",
+      "completed_date_raw": "4 November 2026"
+    },
+    {
+      "course_name": "Intro to Welding",
+      "completed_date": "2026-11-04",
+      "completed_date_raw": "4 November 2026"
+    },
+    {
+      "course_name": "Introduction to being an Electrician Apprentice",
+      "completed_date": "2026-11-04",
+      "completed_date_raw": "4 November 2026"
+    },
+    {
+      "course_name": "Intro to HVAC",
+      "completed_date": "2026-11-03",
+      "completed_date_raw": "3 November 2026"
+    }
+  ],
+  "recent_modules_last_5_days": [
+    "HVAC Pre-Maintenance Checklist (2026-11-19)",
+    "Perform a Residential HVAC Tune-Up (2026-11-19)",
+    "Condensate Float Switches (2026-11-16)",
+    "Ductless System Parts (2026-11-16)",
+    "Identifying Fuses & Breakers (2026-11-16)"
+  ],
+  "stalled": false,
+  "flags": []
+}

@@ -1,0 +1,30 @@
+{
+  "participant_key": "William_Belk",
+  "name": "William Belk",
+  "location": "Columbia",
+  "track": "first_shift",
+  "status": "active",
+  "user_id": 73,
+  "client_id": null,
+  "apricot_id": "80797",
+  "phone": "",
+  "email": "william.belk.80797@firstshift.org",
+  "files": [
+    "William_Belk_Columbia_criminal_history.docx",
+    "William_Belk_Columbia_criminal_history.md",
+    "William_Belk_Columbia_draft_scoring_form.docx",
+    "William_Belk_Columbia_draft_scoring_form.md",
+    "William_Belk_Columbia_interview_guide.docx",
+    "William_Belk_Columbia_interview_guide.md",
+    "William_Belk_Columbia_transcript.txt"
+  ],
+  "folder_slug": "William_Belk",
+  "folder_path": "data/participants/William_Belk",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": true,
+  "has_action_plan": false,
+  "waitlist_ready": false,
+  "waitlist_met_count": 5,
+  "data_flags_count": 1,
+  "updated_at": "2026-11-22T17:18:01.547Z"
+}

@@ -1,0 +1,562 @@
+{
+  "ANGER": {
+    "behavioral_definitions": [
+      "History of explosive, aggressive outbursts out of proportion to any precipitating stressors leading to assaultive acts or destruction of property.",
+      "Overreaction of hostility to insignificant irritants.",
+      "Swift and harsh judgment statements made to or about others.",
+      "Body language of tense muscles (e.g., clenched fist or jaw, glaring looks, or refusal to make eye contact).",
+      "Use of passive-aggressive patterns (e.g., social withdrawal due to anger, lack of complete or timely compliance in following directions or rules, complaining about authority figures behind their backs, or nonparticipation in meeting expected behavioral norms).",
+      "Anger intensity that leads to mental confusion (e.g., all or nothing thinking, progressive use of abusive language expressed to self or others).",
+      "Hypersensitivity to perceived disapproval, rejection, or criticism that causes angry communication breakdowns.",
+      "Passive avoidance of conflict and irritations that contribute ultimately to a rapid (and often inappropriate), intense expression of anger.",
+      "Uses aggression as a means to achieve needed power and control."
+    ],
+    "long_term_goals": [
+      "Decrease frequency and intensity of expression of angry feelings.",
+      "Increase ability for coping with angry feelings in a constructive way that enhances daily functioning.",
+      "Improve awareness and understanding of anger: How it is triggered and its consequences.",
+      "Access and accept a greater range of emotions with more flexibility and ability to express these emotions constructively."
+    ]
+  },
+  "ASSERTIVENESS DEFICITS": {
+    "behavioral_definitions": [
+      "Reluctant to express dissatisfaction or verbalize unmet needs or desires.",
+      "Frequently fails to refuse a request to do something undesirable for or with someone.",
+      "Avoids expressing views that are in conflict with others' opinions.",
+      "Expresses thoughts aggressively.",
+      "Utilizes a passive-aggressive or indirect style of communication that alienates others.",
+      "Excessive tolerance of unpleasant situations.",
+      "Inability to directly express feelings appropriately to others.",
+      "Overly anxious in social situations.",
+      "Pattern of suppressing bad feelings until one single event triggers explosion of resentment."
+    ],
+    "long_term_goals": [
+      "Improve ability to effectively express personal opinions, desires, and feelings without antagonizing or alienating others.",
+      "Maintain a clearer perception and appreciation for the rights and boundaries of self and others.",
+      "Increase sense of ease and confidence in different social situations.",
+      "Learn to differentiate and exhibit assertive communication from that which is passive and aggressive."
+    ]
+  },
+  "AUTHORITY CONFLICTS": {
+    "behavioral_definitions": [
+      "Rejects, resists, or opposes rules, instruction, direction, or feedback from authority figures.",
+      "Typically blames others rather than taking any responsibility for conflicts.",
+      "Frequently harbors feelings of victimization and resentment toward others.",
+      "Has a limited definition of self, based on defying authority.",
+      "Negatively prejudges others in a manner that maintains continued isolation and ignorance.",
+      "Inability to effectively communicate needs to authority figures.",
+      "Perceived liberties are easily threatened, causing reactive hostility or oppositional behavior.",
+      "Commonly perceives the world from a fear-based or distrustful mentality.",
+      "Deliberately annoys other people."
+    ],
+    "long_term_goals": [
+      "Learn to accept direction from authority figures without hostility or opposition.",
+      "Develop sensitivity to reactance patterns that precede conflict with authority figures.",
+      "Maintain a more balanced and useful perspective of authority figures that is not resentful and distrustful.",
+      "Increase ability to communicate needs effectively to authority figures and others.",
+      "Increase personal options and skills that will promote harmony within power relations."
+    ]
+  },
+  "CALLOUSNESS (LACK OF EMPATHY/HONESTY)": {
+    "behavioral_definitions": [
+      "Demonstrates little genuine sympathy or respect for the feelings of others.",
+      "Shows no remorse or concern for the negative consequences his/her actions have had on others.",
+      "Frequently deceives and manipulates others for personal gain.",
+      "Lying and fabrications are an integral part of interactions with others.",
+      "Interpersonal style or interactions are insincere and superficial.",
+      "Overinflated sense of abilities and self-worth.",
+      "Does not accept responsibility for own actions.",
+      "Displays an extremely shallow and narrow range of emotions."
+    ],
+    "long_term_goals": [
+      "Become more sensitive to the feelings and rights of others.",
+      "Acknowledge a lack of empathy that frequently results in harm to other people.",
+      "Develop perspectives and relationships that are less self-focused.",
+      "Reduce the frequency and magnitude of deceptions, lies, and conning behavior.",
+      "Adopt a lifestyle based more on giving than getting."
+    ]
+  },
+  "CHEMICAL DEPENDENCE": {
+    "behavioral_definitions": [
+      "Functioning in fundamental life areas (e.g., family, vocation, health, finances, social) is impaired or significantly disrupted as a result of alcohol and other drug (AOD) dependence.",
+      "Increased tolerance for alcohol and other drugs has resulted in a repeating cycle of biopsychosocial negative consequences.",
+      "Tendency to engage in criminal behavior increases when under the influence of mood- altering substances.",
+      "Tendency to engage in criminal activity to procure mood-altering substances.",
+      "Feelings, attitudes, and perspectives are frequently distorted as a result of AOD abuse.",
+      "Pattern of unsuccessful attempts to reduce and/or terminate the use of mood-altering substances.",
+      "Diminished social support, fulfillment, and/or contact as a result of prolonged involvement with mood-altering substances.",
+      "Pattern of interpersonal conflict and/or personal isolation because of AOD abuse.",
+      "Repeated use of alcohol and other drugs to deal with the mental and physical pain of withdrawal from a drug.",
+      "Significant loss of freedom, friendships, property, and respect due to chemical dependence.",
+      "Inability to achieve a balance in responsibly meeting personal obligations and satisfying desires due to chemical dependence."
+    ],
+    "long_term_goals": [
+      "Significantly reduce or eliminate the amount of frequency of alcohol and other drugs consumed.",
+      "Establish a reliable social network that shares and supports a healthy, drug-free lifestyle and self-respect.",
+      "Balance lifestyle with responsibly meeting comparable levels of obligations and desires routinely fulfilled or gratified.",
+      "Minimize or eliminate the negative consequences that result from prolonged AOD abuse.",
+      "Attain greater serenity, acceptance, and personal self-regulation skills.",
+      "Experience greater self-potential and stability while being present, one moment to the next."
+    ]
+  },
+  "CHILDHOOD TRAUMA/ABUSE/NEGLECT": {
+    "behavioral_definitions": [
+      "Reported memories of childhood physical, sexual, or emotional abuse.",
+      "Confirmed history of abusive or neglectful parenting.",
+      "Describes parents/caregivers as neglectful, absent, chemically dependent, and so on.",
+      "Inability to recall childhood.",
+      "Irrational fears, rage, low self-esteem, depression, or insecurity related to painful childhood memories or when in contact with family members.",
+      "Pervasive pattern of abusive, neglectful, or promiscuous intimate relationships.",
+      "Disturbing thoughts or dreams about the traumatic events.",
+      "Inability to experience a wide range of emotions.",
+      "Repeating the pattern of abuse, violence, and neglect that was experienced in childhood.",
+      "Dissociative phenomena experienced as maladaptive coping mechanism resulting from childhood trauma."
+    ],
+    "long_term_goals": [
+      "Reduce the negative impact that child abuse/trauma/neglect has on quality of life and functioning.",
+      "Terminate destructive coping mechanisms and implement healthy coping strategies that promote healing and responsible living.",
+      "Develop the ability to express a wide range of emotions like fear, joy, compassion, anger, and hurt.",
+      "Develop awareness of how past childhood trauma affects current relationships, self-care, or parenting skills.",
+      "Increase ability to form and maintain meaningful, healthy intimate relationships."
+    ]
+  },
+  "CONSEQUENTIAL THINKING DEFICITS": {
+    "behavioral_definitions": [
+      "Lack of control over impulsive, irrational, and/or emotional behavior regardless of consequences.",
+      "Loss of personal freedoms due to presence in criminal justice system as a result of consequential thinking deficits.",
+      "Remorse for past behavior that resulted from acting without thought of consequences.",
+      "Does not develop and incorporate long-term problem-solving strategies, resulting in an inability to attain personal goals.",
+      "Dissatisfaction with self due to inability to attain desired quality of life because of poor decision making.",
+      "Inability to maintain meaningful employment due to capricious and cavalier lack of regard for performance outcomes.",
+      "Loss of meaningful relationships as a result of impulsive, aggressive, and/or thoughtless behavior."
+    ],
+    "long_term_goals": [
+      "Acquire greater self-control by improving decision-making ability through consideration of consequences.",
+      "Enjoy close personal relationships based on mutual respect and thoughtful consideration of each other's feelings.",
+      "Progressively fulfill more personal commitments, obligations, and goals by means of behavior that is deliberate and circumspect.",
+      "Experience self-confidence and mastery in terms of career or livelihood because of engaging in more thoughtful behavior."
+    ]
+  },
+  "CRIMINAL PEERS": {
+    "behavioral_definitions": [
+      "Currently associates with friends and acquaintances who are involved in criminal behavior.",
+      "Verbalizes acceptance of peers' criminal behavior.",
+      "Admires or identifies with others who are pro-crime and sees their lifestyle as desirable.",
+      "Encouraged and easily influenced by peers to participate in criminal behavior.",
+      "Participates in criminal behavior with friends.",
+      "Willing to protect, cover-up, and accept responsibility for peers' deviant behavior.",
+      "Verbalizes a sense of loyalty to and identification with a gang.",
+      "Prior attempts to distance self from criminal peers have been unsuccessful.",
+      "Inability to establish and maintain meaningful pro-social peer support group."
+    ],
+    "long_term_goals": [
+      "Significantly reduce or eliminate association with criminal friends.",
+      "Learn to manage existing pro-criminal relationships by reestablishing boundaries to reduce risk for relapse or recidivism.",
+      "Develop a greater understanding about peer group; how peers influence and interact with personal behavior to effect lifestyle quality.",
+      "Develop a meaningful, pro-social support network.",
+      "Terminate all criminal behavior, even if it results in peer conflict."
+    ]
+  },
+  "DECEITFUL": {
+    "behavioral_definitions": [
+      "Frequently takes delight in duping or deceiving others.",
+      "Fabricates information when defensive.",
+      "Routinely embellishes or exaggerates to impress others.",
+      "Deceives others to hurt, manipulate, or use them.",
+      "Lies and practices deception routinely.",
+      "Frequently omits sharing information to avoid accountability.",
+      "Thinking distortions impair honesty with self.",
+      "Significant discrepancies between emotions experienced and emotions expressed.",
+      "Often involved in secretive behaviors and communications."
+    ],
+    "long_term_goals": [
+      "Establish a clear and unambiguous goal for greater truthfulness.",
+      "Achieve greater self-congruence, confidence, and ability to be truthful.",
+      "Fully recognize discrepancies between current practice of and actual potential for honesty.",
+      "Increase awareness and understanding of the underlying motives for specific types of dishonesty.",
+      "Develop a precise understanding of various levels and types of honesty."
+    ]
+  },
+  "DEPRESSION/SUICIDAL IDEATION": {
+    "behavioral_definitions": [
+      "Depressed affect every day.",
+      "Insomnia or hypersomnia.",
+      "Loss of appetite.",
+      "Diminished interest and enjoyment in activities.",
+      "Resignation from groups, organizations, or activities.",
+      "Feelings of helplessness, hopelessness, and worthlessness.",
+      "Low self-esteem and feelings of inappropriate guilt.",
+      "Psychomotor agitation or retardation.",
+      "Inability to concentrate.",
+      "History of chronic or recurrent depression for which the client has received treatment.",
+      "Previous attempts at suicide.",
+      "Recurrent thoughts of or preoccupation with death."
+    ],
+    "long_term_goals": [
+      "Alleviate depressed mood/suicidal ideation and return to previous level of effective functioning.",
+      "Increase ability for coping with depression in a way that enhances daily functioning.",
+      "Improve awareness, acceptance and understanding of depression.",
+      "Develop healthy cognitive patterns and beliefs about self and the world that lead to the alleviation of symptoms of depression and/or suicidal ideation.",
+      "Resolve the grief or emotional conflicts that underlie depression or suicidal patterns."
+    ]
+  },
+  "DRIVING-RELATED OFFENSES": {
+    "behavioral_definitions": [
+      "Drives while under the influence of a mood altering substance (e.g., alcohol, drugs, prescription medicines).",
+      "Drives with a suspended or revoked license.",
+      "History of more than five arrests and convictions for traffic violations (e.g., speeding, moving violations).",
+      "Exhibits a blatant disregard for traffic laws.",
+      "History of driving with debilitating physical disorders (e.g., epilepsy, hypertension, significant auditory problems, significant visual problems, immobility).",
+      "History of driving with debilitating cognitive, mood, anxiety or sleep disorders (e.g., brain/head injury, dementia, schizophrenia, anxiety, depression, narcolepsy).",
+      "Explosive, aggressive outbursts in reaction to stressors while driving (i.e., \u201croad rage\u201d incidents).",
+      "History of taking undue risks while driving; at times causing accidents for self or others."
+    ],
+    "long_term_goals": [
+      "Eliminate driving while under the influence of mood altering substances.",
+      "Increase understanding of and compliance with driving/traffic laws.",
+      "Terminate high-risk driving behavior.",
+      "Increase responsible monitoring of health and medication concerns that may influence driving safety.",
+      "Increase ability to cope with angry feelings in a constructive way while driving."
+    ]
+  },
+  "FAMILY CONFLICT/ALIENATION": {
+    "behavioral_definitions": [
+      "A pattern of frequent conflicts with family members that often triggers involvement in criminal behavior.",
+      "Unable to establish and maintain healthy, pro-social relationships with family members due to their involvement in criminal and/or substance abuse behavior.",
+      "Family members are not actively supportive of the client's attempts to refrain from or terminate criminal lifestyle.",
+      "Current physical, emotional, or psychological abuse in the family.",
+      "Hypersensitivity to perceived disapproval, rejection, or criticism of family that leads to superficial or dishonest relationships with the family.",
+      "Lack of communication or contact with family leading to feelings of isolation, alienation, or depression.",
+      "Alienated from family members due to own history of criminal behavior."
+    ],
+    "long_term_goals": [
+      "Manage relationships with pro-criminal family members by establishing boundaries to reduce risk for relapse or recidivism.",
+      "Gain a greater understanding about how family interactions affect behavioral choices.",
+      "Develop and maintain healthy, pro-social relationships with pro-social family members.",
+      "Communicate needs or wishes to family members in a constructive manner.",
+      "Terminate reacting to family conflict with criminal behavior."
+    ]
+  },
+  "FAMILY CRIMINALITY/DEVIANCE": {
+    "behavioral_definitions": [
+      "Family members are involved in criminal behavior.",
+      "Demonstrates acceptance of family members' criminal behavior.",
+      "Looks up to pro-criminal family members and desires to emulate these individuals.",
+      "Encouraged by family members to participate in deviant behavior and/or reinforced for engaging in criminal behavior.",
+      "Participates in criminal behavior with family members.",
+      "Willing to protect and cover up family members' deviant behavior.",
+      "Prior attempts to refrain from criminal involvement with family members have been unsuccessful.",
+      "Unable to establish and maintain healthy, pro-social relationships with family members due to their involvement in deviancy.",
+      "Family members are not actively supportive of the client's attempts to refrain from or terminate criminal lifestyle."
+    ],
+    "long_term_goals": [
+      "Eliminate involvement in criminal behavior with family members.",
+      "Significantly reduce or eliminate association with family members that are involved in criminal behavior.",
+      "Learn to manage pro-criminal relationships with family members by establishing boundaries to reduce risk for relapse or recidivism.",
+      "Gain a greater understanding about how family interactions effect lifestyle choices.",
+      "Develop and maintain healthy, pro-social relationships with pro-social family members."
+    ]
+  },
+  "FINANCIAL MANAGEMENT PROBLEMS": {
+    "behavioral_definitions": [
+      "Frequently overspends, resulting in bounced checks, maximized credit cards, repossessions, defaulted loans, and/or bankruptcy.",
+      "Fails to prioritize financial obligations to ensure that all necessary expenses are paid before optional expenses are incurred.",
+      "Routinely fails to adequately estimate projected budget for actual living expenses.",
+      "A long-term lack of discipline in money management has led to excessive indebtedness.",
+      "A pattern of impulsive spending that does not consider the eventual financial consequences.",
+      "Dependent on others for meeting own basic needs for food, clothing, and shelter.",
+      "Credit rating is low or nonexistent.",
+      "Limited financial management abilities result in frequent self-disapproval and diminished self-concept.",
+      "Resorts to illegal behaviors to obtain money to cover living expenses."
+    ],
+    "long_term_goals": [
+      "Establish a clear income and expense budget that will meet bill payment demands.",
+      "Develop the ability to prioritize financial obligations and the discipline to live within those limits.",
+      "Attain financial independence by maximizing income and terminating unnecessary spending.",
+      "Maintain employment as a legal means of obtaining income and responsibly manage finances to meet obligations"
+    ]
+  },
+  "GENDER IDENTIFICATION ISSUES": {
+    "behavioral_definitions": [
+      "Confused sexual proclivity resulting in marginalized self-concept and lifestyle.",
+      "Sense of inappropriateness in assigned gender role that results in significant distress or social isolation.",
+      "Hatred for members of the opposite sex.",
+      "Rebellion against gender role resulting in impairment in social, occupational, or other areas of functioning.",
+      "Gender or sexual proclivity discomfort leads to involvement in an environment with excessive criminogenic influences (e.g., criminal peers, substance abuse, violence)."
+    ],
+    "long_term_goals": [
+      "Increased sense of comfort with sexual proclivity and gender.",
+      "Balanced lifestyle in accordance with sexual identity development.",
+      "Integrate a positive sexual identity into the client's total self-concept.",
+      "Increased respect for self, and others with different gender and/or sexual orientation.",
+      "Incorporate a clear definition of own gender and sexual orientation into life to resume a healthy level of functioning."
+    ]
+  },
+  "IMPULSIVITY": {
+    "behavioral_definitions": [
+      "History of impulsive, aggressive outbursts out of proportion to any precipitating stressors, leading to assaultive acts or destruction of property.",
+      "Fails to control impulsive, irrational, and/or emotional behavior regardless of consequences.",
+      "Loss of personal freedoms due to presence in criminal justice system as a result of impulsive behavior.",
+      "Remorse for the consequences of acting without thought.",
+      "Easily distracted from focusing or concentrating on an activity at hand, rarely completing anything that was started.",
+      "Failure to maintain meaningful employment due to capricious and cavalier lack of regard for performance outcomes.",
+      "Loss of meaningful relationships as a result of impulsive, aggressive, and/or thoughtless behavior.",
+      "Impulsive behavior related to use of drugs and alcohol, gambling, sex, or other self- defeating patterns that result in diminished quality of life."
+    ],
+    "long_term_goals": [
+      "Decrease the frequency of impulsive behavior.",
+      "Acquire skills and techniques for delaying acting on impulsive thoughts.",
+      "Cope with impulses in a constructive way that enhances daily functioning.",
+      "Experience progressively better health-related, financial, and social outcomes as a result of engaging in more thoughtful behavior."
+    ]
+  },
+  "INADEQUATE SOCIAL SUPPORT/SOCIAL ISOLATION": {
+    "behavioral_definitions": [
+      "Inability to establish and maintain meaningful, pro-social, peer support group.",
+      "Social support network composed entirely of people involved with crime.",
+      "No participation in pro-social groups, organizations, or activities.",
+      "Absence of close friends or confidants.",
+      "Hypersensitivity to perceived disapproval, rejection, or criticism.",
+      "Passive avoidance of any conflict leads to an absence of relationships.",
+      "Pattern of persistent interpersonal conflict and/or personal isolation.",
+      "Highly anxious in social situations.",
+      "Overly aggressive in social situations."
+    ],
+    "long_term_goals": [
+      "Develop a meaningful and reliable pro-social network that shares and supports a healthy lifestyle and self-respect.",
+      "Terminate relationships with everyone who is involved with criminal behavior.",
+      "Increase a sense of ease and confidence in various social situations.",
+      "Improve ability to effectively express personal opinions, desires, and feelings without antagonizing or alienating others.",
+      "Develop essential social skills necessary to communicate in a constructive manner.",
+      "Find a balance between personal time alone and interpersonal interactions with others."
+    ]
+  },
+  "INTIMATE RELATIONSHIP CONFLICT": {
+    "behavioral_definitions": [
+      "Inability to establish and maintain a meaningful intimate relationship.",
+      "History of perpetrating physical, emotional, or psychological abuse in an intimate relationship.",
+      "Involvement in several intimate relationships at the same time.",
+      "History of explosive, aggressive outbursts in reaction to relationship conflict, leading to assaultive acts or destruction of property.",
+      "Hypersensitivity to perceived disapproval, rejection, or criticism that causes communication breakdowns.",
+      "Passive avoidance of conflict and irritations that contribute ultimately to the collapse of a relationship.",
+      "A pattern of allowing self to be victimized in abusive relationships.",
+      "Inability to communicate wants/needs to an intimate partner.",
+      "Relationship stress triggers involvement in substance abuse or criminal behavior."
+    ],
+    "long_term_goals": [
+      "Establish and maintain a meaningful intimate relationship.",
+      "Improve self-awareness and understanding of own behavior and contribution to relationship stress.",
+      "Communicate needs or wishes in a constructive manner.",
+      "Learn effective, pro-social problem-solving skills to deal with inevitable relationship stress.",
+      "Learn to identify precursors to violence as a perpetrator or a victim, and means to de- escalate the tension."
+    ]
+  },
+  "MORAL DISENGAGEMENT": {
+    "behavioral_definitions": [
+      "Maintains personal values that are supportive of frequent, serious, and persistent criminal activity.",
+      "Frequently rationalizes or justifies antisocial behavior through emphasis on extenuating circumstances.",
+      "Employs denial, projection, or euphemistic language to portray reprehensible behavior more favorably.",
+      "Bases assessments of personal conduct on \u201cgood intentions\u201d rather than actual hurtful behavior.",
+      "Minimizes personal responsibility by making comparisons to the more severe antisocial behavior of others.",
+      "Consistently minimizes the impact of personal antisocial behavior on others.",
+      "Chooses not to be held accountable to conventional norms, mores, laws, and ethical standards.",
+      "Distorted self-image that emphasizes either a completely negative or completely positive identity.",
+      "Little or no maintenance of pro-social values.",
+      "Completely egocentric viewpoints on almost everything."
+    ],
+    "long_term_goals": [
+      "Adopt and consistently support pro-social values and behaviors that are beneficial to the community, family, and others.",
+      "Develop skills and techniques for monitoring and interrupting morally \u201cneutralizing\u201d self- talk.",
+      "Become less egocentric and better able to accept the perspectives of others.",
+      "Discover new potential for making conventional contributions to society."
+    ]
+  },
+  "NARCISSISTIC\u2014UNPRINCIPLED": {
+    "behavioral_definitions": [
+      "Exaggerates self-importance in a grandiose manner, resorting to outright lies to inflate his/her self-image if that seems expedient.",
+      "Has feelings of entitlement, believing that ordinary rules that apply to others are inapplicable to him/her.",
+      "Deficient conscience, unscrupulous, and amoral.",
+      "Does not maintain loyalties, and will, if the opportunity arises, exploit a trusting other.",
+      "Is fraudulent and deceptive, and often is a con or a charlatan.",
+      "Is arrogant and is contemptuous and/or vindictive toward victims of his/her exploitive endeavors.",
+      "Is indifferent to the welfare of others, and lacks empathy for their feelings.",
+      "Is domineering, exercising high levels of control in relationships."
+    ],
+    "long_term_goals": [
+      "Decrease arrogant, contemptuous attitudes and behaviors.",
+      "Reduce feelings of entitlement and expectations of special treatment.",
+      "Improve empathy, increasing the ability and desire to understand others' feelings.",
+      "Decrease or eliminate interpersonal exploitation.",
+      "Reduce or eliminate tendency to denigrate or put down others.",
+      "Acquire greater discipline and self-control over emotions, especially anger and rage."
+    ]
+  },
+  "PROBLEM-SOLVING SKILL DEFICITS": {
+    "behavioral_definitions": [
+      "Routinely overlooks and fails to consider all the important factors when responding to problems.",
+      "Inability to adequately problem solve creates or adds to the problems that significant others must deal with.",
+      "Often resorts to criminal behavior (e.g., assault, burglary, embezzling) to solve interpersonal, economic, or other problems.",
+      "Frequently unable to recognize or define problems in sufficient time to avoid having problems evolve into pernicious and seemingly out-of-control situations.",
+      "Unrealistically relies on magical or wishful thinking to resolve real-life problems.",
+      "Frequently opts to deliberately avoid addressing problems and critical decisions.",
+      "Limited decision-making abilities result in frequent self-disapproval and diminished self- concept.",
+      "Unable to make personal decisions and stick to them.",
+      "Pattern of personal decision making that results in loss of freedom, income, and social opportunities."
+    ],
+    "long_term_goals": [
+      "Adhere to a proven sequential step process for making good problem-solving decisions.",
+      "Recognize and appropriately classify problems at the earliest possible stage.",
+      "Thoroughly investigate problems so that subsequent decisions are based on the best available information.",
+      "Clearly define and state the essential factors constituting a given problem.",
+      "Experience progressively better health-related, financial, and social outcomes as a result of better problem solving."
+    ]
+  },
+  "PSYCHOSIS": {
+    "behavioral_definitions": [
+      "Experiences bizarre (implausible) or nonbizarre (i.e., involving situations that occur in real life) delusions.",
+      "Psychomotor functioning is impaired (e.g., marked decrease in reactivity to the environment, catatonic behavior, unusual mannerisms, or grimacing).",
+      "Illogical and disorganized speech (e.g., incoherent, tangential, vague, or repetitive speech).",
+      "Experiences hallucinations (e.g., auditory, olfactory, visual, or tactile).",
+      "Demonstrates blunted or inappropriate affect.",
+      "Withdrawal from involvement with external world and preoccupation with egocentric ideas and fantasies.",
+      "Extreme aggression toward the external world based in irrational delusional thought and/or uncontrollable hallucinations."
+    ],
+    "long_term_goals": [
+      "Control or eliminate debilitating psychotic symptoms and return to highest level of effective functioning.",
+      "Increase ability to cope with severe stressors that might precipitate a psychotic break.",
+      "Improve awareness and understanding of psychosis.",
+      "Interact with others without defensiveness or aggression."
+    ]
+  },
+  "SELF-CONCEPT DEFICITS": {
+    "behavioral_definitions": [
+      "Inability to identify own positive traits or achievements.",
+      "Poor self-image leads to association with low-achieving peers.",
+      "Uses criminal behavior in an attempt to impress others.",
+      "Powerful fear of rejection or criticism contributes to a difficulty saying no to others.",
+      "Repeated critical or reproachful statements about self with a pessimistic outlook on own abilities or future.",
+      "Extreme lack of self-confidence in abilities that inhibits initiating new activities or seeking pro-social, successful friends.",
+      "Avoids interpersonal interaction due to view of self as inferior, socially inept, inadequate, or personally unappealing.",
+      "Unrealistic evaluation of self that leads to inappropriately high goals resulting in failures that reinforce feelings of inadequacy."
+    ],
+    "long_term_goals": [
+      "Develop a consistent, positive self-image.",
+      "Develop healthy, positive cognitive patterns about self and the world.",
+      "Increase the ability to self-soothe, self-regulate, and evaluate self in a fair manner.",
+      "Develop a sense of abilities and self-worth that is based in reality."
+    ]
+  },
+  "SELF-DEFEATING BEHAVIOR PATTERNS (non-AOD)": {
+    "behavioral_definitions": [
+      "Inability to manage urges, impulses, and cravings and remain abstinent from self-defeating behaviors (e.g., loss of temper, gambling, dysfunctional family interaction, sexual acting- out, poor health habits, isolating socially, shoplifting, noncompliance with medication).",
+      "Verbalizes a commitment to abstain from self-defeating behaviors but has no plan, strategy, or specific skills for achieving this goal.",
+      "Increased frequency of engaging in self-defeating behaviors when feeling down, sad, angry, scared, embarrassed, or bored.",
+      "Feels social pressure when around others who are involved in self-defeating behaviors.",
+      "Increased frequency of engaging in self-defeating behaviors after fights and arguments with others or after being criticized by someone else.",
+      "Positive emotions, testing personal control and/or feeling bad physically frequently threatens or undermines commitment to abstain from self-defeating behavior.",
+      "All or nothing attitude toward changing self-defeating behaviors, results in self-loathing and disgust when slips or minor set-backs are experienced.",
+      "Little or no lifestyle balance in terms of the amount of obligations or \u201cshoulds\u201d fulfilled as opposed to the amount of gratifications of \u201cwants.\u201d",
+      "Ceases utilizing established and effective strategies, methods, and skills to abstain from self-defeating behaviors.",
+      "Chronic difficulties managing stress contribute to an on-going cycle of relapse into self- defeating behavior."
+    ],
+    "long_term_goals": [
+      "Terminate self-defeating behavior and replace it with healthy habits.",
+      "Develop a set of realistic plans, strategies, and skills for abstaining from self-defeating behaviors and utilize these strategies in everyday living.",
+      "Build and maintain more supportive social relationships that support abstinence and behavior change goals.",
+      "Develop a more flexible and resilient self-concept that allows for set-backs in behavior change, but fosters on-going self-improvement.",
+      "Learn skills for coping with urges, impulses, and cravings for self-defeating behaviors and for reframing their unrealistic outcome expectancies.",
+      "Learn and implement specific techniques and skills for successfully coping all major high- risk situations relevant to remaining abstinent from self-defeating behavior."
+    ]
+  },
+  "SEXUALLY DEVIANT BEHAVIOR": {
+    "behavioral_definitions": [
+      "Involvement in the criminal justice system due to charges of criminal sexual conduct or assault.",
+      "Exposure of genitals to an unsuspecting stranger.",
+      "Acts of frottage involving touching or rubbing against a nonconsenting person.",
+      "Observing an unsuspecting person who is naked, disrobing, or engaging in sexual activity.",
+      "Sexual activity with a prepubescent child.",
+      "Abuse of alcohol and/or other drugs associated with deviant sexual arousal.",
+      "An attitude of sexual entitlement that leads to sexually deviant behavior.",
+      "Low impulse control especially as related to deviant sexual behavior."
+    ],
+    "long_term_goals": [
+      "Eliminate sexually deviant behavior.",
+      "Terminate attitude of sexual entitlement.",
+      "Terminate the abuse of alcohol and other drugs.",
+      "Decrease the frequency of impulsive behavior related to deviant sexual arousal."
+    ]
+  },
+  "TIME MANAGEMENT PROBLEMS": {
+    "behavioral_definitions": [
+      "Inability to manage time in order to meet personal obligations.",
+      "Routinely fails to meet deadlines, make appointments, or follow through on things in a timely manner.",
+      "Inability to adequately anticipate time needed to accomplish tasks, projects, or goals.",
+      "Fails to prioritize obligations in order to ensure that all necessary ones are completed before less important ones.",
+      "Frequently overextends self, making it impossible to meet obligations in a timely manner.",
+      "Lack of time management abilities result in frequent self-disapproval and diminished self- concept."
+    ],
+    "long_term_goals": [
+      "Ability to manage time efficiently so that personal obligations are met.",
+      "Develop the skill necessary to prioritize personal obligations.",
+      "Gain an understanding of personal abilities to avoid becoming overextended and overwhelmed with obligations."
+    ]
+  },
+  "UNSTABLE LIVING SITUATION": {
+    "behavioral_definitions": [
+      "Currently lives in an environment with excessive criminogenic influences (e.g., criminal peers, substance abuse, violence) and is at high risk for relapse.",
+      "Family members or roommates are involved in criminal behavior.",
+      "Has a history of frequent moves, conflictual relationships, and repeated unemployment.",
+      "Currently homeless or lives in community shelters.",
+      "Depends on others for shelter, food, and clothing.",
+      "Lives in an environment where there is a high risk of sustaining physical, sexual, or emotional abuse.",
+      "Failure to make rent, mortgage, or utility payments, leading to a loss of residence."
+    ],
+    "long_term_goals": [
+      "Maintain employment as a legal means of obtaining income and responsibly manage finances for a stable living situation.",
+      "Change living situation to reduce or eliminate association with those involved in criminal behavior.",
+      "Manage pro-criminal relationships with roommates or family members by establishing boundaries to reduce risk for relapse or recidivism.",
+      "Establish a social network that is supportive of pro-social, stable living."
+    ]
+  },
+  "VIOLENT/AGGRESSIVE BEHAVIOR": {
+    "behavioral_definitions": [
+      "History of violent, aggressive responses out of proportion to any precipitating stressors.",
+      "History of involvement in the criminal justice system with charges related to violence, assault, menacing, or battery.",
+      "Uses violence as a means to achieve power and control.",
+      "Shows a cavalier disregard and no remorse for perpetrating violence or injuring on others.",
+      "Unreasonably attributes betrayal and/or hostility to others and overreacts aggressively to others accordingly.",
+      "Has a paranoid quality that leads to projection of own malicious outlook onto others.",
+      "Has a childhood history of exposure to repeated physical abuse and neglect.",
+      "Receives reinforcement for violence from peer group and faces possible alienation for nonaggressive behavior."
+    ],
+    "long_term_goals": [
+      "Significantly decrease frequency and intensity of violent, aggressive behavior, including verbal and physical abuse.",
+      "Improve awareness and understanding of violence: how it is triggered and what its painful consequences are to others.",
+      "Access and accept a greater range of emotions with increased ability to express these emotions constructively.",
+      "Develop a repertoire of behavior that makes it possible to achieve reinforcement from nonaggressive behavior.",
+      "Develop a pro-social network that shares and supports healthy nonaggressive lifestyle and respect for others."
+    ]
+  },
+  "VOCATIONAL DEFICITS": {
+    "behavioral_definitions": [
+      "In need of full-time employment.",
+      "Not employed full-time at least 50 percent of the past year and/or has never maintained full-time employment longer than one year.",
+      "Chronically underemployed in positions that provide little or not benefits and pay at or slightly above minimum wage.",
+      "Currently employed in a work environment with excessive criminogenic influences (e.g., criminal peers, substance abuse, violence) and risk for related relapse.",
+      "Limited access to job opportunities arising from the requirement to disclose criminal record.",
+      "Unrealistic expectations regarding the demands of a possible job (e.g., job-required work habits, team participation, and authority interactions).",
+      "Unrealistic self-expectations and confidence (over or under) regarding performance capability in new job.",
+      "Chaotic living environment, unstable social relations, illness, or immediate family member illness contribute to vocational conflict.",
+      "Educational, skills, and learning deficits that represent obstacles to literacy (English or computer), interpersonal skills or minimal mainstream vocational competencies (e.g., basic math)."
+    ],
+    "long_term_goals": [
+      "Maintain stable full-time employment in a pro-social work environment.",
+      "Develop a set of realistic job-related expectations regarding job performance requirements and the ability to meet these requirements.",
+      "Acquire necessary self-discipline skills to perform full-time work in a punctual, consistent, and productive manner.",
+      "Realistically acknowledge personal vocational aptitudes, current skills and deficits, and what the related career opportunities are.",
+      "Learn how to manage existing criminogenic influences in the workplace to reduce the risk for relapse.",
+      "Identify a concrete, personal set of both short- and long-term vocational goals that reflect a realistic career path.",
+      "Increase self-presentation and job interview skills for potential employers."
+    ]
+  }
+}

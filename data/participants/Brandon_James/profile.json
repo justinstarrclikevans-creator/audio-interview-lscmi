@@ -1,0 +1,30 @@
+{
+  "participant_key": "Brandon_James",
+  "name": "Brandon James",
+  "location": "Columbia",
+  "track": "first_shift",
+  "status": "active",
+  "user_id": null,
+  "client_id": 54,
+  "apricot_id": "62636",
+  "phone": "",
+  "email": "",
+  "files": [
+    "Brandon_James_Columbia_criminal_history.docx",
+    "Brandon_James_Columbia_criminal_history.md",
+    "Brandon_James_Columbia_draft_scoring_form.docx",
+    "Brandon_James_Columbia_draft_scoring_form.md",
+    "Brandon_James_Columbia_interview_guide.docx",
+    "Brandon_James_Columbia_interview_guide.md",
+    "Brandon_James_Columbia_transcript.txt"
+  ],
+  "folder_slug": "Brandon_James",
+  "folder_path": "data/participants/Brandon_James",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": true,
+  "has_action_plan": false,
+  "waitlist_ready": false,
+  "waitlist_met_count": 7,
+  "data_flags_count": 2,
+  "updated_at": "2026-11-22T17:18:01.641Z"
+}

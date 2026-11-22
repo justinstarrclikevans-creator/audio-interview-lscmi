@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>First Shift & Re-entry Navigation Platform</title>
-    <link rel="stylesheet" href="style.css?v=1792000000000">
+    <link rel="stylesheet" href="style.css?v=1792000000003">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
@@ -38,170 +38,299 @@
     <header class="top-nav">
         <div class="nav-container">
             <div class="brand">
-                <span class="brand-badge">SC RE-ENTRY</span>
+                <span class="brand-badge">TURN90</span>
                 <span class="brand-title">First Shift <span class="accent-text">&</span> Re-entry Navigation</span>
             </div>
             <div class="nav-right" id="nav-user-section">
                 <!-- Dynamically populated based on auth status -->
             </div>
         </div>
+        <!-- Persistent 6-Dashboard Switcher & Quick Command Bar (Shown when authenticated) -->
+        <div id="six-dashboards-bar" class="hidden" style="background: #0f172a; border-top: 1px solid #1e293b; padding: 8px 20px;">
+            <div style="max-width: 1440px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                    <span style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-right: 4px;">6 Dashboards:</span>
+                    <button type="button" class="dash6-tab-btn" data-dash="lscmi" onclick="switchSixDashboard('lscmi')" style="padding: 6px 12px; font-size: 12px; font-weight: 700; border-radius: 6px; border: 1px solid #334155; background: #1e293b; color: #f8fafc; cursor: pointer;">📋 1. LS/CMI & Screening</button>
+                    <button type="button" class="dash6-tab-btn" data-dash="charleston" onclick="switchSixDashboard('charleston')" style="padding: 6px 12px; font-size: 12px; font-weight: 700; border-radius: 6px; border: 1px solid #334155; background: #1e293b; color: #f8fafc; cursor: pointer;">🏢 2. Charleston (CHS)</button>
+                    <button type="button" class="dash6-tab-btn" data-dash="columbia" onclick="switchSixDashboard('columbia')" style="padding: 6px 12px; font-size: 12px; font-weight: 700; border-radius: 6px; border: 1px solid #334155; background: #1e293b; color: #f8fafc; cursor: pointer;">🏢 3. Columbia (COL)</button>
+                    <button type="button" class="dash6-tab-btn" data-dash="spartanburg" onclick="switchSixDashboard('spartanburg')" style="padding: 6px 12px; font-size: 12px; font-weight: 700; border-radius: 6px; border: 1px solid #334155; background: #1e293b; color: #f8fafc; cursor: pointer;">🏢 4. Spartanburg (SPB)</button>
+                    <button type="button" class="dash6-tab-btn" data-dash="reentry_nav" onclick="switchSixDashboard('reentry_nav')" style="padding: 6px 12px; font-size: 12px; font-weight: 700; border-radius: 6px; border: 1px solid #334155; background: #1e293b; color: #f8fafc; cursor: pointer;">🧭 5. Reentry Navigation</button>
+                    <button type="button" class="dash6-tab-btn" data-dash="supervisor" onclick="switchSixDashboard('supervisor')" style="padding: 6px 12px; font-size: 12px; font-weight: 700; border-radius: 6px; border: 1px solid #334155; background: #1e293b; color: #f8fafc; cursor: pointer;">🌐 6. All-Information Master</button>
+                </div>
+                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                    <button type="button" onclick="openUnifiedParticipantFoldersModal()" style="padding: 5px 11px; font-size: 11.5px; font-weight: 700; border-radius: 6px; border: 1px solid #38bdf8; background: #0284c7; color: white; cursor: pointer;">📁 Participant Folders & Gate-Free Briefcase</button>
+                    <button type="button" onclick="openCombinedSupervisionReportModal()" style="padding: 5px 11px; font-size: 11.5px; font-weight: 700; border-radius: 6px; border: 1px solid #a78bfa; background: #4f46e5; color: white; cursor: pointer;">📊 SkillCat Pathways + Apricot Supervision Report</button>
+                    <button type="button" onclick="openVoiceRecognitionModal()" style="padding: 5px 11px; font-size: 11.5px; font-weight: 700; border-radius: 6px; border: 1px solid #34d399; background: #059669; color: white; cursor: pointer;">🎙️ Voice Recognition (30s Staff Script)</button>
+                    <button type="button" onclick="openTemplatesAndSkillsModal()" style="padding: 5px 11px; font-size: 11.5px; font-weight: 700; border-radius: 6px; border: 1px solid #fbbf24; background: #d97706; color: white; cursor: pointer;">📐 CM & Screening Templates / Skills</button>
+                </div>
+            </div>
+        </div>
     </header>
 
     <main class="main-content">
         <!-- ========================================================= -->
-        <!-- VIEW 1: AUTHENTICATION (LOGIN / SIGN UP)                   -->
+        <!-- MAIN LANDING VIEW: ACCESS CODE LOGIN ONLY                 -->
         <!-- ========================================================= -->
-        
-        <!-- ========================================================= -->
-        <!-- VIEW 0: PUBLIC PORTAL                                      -->
-        <!-- ========================================================= -->
-        <section id="view-public" class="app-view active">
-            <div class="portal-header" style="text-align: center; padding: 40px 20px; background: #f8fafc; border-bottom: 1px solid var(--border); margin-bottom: 30px;">
-                <h1 style="font-size: 32px; color: var(--primary); margin: 0;">Turn90 Job Board & Resource Guide</h1>
-                <p style="font-size: 16px; color: var(--slate); max-width: 600px; margin: 10px auto 0 auto;">Browse verified fair-chance employers and state benefits without logging in.</p>
-            </div>
-            
-            <div class="public-tabs" style="display: flex; justify-content: center; gap: 10px; margin-bottom: 30px;">
-                <button id="pub-btn-jobs" class="btn btn-primary" onclick="switchPublicTab('jobs')">💼 Job Board</button>
-                <button id="pub-btn-benefits" class="btn btn-outline" onclick="switchPublicTab('benefits')">🏛️ Resource Guide</button>
-            </div>
-
-            <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
-                <!-- SUBSECTION: Job Board -->
-            <div id="pub-sec-jobs" class="">
-                <div class="section-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
-                        <div>
-                            <h2 style="margin: 0; font-size: 20px; font-weight: 700; color: var(--dark);">Fair-Chance Re-entry Employers in South Carolina</h2>
-                            <p style="margin: 4px 0 0 0; font-size: 13.5px;" class="text-slate">Verified partners from Turn90 spreadsheets and regional hiring searches offering competitive pay, 1st shift schedules, and rapid career progression.</p>
-                        </div>
-                        <div style="display: flex; gap: 6px; flex-wrap: wrap;" id="rn-job-area-buttons">
-                            <button class="btn btn-primary" id="btn-job-loc-all" style="font-size: 12px; padding: 6px 12px;" onclick="filterJobsByArea('all')">All Areas</button>
-                            <button class="btn btn-outline" id="btn-job-loc-charleston" style="font-size: 12px; padding: 6px 12px;" onclick="filterJobsByArea('Charleston')">📍 Charleston</button>
-                            <button class="btn btn-outline" id="btn-job-loc-columbia" style="font-size: 12px; padding: 6px 12px;" onclick="filterJobsByArea('Columbia')">📍 Columbia</button>
-                            <button class="btn btn-outline" id="btn-job-loc-spartanburg" style="font-size: 12px; padding: 6px 12px;" onclick="filterJobsByArea('Spartanburg')">📍 Spartanburg</button>
-                        </div>
-                    </div>
-                    <div style="background: #f1f5f9; border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; margin-bottom: 16px;">
-                        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
-                            <div style="flex: 1; min-width: 240px; position: relative;">
-                                <input type="text" id="input-job-keyword" placeholder="Search by job title, trade skill, or employer..." style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px;" onkeyup="handleJobKeywordKeyup(event)">
-                            </div>
-                            <button class="btn btn-primary" style="font-size: 12px; padding: 8px 14px;" onclick="handleJobSearchSubmit()">🔍 Filter Openings</button>
-                            <button class="btn btn-outline" style="font-size: 12px; padding: 8px 14px; background: white;" onclick="launchGoogleJobsSearch()">🌐 Search Live Google Jobs</button>
-                            <button class="btn btn-outline" style="font-size: 12px; padding: 8px 10px; background: white;" onclick="clearJobSearch()" title="Reset Filters">✕ Reset</button>
-                        </div>
-                    </div>
-                    <div id="jobs-status-summary" style="font-size: 13px; color: var(--slate); font-weight: 600; margin-bottom: 14px;">Loading verified openings...</div>
-                    <div id="job-listings-grid" class="job-grid"></div>
-                </div>
-            </div>
-
-            
-                <!-- SUBSECTION: State Benefits -->
-            <div id="pub-sec-benefits" class="hidden">
-                <div class="section-card" style="border-top: 4px solid #0284c7; margin-bottom: 20px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
-                        <div>
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <span style="font-size: 24px;">🏢</span>
-                                <h2 style="margin: 0; font-size: 19px;">South Carolina Community Resource Guide</h2>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 20px;">
-                        <!-- Info Box -->
-                        <div style="flex: 1; min-width: 300px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 16px;">
-                            <h3 style="margin: 0 0 10px 0; font-size: 16px; color: #b45309;">📍 Full Statewide Database</h3>
-                            <p style="font-size: 13px; color: #92400e; margin: 0 0 12px 0; line-height: 1.5;">Scroll down to view our complete list of verified community resources across South Carolina, categorized by location and need.</p>
-                            <input type="text" id="pub-res-search" placeholder="Quick search by name or keyword..." oninput="filterPublicResources()" style="width: 100%; padding: 10px; font-size: 13px; border: 1px solid #fcd34d; border-radius: 4px; box-sizing: border-box;">
-                        </div>
-                    </div>
-                    
-                    <div id="pub-res-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px;">
-                        <!-- Filled dynamically -->
-                    </div>
-                    
-
-                </div>
-            </div>
-
-            </div>
-            <!-- Public Footer with Hidden Intake Kiosk -->
-            <div style="text-align: right; padding: 12px 24px; opacity: 0.6; margin-top: 10px;">
-                <button onclick="promptKioskIntake()" style="background: none; border: none; color: var(--slate); font-size: 12px; cursor: pointer;">🎙️ Intake Portal</button>
-            </div>
-        </section>
-        <section id="view-auth" class="app-view hidden">
-            <div class="auth-card" style="max-width: 520px; margin: 40px auto; background: white; border-radius: 14px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); padding: 32px; border: 1px solid #e2e8f0;">
-                <div class="auth-header" style="text-align: center; margin-bottom: 24px;">
+        <section id="view-auth" class="app-view active">
+            <div class="auth-card" style="max-width: 420px; margin: 90px auto; background: white; border-radius: 14px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); padding: 32px; border: 1px solid #e2e8f0;">
+                <div class="auth-header" style="text-align: center; margin-bottom: 22px;">
                     <div style="font-size: 36px; margin-bottom: 8px;">🔐</div>
-                    <h2 style="font-size: 24px; font-weight: 800; color: #0f172a; margin: 0 0 6px 0;">Turn90 Program Portals</h2>
-                    <p class="subtitle" style="font-size: 13.5px; color: #64748b; margin: 0;">Select your program portal and enter your passcode (No emails required).</p>
+                    <h2 style="font-size: 22px; font-weight: 800; color: #0f172a; margin: 0 0 6px 0;">Turn90 Portal Login</h2>
+                    <p class="subtitle" style="font-size: 13.5px; color: #64748b; margin: 0;">Enter your access code to continue.</p>
                 </div>
 
-                <!-- Portal Selector Cards -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;">
-                    <button type="button" class="portal-select-btn active" id="btn-portal-charleston" data-portal="charleston" onclick="selectPortal('charleston')" style="padding: 12px; border: 2px solid #2563eb; background: #eff6ff; border-radius: 10px; cursor: pointer; text-align: left; font-weight: 700; color: #1e3a8a; transition: all 0.2s;">
-                        <div style="font-size: 15px;">🏢 Charleston Center</div>
-                        <div style="font-size: 11px; color: #3b82f6; font-weight: normal; margin-top: 2px;">First Shift & CM</div>
-                    </button>
-                    <button type="button" class="portal-select-btn" id="btn-portal-columbia" data-portal="columbia" onclick="selectPortal('columbia')" style="padding: 12px; border: 1.5px solid #cbd5e1; background: #f8fafc; border-radius: 10px; cursor: pointer; text-align: left; font-weight: 700; color: #334155; transition: all 0.2s;">
-                        <div style="font-size: 15px;">🏢 Columbia Center</div>
-                        <div style="font-size: 11px; color: #64748b; font-weight: normal; margin-top: 2px;">First Shift & CM</div>
-                    </button>
-                    <button type="button" class="portal-select-btn" id="btn-portal-spartanburg" data-portal="spartanburg" onclick="selectPortal('spartanburg')" style="padding: 12px; border: 1.5px solid #cbd5e1; background: #f8fafc; border-radius: 10px; cursor: pointer; text-align: left; font-weight: 700; color: #334155; transition: all 0.2s;">
-                        <div style="font-size: 15px;">🏢 Spartanburg Center</div>
-                        <div style="font-size: 11px; color: #64748b; font-weight: normal; margin-top: 2px;">First Shift & CM</div>
-                    </button>
-                    <button type="button" class="portal-select-btn" id="btn-portal-reentry_nav" data-portal="reentry_nav" onclick="selectPortal('reentry_nav')" style="padding: 12px; border: 1.5px solid #cbd5e1; background: #f8fafc; border-radius: 10px; cursor: pointer; text-align: left; font-weight: 700; color: #334155; transition: all 0.2s;">
-                        <div style="font-size: 15px;">🧭 Reentry Navigation</div>
-                        <div style="font-size: 11px; color: #64748b; font-weight: normal; margin-top: 2px;">Statewide Caseload</div>
-                    </button>
-                </div>
-                
-                <div style="margin-bottom: 20px;">
-                    <button type="button" class="portal-select-btn" id="btn-portal-supervisor" data-portal="supervisor" onclick="selectPortal('supervisor')" style="width: 100%; padding: 12px; border: 1.5px solid #cbd5e1; background: #f8fafc; border-radius: 10px; cursor: pointer; text-align: center; font-weight: 700; color: #475569; transition: all 0.2s;">
-                        👑 Supervisor / Leadership Command Center
-                    </button>
-                </div>
-
-                <!-- Passcode Entry Form -->
+                <!-- Access Code Entry Form -->
                 <form id="form-pin-login" onsubmit="handlePinLogin(event)">
-                    <input type="hidden" id="selected-portal-val" value="charleston">
+                    <input type="hidden" id="selected-portal-val" value="supervisor">
                     
                     <div class="form-group" style="margin-bottom: 16px;">
                         <label for="portal-passcode" style="font-weight: 700; font-size: 13px; color: #1e293b; display: block; margin-bottom: 6px;">
-                            Passcode for <span id="label-active-portal" style="color: #2563eb;">Charleston Center</span>:
+                            Access Code
                         </label>
-                        <input type="password" id="portal-passcode" inputmode="numeric" required placeholder="Enter passcode" autofocus style="width: 100%; padding: 12px 14px; font-size: 18px; letter-spacing: 4px; text-align: center; border: 1.5px solid #cbd5e1; border-radius: 8px; box-sizing: border-box;">
+                        <input type="password" id="portal-passcode" inputmode="numeric" required placeholder="Enter Access Code" autofocus style="width: 100%; padding: 12px 14px; font-size: 18px; letter-spacing: 4px; text-align: center; border: 1.5px solid #cbd5e1; border-radius: 8px; box-sizing: border-box;">
                     </div>
 
                     <div id="pin-login-error" class="hidden" style="margin-bottom: 14px; padding: 10px; border-radius: 6px; background: #fee2e2; color: #b91c1c; font-size: 12.5px; text-align: center; font-weight: 600;"></div>
 
-                    <button type="submit" id="btn-pin-signin" class="btn btn-primary btn-block" style="padding: 12px; font-size: 15px; font-weight: 700; border-radius: 8px; width: 100%; cursor: pointer;">
-                        Sign In to Portal
+                    <button type="submit" id="btn-pin-signin" class="btn btn-primary btn-block" style="padding: 13px; font-size: 15px; font-weight: 700; border-radius: 8px; width: 100%; cursor: pointer;">
+                        Sign In
                     </button>
                 </form>
 
-                <div style="margin-top: 20px; text-align: center; border-top: 1px solid #f1f5f9; padding-top: 14px;">
-                    <a href="javascript:void(0)" onclick="toggleLegacyEmailLogin()" style="font-size: 12px; color: #64748b; text-decoration: underline;">Participant / Email Login</a>
+                <!-- Hidden legacy form container kept for DOM safety -->
+                <div id="legacy-email-login" class="hidden">
+                    <form id="form-login" onsubmit="handleLogin(event)">
+                        <input type="email" id="login-email">
+                        <input type="password" id="login-password">
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- DASHBOARD 1: DEDICATED LS/CMI & SCREENING DASHBOARD        -->
+        <!-- ========================================================= -->
+        <section id="view-lscmi-dashboard" class="app-view hidden">
+            <div class="portal-header" style="background: white; padding: 22px 30px; border-bottom: 1px solid var(--border); margin-bottom: 22px;">
+                <div style="max-width: 1440px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+                    <div>
+                        <h1 style="font-size: 24px; font-weight: 800; color: #0f172a; margin: 0;">📋 Dashboard 1: LS/CMI Dynamic Assessment, Screening & Action Plan Loop</h1>
+                        <p style="font-size: 13.5px; color: #64748b; margin: 4px 0 0 0;">Screening Consultation → Auto-Briefcase (9 Waitlist Items) → Dynamic LS/CMI Interview (with Probation Planner Behavioral Definitions & Discrepancy Detection) → Case Brief & Action Plan Feedback Loop</p>
+                    </div>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <button type="button" class="btn btn-primary" onclick="openInterviewModal()" style="font-size: 12.5px; padding: 8px 14px; font-weight: 700; background: #0f766e; border-color: #0f766e;">🎙️ Live 158-Q Dynamic Audio Intake</button>
+                        <button type="button" class="btn btn-outline" onclick="window.open('lscmi_companion.html', '_blank')" style="font-size: 12.5px; padding: 8px 14px; font-weight: 700; border-color: #2563eb; color: #1d4ed8; background: #eff6ff;">🧮 LS/CMI QuikScore Companion & Section 9 Resource Bridge</button>
+                        <button type="button" class="btn btn-outline" onclick="window.open('Turn90_Weekly_Pulse.html', '_blank')" style="font-size: 12.5px; padding: 8px 14px; font-weight: 700; border-color: #059669; color: #047857; background: #ecfdf5;">📈 Weekly Caseload Pulse Report</button>
+                        <button type="button" class="btn btn-outline" onclick="openManualInterviewModal()" style="font-size: 12.5px; padding: 8px 14px; font-weight: 700;">🎙️ Upload / Process LS/CMI Audio (Enrolls Participant Voice)</button>
+                        <button type="button" class="btn btn-primary" onclick="openUnifiedParticipantFoldersModal()" style="font-size: 12.5px; padding: 8px 14px; font-weight: 700;">📁 Open Participant Folders</button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="max-width: 1440px; margin: 0 auto 40px auto; padding: 0 20px; display: grid; grid-template-columns: 1fr 1.25fr; gap: 22px;">
+                <!-- Left Column: Step 1 Screening Consultation -> Creates Unified Briefcase & Informs LS/CMI -->
+                <div style="background: white; border-radius: 12px; border: 1px solid #cbd5e1; padding: 22px; box-shadow: 0 1px 4px rgba(0,0,0,0.05);">
+                    <h2 style="font-size: 17px; font-weight: 800; color: #0f172a; margin: 0 0 6px 0;">1️⃣ Screening Consultation (Creates Unified Briefcase & Informs LS/CMI)</h2>
+                    <p style="font-size: 12.5px; color: #64748b; margin: 0 0 14px 0;">Determines First Shift vs. Reentry Navigation eligibility, auto-builds the single-document Gate-Free Briefcase (9 Waitlist Items + Conditional Medical Logic), and pre-loads anchors into the LS/CMI.</p>
+
+                    <form id="form-screening-consultation" onsubmit="submitScreeningConsultation(event)">
+                        <div style="display: grid; grid-template-columns: 1.5fr 0.7fr 1fr; gap: 10px; margin-bottom: 10px;">
+                            <div>
+                                <label style="font-size: 11.5px; font-weight: 700; color: #334155;">Participant Full Name *</label>
+                                <input type="text" id="sc-participant-name" required placeholder="e.g. Marcus McMillian" style="width: 100%; padding: 8px 10px; font-size: 12.5px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;">
+                            </div>
+                            <div>
+                                <label style="font-size: 11.5px; font-weight: 700; color: #334155;">Age (25–50)</label>
+                                <input type="number" id="sc-age" value="32" min="18" max="80" style="width: 100%; padding: 8px 10px; font-size: 12.5px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;">
+                            </div>
+                            <div>
+                                <label style="font-size: 11.5px; font-weight: 700; color: #334155;">Center</label>
+                                <select id="sc-location" style="width: 100%; padding: 8px 10px; font-size: 12.5px; border: 1px solid #cbd5e1; border-radius: 6px; background: white;">
+                                    <option value="Charleston">Charleston (CHS)</option>
+                                    <option value="Columbia">Columbia (COL)</option>
+                                    <option value="Spartanburg">Spartanburg (SPB)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-bottom: 12px;">
+                            <div style="font-size: 12px; font-weight: 800; color: #1e3a8a; margin-bottom: 8px;">📋 9 Mandatory First Shift Waitlist Requirements (Creates Briefcase)</div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12px;">
+                                <div>
+                                    <label style="font-weight: 700; display: block; margin-bottom: 2px;">1. State ID or Driver's License</label>
+                                    <select id="sc-id-dl" onchange="handleScreeningConditionalFields()" style="width: 100%; padding: 6px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 5px; background: white;">
+                                        <option value="valid_dl">✅ Valid Driver's License</option>
+                                        <option value="valid_state_id">✅ Valid State ID (No DL)</option>
+                                        <option value="dl_suspended_has_state_id">⚠️ DL Suspended (Has Valid State ID)</option>
+                                        <option value="dl_suspended_no_id">❌ DL Suspended & No State ID</option>
+                                        <option value="applied_receipt">⏳ Applied — DMV Receipt in Hand</option>
+                                        <option value="missing">❌ Missing ID / DL</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="font-weight: 700; display: block; margin-bottom: 2px;">2. Social Security Card</label>
+                                    <select id="sc-ss-card" style="width: 100%; padding: 6px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 5px; background: white;">
+                                        <option value="verified_card">✅ Physical SS Card Verified</option>
+                                        <option value="verified_ssa_receipt">✅ SSA Replacement Receipt Verified</option>
+                                        <option value="applied_pending">⏳ Applied / SSA Pending</option>
+                                        <option value="missing">❌ Missing SS Card</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="font-weight: 700; display: block; margin-bottom: 2px;">3. Birth Certificate</label>
+                                    <select id="sc-birth-cert" style="width: 100%; padding: 6px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 5px; background: white;">
+                                        <option value="verified_copy">✅ Certified Copy Verified</option>
+                                        <option value="ordered_in_transit">⏳ Ordered / In Transit</option>
+                                        <option value="missing">❌ Missing Birth Certificate</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="font-weight: 700; display: block; margin-bottom: 2px;">4. Any Chronic Health Condition?</label>
+                                    <select id="sc-has-chronic" onchange="handleScreeningConditionalFields()" style="width: 100%; padding: 6px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 5px; background: white;">
+                                        <option value="no">✅ No Chronic Health Conditions (Do NOT ask for medical appts)</option>
+                                        <option value="yes">🩺 Yes — Has Chronic Condition / Requires Daily Meds</option>
+                                    </select>
+                                </div>
+                                <div id="sc-chronic-followup-box" class="hidden" style="grid-column: span 2; background: #fffbeb; border: 1px solid #fde68a; padding: 8px; border-radius: 6px;">
+                                    <label style="font-weight: 700; display: block; margin-bottom: 2px; color: #92400e;">↳ Chronic Condition Treatment & Daily Medication Access</label>
+                                    <select id="sc-chronic-status" style="width: 100%; padding: 6px; font-size: 12px; border: 1px solid #fcd34d; border-radius: 5px; background: white;">
+                                        <option value="treated_and_has_daily_meds">✅ Treated & Has Steady Access to Daily Medications</option>
+                                        <option value="needs_daily_med_access">❌ Needs Daily Medication Access / Welvista Refill</option>
+                                        <option value="needs_medical_appointment">❌ Untreated — Needs Medical Appointment</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="font-weight: 700; display: block; margin-bottom: 2px;">5. Stable Address / Housing</label>
+                                    <select id="sc-housing" style="width: 100%; padding: 6px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 5px; background: white;">
+                                        <option value="stable_verified">✅ Stable Housing Verified</option>
+                                        <option value="transitional_verified">✅ Approved Transitional Housing</option>
+                                        <option value="temporary_unstable">❌ Temporary / Couch Surfing (Stabilize in RN)</option>
+                                        <option value="unhoused_shelter">❌ Unhoused / Shelter (Stabilize in RN)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="font-weight: 700; display: block; margin-bottom: 2px;">6. Reliable Phone Number</label>
+                                    <select id="sc-phone" style="width: 100%; padding: 6px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 5px; background: white;">
+                                        <option value="active_verified">✅ Active & Reliable Phone Verified</option>
+                                        <option value="wifi_only">❌ Wi-Fi / Text App Only</option>
+                                        <option value="no_phone">❌ No Phone / Disconnected</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="font-weight: 700; display: block; margin-bottom: 2px;">7. Gone to DMV if DL Suspended</label>
+                                    <select id="sc-dmv-inquiry" style="width: 100%; padding: 6px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 5px; background: white;">
+                                        <option value="not_applicable_valid">✅ N/A (DL Valid or Not Suspended)</option>
+                                        <option value="completed_dmv_inquiry">✅ Gone to DMV — Reinstatement Plan Obtained</option>
+                                        <option value="dmv_visit_scheduled">⏳ DMV Visit Scheduled</option>
+                                        <option value="needs_dmv_visit">❌ DL Suspended — Has Not Gone to DMV Yet</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label style="font-weight: 700; display: block; margin-bottom: 2px;">8. Child Support Contact (if applicable)</label>
+                                    <select id="sc-child-support" style="width: 100%; padding: 6px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 5px; background: white;">
+                                        <option value="not_applicable">✅ N/A (No Child Support Case)</option>
+                                        <option value="contact_made_compliant">✅ Contact Made & Compliance Plan Active</option>
+                                        <option value="current_paid_up">✅ Current / Paid Up</option>
+                                        <option value="needs_contact">❌ Applicable — Needs Contact with Child Support</option>
+                                    </select>
+                                </div>
+                                <div style="grid-column: span 2;">
+                                    <label style="font-weight: 700; display: block; margin-bottom: 2px;">9. Supervision Information (Probation / Parole / Pending Charges)</label>
+                                    <select id="sc-supervision" style="width: 100%; padding: 6px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 5px; background: white; margin-bottom: 6px;">
+                                        <option value="not_under_supervision">✅ Not Under Supervision (Maxed Out / Non-Supervised)</option>
+                                        <option value="active_logged_no_conflict">✅ Active Supervision — Officer & Schedule Logged (No Work Conflict)</option>
+                                        <option value="pending_charges_cleared">✅ Pending Charges — Written PD/PO Email Reassurance Received</option>
+                                        <option value="missing_or_conflict">❌ Missing Supervision Details or Unresolved Pending Charge Block</option>
+                                    </select>
+                                    <input type="text" id="sc-supervision-notes" placeholder="Supervision Officer Name, Phone/Email, Reporting Day, or arrest history notes (informs LS/CMI)..." style="width: 100%; padding: 6px 8px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 5px; box-sizing: border-box;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 10px; font-size: 13.5px; font-weight: 700;">
+                            ✨ Run Eligibility Check, Create Unified Briefcase & Pre-Load into LS/CMI
+                        </button>
+                    </form>
+
+                    <div id="sc-verdict-output" class="hidden" style="margin-top: 14px; padding: 14px; border-radius: 8px; background: #f0fdf4; border: 1.5px solid #86efac; font-size: 13px;"></div>
                 </div>
 
-                <!-- Collapsible legacy email login if a participant needs it -->
-                <div id="legacy-email-login" class="hidden" style="margin-top: 16px; padding: 16px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
-                    <form id="form-login" class="auth-form" onsubmit="handleLogin(event)">
-                        <div class="form-group" style="margin-bottom: 10px;">
-                            <label for="login-email" style="font-size: 12px;">Email Address</label>
-                            <input type="email" id="login-email" placeholder="name@example.com" style="width: 100%; padding: 8px; font-size: 13px;">
+                <!-- Right Column: Step 2 Dynamic LS/CMI Questioning + Probation Planner Behavioral Definitions + Feedback Loop -->
+                <div style="display: flex; flex-direction: column; gap: 18px;">
+                    <div style="background: white; border-radius: 12px; border: 1px solid #cbd5e1; padding: 22px; box-shadow: 0 1px 4px rgba(0,0,0,0.05);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;">
+                            <div>
+                                <h2 style="font-size: 17px; font-weight: 800; color: #0f172a; margin: 0;">2️⃣ Dynamic LS/CMI Interviewer & Probation Planner Matcher</h2>
+                                <p style="font-size: 12px; color: #64748b; margin: 2px 0 0 0;">Identifies discrepancies in the moment, asks non-challenging open-ended MI/SYNAPSE follow-up questions, and matches responses to Probation Planner Behavioral Definitions.</p>
+                            </div>
+                            <select id="dyn-lscmi-domain" style="padding: 6px 10px; font-size: 12px; font-weight: 700; border: 1.5px solid #2563eb; border-radius: 6px; background: #eff6ff; color: #1e3a8a;">
+                                <option value="01-criminal-history">1.1 Criminal History & Supervision</option>
+                                <option value="02-education-employment">1.2 Education & Employment</option>
+                                <option value="03-family-marital">1.3 Family & Marital</option>
+                                <option value="04-leisure-recreation">1.4 Leisure & Recreation</option>
+                                <option value="05-companions">1.5 Companions</option>
+                                <option value="06-alcohol-drug">1.6 Alcohol & Substance Use</option>
+                                <option value="07-procriminal-attitude">1.7 Procriminal Attitude & Authority</option>
+                                <option value="08-antisocial-pattern">1.8 Antisocial Pattern & Impulsivity</option>
+                            </select>
                         </div>
-                        <div class="form-group" style="margin-bottom: 12px;">
-                            <label for="login-password" style="font-size: 12px;">Password</label>
-                            <input type="password" id="login-password" placeholder="Enter password" style="width: 100%; padding: 8px; font-size: 13px;">
+
+                        <div id="dyn-lscmi-chat-log" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; height: 220px; overflow-y: auto; font-size: 13px; margin-bottom: 10px;">
+                            <div style="color: #475569;"><strong>Interviewer (Suggested Opening):</strong> "Hello, our goal is to help you get into stable employment while identifying thinking patterns that may have held you back in the past. Walk me through what your work and day-to-day routine looked like leading up to your most recent arrest."</div>
                         </div>
-                        <button type="submit" class="btn btn-outline btn-block" style="width: 100%; font-size: 12px; padding: 8px;">Sign In with Email</button>
-                    </form>
+
+                        <div id="dyn-lscmi-badges" style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px;"></div>
+
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="dyn-lscmi-answer-input" placeholder="Enter or dictate participant's response to test dynamic follow-up & discrepancy detection..." style="flex: 1; padding: 10px 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                            <button type="button" class="btn btn-primary" onclick="sendDynamicLscmiTurn()" style="padding: 10px 16px; font-size: 13px; font-weight: 700; white-space: nowrap;">
+                                🧠 Analyze & Ask Follow-Up
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Action Plan Disagreement Feedback Loop -->
+                    <div style="background: white; border-radius: 12px; border: 1px solid #cbd5e1; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.05);">
+                        <h2 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0 0 4px 0;">3️⃣ Action Plan Disagreement Feedback Loop (Informs First Shift Case Management)</h2>
+                        <p style="font-size: 12px; color: #64748b; margin: 0 0 12px 0;">When a participant disagrees with their LS/CMI Action Plan target, log their objection and execute the collaborative 4-Step Feedback Loop (SYNAPSE Navigate/Activate + First Shift Scripts 3.2 / 4.7).</p>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; font-size: 12px;">
+                            <div>
+                                <label style="font-weight: 700;">Participant Name</label>
+                                <input type="text" id="fl-participant-name" placeholder="e.g. Jovon Bonneau" style="width: 100%; padding: 7px; border: 1px solid #cbd5e1; border-radius: 5px; box-sizing: border-box;">
+                            </div>
+                            <div>
+                                <label style="font-weight: 700;">Participant Agreement Status</label>
+                                <select id="fl-agreement-status" style="width: 100%; padding: 7px; border: 1px solid #cbd5e1; border-radius: 5px; background: white;">
+                                    <option value="resolved_via_feedback_loop">🔄 Disagreed → Resolved via 4-Step Feedback Loop</option>
+                                    <option value="agreed">✅ Participant Agreed with Action Plan Targets</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="font-weight: 700;">Target Disagreed With (if any)</label>
+                                <input type="text" id="fl-disagreed-target" placeholder="e.g. Family Conflict / Authority" style="width: 100%; padding: 7px; border: 1px solid #cbd5e1; border-radius: 5px; box-sizing: border-box;">
+                            </div>
+                            <div>
+                                <label style="font-weight: 700;">Agreed Pivot Target & Tool Kit (1A–1N)</label>
+                                <input type="text" id="fl-replacement-target" placeholder="e.g. Impulsivity — Stop & Think + STAC (1I)" style="width: 100%; padding: 7px; border: 1px solid #cbd5e1; border-radius: 5px; box-sizing: border-box;">
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="fl-objection-quote" placeholder="Participant's verbatim feedback (e.g. 'I'd rather focus on making decisions on the spot at work first')..." style="flex: 1; padding: 8px 10px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 5px;">
+                            <button type="button" class="btn btn-primary" onclick="submitActionPlanFeedbackLoop()" style="padding: 8px 14px; font-size: 12.5px; font-weight: 700; background: #0f766e; border-color: #0f766e; white-space: nowrap;">
+                                💾 Save Feedback Loop to Folder
+                            </button>
+                        </div>
+                        <div id="fl-status-msg" class="hidden" style="margin-top: 8px; font-size: 12px; font-weight: 700; color: #047857;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- All Completed LS/CMI Scoring Forms, Briefs & Action Plans Table -->
+            <div style="max-width: 1440px; margin: 0 auto 40px auto; padding: 0 20px;">
+                <div style="background: white; border-radius: 12px; border: 1px solid #cbd5e1; padding: 22px;">
+                    <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0 0 12px 0;">📂 Participant LS/CMI Briefs, Scoring Forms & Action Plans (Click Any Participant to Open Their Folder)</h2>
+                    <div id="lscmi-dash-folders-grid"></div>
                 </div>
             </div>
         </section>
@@ -1612,13 +1741,39 @@
                         </select>
                     </div>
                 </div>
-                <div id="live-consultation-summary-box" class="hidden" style="margin-bottom: 14px; background: #eff6ff; border: 1.5px solid #93c5fd; border-radius: 8px; padding: 12px 14px; font-size: 12.5px;"></div>
+                <div id="live-consultation-summary-box" class="hidden" style="margin-bottom: 12px; background: #eff6ff; border: 1.5px solid #93c5fd; border-radius: 8px; padding: 12px 14px; font-size: 12.5px;"></div>
+                <div style="margin-bottom: 12px; background: #fefce8; border: 1.5px solid #fde047; border-radius: 8px; padding: 9px 12px; font-size: 12px; color: #713f12; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                    <div>
+                        <strong>⚠️ Mandatory 158-Question Re-Ask &amp; Discrepancy Rule:</strong> Even if information was captured in Screening/Apricot Consultation, ask all <strong>158 original questions</strong> live to verify accuracy and flag discrepancies.
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                        <span id="int-answered-counter" style="background: #dcfce7; color: #166534; border: 1px solid #86efac; padding: 2px 8px; border-radius: 999px; font-weight: 700;">Answered: 0 / 158</span>
+                        <span id="int-discrepancy-counter" style="background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; padding: 2px 8px; border-radius: 999px; font-weight: 700;">Discrepancies: 0</span>
+                        <button type="button" class="btn btn-outline" onclick="jumpToNextUnanswered158()" style="font-size: 11px; padding: 3px 8px;">⏭️ Next Unanswered</button>
+                        <button type="button" class="btn btn-outline" onclick="toggle158QuestionMap()" style="font-size: 11px; padding: 3px 8px;">📋 158-Q Map</button>
+                    </div>
+                </div>
+                <div id="int-158-map-drawer" class="hidden" style="margin-bottom: 12px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; max-height: 170px; overflow-y: auto;">
+                    <div style="font-size: 11.5px; color: #475569; margin-bottom: 6px; font-weight: 600;">Click any question (1–158) to jump: Green = Answered Live | Red = Discrepancy Flagged | Slate = Pending</div>
+                    <div id="int-158-map-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(34px, 1fr)); gap: 4px;"></div>
+                </div>
                 <div class="interview-progress-bar">
                     <div id="int-progress-fill" class="progress-fill" style="width: 2%;"></div>
                 </div>
-                <div class="question-box">
-                    <span class="question-number" id="int-q-number">Question 1 of 158</span>
-                    <h3 id="int-q-text">Loading question...</h3>
+                <div class="question-box" style="text-align: left;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
+                        <span class="question-number" id="int-q-number">Question 1 of 158</span>
+                        <span id="int-q-domain-badge" style="font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: #e0e7ff; color: #3730a3;">Domain: Screening</span>
+                    </div>
+                    <h3 id="int-q-text" style="margin: 4px 0 6px;">Loading question...</h3>
+                    <p id="int-q-subtext" style="font-size: 12.5px; color: #475569; margin: 0 0 10px;"></p>
+                    <label for="int-live-answer-notes" style="display: block; font-size: 12px; font-weight: 700; color: #1e293b; margin-bottom: 4px;">Live Participant Answer / Quick Interviewer Note (used for discrepancy detection &amp; Probation Planner):</label>
+                    <textarea id="int-live-answer-notes" rows="2" class="form-control" placeholder="Type key points from participant's live answer here (or check discrepancy against Consultation)..." style="font-size: 13px; margin-bottom: 8px;"></textarea>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                        <button type="button" id="btn-check-discrepancy" class="btn btn-outline" onclick="checkLive158QuestionDiscrepancy()" style="font-size: 12px; padding: 6px 12px; border-color: #7c3aed; color: #5b21b6; background: #f5f3ff; font-weight: 600;">🧠 Check Discrepancy &amp; Get Dynamic Follow-Up</button>
+                        <button type="button" id="btn-mark-answered-next" class="btn btn-primary" onclick="markCurrent158QuestionAnswered()" style="font-size: 12px; padding: 6px 12px; background: #15803d; border-color: #15803d; font-weight: 600;">✅ Mark Answered &amp; Next</button>
+                    </div>
+                    <div id="int-dynamic-feedback-box" class="hidden" style="margin-top: 10px; padding: 10px 12px; border-radius: 8px; border: 1.5px solid #c4b5fd; background: #faf5ff; font-size: 12.5px; color: #1e293b;"></div>
                 </div>
                 <div class="recording-controls">
                     <button id="btn-record" class="btn btn-record" onclick="toggleRecording()">🔴 Start Voice Recording</button>
@@ -3424,7 +3579,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=1792000000002"></script>
+    <script src="app.js?v=1792000000003"></script>
 
     
     <!-- MODAL: Playbook AI -->
@@ -3544,6 +3699,93 @@
     <style>
         .pf-tab-btn:hover { color: var(--primary) !important; }
     </style>
+
+    <!-- ========================================================================= -->
+    <!-- MODAL 1: PER-PARTICIPANT FOLDERS & UNIFIED GATE-FREE BRIEFCASE            -->
+    <!-- ========================================================================= -->
+    <div id="modal-unified-participant-folders" class="modal hidden" style="z-index: 9500;">
+        <div class="modal-content" style="max-width: 1320px; width: 96%; max-height: 92vh; overflow-y: auto; padding: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 16px;">
+                <div>
+                    <h2 style="margin: 0; font-size: 21px; font-weight: 800; color: #0f172a;">📁 Participant Folders, Caseload Evals & Unified Single-Document Briefcase (No Gates)</h2>
+                    <p style="margin: 4px 0 0 0; font-size: 13px; color: #64748b;">Every participant has a dedicated folder storing their LS/CMI Brief, Action Plan, Feedback Loop Log, Unified Briefcase (9 First Shift Waitlist Required Items + Conditional Medical Logic), Case Management Notes, and SkillCat Module Progress.</p>
+                </div>
+                <button type="button" class="btn btn-outline" onclick="document.getElementById('modal-unified-participant-folders').classList.add('hidden')" style="font-size: 13px; padding: 6px 14px; font-weight: 700;">✕ Close</button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 360px 1fr; gap: 20px;">
+                <!-- Left Directory List -->
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; max-height: 75vh; display: flex; flex-direction: column;">
+                    <div style="display: flex; gap: 6px; margin-bottom: 10px;">
+                        <input type="text" id="upf-search-input" placeholder="Search participant folder..." oninput="filterUnifiedParticipantFoldersList()" style="flex: 1; padding: 7px 10px; font-size: 12.5px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                        <select id="upf-center-filter" onchange="filterUnifiedParticipantFoldersList()" style="padding: 7px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 6px; background: white;">
+                            <option value="all">All Centers</option>
+                            <option value="charleston">Charleston</option>
+                            <option value="columbia">Columbia</option>
+                            <option value="spartanburg">Spartanburg</option>
+                        </select>
+                    </div>
+                    <div id="upf-directory-list" style="overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 6px;"></div>
+                </div>
+
+                <!-- Right Active Participant Folder Inspector -->
+                <div id="upf-folder-detail-pane" style="background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px; max-height: 75vh; overflow-y: auto;">
+                    <div style="color: #64748b; text-align: center; padding: 40px;">Select a participant folder on the left to inspect or edit their Unified Briefcase, LS/CMI Brief, Action Plan, SkillCat Modules, and Case Management Evaluations.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- MODAL 2: COMBINED SUPERVISION REPORT (SKILLCAT PATHWAYS + APRICOT + FLAGS)-->
+    <!-- ========================================================================= -->
+    <div id="modal-combined-supervision-report" class="modal hidden" style="z-index: 9500;">
+        <div class="modal-content" style="max-width: 1320px; width: 96%; max-height: 92vh; overflow-y: auto; padding: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 16px;">
+                <div>
+                    <h2 style="margin: 0; font-size: 21px; font-weight: 800; color: #0f172a;">📊 Combined Supervision Report: SkillCat Module Pathways + Apricot Reports + Data Eval Flagging Template</h2>
+                    <p style="margin: 4px 0 0 0; font-size: 13px; color: #64748b;">Scrapes module-level SkillCat portfolios, tracks trade pathways, flags stalled progress & waitlist gaps, and combines with Apricot & Classroom/CM QA.</p>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button type="button" class="btn btn-primary" onclick="triggerSkillCatModuleRefresh(this)" style="font-size: 12.5px; padding: 7px 14px; font-weight: 700;">🔄 Refresh Live SkillCat Module Portfolios</button>
+                    <button type="button" class="btn btn-outline" onclick="document.getElementById('modal-combined-supervision-report').classList.add('hidden')" style="font-size: 13px; padding: 6px 14px; font-weight: 700;">✕ Close</button>
+                </div>
+            </div>
+            <div id="combined-supervision-report-body">Loading combined SkillCat & Apricot supervision report...</div>
+        </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- MODAL 3: VOICE RECOGNITION (30s STAFF SCRIPT & PARTICIPANT LS/CMI VOICES) -->
+    <!-- ========================================================================= -->
+    <div id="modal-voice-recognition" class="modal hidden" style="z-index: 9500;">
+        <div class="modal-content" style="max-width: 960px; width: 95%; max-height: 90vh; overflow-y: auto; padding: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 16px;">
+                <div>
+                    <h2 style="margin: 0; font-size: 20px; font-weight: 800; color: #0f172a;">🎙️ Voice Recognition: 30-Second Staff Calibration & LS/CMI Participant Voice Profiles</h2>
+                    <p style="margin: 4px 0 0 0; font-size: 13px; color: #64748b;">Enroll each staff member with a 30-second reading of the calibration script below; participant voices are enrolled automatically from their LS/CMI interview audio.</p>
+                </div>
+                <button type="button" class="btn btn-outline" onclick="document.getElementById('modal-voice-recognition').classList.add('hidden')" style="font-size: 13px; padding: 6px 14px; font-weight: 700;">✕ Close</button>
+            </div>
+            <div id="voice-recognition-modal-body">Loading voice profiles...</div>
+        </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- MODAL 4: TEMPLATES & PROGRESSIVE DISCLOSURE SKILLS REFERENCE VIEWER       -->
+    <!-- ========================================================================= -->
+    <div id="modal-templates-and-skills" class="modal hidden" style="z-index: 9500;">
+        <div class="modal-content" style="max-width: 1180px; width: 95%; max-height: 90vh; overflow-y: auto; padding: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 16px;">
+                <div>
+                    <h2 style="margin: 0; font-size: 20px; font-weight: 800; color: #0f172a;">📐 Official Turn90 Templates & Progressive Disclosure Skills (Built from T90 App Skills)</h2>
+                    <p style="margin: 4px 0 0 0; font-size: 13px; color: #64748b;">6-Part Case Management Session Template, Screening Consultation Template, Unified Gate-Free Briefcase Spec, Classroom Do's & Don'ts / Modeling vs. Role-Play, First Shift Scripts, Probation Planner Behavioral Definitions, and Data Flagging Template.</p>
+                </div>
+                <button type="button" class="btn btn-outline" onclick="document.getElementById('modal-templates-and-skills').classList.add('hidden')" style="font-size: 13px; padding: 6px 14px; font-weight: 700;">✕ Close</button>
+            </div>
+            <div id="templates-and-skills-modal-body">Loading templates...</div>
+        </div>
+    </div>
 
 </body>
 </html>

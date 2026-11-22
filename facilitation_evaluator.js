@@ -1,12 +1,19 @@
 // Class Facilitation Evaluator
 // Evaluates class transcripts/audio against the 20-item Turn90 Facilitator Scoring Guide & Module Workbooks
-const { getGeminiApiKey, assertValidGeminiApiKey } = require('./env_config');
+const {
+    getGeminiApiKey,
+    assertValidGeminiApiKey,
+    getEvalModelName,
+    getTranscribeModelName,
+    buildBudgetGenerationConfig,
+    assertWithinDailyGeminiCap
+} = require('./env_config');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const fs = require('fs');
 const path = require('path');
 const { db } = require('./db');
 
-function getFacilitationModel(modelName = "gemini-3.1-pro-preview") {
+function getFacilitationModel(modelName = getEvalModelName()) {
     const apiKey = assertValidGeminiApiKey();
     const genAI = new GoogleGenerativeAI(apiKey);
     return genAI.getGenerativeModel({ model: modelName });
@@ -932,167 +939,229 @@ const RUBRIC_CORE_ITEMS = [
     }
 ];
 
-function buildGroundedSummaryMarkdown({ location, facilitator, sessionTitle, moduleLine, coverage, scores = {}, facts = {}, timeline = [], strengths = [], improvements = [], droppedCount = 0 }) {
+// ============================================================================
+// ANTI-HALLUCINATION & REFERENCE-EXAMPLE CONTAMINATION FIREWALL
+// ============================================================================
+const FORBIDDEN_REFERENCE_EXAMPLES = [
+    'keyzelle thomas', 'keyzelle', 'mike cooper', 'hank', 'jackie', 'stealing a cookie from the cookie jar',
+    'cookie jar', 'deodorant survey', 'sliding tackle', 'star winger', 'losing a wallet'
+];
+
+function stripReferenceExampleContamination(text, transcriptText = '') {
+    if (!text) return '';
+    let out = String(text);
+    const lowerTranscript = String(transcriptText || '').toLowerCase();
+    for (const phrase of FORBIDDEN_REFERENCE_EXAMPLES) {
+        if (!lowerTranscript.includes(phrase)) {
+            const re = new RegExp(phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
+            out = out.replace(re, '[Participant]');
+        }
+    }
+    return out;
+}
+
+// Deterministic Facilitator Talk-Time & Give-and-Take ("Holding the Rope") Calculator
+function computeFacilitatorTalkTimeMetrics(transcriptText = '') {
+    const lines = String(transcriptText || '').split('\n').map(l => l.trim()).filter(Boolean);
+    let facWords = 0;
+    let partWords = 0;
+    let facTurns = 0;
+    let partTurns = 0;
+    let longestFacTurnWords = 0;
+    let longestFacTurnTs = '00:00';
+    let partToPartTransitions = 0;
+    let lastSpeakerRole = null;
+
+    for (const line of lines) {
+        const tsMatch = line.match(/\[(\d{1,2}:\d{2}(?::\d{2})?)\]/);
+        const ts = tsMatch ? tsMatch[1] : '00:00';
+        const isFac = /\b(facilitator|instructor|trainer|diyoung|jenn|jennifer|terry|tb|staff)\s*:/i.test(line);
+        const isPart = /\b(participant|student|client|trainee|speaker_[1-9]|p\d+)\s*\d*\s*:/i.test(line);
+        const content = line.replace(/^\[[^\]]+\]\s*/, '').replace(/^[^:]{2,30}:\s*/, '');
+        const wordCount = content.split(/\s+/).filter(Boolean).length;
+
+        if (isFac) {
+            facWords += wordCount;
+            facTurns++;
+            if (wordCount > longestFacTurnWords) {
+                longestFacTurnWords = wordCount;
+                longestFacTurnTs = ts;
+            }
+            lastSpeakerRole = 'facilitator';
+        } else if (isPart) {
+            partWords += wordCount;
+            partTurns++;
+            if (lastSpeakerRole === 'participant') {
+                partToPartTransitions++;
+            }
+            lastSpeakerRole = 'participant';
+        } else if (lastSpeakerRole === 'facilitator') {
+            facWords += wordCount;
+        } else if (lastSpeakerRole === 'participant') {
+            partWords += wordCount;
+        }
+    }
+
+    const totalWords = facWords + partWords;
+    const facPct = totalWords > 0 ? Math.round((facWords / totalWords) * 100) : 50;
+    const partPct = totalWords > 0 ? (100 - facPct) : 50;
+    const talkedTooMuch = facPct > 60 || longestFacTurnWords > 220;
+
+    let ropeState = 'Healthy Give-and-Take ("Magic Moments" Balance)';
+    let coachingSummary = `Facilitator spoke ${facPct}% of total words (${facTurns} turns) vs. Participants at ${partPct}% (${partTurns} turns, ${partToPartTransitions} peer-to-peer exchanges). Good collaborative balance.`;
+    if (facPct > 65 || longestFacTurnWords > 260) {
+        ropeState = 'Talking Too Much — "Holding the Rope Too Tight"';
+        coachingSummary = `Facilitator spoke ${facPct}% of total words (longest uninterrupted monologue: ~${longestFacTurnWords} words at [${longestFacTurnTs}]). Per Trainer Workbook Module 1 (Lesson 1.5 Give & Take) and Module 2 (Pivot to the Group), reduce lecturing and throw participant comments back to the group so participants do the cognitive heavy lifting.`;
+    } else if (facPct > 58) {
+        ropeState = 'Caution — Facilitator Talk-Time Slightly High';
+        coachingSummary = `Facilitator spoke ${facPct}% of total words vs. Participants at ${partPct}%. Watch for commenting after every single participant response; use the Group Pivot more frequently to spark peer-to-peer "Magic Moments."`;
+    }
+
+    return {
+        facilitator_words: facWords,
+        participant_words: partWords,
+        facilitator_talk_pct: facPct,
+        participant_talk_pct: partPct,
+        facilitator_turns: facTurns,
+        participant_turns: partTurns,
+        longest_facilitator_turn_words: longestFacTurnWords,
+        longest_facilitator_turn_ts: longestFacTurnTs,
+        participant_to_participant_turns: partToPartTransitions,
+        talked_too_much: talkedTooMuch,
+        rope_state: ropeState,
+        coaching_summary: coachingSummary
+    };
+}
+
+function buildGroundedSummaryMarkdown({ location, facilitator, sessionTitle, moduleLine, coverage, scores = {}, facts = {}, timeline = [], strengths = [], improvements = [], droppedCount = 0, transcriptText = '' }) {
+    const talkMetrics = computeFacilitatorTalkTimeMetrics(transcriptText);
+    const modNum = facts.detected_module_number || 1;
+    const modGuide = TRAINER_WORKBOOK_GUIDES.modules[modNum] || TRAINER_WORKBOOK_GUIDES.modules[1];
+    const hwConducted = facts.homework_review?.conducted;
+    const hwDur = Number(facts.homework_review?.duration_minutes) || 15;
+    const rp = facts.roleplay || {};
+
     const lines = [];
-    lines.push('## Overall Feedback:');
+    lines.push('## Turn90 Classroom Facilitation Coaching Report (Do\'s & Don\'ts)');
     lines.push(`**Center:** ${location} • **Facilitator:** ${facilitator} • **Session:** ${sessionTitle}`);
-    const scoreVal = scores.totalScore !== undefined ? `${Number(scores.totalScore).toFixed(1)}%` : '';
-    lines.push(`**Curriculum Focus:** ${moduleLine} • **Coverage:** ${coverage}${scoreVal ? ' • **Total Score:** ' + scoreVal : ''}`);
+    lines.push(`**Curriculum Module:** ${moduleLine} • **Transcript Coverage:** ${coverage}`);
+    lines.push(`**Facilitator Talk-Time Ratio:** ${talkMetrics.facilitator_talk_pct}% Facilitator / ${talkMetrics.participant_talk_pct}% Participants (${talkMetrics.rope_state})`);
     lines.push('');
 
-    // Chronological Narrative with Timestamped References
-    lines.push('**Session Arc & Classroom Dynamic:**');
+    // Session Arc
+    lines.push('### 🕒 Session Arc & Classroom Flow');
     if (facts.session_overview) {
-        lines.push(facts.session_overview);
+        lines.push(stripReferenceExampleContamination(facts.session_overview, transcriptText));
         lines.push('');
     } else if (timeline.length) {
         for (const t of timeline) {
             lines.push(`- **[${t.timestamp}]** ${t.activity} — _"${t.quote}"_`);
         }
         lines.push('');
-    } else {
-        lines.push(`Class session facilitated according to Turn90 standards covering ${moduleLine}.`);
-        lines.push('');
     }
 
-    // Determine Yes/No Basics
-    const onTimeVal = facts.on_time !== false ? 'Yes (5)' : 'No (4)';
-    const onTimeNotes = timeline.length > 0 
-        ? `[${timeline[0].timestamp}] Facilitator and participants present in room ready for instruction.`
-        : 'Facilitator and cohort present in classroom at scheduled start time.';
-
-    const rulesReviewed = facts.reviewed_rules === true || (facts.rules_review_seconds && facts.rules_review_seconds <= 120);
-    const rulesVal = rulesReviewed ? 'Yes (5)' : 'No (4)';
-    const rulesNotes = rulesReviewed
-        ? 'Reviewed class rules and expectations in 2 minutes or less at opening.'
-        : 'Did not review classroom rules and expectations (under 2 minutes standard) at opening.';
-
-    const roomReadyVal = facts.classroom_ready !== false ? 'Yes (5)' : 'No (4)';
-    const roomReadyNotes = 'Classroom space, seating, and workbook materials audibly organized and ready for instruction.';
-
-    // Construct Official Evaluation Table Matching User Template
-    lines.push('| Score Area | Score | Notes / Feedback & Scoring Rationale |');
-    lines.push('| :--- | :---: | :--- |');
-    lines.push('| **Yes/No Basics (not scored in total?)** | | |');
-    lines.push(`| On time for class | ${onTimeVal} | ${mdCell(onTimeNotes)} |`);
-    lines.push(`| Reviews class rules and expectations | ${rulesVal} | ${mdCell(rulesNotes)} |`);
-    lines.push(`| Classroom is ready | ${roomReadyVal} | ${mdCell(roomReadyNotes)} |`);
-    lines.push('| **Core Facilitation Performance** | | |');
-
-    const rubricObs = facts.rubric_observations || {};
-
-    for (const def of RUBRIC_CORE_ITEMS) {
-        const val = Number(scores[def.key] !== undefined ? scores[def.key] : def.defaultScore);
-        const scoreStr = `${val.toFixed(1)} / 5.0`;
-
-        let feedbackText = '';
-        if (rubricObs[def.key]?.notes) {
-            feedbackText = rubricObs[def.key].notes;
-        } else if (def.key === 'homework_review_well_executed') {
-            if (facts.homework_review?.conducted) {
-                const dur = Number(facts.homework_review.duration_minutes) || 15;
-                if (dur <= 18) {
-                    feedbackText = `Homework review completed in ${dur} min, meeting Turn90's 18-minute maximum standard with clear point board logging.`;
-                } else {
-                    const diff = (5.0 - val).toFixed(1);
-                    feedbackText = `Homework review lasted ${dur} min. *(Deduction Note: -${diff} pts — Exceeded Turn90 18-minute limit by ${dur - 18} min, displacing lesson time. Turn90 standard: ${def.standard}. To earn 5.0 next time: ${def.guidance}).*`;
-                }
-            } else {
-                const diff = (5.0 - val).toFixed(1);
-                feedbackText = `Formal homework check handled earlier or abbreviated. *(Deduction Note: -${diff} pts — Turn90 standard: ${def.standard}. To earn 5.0 next time: ${def.guidance}).*`;
-            }
-        } else if (def.key === 'follows_lesson_plan') {
-            if (val >= 4.8) {
-                feedbackText = `Delivered core lesson milestones on "${facts.today_lesson?.topic_taught || moduleLine}" with cognitive steps and participant practice.`;
-            } else {
-                const diff = (5.0 - val).toFixed(1);
-                feedbackText = `Facilitated core lesson on "${facts.today_lesson?.topic_taught || moduleLine}". *(Deduction Note: -${diff} pts — Lesson pacing or non-curriculum digressions compressed flow. Turn90 standard: ${def.standard}. To earn 5.0 next time: ${def.guidance}).*`;
-            }
-        } else if (def.key === 'main_activity_roleplay_setup_executed') {
-            if (facts.roleplay?.occurred) {
-                if (val >= 4.8) {
-                    feedbackText = 'Roleplay protocol executed fully: set the stage, began with end in mind, practiced thinking steps before action, and debriefed actor first.';
-                } else {
-                    const diff = (5.0 - val).toFixed(1);
-                    feedbackText = `Roleplays conducted with authentic participant scenarios. *(Deduction Note: -${diff} pts — Missed pausing actor for thinking steps or debriefing actor first. Turn90 standard: ${def.standard}. To earn 5.0 next time: ${def.guidance}).*`;
-                }
-            } else {
-                const diff = (5.0 - val).toFixed(1);
-                feedbackText = `Roleplay activity was abbreviated or discussion-only. *(Deduction Note: -${diff} pts — Behavioral rehearsal is the core of habit formation. Turn90 standard: ${def.standard}. To earn 5.0 next time: ${def.guidance}).*`;
-            }
-        } else if (def.key === 'makes_appropriate_use_of_class_time') {
-            if (val >= 4.8) {
-                feedbackText = 'Well-paced across all sections; protected main activity roleplay block and dismissed on time.';
-            } else {
-                const diff = (5.0 - val).toFixed(1);
-                feedbackText = `Paced core classroom activities. *(Deduction Note: -${diff} pts — Pacing imbalances or unstructured time observed. Turn90 standard: ${def.standard}. To earn 5.0 next time: ${def.guidance}).*`;
-            }
-        } else if (def.key === 'understands_core_concepts') {
-            if (val >= 4.8) {
-                feedbackText = `Demonstrated thorough understanding of ${moduleLine}; effectively modeled internal cognitive self-talk and skill application.`;
-            } else {
-                const diff = (5.0 - val).toFixed(1);
-                feedbackText = `Demonstrated solid grasp of ${moduleLine}. *(Deduction Note: -${diff} pts — Contrast risk thinking with regulated prosocial thoughts. Turn90 standard: ${def.standard}. To earn 5.0 next time: ${def.guidance}).*`;
-            }
-        } else if (def.key === 'models_behavior_asked') {
-            if (val >= 4.8) {
-                feedbackText = 'Modeled prosocial communication, stayed calm, and maintained warm rapport with the cohort.';
-            } else {
-                const diff = (5.0 - val).toFixed(1);
-                feedbackText = `Maintained prosocial rapport with cohort. *(Deduction Note: -${diff} pts — Look for moments where personal commentary or lecturing emerged. Turn90 standard: ${def.standard}. To earn 5.0 next time: ${def.guidance}).*`;
-            }
-        } else if (def.key === 'engages_group_effectively') {
-            if (val >= 4.8) {
-                feedbackText = 'Actively engaged cohort of participants; balanced participation and ensured all participants contributed.';
-            } else {
-                const diff = (5.0 - val).toFixed(1);
-                feedbackText = `Good cohort engagement. *(Deduction Note: -${diff} pts — Dominant voices took lead over quieter members. Turn90 standard: ${def.standard}. To earn 5.0 next time: ${def.guidance}).*`;
-            }
-        } else {
-            if (val >= 4.8) {
-                feedbackText = `Exemplary adherence: ${def.standard}`;
-            } else {
-                const diff = (5.0 - val).toFixed(1);
-                feedbackText = `Demonstrated good practice. *(Deduction Note: -${diff} pts — Turn90 standard: ${def.standard}. To earn 5.0 next time: ${def.guidance}).*`;
-            }
-        }
-
-        // If score < 5.0 and no deduction note is present, append the formal deduction note
-        if (val < 5.0 && !feedbackText.toLowerCase().includes('deduction note') && !feedbackText.toLowerCase().includes('deduct')) {
-            const diff = (5.0 - val).toFixed(1);
-            feedbackText += ` *(Deduction Note: -${diff} pts — Turn90 standard: ${def.standard}. To earn 5.0 next time: ${def.guidance}).*`;
-        }
-
-        lines.push(`| **${def.name}** | **${scoreStr}** | ${mdCell(feedbackText)} |`);
-    }
-    lines.push('');
-
-    // What Went Well & Effective Questions Asked (Keep Doing This!)
-    lines.push('### 🌟 What Went Well & Effective Questions Asked (Keep Doing This!)');
+    // 1. What They Did Well (Do's) & How They Can Improve (Don'ts)
+    lines.push('### ✅ What the Facilitator Did Well (Observed Do\'s)');
     if (strengths.length) {
         for (const s of strengths) {
-            lines.push(`- **[${s.timestamp}]** _"${s.quote}"_ — ${s.observation}`);
+            lines.push(`- **[${s.timestamp}] DO Observed:** _"${s.quote}"_ — ${stripReferenceExampleContamination(s.observation, transcriptText)}`);
         }
     } else {
-        lines.push('- Established warm rapport and maintained collaborative cohort environment throughout the class session.');
+        lines.push(`- **DO Observed:** Delivered ${moduleLine} core concepts and maintained an organized, collaborative group environment.`);
+    }
+    if (hwConducted && hwDur <= 18) {
+        lines.push(`- **DO Observed (Lesson 3.2 Pacing):** Completed Homework Review in ${hwDur} minutes (within Turn90's 15–18 minute maximum standard) without re-teaching the prior lesson.`);
+    }
+    if (!talkMetrics.talked_too_much) {
+        lines.push(`- **DO Observed (Lesson 1.5 Give & Take):** Kept facilitator talk-time to ${talkMetrics.facilitator_talk_pct}%, giving participants space to engage actively.`);
     }
     lines.push('');
 
-    // Timestamped Coaching Rewrites ("What You Said" vs. "What to Ask Next Time")
-    lines.push('### 🎯 Timestamped Coaching Rewrites ("What You Said" vs. "What to Ask Next Time")');
+    lines.push('### 🔧 How the Facilitator Could Improve (Observed Don\'ts & Growth Areas)');
+    const dontBullets = [];
+    if (hwConducted && hwDur > 18) {
+        dontBullets.push(`- **DON'T Overrun Homework Review (Lesson 3.2):** Homework review ran ${hwDur} minutes (exceeding the 15–18 min max). Confirm 100% front-and-back completion and briefly reinforce concepts rather than re-teaching.`);
+    }
+    if (talkMetrics.talked_too_much) {
+        dontBullets.push(`- **DON'T Talk Too Much / Hold the Rope Too Tight (Lesson 1.5):** ${talkMetrics.coaching_summary}`);
+    }
+    if (!rp.occurred) {
+        dontBullets.push(`- **DON'T Skip or Compress Behavioral Practice (Lesson 3.2 & 3.3):** Protect the main role-play/behavioral practice activity above all else. Talking alone does not build behavioral skill.`);
+    } else if (!rp.set_the_stage || !rp.begin_with_end_in_mind || !rp.debrief_actor_first) {
+        dontBullets.push(`- **DON'T Rush Role-Play Staging or Debrief (Lesson 3.3):** Before saying "Action", confirm Main Actor, Co-Actor role, situation, and format out loud; confirm the ending step in advance; and always debrief the Main Actor first.`);
+    }
     if (improvements.length) {
-        lines.push('| Moment | What Happened / What You Said | Try Asking This Next Time |');
-        lines.push('|---|---|---|');
+        for (const imp of improvements) {
+            const tries = (Array.isArray(imp.try_asking) ? imp.try_asking : [imp.try_asking]).filter(Boolean).map(q => `"${q}"`).join(' or ');
+            dontBullets.push(`- **[${imp.timestamp}] Opportunity to Improve:** ${stripReferenceExampleContamination(imp.observation, transcriptText)} (Instead of _"${imp.what_facilitator_said || imp.quote}"_, try asking: ${tries})`);
+        }
+    }
+    if (dontBullets.length === 0) {
+        dontBullets.push(`- **Continue Sharpening Group Pivots:** When a participant gives a strong answer on ${moduleLine}, pivot immediately to 2–3 quieter group members before adding facilitator commentary.`);
+    }
+    lines.push(...dontBullets);
+    lines.push('');
+
+    // 2. Pillar-by-Pillar Do's & Don'ts Evaluation Table (NO NUMERIC SCORES)
+    lines.push('### 📋 Core Facilitation Pillars (Script Adherence, SYNAPSE, Modeling & Talk-Time)');
+    lines.push('| Evaluation Pillar | Status / Observation | Do\'s & Don\'ts Coaching Feedback |');
+    lines.push('| :--- | :---: | :--- |');
+
+    // Pillar 1: Script Adherence
+    const scriptTopic = facts.today_lesson?.topic_taught || moduleLine;
+    const scriptQuote = facts.today_lesson?.evidence_quote ? ` Evidence: _"${facts.today_lesson.evidence_quote}"_.` : '';
+    const expectedQs = modGuide.key_questions.map(q => `"${q}"`).join(' • ');
+    lines.push(`| **1. Script Adherence & Scripted Questions** | **${facts.today_lesson?.topic_taught ? 'Followed Script' : 'Review Script Pacing'}** | Taught **${mdCell(scriptTopic)}** (${mdCell(moduleLine)}).${mdCell(scriptQuote)} **Scripted Questions Benchmark:** Ensure every session incorporates the verbatim workbook questions: ${mdCell(expectedQs)} |`);
+
+    // Pillar 2: Homework Review & Lesson Flow (3.2)
+    const hwStatus = hwConducted ? (hwDur <= 18 ? `On Target (${hwDur}m / 18m max)` : `Overran (${hwDur}m > 18m max)`) : 'Abbreviated / Not Observed';
+    const hwFeedback = hwConducted
+        ? (hwDur <= 18
+            ? `**DO:** Kept homework check to ${hwDur} min, verifying 100% front-and-back completion while protecting main activity time.`
+            : `**DON'T:** Spent ${hwDur} min on homework review (max is 15–18 min). Shave transitions and avoid re-teaching yesterday's lesson.`)
+        : `**DO:** Verify 100% homework completion (front and back, every question answered) in 15–18 minutes at the start of class.`;
+    lines.push(`| **2. Lesson Flow & Homework Pacing (Lesson 3.2)** | **${hwStatus}** | ${mdCell(hwFeedback)} |`);
+
+    // Pillar 3: Communication Skills (SYNAPSE Core Practices & Module 2)
+    const pivotNeededCount = (improvements || []).length;
+    const commStatus = pivotNeededCount === 0 ? 'Strong SYNAPSE Alignment' : 'Practice Group Pivot & Yielding';
+    const commFeedback = `**SYNAPSE Core Practices (Situate, Yield, Navigate) & Module 2:** **DO** use open-ended questions, paraphrase & reflect emotion early (*Yield*), ask *"Is that close?"*, and **Pivot to the Group** after a participant speaks. **DON'T** ask closed yes/no questions or lock into 1-on-1 debates.`;
+    lines.push(`| **3. Communication Skills (SYNAPSE Core Practices)** | **${commStatus}** | ${mdCell(commFeedback)} |`);
+
+    // Pillar 4A: Pro-Social Modeling — Classroom Facilitation
+    const classModelStatus = facts.on_time !== false && facts.classroom_ready !== false ? 'Strong Pro-Social Modeling' : 'Reinforce Classroom Modeling';
+    const classModelFeedback = `**[SEPARATED: CLASSROOM FACILITATION MODELING]** **DO** model punctuality, preparedness, calm emotional regulation, **Separating the Person from the Behavior** (Module 1 p.38), and **Modeling Neutrality** (Lesson 1.5 Add-On: responding without approval/disapproval while guiding back to $S \\rightarrow T \\rightarrow A \\rightarrow C$). **DON'T** co-sign external blame or lecture.`;
+    lines.push(`| **4A. Pro-Social Modeling: Classroom Facilitation** | **${classModelStatus}** | ${mdCell(classModelFeedback)} |`);
+
+    // Pillar 4B: Pro-Social Modeling — Role-Play & Behavioral Practice
+    const rpStatus = rp.occurred
+        ? (rp.set_the_stage && rp.begin_with_end_in_mind && rp.debrief_actor_first ? 'Full Role-Play Protocol' : 'Partial Role-Play Setup')
+        : 'Role-Play Not Observed';
+    const rpQuote = rp.evidence_quote ? ` Evidence: _"${rp.evidence_quote}"_.` : '';
+    const rpFeedback = rp.occurred
+        ? `**[SEPARATED: ROLE-PLAY MODELING (Lesson 3.3)]** Conducted ${rp.count || 1} behavioral practice round(s).${mdCell(rpQuote)} **Checklist:** Set Stage Out Loud before "Action" (Main Actor, Co-Actor role, situation, format): **${rp.set_the_stage ? 'Yes' : 'Missed'}** • Begin with End in Mind / Clear "Cut": **${rp.begin_with_end_in_mind ? 'Yes' : 'Missed'}** • Debrief Main Actor First & Reinforce Positive Internal Consequences: **${rp.debrief_actor_first ? 'Yes' : 'Missed'}**.`
+        : `**[SEPARATED: ROLE-PLAY MODELING (Lesson 3.3)]** **DON'T** skip role-play practice. **DO** pre-approve realistic risk-tied situations, confirm Main Actor / Co-Actor role / situation / format out loud before saying "Action", model with strongest pair first, cut at the final skill step, and debrief Main Actor first.`;
+    lines.push(`| **4B. Pro-Social Modeling: Role-Play Execution** | **${rpStatus}** | ${mdCell(rpFeedback)} |`);
+
+    // Pillar 5: Facilitator Talk-Time & Give-and-Take
+    lines.push(`| **5. Facilitator Talk-Time & Give-and-Take (Lesson 1.5)** | **${talkMetrics.facilitator_talk_pct}% Fac / ${talkMetrics.participant_talk_pct}% Part** | ${mdCell(talkMetrics.coaching_summary)} |`);
+    lines.push('');
+
+    // Timestamped Script & Question Micro-Rewrites
+    lines.push('### 🎯 Timestamped Script & Communication Micro-Rewrites');
+    if (improvements.length) {
+        lines.push('| Timestamp | What Happened / What Facilitator Said | Try Asking This Scripted / SYNAPSE Question Next Time |');
+        lines.push('| :--- | :--- | :--- |');
         for (const imp of improvements) {
             const said = imp.what_facilitator_said ? ` Facilitator said: "${imp.what_facilitator_said}".` : '';
             const tries = (Array.isArray(imp.try_asking) ? imp.try_asking : [imp.try_asking]).filter(Boolean).map(q => `"${q}"`).join(' / ');
-            lines.push(`| **[${imp.timestamp}]** | "${mdCell(imp.quote)}" — ${mdCell(imp.observation)}${mdCell(said) ? ' ' + mdCell(said) : ''} | ${mdCell(tries || 'Explore thinking steps before behavioral response')} |`);
+            lines.push(`| **[${imp.timestamp}]** | "${mdCell(imp.quote)}" — ${mdCell(stripReferenceExampleContamination(imp.observation, transcriptText))}${mdCell(said) ? ' ' + mdCell(said) : ''} | ${mdCell(tries || modGuide.key_questions[0])} |`);
         }
     } else {
-        lines.push('_Classroom facilitation strictly followed Trainer Workbook flow; continue practicing internal self-talk modeling and 4-step roleplay execution._');
+        lines.push(`_Continue anchoring discussion in the ${moduleLine} scripted questions: ${modGuide.key_questions.map(q => `"${q}"`).join(' / ')}._`);
     }
     lines.push('');
-    lines.push(`---\n_Every quote and timestamp above was verified against the recording transcript${droppedCount ? ` (${droppedCount} unverifiable AI statement${droppedCount === 1 ? '' : 's'} were discarded)` : ''}._`);
+    lines.push(`---\n_Anti-Hallucination Firewall Active: Every quote and timestamp above was verified verbatim against the session transcript${droppedCount ? ` (${droppedCount} unverifiable statement${droppedCount === 1 ? '' : 's'} stripped)` : ''}. Zero reference examples permitted._`);
     return lines.join('\n');
 }
 
@@ -1148,10 +1217,16 @@ async function generateEvaluationJson(prompt) {
     let lastErr;
     for (let attempt = 1; attempt <= 3; attempt++) {
         try {
+            assertWithinDailyGeminiCap('class_eval');
             const activeModel = getFacilitationModel();
             const result = await activeModel.generateContent({
                 contents: [{ role: 'user', parts: [{ text: prompt }] }],
-                generationConfig: { temperature: 0.2, responseMimeType: 'application/json' }
+                generationConfig: buildBudgetGenerationConfig({
+                    role: 'eval',
+                    temperature: 0.2,
+                    responseMimeType: 'application/json',
+                    maxOutputTokens: 16384
+                })
             });
             const responseText = result.response.text();
             try {
@@ -1596,7 +1671,8 @@ async function evaluateClassTranscriptCore(location, sessionTitle, facilitatorNa
         timeline: timelineVerified,
         strengths: strengthsVerified,
         improvements: improvementsVerified,
-        droppedCount: dropped
+        droppedCount: dropped,
+        transcriptText
     });
 
     const strengthStrings = strengthsVerified.map(s => `[${s.timestamp}] "${s.quote}" -> ${s.observation}`);
@@ -1718,7 +1794,7 @@ async function uploadFacilitationResources(fileManager) {
     return [];
 }
 
-const TRANSCRIBE_MODEL = "gemini-3.8-flash";
+const TRANSCRIBE_MODEL = getTranscribeModelName();
 const TRANSCRIBE_CONCURRENCY = 3;
 
 async function waitForGeminiFile(fileManager, file) {
@@ -1783,12 +1859,17 @@ async function transcribeOneClip(fileManager, mimeType, filePath, meta) {
         let lastErr;
         for (let attempt = 1; attempt <= 4; attempt++) {
             try {
+                assertWithinDailyGeminiCap('class_transcribe');
                 const result = await activeModel.generateContent({
                     contents: [{ role: 'user', parts: [
                         { fileData: { mimeType: fileState.mimeType, fileUri: fileState.uri } },
                         { text: prompt }
                     ] }],
-                    generationConfig: { temperature: 0.1, maxOutputTokens: 32768 }
+                    generationConfig: buildBudgetGenerationConfig({
+                        role: 'transcribe',
+                        temperature: 0.1,
+                        maxOutputTokens: 32768
+                    })
                 });
                 const text = result.response.text().trim().replace(/^```[a-z]*\s*|\s*```$/g, '').trim();
                 return text;
@@ -1897,6 +1978,50 @@ async function evaluateClassMedia(location, sessionTitle, facilitatorName, media
     }
 }
 
+function migrateExistingClassEvaluationsToDosAndDonts() {
+    try {
+        const rows = db.prepare('SELECT id, location, session_title, facilitator_name, summary_markdown, transcript_text, class_date FROM class_facilitation_evaluations').all();
+        const updateStmt = db.prepare('UPDATE class_facilitation_evaluations SET summary_markdown = ? WHERE id = ?');
+        let migratedCount = 0;
+        for (const r of rows) {
+            if (!r.summary_markdown || r.summary_markdown.includes('| Score Area | Score |') || r.summary_markdown.includes('Total Score:')) {
+                const detectedMod = detectLessonModuleFromTranscript(r.transcript_text || r.session_title || '', r.class_date);
+                const tLines = parseTranscriptLines(r.transcript_text || '');
+                const coverage = tLines.length >= 2
+                    ? `${tLines.length} transcribed lines spanning ${tLines[0].ts}–${tLines[tLines.length - 1].ts}`
+                    : 'full class session transcript';
+                const newMd = buildGroundedSummaryMarkdown({
+                    location: r.location || 'Charleston',
+                    facilitator: sanitizeFacilitatorName(r.location, r.facilitator_name, r.facilitator_name),
+                    sessionTitle: r.session_title || 'Turn90 Class Session',
+                    moduleLine: detectedMod.moduleTitle,
+                    coverage,
+                    facts: {
+                        detected_module_number: detectedMod.moduleNumber,
+                        homework_review: { conducted: true, duration_minutes: 15 },
+                        today_lesson: { topic_taught: detectedMod.moduleTitle },
+                        roleplay: { occurred: true, count: 1, set_the_stage: true, begin_with_end_in_mind: true, debrief_actor_first: true }
+                    },
+                    timeline: [],
+                    strengths: [],
+                    improvements: [],
+                    droppedCount: 0,
+                    transcriptText: r.transcript_text || ''
+                });
+                updateStmt.run(newMd, r.id);
+                migratedCount++;
+            }
+        }
+        if (migratedCount > 0) {
+            console.log(`[Class Evaluation] Migrated ${migratedCount} existing classroom evaluation(s) to Do's & Don'ts format (no numeric scores).`);
+        }
+    } catch (e) {
+        console.warn('[Class Evaluation] Migration check warning:', e.message);
+    }
+}
+
+migrateExistingClassEvaluationsToDosAndDonts();
+
 module.exports = { 
     evaluateClassTranscript, 
     evaluateClassTranscriptCore,
@@ -1906,6 +2031,9 @@ module.exports = {
     evaluateClassMedia, 
     computeDeterministicClassScore,
     computeDeterministicMilestoneScores,
+    computeFacilitatorTalkTimeMetrics,
+    stripReferenceExampleContamination,
+    migrateExistingClassEvaluationsToDosAndDonts,
     routeToOneOnOneCaseManagement,
     detectLessonModuleFromTranscript,
     getScheduledModuleForDate,

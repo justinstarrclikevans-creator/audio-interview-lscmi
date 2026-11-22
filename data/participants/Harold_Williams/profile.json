@@ -1,0 +1,30 @@
+{
+  "participant_key": "Harold_Williams",
+  "name": "Harold Williams",
+  "location": "Charleston",
+  "track": "first_shift",
+  "status": "active",
+  "user_id": null,
+  "client_id": 59,
+  "apricot_id": "82456",
+  "phone": "",
+  "email": "",
+  "files": [
+    "Harold_Williams_Charleston_criminal_history.docx",
+    "Harold_Williams_Charleston_criminal_history.md",
+    "Harold_Williams_Charleston_draft_scoring_form.docx",
+    "Harold_Williams_Charleston_draft_scoring_form.md",
+    "Harold_Williams_Charleston_interview_guide.docx",
+    "Harold_Williams_Charleston_interview_guide.md",
+    "Harold_Williams_Charleston_transcript.txt"
+  ],
+  "folder_slug": "Harold_Williams",
+  "folder_path": "data/participants/Harold_Williams",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": true,
+  "has_action_plan": false,
+  "waitlist_ready": false,
+  "waitlist_met_count": 5,
+  "data_flags_count": 2,
+  "updated_at": "2026-11-22T17:18:01.656Z"
+}

@@ -1,10 +1,58 @@
-const { assertValidGeminiApiKey, getGeminiApiKey } = require('./env_config');
+const {
+    assertValidGeminiApiKey,
+    getGeminiApiKey,
+    getEvalModelName,
+    buildBudgetGenerationConfig,
+    assertWithinDailyGeminiCap
+} = require('./env_config');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { GoogleAIFileManager } = require("@google/generative-ai/server");
 const db = require('./db').db;
 const path = require('path');
 const fs = require('fs');
 const { getParticipantCoachingContext, registerProcessedCaseNote } = require('./services/apricot_eval_engine');
+const { getParticipantFolderBundle, syncAllParticipantFolders } = require('./services/participant_folder_manager');
+const { stripReferenceExampleContamination } = require('./facilitation_evaluator');
+
+// Official 6-Part First Shift Case Management Session Template (Follow-Along & Adherence Evaluation)
+const CM_SESSION_TEMPLATE = [
+    {
+        step: 1,
+        key: 'stability_and_attendance_checkin',
+        title: '1. Check-In & First Shift Stability Review (3–5 min)',
+        description: 'Review attendance, punctuality, drug screen status, housing/commute stability, and supervision (PO/court) status. If a stability trigger occurred (2+ unplanned absences, any NCNS, MJ/alcohol smell), apply the official First Shift conversation script.'
+    },
+    {
+        step: 2,
+        key: 'unified_briefcase_and_skillcat',
+        title: '2. Unified Briefcase (9 Waitlist Items) & SkillCat Pathway Review (5 min)',
+        description: 'Review open dropdown items in the Unified Briefcase and weekly SkillCat module progress. CONDITIONAL MEDICAL RULE: Never ask if the participant needs medical appointments if they have no chronic health conditions requiring treatment or daily medication.'
+    },
+    {
+        step: 3,
+        key: 'lscmi_brief_action_plan_and_feedback_loop',
+        title: '3. LS/CMI Brief & Action Plan Target Alignment + Feedback Loop (5 min)',
+        description: 'Align session focus with the participant\'s LS/CMI Case Brief and Action Plan. MANDATORY FEEDBACK LOOP: If the participant disagrees with their Action Plan target, acknowledge autonomy ("You\'re the boss"), connect to 8-week employment/values, switch to another agreed criminogenic target or offer a choice of 2 intervention tools, and log the revision.'
+    },
+    {
+        step: 4,
+        key: 'cbt_toolkit_intervention_practice',
+        title: '4. CBT Skill / Tool Kit (1A–1N) Intervention & Practice (10–15 min)',
+        description: 'Trace triggers to internal thinking (S -> T -> A -> C; inside vs. outside triggers) using SYNAPSE core practices (Situate, Yield, Navigate, Activate, Pictures) and practice a concrete Tool Kit worksheet (DMT 1A, Timeline 1B, Upgrading Beliefs 1D, Thought Tracker 1G, STAC 1I/1K, Conflict Cycle 1M, Problem Solving 1N) or Two Voices Role Play.'
+    },
+    {
+        step: 5,
+        key: 'splashmap_next_steps',
+        title: '5. Concrete Next-Week Action Steps / SYNAPSE Splashmap (3–5 min)',
+        description: 'Set 1–3 realistic, controllable action steps for the coming week, mapping immediate Good Ripples vs. Bad Ripples and confirming the review window.'
+    },
+    {
+        step: 6,
+        key: 'apricot_case_note_readiness',
+        title: '6. Apricot Case Note Documentation',
+        description: 'Capture verifiable milestones, referrals, Briefcase updates, and next steps for Apricot documentation.'
+    }
+];
 
 function computeDeterministicCmScore(evaluation) {
     if (!evaluation || !evaluation.scores || typeof evaluation.scores !== 'object') {
@@ -250,19 +298,42 @@ function buildGroundedCmSummaryMarkdown({
         const scoreStr = `${val.toFixed(1)} / 5.0`;
         const rationale = rationales[def.key] || def.defaultRationale;
         
-        let feedbackText = rationale;
+        let feedbackText = stripReferenceExampleContamination(rationale);
         // If deduction occurred, ensure explicit deduction rationale is clear
         if (val < 5.0 && !feedbackText.toLowerCase().includes('deduct') && !feedbackText.toLowerCase().includes('why') && !feedbackText.toLowerCase().includes('room for growth') && !feedbackText.toLowerCase().includes('missing')) {
             const diff = (5.0 - val).toFixed(1);
             if (def.key === 'empathy_and_neutrality') {
                 feedbackText = `${feedbackText} *(Deduction Note: -${diff} pts — Look for moments where client expresses hesitation or emotional ambivalence, and pause to use a complex reflection before pivoting to task logistics. To earn 5.0: fully validate feelings before problem-solving).*`;
             } else if (def.key === 'goal_setting') {
-                feedbackText = `${feedbackText} *(Deduction Note: -${diff} pts — In Session 1, Turn90 specifically looks for: 1) Verifying physical possession of Gate 1 IDs, 2) Confirming client agreement on CBT focus areas, and 3) Limiting goals to 1–2 controllable steps for Week 1).*`;
+                feedbackText = `${feedbackText} *(Deduction Note: -${diff} pts — Turn90 looks for verifying Unified Briefcase Waitlist items, confirming client agreement on the LS/CMI Action Plan via the Feedback Loop, and limiting goals to 1–3 controllable steps).*`;
             }
         }
         lines.push(`| **${def.name}** | **${scoreStr}** | ${mdCell(feedbackText)} |`);
     }
     lines.push('');
+
+    // 6-Part Case Management Session Template Adherence Table
+    const tplAdherence = evaluation.template_adherence || {};
+    lines.push('### 📐 6-Part Case Management Session Template Adherence');
+    lines.push('| Template Step | Adherence Status | Observation & Verbatim Evidence |');
+    lines.push('| :--- | :---: | :--- |');
+    for (const step of CM_SESSION_TEMPLATE) {
+        const stepObj = tplAdherence[step.key] || {};
+        const status = stepObj.status || 'Followed Well';
+        const notes = stripReferenceExampleContamination(stepObj.notes || step.description);
+        lines.push(`| **${step.title}** | **${mdCell(status)}** | ${mdCell(notes)} |`);
+    }
+    lines.push('');
+
+    // Action Plan Feedback Loop Status
+    if (evaluation.action_plan_feedback_loop) {
+        const fl = evaluation.action_plan_feedback_loop;
+        lines.push('### 🔄 Action Plan Agreement & Feedback Loop Check');
+        lines.push(`- **Client Agreement with Action Plan:** ${fl.client_agreed !== false ? 'Agreed / Aligned' : 'Disagreement Expressed'}`);
+        lines.push(`- **Feedback Loop Executed:** ${fl.feedback_loop_used ? 'Yes — Collaboratively adjusted target/tool' : (fl.client_agreed !== false ? 'N/A (Client Agreed)' : 'Missed — Must run 4-Step Action Plan Feedback Loop')}`);
+        if (fl.notes) lines.push(`- **Notes:** ${stripReferenceExampleContamination(fl.notes)}`);
+        lines.push('');
+    }
 
     // What Went Well Section (Keep Doing This!)
     lines.push('### 🌟 What Went Well & Effective Questions Asked (Keep Doing This!)');
@@ -339,6 +410,24 @@ async function evaluateCaseManagementMedia(mediaFiles, sessionTitle, location, c
     const longitudinal = buildLongitudinalContext(apricotId);
     const isReentryNav = longitudinal.isReentryNav || (options.program || '').toLowerCase().includes('reentry');
 
+    // Load Participant Folder Context (LS/CMI Brief, Action Plan, Unified Gate-Free Briefcase, Feedback Loop Log)
+    let folderContextBlock = '';
+    const inferredName = options.participantName || longitudinal.evalContext?.name || sessionTitle;
+    const folderBundle = inferredName ? getParticipantFolderBundle(inferredName) : null;
+    if (folderBundle) {
+        const bc = folderBundle.briefcase || {};
+        const noChronicMedical = bc.has_chronic_health_condition !== 'yes';
+        folderContextBlock = `
+=== PARTICIPANT FOLDER CONTEXT (LS/CMI BRIEF, ACTION PLAN & UNIFIED BRIEFCASE) ===
+- Participant Folder: ${folderBundle.folder_path}
+- First Shift Waitlist Readiness: ${bc.waitlist_met_count || 0}/9 Required Items Ready
+- Chronic Health Condition Status: ${noChronicMedical ? 'NO CHRONIC HEALTH CONDITIONS (Medical appointments & daily meds NOT applicable — DO NOT ask or critique the Case Manager for not asking about medical appointments!)' : 'Has Chronic Condition — verify treatment/daily meds'}
+${folderBundle.lscmi_brief_md ? `- LS/CMI Case Brief Excerpt:\n${folderBundle.lscmi_brief_md.slice(0, 1800)}\n` : ''}
+${folderBundle.action_plan_md ? `- Active LS/CMI Action Plan Excerpt:\n${folderBundle.action_plan_md.slice(0, 1800)}\n` : ''}
+==================================================================================
+`;
+    }
+
     // Determine session type: explicit option, or infer if first session
     let sessionType = options.sessionType || 'auto';
     if (sessionType === 'auto') {
@@ -379,9 +468,17 @@ Evaluate the Case Manager strictly against the realistic 45-Minute Follow-Up Cad
 4. Next Week's Process Goal ("What to Work on Next"): Collaboratively setting 1–3 clear, controllable next steps grounded in their Case Plan, Briefcase, and Gates 1–4.
 `);
 
+    assertWithinDailyGeminiCap('cm_eval');
     const genAI = new GoogleGenerativeAI(apiKey);
     const fileManager = new GoogleAIFileManager(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-3.1-pro-preview" });
+    const model = genAI.getGenerativeModel({
+        model: getEvalModelName(),
+        generationConfig: buildBudgetGenerationConfig({
+            role: 'eval',
+            temperature: 0.2,
+            maxOutputTokens: 16384
+        })
+    });
 
     const prompt = `You are a Senior Case Management Quality Assurance Coach for Turn90 / First Shift.
 Please analyze the attached audio/video recording of a Case Management / Re-entry Navigation meeting at ${location}.
@@ -392,36 +489,35 @@ Session Stage: ${sessionType === 'first_session' ? 'First Session (Initial Intak
 
 ${longitudinal.contextBlock}
 
+${folderContextBlock}
+
 ${cadenceInstructions}
+
+=== 6-PART FIRST SHIFT CASE MANAGEMENT SESSION TEMPLATE (EVALUATE ADHERENCE TO EACH STEP) ===
+1. Check-In & First Shift Stability Review (attendance, punctuality, drug test status, housing/commute, supervision; if stability trigger occurred, apply First Shift script).
+2. Unified Gate-Free Briefcase (9 Waitlist Items) & SkillCat Pathway Review (CONDITIONAL MEDICAL RULE: Never ask if participant needs medical appointments if they have no chronic health conditions requiring one!).
+3. LS/CMI Brief & Action Plan Target Alignment + Mandatory Feedback Loop (If [Client] disagrees with their Action Plan target, CM must execute the 4-Step Feedback Loop: acknowledge autonomy, connect to 8-week employment/values, switch to another agreed target or offer a choice of 2 tools, and update the Action Plan).
+4. CBT Skill / Tool Kit (1A–1N) Intervention & Practice (Trace triggers to internal thinking S->T->A->C using SYNAPSE Situate/Yield/Navigate/Activate/Pictures and practice a Tool Kit worksheet or Two Voices Role Play).
+5. Concrete Next-Week Action Steps / SYNAPSE Splashmap (1–3 controllable steps, Good Ripples vs. Bad Ripples, review window).
+6. Apricot Case Note Documentation.
+=============================================================================================
 
 **CRITICAL TURN90 CULTURAL, LANGUAGE & PRIVACY MANDATES:**
 1. COMPLETE NAME REDACTION: You MUST remove ANY references to the client's actual name throughout the ENTIRE evaluation (including CRM notes and transcript). ALWAYS use "[Client]" as a placeholder instead of their name.
-2. SLANG, PROFANITY & "PRACTICE COURT" PHILOSOPHY:
+2. STRICT ANTI-HALLUCINATION & ZERO-EXAMPLE-LEAKAGE: Never pull examples, character names, or scenarios from reference manuals or training guides. Cite only verbatim quotes from the recording.
+3. SLANG, PROFANITY & "PRACTICE COURT" PHILOSOPHY:
    - Slang, colloquial expressions, AAVE, and profanity from either the Case Manager or [Client] are 100% ACCEPTABLE and are NEVER considered unprofessional in our setting.
    - When [Client] shares real-world risky thoughts or frustrations, raw unsanitized language is welcomed ("Practice Court"). NEVER penalize or critique slang or profanity.
-3. REWARD "5TH-GRADE" ACCESSIBLE LANGUAGE & PROSOCIAL VULNERABILITY:
+4. REWARD "5TH-GRADE" ACCESSIBLE LANGUAGE & PROSOCIAL VULNERABILITY:
    - Reward Case Managers who translate CBT concepts into everyday, relatable "5th-grade" language rather than clinical therapy-speak.
    - Reward authentic Case Manager self-disclosure/vulnerability that models real-world resilience and emotional regulation.
-4. MANDATORY SCORE RATIONALE & DEDUCTION JUSTIFICATION:
-   - Jenn and the Turn90 clinical supervision team specifically require clear justification for every score.
-   - In \`scores_rationales\`, you MUST explain every score.
-   - If ANY score is less than 5.0 (e.g. 4.8 for Empathy, or 4.0 for Gate Execution / Goal Setting), you MUST explicitly state:
-     a) Exact deduction justification: Why were points taken away? Cite the specific timestamp [MM:SS] and what happened.
-     b) What Turn90 standards were looking for (e.g., in a First Session / Initial Intake, verifying Gate 1 vital IDs and confirming client agreement on the Action Plan without overwhelming them).
-     c) What the Case Manager should do differently next time to earn a 5.0!
-5. WHAT WENT WELL & EFFECTIVE QUESTIONS (REINFORCING GOOD HABITS):
-   - Jenn specifically emphasized that knowing what went well and what questions were effective reinforces good practice in her brain so she repeats them.
-   - In \`observed_strengths\`, provide an array of objects:
-     [
-       {
-         "timestamp": "MM:SS",
-         "what_cm_said_or_asked": "Verbatim quote of what CM asked or said",
-         "why_it_was_effective": "Why this question or statement was effective (e.g. elicited change talk, established psychological safety, accessible 5th-grade CBT framing)"
-       }
-     ]
-6. TIMESTAMPED "WHAT TO ASK INSTEAD" COACHING REWRITES:
+5. MANDATORY SCORE RATIONALE & DEDUCTION JUSTIFICATION:
+   - In \`scores_rationales\`, you MUST explain every score and any deduction with exact [MM:SS] timestamps.
+6. WHAT WENT WELL & EFFECTIVE QUESTIONS (REINFORCING GOOD HABITS):
+   - In \`observed_strengths\`, provide an array of objects with \`timestamp\`, \`what_cm_said_or_asked\`, and \`why_it_was_effective\`.
+7. TIMESTAMPED "WHAT TO ASK INSTEAD" COACHING REWRITES:
    - In \`areas_for_improvement\`, cite exact \`[MM:SS]\` timestamps, what happened, what the CM said, and concrete alternative questions combining CBT + Motivational Interviewing + SYNAPSE Situated Empathy.
-7. EMPTY / SILENT AUDIO CHECK:
+8. EMPTY / SILENT AUDIO CHECK:
    - If the recording is silent, empty, or contains less than 1 minute of actual speech, set \`"audio_empty_or_invalid": true\`.
 
 CRITICAL OUTPUT REQUIREMENT:
@@ -443,12 +539,25 @@ Part 1: The Numerical Data (JSON block)
   },
   "scores_rationales": {
     "playbook_adherence": "Detailed rationale...",
-    "goal_setting": "Detailed rationale with deduction justification if <5.0: why points were taken, what Gate execution was expected in this session stage, and what to do next time to earn 5.0...",
-    "cbt_application": "Detailed rationale explaining 5th-grade cognitive framing...",
-    "empathy_and_neutrality": "Detailed rationale with deduction justification if <5.0: why points were taken away, what feeling was missed, and what to do next time to earn 5.0...",
-    "apricot_data_gathering": "Detailed rationale explaining CRM documentation readiness..."
+    "goal_setting": "Detailed rationale...",
+    "cbt_application": "Detailed rationale...",
+    "empathy_and_neutrality": "Detailed rationale...",
+    "apricot_data_gathering": "Detailed rationale..."
   },
-  "structured_meeting_notes_for_apricot": "A concise, professional summary of the meeting, [Client] updates, Briefcase progress, gates achieved, and next steps ready to be pasted into Apricot.",
+  "template_adherence": {
+    "stability_and_attendance_checkin": { "status": "Followed Well", "notes": "Timestamped evidence..." },
+    "unified_briefcase_and_skillcat": { "status": "Followed Well", "notes": "Timestamped evidence..." },
+    "lscmi_brief_action_plan_and_feedback_loop": { "status": "Followed Well", "notes": "Timestamped evidence..." },
+    "cbt_toolkit_intervention_practice": { "status": "Followed Well", "notes": "Timestamped evidence..." },
+    "splashmap_next_steps": { "status": "Followed Well", "notes": "Timestamped evidence..." },
+    "apricot_case_note_readiness": { "status": "Followed Well", "notes": "Timestamped evidence..." }
+  },
+  "action_plan_feedback_loop": {
+    "client_agreed": true,
+    "feedback_loop_used": false,
+    "notes": "Summary of how CM confirmed agreement on the LS/CMI Action Plan or used the 4-Step Feedback Loop if [Client] disagreed."
+  },
+  "structured_meeting_notes_for_apricot": "A concise, professional summary of the meeting, [Client] updates, Unified Briefcase progress, SkillCat modules, and next steps ready to be pasted into Apricot.",
   "referrals_detected": [
     "e.g. Vocational Rehabilitation (Work Boots / Clothing Voucher)",
     "e.g. SC DMV (Driver's License Reinstatement)"
@@ -664,6 +773,8 @@ At the very end of your response, include \`===SESSION_TRANSCRIPT_START===\` fol
             }
         }
 
+        try { syncAllParticipantFolders(); } catch (e) {}
+
         return evaluation;
     } finally {
         for (const res of uploadResults) {
@@ -674,4 +785,4 @@ At the very end of your response, include \`===SESSION_TRANSCRIPT_START===\` fol
     }
 }
 
-module.exports = { evaluateCaseManagementMedia, computeDeterministicCmScore };
+module.exports = { evaluateCaseManagementMedia, computeDeterministicCmScore, CM_SESSION_TEMPLATE };

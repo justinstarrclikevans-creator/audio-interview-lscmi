@@ -1,0 +1,22 @@
+{
+  "participant_key": "George_Stevens",
+  "name": "George Stevens",
+  "location": "Columbia",
+  "track": "reentry_nav",
+  "status": "active",
+  "user_id": null,
+  "client_id": 41,
+  "apricot_id": "81446",
+  "phone": "",
+  "email": "",
+  "files": [],
+  "folder_slug": "George_Stevens",
+  "folder_path": "data/participants/George_Stevens",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": false,
+  "has_action_plan": false,
+  "waitlist_ready": false,
+  "waitlist_met_count": 6,
+  "data_flags_count": 1,
+  "updated_at": "2026-11-22T17:18:01.623Z"
+}

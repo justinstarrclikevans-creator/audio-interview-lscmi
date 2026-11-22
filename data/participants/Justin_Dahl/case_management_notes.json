@@ -1,0 +1,89 @@
+{
+  "case_notes": [
+    {
+      "id": 150,
+      "user_id": 80,
+      "author_id": null,
+      "author_name": "Jenn Jeanquart",
+      "session_date": "2026-10-20",
+      "note_type": "Case Note (documentation only) – no interaction or service",
+      "category": "Reentry Navigation",
+      "content": "Sent text and called to schedule orientation. No answer. Left message requesting return call/text by 8am 10/21.",
+      "apricot_exported": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 151,
+      "user_id": 80,
+      "author_id": null,
+      "author_name": "Daisy Boynton",
+      "session_date": "2026-10-19",
+      "note_type": "Check-in conversation – brief status update",
+      "category": "Reentry Navigation",
+      "content": "Justin called back letting me know he's still excited about the program and will be ready for orientation when he gets the call.",
+      "apricot_exported": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 152,
+      "user_id": 80,
+      "author_id": null,
+      "author_name": "Daisy Boynton",
+      "session_date": "2026-10-19",
+      "note_type": "Case Note (documentation only) – no interaction or service",
+      "category": "Reentry Navigation",
+      "content": "Called to let him know he's nearing the top of the waitlist and to check in. No answer, left a VM.",
+      "apricot_exported": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 153,
+      "user_id": 80,
+      "author_id": null,
+      "author_name": "Daisy Boynton",
+      "session_date": "2026-10-12",
+      "note_type": "Employment support – applications, resume, interview prep",
+      "category": "Reentry Navigation",
+      "content": "Made Justin a resume over the phone and sent it to him over text.",
+      "apricot_exported": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 154,
+      "user_id": 80,
+      "author_id": null,
+      "author_name": "Daisy Boynton",
+      "session_date": "2026-10-09",
+      "note_type": "Employment support – applications, resume, interview prep",
+      "category": "Reentry Navigation",
+      "content": "Sent him 3 staffing agencies in Columbia to check out for temp jobs.",
+      "apricot_exported": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 155,
+      "user_id": 80,
+      "author_id": null,
+      "author_name": "Daisy Boynton",
+      "session_date": "2026-10-08",
+      "note_type": "Intake Appointment COMPLETED",
+      "category": "Intake Appointment",
+      "content": "- Needs to take ADSAP, DUI was dropped but they still want him to take the class. Will get DL once he has proof of enrollment in the class (wants to wait to take the class until he has a source of income to pay for it)\n- Completed a 6 week substance abuse program in NC (Pavilion) \n- Meth addiction in the past, reports being sober for a few years now\n- wants help finding a temp job before program spot opens up\n- plans to go get a state ID on Monday",
+      "apricot_exported": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 156,
+      "user_id": 80,
+      "author_id": null,
+      "author_name": "Daisy Boynton",
+      "session_date": "2026-10-07",
+      "note_type": "Intake Appointment SCHEDULED",
+      "category": "Intake Appointment",
+      "content": "Intake Appointment SCHEDULED",
+      "apricot_exported": 1,
+      "created_at": "2026-11-03 23:04:00"
+    }
+  ],
+  "cm_session_evaluations": []
+}

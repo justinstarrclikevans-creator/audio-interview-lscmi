@@ -1,0 +1,30 @@
+{
+  "participant_key": "Benito_Jackson",
+  "name": "Benito Jackson",
+  "location": "Columbia",
+  "track": "first_shift",
+  "status": "active",
+  "user_id": null,
+  "client_id": 55,
+  "apricot_id": "82379",
+  "phone": "",
+  "email": "",
+  "files": [
+    "Benito_Jackson_Columbia_criminal_history.docx",
+    "Benito_Jackson_Columbia_criminal_history.md",
+    "Benito_Jackson_Columbia_draft_scoring_form.docx",
+    "Benito_Jackson_Columbia_draft_scoring_form.md",
+    "Benito_Jackson_Columbia_interview_guide.docx",
+    "Benito_Jackson_Columbia_interview_guide.md",
+    "Benito_Jackson_Columbia_transcript.txt"
+  ],
+  "folder_slug": "Benito_Jackson",
+  "folder_path": "data/participants/Benito_Jackson",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": true,
+  "has_action_plan": false,
+  "waitlist_ready": false,
+  "waitlist_met_count": 8,
+  "data_flags_count": 2,
+  "updated_at": "2026-11-22T17:18:01.646Z"
+}

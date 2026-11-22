@@ -1,0 +1,22 @@
+{
+  "participant_key": "Daniel_Marsico",
+  "name": "Daniel Marsico",
+  "location": "Charleston",
+  "track": "reentry_nav",
+  "status": "archived",
+  "user_id": null,
+  "client_id": 47,
+  "apricot_id": "81803",
+  "phone": "",
+  "email": "",
+  "files": [],
+  "folder_slug": "Daniel_Marsico",
+  "folder_path": "data/participants/Daniel_Marsico",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": false,
+  "has_action_plan": false,
+  "waitlist_ready": true,
+  "waitlist_met_count": 9,
+  "data_flags_count": 0,
+  "updated_at": "2026-11-22T17:18:01.628Z"
+}

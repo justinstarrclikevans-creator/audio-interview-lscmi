@@ -1,0 +1,84 @@
+{
+  "userid": "491101",
+  "pathway": "HVAC",
+  "pathway_breakdown": {
+    "HVAC": 5,
+    "Work_Readiness_General": 6
+  },
+  "learning_plans": [
+    "Week 1 - Turn90"
+  ],
+  "portfolio_link": "https://skillcat.app/local/skillcat/portfolio/?hash=8d36e4b1061e1cc4479c30cc6db6270d",
+  "last_login": "10 days 1 hour ago",
+  "latest_completion_date": "2026-11-19",
+  "total_hours": 16.5,
+  "completed_count": 11,
+  "completed_last_5_working_days": 5,
+  "daily_delta": 0,
+  "completed_modules": [
+    {
+      "course_name": "Heat & Refrigerant Basics",
+      "completed_date": "2026-11-19",
+      "completed_date_raw": "19 November 2026"
+    },
+    {
+      "course_name": "Residential System Types",
+      "completed_date": "2026-11-19",
+      "completed_date_raw": "19 November 2026"
+    },
+    {
+      "course_name": "Residential Confined Spaces",
+      "completed_date": "2026-11-17",
+      "completed_date_raw": "17 November 2026"
+    },
+    {
+      "course_name": "Reading Pressure & Temp",
+      "completed_date": "2026-11-16",
+      "completed_date_raw": "16 November 2026"
+    },
+    {
+      "course_name": "HVAC Career Path Intro",
+      "completed_date": "2026-11-16",
+      "completed_date_raw": "16 November 2026"
+    },
+    {
+      "course_name": "Analog Gauges",
+      "completed_date": "2026-11-11",
+      "completed_date_raw": "11 November 2026"
+    },
+    {
+      "course_name": "Thermostat Tips & Tricks",
+      "completed_date": "2026-11-05",
+      "completed_date_raw": "5 November 2026"
+    },
+    {
+      "course_name": "Inspect & Clean an Evaporator Coil",
+      "completed_date": "2026-11-04",
+      "completed_date_raw": "4 November 2026"
+    },
+    {
+      "course_name": "Intro to Welding",
+      "completed_date": "2026-11-03",
+      "completed_date_raw": "3 November 2026"
+    },
+    {
+      "course_name": "Introduction to being an Electrician Apprentice",
+      "completed_date": "2026-11-03",
+      "completed_date_raw": "3 November 2026"
+    },
+    {
+      "course_name": "Intro to HVAC",
+      "completed_date": "2026-11-02",
+      "completed_date_raw": "2 November 2026"
+    }
+  ],
+  "recent_modules_last_5_days": [
+    "Heat & Refrigerant Basics (2026-11-19)",
+    "Residential System Types (2026-11-19)",
+    "Residential Confined Spaces (2026-11-17)",
+    "Reading Pressure & Temp (2026-11-16)",
+    "HVAC Career Path Intro (2026-11-16)"
+  ],
+  "stalled": false,
+  "flags": []
+}

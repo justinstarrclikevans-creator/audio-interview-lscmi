@@ -1,0 +1,125 @@
+{
+  "case_notes": [
+    {
+      "id": 107,
+      "user_id": 68,
+      "author_id": null,
+      "author_name": "Diyoung Dantzler",
+      "session_date": "2026-11-03",
+      "note_type": "Coaching / case management session – structured or in-depth meeting",
+      "category": "First Shift",
+      "content": "Client Updates: [Client] continues to demonstrate high motivation and practical application of CBT skills. He shared a success story of using 'Stop and Think' when frustrated by his stepdad rushing him at the store, effectively preventing a conflict and avoiding an old risky behavior (walking out with unpaid items).\n\nBriefcase & Gates Progress:\n- Gate 1: Confirmed possession of State ID and SS Card. Needs Birth Certificate. Confirmed medication (Lisinopril).\n- Gate 2/4: Needs resume updated. Followed up on Highland Bakery application (info passed to HR). \n- Financial/Legal: Needs to pay $60/month for SR-22 non-owner's insurance to reinstate driver's license. Successfully saved $200 this week.\n- Education: Currently working on EPA and electrical certifications. Long-term goal is CDL.\n\nNext Steps:\n1. [Client] to follow up with Highland Bakery HR on Friday.\n2. CM and [Client] to identify the specific process for obtaining his Birth Certificate.\n3. CM to review progress on the $60/month SR-22 insurance payment.",
+      "apricot_exported": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 108,
+      "user_id": 68,
+      "author_id": null,
+      "author_name": "Diyoung Dantzler",
+      "session_date": "2026-10-29",
+      "note_type": "Coaching / case management session – structured or in-depth meeting",
+      "category": "First Shift",
+      "content": "Client Updates: [Client] reported high motivation and continued application of the 'Stop and Think' CBT skill, specifically noting improved interactions with his daughter and a desire to lead by example rather than just apologizing. \n\nBriefcase & Gates Progress: \n- Financial/Legal: Successfully gave his mother $150 last week for safe-keeping toward legal fines; committed to giving her $200 this week. \n- Employment: Continued job search; plans to visit Highland Bakery in-person on his lunch break tomorrow despite some current transportation barriers. \n- Education: Rated GED confidence at 5/10, stating confidence will increase once officially enrolled. \n\nNext Steps: \n1. [Client] to follow up with Highland Bakery in person. \n2. CM to follow up on the $200 savings target for this week. \n3. Discuss specific steps for official GED enrollment.",
+      "apricot_exported": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 27,
+      "user_id": 68,
+      "author_id": null,
+      "author_name": "Diyoung Dantzler",
+      "session_date": "2026-10-21",
+      "note_type": "Coaching / case management session – structured or in-depth meeting",
+      "category": "First Shift",
+      "content": "Client] participated in a Weekly Follow-Up session. Discussed a recent conflict where he successfully utilized the 'Stop and Think' CBT skill to de-escalate a physical altercation by offering the individual two choices instead of reacting aggressively. Explored improvements in emotional regulation, comparing his past reactions to his daughter to his current mindset. Job Search: [Client] followed up on a Highland Bakery application error via voicemail; CM advised an in-person follow-up at the fence. Education: Rated GED confidence at 5/10; identified continuous studying as the key to improving. Legal/Court: Discussed pending court case with a potential 6-18 month sentence; [Client] demonstrated a strong locus of control by focusing on compliance, work, and staying out of trouble. Risk Profile: Explored triggers like boredom and stress; [Client] identified getting 'careless' (the 'fuck its') as an early warning sign and uses positive distraction as a coping tool. Support System: Identified mother, partner, stepdad, and Turn90. Financial Goal: Committed to saving $150 from his next check toward legal fines, keeping his bank card with his mother for safekeeping.",
+      "apricot_exported": 1,
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 28,
+      "user_id": 68,
+      "author_id": null,
+      "author_name": "Diyoung Dantzler",
+      "session_date": "2026-10-13",
+      "note_type": "Coaching / case management session – structured or in-depth meeting",
+      "category": "First Shift",
+      "content": "Client Updates: [Client] reported feeling highly motivated and noted that their mindset has improved significantly. Employment: [Client] had to reset their application with Highland Bakery due to a disability checkbox error and will follow up with the employer on Monday. Education: [Client] rated their GED confidence at 5/10 due to past obstacles but is actively taking online practice tests (history, math) to prepare. Legal: [Client] discussed an upcoming court case with potential time (6-18 months); they are taking ownership of past actions and managing expectations rather than avoiding the reality. Personal/Cognitive: Discussed managing impulsivity, specifically regarding parenting. [Client] is practicing emotional regulation and consequential thinking when dealing with their daughter's behavioral issues, choosing calm communication over anger to maintain an open dialogue. Coping/Sobriety: [Client] plans to rely on their mother for support if old mindsets return and is setting strict boundaries regarding who is allowed at their house. Activities: CM and [Client] completed a roleplay scenario practicing boundary setting and refusal skills with negative peers once independent transportation is secured. Next Steps: Continue GED practice tests, follow up on the bakery application, and maintain active, responsible involvement in the household.",
+      "apricot_exported": 1,
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 29,
+      "user_id": 68,
+      "author_id": null,
+      "author_name": "Diyoung Dantzler",
+      "session_date": "2026-08-19",
+      "note_type": "Case Note (documentation only) – no interaction or service|Employment support – applications, resume, interview prep",
+      "category": "Reentry Navigation",
+      "content": "connected him with match staffing got job at Pork ryan factory passed out an went to er. due heat",
+      "apricot_exported": 1,
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 30,
+      "user_id": 68,
+      "author_id": null,
+      "author_name": "Diyoung Dantzler",
+      "session_date": "2026-08-18",
+      "note_type": "Check-in conversation – brief status update",
+      "category": "Reentry Navigation",
+      "content": "Today I reached out to Christopher on the behalf of the plan that we started up due to him missing a day each week in the program we set new goals as far as still putting an application while he’s waiting to get back in for shift . I asked him to continuously check with the places he put in applications the two that gave him good feedback due to waiting on background check which was match staffing with Brittany and op source he’s waiting on a phone call back today about the Pork Ryan factory.",
+      "apricot_exported": 1,
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 31,
+      "user_id": 68,
+      "author_id": null,
+      "author_name": "Matt Carlisle",
+      "session_date": "2026-08-12",
+      "note_type": "Case Note (documentation only) – no interaction or service",
+      "category": "First Shift",
+      "content": "At approximately 9:30 a.m., Mr. Beck informed me that he had just received a phone call stating that his daughter had been involved in a fight with another student at school. Mr. Beck stated that he needed to leave for the remainder of the day to address the situation.",
+      "apricot_exported": 1,
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 32,
+      "user_id": 68,
+      "author_id": null,
+      "author_name": "Diyoung Dantzler",
+      "session_date": "2026-08-06",
+      "note_type": "Coaching / case management session – structured or in-depth meeting",
+      "category": "First Shift",
+      "content": "Christopher reported that he is adjusting well to the Turn90 program and described the experience as changing the way he thinks. He shared that the cognitive behavioral lessons on impulsivity have helped him compare who he used to be with the person he is becoming. Christopher acknowledged that understanding his past behaviors is essential to preventing future mistakes and stated that “failure is not an option” at this stage of his life.\n\nChristopher reflected on his desire to pursue life the right way, explaining that he has experienced nearly every aspect of street life but has never fully committed to living as a responsible father and productive citizen. He expressed readiness to lead by example and recognized that long-term success will require intentionally applying what he is learning each day.\n\nMotivational Interviewing Discussion\n\nChristopher identified three primary 90-day goals:\n\n* Earn his GED.\n* Obtain his driver’s license.\n* Secure stable employment.\n\nWhen discussing these goals, Christopher shared that accomplishing them would provide opportunities he has never experienced before and would increase his independence, improve employment opportunities, and strengthen his ability to support his family.\n\nChristopher openly discussed concerns regarding increased freedom once he obtains his driver’s license. He reflected on previous experiences where having transportation contributed to poor choices and acknowledged that learning to use his freedom responsibly will be a significant personal test. He verbalized insight into this risk and stated his intention to use his independence for positive purposes.\n\nChristopher also discussed his current legal situation, noting that house arrest may be a likely outcome rather than incarceration. He expressed concern that once legal restrictions are removed, old habits could return if he is not intentional about maintaining the progress he has made.\n\nRecovery and Strengths\n\nChristopher reported maintaining approximately 18 months of sobriety. When exploring the strengths that contributed to this achievement, he identified:\n\n* Becoming tired of his previous lifestyle.\n* Increased motivation for change.\n* Personal realization that street life had given him everything it could.\n* A desire to experience success through legal and positive living.\n\nChristopher demonstrated strong change talk by stating that he now believes he can accomplish anything he commits himself to accomplishing through positive choices.\n\nConfidence Assessment\n\nUsing a confidence scale, Christopher rated his confidence in earning his GED as 5 out of 10. He explained that his limited educational background and the need for additional studying lowered his confidence. Despite this concern, he remained willing to invest the necessary effort to achieve his educational goal.\n\nIdentified Barriers\n\nChristopher identified several obstacles that may interfere with his goals, including:\n\n* Outstanding driving-related fines.\n* Costs associated with obtaining his driver’s license.\n* Required SR-22 insurance.\n* Financial limitations.\n\nHe demonstrated problem-solving by recognizing that obtaining employment will allow him to pay his legal obligations, save money, and gradually remove these barriers.\n\nPast Successes\n\nChristopher reflected on successfully completing probation during a previous supervision period. Although he later returned to criminal behavior, he identified that completing probation helped him discontinue drug use and taught him that he is capable of achieving difficult goals when he remains focused.\n\nSupport System\n\nChristopher identified his child’s mother and his own mother as his two primary sources of support. He acknowledged the importance of maintaining these relationships while continuing to build a stable future for himself and his child.\n\nCommitment to Change\n\nThroughout the session, Christopher consistently demonstrated change talk by emphasizing that he is no longer content with simply thinking about change. Instead, he expressed a commitment to taking action one step at a time and applying the knowledge he gains through the Turn90 program to his daily decisions. He recognized that personal growth requires consistent application rather than simply knowing what the right choices are.\n\nCase Manager Assessment\n\nChristopher presented with good insight, honesty, and self-awareness throughout the meeting. He openly acknowledged personal risk factors, including the possibility of returning to previous behaviors once legal restrictions are lifted, while also identifying practical strategies to reduce those risks. His motivation appears internally driven, and he demonstrated accountability by accepting responsibility for past decisions without minimizing their impact.\n\nChristopher continues to show meaningful progress in cognitive restructuring, recovery, and future-oriented thinking. He remains engaged in the Turn90 program and demonstrates readiness to achieve his 90-day goals. Continued case management will focus on supporting his educational achievement, driver’s license completion, employment readiness, financial planning, and relapse prevention while reinforcing healthy decision-making and accountability.",
+      "apricot_exported": 1,
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 33,
+      "user_id": 68,
+      "author_id": null,
+      "author_name": "Matt Carlisle",
+      "session_date": "2026-07-24",
+      "note_type": "Intake Appointment COMPLETED",
+      "category": "Intake Appointment",
+      "content": "Mr. Beck is a 37 y/o man from Spartanburg. He has been living with the mother of his 15 y/o daughter since his release from Kershaw C.I. in June. He served 18 months for a shoplifting conviction. Prior to his incarceration at Kershaw, he was housed at Wateree C.I.\n\nMr. Beck currently has pending enhanced shoplifting charges in Spartanburg and is on house arrest. He anticipates being placed on probation following his next court appearance.\n\nMr. Beck came to Turn90 seeking assistance with employment, transportation, and driver's license reinstatement. He currently owes approximately $1,800 in driver's license reinstatement fees before he can regain his driving privileges. If accepted into the First Shift program, he will rely on the mother of his daughter for transportation to and from the program.\n\nMr. Beck has a history of intravenous methamphetamine use and smoking crack cocaine. He reports that he has been sober for over a year, with a sobriety date of December 2024.\n\nMr. Beck has approximately 10 yrs of fast-food experience, having worked intermittently at KFC. He expressed an interest in transitioning into a manufacturing position.\n\nFollowing the screening and assessment process, Mr. Beck was determined to be eligible for the First Shift program, contingent upon his ability to maintain reliable transportation to and from the program.",
+      "apricot_exported": 1,
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 34,
+      "user_id": 68,
+      "author_id": null,
+      "author_name": "Daisy Boynton",
+      "session_date": "2026-07-20",
+      "note_type": "Intake Appointment SCHEDULED",
+      "category": "Intake Appointment",
+      "content": "Intake Appointment SCHEDULED",
+      "apricot_exported": 1,
+      "created_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "cm_session_evaluations": []
+}

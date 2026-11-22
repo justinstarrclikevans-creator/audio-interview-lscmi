@@ -1,0 +1,123 @@
+{
+  "detected_flags": [
+    {
+      "category": "Cognitive / Attitude",
+      "flag": "Justifying Cognitive Distortion regarding Parole Supervision",
+      "evidence": "I did 15 years 85%. So I don't understand why I would be under any supervision.",
+      "severity": "medium",
+      "navigator_recommendation": "Maintain absolute neutral modeling (Standard 1.5). Avoid arguing or validating anti-social views on law enforcement/parole. Use neutral curiosity to help him reflect on how remaining compliant protects his goal of long-term freedom."
+    },
+    {
+      "category": "Cognitive / Attitude",
+      "flag": "Cut Off Default Pattern under Frustration",
+      "evidence": "Historical pattern of school suspensions, fights with corrections, and walking away when facing extreme frustration.",
+      "severity": "high",
+      "navigator_recommendation": "Utilize CBT self-regulation logs. Coach Clyde to identify early physiological triggers of frustration before reverting to default 'cut off' reactions."
+    },
+    {
+      "category": "Dynamic Target / Peer Network",
+      "flag": "Extreme Social Isolation / Prosocial Deficit",
+      "evidence": "I don't have friends. I don't talk to strangers.",
+      "severity": "medium",
+      "navigator_recommendation": "Validate his desire to avoid negative criminal peers while encouraging gradual integration into prosocial work environments and peer-support groups."
+    },
+    {
+      "category": "Stability Risk",
+      "flag": "Lack of Driver's License & Transit Dependency",
+      "evidence": "License Status: Suspended / None; relies entirely on walking, bus, or girlfriend.",
+      "severity": "high",
+      "navigator_recommendation": "Connect with Midlands Fatherhood Coalition for driver's license reinstatement counseling and provide COMET bus pass navigation."
+    },
+    {
+      "category": "Stability Risk",
+      "flag": "Active Unemployment & Financial Stress",
+      "evidence": "Unemployed, 0 payroll months in last 12 months, relies on food stamps and girlfriend.",
+      "severity": "high",
+      "navigator_recommendation": "Prioritize immediate transitional placement and applications to local fair-chance commercial employers matching his masonry/industrial skill set."
+    }
+  ],
+  "top_criminogenic_domains": [
+    "Education & Employment (GED Deficit & Active Unemployment)",
+    "Antisocial Pattern / Self-Regulation (Cut-Off Defenses & Parole Resentment)",
+    "Companions (Extreme Isolation / Lack of Prosocial Network)"
+  ],
+  "stability_status": "at_risk",
+  "navigator_case_plan_md": "# Re-entry Navigation Case Plan: Clyde Williams\n\n## 1. Executive Summary & Clinical Assessment\n- **Participant**: Clyde Williams (DOB: 07/30/1989)\n- **Risk Level**: High Risk / Need (LS/CMI Score: 21 / 43)\n- **Supervision**: Parole (18 Days Released, 15-Year Violent Burglary Sentence)\n- **Primary Criminogenic Focus**: Education/Employment, Antisocial Pattern, Companions (Note: Static criminal history score of 6/8 excluded from dynamic intervention targets).\n- **Stability Overview**: Housing is highly stable (resides with girlfriend in clean residential home). Primary instability stems from active unemployment, suspended driver's license, and lack of GED.\n\n## 2. Dynamic Criminogenic Target Areas\n1. **Education & Employment (Subscore 7/9)**:\n   - Needs immediate paid transitional work stabilization.\n   - GED enrollment required to leverage his Brick Masonry NCCER Core certification in commercial contracting.\n2. **Antisocial Pattern / Cognitive Restructuring (Subscore 3/4)**:\n   - Target the 'Justifying' distortion regarding parole resentment and the 'Cut Off' default under frustration.\n3. **Companions / Prosocial Network (Subscore 2/4)**:\n   - Safely bridge the gap between extreme selective isolation ('I don't have friends') and constructive, law-abiding social networks.\n\n## 3. Facilitation & Clinical Strategy (Staff Instructions)\n- **Neutrality & Power Struggles**: Never debate parole requirements or past convictions. If Clyde expresses resentment over parole, reflect with neutral curiosity: *'You've put in a lot of time, so I hear your frustration. What strategy keeps parole off your back so you can build your career?'*\n- **Capitalize on Strategic Mindset**: Leverage Clyde's 'chessboard' thinking style. Co-create structured, written action plans saved in his phone notes.\n- **CBT Skill Building**: Practice problem-solving logs for workplace frustration to prevent impulse 'cut off' behaviors (quitting or fighting).\n\n## 4. Action Plan & Timeline\n- **Immediate (Days 1–7)**:\n  - Provide COMET bus routes and transit passes.\n  - Referral to Midlands Fatherhood Coalition for SCDMV reinstatement counseling.\n  - Secure immediate placement applications for high-paying fair-chance Columbia employers.\n- **Short-Term (Days 8–30)**:\n  - Enroll in adult education/GED prep program in Richland County.\n  - Complete CBT behavior logs focused on workplace communication.\n  - Support transition into commercial masonry/industrial employment.",
+  "participant_guide_md": "# My Fresh Start Action & Resource Guide: Clyde Williams\n\nWelcome to your personalized Re-entry Action Guide, Clyde. You possess exceptional strategic planning skills—what you call thinking like a 'chessboard.' We are going to use that exact strategic mindset to achieve your long-term goals: securing high-paying employment, regaining your driver's license, completing your GED, and maintaining full personal independence.\n\n---\n\n## 1. Key Action Steps & Local Community Resources\n\n### Driver's License & Legal Support\n- **Midlands Fatherhood Coalition**\n  - **Services**: Guidance on SCDMV reinstatement, child support court advocacy, and job coaching.\n  - **Contact**: (803) 933-0530 | 1821 Hampton St, Columbia, SC 29201\n  - **Action**: Call or visit for assistance navigating SCDMV suspension issues.\n  - [Visit Website](https://midlandsfathers.com) | [Directions](https://maps.google.com/?q=1821+Hampton+St,+Columbia,+SC+29201)\n\n- **SCDMV Shop Road Branch**\n  - **Services**: SCDMV driving record printouts and payment plan setups.\n  - **Contact**: (803) 896-5000 | 1630 Shop Rd, Columbia, SC 29201\n  - **Action**: Obtain an official driving record printout to review reinstatement requirements.\n  - [Visit Website](https://scdmvonline.com/Driver-Services/Reinstatement) | [Directions](https://maps.google.com/?q=1630+Shop+Rd,+Columbia,+SC+29201)\n\n### Local Transit & Daily Mobility\n- **The COMET (Central Midlands Regional Transit)**\n  - **Services**: Bus routes connecting residential areas to major industrial zones (Shop Rd, Cayce, West Columbia).\n  - **Contact**: (803) 255-7100\n  - **Action**: Download route maps and obtain a 31-day system pass.\n  - [Visit Website](https://catchthecometsc.gov)\n\n### Civil Legal Aid\n- **SC Legal Services - Columbia Office**\n  - **Services**: Civil legal assistance and record expungement counseling.\n  - **Contact**: (803) 744-9430 | 2109 Bull St, Columbia, SC 29201\n  - **Action**: Schedule a intake consultation regarding civil rights and legal relief.\n  - [Visit Website](https://sclegal.org) | [Directions](https://maps.google.com/?q=2109+Bull+St,+Columbia,+SC+29201)\n\n---\n\n## 2. Target Fair-Chance Employer Matches\n\nHere are top second-chance employers in the Columbia area that align with your background and masonry/industrial skill set:\n\n1. **Midlands Concrete & Paving Solutions**\n   - **Role**: Concrete Finisher Helper / General Laborer\n   - **Pay**: $18.00 – $23.00 / hr\n   - **Shift**: 7:00 AM – 3:30 PM (Day Shift)\n   - **Why It Fits**: Direct application of your Brick Masonry NCCER Core training; second-chance employer offering steady weekly pay.\n   - [Apply Online / View Careers Page](https://www.indeed.com/jobs?q=concrete+paving+laborer&l=Columbia%2C+SC)\n\n2. **CMC Steel South Carolina**\n   - **Role**: Mill Operator Trainee / Material Handler\n   - **Pay**: $19.00 – $24.50 / hr\n   - **Shift**: Day Shift (7:00 AM – 3:30 PM)\n   - **Why It Fits**: Strong industrial atmosphere, excellent healthcare, safety-focused, background-friendly hiring policy.\n   - [Apply Online / View Careers Page](https://www.cmc.com/en-us/careers)\n\n3. **Carolina Industrial Maintenance Group**\n   - **Role**: Maintenance Technician Apprentice / Commercial Grounds\n   - **Pay**: $16.50 – $19.50 / hr\n   - **Shift**: Day Shift (7:30 AM – 4:00 PM, M–F)\n   - **Why It Fits**: Hands-on maintenance trade work with paid training and overtime potential.\n   - [Apply Online / View Careers Page](https://www.indeed.com/jobs?q=maintenance+technician&l=Columbia%2C+SC)\n\n4. **Palmetto State Distribution Center**\n   - **Role**: Order Selector / Warehouse Associate\n   - **Pay**: $17.50 – $21.50 / hr\n   - **Shift**: 1st Shift (7:00 AM – 3:30 PM)\n   - **Why It Fits**: Conveniently located near public bus routes; fair-chance policy with immediate start potential.\n   - [Apply Online / View Careers Page](https://www.indeed.com/jobs?q=warehouse+order+selector&l=West+Columbia%2C+SC)\n\n---\n\n## 3. Four-Week Step-by-Step Milestone Checklist\n\n- [ ] **Week 1: Transit & Financial Foundation**\n  - Map out COMET bus routes to job sites.\n  - Submit job applications to Midlands Concrete and CMC Steel.\n  - Save all interview dates in your phone calendar.\n\n- [ ] **Week 2: Licensing & Education Steps**\n  - Complete intake meeting with Midlands Fatherhood Coalition for driver's license assistance.\n  - Register for local adult education GED preparation classes in Richland County.\n  - Review budget strategy for initial employment paychecks.\n\n- [ ] **Week 3: Workplace Integration & Communication**\n  - Attend scheduled employer interviews.\n  - Practice CBT communication strategies for navigating workplace stress and supervisor feedback constructively.\n  - Confirm parole reporting requirements and update officer on employment progress.\n\n- [ ] **Week 4: Career & Stabilization Launch**\n  - Begin first week of employment.\n  - Establish weekly GED study schedule around work hours.\n  - Continue executing your long-term 'chessboard' financial and personal goals.",
+  "recommended_referrals": [
+    {
+      "resourceName": "Midlands Fatherhood Coalition",
+      "category": "Legal / ID",
+      "contact": "(803) 933-0530 • 1821 Hampton St, Columbia, SC 29201",
+      "websiteUrl": "https://midlandsfathers.com",
+      "actionStep": "Schedule an intake appointment for SCDMV license reinstatement guidance and parole advocacy."
+    },
+    {
+      "resourceName": "SCDMV Headquarters & Shop Road Branch",
+      "category": "Legal / ID",
+      "contact": "(803) 896-5000 • 1630 Shop Rd, Columbia, SC 29201",
+      "websiteUrl": "https://scdmvonline.com/Driver-Services/Reinstatement",
+      "actionStep": "Obtain official SC driving record printout and suspension fee breakdown."
+    },
+    {
+      "resourceName": "The COMET (Central Midlands Regional Transit)",
+      "category": "Food / Transit",
+      "contact": "(803) 255-7100 • Columbia, SC",
+      "websiteUrl": "https://catchthecometsc.gov",
+      "actionStep": "Secure 31-day bus pass and map transit route to Shop Rd and Cayce job locations."
+    },
+    {
+      "resourceName": "SC Legal Services - Columbia Office",
+      "category": "Legal / ID",
+      "contact": "(803) 744-9430 • 2109 Bull St, Columbia, SC 29201",
+      "websiteUrl": "https://sclegal.org",
+      "actionStep": "Consult regarding civil legal rights and record expungement options."
+    }
+  ],
+  "matched_employers": [
+    {
+      "company": "Midlands Concrete & Paving Solutions",
+      "role": "Concrete Finisher Helper / General Laborer",
+      "pay": "$18.00 – $23.00 / hr",
+      "shift": "7:00 AM – 3:30 PM",
+      "careersUrl": "https://www.indeed.com/jobs?q=concrete+paving+laborer&l=Columbia%2C+SC",
+      "matchReason": "Directly leverages his Brick Masonry NCCER Core certification in a second-chance commercial construction environment."
+    },
+    {
+      "company": "CMC Steel South Carolina",
+      "role": "Mill Operator Trainee / Material Handler",
+      "pay": "$19.00 – $24.50 / hr",
+      "shift": "Day Shift (7:00 AM – 3:30 PM)",
+      "careersUrl": "https://www.cmc.com/en-us/careers",
+      "matchReason": "High-wage industrial role with day-shift hours; fair-chance employer offering health benefits and stability."
+    },
+    {
+      "company": "Carolina Industrial Maintenance Group",
+      "role": "Maintenance Technician Apprentice",
+      "pay": "$16.50 – $19.50 / hr",
+      "shift": "Day Shift (7:30 AM – 4:00 PM, M–F)",
+      "careersUrl": "https://www.indeed.com/jobs?q=maintenance+technician&l=Columbia%2C+SC",
+      "matchReason": "Hands-on commercial facilities role providing paid training and clear path for trade advancement."
+    },
+    {
+      "company": "Palmetto State Distribution Center",
+      "role": "Order Selector / Warehouse Associate",
+      "pay": "$17.50 – $21.50 / hr",
+      "shift": "1st Shift (7:00 AM – 3:30 PM)",
+      "careersUrl": "https://www.indeed.com/jobs?q=warehouse+order+selector&l=West+Columbia%2C+SC",
+      "matchReason": "Accessible via local COMET transit lines; immediate hiring with fair-chance background policies."
+    }
+  ],
+  "assessmentData": {
+    "participantName": "Clyde Williams",
+    "location": "Columbia",
+    "interviewTranscript": "CASE REENTRY BRIEF — CLYDE WILLIAMS VERSION 2.0 (HIGH RISK REENTRY)\nPage 1 of 2 | Confidential Staff Assessment\nCASE MANAGEMENT REENTRY BRIEF\nPARTICIPANT: CLYDE WILLIAMS (DOB: 07/30/1989) | HIGH RISK REENTRY PROFILE\nAssessment Date: August 18, 2026 Current Placement: Residential (Lives with Girlfriend)\nReentry Status: Currently Unemployed License Status: Suspended / None\nSupervision Status: Parole (18 Days Home, 15-Yr\nViolent Burglary Sentence) Final Risk Level: HIGH RISK / NEED (Score: 21 / 43)\n1. RISK PROFILE & CRIMINOGENIC DOMAINS\nClyde Williams's standardized LS/CMI assessment calculates a Section 1 Total Score of 21 / 43, placing him in the High\nRisk/Need category (up from Medium, due to active community unemployment and clinical indicators of poor\nself-regulation). While he possesses major historical and systemic risks, he exhibits exceptional cognitive strengths and\nsocial protective factors that can be actively leveraged during his transition. Per clinical instructions, his high Criminal\nHistory score (6/8) is excluded from case planning targets, establishing the following prioritized criminogenic focus areas:\nPrimary Domain: Education & Employment (EE Subscore: 7/9): Clyde completed some high school but lacks a high\nschool diploma or GED. He is currently unemployed and has worked 0 payroll months in the last 12 months due to his\nrecent 15-year incarceration. Under the scoring manual rules, his active unemployment forces his performance, coworker,\nand supervisor interaction ratings to 0 (very unsatisfactory). Securing stable transitional employment and addressing his\nGED deficit are his highest priority criminogenic needs.\nSecondary Domain: Antisocial Pattern (AP Subscore: 3/4): Clyde exhibits an ingrained antisocial pattern. This is driven\nby his first arrest at age 14, a violent property offending history (Burglary 1st), multiple prison behavior reports (cell phones\nand marijuana), and specialized clinical concern for poor self-regulation and personality-behavioral deficits (Item 40 = YES).\nWhile he currently reports high self-regulation, his underlying behavioral patterns represent a severe default default\nresponse under stress.\nTertiary Domain: Companions (CO Subscore: 2/4): An estimated 90% of Clyde's current social network is involved in\ncriminal activity to this day. Clyde is currently managing this risk through extreme self-isolation ('I don't have friends' and 'I\ndon't talk to strangers'), but he requires active clinical support to transition out of this isolation safely by building prosocial,\nlaw-abiding connections.\n2. BEHAVIORAL INDICATORS & THINKING PATTERNS\nClyde exhibits a complex cognitive profile characterized by a strong tension between his current strategic goals and his\ndeeply ingrained antisocial behavioral defaults:\n'Chessboard' Decision-Making (Cognitive Strength): Clyde operates with extremely high current self-regulation and\nplanning. He explicitly states: 'I think before every move now like a chessboard. I think before everything, I'm very strategic.'\nHe writes down his plans and goals in his phone and checks them regularly. This highly reflective planning skill is a powerful\nprotective asset that case management must actively leverage and reinforce.\n'Cut Off' Tendency (Risk Pattern): Historically, Clyde has a tendency to walk away, quit, or react with physical aggression\nwhen facing extreme frustration or authority pressure. His background of early school suspensions, physical fights with\npolice/corrections, and prison infractions represent an ingrained 'Cut Off' pattern. Staff must monitor him for signs of\n\n-- 1 of 4 --\n\nCASE REENTRY BRIEF — CLYDE WILLIAMS VERSION 2.0 (HIGH RISK REENTRY)\nPage 2 of 2 | Confidential Staff Assessment\nfrustration and provide cognitive coaching to prevent him from reverting to these defaults under transitional stress.\n'Justifying' Cognitive Distortions: Clyde exhibits a strong, principled resentment of parole supervision, arguing it is unfair\nbecause he completed 100% of his sentence: 'I did 15 years 85%. So I don't understand why I would be under any\nsupervision.' While fully compliant, this resentment, combined with his view that his past property crimes were merely a\n'selfish learning stage' that he 'had to go through,' represents a 'Justifying' thinking pattern. This cognitive distortion allows\nhim to rationalize non-compliance if he perceives authority actions as unfair.\nDefensive Selective Isolation: To insulate himself from negative peers, Clyde has set an extreme boundary: 'I don't have\nfriends. I don't talk to strangers.' While this boundary successfully prevents procriminal peer influence, it also leads to severe\nsocial isolation, which can increase depressive or emotional stress and lacks long-term prosocial support.\n\n-- 2 of 4 --\n\nCASE REENTRY BRIEF — CLYDE WILLIAMS VERSION 2.0 (HIGH RISK REENTRY)\nPage 3 of 2 | Confidential Staff Assessment\n3. TRAJECTORY & PATTERN OVER TIME\nClyde's justice involvement began early at age 14 with a juvenile disposition. In adulthood, his involvement escalated rapidly\ninto violent property crime, culminating in two major convictions: Burglary Second Degree (3-year sentence) and Burglary\nFirst Degree (15-year sentence, 85% violent). In total, Clyde has spent 18 years of his adult life incarcerated and has been\nhome in the community for only 18 days. This intensive long-term institutionalization means that conventional,\nnon-institutional living skills are highly unpracticed. The goal of case planning is to disrupt this longitudinal cycle by securing\nimmediate, stable conventional roots in the community.\n4. ACUTE / EMERGENCY NEEDS\nActive Unemployment & Financial Stabilization: Because Clyde is currently unemployed and has 0 active income, he is\nin an acute financial transition. He possesses food stamps but has no independent means of support, relying entirely on his\ngirlfriend. Securing immediate transitional employment (such as re-enrolling or stabilizing his Turn 90 placement) is his\nprimary acute need to ensure immediate housing and financial stability. No active housing, mental health, or substance use\ncrises are identified.\n5. STRUCTURAL STABILITY FACTORS\nSeveral highly favorable structural stability factors act as protective shields in Clyde's life, offsetting his high-risk profile:\n• Housing Stability: Extremely high. Resides with his girlfriend in a residential house that he describes as 'nice, clean, and\nvery peaceful.' This low-stress environment is a critical protective asset.\n• Financial Literacy: High. Clyde has Navy Federal checking and savings accounts and manages a tight personal budget\neffectively (spending ~$600/month on hygiene and necessities): 'I've did 15 years, so all I know is budget.' However, his\ncredit score is low (429), requiring credit rehabilitation.\n• Substance Abuse Stability: High. Clyde is a lifelong abstainer from drugs and has controlled, occasional recreational\nalcohol habits (wine) with absolutely no social, medical, or legal impairment.\n• Transportation Barrier: High. Lacks a driver's license, meaning all supervision and work commitments rely strictly on\nwalking, public transit, or his girlfriend. This is his primary physical barrier.\n• Education Deficit: High. Lacks a high school diploma or GED, limiting commercial contracting utilization of his Brick\nMasonry NCCER Core certification.\n6. LEGAL & PLACEMENT CONSTRAINTS\nClyde is under active parole supervision following his release 18 days ago. His legal obligations include regular supervision\nfees and mandatory probation meetings. He currently experiences significant supervision friction due to poor communication\nfrom parole officers ('They don't contact me. I try to call, they don't answer'). His suspended license severely restricts\nphysical movement and placement opportunities. There are no pending charges or Sex Offender Registry requirements.\n7. RESPONSIVITY & ENGAGEMENT PROFILE\nClyde is a highly capable, self-directed client. To successfully engage him and reduce recidivism, staff must utilize a highly\ntailored communication and coaching strategy:\n\n-- 3 of 4 --\n\nCASE REENTRY BRIEF — CLYDE WILLIAMS VERSION 2.0 (HIGH RISK REENTRY)\nPage 4 of 2 | Confidential Staff Assessment\n• Supportive, Non-Confrontational Coaching Style: An aggressive, directive, or highly confrontational authority style will\nimmediately trigger his deeply ingrained resentment of unfair supervision and his past history of fighting authority figures.\nStaff must maintain a highly collaborative, supportive, and respectful coaching approach, treating him as an active partner in\nhis reentry planning.\n• Leverage Strategic Mindset: Capitalize on Clyde's strategic, planning-oriented mindset. Involve him directly in\nco-creating his goals. Use his habit of writing down plans in his phone notes to track reentry milestones, GED preparation\nmodules, and cognitive-behavioral therapy (CBT) homework assignments.\n• CBT Self-Regulation & Cognitive Restructuring: Focus cognitive coaching on addressing his 'Justifying' and 'Cut Off'\nthinking patterns. Use structured CBT behavior logs to help him track triggers of frustration and practice prosocial,\nnon-aggressive problem-solving skills.\n• Immediate Structural Plan: Support immediate transitional goals: (1) assist with re-enrollment/stabilization in a paid\ntransitional work program (Turn 90 or alternative) to resolve his acute financial crisis; (2) coordinate GED preparation\nclasses; (3) provide bus passes and transit route coaching; and (4) help him transition his Brick Masonry NCCER Core\ncertificate into local commercial masonry.\n\n-- 4 of 4 --\n\n",
+    "statedGoals": "First Shift graduation, prosocial stabilization, career placement",
+    "identifiedNeeds": [
+      "Prosocial Modeling",
+      "Workplace Stabilization"
+    ],
+    "livingSituation": "Transitional / Community Housing",
+    "legalStatus": "Active Community Supervision"
+  }
+}

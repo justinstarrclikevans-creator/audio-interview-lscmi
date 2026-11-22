@@ -1,0 +1,41 @@
+{
+  "case_notes": [
+    {
+      "id": 164,
+      "user_id": 83,
+      "author_id": null,
+      "author_name": "Daisy Boynton",
+      "session_date": "2026-10-28",
+      "note_type": "Case Note (documentation only) – no interaction or service",
+      "category": "Intake Appointment",
+      "content": "Carl called back confirming Jumpstart can be his transportation and he'll be there Friday.",
+      "apricot_exported": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 165,
+      "user_id": 83,
+      "author_id": null,
+      "author_name": "Daisy Boynton",
+      "session_date": "2026-10-28",
+      "note_type": "Intake Appointment COMPLETED",
+      "category": "Intake Appointment",
+      "content": "Intake Screening: Carl Allen\nDate: 10/28/2026 | Staff: Daisy | Type: Phone consultation\nOutcome: Offered the open orientation slot this Friday (10/30, 3 PM), with a Monday start. That depends on him confirming a ride. He was calling Jumpstart to check and said he’d call back within about 5 minutes.\n\nHousing\n\nLiving in housing provided through Jumpstart.\nSays he can stay there up to 2 years.\n\nDocuments\n\nBirth certificate: Yes\nSocial Security card: Yes\nState ID: Yes\nDriver’s license: Yes, valid\n\nTransportation\n\nHe thinks Jumpstart will drive him to and from the program but isn’t sure. He’s confirming with them.\nTold him Turn90 doesn’t provide transportation.\nGave him the Spartanburg Dial-a-Ride number as a backup: 864-560-4118. Rides need to be booked by about 10 AM the day before.\n\nAvailability\n\nNo conflicts with 9–3, Monday through Friday, apart from occasional doctor’s appointments. He confirmed the hours work.\n\nHealth / Substance Use\n\nPrescribed blood pressure medication in the last 5 years. He currently has access to it.\nNo history of major alcohol abuse.\nHistory of long-term meth use, which led to homelessness at one point. Clean for over 2 years without a formal treatment program.\nTold him about drug testing at orientation and weekly after that, including marijuana. He said, “I’m clean.”\nLegally and physically able to work, with no health limitations.\nNo immediate or emergency needs.\n\nJustice Involvement\n\nAge at first arrest: about 13\nTotal arrests: about 7–8 \nConvictions: about 7–8\nMost recent release: October 1 (2026), from prison, after about 5 years\nMost recent conviction included drug trafficking: No\nIncluded firearm possession: No\nBiological parents’ criminal record: Both parents are deceased.\nOn parole with about 5 more months left (around March 2027). He’s in compliance.\nTurn90 is not a condition of his parole.\nPending charges: None\n\nEducation / Employment\n\nHighest education: GED\nWork history: construction (possibly “remodeling construction”) and cable assembly.\nLongest job: possibly about a year (unclear).\nHis last job was cable assembly, which he did while incarcerated. It sounded like a prison industries (PIE) job.\nCurrent certifications: IPC certification and J-Standard certification (electronics assembly and soldering).\nChild support: None\n\nProgram Info Given\n\n8 weeks, Monday through Friday, 9–3. $450 a week. Job placement with a partner employer at the end.\nMornings are a CBT-focused group class. The rest of the day is job training: forklift certification and SkillCat online trade courses (HVAC, etc.).\nWeekly one-on-one with a case manager.\n\nNext Steps\n\nWait for Carl’s call back confirming his ride from Jumpstart.\nConfirm the Friday orientation time with him. You told him 3 PM but said you’d double check.\nIf his ride is confirmed: he attends orientation on Friday 10/30 and starts Monday 11/2.",
+      "apricot_exported": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 166,
+      "user_id": 83,
+      "author_id": null,
+      "author_name": "Daisy Boynton",
+      "session_date": "2026-10-27",
+      "note_type": "Intake Appointment SCHEDULED",
+      "category": "Intake Appointment",
+      "content": "Intake Appointment SCHEDULED",
+      "apricot_exported": 1,
+      "created_at": "2026-11-03 23:04:00"
+    }
+  ],
+  "cm_session_evaluations": []
+}

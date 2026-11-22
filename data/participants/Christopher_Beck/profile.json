@@ -1,0 +1,22 @@
+{
+  "participant_key": "Christopher_Beck",
+  "name": "Christopher Beck",
+  "location": "Spartanburg",
+  "track": "first_shift",
+  "status": "active",
+  "user_id": 68,
+  "client_id": null,
+  "apricot_id": "78777",
+  "phone": "",
+  "email": "christopher.beck.78777@firstshift.org",
+  "files": [],
+  "folder_slug": "Christopher_Beck",
+  "folder_path": "data/participants/Christopher_Beck",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": false,
+  "has_action_plan": false,
+  "waitlist_ready": false,
+  "waitlist_met_count": 6,
+  "data_flags_count": 2,
+  "updated_at": "2026-11-22T17:18:01.528Z"
+}

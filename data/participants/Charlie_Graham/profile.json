@@ -1,0 +1,22 @@
+{
+  "participant_key": "Charlie_Graham",
+  "name": "Charlie Graham",
+  "location": "Charleston",
+  "track": "first_shift",
+  "status": "active",
+  "user_id": null,
+  "client_id": null,
+  "apricot_id": null,
+  "phone": "",
+  "email": "",
+  "files": [],
+  "folder_slug": "Charlie_Graham",
+  "folder_path": "data/participants/Charlie_Graham",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": false,
+  "has_action_plan": false,
+  "waitlist_ready": false,
+  "waitlist_met_count": 6,
+  "data_flags_count": 3,
+  "updated_at": "2026-11-22T17:18:01.722Z"
+}

@@ -1,0 +1,22 @@
+{
+  "participant_key": "William_Taylor",
+  "name": "William Taylor",
+  "location": "Columbia",
+  "track": "first_shift",
+  "status": "archived",
+  "user_id": 55,
+  "client_id": null,
+  "apricot_id": null,
+  "phone": "",
+  "email": "williamtaylor@t90.com",
+  "files": [],
+  "folder_slug": "William_Taylor",
+  "folder_path": "data/participants/William_Taylor",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": false,
+  "has_action_plan": false,
+  "waitlist_ready": true,
+  "waitlist_met_count": 9,
+  "data_flags_count": 1,
+  "updated_at": "2026-11-22T17:18:01.521Z"
+}

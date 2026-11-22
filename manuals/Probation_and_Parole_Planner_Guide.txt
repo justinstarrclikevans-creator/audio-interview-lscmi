@@ -1,51 +1,600 @@
-# PROBATION AND PAROLE TREATMENT PLANNER & CRIMINOGENIC NEEDS GUIDELINES
+# The Probation and Parole Treatment Planner — Behavioral Definitions & Long-Term Goals
 
-## Core Criminogenic Need Domains (RNR Framework)
-In accordance with the LS/CMI and the Probation and Parole Treatment Planner, interventions must directly target the participant's dynamic criminogenic risk/need factors. Criminal history is static and must NEVER be selected as a top dynamic target for intervention.
+> [!CAUTION]
+> **STRICT ANTI-HALLUCINATION & ZERO-EXAMPLE-LEAKAGE POLICY**
+> 1. **Never pull or cite examples, names, or dialogue from any skill, manual, or reference file** as evidence in a participant or staff evaluation.
+> 2. **Every claim, coaching observation, or behavioral match MUST be grounded in a verbatim quote** (`6–35 words`) with an `[MM:SS]` timestamp from the actual session transcript or explicit intake record.
+> 3. Any quote that fails deterministic substring/trigram verification against the input transcript is immediately stripped.
 
-### 1. Antisocial / Pro-Criminal Attitudes & Thinking (Procriminal Cognitions)
-- **Standard Definition:** Thoughts, values, beliefs, and rationalizations that justify law-breaking, anti-social conduct, defiance of authority, or impulsive retaliation.
-- **Participant-Facing Definition:** "How you view rules, authority, and accountability, and catching automatic negative thoughts before they turn into impulsive actions."
-- **Evidence-Based Interventions (Probation Planner):**
-  - Cognitive Behavioral Training (CBT): Teaching the Cognitive Triangle (Thoughts -> Feelings -> Actions).
-  - Identification and reframing of cognitive distortions (e.g., victim stance, jumping to conclusions, blaming system).
-  - Practice using the 5-second pause and SODAS decision-making method in workplace scenarios.
 
-### 2. Antisocial Associates & Peer Influence
-- **Standard Definition:** Social networks comprised of individuals engaged in criminal conduct or substance use, combined with an absence of prosocial supportive peers.
-- **Participant-Facing Definition:** "The people you spend time with and who influences your daily choices. Building a supportive circle that protects your fresh start."
-- **Evidence-Based Interventions (Probation Planner):**
-  - Social network mapping: Identifying high-risk individuals and setting strict interpersonal boundaries.
-  - Development of refusal skills and strategies for disengaging from old neighborhood crews.
-  - Engagement with positive workplace mentors and peer recovery specialists.
+> **Source:** Extracted directly from *The Probation and Parole Treatment Planner, with DSM-5* (Jongsma, Bogue, Nandi). Use these behavioral definitions to identify what participants need to work on from their LS/CMI responses and map them to treatment goals.
 
-### 3. Substance Abuse / Addictive Behaviors
-- **Standard Definition:** Recurrent alcohol or drug use resulting in legal, occupational, health, or interpersonal dysfunction.
-- **Participant-Facing Definition:** "Managing triggers, cravings, and stress without relying on drugs or alcohol."
-- **Evidence-Based Interventions (Probation Planner):**
-  - Development of a written Relapse Prevention Plan detailing triggers, high-risk times, and emergency contacts.
-  - Active participation in recovery support groups (12-step, Celebrate Recovery, SMART Recovery).
-  - Random accountability screens and connecting with community treatment if indicated.
+## ANGER
+### Behavioral Definitions
+1. History of explosive, aggressive outbursts out of proportion to any precipitating stressors leading to assaultive acts or destruction of property.
+2. Overreaction of hostility to insignificant irritants.
+3. Swift and harsh judgment statements made to or about others.
+4. Body language of tense muscles (e.g., clenched fist or jaw, glaring looks, or refusal to make eye contact).
+5. Use of passive-aggressive patterns (e.g., social withdrawal due to anger, lack of complete or timely compliance in following directions or rules, complaining about authority figures behind their backs, or nonparticipation in meeting expected behavioral norms).
+6. Anger intensity that leads to mental confusion (e.g., all or nothing thinking, progressive use of abusive language expressed to self or others).
+7. Hypersensitivity to perceived disapproval, rejection, or criticism that causes angry communication breakdowns.
+8. Passive avoidance of conflict and irritations that contribute ultimately to a rapid (and often inappropriate), intense expression of anger.
+9. Uses aggression as a means to achieve needed power and control.
 
-### 4. Family / Marital Relationships & Domestic Stability
-- **Standard Definition:** High-conflict, unsupportive, or criminogenic family dynamics; domestic discord that disrupts emotional stability.
-- **Participant-Facing Definition:** "Building healthy communication and managing conflict with family, partners, and children so your home life supports your job."
-- **Evidence-Based Interventions (Probation Planner):**
-  - Communication skills training: Assertive 'I' statements vs. aggressive/passive reactions.
-  - Structured visitation schedules and establishing clear financial/child support responsibility.
-  - Establishing boundaries with high-conflict family members during the work week.
+### Long-Term Goals
+1. Decrease frequency and intensity of expression of angry feelings.
+2. Increase ability for coping with angry feelings in a constructive way that enhances daily functioning.
+3. Improve awareness and understanding of anger: How it is triggered and its consequences.
+4. Access and accept a greater range of emotions with more flexibility and ability to express these emotions constructively.
 
-### 5. Education / Employment Deficits & Workplace Retention
-- **Standard Definition:** Lack of marketable skills, unstable employment history, difficulty adapting to workplace supervision, or chronic unemployment.
-- **Participant-Facing Definition:** "Developing job skills, understanding workplace expectations, and building a reliable track record to earn steady income."
-- **Evidence-Based Interventions (Probation Planner):**
-  - Master resume development and practiced explanation of criminal background.
-  - Hands-on skills training in construction/manufacturing and earning recognized industry credentials.
-  - Coaching on managing supervisor feedback and job site conflict resolution.
+---
 
-### 6. Leisure, Recreation & Prosocial Time Use
-- **Standard Definition:** Unstructured, unmonitored idle time; lack of involvement in prosocial recreational, athletic, or community activities.
-- **Participant-Facing Definition:** "Filling your free time outside of work with positive, healthy activities that keep you out of trouble."
-- **Evidence-Based Interventions (Probation Planner):**
-  - Scheduling daily routines and time-budgeting for evenings and weekends.
-  - Connecting with local community centers, sports leagues, fitness gyms, or faith communities.
+## ASSERTIVENESS DEFICITS
+### Behavioral Definitions
+1. Reluctant to express dissatisfaction or verbalize unmet needs or desires.
+2. Frequently fails to refuse a request to do something undesirable for or with someone.
+3. Avoids expressing views that are in conflict with others' opinions.
+4. Expresses thoughts aggressively.
+5. Utilizes a passive-aggressive or indirect style of communication that alienates others.
+6. Excessive tolerance of unpleasant situations.
+7. Inability to directly express feelings appropriately to others.
+8. Overly anxious in social situations.
+9. Pattern of suppressing bad feelings until one single event triggers explosion of resentment.
+
+### Long-Term Goals
+1. Improve ability to effectively express personal opinions, desires, and feelings without antagonizing or alienating others.
+2. Maintain a clearer perception and appreciation for the rights and boundaries of self and others.
+3. Increase sense of ease and confidence in different social situations.
+4. Learn to differentiate and exhibit assertive communication from that which is passive and aggressive.
+
+---
+
+## AUTHORITY CONFLICTS
+### Behavioral Definitions
+1. Rejects, resists, or opposes rules, instruction, direction, or feedback from authority figures.
+2. Typically blames others rather than taking any responsibility for conflicts.
+3. Frequently harbors feelings of victimization and resentment toward others.
+4. Has a limited definition of self, based on defying authority.
+5. Negatively prejudges others in a manner that maintains continued isolation and ignorance.
+6. Inability to effectively communicate needs to authority figures.
+7. Perceived liberties are easily threatened, causing reactive hostility or oppositional behavior.
+8. Commonly perceives the world from a fear-based or distrustful mentality.
+9. Deliberately annoys other people.
+
+### Long-Term Goals
+1. Learn to accept direction from authority figures without hostility or opposition.
+2. Develop sensitivity to reactance patterns that precede conflict with authority figures.
+3. Maintain a more balanced and useful perspective of authority figures that is not resentful and distrustful.
+4. Increase ability to communicate needs effectively to authority figures and others.
+5. Increase personal options and skills that will promote harmony within power relations.
+
+---
+
+## CALLOUSNESS (LACK OF EMPATHY/HONESTY)
+### Behavioral Definitions
+1. Demonstrates little genuine sympathy or respect for the feelings of others.
+2. Shows no remorse or concern for the negative consequences his/her actions have had on others.
+3. Frequently deceives and manipulates others for personal gain.
+4. Lying and fabrications are an integral part of interactions with others.
+5. Interpersonal style or interactions are insincere and superficial.
+6. Overinflated sense of abilities and self-worth.
+7. Does not accept responsibility for own actions.
+8. Displays an extremely shallow and narrow range of emotions.
+
+### Long-Term Goals
+1. Become more sensitive to the feelings and rights of others.
+2. Acknowledge a lack of empathy that frequently results in harm to other people.
+3. Develop perspectives and relationships that are less self-focused.
+4. Reduce the frequency and magnitude of deceptions, lies, and conning behavior.
+5. Adopt a lifestyle based more on giving than getting.
+
+---
+
+## CHEMICAL DEPENDENCE
+### Behavioral Definitions
+1. Functioning in fundamental life areas (e.g., family, vocation, health, finances, social) is impaired or significantly disrupted as a result of alcohol and other drug (AOD) dependence.
+2. Increased tolerance for alcohol and other drugs has resulted in a repeating cycle of biopsychosocial negative consequences.
+3. Tendency to engage in criminal behavior increases when under the influence of mood- altering substances.
+4. Tendency to engage in criminal activity to procure mood-altering substances.
+5. Feelings, attitudes, and perspectives are frequently distorted as a result of AOD abuse.
+6. Pattern of unsuccessful attempts to reduce and/or terminate the use of mood-altering substances.
+7. Diminished social support, fulfillment, and/or contact as a result of prolonged involvement with mood-altering substances.
+8. Pattern of interpersonal conflict and/or personal isolation because of AOD abuse.
+9. Repeated use of alcohol and other drugs to deal with the mental and physical pain of withdrawal from a drug.
+10. Significant loss of freedom, friendships, property, and respect due to chemical dependence.
+11. Inability to achieve a balance in responsibly meeting personal obligations and satisfying desires due to chemical dependence.
+
+### Long-Term Goals
+1. Significantly reduce or eliminate the amount of frequency of alcohol and other drugs consumed.
+2. Establish a reliable social network that shares and supports a healthy, drug-free lifestyle and self-respect.
+3. Balance lifestyle with responsibly meeting comparable levels of obligations and desires routinely fulfilled or gratified.
+4. Minimize or eliminate the negative consequences that result from prolonged AOD abuse.
+5. Attain greater serenity, acceptance, and personal self-regulation skills.
+6. Experience greater self-potential and stability while being present, one moment to the next.
+
+---
+
+## CHILDHOOD TRAUMA/ABUSE/NEGLECT
+### Behavioral Definitions
+1. Reported memories of childhood physical, sexual, or emotional abuse.
+2. Confirmed history of abusive or neglectful parenting.
+3. Describes parents/caregivers as neglectful, absent, chemically dependent, and so on.
+4. Inability to recall childhood.
+5. Irrational fears, rage, low self-esteem, depression, or insecurity related to painful childhood memories or when in contact with family members.
+6. Pervasive pattern of abusive, neglectful, or promiscuous intimate relationships.
+7. Disturbing thoughts or dreams about the traumatic events.
+8. Inability to experience a wide range of emotions.
+9. Repeating the pattern of abuse, violence, and neglect that was experienced in childhood.
+10. Dissociative phenomena experienced as maladaptive coping mechanism resulting from childhood trauma.
+
+### Long-Term Goals
+1. Reduce the negative impact that child abuse/trauma/neglect has on quality of life and functioning.
+2. Terminate destructive coping mechanisms and implement healthy coping strategies that promote healing and responsible living.
+3. Develop the ability to express a wide range of emotions like fear, joy, compassion, anger, and hurt.
+4. Develop awareness of how past childhood trauma affects current relationships, self-care, or parenting skills.
+5. Increase ability to form and maintain meaningful, healthy intimate relationships.
+
+---
+
+## CONSEQUENTIAL THINKING DEFICITS
+### Behavioral Definitions
+1. Lack of control over impulsive, irrational, and/or emotional behavior regardless of consequences.
+2. Loss of personal freedoms due to presence in criminal justice system as a result of consequential thinking deficits.
+3. Remorse for past behavior that resulted from acting without thought of consequences.
+4. Does not develop and incorporate long-term problem-solving strategies, resulting in an inability to attain personal goals.
+5. Dissatisfaction with self due to inability to attain desired quality of life because of poor decision making.
+6. Inability to maintain meaningful employment due to capricious and cavalier lack of regard for performance outcomes.
+7. Loss of meaningful relationships as a result of impulsive, aggressive, and/or thoughtless behavior.
+
+### Long-Term Goals
+1. Acquire greater self-control by improving decision-making ability through consideration of consequences.
+2. Enjoy close personal relationships based on mutual respect and thoughtful consideration of each other's feelings.
+3. Progressively fulfill more personal commitments, obligations, and goals by means of behavior that is deliberate and circumspect.
+4. Experience self-confidence and mastery in terms of career or livelihood because of engaging in more thoughtful behavior.
+
+---
+
+## CRIMINAL PEERS
+### Behavioral Definitions
+1. Currently associates with friends and acquaintances who are involved in criminal behavior.
+2. Verbalizes acceptance of peers' criminal behavior.
+3. Admires or identifies with others who are pro-crime and sees their lifestyle as desirable.
+4. Encouraged and easily influenced by peers to participate in criminal behavior.
+5. Participates in criminal behavior with friends.
+6. Willing to protect, cover-up, and accept responsibility for peers' deviant behavior.
+7. Verbalizes a sense of loyalty to and identification with a gang.
+8. Prior attempts to distance self from criminal peers have been unsuccessful.
+9. Inability to establish and maintain meaningful pro-social peer support group.
+
+### Long-Term Goals
+1. Significantly reduce or eliminate association with criminal friends.
+2. Learn to manage existing pro-criminal relationships by reestablishing boundaries to reduce risk for relapse or recidivism.
+3. Develop a greater understanding about peer group; how peers influence and interact with personal behavior to effect lifestyle quality.
+4. Develop a meaningful, pro-social support network.
+5. Terminate all criminal behavior, even if it results in peer conflict.
+
+---
+
+## DECEITFUL
+### Behavioral Definitions
+1. Frequently takes delight in duping or deceiving others.
+2. Fabricates information when defensive.
+3. Routinely embellishes or exaggerates to impress others.
+4. Deceives others to hurt, manipulate, or use them.
+5. Lies and practices deception routinely.
+6. Frequently omits sharing information to avoid accountability.
+7. Thinking distortions impair honesty with self.
+8. Significant discrepancies between emotions experienced and emotions expressed.
+9. Often involved in secretive behaviors and communications.
+
+### Long-Term Goals
+1. Establish a clear and unambiguous goal for greater truthfulness.
+2. Achieve greater self-congruence, confidence, and ability to be truthful.
+3. Fully recognize discrepancies between current practice of and actual potential for honesty.
+4. Increase awareness and understanding of the underlying motives for specific types of dishonesty.
+5. Develop a precise understanding of various levels and types of honesty.
+
+---
+
+## DEPRESSION/SUICIDAL IDEATION
+### Behavioral Definitions
+1. Depressed affect every day.
+2. Insomnia or hypersomnia.
+3. Loss of appetite.
+4. Diminished interest and enjoyment in activities.
+5. Resignation from groups, organizations, or activities.
+6. Feelings of helplessness, hopelessness, and worthlessness.
+7. Low self-esteem and feelings of inappropriate guilt.
+8. Psychomotor agitation or retardation.
+9. Inability to concentrate.
+10. History of chronic or recurrent depression for which the client has received treatment.
+11. Previous attempts at suicide.
+12. Recurrent thoughts of or preoccupation with death.
+
+### Long-Term Goals
+1. Alleviate depressed mood/suicidal ideation and return to previous level of effective functioning.
+2. Increase ability for coping with depression in a way that enhances daily functioning.
+3. Improve awareness, acceptance and understanding of depression.
+4. Develop healthy cognitive patterns and beliefs about self and the world that lead to the alleviation of symptoms of depression and/or suicidal ideation.
+5. Resolve the grief or emotional conflicts that underlie depression or suicidal patterns.
+
+---
+
+## DRIVING-RELATED OFFENSES
+### Behavioral Definitions
+1. Drives while under the influence of a mood altering substance (e.g., alcohol, drugs, prescription medicines).
+2. Drives with a suspended or revoked license.
+3. History of more than five arrests and convictions for traffic violations (e.g., speeding, moving violations).
+4. Exhibits a blatant disregard for traffic laws.
+5. History of driving with debilitating physical disorders (e.g., epilepsy, hypertension, significant auditory problems, significant visual problems, immobility).
+6. History of driving with debilitating cognitive, mood, anxiety or sleep disorders (e.g., brain/head injury, dementia, schizophrenia, anxiety, depression, narcolepsy).
+7. Explosive, aggressive outbursts in reaction to stressors while driving (i.e., “road rage” incidents).
+8. History of taking undue risks while driving; at times causing accidents for self or others.
+
+### Long-Term Goals
+1. Eliminate driving while under the influence of mood altering substances.
+2. Increase understanding of and compliance with driving/traffic laws.
+3. Terminate high-risk driving behavior.
+4. Increase responsible monitoring of health and medication concerns that may influence driving safety.
+5. Increase ability to cope with angry feelings in a constructive way while driving.
+
+---
+
+## FAMILY CONFLICT/ALIENATION
+### Behavioral Definitions
+1. A pattern of frequent conflicts with family members that often triggers involvement in criminal behavior.
+2. Unable to establish and maintain healthy, pro-social relationships with family members due to their involvement in criminal and/or substance abuse behavior.
+3. Family members are not actively supportive of the client's attempts to refrain from or terminate criminal lifestyle.
+4. Current physical, emotional, or psychological abuse in the family.
+5. Hypersensitivity to perceived disapproval, rejection, or criticism of family that leads to superficial or dishonest relationships with the family.
+6. Lack of communication or contact with family leading to feelings of isolation, alienation, or depression.
+7. Alienated from family members due to own history of criminal behavior.
+
+### Long-Term Goals
+1. Manage relationships with pro-criminal family members by establishing boundaries to reduce risk for relapse or recidivism.
+2. Gain a greater understanding about how family interactions affect behavioral choices.
+3. Develop and maintain healthy, pro-social relationships with pro-social family members.
+4. Communicate needs or wishes to family members in a constructive manner.
+5. Terminate reacting to family conflict with criminal behavior.
+
+---
+
+## FAMILY CRIMINALITY/DEVIANCE
+### Behavioral Definitions
+1. Family members are involved in criminal behavior.
+2. Demonstrates acceptance of family members' criminal behavior.
+3. Looks up to pro-criminal family members and desires to emulate these individuals.
+4. Encouraged by family members to participate in deviant behavior and/or reinforced for engaging in criminal behavior.
+5. Participates in criminal behavior with family members.
+6. Willing to protect and cover up family members' deviant behavior.
+7. Prior attempts to refrain from criminal involvement with family members have been unsuccessful.
+8. Unable to establish and maintain healthy, pro-social relationships with family members due to their involvement in deviancy.
+9. Family members are not actively supportive of the client's attempts to refrain from or terminate criminal lifestyle.
+
+### Long-Term Goals
+1. Eliminate involvement in criminal behavior with family members.
+2. Significantly reduce or eliminate association with family members that are involved in criminal behavior.
+3. Learn to manage pro-criminal relationships with family members by establishing boundaries to reduce risk for relapse or recidivism.
+4. Gain a greater understanding about how family interactions effect lifestyle choices.
+5. Develop and maintain healthy, pro-social relationships with pro-social family members.
+
+---
+
+## FINANCIAL MANAGEMENT PROBLEMS
+### Behavioral Definitions
+1. Frequently overspends, resulting in bounced checks, maximized credit cards, repossessions, defaulted loans, and/or bankruptcy.
+2. Fails to prioritize financial obligations to ensure that all necessary expenses are paid before optional expenses are incurred.
+3. Routinely fails to adequately estimate projected budget for actual living expenses.
+4. A long-term lack of discipline in money management has led to excessive indebtedness.
+5. A pattern of impulsive spending that does not consider the eventual financial consequences.
+6. Dependent on others for meeting own basic needs for food, clothing, and shelter.
+7. Credit rating is low or nonexistent.
+8. Limited financial management abilities result in frequent self-disapproval and diminished self-concept.
+9. Resorts to illegal behaviors to obtain money to cover living expenses.
+
+### Long-Term Goals
+1. Establish a clear income and expense budget that will meet bill payment demands.
+2. Develop the ability to prioritize financial obligations and the discipline to live within those limits.
+3. Attain financial independence by maximizing income and terminating unnecessary spending.
+4. Maintain employment as a legal means of obtaining income and responsibly manage finances to meet obligations
+
+---
+
+## GENDER IDENTIFICATION ISSUES
+### Behavioral Definitions
+1. Confused sexual proclivity resulting in marginalized self-concept and lifestyle.
+2. Sense of inappropriateness in assigned gender role that results in significant distress or social isolation.
+3. Hatred for members of the opposite sex.
+4. Rebellion against gender role resulting in impairment in social, occupational, or other areas of functioning.
+5. Gender or sexual proclivity discomfort leads to involvement in an environment with excessive criminogenic influences (e.g., criminal peers, substance abuse, violence).
+
+### Long-Term Goals
+1. Increased sense of comfort with sexual proclivity and gender.
+2. Balanced lifestyle in accordance with sexual identity development.
+3. Integrate a positive sexual identity into the client's total self-concept.
+4. Increased respect for self, and others with different gender and/or sexual orientation.
+5. Incorporate a clear definition of own gender and sexual orientation into life to resume a healthy level of functioning.
+
+---
+
+## IMPULSIVITY
+### Behavioral Definitions
+1. History of impulsive, aggressive outbursts out of proportion to any precipitating stressors, leading to assaultive acts or destruction of property.
+2. Fails to control impulsive, irrational, and/or emotional behavior regardless of consequences.
+3. Loss of personal freedoms due to presence in criminal justice system as a result of impulsive behavior.
+4. Remorse for the consequences of acting without thought.
+5. Easily distracted from focusing or concentrating on an activity at hand, rarely completing anything that was started.
+6. Failure to maintain meaningful employment due to capricious and cavalier lack of regard for performance outcomes.
+7. Loss of meaningful relationships as a result of impulsive, aggressive, and/or thoughtless behavior.
+8. Impulsive behavior related to use of drugs and alcohol, gambling, sex, or other self- defeating patterns that result in diminished quality of life.
+
+### Long-Term Goals
+1. Decrease the frequency of impulsive behavior.
+2. Acquire skills and techniques for delaying acting on impulsive thoughts.
+3. Cope with impulses in a constructive way that enhances daily functioning.
+4. Experience progressively better health-related, financial, and social outcomes as a result of engaging in more thoughtful behavior.
+
+---
+
+## INADEQUATE SOCIAL SUPPORT/SOCIAL ISOLATION
+### Behavioral Definitions
+1. Inability to establish and maintain meaningful, pro-social, peer support group.
+2. Social support network composed entirely of people involved with crime.
+3. No participation in pro-social groups, organizations, or activities.
+4. Absence of close friends or confidants.
+5. Hypersensitivity to perceived disapproval, rejection, or criticism.
+6. Passive avoidance of any conflict leads to an absence of relationships.
+7. Pattern of persistent interpersonal conflict and/or personal isolation.
+8. Highly anxious in social situations.
+9. Overly aggressive in social situations.
+
+### Long-Term Goals
+1. Develop a meaningful and reliable pro-social network that shares and supports a healthy lifestyle and self-respect.
+2. Terminate relationships with everyone who is involved with criminal behavior.
+3. Increase a sense of ease and confidence in various social situations.
+4. Improve ability to effectively express personal opinions, desires, and feelings without antagonizing or alienating others.
+5. Develop essential social skills necessary to communicate in a constructive manner.
+6. Find a balance between personal time alone and interpersonal interactions with others.
+
+---
+
+## INTIMATE RELATIONSHIP CONFLICT
+### Behavioral Definitions
+1. Inability to establish and maintain a meaningful intimate relationship.
+2. History of perpetrating physical, emotional, or psychological abuse in an intimate relationship.
+3. Involvement in several intimate relationships at the same time.
+4. History of explosive, aggressive outbursts in reaction to relationship conflict, leading to assaultive acts or destruction of property.
+5. Hypersensitivity to perceived disapproval, rejection, or criticism that causes communication breakdowns.
+6. Passive avoidance of conflict and irritations that contribute ultimately to the collapse of a relationship.
+7. A pattern of allowing self to be victimized in abusive relationships.
+8. Inability to communicate wants/needs to an intimate partner.
+9. Relationship stress triggers involvement in substance abuse or criminal behavior.
+
+### Long-Term Goals
+1. Establish and maintain a meaningful intimate relationship.
+2. Improve self-awareness and understanding of own behavior and contribution to relationship stress.
+3. Communicate needs or wishes in a constructive manner.
+4. Learn effective, pro-social problem-solving skills to deal with inevitable relationship stress.
+5. Learn to identify precursors to violence as a perpetrator or a victim, and means to de- escalate the tension.
+
+---
+
+## MORAL DISENGAGEMENT
+### Behavioral Definitions
+1. Maintains personal values that are supportive of frequent, serious, and persistent criminal activity.
+2. Frequently rationalizes or justifies antisocial behavior through emphasis on extenuating circumstances.
+3. Employs denial, projection, or euphemistic language to portray reprehensible behavior more favorably.
+4. Bases assessments of personal conduct on “good intentions” rather than actual hurtful behavior.
+5. Minimizes personal responsibility by making comparisons to the more severe antisocial behavior of others.
+6. Consistently minimizes the impact of personal antisocial behavior on others.
+7. Chooses not to be held accountable to conventional norms, mores, laws, and ethical standards.
+8. Distorted self-image that emphasizes either a completely negative or completely positive identity.
+9. Little or no maintenance of pro-social values.
+10. Completely egocentric viewpoints on almost everything.
+
+### Long-Term Goals
+1. Adopt and consistently support pro-social values and behaviors that are beneficial to the community, family, and others.
+2. Develop skills and techniques for monitoring and interrupting morally “neutralizing” self- talk.
+3. Become less egocentric and better able to accept the perspectives of others.
+4. Discover new potential for making conventional contributions to society.
+
+---
+
+## NARCISSISTIC—UNPRINCIPLED
+### Behavioral Definitions
+1. Exaggerates self-importance in a grandiose manner, resorting to outright lies to inflate his/her self-image if that seems expedient.
+2. Has feelings of entitlement, believing that ordinary rules that apply to others are inapplicable to him/her.
+3. Deficient conscience, unscrupulous, and amoral.
+4. Does not maintain loyalties, and will, if the opportunity arises, exploit a trusting other.
+5. Is fraudulent and deceptive, and often is a con or a charlatan.
+6. Is arrogant and is contemptuous and/or vindictive toward victims of his/her exploitive endeavors.
+7. Is indifferent to the welfare of others, and lacks empathy for their feelings.
+8. Is domineering, exercising high levels of control in relationships.
+
+### Long-Term Goals
+1. Decrease arrogant, contemptuous attitudes and behaviors.
+2. Reduce feelings of entitlement and expectations of special treatment.
+3. Improve empathy, increasing the ability and desire to understand others' feelings.
+4. Decrease or eliminate interpersonal exploitation.
+5. Reduce or eliminate tendency to denigrate or put down others.
+6. Acquire greater discipline and self-control over emotions, especially anger and rage.
+
+---
+
+## PROBLEM-SOLVING SKILL DEFICITS
+### Behavioral Definitions
+1. Routinely overlooks and fails to consider all the important factors when responding to problems.
+2. Inability to adequately problem solve creates or adds to the problems that significant others must deal with.
+3. Often resorts to criminal behavior (e.g., assault, burglary, embezzling) to solve interpersonal, economic, or other problems.
+4. Frequently unable to recognize or define problems in sufficient time to avoid having problems evolve into pernicious and seemingly out-of-control situations.
+5. Unrealistically relies on magical or wishful thinking to resolve real-life problems.
+6. Frequently opts to deliberately avoid addressing problems and critical decisions.
+7. Limited decision-making abilities result in frequent self-disapproval and diminished self- concept.
+8. Unable to make personal decisions and stick to them.
+9. Pattern of personal decision making that results in loss of freedom, income, and social opportunities.
+
+### Long-Term Goals
+1. Adhere to a proven sequential step process for making good problem-solving decisions.
+2. Recognize and appropriately classify problems at the earliest possible stage.
+3. Thoroughly investigate problems so that subsequent decisions are based on the best available information.
+4. Clearly define and state the essential factors constituting a given problem.
+5. Experience progressively better health-related, financial, and social outcomes as a result of better problem solving.
+
+---
+
+## PSYCHOSIS
+### Behavioral Definitions
+1. Experiences bizarre (implausible) or nonbizarre (i.e., involving situations that occur in real life) delusions.
+2. Psychomotor functioning is impaired (e.g., marked decrease in reactivity to the environment, catatonic behavior, unusual mannerisms, or grimacing).
+3. Illogical and disorganized speech (e.g., incoherent, tangential, vague, or repetitive speech).
+4. Experiences hallucinations (e.g., auditory, olfactory, visual, or tactile).
+5. Demonstrates blunted or inappropriate affect.
+6. Withdrawal from involvement with external world and preoccupation with egocentric ideas and fantasies.
+7. Extreme aggression toward the external world based in irrational delusional thought and/or uncontrollable hallucinations.
+
+### Long-Term Goals
+1. Control or eliminate debilitating psychotic symptoms and return to highest level of effective functioning.
+2. Increase ability to cope with severe stressors that might precipitate a psychotic break.
+3. Improve awareness and understanding of psychosis.
+4. Interact with others without defensiveness or aggression.
+
+---
+
+## SELF-CONCEPT DEFICITS
+### Behavioral Definitions
+1. Inability to identify own positive traits or achievements.
+2. Poor self-image leads to association with low-achieving peers.
+3. Uses criminal behavior in an attempt to impress others.
+4. Powerful fear of rejection or criticism contributes to a difficulty saying no to others.
+5. Repeated critical or reproachful statements about self with a pessimistic outlook on own abilities or future.
+6. Extreme lack of self-confidence in abilities that inhibits initiating new activities or seeking pro-social, successful friends.
+7. Avoids interpersonal interaction due to view of self as inferior, socially inept, inadequate, or personally unappealing.
+8. Unrealistic evaluation of self that leads to inappropriately high goals resulting in failures that reinforce feelings of inadequacy.
+
+### Long-Term Goals
+1. Develop a consistent, positive self-image.
+2. Develop healthy, positive cognitive patterns about self and the world.
+3. Increase the ability to self-soothe, self-regulate, and evaluate self in a fair manner.
+4. Develop a sense of abilities and self-worth that is based in reality.
+
+---
+
+## SELF-DEFEATING BEHAVIOR PATTERNS (non-AOD)
+### Behavioral Definitions
+1. Inability to manage urges, impulses, and cravings and remain abstinent from self-defeating behaviors (e.g., loss of temper, gambling, dysfunctional family interaction, sexual acting- out, poor health habits, isolating socially, shoplifting, noncompliance with medication).
+2. Verbalizes a commitment to abstain from self-defeating behaviors but has no plan, strategy, or specific skills for achieving this goal.
+3. Increased frequency of engaging in self-defeating behaviors when feeling down, sad, angry, scared, embarrassed, or bored.
+4. Feels social pressure when around others who are involved in self-defeating behaviors.
+5. Increased frequency of engaging in self-defeating behaviors after fights and arguments with others or after being criticized by someone else.
+6. Positive emotions, testing personal control and/or feeling bad physically frequently threatens or undermines commitment to abstain from self-defeating behavior.
+7. All or nothing attitude toward changing self-defeating behaviors, results in self-loathing and disgust when slips or minor set-backs are experienced.
+8. Little or no lifestyle balance in terms of the amount of obligations or “shoulds” fulfilled as opposed to the amount of gratifications of “wants.”
+9. Ceases utilizing established and effective strategies, methods, and skills to abstain from self-defeating behaviors.
+10. Chronic difficulties managing stress contribute to an on-going cycle of relapse into self- defeating behavior.
+
+### Long-Term Goals
+1. Terminate self-defeating behavior and replace it with healthy habits.
+2. Develop a set of realistic plans, strategies, and skills for abstaining from self-defeating behaviors and utilize these strategies in everyday living.
+3. Build and maintain more supportive social relationships that support abstinence and behavior change goals.
+4. Develop a more flexible and resilient self-concept that allows for set-backs in behavior change, but fosters on-going self-improvement.
+5. Learn skills for coping with urges, impulses, and cravings for self-defeating behaviors and for reframing their unrealistic outcome expectancies.
+6. Learn and implement specific techniques and skills for successfully coping all major high- risk situations relevant to remaining abstinent from self-defeating behavior.
+
+---
+
+## SEXUALLY DEVIANT BEHAVIOR
+### Behavioral Definitions
+1. Involvement in the criminal justice system due to charges of criminal sexual conduct or assault.
+2. Exposure of genitals to an unsuspecting stranger.
+3. Acts of frottage involving touching or rubbing against a nonconsenting person.
+4. Observing an unsuspecting person who is naked, disrobing, or engaging in sexual activity.
+5. Sexual activity with a prepubescent child.
+6. Abuse of alcohol and/or other drugs associated with deviant sexual arousal.
+7. An attitude of sexual entitlement that leads to sexually deviant behavior.
+8. Low impulse control especially as related to deviant sexual behavior.
+
+### Long-Term Goals
+1. Eliminate sexually deviant behavior.
+2. Terminate attitude of sexual entitlement.
+3. Terminate the abuse of alcohol and other drugs.
+4. Decrease the frequency of impulsive behavior related to deviant sexual arousal.
+
+---
+
+## TIME MANAGEMENT PROBLEMS
+### Behavioral Definitions
+1. Inability to manage time in order to meet personal obligations.
+2. Routinely fails to meet deadlines, make appointments, or follow through on things in a timely manner.
+3. Inability to adequately anticipate time needed to accomplish tasks, projects, or goals.
+4. Fails to prioritize obligations in order to ensure that all necessary ones are completed before less important ones.
+5. Frequently overextends self, making it impossible to meet obligations in a timely manner.
+6. Lack of time management abilities result in frequent self-disapproval and diminished self- concept.
+
+### Long-Term Goals
+1. Ability to manage time efficiently so that personal obligations are met.
+2. Develop the skill necessary to prioritize personal obligations.
+3. Gain an understanding of personal abilities to avoid becoming overextended and overwhelmed with obligations.
+
+---
+
+## UNSTABLE LIVING SITUATION
+### Behavioral Definitions
+1. Currently lives in an environment with excessive criminogenic influences (e.g., criminal peers, substance abuse, violence) and is at high risk for relapse.
+2. Family members or roommates are involved in criminal behavior.
+3. Has a history of frequent moves, conflictual relationships, and repeated unemployment.
+4. Currently homeless or lives in community shelters.
+5. Depends on others for shelter, food, and clothing.
+6. Lives in an environment where there is a high risk of sustaining physical, sexual, or emotional abuse.
+7. Failure to make rent, mortgage, or utility payments, leading to a loss of residence.
+
+### Long-Term Goals
+1. Maintain employment as a legal means of obtaining income and responsibly manage finances for a stable living situation.
+2. Change living situation to reduce or eliminate association with those involved in criminal behavior.
+3. Manage pro-criminal relationships with roommates or family members by establishing boundaries to reduce risk for relapse or recidivism.
+4. Establish a social network that is supportive of pro-social, stable living.
+
+---
+
+## VIOLENT/AGGRESSIVE BEHAVIOR
+### Behavioral Definitions
+1. History of violent, aggressive responses out of proportion to any precipitating stressors.
+2. History of involvement in the criminal justice system with charges related to violence, assault, menacing, or battery.
+3. Uses violence as a means to achieve power and control.
+4. Shows a cavalier disregard and no remorse for perpetrating violence or injuring on others.
+5. Unreasonably attributes betrayal and/or hostility to others and overreacts aggressively to others accordingly.
+6. Has a paranoid quality that leads to projection of own malicious outlook onto others.
+7. Has a childhood history of exposure to repeated physical abuse and neglect.
+8. Receives reinforcement for violence from peer group and faces possible alienation for nonaggressive behavior.
+
+### Long-Term Goals
+1. Significantly decrease frequency and intensity of violent, aggressive behavior, including verbal and physical abuse.
+2. Improve awareness and understanding of violence: how it is triggered and what its painful consequences are to others.
+3. Access and accept a greater range of emotions with increased ability to express these emotions constructively.
+4. Develop a repertoire of behavior that makes it possible to achieve reinforcement from nonaggressive behavior.
+5. Develop a pro-social network that shares and supports healthy nonaggressive lifestyle and respect for others.
+
+---
+
+## VOCATIONAL DEFICITS
+### Behavioral Definitions
+1. In need of full-time employment.
+2. Not employed full-time at least 50 percent of the past year and/or has never maintained full-time employment longer than one year.
+3. Chronically underemployed in positions that provide little or not benefits and pay at or slightly above minimum wage.
+4. Currently employed in a work environment with excessive criminogenic influences (e.g., criminal peers, substance abuse, violence) and risk for related relapse.
+5. Limited access to job opportunities arising from the requirement to disclose criminal record.
+6. Unrealistic expectations regarding the demands of a possible job (e.g., job-required work habits, team participation, and authority interactions).
+7. Unrealistic self-expectations and confidence (over or under) regarding performance capability in new job.
+8. Chaotic living environment, unstable social relations, illness, or immediate family member illness contribute to vocational conflict.
+9. Educational, skills, and learning deficits that represent obstacles to literacy (English or computer), interpersonal skills or minimal mainstream vocational competencies (e.g., basic math).
+
+### Long-Term Goals
+1. Maintain stable full-time employment in a pro-social work environment.
+2. Develop a set of realistic job-related expectations regarding job performance requirements and the ability to meet these requirements.
+3. Acquire necessary self-discipline skills to perform full-time work in a punctual, consistent, and productive manner.
+4. Realistically acknowledge personal vocational aptitudes, current skills and deficits, and what the related career opportunities are.
+5. Learn how to manage existing criminogenic influences in the workplace to reduce the risk for relapse.
+6. Identify a concrete, personal set of both short- and long-term vocational goals that reflect a realistic career path.
+7. Increase self-presentation and job interview skills for potential employers.
+
+---
+

@@ -1,0 +1,32 @@
+{
+  "participant_key": "Christopher_Barranco",
+  "name": "Christopher Barranco",
+  "location": "Columbia",
+  "track": "first_shift",
+  "status": "archived",
+  "user_id": 69,
+  "client_id": null,
+  "apricot_id": "79019",
+  "phone": "",
+  "email": "christopher.barranco.79019@firstshift.org",
+  "files": [
+    "Christopher_Barranco_Columbia_criminal_history.docx",
+    "Christopher_Barranco_Columbia_criminal_history.md",
+    "Christopher_Barranco_Columbia_draft_scoring_form.docx",
+    "Christopher_Barranco_Columbia_draft_scoring_form.md",
+    "Christopher_Barranco_Columbia_final_scoring_form.docx",
+    "Christopher_Barranco_Columbia_final_scoring_form.md",
+    "Christopher_Barranco_Columbia_interview_guide.docx",
+    "Christopher_Barranco_Columbia_interview_guide.md",
+    "Christopher_Barranco_Columbia_transcript.txt"
+  ],
+  "folder_slug": "Christopher_Barranco",
+  "folder_path": "data/participants/Christopher_Barranco",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": true,
+  "has_action_plan": false,
+  "waitlist_ready": false,
+  "waitlist_met_count": 5,
+  "data_flags_count": 1,
+  "updated_at": "2026-11-22T17:18:01.532Z"
+}

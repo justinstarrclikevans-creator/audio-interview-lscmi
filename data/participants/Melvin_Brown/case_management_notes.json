@@ -1,0 +1,113 @@
+{
+  "case_notes": [
+    {
+      "id": 138,
+      "user_id": 75,
+      "author_id": null,
+      "author_name": "Jenn Jeanquart",
+      "session_date": "2026-10-28",
+      "note_type": "Coaching / case management session – structured or in-depth meeting",
+      "category": "First Shift",
+      "content": "Client: [Client] | Session: 1\n\n**Case Plan & CBT Alignment:**\n- Reviewed CBT Case Plan with [Client]. He agreed with the Focus Areas: Work History/Attendance and Handling Frustration/Anger.\n- Identified workplace triggers: \"showing out\" (disrespect) and being around too many people.\n- Discussed how he normally handles frustration (shutting down/leaving) and set a goal to practice staying calm to maintain employment.\n\n**Briefcase & Gate 1-4 Progress:**\n- **Gate 1 (ID/DL):** [Client] owes $1,740 in DMV fees. Created a plan to pay it off the week of Nov 9th ($400 from his sister, $1040 from another source, $300 from [Client]). Discussed that fees may need to be paid in person since his address was updated online upon release.\n- **Gate 3 (Bank/Comms):** Confirmed [Client] has an active bank account. Verified his phone voicemail is set up and active for employers (CM tested via phone call during session).\n- **Gate 4 (Work/Training):** Discussed short-term goal of obtaining CDL and long-term goal of owning 3 trucks. Referred to WIOA for $5,000 CDL funding. Scheduled WIOA virtual orientation.\n\n**Additional Updates:**\n- [Client] is attending substance abuse, parenting, and anger management classes on Mondays at 6:00 PM (7 classes remaining). This will significantly reduce his supervision time (originally until 2028).\n\n**Next Steps / Process Goals:**\n1. [Client] and CM to complete WIOA virtual orientation together in the conference room on Nov 4th at 10:00 AM.\n2. [Client] to log into SC Works and reset password via link sent to phone.\n3. Execute the DMV fee payment plan the week of Nov 9th.",
+      "apricot_exported": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 88,
+      "user_id": 75,
+      "author_id": null,
+      "author_name": "Daisy Boynton",
+      "session_date": "2026-10-21",
+      "note_type": "Check-in conversation – brief status update",
+      "category": "Reentry Navigation",
+      "content": "Melvin's RDF request was denied. I let him know.",
+      "apricot_exported": 1,
+      "created_at": "2026-10-26 13:47:10"
+    },
+    {
+      "id": 89,
+      "user_id": 75,
+      "author_id": null,
+      "author_name": "Jenn Jeanquart",
+      "session_date": "2026-10-12",
+      "note_type": "Check-in conversation – brief status update",
+      "category": "First Shift",
+      "content": "Attempted to schedule orientation for 10/16, doesn't work for him so we scheduled for 10/23.",
+      "apricot_exported": 1,
+      "created_at": "2026-10-26 13:47:10"
+    },
+    {
+      "id": 90,
+      "user_id": 75,
+      "author_id": null,
+      "author_name": "Daisy Boynton",
+      "session_date": "2026-10-09",
+      "note_type": "Check-in conversation – brief status update",
+      "category": "Reentry Navigation",
+      "content": "Called to confirm where Melvin is currently living to be sure he is within our service area. His mom lives in Orangeburg and his friend lives in Lexington, so he's been between the two. Once accepted into the program, he plans to be fully in Lexington so he can get to and from.",
+      "apricot_exported": 1,
+      "created_at": "2026-10-26 13:47:10"
+    },
+    {
+      "id": 91,
+      "user_id": 75,
+      "author_id": null,
+      "author_name": "Daisy Boynton",
+      "session_date": "2026-10-02",
+      "note_type": "Documentation support – ID, housing forms, paperwork|Transportation support (non-financial) – planning or coordination only",
+      "category": "Reentry Navigation",
+      "content": "Submitted RDF request for DL fees.",
+      "apricot_exported": 1,
+      "created_at": "2026-10-26 13:47:10"
+    },
+    {
+      "id": 92,
+      "user_id": 75,
+      "author_id": null,
+      "author_name": "Daisy Boynton",
+      "session_date": "2026-10-01",
+      "note_type": "Employment support – applications, resume, interview prep|Documentation support – ID, housing forms, paperwork|Barrier removal – problem-solving or coordination support",
+      "category": "Reentry Navigation",
+      "content": "RDF Referral/Resume Meeting:\n- around $1740 to pay off\n- doing landscaping with brother, 2 weeks of landscaping will get him to $1000\n- help him get back and forth to work and appointments, T90 will be able to refer him to CDL school, has 4 kids and will better be able to take care of his family\n\nI asked him to get screenshots of the exact amounts he owes from his DMV account. Created and sent a resume to him.",
+      "apricot_exported": 1,
+      "created_at": "2026-10-26 13:47:10"
+    },
+    {
+      "id": 93,
+      "user_id": 75,
+      "author_id": null,
+      "author_name": "Daisy Boynton",
+      "session_date": "2026-09-28",
+      "note_type": "Check-in conversation – brief status update",
+      "category": "Reentry Navigation",
+      "content": "Called to establish contact and follow up about making him a resume and an RDF referral. Scheduled an appt for Wednesday at 10:30 to do both over the phone.",
+      "apricot_exported": 1,
+      "created_at": "2026-10-26 13:47:10"
+    },
+    {
+      "id": 94,
+      "user_id": 75,
+      "author_id": null,
+      "author_name": "Justin Evans",
+      "session_date": "2026-09-22",
+      "note_type": "Intake Appointment COMPLETED",
+      "category": "Intake Appointment",
+      "content": "**Client Profile: Melvin**\n\n* **Location:** Columbia, SC\n* **Primary Goal:** Obtain a CDL (Commercial Driver's License)\n* **Education:** High School Diploma / GED\n* **Living Situation:** Living with his mother; reliable transportation provided by his father.\n* **Justice Involvement:** Released from SEDDC (Trenton) around July 31st. Currently on probation for three years.\n* **Probation Requirements:** Attending court-ordered substance abuse classes at 6:00 PM ($25/class). Needs to pay an $800 fee to the Lexington Clerk of Court to be eligible to get off probation.\n* **Employability:** Physically and legally able to work. No pending charges or sex convictions. Able to pass a pre-employment drug screen (past marijuana use only).\n\n**Identified Barriers**\n\n* **Driver's License:** Currently suspended due to DUS (Driving Under Suspension), traffic tickets, and a disorderly conduct charge. No DUIs or accidents.\n* **Financial Fines:** Owes approximately $2,200 to get his license reinstated, which is a strict prerequisite for obtaining a CDL permit.\n\n**Turn 90 Program Alignment**\n\n* **First Shift (Paid Program):** Melvin is interested in this 8-week program (Mon-Fri, 9 AM - 3 PM, up to $450/week stipend). However, the Columbia location currently has a 3-to-4-week waitlist.\n* **Re-entry Navigation:** Recommended as an immediate starting point to help Melvin secure interim employment and tackle his legal/financial barriers while he waits for a spot in First Shift.\n\n**Action Items & Next Steps**\n\n* **Justin:** Forward intake notes and connect Melvin with Daisy (Re-entry Navigator).\n* **Daisy:** Reach out to Melvin within the next few days to initiate one-on-one Re-entry Navigation.\n* **Daisy & Melvin:** Draft a professional resume and begin an immediate local job search.\n* **Daisy & Melvin:** Submit a referral/application to the Columbia \"Rainy Day Fund\" (funding opens August 1st) to request financial assistance in paying off the $2,200 license fines.\n* **Long-Term Goal:** Once the fines are paid and Melvin's license/CDL permit is secured, Turn 90 will refer him to a partner trucking school in the area.",
+      "apricot_exported": 1,
+      "created_at": "2026-10-26 13:47:10"
+    },
+    {
+      "id": 95,
+      "user_id": 75,
+      "author_id": null,
+      "author_name": "Daisy Boynton",
+      "session_date": "2026-09-21",
+      "note_type": "Intake Appointment SCHEDULED",
+      "category": "Intake Appointment",
+      "content": "Intake Appointment SCHEDULED",
+      "apricot_exported": 1,
+      "created_at": "2026-10-26 13:47:10"
+    }
+  ],
+  "cm_session_evaluations": []
+}

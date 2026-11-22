@@ -1,0 +1,28 @@
+{
+  "participant_key": "Javis_Foster",
+  "name": "Javis Foster",
+  "location": "Spartanburg",
+  "track": "reentry_nav",
+  "status": "archived",
+  "user_id": 58,
+  "client_id": null,
+  "apricot_id": null,
+  "phone": "",
+  "email": "javisfoster@t90.com",
+  "files": [
+    "1790194152697_Javis_Foster_reentry_assessment_data.json",
+    "1790194152697_Javis_Foster_reentry_participant_action_guide.docx",
+    "1790194152697_Javis_Foster_reentry_participant_action_guide.md",
+    "1790194152697_Javis_Foster_reentry_staff_case_plan.docx",
+    "1790194152697_Javis_Foster_reentry_staff_case_plan.md"
+  ],
+  "folder_slug": "Javis_Foster",
+  "folder_path": "data/participants/Javis_Foster",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": false,
+  "has_action_plan": true,
+  "waitlist_ready": false,
+  "waitlist_met_count": 6,
+  "data_flags_count": 1,
+  "updated_at": "2026-11-22T17:18:01.526Z"
+}

@@ -1,0 +1,30 @@
+{
+  "participant_key": "Kwatez_Carter",
+  "name": "Kwatez Carter",
+  "location": "Columbia",
+  "track": "first_shift",
+  "status": "active",
+  "user_id": 78,
+  "client_id": 40,
+  "apricot_id": "81443",
+  "phone": "",
+  "email": "kwatez.carter.81443@firstshift.org",
+  "files": [
+    "Kwatez_Carter_Columbia_criminal_history.docx",
+    "Kwatez_Carter_Columbia_criminal_history.md",
+    "Kwatez_Carter_Columbia_draft_scoring_form.docx",
+    "Kwatez_Carter_Columbia_draft_scoring_form.md",
+    "Kwatez_Carter_Columbia_interview_guide.docx",
+    "Kwatez_Carter_Columbia_interview_guide.md",
+    "Kwatez_Carter_Columbia_transcript.txt"
+  ],
+  "folder_slug": "Kwatez_Carter",
+  "folder_path": "data/participants/Kwatez_Carter",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": true,
+  "has_action_plan": false,
+  "waitlist_ready": false,
+  "waitlist_met_count": 5,
+  "data_flags_count": 1,
+  "updated_at": "2026-11-22T17:18:01.570Z"
+}

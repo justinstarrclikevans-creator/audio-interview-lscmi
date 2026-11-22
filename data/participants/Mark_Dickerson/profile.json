@@ -1,0 +1,22 @@
+{
+  "participant_key": "Mark_Dickerson",
+  "name": "Mark Dickerson",
+  "location": "Columbia",
+  "track": "reentry_nav",
+  "status": "active",
+  "user_id": null,
+  "client_id": 29,
+  "apricot_id": "80373",
+  "phone": "",
+  "email": "",
+  "files": [],
+  "folder_slug": "Mark_Dickerson",
+  "folder_path": "data/participants/Mark_Dickerson",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": false,
+  "has_action_plan": false,
+  "waitlist_ready": false,
+  "waitlist_met_count": 6,
+  "data_flags_count": 1,
+  "updated_at": "2026-11-22T17:18:01.606Z"
+}

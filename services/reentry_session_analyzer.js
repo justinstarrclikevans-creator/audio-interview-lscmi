@@ -1,6 +1,11 @@
 // Reentry Navigation Session Analyzer
 // Analyzes audio recordings, transcripts, or case notes to update live case plans, goals, briefcase items, and next-session agenda
-const { assertValidGeminiApiKey } = require('../env_config');
+const {
+    assertValidGeminiApiKey,
+    getEvalModelName,
+    buildBudgetGenerationConfig,
+    assertWithinDailyGeminiCap
+} = require('../env_config');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const { GoogleAIFileManager } = require("@google/generative-ai/server");
 const fs = require('fs');
@@ -8,10 +13,15 @@ const path = require('path');
 const { getParticipantCoachingContext, registerProcessedCaseNote } = require('./apricot_eval_engine');
 
 function getReentryModel(apiKey) {
+    assertWithinDailyGeminiCap('reentry_session');
     const genAI = new GoogleGenerativeAI(apiKey);
     return genAI.getGenerativeModel({
-        model: "gemini-3.1-pro-preview",
-        generationConfig: { responseMimeType: "application/json" }
+        model: getEvalModelName(),
+        generationConfig: buildBudgetGenerationConfig({
+            role: 'eval',
+            responseMimeType: 'application/json',
+            maxOutputTokens: 8192
+        })
     });
 }
 

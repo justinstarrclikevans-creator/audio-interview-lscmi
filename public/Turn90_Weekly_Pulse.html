@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Turn90 Unified Weekly Operations &amp; Caseload Pulse</title>
+<style>
+  :root {
+    --bg: #F8FAFC;
+    --card: #FFFFFF;
+    --border: #E2E8F0;
+    --text: #0F172A;
+    --muted: #475569;
+    --primary: #1C566E;
+    --ok-bg: #DCFCE7; --ok-fg: #166534;
+    --warn-bg: #FEF3C7; --warn-fg: #92400E;
+    --err-bg: #FEE2E2; --err-fg: #991B1B;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+  }
+  :where(a:any-link, button, select):focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 2px;
+  }
+  header {
+    background: #0F172A;
+    color: #FFFFFF;
+    padding: 18px 24px;
+    border-bottom: 3px solid var(--primary);
+  }
+  .container {
+    max-width: 1260px;
+    margin: 0 auto;
+    padding: 24px;
+  }
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(195px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .kpi-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+  }
+  .kpi-val {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--primary);
+    line-height: 1.15;
+  }
+  .kpi-label {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 22px;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 9px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 800;
+  }
+  .b-ok { background: var(--ok-bg); color: var(--ok-fg); }
+  .b-warn { background: var(--warn-bg); color: var(--warn-fg); }
+  .b-err { background: var(--err-bg); color: var(--err-fg); }
+  /* Responsive table per modern-web-guidance (responsive-table) */
+  .table-wrapper {
+    overflow: auto;
+    max-inline-size: 100%;
+    max-block-size: min(540px, 80vh);
+    container-type: inline-size;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 13.5px;
+  }
+  caption {
+    text-align: left;
+    padding: 10px 14px;
+    font-weight: 800;
+    background: #F8FAFC;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+  }
+  thead {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 1;
+    background: #F1F5F9;
+  }
+  th, td {
+    padding: 9px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  tbody th {
+    position: sticky;
+    inset-inline-start: 0;
+    background: #FFFFFF;
+    font-weight: 700;
+  }
+  @container (width < 600px) {
+    table, thead, tbody, tr, th, td { display: block; white-space: normal; }
+    thead { display: none; }
+    tr { margin-block-end: 1rem; border: 1px solid var(--border); border-radius: 8px; }
+    tbody th { position: sticky; inset-block-start: 0; z-index: 2; background: #F1F5F9; }
+    td:nth-child(2)::before { content: var(--label-2, "Center") ": "; font-weight: 700; }
+    td:nth-child(3)::before { content: var(--label-3, "Start Date") ": "; font-weight: 700; }
+    td:nth-child(4)::before { content: var(--label-4, "Points") ": "; font-weight: 700; }
+    td:nth-child(5)::before { content: var(--label-5, "LS/CMI") ": "; font-weight: 700; }
+    td:nth-child(6)::before { content: var(--label-6, "Case Plan") ": "; font-weight: 700; }
+    td:nth-child(7)::before { content: var(--label-7, "Briefcase") ": "; font-weight: 700; }
+  }
+  .filter-pill {
+    min-block-size: 36px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: #FFFFFF;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .filter-pill[aria-pressed="true"] {
+    background: var(--primary);
+    color: #FFFFFF;
+    border-color: var(--primary);
+  }
+  @media print {
+    .no-print { display: none !important; }
+    .table-wrapper { max-block-size: none; overflow: visible; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div style="max-width:1260px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;">
+    <div>
+      <h1 style="margin:0;font-size:21px;font-weight:800;">Turn90 Unified Weekly Operations &amp; Caseload Pulse</h1>
+      <p style="margin:3px 0 0 0;font-size:13px;color:#94A3B8;">Automated Weekly CSV + Apricot Workbook + Slack Huddle Synthesis · Automatic SSN Redaction Enabled</p>
+    </div>
+    <div class="no-print" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+      <button type="button" class="filter-pill" data-center="ALL" aria-pressed="true">All Centers</button>
+      <button type="button" class="filter-pill" data-center="Charleston" aria-pressed="false">Charleston</button>
+      <button type="button" class="filter-pill" data-center="Columbia" aria-pressed="false">Columbia</button>
+      <button type="button" class="filter-pill" data-center="Spartanburg" aria-pressed="false">Spartanburg</button>
+      <a href="../lscmi-manual/lscmi_companion.html" style="padding:8px 14px;border-radius:10px;background:var(--primary);color:#FFFFFF;font-size:13px;font-weight:700;text-decoration:none;">Open LS/CMI Scoring Companion →</a>
+      <button type="button" onclick="window.print()" class="filter-pill">Print Briefing</button>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <div id="kpi-container" class="kpi-grid"></div>
+
+  <section class="card" aria-labelledby="alerts-heading">
+    <h2 id="alerts-heading" style="margin:0 0 12px 0;font-size:17px;font-weight:800;">1. Immediate Action Alerts (Attendance Drops &amp; Missing LS/CMI / Case Plans)</h2>
+    <div id="alerts-container" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;"></div>
+  </section>
+
+  <section class="card" aria-labelledby="roster-heading">
+    <h2 id="roster-heading" style="margin:0 0 12px 0;font-size:17px;font-weight:800;">2. Active First Shift Caseload &amp; Apricot Milestone Tracker</h2>
+    <div tabindex="0" role="region" aria-labelledby="roster-caption" class="table-wrapper">
+      <table style="--label-2:'Center';--label-3:'Start Date';--label-4:'Week Points';--label-5:'LS/CMI';--label-6:'Case Plan';--label-7:'Briefcase %';">
+        <caption id="roster-caption">First Shift Participant Milestones &amp; Stipend Points</caption>
+        <thead>
+          <tr>
+            <th scope="col">Participant (ID)</th>
+            <th scope="col">Center</th>
+            <th scope="col">Start Date</th>
+            <th scope="col">Last Week Points (Stipend)</th>
+            <th scope="col">LS/CMI Score</th>
+            <th scope="col">Case Plan</th>
+            <th scope="col">Briefcase %</th>
+            <th scope="col">Bio Info</th>
+            <th scope="col">Case Plan Focus Areas</th>
+          </tr>
+        </thead>
+        <tbody id="roster-tbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(480px,1fr));gap:20px;">
+    <section class="card" aria-labelledby="starts-heading">
+      <h2 id="starts-heading" style="margin:0 0 12px 0;font-size:17px;font-weight:800;">3. New Enrollments This Week (PII-Sanitized)</h2>
+      <div tabindex="0" role="region" aria-labelledby="starts-caption" class="table-wrapper">
+        <table>
+          <caption id="starts-caption">New Starts Across First Shift &amp; Reentry Navigation</caption>
+          <thead>
+            <tr>
+              <th scope="col">Participant (ID)</th>
+              <th scope="col">Program</th>
+              <th scope="col">Center</th>
+              <th scope="col">City / ZIP</th>
+              <th scope="col">SSN (Masked)</th>
+            </tr>
+          </thead>
+          <tbody id="starts-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="exits-heading">
+      <h2 id="exits-heading" style="margin:0 0 12px 0;font-size:17px;font-weight:800;">4. Program Transitions &amp; Exits Last Week</h2>
+      <div tabindex="0" role="region" aria-labelledby="exits-caption" class="table-wrapper">
+        <table>
+          <caption id="exits-caption">Distinguishing Positive RN → First Shift Transitions from Discharges</caption>
+          <thead>
+            <tr>
+              <th scope="col">Participant (ID)</th>
+              <th scope="col">Center</th>
+              <th scope="col">Outcome</th>
+              <th scope="col">Disposition Details</th>
+            </tr>
+          </thead>
+          <tbody id="exits-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script>
+(function () {
+  "use strict";
+  var DATA = {"firstShiftRoster": [{"id": "80789", "firstName": "Darryl", "lastName": "Aiken", "fullName": "Darryl Aiken", "startDate": "2026-10-05", "endDate": "", "program": "First Shift", "center": "Charleston", "lscmiScore": 21, "hasLscmi": true, "casePlanComplete": true, "focusAreas": "Family and Relationships (Family/Marital) / Substance Use", "briefcasePct": 12.1, "bioComplete": false, "weekPoints": null, "weekStipend": null}, {"id": "77677", "firstName": "Jovon", "lastName": "Bonneau", "fullName": "Jovon Bonneau", "startDate": "2026-08-24", "endDate": "", "program": "First Shift", "center": "Charleston", "lscmiScore": 0, "hasLscmi": true, "casePlanComplete": true, "focusAreas": "Work and Follow-Through (Employment/Education) / Reactions and Self Control (Antisocial Pattern)", "briefcasePct": 0.0, "bioComplete": true, "weekPoints": null, "weekStipend": null}, {"id": "77669", "firstName": "Dillon", "lastName": "Johnson", "fullName": "Dillon Johnson", "startDate": "2026-08-24", "endDate": "", "program": "First Shift", "center": "Charleston", "lscmiScore": 0, "hasLscmi": true, "casePlanComplete": true, "focusAreas": "Reactions and Self Control (Antisocial Pattern) / Thinking Patterns (Procriminal Attitudes)", "briefcasePct": 0.0, "bioComplete": true, "weekPoints": null, "weekStipend": null}, {"id": "79622", "firstName": "Isiah", "lastName": "Oree", "fullName": "Isiah Oree", "startDate": "2026-09-07", "endDate": "", "program": "First Shift", "center": "Charleston", "lscmiScore": 15, "hasLscmi": true, "casePlanComplete": true, "focusAreas": "Reactions and Self Control (Antisocial Pattern) / Thinking Patterns (Procriminal Attitudes)", "briefcasePct": 0.0, "bioComplete": true, "weekPoints": 24, "weekStipend": 216.0}, {"id": "79019", "firstName": "Christopher", "lastName": "Barranco", "fullName": "Christopher Barranco", "startDate": "2026-08-24", "endDate": "", "program": "First Shift", "center": "Columbia", "lscmiScore": 21, "hasLscmi": true, "casePlanComplete": false, "focusAreas": "Substance Use / Work and Follow-Through (Employment/Education)", "briefcasePct": 72.7, "bioComplete": true, "weekPoints": null, "weekStipend": null}, {"id": "80797", "firstName": "William", "lastName": "Belk", "fullName": "William Belk", "startDate": "2026-10-12", "endDate": "", "program": "First Shift", "center": "Columbia", "lscmiScore": 0, "hasLscmi": true, "casePlanComplete": false, "focusAreas": "", "briefcasePct": 0.0, "bioComplete": false, "weekPoints": 50, "weekStipend": 450.0}, {"id": "78621", "firstName": "Lokheim", "lastName": "Campbell", "fullName": "Lokheim Campbell", "startDate": "2026-08-17", "endDate": "", "program": "First Shift", "center": "Columbia", "lscmiScore": 17, "hasLscmi": true, "casePlanComplete": true, "focusAreas": "Work and Follow-Through (Employment/Education) / Time and Structure (Leisure/Recreation)", "briefcasePct": 0.0, "bioComplete": true, "weekPoints": null, "weekStipend": null}, {"id": "79620", "firstName": "Vincent", "lastName": "Gailliard", "fullName": "Vincent Gailliard", "startDate": "2026-09-28", "endDate": "", "program": "First Shift", "center": "Columbia", "lscmiScore": 14, "hasLscmi": true, "casePlanComplete": true, "focusAreas": "Work and Follow-Through (Employment/Education) / Thinking Patterns (Procriminal Attitudes)", "briefcasePct": 51.5, "bioComplete": true, "weekPoints": 50, "weekStipend": 450.0}, {"id": "66054", "firstName": "Lawrence", "lastName": "Pinckney", "fullName": "Lawrence Pinckney", "startDate": "2026-09-08", "endDate": "", "program": "First Shift", "center": "Columbia", "lscmiScore": 20, "hasLscmi": true, "casePlanComplete": true, "focusAreas": "Work and Follow-Through (Employment/Education) / People and Influence (Peer Associations)", "briefcasePct": 51.5, "bioComplete": true, "weekPoints": null, "weekStipend": null}, {"id": "80088", "firstName": "Eddie", "lastName": "Ballenger", "fullName": "Eddie Ballenger", "startDate": "2026-09-07", "endDate": "", "program": "First Shift", "center": "Spartanburg", "lscmiScore": 16, "hasLscmi": true, "casePlanComplete": true, "focusAreas": "Work and Follow-Through (Employment/Education) / People and Influence (Peer Associations)", "briefcasePct": 63.6, "bioComplete": true, "weekPoints": 30, "weekStipend": 270.0}, {"id": "80688", "firstName": "Javis", "lastName": "Foster", "fullName": "Javis Foster", "startDate": "2026-09-21", "endDate": "", "program": "First Shift", "center": "Spartanburg", "lscmiScore": 20, "hasLscmi": true, "casePlanComplete": true, "focusAreas": "Substance Use / Reactions and Self Control (Antisocial Pattern)", "briefcasePct": 60.6, "bioComplete": true, "weekPoints": null, "weekStipend": null}, {"id": "80590", "firstName": "Christian", "lastName": "Isham", "fullName": "Christian Isham", "startDate": "2026-09-21", "endDate": "", "program": "First Shift", "center": "Spartanburg", "lscmiScore": 20, "hasLscmi": true, "casePlanComplete": true, "focusAreas": "Substance Use / Time and Structure (Leisure/Recreation)", "briefcasePct": 63.6, "bioComplete": true, "weekPoints": null, "weekStipend": null}, {"id": "78777", "firstName": "Christopher", "lastName": "Beck", "fullName": "Christopher Beck", "startDate": "2026-10-12", "endDate": "", "program": "First Shift", "center": "Unassigned", "lscmiScore": 0, "hasLscmi": true, "casePlanComplete": true, "focusAreas": "Time and Structure (Leisure/Recreation) / Family and Relationships (Family/Marital)", "briefcasePct": 33.3, "bioComplete": true, "weekPoints": 50, "weekStipend": 450.0}, {"id": "81055", "firstName": "Charlie", "lastName": "Graham Jr.", "fullName": "Charlie Graham Jr.", "startDate": "2026-10-12", "endDate": "", "program": "First Shift", "center": "Unassigned", "lscmiScore": 0, "hasLscmi": true, "casePlanComplete": false, "focusAreas": "", "briefcasePct": 0.0, "bioComplete": true, "weekPoints": 50, "weekStipend": 450.0}, {"id": "79879", "firstName": "Stephen", "lastName": "Lazenby", "fullName": "Stephen Lazenby", "startDate": "2026-10-12", "endDate": "", "program": "First Shift", "center": "Unassigned", "lscmiScore": 0, "hasLscmi": true, "casePlanComplete": false, "focusAreas": "", "briefcasePct": 0.0, "bioComplete": false, "weekPoints": 30, "weekStipend": 270.0}, {"id": "81030", "firstName": "Jeremiah", "lastName": "Sims", "fullName": "Jeremiah Sims", "startDate": "2026-10-12", "endDate": "", "program": "First Shift", "center": "Unassigned", "lscmiScore": 0, "hasLscmi": true, "casePlanComplete": false, "focusAreas": "", "briefcasePct": 0.0, "bioComplete": false, "weekPoints": null, "weekStipend": null}], "totalCaseload": 61, "firstShiftCount": 16, "reentryNavCount": 45, "newStarts": [{"id": "66051", "fullName": "Jayson Crisp", "program": "First Shift", "center": "Charleston", "dob": "01/22/1988", "ssnMasked": "***-**-6169", "city": "Summerville", "zip": "29486"}, {"id": "82609", "fullName": "Dreshaun Carter", "program": "First Shift", "center": "Charleston", "dob": "03/14/2003", "ssnMasked": "***-**-3180", "city": "Summerville", "zip": "29483"}, {"id": "82640", "fullName": "Marcus McMillan", "program": "First Shift", "center": "Charleston", "dob": "03/01/2000", "ssnMasked": "***-**-4063", "city": "Charleston", "zip": "29406"}, {"id": "82849", "fullName": "Dakari Johnson", "program": "First Shift", "center": "Charleston", "dob": "02/15/2007", "ssnMasked": "***-**-9265", "city": "North Charleston", "zip": "29418"}, {"id": "83003", "fullName": "Charles Jackson", "program": "Reentry Navigation", "center": "Spartanburg", "dob": "N/A (RN Intake)", "ssnMasked": "N/A (RN Intake)", "city": "Spartanburg Area", "zip": ""}, {"id": "83029", "fullName": "Terquerious Byrd", "program": "Reentry Navigation", "center": "Spartanburg", "dob": "N/A (RN Intake)", "ssnMasked": "N/A (RN Intake)", "city": "Spartanburg", "zip": ""}, {"id": "83051", "fullName": "Micquell Kirk", "program": "Reentry Navigation", "center": "Columbia", "dob": "N/A (RN Intake)", "ssnMasked": "N/A (RN Intake)", "city": "Columbia", "zip": ""}], "exits": [{"id": "81457", "fullName": "Michael Maness", "program": "First Shift", "center": "Spartanburg", "startDate": "10/26/2026", "endDate": "11/02/2026", "category": "Incarcerated", "reason": "Incarcerated During Program (enhanced shoplifting arrest over weekend)", "isPositive": false}, {"id": "79879", "fullName": "Stephen Lazenby", "program": "First Shift", "center": "Charleston", "startDate": "10/12/2026", "endDate": "11/04/2026", "category": "Terminated", "reason": "Terminated (urinalysis violation / falsification on 11/04)", "isPositive": false}, {"id": "78871", "fullName": "Hakeem Alston", "program": "Reentry Navigation", "center": "Charleston", "startDate": "10/26/2026", "endDate": "11/02/2026", "category": "Discharged / Closed", "reason": "Non-Engagement / YOA violation (failed to contact staff by deadline)", "isPositive": false}, {"id": "81428", "fullName": "Tarren Hughey", "program": "Reentry Navigation", "center": "Columbia", "startDate": "10/06/2026", "endDate": "11/02/2026", "category": "Discharged / Closed", "reason": "No Contact / Phone Disconnected (removed from RN and waitlist)", "isPositive": false}, {"id": "82004", "fullName": "Robert Shaw", "program": "Reentry Navigation", "center": "Charleston", "startDate": "10/13/2026", "endDate": "11/02/2026", "category": "Discharged / Closed", "reason": "No Contact / Voicemail Full (unresponsive after 10/13 intake)", "isPositive": false}, {"id": "82799", "fullName": "Nat Lobengilo", "program": "Reentry Navigation", "center": "Charleston", "startDate": "11/04/2026", "endDate": "11/06/2026", "category": "Program Transition", "reason": "Transitioned from Reentry Nav to First Shift (Orientation completed 11/06)", "isPositive": true}, {"id": "77653", "fullName": "Robert Taylor", "program": "Reentry Navigation", "center": "Columbia", "startDate": "10/19/2026", "endDate": "11/02/2026", "category": "Program Transition", "reason": "Transitioned from Reentry Nav to First Shift (Started First Shift 11/02)", "isPositive": true}, {"id": "81798", "fullName": "Davon Thompson", "program": "Reentry Navigation", "center": "Columbia", "startDate": "10/09/2026", "endDate": "11/02/2026", "category": "Program Transition", "reason": "Transitioned from Reentry Nav to First Shift (Started First Shift 11/02)", "isPositive": true}, {"id": "81816", "fullName": "Justin Dahl", "program": "Reentry Navigation", "center": "Columbia", "startDate": "10/08/2026", "endDate": "11/02/2026", "category": "Program Transition", "reason": "Transitioned from Reentry Nav to First Shift (Started First Shift 11/02)", "isPositive": true}], "positiveTransitions": 4, "negativeExits": 5, "pointsList": [{"id": "46026", "fullName": "Reante Baylock", "center": "Charleston", "points": 10, "stipend": 90.0, "atRisk": true}, {"id": "79622", "fullName": "Isiah Oree", "center": "Charleston", "points": 24, "stipend": 216.0, "atRisk": true}, {"id": "80088", "fullName": "Eddie Ballenger", "center": "Spartanburg", "points": 30, "stipend": 270.0, "atRisk": true}, {"id": "79879", "fullName": "Stephen Lazenby", "center": "Charleston", "points": 30, "stipend": 270.0, "atRisk": true}, {"id": "78959", "fullName": "Chance Simmons", "center": "Charleston", "points": 40, "stipend": 360.0, "atRisk": false}, {"id": "82409", "fullName": "Jayhova Freeman", "center": "Spartanburg", "points": 49, "stipend": 441.0, "atRisk": false}, {"id": "82300", "fullName": "Alec Greene", "center": "Spartanburg", "points": 50, "stipend": 450.0, "atRisk": false}, {"id": "82567", "fullName": "Carl Allen", "center": "Spartanburg", "points": 50, "stipend": 450.0, "atRisk": false}, {"id": "81055", "fullName": "Charlie Graham Jr.", "center": "Spartanburg", "points": 50, "stipend": 450.0, "atRisk": false}, {"id": "78777", "fullName": "Christopher Beck", "center": "Spartanburg", "points": 50, "stipend": 450.0, "atRisk": false}, {"id": "81798", "fullName": "Davon Thompson", "center": "Columbia", "points": 50, "stipend": 450.0, "atRisk": false}, {"id": "81816", "fullName": "Justin Dahl", "center": "Columbia", "points": 50, "stipend": 450.0, "atRisk": false}, {"id": "81443", "fullName": "Kwatez Carter", "center": "Columbia", "points": 50, "stipend": 450.0, "atRisk": false}, {"id": "80978", "fullName": "Melvin Brown", "center": "Columbia", "points": 50, "stipend": 450.0, "atRisk": false}, {"id": "77653", "fullName": "Robert Taylor", "center": "Columbia", "points": 50, "stipend": 450.0, "atRisk": false}, {"id": "79620", "fullName": "Vincent Gailliard", "center": "Columbia", "points": 50, "stipend": 450.0, "atRisk": false}, {"id": "80797", "fullName": "William Belk", "center": "Columbia", "points": 50, "stipend": 450.0, "atRisk": false}], "totalStipend": 6597.0, "atRiskCount": 4, "missingLscmiCount": 0};
+  var activeCenter = "ALL";
+
+  function esc(s) {
+    return String(s === null || s === undefined ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function matchCenter(c) {
+    if (activeCenter === "ALL") { return true; }
+    return String(c || "").toLowerCase().indexOf(activeCenter.toLowerCase()) !== -1;
+  }
+
+  function render() {
+    var fs = DATA.firstShiftRoster.filter(function (p) { return matchCenter(p.center); });
+    var starts = DATA.newStarts.filter(function (p) { return matchCenter(p.center); });
+    var exits = DATA.exits.filter(function (p) { return matchCenter(p.center); });
+    var pts = DATA.pointsList.filter(function (p) { return matchCenter(p.center); });
+
+    var stipendSum = pts.reduce(function (acc, x) { return acc + x.stipend; }, 0);
+    var posTrans = exits.filter(function (x) { return x.isPositive; }).length;
+    var negExits = exits.filter(function (x) { return !x.isPositive; }).length;
+    var lscmiDone = fs.filter(function (x) { return x.hasLscmi; }).length;
+
+    document.getElementById("kpi-container").innerHTML =
+      '<div class="kpi-card"><div class="kpi-val">' + fs.length + '</div><div class="kpi-label">Active First Shift Roster</div></div>' +
+      '<div class="kpi-card"><div class="kpi-val">$' + stipendSum.toLocaleString("en-US", {minimumFractionDigits: 2}) + '</div><div class="kpi-label">Weekly Stipend Payroll (' + pts.length + ' men)</div></div>' +
+      '<div class="kpi-card"><div class="kpi-val">' + starts.length + '</div><div class="kpi-label">New Starts This Week</div></div>' +
+      '<div class="kpi-card"><div class="kpi-val" style="color:#166534;">+' + posTrans + '</div><div class="kpi-label">RN → First Shift Transitions</div></div>' +
+      '<div class="kpi-card"><div class="kpi-val" style="color:#991B1B;">' + negExits + '</div><div class="kpi-label">Discharges / Terminations</div></div>' +
+      '<div class="kpi-card"><div class="kpi-val">' + lscmiDone + ' / ' + fs.length + '</div><div class="kpi-label">LS/CMI Assessments Logged</div></div>';
+
+    var atRiskPts = pts.filter(function (x) { return x.atRisk; });
+    var missingLscmi = fs.filter(function (x) { return !x.hasLscmi || !x.casePlanComplete; });
+
+    var alertCards = [];
+    atRiskPts.forEach(function (x) {
+      alertCards.push(
+        '<div style="padding:12px 14px;border-radius:12px;background:var(--err-bg);color:var(--err-fg);border:1px solid #FCA5A5;">' +
+        '<div style="font-weight:800;font-size:14px;">⚠️ Attendance / Stipend Drop: ' + esc(x.fullName) + ' (#' + esc(x.id) + ')</div>' +
+        '<div style="font-size:12.5px;margin-top:3px;">Center: <b>' + esc(x.center) + '</b> · Earned <b>' + x.points + ' / 50 pts</b> ($' + x.stipend.toFixed(2) + '). Schedule 1-on-1 retention check-in.</div>' +
+        '</div>'
+      );
+    });
+    missingLscmi.slice(0, 6).forEach(function (p) {
+      var gaps = [];
+      if (!p.hasLscmi) { gaps.push("Missing LS/CMI Score"); }
+      if (!p.casePlanComplete) { gaps.push("Incomplete Case Plan"); }
+      alertCards.push(
+        '<div style="padding:12px 14px;border-radius:12px;background:var(--warn-bg);color:var(--warn-fg);border:1px solid #FCD34D;">' +
+        '<div style="font-weight:800;font-size:14px;">📋 Apricot Compliance Gap: ' + esc(p.fullName) + ' (#' + esc(p.id) + ')</div>' +
+        '<div style="font-size:12.5px;margin-top:3px;">Center: <b>' + esc(p.center) + '</b> · ' + esc(gaps.join(" & ")) + '</div>' +
+        '</div>'
+      );
+    });
+    document.getElementById("alerts-container").innerHTML = alertCards.join("") || '<p style="color:var(--muted);font-size:13.5px;">No urgent attendance or compliance alerts for this filter.</p>';
+
+    document.getElementById("roster-tbody").innerHTML = fs.map(function (p) {
+      var ptBadge = p.weekPoints === null
+        ? '<span class="badge">No log</span>'
+        : '<span class="badge ' + (p.weekPoints >= 45 ? 'b-ok' : (p.weekPoints >= 35 ? 'b-warn' : 'b-err')) + '">' + p.weekPoints + ' pts ($' + p.weekStipend.toFixed(0) + ')</span>';
+      var lscmiBadge = p.hasLscmi
+        ? '<span class="badge ' + (p.lscmiScore >= 30 ? 'b-err' : (p.lscmiScore >= 20 ? 'b-warn' : 'b-ok')) + '">Score: ' + p.lscmiScore + '</span>'
+        : '<a href="../lscmi-manual/lscmi_companion.html" class="badge b-err" style="text-decoration:none;">Score Now →</a>';
+      return (
+        '<tr>' +
+        '<th scope="row">' + esc(p.fullName) + ' <span style="color:var(--muted);font-weight:500;">(#' + esc(p.id) + ')</span></th>' +
+        '<td>' + esc(p.center) + '</td>' +
+        '<td>' + esc(p.startDate) + '</td>' +
+        '<td>' + ptBadge + '</td>' +
+        '<td>' + lscmiBadge + '</td>' +
+        '<td><span class="badge ' + (p.casePlanComplete ? 'b-ok' : 'b-warn') + '">' + (p.casePlanComplete ? 'Complete' : 'Pending') + '</span></td>' +
+        '<td><b>' + p.briefcasePct.toFixed(1) + '%</b></td>' +
+        '<td>' + (p.bioComplete ? '✅' : '⏳') + '</td>' +
+        '<td style="white-space:normal;max-width:260px;font-size:12px;color:var(--muted);">' + esc(p.focusAreas || "—") + '</td>' +
+        '</tr>'
+      );
+    }).join("");
+
+    document.getElementById("starts-tbody").innerHTML = starts.map(function (s) {
+      return (
+        '<tr>' +
+        '<th scope="row">' + esc(s.fullName) + ' <span style="color:var(--muted);font-weight:500;">(#' + esc(s.id) + ')</span></th>' +
+        '<td><span class="badge ' + (s.program === "First Shift" ? 'b-ok' : 'b-warn') + '">' + esc(s.program) + '</span></td>' +
+        '<td>' + esc(s.center) + '</td>' +
+        '<td>' + esc(s.city) + (s.zip ? ' (' + esc(s.zip) + ')' : '') + '</td>' +
+        '<td style="font-family:monospace;">' + esc(s.ssnMasked) + '</td>' +
+        '</tr>'
+      );
+    }).join("");
+
+    document.getElementById("exits-tbody").innerHTML = exits.map(function (x) {
+      return (
+        '<tr>' +
+        '<th scope="row">' + esc(x.fullName) + ' <span style="color:var(--muted);font-weight:500;">(#' + esc(x.id) + ')</span></th>' +
+        '<td>' + esc(x.center) + '</td>' +
+        '<td><span class="badge ' + (x.isPositive ? 'b-ok' : 'b-err') + '">' + esc(x.category) + '</span></td>' +
+        '<td style="white-space:normal;max-width:280px;font-size:12px;color:var(--muted);">' + esc(x.reason) + '</td>' +
+        '</tr>'
+      );
+    }).join("");
+  }
+
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest("[data-center]");
+    if (!btn) { return; }
+    activeCenter = btn.getAttribute("data-center");
+    document.querySelectorAll("[data-center]").forEach(function (el) {
+      el.setAttribute("aria-pressed", el.getAttribute("data-center") === activeCenter ? "true" : "false");
+    });
+    render();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

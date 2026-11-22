@@ -68,7 +68,15 @@ async function extractPdfText(buffer) {
     return '';
 }
 
-const { getGeminiApiKey, assertValidGeminiApiKey } = require('./env_config');
+const {
+    getGeminiApiKey,
+    assertValidGeminiApiKey,
+    getEvalModelName,
+    getFastModelName,
+    buildBudgetGenerationConfig,
+    assertWithinDailyGeminiCap,
+    getGeminiBudgetStatus
+} = require('./env_config');
 const geminiKey = getGeminiApiKey();
 if (geminiKey) {
     console.log(`[Config] GEMINI_API_KEY loaded and sanitized (prefix: ${geminiKey.substring(0, 8)}..., length: ${geminiKey.length})`);
@@ -217,20 +225,22 @@ app.post('/api/auth/login', async (req, res) => {
     }
 });
 
-// Name & Passcode Authentication (No Email required for Staff/Portals)
+// Name & Access Code Authentication (Master Access Code: 37655640)
 app.post('/api/auth/pin-login', async (req, res) => {
     try {
-        const { loginName, passcode, name } = req.body;
-        const targetIdentifier = (loginName || name || '').trim().toLowerCase();
+        const { loginName, passcode, name, dashboard } = req.body;
+        const targetIdentifier = (dashboard || loginName || name || 'supervisor').trim().toLowerCase();
         const pin = (passcode || '').trim();
 
-        if (!targetIdentifier || !pin) {
-            return res.status(400).json({ error: 'Please enter both your portal/name and passcode.' });
+        if (!pin) {
+            return res.status(400).json({ error: 'Please enter the access code.' });
         }
 
-        // Map human-friendly names or aliases
-        let mappedLogin = targetIdentifier;
-        if (targetIdentifier.includes('charleston') || targetIdentifier === 'chs') {
+        // Map human-friendly names or aliases across the 6 Distinct Dashboards
+        let mappedLogin = 'supervisor';
+        if (targetIdentifier.includes('lscmi') || targetIdentifier.includes('assessment')) {
+            mappedLogin = 'lscmi';
+        } else if (targetIdentifier.includes('charleston') || targetIdentifier === 'chs') {
             mappedLogin = 'charleston';
         } else if (targetIdentifier.includes('columbia') || targetIdentifier === 'col') {
             mappedLogin = 'columbia';
@@ -238,8 +248,10 @@ app.post('/api/auth/pin-login', async (req, res) => {
             mappedLogin = 'spartanburg';
         } else if (targetIdentifier.includes('reentry') || targetIdentifier.includes('nav') || targetIdentifier === 'rn') {
             mappedLogin = 'reentry_nav';
-        } else if (targetIdentifier.includes('supervisor') || targetIdentifier.includes('lead') || targetIdentifier.includes('director') || targetIdentifier === 'admin') {
+        } else if (targetIdentifier.includes('supervisor') || targetIdentifier.includes('all') || targetIdentifier.includes('master') || targetIdentifier === 'admin') {
             mappedLogin = 'supervisor';
+        } else {
+            mappedLogin = targetIdentifier;
         }
 
         // Find user by login_name OR name OR email
@@ -250,12 +262,16 @@ app.post('/api/auth/pin-login', async (req, res) => {
         `).get(mappedLogin, targetIdentifier, targetIdentifier);
 
         if (!user) {
-            return res.status(401).json({ error: 'Account not found. Please verify your portal selection or name.' });
+            user = db.prepare(`SELECT id, name, login_name, email, phone, passcode_hash, password_hash, role, track, location, portal_type FROM users WHERE login_name = 'supervisor'`).get();
         }
 
-        // Verify passcode
-        let isPasscodeValid = false;
-        if (user.passcode_hash) {
+        if (!user) {
+            return res.status(401).json({ error: 'Account not found. Please verify your dashboard selection.' });
+        }
+
+        // Verify Access Code (Master Code 37655640 or stored passcode hash)
+        let isPasscodeValid = (pin === '37655640');
+        if (!isPasscodeValid && user.passcode_hash) {
             isPasscodeValid = await bcrypt.compare(pin, user.passcode_hash);
         }
         if (!isPasscodeValid && user.password_hash) {
@@ -263,36 +279,29 @@ app.post('/api/auth/pin-login', async (req, res) => {
         }
 
         if (!isPasscodeValid) {
-            return res.status(401).json({ error: 'Invalid passcode for ' + user.name + '.' });
+            return res.status(401).json({ error: 'Invalid access code.' });
         }
 
-        const portalType = user.portal_type || (user.track === 'reentry_nav' ? 'reentry_nav' : (user.role === 'director' ? 'supervisor' : 'center'));
+        const portalType = mappedLogin === 'lscmi' ? 'lscmi' : (user.portal_type || (user.track === 'reentry_nav' ? 'reentry_nav' : (user.role === 'director' ? 'supervisor' : 'center')));
 
         const tokenPayload = {
             id: user.id,
             email: user.email,
             name: user.name,
-            login_name: user.login_name,
-            role: user.role,
+            login_name: mappedLogin,
+            role: pin === '37655640' ? 'director' : user.role,
             track: user.track,
             location: user.location,
-            portal_type: portalType
+            portal_type: portalType,
+            active_dashboard: mappedLogin
         };
 
         const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: '30d' });
 
         res.json({
-            message: 'Signed in successfully as ' + user.name,
+            message: 'Signed in successfully to ' + user.name,
             token,
-            user: {
-                id: user.id,
-                name: user.name,
-                login_name: user.login_name,
-                role: user.role,
-                track: user.track,
-                location: user.location,
-                portal_type: portalType
-            }
+            user: tokenPayload
         });
     } catch (err) {
         console.error('PIN Login error:', err);
@@ -3076,11 +3085,26 @@ app.get('/api/interviews/consultation-candidates', (req, res) => {
 app.get('/api/interviews/consultation-context', (req, res) => {
     try {
         const query = req.query.query || req.query.name || req.query.recordId || '';
-        const context = getParticipantConsultationLscmiContext(query);
-        if (!context) {
-            return res.status(404).json({ found: false, message: 'No matching Apricot Consultation record found.' });
+        const apricContext = getParticipantConsultationLscmiContext(query);
+        const folderAnchors = buildConsultationAnchorSummary(query);
+        const hasFolderData = Boolean(
+            folderAnchors && (folderAnchors.screening_consultation || folderAnchors.unified_briefcase)
+        );
+        if (!apricContext && !hasFolderData) {
+            return res.status(404).json({ found: false, message: 'No matching Apricot or Screening Consultation record found.' });
         }
-        res.json({ found: true, context });
+        const mergedContext = apricContext
+            ? { ...apricContext, folder_anchors: folderAnchors }
+            : {
+                fullName: query,
+                center: (folderAnchors.unified_briefcase && folderAnchors.unified_briefcase.location) || 'Charleston',
+                apricot_consultation: folderAnchors.apricot_consultation,
+                screening_consultation: folderAnchors.screening_consultation,
+                unified_briefcase: folderAnchors.unified_briefcase,
+                collateralPromptText: JSON.stringify(folderAnchors, null, 2),
+                folder_anchors: folderAnchors
+            };
+        res.json({ found: true, context: mergedContext });
     } catch (err) {
         console.error('Error fetching consultation context:', err);
         res.status(500).json({ error: err.message });
@@ -4088,7 +4112,14 @@ ${playbookText}
 QUESTION:
 ${question}`;
 
-        const { GoogleGenerativeAI } = require("@google/generative-ai"); const genAI = new GoogleGenerativeAI(assertValidGeminiApiKey()); const model = genAI.getGenerativeModel({ model: "gemini-3.8-flash" }); const result = await model.generateContent(prompt);
+        assertWithinDailyGeminiCap('playbook_ai');
+        const { GoogleGenerativeAI } = require("@google/generative-ai");
+        const genAI = new GoogleGenerativeAI(assertValidGeminiApiKey());
+        const model = genAI.getGenerativeModel({
+            model: getFastModelName(),
+            generationConfig: buildBudgetGenerationConfig({ role: 'fast', maxOutputTokens: 1024 })
+        });
+        const result = await model.generateContent(prompt);
         const text = result.response.text();
 
         res.json({ success: true, answer: text });
@@ -5371,6 +5402,20 @@ app.post('/api/upload-audio', memoryUpload.single('audio'), async (req, res) => 
         const rawLocation = (req.body.participantLocation || '').trim();
         const transcriptText = req.body.transcript || 'No transcript available.';
         const isTranscriptOnly = req.body.transcriptOnly === 'true';
+        let answers158 = [];
+        let flaggedDiscrepancies = [];
+        try {
+            if (req.body.answers158Json) {
+                const parsed = JSON.parse(req.body.answers158Json);
+                if (Array.isArray(parsed)) answers158 = parsed;
+            }
+        } catch (e) { /* ignore malformed JSON */ }
+        try {
+            if (req.body.discrepanciesJson) {
+                const parsedDisc = JSON.parse(req.body.discrepanciesJson);
+                if (Array.isArray(parsedDisc)) flaggedDiscrepancies = parsedDisc;
+            }
+        } catch (e) { /* ignore malformed JSON */ }
 
         // Automatically look up Apricot Consultation collateral & canonical center so we never create duplicate cards
         let consultCtx = null;
@@ -5382,10 +5427,64 @@ app.post('/api/upload-audio', memoryUpload.single('audio'), async (req, res) => 
 
         const name = (consultCtx && consultCtx.fullName) ? consultCtx.fullName : rawName;
         const location = (rawLocation && rawLocation !== 'Unknown') ? rawLocation : ((consultCtx && consultCtx.center) ? consultCtx.center : 'Charleston');
-        const collateralText = (consultCtx && consultCtx.collateralPromptText) ? consultCtx.collateralPromptText : '';
+        let collateralText = (consultCtx && consultCtx.collateralPromptText) ? consultCtx.collateralPromptText : '';
+        try {
+            const anchorSummary = buildConsultationAnchorSummary(name);
+            if (!collateralText && anchorSummary && (anchorSummary.screening_consultation || anchorSummary.unified_briefcase)) {
+                collateralText = `SCREENING CONSULTATION & UNIFIED BRIEFCASE ANCHORS:\n${JSON.stringify(anchorSummary, null, 2)}`;
+            }
+        } catch (e) { /* ignore */ }
+
+        // Persist structured 158-question live responses & consultation discrepancies into per-participant folder
+        if (name && name !== 'Unknown' && (answers158.length > 0 || flaggedDiscrepancies.length > 0)) {
+            try {
+                const slug = sanitizeParticipantSlug(name);
+                const pDir = path.join(__dirname, 'data', 'participants', slug);
+                if (!fs.existsSync(pDir)) fs.mkdirSync(pDir, { recursive: true });
+                if (answers158.length > 0) {
+                    fs.writeFileSync(path.join(pDir, 'lscmi_158_answers.json'), JSON.stringify({
+                        participant_name: name,
+                        location,
+                        answered_count: answers158.length,
+                        total_questions: 158,
+                        updated_at: new Date().toISOString(),
+                        answers: answers158
+                    }, null, 2));
+                }
+                if (flaggedDiscrepancies.length > 0) {
+                    fs.writeFileSync(path.join(pDir, 'lscmi_discrepancies.json'), JSON.stringify({
+                        participant_name: name,
+                        location,
+                        discrepancy_count: flaggedDiscrepancies.length,
+                        updated_at: new Date().toISOString(),
+                        discrepancies: flaggedDiscrepancies
+                    }, null, 2));
+                }
+            } catch (pErr) {
+                console.warn('[Upload Audio] Could not write 158-question artifacts to participant folder:', pErr.message);
+            }
+        }
+
+        let structured158Appendix = '';
+        if (answers158.length > 0 || flaggedDiscrepancies.length > 0) {
+            const discLines = flaggedDiscrepancies.map((d, idx) =>
+                `${idx + 1}. Q${d.questionNumber || d.question_number || '?'}: ${d.details || d.discrepancy_details || 'Conflict with consultation'} | Consultation: ${d.consultationValue || d.consultation_value_on_file || 'N/A'} | Live: ${d.liveValue || d.live_participant_value || 'N/A'} | Follow-up asked: ${d.followUpQuestion || d.follow_up_question || 'N/A'}`
+            ).join('\n');
+            const ansLines = answers158
+                .map(a => `Q${a.questionNumber || a.index + 1} (${a.questionText || ''}): ${a.liveAnswer || ''}${a.followUpQuestion && a.followUpAnswer ? ` | Follow-Up (${a.followUpQuestion}): ${a.followUpAnswer}` : ''}`)
+                .join('\n');
+            structured158Appendix = [
+                '\n\n==========================================================',
+                `LIVE 158-QUESTION CHECKLIST COVERAGE (${answers158.length}/158 LOGGED)`,
+                '==========================================================',
+                flaggedDiscrepancies.length > 0 ? `FLAGGED CONSULTATION VS. LIVE DISCREPANCIES (${flaggedDiscrepancies.length}):\n${discLines}` : 'FLAGGED CONSULTATION VS. LIVE DISCREPANCIES: None logged interactively.',
+                ansLines ? `\nINTERVIEWER QUESTION-BY-QUESTION NOTES:\n${ansLines}` : ''
+            ].filter(Boolean).join('\n');
+        }
+        const combinedLiveTranscript = `${transcriptText}${structured158Appendix}`;
         
         const audioSizeMB = (audioBuffer.length / (1024 * 1024)).toFixed(2);
-        console.log(`Upload received: ${name} (${location}) | Audio: ${audioSizeMB} MB | Transcript-only: ${isTranscriptOnly} | Consultation Collateral: ${collateralText ? 'YES' : 'NO'}`);
+        console.log(`Upload received: ${name} (${location}) | Audio: ${audioSizeMB} MB | Transcript-only: ${isTranscriptOnly} | Consultation Collateral: ${collateralText ? 'YES' : 'NO'} | 158-Checklist: ${answers158.length}/158 | Discrepancies: ${flaggedDiscrepancies.length}`);
 
         const safeName = name.replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_+|_+$/g, '');
         const filePrefix = (name && name !== 'Unknown')
@@ -5396,9 +5495,9 @@ app.post('/api/upload-audio', memoryUpload.single('audio'), async (req, res) => 
         if (!isTranscriptOnly && audioBuffer.length > 200) {
             console.log(`Received audio buffer of length ${audioBuffer.length}, skipping disk write.`);
         }
-        const initialTranscriptToSave = collateralText && !transcriptText.includes('APRICOT CONSULTATION & INTAKE COLLATERAL')
-            ? `${transcriptText}\n\n${collateralText}`
-            : transcriptText;
+        const initialTranscriptToSave = collateralText && !combinedLiveTranscript.includes('APRICOT CONSULTATION & INTAKE COLLATERAL')
+            ? `${combinedLiveTranscript}\n\n${collateralText}`
+            : combinedLiveTranscript;
         fs.writeFileSync(path.join(dataDir, `${filePrefix}_transcript.txt`), initialTranscriptToSave);
         
         res.status(200).json({ message: 'Audio uploaded successfully. Processing in background...', filePrefix });
@@ -5407,8 +5506,8 @@ app.post('/api/upload-audio', memoryUpload.single('audio'), async (req, res) => 
             console.log(`Starting LLM Phase 1 for ${name} (${filePrefix})...`);
             try {
                 const results = (!isTranscriptOnly && audioBuffer && audioBuffer.length > 200) 
-                    ? await runPhase1WithAudio(audioBuffer, req.file.mimetype || 'audio/webm', name, location, transcriptText, '', collateralText)
-                    : await runPhase1(transcriptText, name, location, '', collateralText);
+                    ? await runPhase1WithAudio(audioBuffer, req.file.mimetype || 'audio/webm', name, location, combinedLiveTranscript, '', collateralText)
+                    : await runPhase1(combinedLiveTranscript, name, location, '', collateralText);
                 if (results.transcript && results.transcript.trim()) {
                     const finalTranscript = collateralText && !results.transcript.includes('APRICOT CONSULTATION & INTAKE COLLATERAL')
                         ? `${results.transcript.trim()}\n\n${collateralText}`
@@ -5420,12 +5519,18 @@ app.post('/api/upload-audio', memoryUpload.single('audio'), async (req, res) => 
                 try {
                     deduplicateAndEnsureScoringHeaders(dataDir);
                 } catch (dedupErr) { /* ignore */ }
+                try {
+                    syncAllParticipantFolders();
+                } catch (syncErr) { /* ignore */ }
                 console.log(`LLM Phase 1 finished for ${name}. Pending review.`);
             } catch (llmErr) {
                 console.error("LLM Phase 1 failed:", llmErr);
                 fs.writeFileSync(path.join(dataDir, `${filePrefix}_error.txt`), `Failed to generate assessment: ${llmErr.message}`);
             }
         } else {
+            try {
+                syncAllParticipantFolders();
+            } catch (syncErr) { /* ignore */ }
             console.warn("GEMINI_API_KEY not found. Skipping LLM pipeline.");
             fs.writeFileSync(path.join(dataDir, `${filePrefix}_error.txt`), `Failed: GEMINI_API_KEY is missing from environment variables.`);
         }
@@ -5863,6 +5968,8 @@ app.post('/api/staff/relapse-plan', authenticateToken, (req, res) => {
     }
 });
 
+
+
 app.post('/api/staff/health-assessment', authenticateToken, (req, res) => {
     if (req.user.role === 'participant') {
         return res.status(403).json({ error: 'Unauthorized' });
@@ -6053,10 +6160,11 @@ app.get('/api/staff/ai-caseload-report', authenticateToken, requireRole('program
             return res.status(500).json({ error: 'GEMINI_API_KEY is not configured or is invalid. Please verify Render Environment Variables.' });
         }
         
+        assertWithinDailyGeminiCap('caseload_report');
         const genAI = new GoogleGenerativeAI(getGeminiApiKey());
         const model = genAI.getGenerativeModel({ 
-            model: "gemini-3.1-pro-preview", 
-            generationConfig: { responseMimeType: "application/json" } 
+            model: getEvalModelName(), 
+            generationConfig: buildBudgetGenerationConfig({ role: 'eval', responseMimeType: "application/json", maxOutputTokens: 8192 })
         });
 
         // 1. Gather active participants
@@ -8128,6 +8236,532 @@ app.post('/api/participant/habit', authenticateToken, (req, res) => {
         res.json({ success: true });
     } catch (e) {
         res.status(500).json({ error: e.message });
+    }
+});
+
+// ============================================================================
+// UNIFIED PARTICIPANT FOLDERS, GATE-FREE BRIEFCASE, DYNAMIC LS/CMI,
+// SCREENING CONSULTATION, VOICE RECOGNITION & COMBINED SUPERVISION REPORT APIs
+// ============================================================================
+const {
+    UNIFIED_BRIEFCASE_SCHEMA,
+    sanitizeParticipantSlug,
+    syncAllParticipantFolders,
+    getParticipantFolderBundle,
+    updateParticipantUnifiedBriefcase
+} = require('./services/participant_folder_manager');
+const {
+    generateDynamicLscmiNextQuestion,
+    evaluateLive158QuestionTurn,
+    buildConsultationAnchorSummary
+} = require('./llm_pipeline');
+const { CM_SESSION_TEMPLATE } = require('./cm_evaluator');
+
+// 1. Per-Participant Folders & Caseload Evaluations
+app.get('/api/participants/folders', (req, res) => {
+    try {
+        const locationFilter = (req.query.location || '').trim().toLowerCase();
+        const trackFilter = (req.query.track || '').trim().toLowerCase();
+        let list = syncAllParticipantFolders();
+        if (locationFilter && locationFilter !== 'all' && locationFilter !== 'statewide') {
+            list = list.filter(p => String(p.location || '').toLowerCase().includes(locationFilter));
+        }
+        if (trackFilter && trackFilter !== 'all') {
+            list = list.filter(p => String(p.track || '').toLowerCase().includes(trackFilter));
+        }
+        res.json({
+            total: list.length,
+            participants: list
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.get('/api/participants/folder/:slug', (req, res) => {
+    try {
+        const bundle = getParticipantFolderBundle(req.params.slug);
+        if (!bundle) {
+            return res.status(404).json({ error: 'Participant folder not found.' });
+        }
+        res.json(bundle);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// 2. Unified Single-Document Gate-Free Briefcase (9 First Shift Waitlist Items + Conditional Medical Logic)
+app.get('/api/briefcase/schema', (req, res) => {
+    res.json(UNIFIED_BRIEFCASE_SCHEMA);
+});
+
+app.get('/api/briefcase/:slug', (req, res) => {
+    try {
+        const bundle = getParticipantFolderBundle(req.params.slug);
+        if (!bundle) {
+            return res.status(404).json({ error: 'Participant not found.' });
+        }
+        res.json({
+            schema: UNIFIED_BRIEFCASE_SCHEMA,
+            briefcase: bundle.briefcase
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/briefcase/:slug', (req, res) => {
+    try {
+        const updated = updateParticipantUnifiedBriefcase(req.params.slug, req.body || {});
+        res.json({
+            success: true,
+            briefcase: updated
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// 3. Screening Consultations -> Eligibility & Auto-Briefcase Creation -> Feeds LS/CMI
+app.get('/api/screening/consultations', (req, res) => {
+    try {
+        const rows = db.prepare('SELECT * FROM screening_consultations ORDER BY created_at DESC LIMIT 100').all();
+        res.json({ consultations: rows });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/screening/consult', (req, res) => {
+    try {
+        const body = req.body || {};
+        const participantName = (body.participant_name || '').trim();
+        if (!participantName) {
+            return res.status(400).json({ error: 'Participant name is required.' });
+        }
+        const slug = sanitizeParticipantSlug(participantName);
+        const location = body.location || 'Charleston';
+        const age = Number(body.age || 30);
+        const releasedWithin12Mo = body.released_within_12_months !== 'no';
+        const pendingChargesCleared = body.pending_charges_status !== 'blocking_unresolved';
+
+        // Update Unified Briefcase directly from Screening Consultation answers
+        const hasChronic = body.has_chronic_health_condition === 'yes' ? 'yes' : 'no';
+        const dlSuspended = (body.state_id_or_dl === 'dl_suspended_has_state_id' || body.state_id_or_dl === 'dl_suspended_no_id' || body.dl_is_suspended === 'yes') ? 'yes' : 'no';
+        const csApplicable = (body.child_support_contact && body.child_support_contact !== 'not_applicable') ? 'yes' : 'no';
+
+        const updatedBriefcase = updateParticipantUnifiedBriefcase(participantName, {
+            has_chronic_health_condition: hasChronic,
+            dl_is_suspended: dlSuspended,
+            child_support_applicable: csApplicable,
+            supervision_officer_details: body.supervision_notes || '',
+            chronic_condition_details: hasChronic === 'yes' ? (body.chronic_condition_notes || '') : '',
+            items: {
+                state_id_or_dl: { value: body.state_id_or_dl || 'missing', notes: body.id_notes || '' },
+                ss_card: { value: body.ss_card || 'missing', notes: '' },
+                birth_certificate: { value: body.birth_certificate || 'missing', notes: '' },
+                chronic_health_and_meds: {
+                    value: hasChronic === 'no' ? 'no_chronic_conditions_na' : (body.chronic_health_and_meds || 'treated_and_has_daily_meds'),
+                    notes: hasChronic === 'no' ? 'No chronic health conditions — medical appointments not required' : (body.chronic_condition_notes || '')
+                },
+                stable_housing: { value: body.stable_housing || 'stable_verified', notes: body.housing_notes || '' },
+                reliable_phone: { value: body.reliable_phone || 'active_verified', notes: body.phone || '' },
+                dmv_suspended_inquiry: {
+                    value: dlSuspended === 'no' ? 'not_applicable_valid' : (body.dmv_suspended_inquiry || 'needs_dmv_visit'),
+                    notes: body.dmv_notes || ''
+                },
+                child_support_contact: { value: body.child_support_contact || 'not_applicable', notes: body.child_support_notes || '' },
+                supervision_information: { value: body.supervision_information || 'active_logged_no_conflict', notes: body.supervision_notes || '' },
+                skillcat_pathway: { value: body.skillcat_pathway || 'HVAC', notes: 'Selected during Screening Consultation' }
+            }
+        });
+
+        // Determine Eligibility Verdict per First Shift Scripts (Section 1.1 & 1.2)
+        let eligibilityDecision = 'reentry_navigation';
+        let ineligibilityReason = '';
+        if (age < 25 || age > 50) {
+            eligibilityDecision = 'resource_coordination';
+            ineligibilityReason = `Outside First Shift age range (Age ${age}; requires ages 25–50). Route to Resource Coordination referrals.`;
+        } else if (!releasedWithin12Mo) {
+            eligibilityDecision = 'resource_coordination';
+            ineligibilityReason = 'Released > 12 months ago. Route to Resource Coordination employer referrals.';
+        } else if (!pendingChargesCleared) {
+            eligibilityDecision = 'reentry_navigation';
+            ineligibilityReason = 'Serious pending charges without PD/PO email clearance. Stabilize in Reentry Navigation while requesting PD/PO email.';
+        } else if (updatedBriefcase.waitlist_ready) {
+            eligibilityDecision = 'first_shift_waitlist';
+            ineligibilityReason = 'All 9 First Shift Waitlist Briefcase requirements verified! Ready for First Shift Waitlist / Cohort Enrollment.';
+        } else {
+            const missingItems = updatedBriefcase.waitlist_checklist.filter(i => !i.ready).map(i => i.title);
+            eligibilityDecision = 'reentry_navigation';
+            ineligibilityReason = `${updatedBriefcase.waitlist_met_count}/9 Waitlist items ready. Start in Reentry Navigation to complete: ${missingItems.join(', ')}.`;
+        }
+
+        const summaryMd = `### Screening Consultation & Waitlist Eligibility Summary
+- **Participant:** ${participantName} (${location}) • **Age:** ${age}
+- **Eligibility Verdict:** **${eligibilityDecision.toUpperCase().replace(/_/g, ' ')}**
+- **First Shift Waitlist Briefcase Score:** **${updatedBriefcase.waitlist_met_count} / 9 Required Items Ready**
+- **Chronic Medical Condition Rule:** ${hasChronic === 'no' ? 'No chronic health conditions (Medical appointment prompts suppressed — N/A)' : `Chronic condition noted (${updatedBriefcase.items.chronic_health_and_meds.value})`}
+- **Routing Rationale:** ${ineligibilityReason}`;
+
+        const info = db.prepare(`
+            INSERT INTO screening_consultations (
+                participant_key, participant_name, location, age, release_timeframe,
+                eligibility_decision, ineligibility_reason, consultation_data_json, summary_markdown
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `).run(
+            slug,
+            participantName,
+            location,
+            age,
+            releasedWithin12Mo ? 'Within 6-12 Months' : 'Over 12 Months',
+            eligibilityDecision,
+            ineligibilityReason,
+            JSON.stringify(body),
+            summaryMd
+        );
+
+        syncAllParticipantFolders();
+
+        res.json({
+            success: true,
+            consultation_id: info.lastInsertRowid,
+            participant_key: slug,
+            eligibility_decision: eligibilityDecision,
+            ineligibility_reason: ineligibilityReason,
+            summary_markdown: summaryMd,
+            briefcase: updatedBriefcase
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// 4. Dynamic LS/CMI Questioning, Probation Planner Behavioral Definitions & Action Plan Feedback Loop
+app.get('/api/lscmi/probation-planner-definitions', (req, res) => {
+    try {
+        const jsonPath = path.join(__dirname, 'manuals', 'probation_planner_behavioral_definitions.json');
+        if (fs.existsSync(jsonPath)) {
+            return res.json(JSON.parse(fs.readFileSync(jsonPath, 'utf8')));
+        }
+        res.json({});
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/lscmi/dynamic-question', async (req, res) => {
+    try {
+        const response = await generateDynamicLscmiNextQuestion(req.body || {});
+        res.json(response);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.get('/api/lscmi/interview-158-turn', (req, res) => res.status(405).json({ error: 'Use POST' }));
+app.get('/api/admin/gemini-budget', (req, res) => {
+    try {
+        res.json(getGeminiBudgetStatus());
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/lscmi/interview-158-turn', async (req, res) => {
+    try {
+        const response = await evaluateLive158QuestionTurn(req.body || {});
+        res.json(response);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/lscmi/feedback-loop', async (req, res) => {
+    try {
+        const {
+            participant_name,
+            location = 'Charleston',
+            agreement_status = 'resolved_via_feedback_loop',
+            disagreed_target = '',
+            participant_objection_quote = '',
+            staff_pivot_strategy = 'switched_target',
+            agreed_replacement_target = '',
+            selected_toolkit_tool = 'STAC (1I)',
+            existing_action_plan = ''
+        } = req.body || {};
+
+        if (!participant_name) {
+            return res.status(400).json({ error: 'participant_name is required.' });
+        }
+        const slug = sanitizeParticipantSlug(participant_name);
+        const bundle = getParticipantFolderBundle(slug);
+        const currentPlan = existing_action_plan || (bundle && bundle.action_plan_md) || '';
+
+        if (agreement_status === 'agreed') {
+            db.prepare(`
+                INSERT INTO action_plan_feedback_loops (
+                    participant_key, participant_name, location, agreement_status,
+                    disagreed_target, participant_objection_quote, staff_pivot_strategy,
+                    agreed_replacement_target, selected_toolkit_tool, revised_action_plan_md
+                ) VALUES (?, ?, ?, 'agreed', 'None', 'Participant reviewed and agreed with Action Plan targets.', 'confirmed_agreement', 'Current Plan Approved', ?, ?)
+            `).run(slug, participant_name, location, selected_toolkit_tool, currentPlan);
+            syncAllParticipantFolders();
+            return res.json({
+                success: true,
+                agreement_status: 'agreed',
+                revised_action_plan_md: currentPlan
+            });
+        }
+
+        // Run collaborative Feedback Loop revision via adjustActionPlan if Gemini key available, or deterministic update
+        const feedbackInstruction = `Participant expressed disagreement with "${disagreed_target}" (Quote: "${participant_objection_quote}"). Staff executed 4-Step Feedback Loop (${staff_pivot_strategy}) and collaboratively agreed to focus on "${agreed_replacement_target}" using Tool Kit intervention "${selected_toolkit_tool}".`;
+        let revisedPlan = currentPlan;
+        if (getGeminiApiKey() && currentPlan) {
+            try {
+                const adj = await adjustActionPlan(
+                    participant_name,
+                    currentPlan,
+                    feedbackInstruction,
+                    bundle?.lscmi_brief_md || '',
+                    {
+                        location,
+                        disagreed_target,
+                        staff_pivot_strategy,
+                        agreed_replacement_target,
+                        selected_toolkit_tool
+                    }
+                );
+                if (adj && adj.participant_case_plan) {
+                    revisedPlan = adj.participant_case_plan;
+                }
+            } catch (e) {
+                console.warn('[Feedback Loop] Fallback deterministic plan update:', e.message);
+            }
+        } else {
+            revisedPlan = `${currentPlan}\n\n---\n### 🔄 Collaborative Action Plan Feedback Loop Update (${new Date().toLocaleDateString('en-US')})\n- **Previous Focus Adjusted:** ${disagreed_target}\n- **Participant Input:** "${participant_objection_quote}"\n- **Agreed New Target:** **${agreed_replacement_target}**\n- **Selected Turn90 CBT Tool Kit Intervention:** **${selected_toolkit_tool}**\n`;
+            db.prepare(`
+                INSERT INTO action_plan_feedback_loops (
+                    participant_key, participant_name, location, agreement_status,
+                    disagreed_target, participant_objection_quote, staff_pivot_strategy,
+                    agreed_replacement_target, selected_toolkit_tool, revised_action_plan_md
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `).run(
+                slug, participant_name, location, agreement_status,
+                disagreed_target, participant_objection_quote, staff_pivot_strategy,
+                agreed_replacement_target, selected_toolkit_tool, revisedPlan
+            );
+            const pDir = path.join(dataDir, 'participants', slug);
+            if (fs.existsSync(pDir)) {
+                fs.writeFileSync(path.join(pDir, 'action_plan.md'), revisedPlan);
+            }
+            syncAllParticipantFolders();
+        }
+
+        res.json({
+            success: true,
+            agreement_status,
+            revised_action_plan_md: revisedPlan
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// 5. Voice Recognition (30-Second Staff Script & Participant LS/CMI Voice Enrollment)
+const STAFF_30S_CALIBRATION_SCRIPT = `Hello, my name is [Full Name], and I work at the [Charleston / Columbia / Spartanburg] center with Turn90. In First Shift and Reentry Navigation, we focus on clear communication, pro-social modeling, and helping participants build their Briefcase and reach stable employment. Remember that our thinking controls our actions: Situation, Thinking, Action, and Consequence. When we pause, ask open-ended questions, and listen carefully, we help everyone in the room practice real skills that work on the job and in everyday life.`;
+
+app.get('/api/voice/profiles', (req, res) => {
+    try {
+        // Ensure core staff roster entries exist in voice_profiles table
+        const defaultStaff = [
+            { id: 'staff_spb_diyoung', name: 'Diyoung Dantzler', location: 'Spartanburg', role: 'Facilitator / Case Manager' },
+            { id: 'staff_col_jenn', name: 'Jenn Jeanquart', location: 'Columbia', role: 'Facilitator / Case Manager' },
+            { id: 'staff_chs_tb', name: 'TB (Terry Brooks)', location: 'Charleston', role: 'Facilitator / Case Manager' },
+            { id: 'staff_rn_daisy', name: 'Daisy Boynton', location: 'Statewide', role: 'Reentry Navigator' },
+            { id: 'staff_chs_terrence', name: 'Terrence Brown', location: 'Charleston', role: 'Program Manager' }
+        ];
+        for (const s of defaultStaff) {
+            const exists = db.prepare('SELECT profile_id FROM voice_profiles WHERE profile_id = ?').get(s.id);
+            if (!exists) {
+                db.prepare(`
+                    INSERT INTO voice_profiles (profile_id, person_type, name, location, role, source_type, audio_file_path, duration_seconds, acoustic_notes)
+                    VALUES (?, 'staff', ?, ?, ?, '30s_script', '', 0, 'Pending 30-second calibration recording')
+                `).run(s.id, s.name, s.location, s.role);
+            }
+        }
+        const profiles = db.prepare('SELECT * FROM voice_profiles ORDER BY person_type DESC, location ASC, name ASC').all();
+        res.json({
+            calibration_script_30s: STAFF_30S_CALIBRATION_SCRIPT,
+            staff_profiles: profiles.filter(p => p.person_type === 'staff'),
+            participant_profiles: profiles.filter(p => p.person_type === 'participant')
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/voice/enroll-staff', memoryUpload.single('audio'), (req, res) => {
+    try {
+        const { staff_name, location = 'Charleston', role = 'Facilitator / Case Manager', profile_id } = req.body || {};
+        if (!staff_name && !profile_id) {
+            return res.status(400).json({ error: 'staff_name or profile_id is required.' });
+        }
+        const pid = profile_id || `staff_${sanitizeParticipantSlug(staff_name).toLowerCase()}`;
+        const staffVoiceDir = path.join(dataDir, 'voice_profiles', 'staff');
+        if (!fs.existsSync(staffVoiceDir)) fs.mkdirSync(staffVoiceDir, { recursive: true });
+
+        let savedPath = '';
+        if (req.file && req.file.buffer) {
+            const ext = (req.file.originalname && path.extname(req.file.originalname)) || '.wav';
+            savedPath = path.join(staffVoiceDir, `${pid}${ext}`);
+            fs.writeFileSync(savedPath, req.file.buffer);
+        } else {
+            savedPath = path.join(staffVoiceDir, `${pid}_enrolled.marker`);
+            fs.writeFileSync(savedPath, `Enrolled 30s calibration profile for ${staff_name} at ${new Date().toISOString()}`);
+        }
+
+        db.prepare(`
+            INSERT OR REPLACE INTO voice_profiles (
+                profile_id, person_type, name, location, role, source_type,
+                audio_file_path, duration_seconds, acoustic_notes, enrolled_at
+            ) VALUES (?, 'staff', ?, ?, ?, '30s_script', ?, 30, 'Enrolled via 30-second Turn90 Staff Calibration Script', CURRENT_TIMESTAMP)
+        `).run(pid, staff_name || pid, location, role, savedPath);
+
+        res.json({
+            success: true,
+            profile_id: pid,
+            audio_file_path: savedPath
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// 6. Combined Supervision Report (SkillCat Module Pathways + Apricot Reports + Data Eval Flagging Template)
+app.get('/api/supervision/combined-report', (req, res) => {
+    try {
+        const locationFilter = (req.query.location || '').trim().toLowerCase();
+        const folders = syncAllParticipantFolders();
+        const supervisionDir = path.resolve(__dirname, '..', '..', '..', 'pipelines', 'supervision-report');
+
+        let skillcatHistory = {};
+        try {
+            const scPath = path.join(supervisionDir, 'skillcat_history.json');
+            if (fs.existsSync(scPath)) skillcatHistory = JSON.parse(fs.readFileSync(scPath, 'utf8'));
+        } catch (e) {}
+
+        const snapshots = skillcatHistory.snapshots || {};
+        const latestDate = Object.keys(snapshots).sort().pop() || null;
+        const skillcatLearners = latestDate ? Object.values(snapshots[latestDate]) : [];
+
+        // Build Data Evaluation Flagging Template rows across all participants
+        const dataFlags = [];
+        for (const p of folders) {
+            if (locationFilter && locationFilter !== 'all' && !String(p.location || '').toLowerCase().includes(locationFilter)) {
+                continue;
+            }
+            const evalFlags = (p.caseload_eval && p.caseload_eval.data_evaluation_flags) || [];
+            for (const f of evalFlags) {
+                dataFlags.push({
+                    participant_key: p.participant_key,
+                    participant_name: p.name,
+                    location: p.location,
+                    track: p.track,
+                    flag_code: f.code,
+                    severity: f.severity,
+                    message: f.message
+                });
+            }
+        }
+
+        // Classroom Do's & Don'ts recent evaluations
+        let classEvals = db.prepare('SELECT id, location, session_title, facilitator_name, class_date, summary_markdown, created_at FROM class_facilitation_evaluations ORDER BY created_at DESC LIMIT 30').all();
+        if (locationFilter && locationFilter !== 'all') {
+            classEvals = classEvals.filter(c => String(c.location || '').toLowerCase().includes(locationFilter));
+        }
+
+        // Case Management Template Adherence recent evaluations
+        let cmEvals = db.prepare('SELECT id, location, session_title, cm_name, apricot_id, session_type, total_score, summary_markdown, created_at FROM case_management_evaluations ORDER BY created_at DESC LIMIT 30').all();
+        if (locationFilter && locationFilter !== 'all') {
+            cmEvals = cmEvals.filter(c => String(c.location || '').toLowerCase().includes(locationFilter));
+        }
+
+        res.json({
+            report_date: latestDate || new Date().toISOString().split('T')[0],
+            skillcat_summary: {
+                snapshot_date: latestDate,
+                total_learners: skillcatLearners.length,
+                flagged_stalled_count: skillcatLearners.filter(l => l.flagged_2_working_days || l.total_courses === 0).length,
+                learners: skillcatLearners
+            },
+            waitlist_readiness_summary: {
+                total_participants: folders.length,
+                waitlist_ready_count: folders.filter(f => f.waitlist_ready).length,
+                stabilizing_count: folders.filter(f => !f.waitlist_ready).length
+            },
+            data_evaluation_flags: dataFlags,
+            recent_classroom_coaching: classEvals,
+            recent_cm_template_evals: cmEvals
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/supervision/refresh-skillcat', async (req, res) => {
+    try {
+        const { execFileSync } = require('child_process');
+        const supervisionDir = path.resolve(__dirname, '..', '..', '..', 'pipelines', 'supervision-report');
+        const pyCode = `
+import sys
+from concurrent.futures import ThreadPoolExecutor
+from datetime import date
+sys.path.insert(0, ${JSON.stringify(supervisionDir)})
+import scrape_skillcat as sc
+html, is_live = sc.fetch_ranked_list_html(interactive_login=False, allow_snapshot_fallback=True, timeout_sec=25)
+emps = sc.parse_training_data_from_html(html, is_live=is_live)
+with ThreadPoolExecutor(max_workers=8) as ex:
+    portfolios = list(ex.map(sc.fetch_employee_portfolio, emps))
+enriched, _ = sc.update_history_and_compute_metrics(portfolios, date.today())
+print(len(enriched))
+`;
+        execFileSync('python3', ['-c', pyCode], { timeout: 45000 });
+        const synced = syncAllParticipantFolders();
+        res.json({ success: true, synced_folders: synced.length });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// 7. Authoritative Templates & Reference Library Endpoint
+app.get('/api/templates/all', (req, res) => {
+    try {
+        const skillsBase = path.resolve(__dirname, '..', '..', '..', '.agents', 'skills');
+        const readRef = (relPath) => {
+            const p = path.join(skillsBase, relPath);
+            return fs.existsSync(p) ? fs.readFileSync(p, 'utf8') : '';
+        };
+        res.json({
+            cm_session_template_steps: CM_SESSION_TEMPLATE,
+            unified_briefcase_schema: UNIFIED_BRIEFCASE_SCHEMA,
+            staff_30s_voice_script: STAFF_30S_CALIBRATION_SCRIPT,
+            markdown_templates: {
+                screening_consultation: readRef('screening-and-briefcase/references/screening_consultation_template.md'),
+                unified_briefcase: readRef('screening-and-briefcase/references/unified_briefcase_spec.md'),
+                cm_session_template: readRef('case-management-evaluation/references/cm_session_template_and_adherence.md'),
+                first_shift_scripts: readRef('case-management-evaluation/references/first_shift_conversation_scripts.md'),
+                class_dos_and_donts: readRef('class-facilitation-coaching/references/facilitator_training_dos_and_donts.md'),
+                class_modeling_vs_roleplay: readRef('class-facilitation-coaching/references/prosocial_modeling_vs_roleplay.md'),
+                synapse_core_practices: readRef('class-facilitation-coaching/references/synapse_core_practices.md'),
+                lscmi_dynamic_questioning: readRef('lscmi-dynamic-assessment/references/dynamic_questioning_and_mi.md'),
+                lscmi_feedback_loop: readRef('lscmi-dynamic-assessment/references/feedback_loop_and_action_plan.md'),
+                data_eval_flagging_template: readRef('program-data-and-supervision-report/references/data_eval_flagging_template.md'),
+                skillcat_pathways: readRef('program-data-and-supervision-report/references/skillcat_pathways_and_flags.md')
+            }
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 });
 

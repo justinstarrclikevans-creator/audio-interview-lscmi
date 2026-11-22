@@ -1,0 +1,22 @@
+{
+  "participant_key": "Malcolm_Kinloch",
+  "name": "Malcolm Kinloch",
+  "location": "Charleston",
+  "track": "reentry_nav",
+  "status": "active",
+  "user_id": null,
+  "client_id": 49,
+  "apricot_id": "81824",
+  "phone": "",
+  "email": "",
+  "files": [],
+  "folder_slug": "Malcolm_Kinloch",
+  "folder_path": "data/participants/Malcolm_Kinloch",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": false,
+  "has_action_plan": false,
+  "waitlist_ready": true,
+  "waitlist_met_count": 9,
+  "data_flags_count": 0,
+  "updated_at": "2026-11-22T17:18:01.630Z"
+}

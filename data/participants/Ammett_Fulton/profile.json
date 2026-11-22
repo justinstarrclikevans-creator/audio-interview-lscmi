@@ -1,0 +1,22 @@
+{
+  "participant_key": "Ammett_Fulton",
+  "name": "Ammett Fulton",
+  "location": "Columbia",
+  "track": "reentry_nav",
+  "status": "archived",
+  "user_id": null,
+  "client_id": 36,
+  "apricot_id": "81324",
+  "phone": "",
+  "email": "",
+  "files": [],
+  "folder_slug": "Ammett_Fulton",
+  "folder_path": "data/participants/Ammett_Fulton",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": false,
+  "has_action_plan": false,
+  "waitlist_ready": false,
+  "waitlist_met_count": 6,
+  "data_flags_count": 1,
+  "updated_at": "2026-11-22T17:18:01.616Z"
+}

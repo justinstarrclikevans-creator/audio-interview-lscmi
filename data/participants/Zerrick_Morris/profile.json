@@ -1,0 +1,30 @@
+{
+  "participant_key": "Zerrick_Morris",
+  "name": "Zerrick Morris",
+  "location": "Columbia",
+  "track": "first_shift",
+  "status": "active",
+  "user_id": null,
+  "client_id": 61,
+  "apricot_id": "82496",
+  "phone": "",
+  "email": "",
+  "files": [
+    "Zerrick_Morris_Columbia_criminal_history.docx",
+    "Zerrick_Morris_Columbia_criminal_history.md",
+    "Zerrick_Morris_Columbia_draft_scoring_form.docx",
+    "Zerrick_Morris_Columbia_draft_scoring_form.md",
+    "Zerrick_Morris_Columbia_interview_guide.docx",
+    "Zerrick_Morris_Columbia_interview_guide.md",
+    "Zerrick_Morris_Columbia_transcript.txt"
+  ],
+  "folder_slug": "Zerrick_Morris",
+  "folder_path": "data/participants/Zerrick_Morris",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": true,
+  "has_action_plan": false,
+  "waitlist_ready": false,
+  "waitlist_met_count": 7,
+  "data_flags_count": 2,
+  "updated_at": "2026-11-22T17:18:01.664Z"
+}

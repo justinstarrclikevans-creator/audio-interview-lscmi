@@ -1,0 +1,30 @@
+{
+  "participant_key": "Nathaniel_Outin_Jr",
+  "name": "Nathaniel Outin Jr.",
+  "location": "Columbia",
+  "track": "first_shift",
+  "status": "active",
+  "user_id": null,
+  "client_id": 56,
+  "apricot_id": "82416",
+  "phone": "",
+  "email": "",
+  "files": [
+    "Nathaniel_Outin_Jr_Columbia_criminal_history.docx",
+    "Nathaniel_Outin_Jr_Columbia_criminal_history.md",
+    "Nathaniel_Outin_Jr_Columbia_draft_scoring_form.docx",
+    "Nathaniel_Outin_Jr_Columbia_draft_scoring_form.md",
+    "Nathaniel_Outin_Jr_Columbia_interview_guide.docx",
+    "Nathaniel_Outin_Jr_Columbia_interview_guide.md",
+    "Nathaniel_Outin_Jr_Columbia_transcript.txt"
+  ],
+  "folder_slug": "Nathaniel_Outin_Jr",
+  "folder_path": "data/participants/Nathaniel_Outin_Jr",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": true,
+  "has_action_plan": false,
+  "waitlist_ready": false,
+  "waitlist_met_count": 8,
+  "data_flags_count": 2,
+  "updated_at": "2026-11-22T17:18:01.649Z"
+}

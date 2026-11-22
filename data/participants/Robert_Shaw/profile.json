@@ -1,0 +1,22 @@
+{
+  "participant_key": "Robert_Shaw",
+  "name": "Robert Shaw",
+  "location": "Charleston",
+  "track": "reentry_nav",
+  "status": "archived",
+  "user_id": null,
+  "client_id": 50,
+  "apricot_id": "82004",
+  "phone": "",
+  "email": "",
+  "files": [],
+  "folder_slug": "Robert_Shaw",
+  "folder_path": "data/participants/Robert_Shaw",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": false,
+  "has_action_plan": false,
+  "waitlist_ready": false,
+  "waitlist_met_count": 7,
+  "data_flags_count": 1,
+  "updated_at": "2026-11-22T17:18:01.632Z"
+}

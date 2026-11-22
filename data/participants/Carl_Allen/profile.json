@@ -1,0 +1,30 @@
+{
+  "participant_key": "Carl_Allen",
+  "name": "Carl Allen",
+  "location": "Spartanburg",
+  "track": "first_shift",
+  "status": "active",
+  "user_id": 83,
+  "client_id": null,
+  "apricot_id": "82567",
+  "phone": "",
+  "email": "carl.allen.82567@firstshift.org",
+  "files": [
+    "Carl_Allen_Spartanburg_criminal_history.docx",
+    "Carl_Allen_Spartanburg_criminal_history.md",
+    "Carl_Allen_Spartanburg_draft_scoring_form.docx",
+    "Carl_Allen_Spartanburg_draft_scoring_form.md",
+    "Carl_Allen_Spartanburg_interview_guide.docx",
+    "Carl_Allen_Spartanburg_interview_guide.md",
+    "Carl_Allen_Spartanburg_transcript.txt"
+  ],
+  "folder_slug": "Carl_Allen",
+  "folder_path": "data/participants/Carl_Allen",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": true,
+  "has_action_plan": false,
+  "waitlist_ready": false,
+  "waitlist_met_count": 6,
+  "data_flags_count": 2,
+  "updated_at": "2026-11-22T17:18:01.591Z"
+}

@@ -1,0 +1,22 @@
+{
+  "participant_key": "Michael_Blunt",
+  "name": "Michael Blunt",
+  "location": "Spartanburg",
+  "track": "first_shift",
+  "status": "archived",
+  "user_id": 40,
+  "client_id": null,
+  "apricot_id": null,
+  "phone": "",
+  "email": "michaelblunt@t90.com",
+  "files": [],
+  "folder_slug": "Michael_Blunt",
+  "folder_path": "data/participants/Michael_Blunt",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": false,
+  "has_action_plan": false,
+  "waitlist_ready": true,
+  "waitlist_met_count": 9,
+  "data_flags_count": 1,
+  "updated_at": "2026-11-22T17:18:01.466Z"
+}

@@ -1,0 +1,964 @@
+{
+  "userid": "549484",
+  "pathway": "HVAC",
+  "pathway_breakdown": {
+    "HVAC": 30,
+    "Plumbing": 16,
+    "Facilities_Maintenance": 19,
+    "Electrical": 20,
+    "Work_Readiness_General": 95,
+    "Commercial_Safety": 7
+  },
+  "learning_plans": [
+    "Week 1 - Turn90"
+  ],
+  "portfolio_link": "https://skillcat.app/local/skillcat/portfolio/?hash=c4540c9e4f6be004d9091ca323b022ba",
+  "last_login": "10 days 3 hours ago",
+  "latest_completion_date": "2026-11-09",
+  "total_hours": 280.5,
+  "completed_count": 187,
+  "completed_last_5_working_days": 0,
+  "daily_delta": 0,
+  "completed_modules": [
+    {
+      "course_name": "HVAC Theory Certification",
+      "completed_date": "2026-11-06",
+      "completed_date_raw": "6 November 2026"
+    },
+    {
+      "course_name": "Commercial HVAC Certification",
+      "completed_date": "2026-11-09",
+      "completed_date_raw": "9 November 2026"
+    },
+    {
+      "course_name": "Plumbing Theory Certification",
+      "completed_date": "2026-11-09",
+      "completed_date_raw": "9 November 2026"
+    },
+    {
+      "course_name": "Appliance Repair Theory Certification",
+      "completed_date": "2026-11-04",
+      "completed_date_raw": "4 November 2026"
+    },
+    {
+      "course_name": "EPA 608 Type 1 Certificate",
+      "completed_date": "2026-10-27",
+      "completed_date_raw": "27 October 2026"
+    },
+    {
+      "course_name": "Identifying Water Line Pipe and Valves",
+      "completed_date": "2026-11-09",
+      "completed_date_raw": "9 November 2026"
+    },
+    {
+      "course_name": "Electrical Flow",
+      "completed_date": "2026-11-09",
+      "completed_date_raw": "9 November 2026"
+    },
+    {
+      "course_name": "Series vs Parallel and Electrical Rules",
+      "completed_date": "2026-11-09",
+      "completed_date_raw": "9 November 2026"
+    },
+    {
+      "course_name": "Intro to DWV and Water Distribution",
+      "completed_date": "2026-11-09",
+      "completed_date_raw": "9 November 2026"
+    },
+    {
+      "course_name": "Plumbing Systems History",
+      "completed_date": "2026-11-09",
+      "completed_date_raw": "9 November 2026"
+    },
+    {
+      "course_name": "Control Systems Basics",
+      "completed_date": "2026-11-09",
+      "completed_date_raw": "9 November 2026"
+    },
+    {
+      "course_name": "Walk-in Freezers Basics",
+      "completed_date": "2026-11-09",
+      "completed_date_raw": "9 November 2026"
+    },
+    {
+      "course_name": "PTAC Unit Basics",
+      "completed_date": "2026-11-09",
+      "completed_date_raw": "9 November 2026"
+    },
+    {
+      "course_name": "Ice Machines Basics",
+      "completed_date": "2026-11-09",
+      "completed_date_raw": "9 November 2026"
+    },
+    {
+      "course_name": "Seasonal Overhauls for Chillers",
+      "completed_date": "2026-11-09",
+      "completed_date_raw": "9 November 2026"
+    },
+    {
+      "course_name": "Installing Chiller Systems",
+      "completed_date": "2026-11-09",
+      "completed_date_raw": "9 November 2026"
+    },
+    {
+      "course_name": "Troubleshooting Air Handling Units",
+      "completed_date": "2026-11-09",
+      "completed_date_raw": "9 November 2026"
+    },
+    {
+      "course_name": "Chiller Startup Procedures",
+      "completed_date": "2026-11-09",
+      "completed_date_raw": "9 November 2026"
+    },
+    {
+      "course_name": "Chiller Systems: Routine Maintenance",
+      "completed_date": "2026-11-09",
+      "completed_date_raw": "9 November 2026"
+    },
+    {
+      "course_name": "Packaged Rooftop Units",
+      "completed_date": "2026-11-09",
+      "completed_date_raw": "9 November 2026"
+    },
+    {
+      "course_name": "Commercial Refrigeration Systems",
+      "completed_date": "2026-11-09",
+      "completed_date_raw": "9 November 2026"
+    },
+    {
+      "course_name": "Air Handling and Distribution: Routine Maintenance",
+      "completed_date": "2026-11-09",
+      "completed_date_raw": "9 November 2026"
+    },
+    {
+      "course_name": "Packaged Rooftop Units: Routine Maintenance",
+      "completed_date": "2026-11-09",
+      "completed_date_raw": "9 November 2026"
+    },
+    {
+      "course_name": "Computer Room Air Conditioning",
+      "completed_date": "2026-11-09",
+      "completed_date_raw": "9 November 2026"
+    },
+    {
+      "course_name": "Air Handling and Distribution",
+      "completed_date": "2026-11-09",
+      "completed_date_raw": "9 November 2026"
+    },
+    {
+      "course_name": "Complete Chiller Systems",
+      "completed_date": "2026-11-06",
+      "completed_date_raw": "6 November 2026"
+    },
+    {
+      "course_name": "Introduction to Commercial Systems",
+      "completed_date": "2026-11-06",
+      "completed_date_raw": "6 November 2026"
+    },
+    {
+      "course_name": "Plumbing Hand Tools",
+      "completed_date": "2026-11-06",
+      "completed_date_raw": "6 November 2026"
+    },
+    {
+      "course_name": "Plumbing System Fundamentals",
+      "completed_date": "2026-11-06",
+      "completed_date_raw": "6 November 2026"
+    },
+    {
+      "course_name": "Basics of Residential Plumbing",
+      "completed_date": "2026-11-06",
+      "completed_date_raw": "6 November 2026"
+    },
+    {
+      "course_name": "Electrical Component Checks",
+      "completed_date": "2026-11-06",
+      "completed_date_raw": "6 November 2026"
+    },
+    {
+      "course_name": "Capacitors and Resistors",
+      "completed_date": "2026-11-06",
+      "completed_date_raw": "6 November 2026"
+    },
+    {
+      "course_name": "Thermostat Tips & Tricks",
+      "completed_date": "2026-11-06",
+      "completed_date_raw": "6 November 2026"
+    },
+    {
+      "course_name": "Electrical Components - Part 2",
+      "completed_date": "2026-11-06",
+      "completed_date_raw": "6 November 2026"
+    },
+    {
+      "course_name": "Thermostats 101",
+      "completed_date": "2026-11-06",
+      "completed_date_raw": "6 November 2026"
+    },
+    {
+      "course_name": "Electrical Components - Part 1",
+      "completed_date": "2026-11-06",
+      "completed_date_raw": "6 November 2026"
+    },
+    {
+      "course_name": "Types of Electrical Motors",
+      "completed_date": "2026-11-06",
+      "completed_date_raw": "6 November 2026"
+    },
+    {
+      "course_name": "HVAC Maintenance Safety",
+      "completed_date": "2026-11-06",
+      "completed_date_raw": "6 November 2026"
+    },
+    {
+      "course_name": "Residential Confined Spaces",
+      "completed_date": "2026-11-06",
+      "completed_date_raw": "6 November 2026"
+    },
+    {
+      "course_name": "Air Quality and Fire Protection Regulations",
+      "completed_date": "2026-11-06",
+      "completed_date_raw": "6 November 2026"
+    },
+    {
+      "course_name": "Hazardous Materials",
+      "completed_date": "2026-11-06",
+      "completed_date_raw": "6 November 2026"
+    },
+    {
+      "course_name": "Personal Protective Equipment",
+      "completed_date": "2026-11-05",
+      "completed_date_raw": "5 November 2026"
+    },
+    {
+      "course_name": "A2L Refrigerants",
+      "completed_date": "2026-11-05",
+      "completed_date_raw": "5 November 2026"
+    },
+    {
+      "course_name": "Personal Safety and Work Practices",
+      "completed_date": "2026-11-05",
+      "completed_date_raw": "5 November 2026"
+    },
+    {
+      "course_name": "Mold Awareness",
+      "completed_date": "2026-11-05",
+      "completed_date_raw": "5 November 2026"
+    },
+    {
+      "course_name": "Vehicle Safety",
+      "completed_date": "2026-11-05",
+      "completed_date_raw": "5 November 2026"
+    },
+    {
+      "course_name": "Emergency Response",
+      "completed_date": "2026-11-05",
+      "completed_date_raw": "5 November 2026"
+    },
+    {
+      "course_name": "Fatigue Management",
+      "completed_date": "2026-11-05",
+      "completed_date_raw": "5 November 2026"
+    },
+    {
+      "course_name": "Asbestos Awareness",
+      "completed_date": "2026-11-05",
+      "completed_date_raw": "5 November 2026"
+    },
+    {
+      "course_name": "Confined Spaces",
+      "completed_date": "2026-11-05",
+      "completed_date_raw": "5 November 2026"
+    },
+    {
+      "course_name": "Lockout and Tagout Safety",
+      "completed_date": "2026-11-05",
+      "completed_date_raw": "5 November 2026"
+    },
+    {
+      "course_name": "Electrical Safety",
+      "completed_date": "2026-11-05",
+      "completed_date_raw": "5 November 2026"
+    },
+    {
+      "course_name": "Proper Lifting and Moving (Back Safety)",
+      "completed_date": "2026-11-04",
+      "completed_date_raw": "4 November 2026"
+    },
+    {
+      "course_name": "Preventing Slips, Trips, and Falls",
+      "completed_date": "2026-11-04",
+      "completed_date_raw": "4 November 2026"
+    },
+    {
+      "course_name": "Ladder Safety",
+      "completed_date": "2026-11-04",
+      "completed_date_raw": "4 November 2026"
+    },
+    {
+      "course_name": "Hand & Power Tool Safety",
+      "completed_date": "2026-11-04",
+      "completed_date_raw": "4 November 2026"
+    },
+    {
+      "course_name": "Hazard Communication",
+      "completed_date": "2026-11-04",
+      "completed_date_raw": "4 November 2026"
+    },
+    {
+      "course_name": "Bloodborne Pathogens",
+      "completed_date": "2026-11-04",
+      "completed_date_raw": "4 November 2026"
+    },
+    {
+      "course_name": "Fire Prevention",
+      "completed_date": "2026-11-04",
+      "completed_date_raw": "4 November 2026"
+    },
+    {
+      "course_name": "Safety Basics",
+      "completed_date": "2026-11-04",
+      "completed_date_raw": "4 November 2026"
+    },
+    {
+      "course_name": "Reading Electrical Drawings & Blueprints",
+      "completed_date": "2026-11-04",
+      "completed_date_raw": "4 November 2026"
+    },
+    {
+      "course_name": "Advanced Electrical Troubleshooting",
+      "completed_date": "2026-11-02",
+      "completed_date_raw": "2 November 2026"
+    },
+    {
+      "course_name": "Basic Wiring",
+      "completed_date": "2026-11-02",
+      "completed_date_raw": "2 November 2026"
+    },
+    {
+      "course_name": "Intro to Electrical Troubleshooting",
+      "completed_date": "2026-11-02",
+      "completed_date_raw": "2 November 2026"
+    },
+    {
+      "course_name": "Wiring Diagrams",
+      "completed_date": "2026-11-02",
+      "completed_date_raw": "2 November 2026"
+    },
+    {
+      "course_name": "Using A Multimeter",
+      "completed_date": "2026-11-02",
+      "completed_date_raw": "2 November 2026"
+    },
+    {
+      "course_name": "MEP Systems and Construction Finishing",
+      "completed_date": "2026-11-02",
+      "completed_date_raw": "2 November 2026"
+    },
+    {
+      "course_name": "Basics of Carpentry",
+      "completed_date": "2026-11-02",
+      "completed_date_raw": "2 November 2026"
+    },
+    {
+      "course_name": "Introduction to Construction Rules and Regulations",
+      "completed_date": "2026-11-02",
+      "completed_date_raw": "2 November 2026"
+    },
+    {
+      "course_name": "Preparing Site Reports and Documentations",
+      "completed_date": "2026-11-02",
+      "completed_date_raw": "2 November 2026"
+    },
+    {
+      "course_name": "Key Hand Tools",
+      "completed_date": "2026-11-02",
+      "completed_date_raw": "2 November 2026"
+    },
+    {
+      "course_name": "Layout Math for Techs",
+      "completed_date": "2026-11-02",
+      "completed_date_raw": "2 November 2026"
+    },
+    {
+      "course_name": "Jobsite Math: Conversions & Calculations",
+      "completed_date": "2026-11-02",
+      "completed_date_raw": "2 November 2026"
+    },
+    {
+      "course_name": "Trades Math: Strength in Numbers",
+      "completed_date": "2026-11-02",
+      "completed_date_raw": "2 November 2026"
+    },
+    {
+      "course_name": "Heat & Temperature Basics",
+      "completed_date": "2026-11-02",
+      "completed_date_raw": "2 November 2026"
+    },
+    {
+      "course_name": "Chemistry Basics",
+      "completed_date": "2026-11-02",
+      "completed_date_raw": "2 November 2026"
+    },
+    {
+      "course_name": "Ranges Basics",
+      "completed_date": "2026-11-02",
+      "completed_date_raw": "2 November 2026"
+    },
+    {
+      "course_name": "Garbage Disposal Basics",
+      "completed_date": "2026-11-02",
+      "completed_date_raw": "2 November 2026"
+    },
+    {
+      "course_name": "Microwave Basics",
+      "completed_date": "2026-10-30",
+      "completed_date_raw": "30 October 2026"
+    },
+    {
+      "course_name": "Washers Basics",
+      "completed_date": "2026-10-30",
+      "completed_date_raw": "30 October 2026"
+    },
+    {
+      "course_name": "Dishwasher Basics",
+      "completed_date": "2026-10-30",
+      "completed_date_raw": "30 October 2026"
+    },
+    {
+      "course_name": "Central Vacuum Cleaners Basics",
+      "completed_date": "2026-10-30",
+      "completed_date_raw": "30 October 2026"
+    },
+    {
+      "course_name": "Kitchen Exhaust Hoods Basics",
+      "completed_date": "2026-10-30",
+      "completed_date_raw": "30 October 2026"
+    },
+    {
+      "course_name": "Dryers Basics",
+      "completed_date": "2026-10-30",
+      "completed_date_raw": "30 October 2026"
+    },
+    {
+      "course_name": "Washing Machines: Installation & Maintenance",
+      "completed_date": "2026-10-30",
+      "completed_date_raw": "30 October 2026"
+    },
+    {
+      "course_name": "Ovens Basics",
+      "completed_date": "2026-10-30",
+      "completed_date_raw": "30 October 2026"
+    },
+    {
+      "course_name": "Domestic Refrigerators Basics",
+      "completed_date": "2026-10-29",
+      "completed_date_raw": "29 October 2026"
+    },
+    {
+      "course_name": "Domestic Refrigerators - Basic Troubleshooting and Maintenance",
+      "completed_date": "2026-10-29",
+      "completed_date_raw": "29 October 2026"
+    },
+    {
+      "course_name": "Flooring Care Products",
+      "completed_date": "2026-10-29",
+      "completed_date_raw": "29 October 2026"
+    },
+    {
+      "course_name": "Flooring Care Equipment",
+      "completed_date": "2026-10-29",
+      "completed_date_raw": "29 October 2026"
+    },
+    {
+      "course_name": "Types of Flooring Materials",
+      "completed_date": "2026-10-29",
+      "completed_date_raw": "29 October 2026"
+    },
+    {
+      "course_name": "Customer Soft Skills and Sales",
+      "completed_date": "2026-10-29",
+      "completed_date_raw": "29 October 2026"
+    },
+    {
+      "course_name": "Housecall Pro for Education Certification",
+      "completed_date": "2026-10-29",
+      "completed_date_raw": "29 October 2026"
+    },
+    {
+      "course_name": "Customer Interaction",
+      "completed_date": "2026-10-29",
+      "completed_date_raw": "29 October 2026"
+    },
+    {
+      "course_name": "Essential HVAC Tools",
+      "completed_date": "2026-10-29",
+      "completed_date_raw": "29 October 2026"
+    },
+    {
+      "course_name": "Electrical and Mechanical Codes",
+      "completed_date": "2026-10-29",
+      "completed_date_raw": "29 October 2026"
+    },
+    {
+      "course_name": "Lubricants",
+      "completed_date": "2026-10-29",
+      "completed_date_raw": "29 October 2026"
+    },
+    {
+      "course_name": "Fasteners",
+      "completed_date": "2026-10-29",
+      "completed_date_raw": "29 October 2026"
+    },
+    {
+      "course_name": "Fabrication Tools",
+      "completed_date": "2026-10-29",
+      "completed_date_raw": "29 October 2026"
+    },
+    {
+      "course_name": "Reading HVAC Drawings and Blueprints",
+      "completed_date": "2026-10-29",
+      "completed_date_raw": "29 October 2026"
+    },
+    {
+      "course_name": "Basics of Drawings & Blueprints",
+      "completed_date": "2026-10-29",
+      "completed_date_raw": "29 October 2026"
+    },
+    {
+      "course_name": "Brazing & Soldering",
+      "completed_date": "2026-10-28",
+      "completed_date_raw": "28 October 2026"
+    },
+    {
+      "course_name": "Piping",
+      "completed_date": "2026-10-28",
+      "completed_date_raw": "28 October 2026"
+    },
+    {
+      "course_name": "National Electrical Code",
+      "completed_date": "2026-10-28",
+      "completed_date_raw": "28 October 2026"
+    },
+    {
+      "course_name": "Electrical Soldering",
+      "completed_date": "2026-10-28",
+      "completed_date_raw": "28 October 2026"
+    },
+    {
+      "course_name": "Electrical Components and Devices",
+      "completed_date": "2026-10-28",
+      "completed_date_raw": "28 October 2026"
+    },
+    {
+      "course_name": "Introduction to Residential Power Generators",
+      "completed_date": "2026-10-28",
+      "completed_date_raw": "28 October 2026"
+    },
+    {
+      "course_name": "Fittings and Valves",
+      "completed_date": "2026-10-28",
+      "completed_date_raw": "28 October 2026"
+    },
+    {
+      "course_name": "Reading Piping Prints",
+      "completed_date": "2026-10-28",
+      "completed_date_raw": "28 October 2026"
+    },
+    {
+      "course_name": "Plumbing Codes Overview",
+      "completed_date": "2026-10-28",
+      "completed_date_raw": "28 October 2026"
+    },
+    {
+      "course_name": "Introduction to Residential Water Heaters",
+      "completed_date": "2026-10-28",
+      "completed_date_raw": "28 October 2026"
+    },
+    {
+      "course_name": "Introduction to Drain Cleaning",
+      "completed_date": "2026-10-28",
+      "completed_date_raw": "28 October 2026"
+    },
+    {
+      "course_name": "Introduction to Sump Pumps and Sewage Ejector Pumps",
+      "completed_date": "2026-10-28",
+      "completed_date_raw": "28 October 2026"
+    },
+    {
+      "course_name": "Residential Gas Piping",
+      "completed_date": "2026-10-28",
+      "completed_date_raw": "28 October 2026"
+    },
+    {
+      "course_name": "Plumbing Demolition",
+      "completed_date": "2026-10-28",
+      "completed_date_raw": "28 October 2026"
+    },
+    {
+      "course_name": "Toilet Troubleshooting and Replacement",
+      "completed_date": "2026-10-28",
+      "completed_date_raw": "28 October 2026"
+    },
+    {
+      "course_name": "Installing and Testing Fixtures",
+      "completed_date": "2026-10-28",
+      "completed_date_raw": "28 October 2026"
+    },
+    {
+      "course_name": "Plumbing Fixtures",
+      "completed_date": "2026-10-28",
+      "completed_date_raw": "28 October 2026"
+    },
+    {
+      "course_name": "Mini Split Basics",
+      "completed_date": "2026-10-27",
+      "completed_date_raw": "27 October 2026"
+    },
+    {
+      "course_name": "Heat Pumps Basics",
+      "completed_date": "2026-10-27",
+      "completed_date_raw": "27 October 2026"
+    },
+    {
+      "course_name": "Gas Boiler Basics",
+      "completed_date": "2026-10-27",
+      "completed_date_raw": "27 October 2026"
+    },
+    {
+      "course_name": "Airflow Temperature Checks",
+      "completed_date": "2026-10-27",
+      "completed_date_raw": "27 October 2026"
+    },
+    {
+      "course_name": "Blowers & Fans",
+      "completed_date": "2026-10-27",
+      "completed_date_raw": "27 October 2026"
+    },
+    {
+      "course_name": "Airflow Design",
+      "completed_date": "2026-10-27",
+      "completed_date_raw": "27 October 2026"
+    },
+    {
+      "course_name": "Air Tests Made Easy",
+      "completed_date": "2026-10-27",
+      "completed_date_raw": "27 October 2026"
+    },
+    {
+      "course_name": "Airflow Tools",
+      "completed_date": "2026-10-27",
+      "completed_date_raw": "27 October 2026"
+    },
+    {
+      "course_name": "Mastering Airflow",
+      "completed_date": "2026-10-27",
+      "completed_date_raw": "27 October 2026"
+    },
+    {
+      "course_name": "Humidity Measurements",
+      "completed_date": "2026-10-26",
+      "completed_date_raw": "26 October 2026"
+    },
+    {
+      "course_name": "Temperature Measurements",
+      "completed_date": "2026-10-26",
+      "completed_date_raw": "26 October 2026"
+    },
+    {
+      "course_name": "Airflow & Ventilation Basics",
+      "completed_date": "2026-10-26",
+      "completed_date_raw": "26 October 2026"
+    },
+    {
+      "course_name": "Airflow Systems",
+      "completed_date": "2026-10-26",
+      "completed_date_raw": "26 October 2026"
+    },
+    {
+      "course_name": "Switches and Relays",
+      "completed_date": "2026-10-26",
+      "completed_date_raw": "26 October 2026"
+    },
+    {
+      "course_name": "Solenoids",
+      "completed_date": "2026-10-26",
+      "completed_date_raw": "26 October 2026"
+    },
+    {
+      "course_name": "Transformers",
+      "completed_date": "2026-10-26",
+      "completed_date_raw": "26 October 2026"
+    },
+    {
+      "course_name": "Motor Circuit Calculations",
+      "completed_date": "2026-10-26",
+      "completed_date_raw": "26 October 2026"
+    },
+    {
+      "course_name": "Components in the Trades",
+      "completed_date": "2026-10-26",
+      "completed_date_raw": "26 October 2026"
+    },
+    {
+      "course_name": "Electricity Fundamentals",
+      "completed_date": "2026-10-26",
+      "completed_date_raw": "26 October 2026"
+    },
+    {
+      "course_name": "Heat & Refrigerant Basics",
+      "completed_date": "2026-10-26",
+      "completed_date_raw": "26 October 2026"
+    },
+    {
+      "course_name": "Nameplate Reading Guide",
+      "completed_date": "2026-10-26",
+      "completed_date_raw": "26 October 2026"
+    },
+    {
+      "course_name": "Refrigeration Components",
+      "completed_date": "2026-10-26",
+      "completed_date_raw": "26 October 2026"
+    },
+    {
+      "course_name": "Split System ID",
+      "completed_date": "2026-10-26",
+      "completed_date_raw": "26 October 2026"
+    },
+    {
+      "course_name": "Analog Gauges",
+      "completed_date": "2026-10-23",
+      "completed_date_raw": "23 October 2026"
+    },
+    {
+      "course_name": "Low-Loss Hose Fittings",
+      "completed_date": "2026-10-23",
+      "completed_date_raw": "23 October 2026"
+    },
+    {
+      "course_name": "Refrigeration: From Vapor to Liquid",
+      "completed_date": "2026-10-23",
+      "completed_date_raw": "23 October 2026"
+    },
+    {
+      "course_name": "Refrigeration 101",
+      "completed_date": "2026-10-23",
+      "completed_date_raw": "23 October 2026"
+    },
+    {
+      "course_name": "Refrigeration Cycle - NATE Training",
+      "completed_date": "2026-10-23",
+      "completed_date_raw": "23 October 2026"
+    },
+    {
+      "course_name": "Superheat, Subcool, and Heat Transfer",
+      "completed_date": "2026-10-23",
+      "completed_date_raw": "23 October 2026"
+    },
+    {
+      "course_name": "Mechanical Troubleshooting",
+      "completed_date": "2026-10-22",
+      "completed_date_raw": "22 October 2026"
+    },
+    {
+      "course_name": "PT Charts and Psychrometrics",
+      "completed_date": "2026-10-22",
+      "completed_date_raw": "22 October 2026"
+    },
+    {
+      "course_name": "Gas Furnace Basics",
+      "completed_date": "2026-10-22",
+      "completed_date_raw": "22 October 2026"
+    },
+    {
+      "course_name": "Complete Residential Systems",
+      "completed_date": "2026-10-22",
+      "completed_date_raw": "22 October 2026"
+    },
+    {
+      "course_name": "Refrigeration Equipment",
+      "completed_date": "2026-10-22",
+      "completed_date_raw": "22 October 2026"
+    },
+    {
+      "course_name": "Heating Systems",
+      "completed_date": "2026-10-22",
+      "completed_date_raw": "22 October 2026"
+    },
+    {
+      "course_name": "Heating Basics",
+      "completed_date": "2026-10-22",
+      "completed_date_raw": "22 October 2026"
+    },
+    {
+      "course_name": "Refrigeration Basics",
+      "completed_date": "2026-10-22",
+      "completed_date_raw": "22 October 2026"
+    },
+    {
+      "course_name": "Intro to HVAC",
+      "completed_date": "2026-10-22",
+      "completed_date_raw": "22 October 2026"
+    },
+    {
+      "course_name": "How to Clean an HVAC Unit Cabinet",
+      "completed_date": "2026-10-22",
+      "completed_date_raw": "22 October 2026"
+    },
+    {
+      "course_name": "Beat the AC Drain Clog",
+      "completed_date": "2026-10-21",
+      "completed_date_raw": "21 October 2026"
+    },
+    {
+      "course_name": "Inspect & Clean an Evaporator Coil",
+      "completed_date": "2026-10-21",
+      "completed_date_raw": "21 October 2026"
+    },
+    {
+      "course_name": "Clean an HVAC Blower Wheel",
+      "completed_date": "2026-10-21",
+      "completed_date_raw": "21 October 2026"
+    },
+    {
+      "course_name": "Clean & Maintain an AC Condenser",
+      "completed_date": "2026-10-21",
+      "completed_date_raw": "21 October 2026"
+    },
+    {
+      "course_name": "HVAC Pre-Maintenance Checklist",
+      "completed_date": "2026-10-21",
+      "completed_date_raw": "21 October 2026"
+    },
+    {
+      "course_name": "Maintenance Mistakes to Avoid",
+      "completed_date": "2026-10-21",
+      "completed_date_raw": "21 October 2026"
+    },
+    {
+      "course_name": "Perform a Residential HVAC Tune-Up",
+      "completed_date": "2026-10-21",
+      "completed_date_raw": "21 October 2026"
+    },
+    {
+      "course_name": "Condensate Float Switches",
+      "completed_date": "2026-10-21",
+      "completed_date_raw": "21 October 2026"
+    },
+    {
+      "course_name": "Ductless System Parts",
+      "completed_date": "2026-10-21",
+      "completed_date_raw": "21 October 2026"
+    },
+    {
+      "course_name": "Identifying Fuses & Breakers",
+      "completed_date": "2026-10-21",
+      "completed_date_raw": "21 October 2026"
+    },
+    {
+      "course_name": "Choosing Measurement Tools",
+      "completed_date": "2026-10-21",
+      "completed_date_raw": "21 October 2026"
+    },
+    {
+      "course_name": "Interview Skills",
+      "completed_date": "2026-10-20",
+      "completed_date_raw": "20 October 2026"
+    },
+    {
+      "course_name": "Exploring the Plumbing Trade",
+      "completed_date": "2026-10-20",
+      "completed_date_raw": "20 October 2026"
+    },
+    {
+      "course_name": "HVAC Career Path Intro",
+      "completed_date": "2026-10-20",
+      "completed_date_raw": "20 October 2026"
+    },
+    {
+      "course_name": "Intro to Commercial Driving and Licensing",
+      "completed_date": "2026-10-20",
+      "completed_date_raw": "20 October 2026"
+    },
+    {
+      "course_name": "Introduction to Masonry",
+      "completed_date": "2026-10-20",
+      "completed_date_raw": "20 October 2026"
+    },
+    {
+      "course_name": "Intro to Elevators and Elevator Technicians",
+      "completed_date": "2026-10-20",
+      "completed_date_raw": "20 October 2026"
+    },
+    {
+      "course_name": "Intro to Solar",
+      "completed_date": "2026-10-19",
+      "completed_date_raw": "19 October 2026"
+    },
+    {
+      "course_name": "Intro to Roofing",
+      "completed_date": "2026-10-19",
+      "completed_date_raw": "19 October 2026"
+    },
+    {
+      "course_name": "Intro to Welding",
+      "completed_date": "2026-10-19",
+      "completed_date_raw": "19 October 2026"
+    },
+    {
+      "course_name": "Introduction to being an Electrician Apprentice",
+      "completed_date": "2026-10-19",
+      "completed_date_raw": "19 October 2026"
+    },
+    {
+      "course_name": "Apartment Make-Ready",
+      "completed_date": "2026-10-19",
+      "completed_date_raw": "19 October 2026"
+    },
+    {
+      "course_name": "Intro to Flooring Care and Maintenance",
+      "completed_date": "2026-10-19",
+      "completed_date_raw": "19 October 2026"
+    },
+    {
+      "course_name": "Intro to Multifamily Residential (Apartment) Maintenance",
+      "completed_date": "2026-10-19",
+      "completed_date_raw": "19 October 2026"
+    },
+    {
+      "course_name": "Residential System Types",
+      "completed_date": "2026-10-16",
+      "completed_date_raw": "16 October 2026"
+    },
+    {
+      "course_name": "Reading Pressure & Temp",
+      "completed_date": "2026-10-16",
+      "completed_date_raw": "16 October 2026"
+    },
+    {
+      "course_name": "Basic Mechanics",
+      "completed_date": "2026-10-16",
+      "completed_date_raw": "16 October 2026"
+    },
+    {
+      "course_name": "Intro to Forklift Operation",
+      "completed_date": "2026-10-16",
+      "completed_date_raw": "16 October 2026"
+    },
+    {
+      "course_name": "Painting",
+      "completed_date": "2026-10-16",
+      "completed_date_raw": "16 October 2026"
+    },
+    {
+      "course_name": "Basic Construction",
+      "completed_date": "2026-10-14",
+      "completed_date_raw": "14 October 2026"
+    }
+  ],
+  "recent_modules_last_5_days": [],
+  "stalled": true,
+  "flags": [
+    "FLAG-SKILLCAT-STALL: No modules completed in last 2 working days"
+  ]
+}

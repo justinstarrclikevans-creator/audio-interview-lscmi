@@ -1,0 +1,22 @@
+{
+  "participant_key": "Michael_Maness",
+  "name": "Michael Maness",
+  "location": "Spartanburg",
+  "track": "reentry_nav",
+  "status": "archived",
+  "user_id": 76,
+  "client_id": 44,
+  "apricot_id": "81457",
+  "phone": "",
+  "email": "michael.maness.81457@firstshift.org",
+  "files": [],
+  "folder_slug": "Michael_Maness",
+  "folder_path": "data/participants/Michael_Maness",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": false,
+  "has_action_plan": false,
+  "waitlist_ready": false,
+  "waitlist_met_count": 6,
+  "data_flags_count": 1,
+  "updated_at": "2026-11-22T17:18:01.560Z"
+}

@@ -1,0 +1,25 @@
+{
+  "participant_key": "Marcus_Johnson",
+  "participant_name": "Marcus Johnson",
+  "location": "Charleston",
+  "track": "reentry_nav",
+  "folder_path": "data/participants/Marcus_Johnson",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": false,
+  "has_action_plan": true,
+  "action_plan_agreement": "agreed",
+  "waitlist_ready": false,
+  "waitlist_score": "5/9",
+  "medical_appointments_applicable": false,
+  "skillcat_pathway": "HVAC",
+  "skillcat_modules_completed": 0,
+  "cm_notes_count": 0,
+  "data_evaluation_flags": [
+    {
+      "code": "FLAG-WAITLIST-GAP",
+      "severity": "warning",
+      "message": "5/9 First Shift Waitlist Briefcase items ready. Missing: 1. State ID or Driver's License (DL), 2. Social Security Card, 3. Birth Certificate"
+    }
+  ],
+  "updated_at": "2026-11-22T17:18:01.684Z"
+}

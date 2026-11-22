@@ -1,0 +1,22 @@
+{
+  "participant_key": "William_Countee_III",
+  "name": "William Countee III",
+  "location": "Charleston",
+  "track": "reentry_nav",
+  "status": "active",
+  "user_id": null,
+  "client_id": 23,
+  "apricot_id": "66058",
+  "phone": "",
+  "email": "",
+  "files": [],
+  "folder_slug": "William_Countee_III",
+  "folder_path": "data/participants/William_Countee_III",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": false,
+  "has_action_plan": false,
+  "waitlist_ready": false,
+  "waitlist_met_count": 6,
+  "data_flags_count": 1,
+  "updated_at": "2026-11-22T17:18:01.594Z"
+}

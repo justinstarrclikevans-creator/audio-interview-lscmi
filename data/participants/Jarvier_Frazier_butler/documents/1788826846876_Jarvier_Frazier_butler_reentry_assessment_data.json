@@ -1,0 +1,130 @@
+{
+  "detected_flags": [
+    {
+      "category": "Cognitive / Attitude",
+      "flag": "Procriminal Justification & Remorse Neutralization",
+      "evidence": "Stated in case notes: 'the bad ones I do feel some kind of remorse, but some of them I feel are justified.' Neutralizes guilt under pressure.",
+      "severity": "high",
+      "navigator_recommendation": "Apply Turn90 Modeling Neutrality Standard (1.5). Do not challenge or debate statements regarding past offenses. Use open-ended, reflective questions to guide him to examine how justifying rules leads to loss of freedom and separation from family."
+    },
+    {
+      "category": "Cognitive / Attitude",
+      "flag": "Cut-Off Thinking Pattern Under Frustration",
+      "evidence": "Documented history of walking away from responsibilities and jobs when structural barriers (e.g., transportation failures) become overwhelming.",
+      "severity": "high",
+      "navigator_recommendation": "Use CBT cognitive restructuring and Carey Guides to build problem-solving micro-steps before frustration reaches a boiling point. Emphasize early communication with staff before walking away."
+    },
+    {
+      "category": "Stability Risk",
+      "flag": "Transportation Barrier & Suspended Driver's License",
+      "evidence": "Suspended driver's license; previous employment in cleanup and cooking ended due to transportation failures.",
+      "severity": "high",
+      "navigator_recommendation": "Set up immediate CARTA transit passes and route planning to Shield Ministries and job sites. Connect with Father to Father Project for driver's license restoration support."
+    },
+    {
+      "category": "Substance / Health",
+      "flag": "Medication Continuity & Historical Alcohol Relapse Risk",
+      "evidence": "Requires daily Remeron (mirtazapine). Historical alcohol misuse directly co-occurred with major community supervision violations.",
+      "severity": "medium",
+      "navigator_recommendation": "Connect with Welvista for continuous 30/90-day medication supply. Incorporate alcohol relapse prevention into his weekly wellness and CBT plan."
+    },
+    {
+      "category": "Supervision / Legal",
+      "flag": "Unresolved Warrants / Pending Charges Uncertainty",
+      "evidence": "Participant reported: 'I might have pending charges, I don't know.' History of severe arrest escalations.",
+      "severity": "medium",
+      "navigator_recommendation": "Perform an immediate court record check through legal partners (SC Legal Services) to clarify active warrants or pending court dates to avoid surprise custody events."
+    }
+  ],
+  "top_criminogenic_domains": [
+    "Antisocial Cognition (Justifying / Rationalizations)",
+    "School / Employment Deficits (Unemployed past 12 months)",
+    "Antisocial Personality Pattern (Impulsivity / Authority Sensitivity)"
+  ],
+  "stability_status": "at_risk",
+  "navigator_case_plan_md": "# Re-entry Navigation Case Plan: Jarvier Xavier Frazier-Butler\n\n**Participant Profile:** Jarvier Xavier Frazier-Butler | **Age:** 24 | **Supervision:** State Probation (Charleston County)  \n**Housing:** Shield Ministries Cottage Housing (High Stability) | **LS/CMI Risk Level:** High (24/43)  \n**Primary Clinical Target:** Antisocial Cognition & Workplace Stabilization  \n\n---\n\n## 1. Executive Summary & Dynamic Needs Assessment\nJarvier presents a **High Risk / High Needs** profile with strong motivation tied to family unification and stability. While his housing at Shield Ministries is currently highly stable, his primary dynamic risk factors include **Antisocial Cognition** (*Justifying* and *Cut-Off* thinking patterns), **Workplace Deficits** (0 payroll months in last 12), and **Authority Sensitivity** rooted in childhood family trauma. Static risk (juvenile record, past convictions) is noted but excluded from treatment targeting.\n\n### Acute Triage Items (First 30 Days):\n1. **Medication Continuity:** Secure uninterrupted supply of Remeron (mirtazapine) via Welvista / Fetter Health Care.\n2. **Transportation Infrastructure:** Map CARTA bus routes for program attendance; initiate license restoration work.\n3. **Legal Clarification:** Verify whether pending charges/warrants exist to preserve probation status.\n4. **Program Fee Coordination:** Establish fee-deferral or transitional stipend plan for Shield Ministries fees.\n\n---\n\n## 2. Clinical & Facilitation Coaching Plan (Turn90 CBT Standards)\n\n* **Modeling Neutrality (Standard 1.5):** When Jarvier displays rationalizations ('some crimes are justified'), staff must remain non-judgmental. Avoid debating ethics or morality. Utilize reflective inquiry: *\"When you held that rule in the past, did it get you closer to being with your family or did it cost you your freedom?\"*\n* **Managing Frustration & Resistance (Standards 3.2 & 18.0):** Address his *Cut Off* pattern early. Frame all program expectations around his core self-interests: maintaining independence, providing for his kids, and avoiding probation sanctions.\n* **Authority Sensitivity Trauma-Informed Approach:** Given his history of resisting arrest and emotional volatility with law enforcement, staff must maintain a predictable, collaborative, and non-confrontational coaching style. Reinforce his current positive relationship with his probation officer.\n\n---\n\n## 3. Measurable Action Goals\n\n* **Goal 1 (Health & Stability):** Secure a 90-day refill of Remeron through Welvista by Week 2.\n* **Goal 2 (Transit & Legal):** Attend an intake session with Father to Father Project for driver's license restoration and child support alignment by Week 3.\n* **Goal 3 (Employment Placement):** Complete 2 interviews with fair-chance employers in demolition, landscape enhancement, or logistics by Week 4.\n* **Goal 4 (CBT Mastery):** Complete Carey Guides modules on *Justifying* and *Problem-Solving* with 80%+ compliance by Week 4.",
+  "participant_guide_md": "# My Fresh Start Action & Resource Guide: Jarvier Frazier-Butler\n\n**Welcome to First Shift / Turn90 Re-entry Support!**  \nJarvier, this guide is built to support your vision: staying free, providing for your children and loved ones, and building a strong, lasting career in the Lowcountry. You have solid experience in construction cleanup, demolition, and cooking—and with stable housing at Shield Ministries, you are in a great position to take control of your future.\n\n---\n\n## 1. Local Community Resources For Your Fresh Start\n\n### 🚌 Public Transit & Getting Around\n* **CARTA Transit Passes & Route Mapping**  \n  * **Services:** Fixed-route buses and workforce shuttle connections across Charleston and North Charleston.  \n  * **Phone:** (843) 724-7420  \n  * **Address:** Downtown / North Charleston Hubs  \n  * **Link:** [Visit CARTA Website](https://ridecarta.com) | [Directions](https://maps.google.com/?q=Charleston+Area+Regional+Transportation+Authority)  \n  * **Next Step:** Obtain your monthly CARTA pass at the transit hub and map your weekly bus route to First Shift and job interviews.\n\n### ⚖️ Driver's License Restoration & Legal Support\n* **Center for Fathering / Father to Father Project**  \n  * **Services:** Assistance with driver's license restoration, child support modifications, and life coaching for dads.  \n  * **Phone:** (843) 744-2126  \n  * **Address:** 4925 Lacross Rd, North Charleston, SC 29406  \n  * **Link:** [Visit Father to Father Website](https://scfathersandfamilies.com) | [Directions](https://maps.google.com/?q=4925+Lacross+Rd,+North+Charleston,+SC+29406)  \n  * **Next Step:** Schedule an intake appointment to review your driver's license reinstatement path.\n\n* **SC Legal Services - Charleston Office**  \n  * **Services:** Free legal aid, court record clarification, and tenant rights support.  \n  * **Phone:** (843) 720-7044  \n  * **Address:** 2803 Carner Ave, North Charleston, SC 29405  \n  * **Link:** [Visit SC Legal Website](https://sclegal.org) | [Directions](https://maps.google.com/?q=2803+Carner+Ave,+North+Charleston,+SC+29405)  \n  * **Next Step:** Request a free background check review to clear up any questions regarding pending charges.\n\n### 💊 Healthcare & Medication Assistance\n* **Welvista Statewide Prescription Assistance**  \n  * **Services:** Free 30/90-day delivery of maintenance prescription medications (including Remeron) for uninsured SC residents.  \n  * **Phone:** (803) 933-9183  \n  * **Link:** [Visit Welvista Website](https://welvista.org)  \n  * **Next Step:** Fill out the online/paper application with your navigator to set up free mail delivery for your prescriptions.\n\n* **Fetter Health Care Network**  \n  * **Services:** Affordable primary care, dental, and behavioral health services on a sliding fee scale.  \n  * **Phone:** (843) 722-4112  \n  * **Address:** 51 Nassau St, Charleston, SC 29403  \n  * **Link:** [Visit Fetter Health Website](https://fetterhealthcare.org) | [Directions](https://maps.google.com/?q=51+Nassau+St,+Charleston,+SC+29403)  \n  * **Next Step:** Establish a local primary care doctor to manage health checkups and prescriptions.\n\n---\n\n## 2. Target Fair-Chance Job Matches\n\nHere are vetted local employers offering competitive pay, steady shifts, and fair-chance opportunities that fit your background in physical work, cleanup, and site operations:\n\n### 1. Lowcountry Framing & Carpentry Pros\n* **Role:** Jobsite Laborer / Framing Apprentice  \n* **Pay Rate:** $19.00 – $25.00 / hour  \n* **Shift:** 6:30 AM – 3:00 PM (Monday – Friday, optional Saturday OT)  \n* **Why It Fits:** Excellent match for your construction cleanup/demolition background. Fair-chance employer focusing on work ethic and daily punctuality. Provides tool reimbursement allowances.  \n* **Apply Link:** [Apply Online / View Careers Page](https://www.indeed.com/jobs?q=framing+carpentry&l=Charleston%2C+SC)\n\n### 2. Palmetto Logistics & Distribution Hub\n* **Role:** Order Selector / Warehouse Associate  \n* **Pay Rate:** $18.00 – $22.50 / hour  \n* **Shift:** Day Shift (6:30 AM – 3:00 PM)  \n* **Why It Fits:** Active second-chance hiring policy with structured day shifts that fit public transit routes. Includes on-site OSHA forklift certification training.  \n* **Apply Link:** [Apply Online / View Careers Page](https://www.indeed.com/jobs?q=warehouse+logistics&l=Charleston%2C+SC)\n\n### 3. Yardnique\n* **Role:** Landscape Enhancement Crew Member  \n* **Pay Rate:** Competitive Market Rate  \n* **Shift:** Full-Time Year-Round Day Shift  \n* **Location:** Ladson, SC  \n* **Why It Fits:** Hands-on outdoor physical labor utilizing your stamina and outdoor work skills. Year-round employment stability.  \n* **Apply Link:** [Apply Online / View Careers Page](https://www.yardnique.com/careers/)\n\n### 4. Brock Cabinets\n* **Role:** Delivery Staff I  \n* **Pay Rate:** $17.00 – $19.00 / hour  \n* **Shift:** Day Shift  \n* **Location:** North Charleston, SC  \n* **Why It Fits:** Involves staging, loading, and delivering cabinet orders. Works out of North Charleston near public transit lines.  \n* **Apply Link:** [Apply Online / View Careers Page](https://www.brockcabinets.com/)\n\n---\n\n## 3. Your 4-Week Step-by-Step Action Checklist\n\n### Week 1: Immediate Stabilization & Transit Setup\n- [ ] Confirm daily medication setup through Welvista or Fetter Health Care.\n- [ ] Obtain CARTA monthly transit pass and map daily bus travel times.\n- [ ] Check in with state probation officer and share your First Shift schedule.\n\n### Week 2: Legal Clarity & Skill Building\n- [ ] Attend Father to Father Project intake for driver's license restoration.\n- [ ] Complete legal check with SC Legal Services regarding open records.\n- [ ] Complete CBT Carey Guide module on managing frustration and problem-solving.\n\n### Week 3: Employment Applications & Resume Readiness\n- [ ] Finalize resume with your Navigator highlighting cleanup, demolition, and general labor skills.\n- [ ] Submit online applications to **Lowcountry Framing** and **Palmetto Logistics**.\n- [ ] Practice mock interviews focusing on positive self-talk and professional communication.\n\n### Week 4: Interviews & Career Placement\n- [ ] Attend scheduled job interviews with fair-chance hiring partners.\n- [ ] Establish a paycheck savings plan for program fees and family support.\n- [ ] Celebrate 30-day program milestones with your First Shift support team!",
+  "recommended_referrals": [
+    {
+      "resourceName": "Welvista (Prescription Assistance)",
+      "category": "Healthcare",
+      "contact": "(803) 933-9183 • Statewide Mail-Order",
+      "websiteUrl": "https://welvista.org",
+      "actionStep": "Submit income verification form with Navigator to receive continuous 90-day supplies of mirtazapine/Remeron at zero cost."
+    },
+    {
+      "resourceName": "Center for Fathering / Father to Father Project",
+      "category": "Legal / ID",
+      "contact": "(843) 744-2126 • 4925 Lacross Rd, North Charleston, SC 29406",
+      "websiteUrl": "https://scfathersandfamilies.com",
+      "actionStep": "Schedule driver's license restoration consultation and review child support alignment options."
+    },
+    {
+      "resourceName": "CARTA Public Transit",
+      "category": "Food / Transit",
+      "contact": "(843) 724-7420 • Charleston Tri-County Area",
+      "websiteUrl": "https://ridecarta.com",
+      "actionStep": "Pick up monthly bus pass and map transit route from Shield Ministries housing to First Shift and interview sites."
+    },
+    {
+      "resourceName": "SC Legal Services - Charleston Office",
+      "category": "Legal / ID",
+      "contact": "(843) 720-7044 • 2803 Carner Ave, North Charleston, SC 29405",
+      "websiteUrl": "https://sclegal.org",
+      "actionStep": "Request civil legal review to confirm no active warrants or open court dates exist in state records."
+    },
+    {
+      "resourceName": "Charleston Center (DAODAS)",
+      "category": "Recovery",
+      "contact": "(843) 958-3300 • 5 Charleston Center Dr, Charleston, SC 29401",
+      "websiteUrl": "https://charlestoncounty.org/departments/charleston-center/",
+      "actionStep": "Enroll in outpatient peer support / relapse prevention group to maintain alcohol sobriety."
+    }
+  ],
+  "matched_employers": [
+    {
+      "company": "Lowcountry Framing & Carpentry Pros",
+      "role": "Jobsite Laborer / Framing Apprentice",
+      "pay": "$19.00 – $25.00 / hr",
+      "shift": "6:30 AM – 3:00 PM",
+      "careersUrl": "https://www.indeed.com/jobs?q=framing+carpentry&l=Charleston%2C+SC",
+      "matchReason": "Directly matches Jarvier's background in demolition and cleanup. Fair-chance employer focused on work ethic and offering rapid skill advancement."
+    },
+    {
+      "company": "Palmetto Logistics & Distribution Hub",
+      "role": "Order Selector / Warehouse Associate",
+      "pay": "$18.00 – $22.50 / hr",
+      "shift": "Day Shift (6:30 AM – 3:00 PM)",
+      "careersUrl": "https://www.indeed.com/jobs?q=warehouse+logistics&l=Charleston%2C+SC",
+      "matchReason": "Structured day shift accessible via public transit, offers on-site forklift certification, and maintains active fair-chance hiring practices."
+    },
+    {
+      "company": "Yardnique",
+      "role": "Landscape Enhancement Crew Member",
+      "pay": "Competitive / Market Rate",
+      "shift": "Full-Time Day Shift",
+      "careersUrl": "https://www.yardnique.com/careers/",
+      "matchReason": "Strong alignment with Jarvier's physical labor experience and desire for full-time, stable outdoor work in the Charleston metro area."
+    },
+    {
+      "company": "Brock Cabinets",
+      "role": "Delivery Staff I",
+      "pay": "$17.00 – $19.00 / hr",
+      "shift": "Day Shift",
+      "careersUrl": "https://www.brockcabinets.com/",
+      "matchReason": "Entry-level warehouse/delivery staging position in North Charleston; suits physical ability and team operations experience."
+    }
+  ],
+  "assessmentData": {
+    "participantName": "Jarvier Frazier-butler",
+    "location": "Charleston",
+    "interviewTranscript": "CASE MANAGEMENT BRIEF (INTERNAL)\nParticipant Case Plan: Jarvier Xavier Frazier-Butler\nCONFIDENTIAL - STAFF-FACING CASE ROADMAP Page 1 of 2\nParticipant: Jarvier Xavier Frazier-Butler Date of Birth: June 2002 (Age: 24)\nReentry Agency: Shield Ministries Reentry Program Supervision Type: State Probation (Charleston County)\n1. RISK PROFILE\nOverall Risk/Need Level: HIGH (LS/CMI Total Score: 24 / 43)\nJarvier represents a High Risk profile. Supervision intensity should be highly structured, focusing on targeting dynamic criminogenic\nneeds through cognitive-behavioral coaching and skill-building. (Note: Criminal History has been excluded from the primary target\ndomains below per user directive.)\nNeed Priority Criminogenic Domain Key Subcomponent Indicators\n1 (Primary) Antisocial Personality Pattern History of recurrent physical violence (Assault & Battery High\nAggravated, Assault 1st, Resisting Arrest/Assaulting Police) and\nweapons use. Admitted impulsivity and high frustration sensitivity.\n2 (Secondary) School / Work Currently unemployed; 0 payroll months worked in the last 12 months.\nDisciplinary history in school (both suspended and expelled). Left past\ncleanup/cooking jobs due to transportation issues.\n3 (Tertiary) Antisocial Cognition Neutralizes guilt and exhibits procriminal justification ('some of my\ncrimes are justified'). Strong egocentric worldview and rationalizations\nfor delinquent behaviors under pressure.\n2. BEHAVIORAL INDICATORS\nBehavioral indicators represent how Jarvier's criminogenic risk factors manifest in daily life. Understanding these patterns prepares\nstaff to anticipate friction points and select coaching interventions.\nBehavioral Component Observed Manifestation & Thinking Patterns\nTypical Triggers Transportation failures, structural instability (eviction history), unemployment, and perceived disrespect\nor challenging situations from authority figures.\nEscalation Tendencies Recurrent physical violence and aggressive resistance. When facing legal or community supervision\npressure, he has historically escalated to physical fights and resisting arrest.\nThinking Pattern: JUSTIFYING Neutralizes criminal guilt. Specifically states: 'the bad ones I do feel some kind of remorse, but some of\nthem I feel are justified.' This allows him to bypass prosocial morals when facing crises.\nThinking Pattern: CUT OFF A tendency to give up or walk away from responsibilities when things become highly frustrating or when\nstructural barriers (like transportation) seem insurmountable.\nAuthority Response Style Highly sensitive and defensive. Has a documented record of assaulting and fighting police officers\nserving process, though currently reports a highly cooperative stance with his PO.\n\n-- 1 of 3 --\n\nCASE MANAGEMENT BRIEF - CONFIDENTIAL BUTLER, JARVIER XAVIER FRAZIER\nCONFIDENTIAL - STAFF-FACING CASE ROADMAP Page 2 of 2\n3. PATTERN OVER TIME\nDelinquency Trajectory: Jarvier's justice involvement began exceptionally early, with a first arrest at age 10. His history contains\na dense juvenile record which he is unable to fully recall, followed by a severe escalation in adulthood. He has been incarcerated\nupon conviction, recently completing a two-year prison term under a DOC sentence (Burglary 2nd/Assault 1st).\nCommunity Supervision Violations: His community supervision history is marked by instability. He has had his probation and\nparole suspended/revoked, and was arrested on supervision for public intoxication, malicious property damage, and pedestrian in\nthe roadway, which co-occurred with an armed robbery the same night. This trajectory highlights a pattern of rapid escalation from\nminor property offenses to severe physical violence.\n4. ACUTE / EMERGENCY NEEDS\nThese immediate stabilization needs must be addressed during his first 30 days to facilitate program compliance:\n• Transportation Stabilization: His driver's license is suspended. He currently relies on walking or unreliable public transit. He\nneeds immediate scheduling support, bus passes, and route mapping to attend Shield Ministries' programs regularly.\n• Medication Compliance: He takes Remron (mirtazapine) daily. Reentry staff must verify he has an uninterrupted supply of his\nmedication and access to medical providers.\n• Financial/Program Fee Debt: He has immediate obligations to pay program fees to Shield Ministries. Lacking a payroll job, he\nrequires rapid transitional employment or fee-deferral options to prevent financial crisis.\n5. STRUCTURAL STABILITY FACTORS\n• Housing Stability: High stability. He is currently residing in 'college' or Shield Ministries cottage housing and expresses immense\nsatisfaction ('I love it'). This safe, structured environment is a major protective factor.\n• Education: Highly stable. Holds a GED and has completed 12th grade, leaving him well-prepared for vocational training without\nacademic remedial barriers.\n• Employment History: Unstable but skilled. Possesses experience in construction cleanup, demolition cleanup, and cooking.\nJobs typically ended due to a lack of reliable transportation. He holds a strong desire to work.\n• Substance Use: Historically used alcohol which contributed to his severe arrest on active supervision. He has been sober during\nincarceration, but needs relapse prevention as his work and social circles expand.\n6. LEGAL & PLACEMENT CONSTRAINTS\n• Supervision Schedule: Subject to active state probation. Requires coordination of program times with probation officer visits\n(whom he reports is fair and reasonable).\n• Pending Charges: He reports 'I might have pending charges, I don't know.' Staff must conduct immediate legal advocacy and a\nrecords check to clarify any unresolved warrants or pending court dates.\n• Placement Safety: No Sex Offender Registry requirements. However, his history of severe physical violence and resisting arrest\nrequires careful monitoring in group environments to manage anger/conflict triggers.\n7. RESPONSIVITY & ENGAGEMENT PROFILE\n• Coaching Style: Supportive & Cognitive-Behavioral: Jarvier is highly motivated to work and lead a law-abiding life, and he\ndeeply loves his family (wife/girlfriend and children). Staff should leverage this family motivation in case planning. Use\nnon-confrontational CBT (e.g., MRT or Carey Guides) to address his Justifying and Cut Off thinking patterns.\n• Trauma-Informed Approach: He has a severe history of childhood family abuse, neglect, and removal from the home by DSS.\nThis trauma likely drives his authority sensitivity and emotional reactivity. Staff must maintain a calm, predictable, and supportive\ndemeanor.\n• Authority Figure Sensitivity: Due to his history of resisting and assaulting police officers, aggressive or overly confrontational\nsupervision will trigger a defensive, defiant response. Reentry coaches should emphasize collaboration and problem-solving,\n\n-- 2 of 3 --\n\nCASE MANAGEMENT BRIEF - CONFIDENTIAL BUTLER, JARVIER XAVIER FRAZIER\nCONFIDENTIAL - STAFF-FACING CASE ROADMAP Page 3 of 2\nbuilding on his positive view of his current probation worker.\n\n-- 3 of 3 --\n\n",
+    "statedGoals": "First Shift graduation, prosocial stabilization, career placement",
+    "identifiedNeeds": [
+      "Prosocial Modeling",
+      "Workplace Stabilization"
+    ],
+    "livingSituation": "Transitional / Community Housing",
+    "legalStatus": "Active Community Supervision"
+  }
+}

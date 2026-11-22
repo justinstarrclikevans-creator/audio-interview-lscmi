@@ -1,0 +1,19 @@
+{
+  "participant_key": "Irby_Dewitt",
+  "participant_name": "Irby Dewitt",
+  "location": "Columbia",
+  "track": "reentry_nav",
+  "folder_path": "data/participants/Irby_Dewitt",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": false,
+  "has_action_plan": false,
+  "action_plan_agreement": "pending_review",
+  "waitlist_ready": true,
+  "waitlist_score": "9/9",
+  "medical_appointments_applicable": false,
+  "skillcat_pathway": "HVAC",
+  "skillcat_modules_completed": 0,
+  "cm_notes_count": 0,
+  "data_evaluation_flags": [],
+  "updated_at": "2026-11-22T17:18:01.637Z"
+}

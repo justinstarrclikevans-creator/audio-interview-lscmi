@@ -1,21 +1,455 @@
-const { getGeminiApiKey, assertValidGeminiApiKey } = require('./env_config');
+const {
+    getGeminiApiKey,
+    assertValidGeminiApiKey,
+    getEvalModelName,
+    getTranscribeModelName,
+    getFastModelName,
+    buildBudgetGenerationConfig,
+    assertWithinDailyGeminiCap
+} = require('./env_config');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const fs = require('fs');
 const path = require('path');
+const { db } = require('./db');
+const {
+    sanitizeParticipantSlug,
+    getParticipantFolderBundle,
+    updateParticipantUnifiedBriefcase,
+    syncAllParticipantFolders
+} = require('./services/participant_folder_manager');
+const { stripReferenceExampleContamination } = require('./facilitation_evaluator');
+
+const skillsRootDir = path.resolve(__dirname, '..', '..', '..', '.agents', 'skills');
+
+// Load ONLY the requested LS/CMI domain reference (Progressive Disclosure)
+function loadSingleLscmiDomainReference(domainCode = '01-criminal-history') {
+    try {
+        const domPath = path.join(skillsRootDir, 'lscmi-dynamic-assessment', 'references', 'domains', `${domainCode}.md`);
+        if (fs.existsSync(domPath)) {
+            return fs.readFileSync(domPath, 'utf8');
+        }
+    } catch (e) {}
+    return '';
+}
+
+// Dynamic LS/CMI Turn-by-Turn Questioning & Discrepancy Engine
+async function generateDynamicLscmiNextQuestion({
+    clientName = 'Participant',
+    location = 'Charleston',
+    currentDomain = '01-criminal-history',
+    conversationHistory = [],
+    intakeAnchors = {},
+    claimsLog = [],
+    discrepancyAttemptsOnCurrentTopic = 0
+}) {
+    const DOMAIN_SEQUENCE = [
+        { code: '01-criminal-history', title: '1.1 Criminal History & Supervision' },
+        { code: '02-education-employment', title: '1.2 Education & Employment' },
+        { code: '03-family-marital', title: '1.3 Family & Marital Relationships' },
+        { code: '04-leisure-recreation', title: '1.4 Leisure & Recreation (Typical Weekday/Weekend)' },
+        { code: '05-companions', title: '1.5 Companions & Social Support' },
+        { code: '06-alcohol-drug', title: '1.6 Alcohol & Substance Use' },
+        { code: '07-procriminal-attitude', title: '1.7 Attitude, Values & Authority' },
+        { code: '08-antisocial-pattern', title: '1.8 Coping, Impulsivity & Frustration Tolerance' }
+    ];
+
+    const folderBundle = getParticipantFolderBundle(clientName);
+    const mergedAnchors = {
+        ...(folderBundle?.screening_consultation?.latest_screening || {}),
+        ...(folderBundle?.briefcase?.items || {}),
+        ...intakeAnchors
+    };
+
+    // Progressive Disclosure: Load ONLY the active domain's scoring criteria + Probation Planner behavioral definitions
+    const domainReference = loadSingleLscmiDomainReference(currentDomain);
+    const curIdx = Math.max(0, DOMAIN_SEQUENCE.findIndex(d => d.code === currentDomain));
+    const nextDomainObj = DOMAIN_SEQUENCE[Math.min(DOMAIN_SEQUENCE.length - 1, curIdx + 1)];
+
+    // Fallback deterministic question if no Gemini key is configured in local test
+    if (!getGeminiApiKey()) {
+        return {
+            move_type: 'probe_deeper',
+            active_domain: currentDomain,
+            next_domain: currentDomain,
+            discrepancy_detected: false,
+            discrepancy_details: null,
+            matched_probation_planner_definitions: [],
+            extracted_claims: [],
+            reflection_and_question: `I appreciate you walking me through that. Thinking about ${DOMAIN_SEQUENCE[curIdx]?.title || currentDomain}, walk me through a specific recent situation and how you handled it day-to-day.`
+        };
+    }
+
+    assertWithinDailyGeminiCap('lscmi_dynamic_question');
+    const model = getFastPipelineModel();
+    const prompt = `You are a skilled Turn90 LS/CMI Dynamic Interviewer trained in Motivational Interviewing (MI), SYNAPSE (Situate, Yield, Navigate, Activate), and CBT with Justice-Involved Clients.
+Participant: ${clientName} (${location})
+Active LS/CMI Domain: ${DOMAIN_SEQUENCE[curIdx]?.title || currentDomain}
+Next LS/CMI Domain (if current domain has sufficient evidence): ${nextDomainObj.title} (${nextDomainObj.code})
+Discrepancy Probes Already Attempted on This Topic: ${discrepancyAttemptsOnCurrentTopic} (MAX 1 ALLOWED — if >= 1, do NOT probe discrepancy again; log unresolved_discrepancy and move on).
+
+=== STRICT ANTI-HALLUCINATION & ZERO-EXAMPLE-LEAKAGE POLICY ===
+- Never pull or cite examples, character names, or scenarios from reference manuals.
+- Base every claim and behavioral definition match strictly on what ${clientName} said in the conversation history below.
+
+=== PRE-LOADED SCREENING CONSULTATION & BRIEFCASE ANCHORS ===
+${JSON.stringify(mergedAnchors, null, 2)}
+
+=== CLAIMS LOGGED SO FAR IN THIS INTERVIEW ===
+${JSON.stringify(claimsLog, null, 2)}
+
+=== ACTIVE DOMAIN REFERENCE & PROBATION PLANNER BEHAVIORAL DEFINITIONS ===
+${domainReference}
+
+=== RECENT CONVERSATION TURNS ===
+${conversationHistory.slice(-8).map(t => `${t.role === 'interviewer' ? 'Interviewer' : clientName}: ${t.text}`).join('\n')}
+
+TASK (2-Step Silent Analysis -> 1 Open-Ended MI Question):
+1. Analyze ${clientName}'s last response:
+   - Extract any concrete factual claims (frequency, recency, impact).
+   - Check if it matches any **Probation and Parole Treatment Planner Behavioral Definitions** listed in the active domain reference above (cite verbatim quote from ${clientName}).
+   - Check if it contradicts the Pre-Loaded Screening/Record Anchors or an earlier claim in Claims Logged So Far.
+2. Decide ONE move ("move_type"):
+   - "gentle_discrepancy": If a contradiction was detected AND Discrepancy Probes Already Attempted < 1. Use SYNAPSE Navigate / Double-Sided Reflection or "I want to make sure my timeline is right..." — NEVER say "You contradicted yourself" or sound confrontational.
+   - "probe_deeper": If the answer was vague, minimized, or lacks concrete detail (who, when, how often, impact) needed to score the active LS/CMI domain. Ask for a specific episode ("Walk me through the last time...", "What does a typical Tuesday look like?").
+   - "reflect_and_bridge": If the participant shared an emotional or sensitive struggle — validate with Situated Empathy & Yielding before asking an open question.
+   - "advance_domain": If we have sufficient behavioral evidence for ${DOMAIN_SEQUENCE[curIdx]?.title}, summarize in 1 warm sentence and ask the opening open-ended question for ${nextDomainObj.title}.
+3. Write "reflection_and_question": Start with a brief, non-judgmental reflection, followed by ONE open-ended, non-challenging question (never stack multiple questions).
+
+Return ONE valid JSON object with this exact schema:
+{
+  "move_type": "probe_deeper" | "gentle_discrepancy" | "reflect_and_bridge" | "advance_domain",
+  "active_domain": "${currentDomain}",
+  "next_domain": "${currentDomain} or ${nextDomainObj.code}",
+  "domain_sufficient": false,
+  "discrepancy_detected": false,
+  "unresolved_discrepancy": false,
+  "discrepancy_details": "null or brief description of the mismatch between anchor/claim A and claim B",
+  "matched_probation_planner_definitions": [
+    {
+      "problem_area": "e.g. IMPULSIVITY or AUTHORITY CONFLICTS",
+      "behavioral_definition": "Exact behavioral definition matched from Probation Planner",
+      "verbatim_quote": "Exact words spoken by participant"
+    }
+  ],
+  "extracted_claims": [
+    { "domain": "${currentDomain}", "claim": "Factual summary of claim", "quote": "Verbatim quote" }
+  ],
+  "reflection_and_question": "Your 1-sentence reflection followed by ONE open-ended question..."
+}`;
+
+    const result = await model.generateContent(prompt);
+    const parsed = safeJsonParse(result.response.text()) || {};
+    parsed.reflection_and_question = stripReferenceExampleContamination(parsed.reflection_and_question || '', JSON.stringify(conversationHistory));
+    return parsed;
+}
+
+// Map any of the 158 LS/CMI Audio Intake questions (1-based qNum) to its Central Eight domain for progressive disclosure
+function mapQuestionIndexToLscmiDomain(questionIndex = 0, questionText = '') {
+    const qNum = Number(questionIndex) + 1;
+    if ((qNum >= 1 && qNum <= 11) || (qNum >= 106 && qNum <= 127)) {
+        return '01-criminal-history';
+    }
+    if ((qNum >= 12 && qNum <= 20) || (qNum >= 50 && qNum <= 59) || (qNum >= 138 && qNum <= 157)) {
+        return '02-education-employment';
+    }
+    if ((qNum >= 21 && qNum <= 25) || qNum === 128 || (qNum >= 133 && qNum <= 135)) {
+        return '03-family-marital';
+    }
+    if (qNum >= 26 && qNum <= 28) {
+        return '04-leisure-recreation';
+    }
+    if ((qNum >= 29 && qNum <= 33) || qNum === 136) {
+        return '05-companions';
+    }
+    if ((qNum >= 34 && qNum <= 37) || (qNum >= 129 && qNum <= 132)) {
+        return '06-alcohol-drug';
+    }
+    if ((qNum >= 38 && qNum <= 43) || qNum === 137) {
+        return '07-procriminal-attitude';
+    }
+    const t = String(questionText || '').toLowerCase();
+    if (/alcohol|drink|drug|marijuana|weed|cocaine|meth|opiate|substance|sober|relapse/.test(t)) return '06-alcohol-drug';
+    if (/job|work|employ|school|grade|diploma|ged|boss|supervisor|income|money|skill/.test(t)) return '02-education-employment';
+    if (/arrest|convict|incarcerat|probation|parole|supervision|charge|court|jail|prison/.test(t)) return '01-criminal-history';
+    return '08-antisocial-pattern';
+}
+
+function buildConsultationAnchorSummary(clientName) {
+    const anchors = {
+        screening_consultation: null,
+        unified_briefcase: null,
+        apricot_consultation: null
+    };
+    try {
+        const bundle = getParticipantFolderBundle(clientName);
+        if (bundle) {
+            if (bundle.screening_consultation && bundle.screening_consultation.latest_screening) {
+                anchors.screening_consultation = bundle.screening_consultation.latest_screening;
+            }
+            if (bundle.briefcase && bundle.briefcase.items) {
+                const compactBriefcase = {};
+                for (const [k, v] of Object.entries(bundle.briefcase.items)) {
+                    compactBriefcase[k] = v && v.value ? `${v.value}${v.notes ? ` (${v.notes})` : ''}` : '';
+                }
+                anchors.unified_briefcase = compactBriefcase;
+            }
+        }
+    } catch (e) {}
+    try {
+        const { getParticipantConsultationLscmiContext } = require('./services/apricot_eval_engine');
+        const ctx = getParticipantConsultationLscmiContext(clientName);
+        if (ctx) {
+            anchors.apricot_consultation = {
+                recordId: ctx.recordId,
+                center: ctx.center,
+                consultationDate: ctx.consultationDate,
+                domainCrosswalk: ctx.domainCrosswalk || {},
+                collateralSnippet: (ctx.collateralPromptText || '').slice(0, 2500)
+            };
+        }
+    } catch (e) {}
+    return anchors;
+}
+
+// Deterministic fallback discrepancy check (ensures re-ask discrepancy flags still work if API key is missing/offline)
+function detectDeterministicConsultationDiscrepancy(questionText, liveAnswer, anchors) {
+    const q = String(questionText || '').toLowerCase();
+    const a = String(liveAnswer || '').toLowerCase();
+    if (!a || a.length < 2) return null;
+
+    const bc = anchors?.unified_briefcase || {};
+    const cw = anchors?.apricot_consultation?.domainCrosswalk || {};
+    const scRaw = JSON.stringify(anchors?.screening_consultation || '').toLowerCase();
+
+    // 1. Driver's license / ID check
+    if (/license|dl\b|driver/.test(q)) {
+        const bcId = String(bc.state_id_or_dl || '').toLowerCase();
+        if (bcId.includes('suspended') && /\b(valid|good|active|clean|not suspended|have my license)\b/.test(a) && !/suspended/.test(a)) {
+            return {
+                consultation_value: bc.state_id_or_dl,
+                live_value: liveAnswer,
+                details: 'Consultation/Briefcase indicates DL is suspended, while participant stated license is valid/active.',
+                follow_up: 'I want to make sure my notes are accurate—on the screening notes there was a mention of a suspended license, and you mentioned your license is good right now. Walk me through where things stand with the DMV so I don\'t put the wrong info down.'
+            };
+        }
+        if (bcId.includes('valid_dl') && /\b(suspended|revoked|no license|never had)\b/.test(a)) {
+            return {
+                consultation_value: bc.state_id_or_dl,
+                live_value: liveAnswer,
+                details: 'Consultation/Briefcase lists a valid Driver\'s License, while participant stated it is suspended or missing.',
+                follow_up: 'Just to make sure I have the right status—our initial screening listed a valid license, and just now you mentioned it\'s suspended/missing. When did that change?'
+            };
+        }
+    }
+
+    // 2. Housing check
+    if (/address|housing|live|staying|homeless|shelter/.test(q)) {
+        const bcHouse = String(bc.stable_housing || '').toLowerCase();
+        if ((bcHouse.includes('unhoused') || bcHouse.includes('temporary') || scRaw.includes('shelter') || scRaw.includes('motel')) && /\b(stable|own place|lease|apartment|no issues)\b/.test(a)) {
+            return {
+                consultation_value: bc.stable_housing || 'Temporary/Unstable housing on screening',
+                live_value: liveAnswer,
+                details: 'Screening consultation noted temporary/unstable housing, while participant reported stable housing.',
+                follow_up: 'Earlier at screening there was a note about housing still getting settled, and today you mentioned things are stable. Help me picture where you\'re sleeping night-to-night right now so we make sure nothing gets in the way.'
+            };
+        }
+    }
+
+    // 3. Arrests / Criminal history / Supervision check
+    if (/arrest|convict|probation|parole|supervision|charge|pending/.test(q)) {
+        const recText = String(cw.criminalHistory?.arrestsAndConvictions || cw.criminalHistory?.supervisionStatus || '').toLowerCase();
+        if ((recText.includes('probation') || recText.includes('parole') || scRaw.includes('active_logged') || scRaw.includes('pending_charges')) && /\b(no supervision|not on probation|never arrested|no arrests|clean record|maxed out)\b/.test(a)) {
+            return {
+                consultation_value: cw.criminalHistory?.supervisionStatus || bc.supervision_information || 'Active supervision/charges noted on consultation',
+                live_value: liveAnswer,
+                details: 'Consultation/intake records note supervision or charges, while participant denied supervision/arrests.',
+                follow_up: 'I want to make sure I have your timeline completely straight—on the consultation sheet there was a note about supervision/charges, and you just mentioned you\'re off supervision. Walk me through when that wrapped up so I have accurate dates.'
+            };
+        }
+    }
+
+    // 4. Alcohol / Drug check
+    if (/alcohol|drug|marijuana|weed|cocaine|meth|opiate|substance/.test(q)) {
+        const subText = String(cw.alcoholDrug?.substanceSummary || '').toLowerCase();
+        if ((subText.includes('thc') || subText.includes('marijuana') || subText.includes('positive') || subText.includes('history')) && /\b(never|none|no drug|never used|nothing at all)\b/.test(a)) {
+            return {
+                consultation_value: cw.alcoholDrug?.substanceSummary || 'Prior substance/screen note in consultation',
+                live_value: liveAnswer,
+                details: 'Consultation/collateral notes reference substance history or positive screen, while participant denied any use.',
+                follow_up: 'I\'m not here to judge—I just want to make sure our Briefcase matches reality. On the consultation notes there was a mention of past use or a screen; tell me a little about your history with that so we support you accurately.'
+            };
+        }
+    }
+
+    return null;
+}
+
+// Live Dynamic 158-Question Audio Intake Engine (Always re-asks consultation topics to flag discrepancies)
+async function evaluateLive158QuestionTurn({
+    clientName = 'Participant',
+    location = 'Charleston',
+    questionIndex = 0,
+    questionNumber = 1,
+    questionText = '',
+    questionSubtext = '',
+    liveAnswer = '',
+    answers158 = {},
+    discrepancyFollowupsUsed = 0
+}) {
+    const activeDomain = mapQuestionIndexToLscmiDomain(questionIndex, questionText);
+    const domainReference = loadSingleLscmiDomainReference(activeDomain);
+    const anchors = buildConsultationAnchorSummary(clientName);
+
+    const trimmedAnswer = String(liveAnswer || '').trim();
+    const isVague = trimmedAnswer.length > 0 && (
+        trimmedAnswer.split(/\s+/).length <= 3 ||
+        /^(yes|no|yeah|nah|idk|i don't know|maybe|fine|good|nothing|none|normal|same)\.?$/i.test(trimmedAnswer)
+    );
+
+    function buildDeterministic158Fallback(modeLabel) {
+        if (detMismatch && discrepancyFollowupsUsed < 1) {
+            return {
+                move_type: 'gentle_discrepancy',
+                active_domain: activeDomain,
+                question_number: questionNumber,
+                discrepancy_detected: true,
+                discrepancy_details: detMismatch.details,
+                consultation_value_on_file: detMismatch.consultation_value,
+                live_participant_value: detMismatch.live_value,
+                follow_up_question: detMismatch.follow_up,
+                matched_probation_planner_definitions: [],
+                ready_to_advance: false,
+                engine_mode: modeLabel
+            };
+        }
+        if (isVague && discrepancyFollowupsUsed < 1) {
+            const subHint = questionSubtext ? `${questionSubtext} — ` : '';
+            return {
+                move_type: 'probe_deeper',
+                active_domain: activeDomain,
+                question_number: questionNumber,
+                discrepancy_detected: false,
+                discrepancy_details: null,
+                follow_up_question: `Appreciate you sharing that. To make sure I capture Q${questionNumber} completely: ${subHint}walk me through a specific example or timeline for that.`,
+                matched_probation_planner_definitions: [],
+                ready_to_advance: false,
+                engine_mode: modeLabel
+            };
+        }
+        return {
+            move_type: 'advance_next_question',
+            active_domain: activeDomain,
+            question_number: questionNumber,
+            discrepancy_detected: Boolean(detMismatch),
+            discrepancy_details: detMismatch ? detMismatch.details : null,
+            consultation_value_on_file: detMismatch ? detMismatch.consultation_value : null,
+            live_participant_value: trimmedAnswer,
+            follow_up_question: '',
+            matched_probation_planner_definitions: [],
+            ready_to_advance: true,
+            engine_mode: modeLabel
+        };
+    }
+
+    // Deterministic fallback if GEMINI_API_KEY is not configured or fails
+    const detMismatch = detectDeterministicConsultationDiscrepancy(questionText, trimmedAnswer, anchors);
+    if (!getGeminiApiKey()) {
+        return buildDeterministic158Fallback('deterministic_offline');
+    }
+
+    try {
+        assertWithinDailyGeminiCap('lscmi_dynamic_question');
+    const model = getFastPipelineModel();
+        const answerList = Array.isArray(answers158) ? answers158 : Object.entries(answers158 || {}).map(([qIdx, rec]) => ({ index: Number(qIdx), ...rec }));
+        const recentAnswers = answerList
+            .slice(-12)
+            .map((rec, i) => `Q${rec.questionNumber || (rec.index != null ? Number(rec.index) + 1 : i + 1)} (${rec.questionText || rec.question || ''}): "${rec.liveAnswer || rec.answer || ''}"`)
+            .join('\n');
+
+        const prompt = `You are a Turn90 LS/CMI Audio Intake Co-Pilot guiding a live 158-question recorded intake interview.
+Participant: ${clientName} (${location})
+Current Question: Q${questionNumber} of 158: "${questionText}" ${questionSubtext ? `(Sub-prompt: ${questionSubtext})` : ''}
+Active Central Eight Domain: ${activeDomain}
+Follow-Up Probes Already Used on Q${questionNumber}: ${discrepancyFollowupsUsed} (MAX 1 FOLLOW-UP PER QUESTION — if >= 1, set ready_to_advance: true and log unresolved discrepancy if still mismatched).
+
+=== MANDATORY RE-ASK & DISCREPANCY POLICY ===
+1. Even when information is already present in the Screening Consultation, Briefcase, or Apricot Consultation below, the interviewer MUST ask the participant all 158 questions live to verify accuracy and catch discrepancies.
+2. Compare ${clientName}'s live answer below against BOTH:
+   a) Pre-loaded Screening Consultation / Briefcase / Apricot Consultation records, AND
+   b) Prior answers already given in this 158-question interview.
+3. NEVER pull examples, names, or anecdotes from reference manuals.
+4. If a discrepancy exists (and follow-ups used < 1): set "move_type": "gentle_discrepancy", "discrepancy_detected": true, and write ONE non-challenging, curious MI/SYNAPSE follow-up question ("I want to make sure my notes are accurate—on the consultation sheet there was a note about [X], and you mentioned [Y]. Walk me through what happened there.").
+5. If the answer is vague, minimized, or misses the sub-prompt (and follow-ups used < 1): set "move_type": "probe_deeper" and ask ONE open-ended episodic follow-up ("Walk me through the last time...", "What does a typical day look like?").
+6. Otherwise set "move_type": "advance_next_question" and "ready_to_advance": true.
+
+=== PRE-LOADED CONSULTATION & BRIEFCASE ANCHORS (FOR DISCREPANCY CHECKING) ===
+${JSON.stringify(anchors, null, 2)}
+
+=== RECENT PRIOR ANSWERS IN THIS 158-QUESTION INTERVIEW ===
+${recentAnswers || 'None logged yet.'}
+
+=== ACTIVE DOMAIN & PROBATION PLANNER BEHAVIORAL DEFINITIONS ===
+${domainReference}
+
+=== PARTICIPANT'S LIVE ANSWER TO Q${questionNumber} ===
+"${trimmedAnswer}"
+
+Return ONE valid JSON object:
+{
+  "move_type": "gentle_discrepancy" | "probe_deeper" | "reflect_and_bridge" | "advance_next_question",
+  "discrepancy_detected": false,
+  "discrepancy_details": null,
+  "consultation_value_on_file": null,
+  "live_participant_value": "${trimmedAnswer.replace(/"/g, '\\"')}",
+  "follow_up_question": "",
+  "matched_probation_planner_definitions": [
+    { "problem_area": "...", "behavioral_definition": "...", "verbatim_quote": "..." }
+  ],
+  "ready_to_advance": true
+}`;
+
+        const result = await model.generateContent(prompt);
+        const parsed = safeJsonParse(result.response.text()) || {};
+        parsed.active_domain = activeDomain;
+        parsed.question_number = questionNumber;
+        parsed.engine_mode = 'gemini';
+        if (parsed.follow_up_question) {
+            parsed.follow_up_question = stripReferenceExampleContamination(parsed.follow_up_question, trimmedAnswer);
+        }
+        return parsed;
+    } catch (apiErr) {
+        // Safe fallback to deterministic check if Gemini key is invalid/rate-limited
+        return buildDeterministic158Fallback('deterministic_fallback');
+    }
+}
 
 function getPipelineGenAI() {
     const apiKey = assertValidGeminiApiKey();
     return new GoogleGenerativeAI(apiKey);
 }
 
+function getFastPipelineModel() {
+    const genAI = getPipelineGenAI();
+    return genAI.getGenerativeModel({
+        model: getFastModelName(),
+        generationConfig: buildBudgetGenerationConfig({
+            role: 'fast',
+            responseMimeType: 'application/json',
+            maxOutputTokens: 1024
+        })
+    });
+}
+
 function getPipelineModel() {
+    assertWithinDailyGeminiCap('lscmi_eval');
     const genAI = getPipelineGenAI();
     return genAI.getGenerativeModel({ 
-        model: "gemini-3.8-flash", 
-        generationConfig: { 
-            responseMimeType: "application/json",
-            maxOutputTokens: 65536
-        } 
+        model: getEvalModelName(), 
+        generationConfig: buildBudgetGenerationConfig({
+            role: 'eval',
+            responseMimeType: 'application/json',
+            maxOutputTokens: 32768
+        })
     });
 }
 
@@ -310,12 +744,17 @@ Phase 1 Task: Based on the provided LS/CMI interview transcript, Apricot Reentry
      * Domain 8: Procriminal Attitude / Orientation
      * Domain 9: Antisocial Pattern
      * Domain 10: Specific Risk/Need & Personal Barrier Factors
-   - For each question:
-     - Bold the question title.
-     - Provide the participant's direct quotes and evidence from the transcript AND/OR verified collateral from their Reentry Consultation / Intake Screening notes.
-     - CRITICAL COLLATERAL PRE-FILL RULE: Official LS/CMI rules require synthesizing interview responses with collateral file review. Whenever an item (such as age at first arrest, total arrests/convictions, supervision status, education/GED, employment history, substance use history, parental criminal record, housing, or IDs/DL status) is documented in the Apricot Reentry Consultation / Intake Screening notes, use that verified information to answer the question and cite "[Verified via Reentry Consultation / Collateral Record]" if not repeated verbatim in the audio transcript.
-     - CRITICAL: Interviewers rarely read the questions verbatim. They often paraphrase, ask conversational questions, or do rapid-fire Yes/No checklists. You MUST intelligently map their conversational answers to the appropriate LS/CMI questions.
-     - ONLY say "Not explicitly discussed in intake interview" if the entire topic or domain was completely absent from BOTH the interview transcript and the Consultation collateral notes.
+   - For each of the **158 questions**:
+     - Bold the question title (\`1.\` through \`158.\`).
+     - Provide the participant's direct quotes and evidence from the **live interview transcript/audio**.
+     - **CRITICAL RE-ASK & DISCREPANCY VERIFICATION RULE:** Even when information was previously documented in the Screening Consultation or Apricot Consultation, all 158 questions must be asked and answered live in the interview to catch discrepancies.
+       * If the participant answered the question live and it **matches** the consultation/collateral, cite their live quote (\`[Answered Live]\`).
+       * If the participant's live answer **conflicts** with the Screening Consultation, Briefcase, or Apricot Consultation, explicitly mark **\`⚠️ DISCREPANCY FLAGGED\`** and state both what the consultation/collateral recorded AND what the participant stated live.
+       * If a question was **not asked/answered live** in the audio or transcript, explicitly mark **\`⚠️ NOT ASKED LIVE IN INTERVIEW\`** (you may note \`[Consultation Only — Unverified Live: ...]\` so staff follow up, never silently pretending it was asked live).
+     - At the very top of \`interview_guide\` (right under the header), include a **\`## ⚠️ Consultation vs. Live Interview Discrepancy Log & Missing Questions Check\`** summary listing:
+       1. Every discrepancy detected between Consultation/Collateral and Live Interview answers.
+       2. Any of the 158 questions not yet answered live.
+     - CRITICAL: Interviewers may paraphrase or use dynamic MI follow-up probes. Map conversational answers and follow-ups accurately to the corresponding numbered question (\`1–158\`).
    - DO NOT truncate, skip, or summarize questions. Provide all questions systematically.
    - Do NOT use the word "clinical". Use "behavioral health", "support", or "assessment" instead.
    - Do NOT reference Route 66.
@@ -433,11 +872,16 @@ async function runPhase1WithAudio(audioBuffer, mimeType, clientName, location, a
             };
         }
 
-        // Stage 1: Full Verbatim Audio Transcription
+        // Stage 1: Full Verbatim Audio Transcription (thinkingBudget: 0 saves thinking-token spend)
         console.log(`[Audio Pipeline] Transcribing complete audio recording for ${clientName}...`);
+        assertWithinDailyGeminiCap('lscmi_transcribe');
         const transcriptionModel = genAI.getGenerativeModel({
-            model: "gemini-3.8-flash",
-            generationConfig: { maxOutputTokens: 65536, temperature: 0.1 }
+            model: getTranscribeModelName(),
+            generationConfig: buildBudgetGenerationConfig({
+                role: 'transcribe',
+                temperature: 0.1,
+                maxOutputTokens: 32768
+            })
         });
 
         const transcriptionPrompt = `You are an expert intake assessment transcriber for Turn90 / First Shift.
@@ -470,6 +914,22 @@ ${additionalNotes && additionalNotes.trim() ? `\nFor context, here is a chronolo
             transcriptText = `# Turn90 / First Shift Intake Assessment Transcript\nParticipant: ${clientName}\nLocation: Turn90 ${location || 'Center'}\nDate: ${new Date().toLocaleDateString('en-US')}\nAssessor: Turn90 Case Management Team\n==========================================================\n\n${transcriptText || `Interview audio recorded for ${clientName}.`}\n\n${additionalNotes || ''}`;
         }
         console.log(`[Audio Pipeline] Transcription complete. Length: ${transcriptText.length} characters.`);
+
+        // Auto-enroll Participant Voice Profile from LS/CMI Audio Recording
+        try {
+            const pSlug = sanitizeParticipantSlug(clientName);
+            const voiceDir = path.join(__dirname, 'data', 'voice_profiles', 'participants');
+            if (!fs.existsSync(voiceDir)) fs.mkdirSync(voiceDir, { recursive: true });
+            const refPath = path.join(voiceDir, `${pSlug}_lscmi_ref.webm`);
+            // Store up to 512KB voice reference sample
+            fs.writeFileSync(refPath, audioBuffer.slice(0, Math.min(audioBuffer.length, 512 * 1024)));
+            db.prepare(`
+                INSERT OR REPLACE INTO voice_profiles (profile_id, person_type, name, location, role, source_type, audio_file_path, duration_seconds, acoustic_notes, enrolled_at)
+                VALUES (?, 'participant', ?, ?, 'participant', 'lscmi_interview', ?, 30, 'Enrolled automatically from LS/CMI assessment recording (separated from staff interviewer voice)', CURRENT_TIMESTAMP)
+            `).run(`participant_${pSlug}`, clientName, location || 'Charleston', refPath);
+        } catch (vErr) {
+            console.warn('[Voice Recognition] Could not save participant voice profile from LS/CMI audio:', vErr.message);
+        }
 
         // Stage 2: Comprehensive 158-Question Interview Guide & Draft Scoring Form
         console.log(`[Audio Pipeline] Generating full 158-question Interview Guide and Draft Scoring Form for ${clientName}...`);
@@ -606,17 +1066,49 @@ async function runPhase2(transcriptText, clientName, draftScoringForm, feedback,
                 age: resolvedBio.age,
                 center
             });
+            parsed.final_scoring_form = stripReferenceExampleContamination(parsed.final_scoring_form, transcriptText);
         }
+        if (parsed && parsed.case_brief) {
+            parsed.case_brief = stripReferenceExampleContamination(parsed.case_brief, transcriptText);
+        }
+        if (parsed && parsed.participant_case_plan) {
+            parsed.participant_case_plan = stripReferenceExampleContamination(parsed.participant_case_plan, transcriptText);
+        }
+        // Auto-sync Unified Gate-Free Briefcase (9 Waitlist Items + Conditional Medical Logic) & Participant Folder
+        if (parsed && parsed.briefcase_autofill) {
+            const bf = parsed.briefcase_autofill;
+            const g = bf.gates_autocomplete || {};
+            const hasChronic = Boolean(bf.welvista_needed && /chronic|medication|daily med|diabetes|hypertension|asthma|seizure/i.test(transcriptText));
+            updateParticipantUnifiedBriefcase(clientName, {
+                has_chronic_health_condition: hasChronic ? 'yes' : 'no',
+                dl_is_suspended: bf.dl_status === 'suspended' ? 'yes' : 'no',
+                child_support_applicable: (bf.child_support_status && bf.child_support_status !== 'none') ? 'yes' : 'no',
+                items: {
+                    state_id_or_dl: { value: bf.dl_status === 'valid' ? 'valid_dl' : (g.g1_state_id ? 'valid_state_id' : (bf.dl_status === 'suspended' ? 'dl_suspended_no_id' : 'missing')), notes: bf.dl_notes || '' },
+                    ss_card: { value: g.g1_ssn ? 'verified_card' : 'missing', notes: '' },
+                    birth_certificate: { value: g.g1_birth_cert ? 'verified_copy' : 'missing', notes: '' },
+                    chronic_health_and_meds: { value: hasChronic ? 'needs_daily_med_access' : 'no_chronic_conditions_na', notes: hasChronic ? 'Chronic condition identified in LS/CMI' : 'No chronic condition requiring medical appointment/daily meds' },
+                    stable_housing: { value: (bf.housing_status === 'stable' || g.g2_housing) ? 'stable_verified' : 'temporary_unstable', notes: bf.housing_status || '' },
+                    reliable_phone: { value: g.g2_phone ? 'active_verified' : 'wifi_only', notes: '' },
+                    dmv_suspended_inquiry: { value: bf.dl_status === 'suspended' ? 'needs_dmv_visit' : (bf.dl_status === 'reinstatement_plan' ? 'completed_dmv_inquiry' : 'not_applicable_valid'), notes: bf.dl_notes || '' },
+                    child_support_contact: { value: (!bf.child_support_status || bf.child_support_status === 'none') ? 'not_applicable' : (bf.child_support_status === 'current' ? 'current_paid_up' : 'needs_contact'), notes: bf.child_support_notes || '' }
+                }
+            });
+        }
+        syncAllParticipantFolders();
     } catch (e) {}
     return parsed;
 }
 
-async function adjustActionPlan(clientName, existingPlanText, feedback, supportingContext = "") {
+async function adjustActionPlan(clientName, existingPlanText, feedback, supportingContext = "", feedbackLoopMeta = {}) {
     assertValidGeminiApiKey();
     const model = getPipelineModel();
 
     const systemPrompt = `You are an expert case manager and CBT specialist for First Shift / Turn90.
-Your task is to refine and update the Participant's First Shift Action Plan based STRICTLY on the supervisor's feedback.
+Your task is to refine and update the Participant's First Shift Action Plan based STRICTLY on the Action Plan Feedback Loop (participant disagreement/collaboration or supervisor feedback), using the Probation and Parole Treatment Planner behavioral definitions, SYNAPSE (Navigate/Activate/Splash), and First Shift conversation scripts (Switching to Another Target / Giving Options of Intervention Tools).
+
+STRICT ANTI-HALLUCINATION RULE:
+- Never pull examples, character names, or scenarios from reference manuals.
 
 CRITICAL FIRST SHIFT ACTION PLAN SPECIFICATIONS:
 - Beautiful, empowering, PRINTABLE First Shift Action Plan written directly for the participant.
@@ -624,7 +1116,7 @@ CRITICAL FIRST SHIFT ACTION PLAN SPECIFICATIONS:
 - CRITICAL REQUIREMENT: DO NOT INCLUDE ANY GOALS. Remove all goal sections entirely.
 - Identify EXACTLY the TOP 3 Areas of Focus (these correspond to their criminogenic domains, but use highly accessible, less clinical language). For each of the 3 areas, structure into EXACTLY these 4 sections:
   * **Area of Focus & Core Goal**: (e.g., "Area of Focus: Handling Frustration & Anger | Core Goal: Staying calm when things don't go your way", rather than using clinical terms like 'Criminogenic Domain' or 'Hostile Attribution').
-  * **Personal Pattern**: (The specific unhelpful thinking trap, defense mechanism, or automatic loop identified from their interview, explained in everyday language, e.g., "Taking workplace feedback as a personal attack" or "Walking away or quitting when feeling overwhelmed").
+  * **Personal Pattern**: (The specific unhelpful thinking trap, defense mechanism, or automatic loop identified from their interview and Probation Planner Behavioral Definitions, explained in everyday language).
   * **Trigger Situations**:
     - Leave this section entirely empty so the participant and case manager can identify triggers together. Simply provide 5 to 8 numbered blank lines where the participant can write down specific situations that trigger this pattern:
       1. ___________________________________________________________________________________
@@ -633,30 +1125,76 @@ CRITICAL FIRST SHIFT ACTION PLAN SPECIFICATIONS:
       4. ___________________________________________________________________________________
       5. ___________________________________________________________________________________
       6. ___________________________________________________________________________________
-  * **Suggested Tools from the Turn90 CBT Toolkit**:
+  * **Suggested Tools from the Turn90 CBT Toolkit (1A–1N)**:
     - Explicitly recommend 2-3 tools tailored to counteract this exact pattern:
-      - **Stop & Think**: The 3-second pause before reacting to an authority figure or stressor.
-      - **Thinking Report**: Writing out Situation -> Thoughts -> Physical Sensations -> Action -> Outcome to expose faulty beliefs.
-      - **Problem Solving 4-Step Method**: 1. Define problem without blame, 2. Brainstorm 3 choices, 3. Weigh costs to freedom/job, 4. Act.
-      - **Decisional Balance**: Immediate impulse payoff vs Long-term freedom & wages.
-      - **Cognitive Restructuring**: Replacing the automatic thinking trap with a grounded, helpful thought.
-      - **Modeling Neutrality**: De-escalating posture and tone, asking open-ended clarifying questions.
+      - **Decision Making Tool (DMT - 1A) / Decisional Balance**: Immediate impulse payoff vs Long-term freedom & wages.
+      - **Thought Tracker (1G) / Situation-Thinking-Action-Consequences (STAC - 1I/1K)**: Writing out Situation -> Thinking -> Action -> Consequence.
+      - **Upgrading Beliefs (1D) / Call & Response (1F)**: Replacing rigid "should" or entitlement rules with pro-social counter-thoughts.
+      - **Conflict Cycle (1M) / Three Steps to Problem Solving (1N)**: 1. Define problem without blame, 2. Brainstorm 3 choices, 3. Pick best option and act.
+      - **Stop & Think / Two Voices Role Play**: The 3-second pause and rehearsing pro-social responses.
 - CRITICAL REQUIREMENT: DO NOT include a closing message. The plan should end immediately after the Suggested Tools for the third Area of Focus.
 
-INCORPORATE SUPERVISOR ADJUSTMENTS:
-Apply the supervisor's feedback to update the focus areas, personal patterns, trigger count, or suggested CBT tools accordingly.
+INCORPORATE ACTION PLAN FEEDBACK LOOP ADJUSTMENTS:
+If the participant disagreed with an Area of Focus or tool, pivot collaboratively to their agreed target or tool choice while keeping all 3 Areas of Focus grounded in their assessment.
 
 You must return a valid JSON object with EXACTLY this key:
 {
   "participant_case_plan": "# My First Shift Action Plan\\n..."
 }`;
 
-    const prompt = `${systemPrompt}\n\nParticipant Name: ${clientName}\n\nSupervisor Adjustments & Feedback:\n${feedback || 'Refine and polish the action plan based on standard Turn90 CBT practices.'}\n\nExisting Action Plan:\n${existingPlanText || 'None currently on file; generate new plan based on supporting context.'}\n\nSupporting Assessment Context:\n${supportingContext || 'None available.'}`;
+    const prompt = `${systemPrompt}\n\nParticipant Name: ${clientName}\n\nAction Plan Feedback Loop / Supervisor Adjustments:\n${feedback || 'Refine and polish the action plan based on standard Turn90 CBT practices.'}\n\nExisting Action Plan:\n${existingPlanText || 'None currently on file; generate new plan based on supporting context.'}\n\nSupporting Assessment Context:\n${supportingContext || 'None available.'}`;
 
     const result = await model.generateContent(prompt);
     const responseText = result.response.text();
-    return safeJsonParse(responseText);
+    const parsed = safeJsonParse(responseText);
+
+    try {
+        const slug = sanitizeParticipantSlug(clientName);
+        if (parsed && parsed.participant_case_plan) {
+            parsed.participant_case_plan = stripReferenceExampleContamination(parsed.participant_case_plan, supportingContext);
+            db.prepare(`
+                INSERT INTO action_plan_feedback_loops (
+                    participant_key, participant_name, location, agreement_status,
+                    disagreed_target, participant_objection_quote, staff_pivot_strategy,
+                    agreed_replacement_target, selected_toolkit_tool, revised_action_plan_md, logged_by
+                ) VALUES (?, ?, ?, 'resolved_via_feedback_loop', ?, ?, ?, ?, ?, ?, ?)
+            `).run(
+                slug,
+                clientName,
+                feedbackLoopMeta.location || 'Charleston',
+                feedbackLoopMeta.disagreed_target || 'Initial Target Adjusted',
+                feedback,
+                feedbackLoopMeta.staff_pivot_strategy || 'switched_target_or_tool',
+                feedbackLoopMeta.agreed_replacement_target || 'Updated Collaborative Target',
+                feedbackLoopMeta.selected_toolkit_tool || 'STAC (1I) / DMT (1A)',
+                parsed.participant_case_plan,
+                feedbackLoopMeta.logged_by || 'Turn90 Case Manager'
+            );
+            const pDir = path.join(__dirname, 'data', 'participants', slug);
+            if (fs.existsSync(pDir)) {
+                fs.writeFileSync(path.join(pDir, 'action_plan.md'), parsed.participant_case_plan);
+            }
+            syncAllParticipantFolders();
+        }
+    } catch (e) {
+        console.warn('[Action Plan Feedback Loop] Logging warning:', e.message);
+    }
+
+    return parsed;
 }
 
-module.exports = { runPhase1, runPhase1WithAudio, runPhase2, adjustActionPlan, safeJsonParse, validateAndNormalizeLscmiScoringForm };
+module.exports = {
+    runPhase1,
+    runPhase1WithAudio,
+    runPhase2,
+    adjustActionPlan,
+    generateDynamicLscmiNextQuestion,
+    evaluateLive158QuestionTurn,
+    mapQuestionIndexToLscmiDomain,
+    buildConsultationAnchorSummary,
+    detectDeterministicConsultationDiscrepancy,
+    loadSingleLscmiDomainReference,
+    safeJsonParse,
+    validateAndNormalizeLscmiScoringForm
+};
 

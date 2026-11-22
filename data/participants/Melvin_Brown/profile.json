@@ -1,0 +1,30 @@
+{
+  "participant_key": "Melvin_Brown",
+  "name": "Melvin Brown",
+  "location": "Columbia",
+  "track": "first_shift",
+  "status": "active",
+  "user_id": 75,
+  "client_id": 31,
+  "apricot_id": "80978",
+  "phone": "",
+  "email": "melvin.brown.80978@firstshift.org",
+  "files": [
+    "Melvin_Brown_Columbia_criminal_history.docx",
+    "Melvin_Brown_Columbia_criminal_history.md",
+    "Melvin_Brown_Columbia_draft_scoring_form.docx",
+    "Melvin_Brown_Columbia_draft_scoring_form.md",
+    "Melvin_Brown_Columbia_interview_guide.docx",
+    "Melvin_Brown_Columbia_interview_guide.md",
+    "Melvin_Brown_Columbia_transcript.txt"
+  ],
+  "folder_slug": "Melvin_Brown",
+  "folder_path": "data/participants/Melvin_Brown",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": true,
+  "has_action_plan": false,
+  "waitlist_ready": false,
+  "waitlist_met_count": 5,
+  "data_flags_count": 1,
+  "updated_at": "2026-11-22T17:18:01.556Z"
+}

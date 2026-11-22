@@ -1,0 +1,101 @@
+{
+  "case_notes": [
+    {
+      "id": 99,
+      "user_id": 77,
+      "author_id": null,
+      "author_name": "Daisy Boynton",
+      "session_date": "2026-10-26",
+      "note_type": "Case Note (documentation only) – no interaction or service",
+      "category": "Reentry Navigation",
+      "content": "Called to let Robert know he's 2nd on the waitlist. No answer, let him know in a VM.",
+      "apricot_exported": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 100,
+      "user_id": 77,
+      "author_id": null,
+      "author_name": "Daisy Boynton",
+      "session_date": "2026-10-20",
+      "note_type": "Employment support – applications, resume, interview prep",
+      "category": "Reentry Navigation",
+      "content": "Made a resume and sent to Robert over text and email. Also attached to his reentry nav case plan.",
+      "apricot_exported": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 101,
+      "user_id": 77,
+      "author_id": null,
+      "author_name": "Daisy Boynton",
+      "session_date": "2026-10-19",
+      "note_type": "Intake Appointment COMPLETED",
+      "category": "Intake Appointment",
+      "content": "Currently staying with his mom, has tickets and reinstatement fees for DL, has Welvista and gets prescriptions through that. Has only been able to get temp work. Wants long term employment. Lives 1.5 miles away from center, can walk on the days he's not able to get rides. Added him to waitlist. In the meantime, wants help job searching. Has no resume, so scheduled a phone call for tomorrow to make one.",
+      "apricot_exported": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 102,
+      "user_id": 77,
+      "author_id": null,
+      "author_name": "Daisy Boynton",
+      "session_date": "2026-10-15",
+      "note_type": "Intake Appointment SCHEDULED",
+      "category": "Intake Appointment",
+      "content": "Intake Appointment SCHEDULED",
+      "apricot_exported": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 103,
+      "user_id": 77,
+      "author_id": null,
+      "author_name": "Jenn Jeanquart",
+      "session_date": "2026-06-22",
+      "note_type": "Behavioral incident – disruption, conflict, or left early",
+      "category": "Reentry Navigation",
+      "content": "Robert unable to start FS program due to failed UA.",
+      "apricot_exported": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 104,
+      "user_id": 77,
+      "author_id": null,
+      "author_name": "Jenn Jeanquart",
+      "session_date": "2026-06-15",
+      "note_type": "Barrier removal – problem-solving or coordination support",
+      "category": "Reentry Navigation",
+      "content": "Robert came in to check his status to enroll in First Shift. He passed a preliminary drug test and was scheduled for orientation on 6/22. He was reminded he will need to pass a drug test on orientation and weekly thereafter. At the end of the conversation, Robert informed me he is in need of emergency housing. I contacted Greyce Transitional home who is willing to accept and do a payment plan for him pending enrollment in T90.",
+      "apricot_exported": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 105,
+      "user_id": 77,
+      "author_id": null,
+      "author_name": "Jenn Jeanquart",
+      "session_date": "2026-06-09",
+      "note_type": "Intake Appointment COMPLETED",
+      "category": "Intake Appointment",
+      "content": "Released from SCDC on Dec 31, 2025 and has not found a job since then. Has applied at fast food, warehouses, WalMart, Amazon, etc. with no return call. His VM is set up and checks his email regularly. Stays with his mother and although he is grateful, he wants his own place. Has four children and is not on child support. Does not have DL, has $1900 in reinstatement fees alone, and does not know how much he owes in tickets.  Will refer to RDF after gathering ticket info. Explained the First Shift program and reviewed eligibility for enrollment. He is usure if he can pass a drug test at this time but will test himself and follow up with me.",
+      "apricot_exported": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 106,
+      "user_id": 77,
+      "author_id": null,
+      "author_name": "Kat Norsworthy",
+      "session_date": "2026-06-02",
+      "note_type": "Intake Appointment SCHEDULED",
+      "category": "Intake Appointment",
+      "content": "Rescheduled appointment twice. 6/9 is the most recently scheduled intake.",
+      "apricot_exported": 1,
+      "created_at": "2026-11-03 23:04:00"
+    }
+  ],
+  "cm_session_evaluations": []
+}

@@ -1,0 +1,22 @@
+{
+  "participant_key": "Vincent_Gailliard",
+  "name": "Vincent Gailliard",
+  "location": "Columbia",
+  "track": "first_shift",
+  "status": "active",
+  "user_id": 70,
+  "client_id": null,
+  "apricot_id": "79620",
+  "phone": "",
+  "email": "vincent.gailliard.79620@firstshift.org",
+  "files": [],
+  "folder_slug": "Vincent_Gailliard",
+  "folder_path": "data/participants/Vincent_Gailliard",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": false,
+  "has_action_plan": false,
+  "waitlist_ready": false,
+  "waitlist_met_count": 6,
+  "data_flags_count": 1,
+  "updated_at": "2026-11-22T17:18:01.534Z"
+}

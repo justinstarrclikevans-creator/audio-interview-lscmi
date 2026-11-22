@@ -1,0 +1,22 @@
+{
+  "participant_key": "Stephen_Odom",
+  "name": "Stephen Odom",
+  "location": "Spartanburg",
+  "track": "first_shift",
+  "status": "archived",
+  "user_id": 54,
+  "client_id": null,
+  "apricot_id": null,
+  "phone": "",
+  "email": "stephenodom@t90.com",
+  "files": [],
+  "folder_slug": "Stephen_Odom",
+  "folder_path": "data/participants/Stephen_Odom",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": false,
+  "has_action_plan": false,
+  "waitlist_ready": false,
+  "waitlist_met_count": 8,
+  "data_flags_count": 2,
+  "updated_at": "2026-11-22T17:18:01.518Z"
+}

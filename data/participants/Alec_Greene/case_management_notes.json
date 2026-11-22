@@ -1,0 +1,53 @@
+{
+  "case_notes": [
+    {
+      "id": 157,
+      "user_id": 81,
+      "author_id": null,
+      "author_name": "Diyoung Dantzler",
+      "session_date": "2026-11-02",
+      "note_type": "Case Note (documentation only) – no interaction or service",
+      "category": "First Shift",
+      "content": "Case Note (documentation only) – no interaction or service",
+      "apricot_exported": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 158,
+      "user_id": 81,
+      "author_id": null,
+      "author_name": "Matt Carlisle",
+      "session_date": "2026-10-27",
+      "note_type": "Check-in conversation – brief status update",
+      "category": "Reentry Navigation",
+      "content": "Reached out to Mr. Greene and scheduled him for orientation this Friday.",
+      "apricot_exported": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 159,
+      "user_id": 81,
+      "author_id": null,
+      "author_name": "Daisy Boynton",
+      "session_date": "2026-10-22",
+      "note_type": "Intake Appointment COMPLETED",
+      "category": "Intake Appointment",
+      "content": "Completed phone consultation with Alec to gather background information for case planning. Alec is currently living at Turn 12 (sober living) and reports this is stable housing he plans to keep. He has his Social Security card and state ID but does not have his birth certificate. He does not currently have a driver’s license. He has held one in the past but is unsure of its current status and would need to call DMV to check.\n\nAlec reports a current Suboxone prescription and has access to his medication. He reported no emergency needs and no weekly obligations that would conflict with program hours (9am–3pm). For transportation, he plans to use Uber. The center is about 2 miles away. He has some savings to cover rides until his first paycheck and plans to buy an electric bike once he is paid. He was informed that pay begins at the end of week two and confirmed he can manage transportation until then.\n\nSubstance use: Alec reports no history of major alcohol abuse and past methamphetamine use. He reports no drug use other than marijuana in the past year, and says his use never led to homelessness. He has not recently completed a substance abuse program outside of sober living.\n\nJustice involvement: First arrest at age 21. He reports 3–4 arrests, 2–3 convictions, and 3–4 incarcerations. He was released from jail approximately two weeks ago after serving about one year. That conviction did not involve drug trafficking or firearm possession. He is currently on state probation with about two years remaining and reports being compliant. He has no pending charges and no child support obligations. Neither parent has a criminal record.\n\nEducation and employment: Alec has completed some college. He is legally and physically able to work. He reports no prior legal employment and no certifications such as forklift, OSHA 10, or first aid.\n\nProgram information reviewed: $450/week stipend tied to the point system (on-time attendance, no phones in class, completing morning homework; about $9 deducted per missed point), pay beginning at the end of week two and weekly after that, weekly drug testing, and the expectation of reliable transportation (transportation issues may result in a move back to the waitlist or to reentry navigation). Alec confirmed program hours work for him and had no questions.\n\nOutcome: Alec was added to the Spartanburg waitlist. He is currently the only person on it, with an estimated wait of 1–2 weeks. He was informed that Daisy, Matt, or Di Young will call to schedule orientation, and that he will have 24 hours to return a missed call/voicemail before the spot moves to the next person. He was offered interim support (resume, temp agency referrals, birth certificate assistance) and declined for now.",
+      "apricot_exported": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 160,
+      "user_id": 81,
+      "author_id": null,
+      "author_name": "Daisy Boynton",
+      "session_date": "2026-10-21",
+      "note_type": "Intake Appointment SCHEDULED",
+      "category": "Intake Appointment",
+      "content": "Intake Appointment SCHEDULED",
+      "apricot_exported": 1,
+      "created_at": "2026-11-03 23:04:00"
+    }
+  ],
+  "cm_session_evaluations": []
+}

@@ -1,7 +1,7 @@
 // Turn90 Job Hunting AI Engine
 // Powered by Gemini 3.6 Flash with Live Spreadsheet Openings & Fair-Chance Directory
 
-const { getGeminiApiKey } = require('./env_config');
+const { getGeminiApiKey, getFastModelName, buildBudgetGenerationConfig, assertWithinDailyGeminiCap } = require('./env_config');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const path = require('path');
 const { loadJobsFromSpreadsheets } = require('./jobs_loader');
@@ -106,9 +106,10 @@ async function matchJobsWithAi(criteria = {}, participantProfile = {}) {
     const genAI = getGenAI();
     if (genAI) {
         try {
+            assertWithinDailyGeminiCap('job_hunting_match');
             const model = genAI.getGenerativeModel({
-                model: "gemini-3.8-flash",
-                generationConfig: { responseMimeType: "application/json" }
+                model: getFastModelName(),
+                generationConfig: buildBudgetGenerationConfig({ role: 'fast', responseMimeType: 'application/json', maxOutputTokens: 2048 })
             });
 
             // Sample top candidate pool up to 35 jobs (prioritizing target location strictly)
@@ -216,7 +217,11 @@ async function generateTailoredResumePoints(jobTitle, company, userSkills = '', 
     const genAI = getGenAI();
     if (genAI) {
         try {
-            const model = genAI.getGenerativeModel({ model: "gemini-3.8-flash" });
+            assertWithinDailyGeminiCap('job_hunting_helper');
+            const model = genAI.getGenerativeModel({
+                model: getFastModelName(),
+                generationConfig: buildBudgetGenerationConfig({ role: 'fast', maxOutputTokens: 1024 })
+            });
             const prompt = `
 You are an expert resume writer specializing in helping second-chance job candidates win interviews at top employers.
 
@@ -252,7 +257,11 @@ async function generateTurnaroundNarrative(jobTitle, company, participantBackgro
     const genAI = getGenAI();
     if (genAI) {
         try {
-            const model = genAI.getGenerativeModel({ model: "gemini-3.8-flash" });
+            assertWithinDailyGeminiCap('job_hunting_helper');
+            const model = genAI.getGenerativeModel({
+                model: getFastModelName(),
+                generationConfig: buildBudgetGenerationConfig({ role: 'fast', maxOutputTokens: 1024 })
+            });
             const prompt = `
 You are an executive interview coach trained in the Turn90 Evidence-Based Model.
 Help a candidate prepare their "Turnaround Narrative" for an interview at:

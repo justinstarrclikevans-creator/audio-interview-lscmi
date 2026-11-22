@@ -1,0 +1,25 @@
+{
+  "participant_key": "Jovon_Bonneau",
+  "participant_name": "Jovon Bonneau",
+  "location": "Charleston",
+  "track": "first_shift",
+  "folder_path": "data/participants/Jovon_Bonneau",
+  "has_lscmi_brief": true,
+  "has_lscmi_scoring": true,
+  "has_action_plan": true,
+  "action_plan_agreement": "agreed",
+  "waitlist_ready": false,
+  "waitlist_score": "8/9",
+  "medical_appointments_applicable": false,
+  "skillcat_pathway": "HVAC",
+  "skillcat_modules_completed": 0,
+  "cm_notes_count": 14,
+  "data_evaluation_flags": [
+    {
+      "code": "FLAG-WAITLIST-GAP",
+      "severity": "warning",
+      "message": "8/9 First Shift Waitlist Briefcase items ready. Missing: 7. Gone to DMV to Figure Out Why DL is Suspended"
+    }
+  ],
+  "updated_at": "2026-11-22T17:18:01.444Z"
+}

@@ -1,0 +1,30 @@
+{
+  "participant_key": "Justin_Dahl",
+  "name": "Justin Dahl",
+  "location": "Columbia",
+  "track": "first_shift",
+  "status": "active",
+  "user_id": 80,
+  "client_id": 48,
+  "apricot_id": "81816",
+  "phone": "",
+  "email": "justin.dahl.81816@firstshift.org",
+  "files": [
+    "Justin_Dahl_Columbia_criminal_history.docx",
+    "Justin_Dahl_Columbia_criminal_history.md",
+    "Justin_Dahl_Columbia_draft_scoring_form.docx",
+    "Justin_Dahl_Columbia_draft_scoring_form.md",
+    "Justin_Dahl_Columbia_interview_guide.docx",
+    "Justin_Dahl_Columbia_interview_guide.md",
+    "Justin_Dahl_Columbia_transcript.txt"
+  ],
+  "folder_slug": "Justin_Dahl",
+  "folder_path": "data/participants/Justin_Dahl",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": true,
+  "has_action_plan": false,
+  "waitlist_ready": false,
+  "waitlist_met_count": 5,
+  "data_flags_count": 1,
+  "updated_at": "2026-11-22T17:18:01.578Z"
+}

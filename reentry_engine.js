@@ -1,5 +1,11 @@
 // Re-entry Navigation Case Planning & Flag Analysis Engine
-const { assertValidGeminiApiKey, sanitizeApiKey } = require('./env_config');
+const {
+    assertValidGeminiApiKey,
+    sanitizeApiKey,
+    getEvalModelName,
+    buildBudgetGenerationConfig,
+    assertWithinDailyGeminiCap
+} = require('./env_config');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const fs = require('fs');
 const path = require('path');
@@ -24,10 +30,15 @@ Turn90 Facilitation & Case Management Standards (Modeling Neutrality, CBT Workbo
 async function generateReentryNavAssessment(data) {
     const apiKey = sanitizeApiKey(data.apiKey) || assertValidGeminiApiKey();
 
+    assertWithinDailyGeminiCap('reentry_nav');
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
-        model: "gemini-3.1-pro-preview",
-        generationConfig: { responseMimeType: "application/json" }
+        model: getEvalModelName(),
+        generationConfig: buildBudgetGenerationConfig({
+            role: 'eval',
+            responseMimeType: 'application/json',
+            maxOutputTokens: 8192
+        })
     });
 
     const feedback = data.feedback || "";
