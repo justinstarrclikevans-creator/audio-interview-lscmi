@@ -8282,10 +8282,6 @@ ${JSON.stringify(bundleData, null, 2)}
 
 
 
-// Catch-all for undefined API routes - ALWAYS return JSON, NEVER HTML
-app.use('/api', (req, res) => {
-    res.status(404).json({ error: `API endpoint ${req.method} ${req.originalUrl} not found.` });
-});
 
 
 // GAMIFICATION ENDPOINTS
@@ -9160,6 +9156,20 @@ app.get('/api/templates/all', (req, res) => {
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
+});
+
+// Catch-all for undefined API routes - ALWAYS return JSON, NEVER HTML
+app.use('/api', (req, res) => {
+    res.status(404).json({ error: `API endpoint ${req.method} ${req.originalUrl} not found.` });
+});
+
+// Final Express Error Handler for routes registered after line 6035 - Always return JSON for API requests
+app.use((err, req, res, next) => {
+    console.error('Unhandled server error:', err);
+    if (req.path.startsWith('/api/')) {
+        return res.status(500).json({ error: err.message || 'Internal Server Error' });
+    }
+    res.status(500).send('Internal Server Error');
 });
 
 app.listen(PORT, async () => {

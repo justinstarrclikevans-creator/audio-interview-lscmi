@@ -12024,6 +12024,7 @@ window.loadLscmiDedicatedDashboard = async function() {
     try {
         const res = await fetch('/api/participants/folders');
         const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to load folders (HTTP ' + res.status + ')');
         window.cachedUnifiedFolders = data.participants || [];
         const withAssessments = window.cachedUnifiedFolders.filter(p => p.has_lscmi_brief || p.has_lscmi_scoring || p.has_action_plan);
         const listToShow = withAssessments.length > 0 ? withAssessments : window.cachedUnifiedFolders.slice(0, 24);
@@ -12119,16 +12120,22 @@ window.switchClientFolderTab = function(tabKey) {
 
 window.loadClientFoldersPortal = async function(preselectSlug = null, forceRefresh = false) {
     const pane = document.getElementById('cfp-folder-detail-pane');
+    const listEl = document.getElementById('cfp-folder-list');
     if (pane && !preselectSlug && !window.activeClientFolderSlug) {
         pane.innerHTML = `<div style="padding: 40px; text-align: center; color: #64748b;">Loading all client folders &amp; historical archive...</div>`;
     }
     try {
         if (!window.cachedBriefcaseSchema) {
             const sRes = await fetch('/api/briefcase/schema');
-            window.cachedBriefcaseSchema = await sRes.json();
+            if (sRes.ok) {
+                window.cachedBriefcaseSchema = await sRes.json();
+            } else {
+                console.warn('Could not load briefcase schema (HTTP ' + sRes.status + ')');
+            }
         }
         const res = await fetch(`/api/participants/folders${forceRefresh ? '?refresh=1' : ''}`);
         const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to load client folders (HTTP ' + res.status + ')');
         window.cachedUnifiedFolders = data.participants || [];
         const totalBadge = document.getElementById('cfp-total-count');
         if (totalBadge) totalBadge.innerText = `${window.cachedUnifiedFolders.length} Total Client Folders`;
@@ -12145,6 +12152,7 @@ window.loadClientFoldersPortal = async function(preselectSlug = null, forceRefre
         }
     } catch (e) {
         console.error('Error loading client folders portal:', e);
+        if (listEl) listEl.innerHTML = `<div style="color: #dc2626; padding: 14px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; font-size: 12.5px;"><strong>Failed to load client folders:</strong><br/>${escapeHtml(e.message)}</div>`;
         if (pane) pane.innerHTML = `<div style="color: #dc2626; padding: 20px;">Error loading client folders: ${escapeHtml(e.message)}</div>`;
     }
 };

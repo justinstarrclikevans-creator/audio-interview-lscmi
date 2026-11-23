@@ -879,6 +879,15 @@ function syncAllParticipantFolders({ force = false } = {}) {
         return _cachedFolderSummary;
     }
 
+    const readDiskJson = (filePath, fallback = null) => {
+        try {
+            if (fs.existsSync(filePath)) {
+                return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+            }
+        } catch (e) {}
+        return fallback;
+    };
+
     const skillcatHistory = loadSkillCatHistory();
     const allDataFiles = fs.existsSync(dataDir) ? fs.readdirSync(dataDir) : [];
 
@@ -1075,6 +1084,27 @@ function syncAllParticipantFolders({ force = false } = {}) {
         });
     }
 
+    // 7. From existing committed data/participants/<slug>/ folders on disk (preserves full roster on Render regardless of SQLite/pipeline state)
+    try {
+        if (fs.existsSync(participantsRootDir)) {
+            for (const entry of fs.readdirSync(participantsRootDir, { withFileTypes: true })) {
+                if (!entry.isDirectory()) continue;
+                const dName = entry.name;
+                if (dName.startsWith('.')) continue;
+                if (PARTICIPANT_SLUG_ALIASES[dName.toLowerCase()]) continue;
+                const prof = readDiskJson(path.join(participantsRootDir, dName, 'profile.json'), null);
+                registerPerson((prof && prof.name) || dName.replace(/_/g, ' '), {
+                    location: (prof && prof.location) || 'Charleston',
+                    track: (prof && prof.track) || 'first_shift',
+                    status: (prof && prof.status) || 'active',
+                    apricot_id: (prof && prof.apricot_id) || null,
+                    phone: (prof && prof.phone) || '',
+                    email: (prof && prof.email) || ''
+                });
+            }
+        }
+    } catch (e) {}
+
     // Build list of alias dirs on disk per canonical slug so legacy alias folders merge seamlessly forward
     const aliasDirsByCanonical = new Map();
     for (const [aliasLower, canonical] of Object.entries(PARTICIPANT_SLUG_ALIASES)) {
@@ -1172,14 +1202,22 @@ function syncAllParticipantFolders({ force = false } = {}) {
             try { return fs.readFileSync(hit.srcPath, 'utf8'); } catch (e) { return ''; }
         };
 
+        const readDiskText = (fname) => {
+            const p = path.join(pDir, fname);
+            try { return fs.existsSync(p) ? fs.readFileSync(p, 'utf8') : ''; } catch (e) { return ''; }
+        };
+
         lscmiBriefMd = pickTextByPattern(f => f.includes('_final_case_brief.md'))
-            || pickTextByPattern(f => f.includes('_Case_Brief_') && f.endsWith('.txt'));
+            || pickTextByPattern(f => f.includes('_Case_Brief_') && f.endsWith('.txt'))
+            || readDiskText('lscmi_brief.md');
         lscmiScoringMd = pickTextByPattern(f => f.includes('_final_scoring_form.md'))
-            || pickTextByPattern(f => f.includes('_draft_scoring_form.md'));
+            || pickTextByPattern(f => f.includes('_draft_scoring_form.md'))
+            || readDiskText('lscmi_scoring.md');
         actionPlanMd = pickTextByPattern(f => f.includes('_participant_case_plan.md'))
             || pickTextByPattern(f => f.includes('_reentry_participant_action_guide.md'))
             || pickTextByPattern(f => f.includes('_reentry_staff_case_plan.md'));
-        transcriptText = pickTextByPattern(f => f.endsWith('_transcript.txt'));
+        transcriptText = pickTextByPattern(f => f.endsWith('_transcript.txt'))
+            || readDiskText('lscmi_transcript.txt');
 
         // Gather ALL historical reentry records for this participant
         const lowerNames = Array.from(new Set([person.name, ...person.aliases_seen].map(n => String(n || '').toLowerCase()).filter(Boolean)));
@@ -1205,8 +1243,17 @@ function syncAllParticipantFolders({ force = false } = {}) {
             return lowerNames.includes(rName) || resolveCanonicalSlug(rcp.participant_name || '') === slug;
         });
 
-        if (!actionPlanMd && reentryCasePlans.length > 0) {
-            actionPlanMd = reentryCasePlans[0].participant_guide_md || reentryCasePlans[0].staff_case_plan_md || '';
+        const diskReentry = readDiskJson(path.join(pDir, 'reentry_history.json'), {}) || {};
+        const finalReentryClients = rClientRows.length > 0 ? rClientRows : (Array.isArray(diskReentry.client_records) ? diskReentry.client_records : []);
+        const finalReentrySessions = reentrySessions.length > 0 ? reentrySessions : (Array.isArray(diskReentry.sessions) ? diskReentry.sessions : []);
+        const finalReentryGoals = reentryGoals.length > 0 ? reentryGoals : (Array.isArray(diskReentry.goals) ? diskReentry.goals : []);
+        const finalReentryCasePlans = reentryCasePlans.length > 0 ? reentryCasePlans : (Array.isArray(diskReentry.case_plans) ? diskReentry.case_plans : []);
+
+        if (!actionPlanMd && finalReentryCasePlans.length > 0) {
+            actionPlanMd = finalReentryCasePlans[0].participant_guide_md || finalReentryCasePlans[0].staff_case_plan_md || '';
+        }
+        if (!actionPlanMd) {
+            actionPlanMd = readDiskText('action_plan.md');
         }
 
         // Write canonical markdown files inside participant folder
@@ -1218,17 +1265,9 @@ function syncAllParticipantFolders({ force = false } = {}) {
         // Compute canonical lscmi_client_id matching data/ prefix
         const lscmiClientId = computeBestLscmiClientId(allFolderDocFiles.length ? allFolderDocFiles : person.files, `${slug}_${person.location || 'Charleston'}`);
 
-        // Preserve any locally-entered manual notes from existing case_management_notes.json if stored outside SQLite
-        let existingManualNotes = [];
-        try {
-            const cmPath = path.join(pDir, 'case_management_notes.json');
-            if (fs.existsSync(cmPath)) {
-                const parsedCm = JSON.parse(fs.readFileSync(cmPath, 'utf8'));
-                if (Array.isArray(parsedCm.manual_folder_notes)) {
-                    existingManualNotes = parsedCm.manual_folder_notes;
-                }
-            }
-        } catch (e) {}
+        // Preserve any locally-entered manual notes/evaluations from existing case_management_notes.json if stored outside SQLite
+        const diskCm = readDiskJson(path.join(pDir, 'case_management_notes.json'), {}) || {};
+        const existingManualNotes = Array.isArray(diskCm.manual_folder_notes) ? diskCm.manual_folder_notes : [];
 
         // Gather Case Management notes & evaluations (match FULL name or exact apricot_id — zero first-name leaks)
         const cmNotes = person.user_ids.length
@@ -1249,9 +1288,12 @@ function syncAllParticipantFolders({ force = false } = {}) {
             ORDER BY created_at DESC
         `, [...nameParams, ...apricotIdParams]);
 
+        const finalCmNotes = cmNotes.length > 0 ? cmNotes : (Array.isArray(diskCm.case_notes) ? diskCm.case_notes : []);
+        const finalCmEvals = cmEvals.length > 0 ? cmEvals : (Array.isArray(diskCm.cm_session_evaluations) ? diskCm.cm_session_evaluations : []);
+
         fs.writeFileSync(path.join(pDir, 'case_management_notes.json'), JSON.stringify({
-            case_notes: cmNotes,
-            cm_session_evaluations: cmEvals,
+            case_notes: finalCmNotes,
+            cm_session_evaluations: finalCmEvals,
             manual_folder_notes: existingManualNotes
         }, null, 2));
 
@@ -1278,23 +1320,29 @@ function syncAllParticipantFolders({ force = false } = {}) {
             ORDER BY activity_date DESC, id DESC
         `, noteParams);
 
+        const diskApricot = readDiskJson(path.join(pDir, 'apricot_history.json'), {}) || {};
+        const finalApricotEvals = matchingApricotEvals.length > 0 ? matchingApricotEvals : (Array.isArray(diskApricot.evaluations) ? diskApricot.evaluations : []);
+        const finalApricotNotes = apricotNotes.length > 0 ? apricotNotes : (Array.isArray(diskApricot.processed_notes) ? diskApricot.processed_notes : []);
+        const finalApricotIds = allApricotIds.length > 0 ? allApricotIds : (Array.isArray(diskApricot.apricot_ids) ? diskApricot.apricot_ids : []);
+        if (!person.apricot_id && finalApricotIds.length > 0) person.apricot_id = finalApricotIds[0];
+
         fs.writeFileSync(path.join(pDir, 'apricot_history.json'), JSON.stringify({
             participant_key: slug,
             participant_name: person.name,
-            apricot_ids: allApricotIds,
-            evaluations: matchingApricotEvals,
-            notes_count: apricotNotes.length,
-            processed_notes: apricotNotes,
+            apricot_ids: finalApricotIds,
+            evaluations: finalApricotEvals,
+            notes_count: finalApricotNotes.length,
+            processed_notes: finalApricotNotes,
             updated_at: new Date().toISOString()
         }, null, 2));
 
         fs.writeFileSync(path.join(pDir, 'reentry_history.json'), JSON.stringify({
             participant_key: slug,
             participant_name: person.name,
-            client_records: rClientRows,
-            sessions: reentrySessions,
-            goals: reentryGoals,
-            case_plans: reentryCasePlans,
+            client_records: finalReentryClients,
+            sessions: finalReentrySessions,
+            goals: finalReentryGoals,
+            case_plans: finalReentryCasePlans,
             updated_at: new Date().toISOString()
         }, null, 2));
 
@@ -1310,18 +1358,29 @@ function syncAllParticipantFolders({ force = false } = {}) {
         const legacyBriefcaseCount = userIdClause ? (safeQueryGet(`SELECT COUNT(*) as n FROM briefcase_items WHERE ${userIdClause}`, person.user_ids)?.n || 0) : 0;
         const legacyGateCount = userIdClause ? (safeQueryGet(`SELECT COUNT(*) as n FROM gate_criteria WHERE ${userIdClause}`, person.user_ids)?.n || 0) : 0;
 
+        const diskProg = readDiskJson(path.join(pDir, 'program_records.json'), {}) || {};
+        const finalProfileRecords = profileRecords.length > 0 ? profileRecords : (Array.isArray(diskProg.profile_records) ? diskProg.profile_records : []);
+        const finalCasePlanTriggers = casePlanTriggers.length > 0 ? casePlanTriggers : (Array.isArray(diskProg.case_plan_triggers) ? diskProg.case_plan_triggers : []);
+        const finalDailyPoints = dailyPoints.length > 0 ? dailyPoints : (Array.isArray(diskProg.daily_points) ? diskProg.daily_points : []);
+        const finalDrugTests = drugTests.length > 0 ? drugTests : (Array.isArray(diskProg.drug_tests) ? diskProg.drug_tests : []);
+        const finalBenefits = benefits.length > 0 ? benefits : (Array.isArray(diskProg.benefits) ? diskProg.benefits : []);
+        const finalResumes = resumes.length > 0 ? resumes : (Array.isArray(diskProg.resumes) ? diskProg.resumes : []);
+        const finalDbDocuments = dbDocuments.length > 0 ? dbDocuments : (Array.isArray(diskProg.db_documents) ? diskProg.db_documents : []);
+        const finalLegacyBriefcaseCount = legacyBriefcaseCount > 0 ? legacyBriefcaseCount : (Number(diskProg.legacy_briefcase_items_count) || 0);
+        const finalLegacyGateCount = legacyGateCount > 0 ? legacyGateCount : (Number(diskProg.legacy_gate_criteria_count) || 0);
+
         fs.writeFileSync(path.join(pDir, 'program_records.json'), JSON.stringify({
             participant_key: slug,
             participant_name: person.name,
-            profile_records: profileRecords,
-            case_plan_triggers: casePlanTriggers,
-            daily_points: dailyPoints,
-            drug_tests: drugTests,
-            benefits,
-            resumes,
-            db_documents: dbDocuments,
-            legacy_briefcase_items_count: legacyBriefcaseCount,
-            legacy_gate_criteria_count: legacyGateCount,
+            profile_records: finalProfileRecords,
+            case_plan_triggers: finalCasePlanTriggers,
+            daily_points: finalDailyPoints,
+            drug_tests: finalDrugTests,
+            benefits: finalBenefits,
+            resumes: finalResumes,
+            db_documents: finalDbDocuments,
+            legacy_briefcase_items_count: finalLegacyBriefcaseCount,
+            legacy_gate_criteria_count: finalLegacyGateCount,
             updated_at: new Date().toISOString()
         }, null, 2));
 
@@ -1390,6 +1449,11 @@ function syncAllParticipantFolders({ force = false } = {}) {
                 flags: Array.isArray(latestMatch.pathway_flags) ? latestMatch.pathway_flags : [],
                 historical_snapshots: historicalSnapshots.slice().reverse()
             };
+        } else {
+            const diskSc = readDiskJson(path.join(pDir, 'skillcat_progress.json'), null);
+            if (diskSc && (Number(diskSc.completed_count) > 0 || (Array.isArray(diskSc.historical_snapshots) && diskSc.historical_snapshots.length > 0) || diskSc.userid)) {
+                skillcatRecord = diskSc;
+            }
         }
         fs.writeFileSync(path.join(pDir, 'skillcat_progress.json'), JSON.stringify(skillcatRecord, null, 2));
 
@@ -1398,6 +1462,9 @@ function syncAllParticipantFolders({ force = false } = {}) {
         let existingBriefcase = null;
         if (existingRow && existingRow.briefcase_json) {
             try { existingBriefcase = JSON.parse(existingRow.briefcase_json); } catch (e) {}
+        }
+        if (!existingBriefcase) {
+            existingBriefcase = readDiskJson(path.join(pDir, 'briefcase.json'), null);
         }
 
         const unifiedBriefcase = synthesizeBriefcaseFromLoadedInfo({
@@ -1408,27 +1475,31 @@ function syncAllParticipantFolders({ force = false } = {}) {
             userId: person.user_id,
             clientId: person.client_id,
             existingBriefcase,
-            textSources: [lscmiBriefMd, actionPlanMd, transcriptText, ...cmNotes.map(n => n.content)],
+            textSources: [lscmiBriefMd, actionPlanMd, transcriptText, ...finalCmNotes.map(n => n.content)],
             skillcatRecord
         });
         fs.writeFileSync(path.join(pDir, 'briefcase.json'), JSON.stringify(unifiedBriefcase, null, 2));
 
         // Load Action Plan Feedback Loop history
         const feedbackLoops = safeQueryAll('SELECT * FROM action_plan_feedback_loops WHERE participant_key = ? ORDER BY created_at DESC', [slug]);
+        const diskFeedback = readDiskJson(path.join(pDir, 'feedback_loop_log.json'), {}) || {};
+        const finalFeedbackLoops = feedbackLoops.length > 0 ? feedbackLoops : (Array.isArray(diskFeedback.history) ? diskFeedback.history : []);
         const feedbackLoopData = {
             participant_key: slug,
             participant_name: person.name,
-            current_agreement_status: feedbackLoops[0] ? feedbackLoops[0].agreement_status : (actionPlanMd ? 'agreed' : 'pending_review'),
-            history: feedbackLoops
+            current_agreement_status: finalFeedbackLoops[0] ? finalFeedbackLoops[0].agreement_status : (diskFeedback.current_agreement_status || (actionPlanMd ? 'agreed' : 'pending_review')),
+            history: finalFeedbackLoops
         };
         fs.writeFileSync(path.join(pDir, 'feedback_loop_log.json'), JSON.stringify(feedbackLoopData, null, 2));
 
         // Load Screening Consultation history
         const screenings = safeQueryAll('SELECT * FROM screening_consultations WHERE participant_key = ? ORDER BY created_at DESC', [slug]);
+        const diskScreening = readDiskJson(path.join(pDir, 'screening_consultation.json'), {}) || {};
+        const finalScreenings = screenings.length > 0 ? screenings : (Array.isArray(diskScreening.history) ? diskScreening.history : []);
         fs.writeFileSync(path.join(pDir, 'screening_consultation.json'), JSON.stringify({
             participant_key: slug,
-            latest_screening: screenings[0] || null,
-            history: screenings
+            latest_screening: finalScreenings[0] || diskScreening.latest_screening || null,
+            history: finalScreenings
         }, null, 2));
 
         // Load Voice Profile
@@ -1480,19 +1551,19 @@ function syncAllParticipantFolders({ force = false } = {}) {
                 actor: 'Archive Sync'
             });
         }
-        if (apricotNotes.length > 0) {
-            const newestDate = apricotNotes[0]?.activity_date || matchingApricotEvals[0]?.updated_at || new Date().toISOString();
+        if (finalApricotNotes.length > 0) {
+            const newestDate = finalApricotNotes[0]?.activity_date || finalApricotEvals[0]?.updated_at || new Date().toISOString();
             addMilestone('apricot:summary', {
                 timestamp: new Date(newestDate).toISOString(),
                 category: 'apricot',
                 action: 'Apricot Historical Record Synced',
-                summary: `${apricotNotes.length} chronological Apricot note(s) archived (${matchingApricotEvals[0]?.case_plan_status || 'Historical Record'}).`,
+                summary: `${finalApricotNotes.length} chronological Apricot note(s) archived (${finalApricotEvals[0]?.case_plan_status || 'Historical Record'}).`,
                 filename: 'apricot_history.json',
                 snapshot_file: '',
                 actor: 'Apricot Sync'
             });
         }
-        for (const cn of cmNotes) {
+        for (const cn of finalCmNotes) {
             addMilestone(`casenote:${cn.id}`, {
                 timestamp: new Date(cn.session_date || cn.created_at || Date.now()).toISOString(),
                 category: 'case_note',
@@ -1503,7 +1574,7 @@ function syncAllParticipantFolders({ force = false } = {}) {
                 actor: cn.author_name || 'Turn90 Staff'
             });
         }
-        for (const ev of cmEvals) {
+        for (const ev of finalCmEvals) {
             addMilestone(`cmeval:${ev.id}`, {
                 timestamp: new Date(ev.created_at || Date.now()).toISOString(),
                 category: 'cm_eval',
@@ -1514,7 +1585,7 @@ function syncAllParticipantFolders({ force = false } = {}) {
                 actor: ev.cm_name || 'Turn90 CM'
             });
         }
-        for (const rs of reentrySessions) {
+        for (const rs of finalReentrySessions) {
             addMilestone(`reentry_session:${rs.id}`, {
                 timestamp: new Date(rs.session_date || rs.created_at || Date.now()).toISOString(),
                 category: 'reentry_session',
@@ -1525,7 +1596,7 @@ function syncAllParticipantFolders({ force = false } = {}) {
                 actor: 'Reentry Navigator'
             });
         }
-        for (const dt of drugTests) {
+        for (const dt of finalDrugTests) {
             addMilestone(`drugtest:${dt.id}`, {
                 timestamp: new Date(dt.test_date || dt.created_at || Date.now()).toISOString(),
                 category: 'drug_test',
@@ -1536,7 +1607,7 @@ function syncAllParticipantFolders({ force = false } = {}) {
                 actor: dt.administered_by || 'Turn90 Staff'
             });
         }
-        for (const scItem of screenings) {
+        for (const scItem of finalScreenings) {
             addMilestone(`screening:${scItem.id}`, {
                 timestamp: new Date(scItem.created_at || Date.now()).toISOString(),
                 category: 'screening',
@@ -1547,7 +1618,7 @@ function syncAllParticipantFolders({ force = false } = {}) {
                 actor: scItem.created_by || 'Turn90 Staff'
             });
         }
-        for (const fb of feedbackLoops) {
+        for (const fb of finalFeedbackLoops) {
             addMilestone(`feedback_loop:${fb.id}`, {
                 timestamp: new Date(fb.created_at || Date.now()).toISOString(),
                 category: 'feedback_loop',
@@ -1584,7 +1655,7 @@ function syncAllParticipantFolders({ force = false } = {}) {
                 message: 'Participant disagreed with Action Plan target — requires collaborative 4-step Feedback Loop in next Case Management session.'
             });
         }
-        if (person.track === 'first_shift' && cmNotes.length === 0 && cmEvals.length === 0 && existingManualNotes.length === 0) {
+        if (person.track === 'first_shift' && finalCmNotes.length === 0 && finalCmEvals.length === 0 && existingManualNotes.length === 0) {
             flags.push({
                 code: 'FLAG-CM-CADENCE',
                 severity: 'warning',
@@ -1617,9 +1688,9 @@ function syncAllParticipantFolders({ force = false } = {}) {
             medical_appointments_applicable: unifiedBriefcase.medical_appointments_applicable,
             skillcat_pathway: unifiedBriefcase.items.skillcat_pathway.value,
             skillcat_modules_completed: skillcatRecord.completed_count,
-            cm_notes_count: cmNotes.length + cmEvals.length + existingManualNotes.length,
-            apricot_notes_count: apricotNotes.length,
-            reentry_sessions_count: reentrySessions.length,
+            cm_notes_count: finalCmNotes.length + finalCmEvals.length + existingManualNotes.length,
+            apricot_notes_count: finalApricotNotes.length,
+            reentry_sessions_count: finalReentrySessions.length,
             history_events_count: mergedEvents.length,
             documents_count: allFolderDocFiles.length,
             data_evaluation_flags: flags,
@@ -1650,8 +1721,8 @@ function syncAllParticipantFolders({ force = false } = {}) {
             waitlist_met_count: unifiedBriefcase.waitlist_met_count,
             data_flags_count: flags.length,
             cm_notes_count: caseloadEval.cm_notes_count,
-            apricot_notes_count: apricotNotes.length,
-            reentry_sessions_count: reentrySessions.length,
+            apricot_notes_count: finalApricotNotes.length,
+            reentry_sessions_count: finalReentrySessions.length,
             history_events_count: mergedEvents.length,
             documents_count: allFolderDocFiles.length,
             updated_at: new Date().toISOString()
