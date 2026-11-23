@@ -41,6 +41,35 @@ const {
     getParticipantFolderBundle,
     updateParticipantUnifiedBriefcase
 } = require('./services/participant_folder_manager');
+const {
+    VALID_CENTERS,
+    normalizeCenterName,
+    normalizeUserAccount,
+    isAdminUser,
+    getAllowedCentersForUser,
+    canUserAccessCenters,
+    invalidateWorkspaceCaches,
+    computeParticipantMetaMap,
+    syncCaseNoteTodosForAllParticipants,
+    getScopedTodos,
+    addManualTodo,
+    toggleTodoComplete,
+    deleteTodo,
+    getScopedWorkspaceOverview,
+    searchScopedParticipants,
+    assertParticipantAccess,
+    getParticipantFileBundle,
+    saveParticipantBasicInfo,
+    saveParticipantScreening,
+    saveParticipantConsultation,
+    autofillBriefcaseFromSources,
+    createNewParticipantFile,
+    listStaffAccounts,
+    createStaffAccount,
+    updateStaffAccount,
+    deleteStaffAccount,
+    changeOwnPassword
+} = require('./services/workspace_portal_service');
 const { evaluateClassTranscript, evaluateClassMedia, regenerateClassEvaluation, formatStaffFeedbackMarkdown } = require('./facilitation_evaluator');
 const { evaluateCaseManagementMedia } = require('./cm_evaluator');
 const { 
@@ -201,7 +230,10 @@ function requireRole(...allowedRoles) {
         if (!req.user) {
             return res.status(403).json({ error: 'Access restricted to authorized personnel.' });
         }
-        if (req.user.role === 'admin' || req.user.role === 'director' || req.user.portal_type === 'supervisor') {
+        if (isAdminUser(req.user)) {
+            return next();
+        }
+        if (req.user.role === 'user' && allowedRoles.some(r => ['program_manager', 'staff', 'navigator', 'facilitator'].includes(r))) {
             return next();
         }
         if (!allowedRoles.includes(req.user.role)) {
@@ -209,6 +241,24 @@ function requireRole(...allowedRoles) {
         }
         next();
     };
+}
+
+function requireAdmin(req, res, next) {
+    if (!req.user || !isAdminUser(req.user)) {
+        return res.status(403).json({ error: 'Admin privileges required.' });
+    }
+    next();
+}
+
+function tryAttachOptionalUser(req) {
+    try {
+        const authHeader = req.headers['authorization'];
+        const token = (authHeader && authHeader.split(' ')[1]) || req.query.token;
+        if (!token) return null;
+        return jwt.verify(token, JWT_SECRET);
+    } catch (e) {
+        return null;
+    }
 }
 
 // -------------------------------------------------------------
@@ -261,24 +311,51 @@ app.post('/api/auth/register', async (req, res) => {
 
 app.post('/api/auth/login', async (req, res) => {
     try {
-        const { email, password } = req.body;
-        if (!email || !password) return res.status(400).json({ error: 'Email and password required.' });
+        const { email, password } = req.body || {};
+        if (!email || !password) return res.status(400).json({ error: 'Email and password are required.' });
 
-        const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email.toLowerCase().trim());
+        const user = db.prepare('SELECT * FROM users WHERE LOWER(email) = ?').get(String(email).toLowerCase().trim());
         if (!user) return res.status(401).json({ error: 'Invalid email or password.' });
+        if (user.is_active === 0) {
+            return res.status(403).json({ error: 'Account is deactivated. Contact your Turn90 Administrator.' });
+        }
 
-        const match = await bcrypt.compare(password, user.password_hash);
+        const match = await bcrypt.compare(password, user.password_hash || '');
         if (!match) return res.status(401).json({ error: 'Invalid email or password.' });
 
-        const token = jwt.sign({ id: user.id, email: user.email, name: user.name, role: user.role, track: user.track, location: user.location, portal_type: user.portal_type || 'center' }, JWT_SECRET, { expiresIn: '30d' });
+        const normalizedUser = normalizeUserAccount(user);
+        const tokenPayload = {
+            id: normalizedUser.id,
+            email: normalizedUser.email,
+            name: normalizedUser.name,
+            role: normalizedUser.role,
+            user_type: normalizedUser.user_type,
+            assigned_center: normalizedUser.assigned_center,
+            allowed_centers: normalizedUser.allowed_centers,
+            track: normalizedUser.track,
+            location: normalizedUser.location,
+            portal_type: normalizedUser.portal_type
+        };
+
+        const token = jwt.sign(tokenPayload, JWT_SECRET, { expiresIn: '30d' });
         res.json({
             message: 'Login successful',
             token,
-            user: { id: user.id, name: user.name, email: user.email, phone: user.phone, role: user.role, track: user.track, location: user.location, portal_type: user.portal_type || 'center' }
+            user: normalizedUser
         });
     } catch (err) {
         console.error('Login error:', err);
         res.status(500).json({ error: 'Login failed.' });
+    }
+});
+
+app.post('/api/auth/change-password', authenticateToken, async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body || {};
+        await changeOwnPassword(req.user.id, currentPassword, newPassword);
+        res.json({ success: true, message: 'Password updated successfully.' });
+    } catch (err) {
+        res.status(err.status || 500).json({ error: err.message || 'Could not update password.' });
     }
 });
 
@@ -396,15 +473,15 @@ app.post('/api/auth/reset-password', async (req, res) => {
 });
 
 app.get('/api/auth/me', authenticateToken, (req, res) => {
-    const user = db.prepare('SELECT id, name, login_name, email, phone, role, track, location, portal_type, created_at FROM users WHERE id = ?').get(req.user.id);
-    if (!user) return res.status(404).json({ error: 'User not found.' });
+    const user = db.prepare('SELECT id, name, login_name, email, phone, role, track, location, portal_type, is_active, created_at FROM users WHERE id = ?').get(req.user.id);
+    if (!user || user.is_active === 0) return res.status(401).json({ error: 'Account inactive or not found.' });
 
     let profile = null;
     if (user.role === 'participant') {
         profile = db.prepare('SELECT * FROM participant_profiles WHERE user_id = ?').get(user.id);
     }
 
-    res.json({ user, profile });
+    res.json({ user: normalizeUserAccount(user), profile });
 });
 
 // -------------------------------------------------------------
@@ -3139,18 +3216,33 @@ app.get('/api/participant/case-plan', authenticateToken, handleGetCasePlan);
 // Staff Endpoint: Fetch Participant Case Plan directly by userId
 app.get('/api/pm/case-plan/:userId', authenticateToken, handleGetCasePlan);
 
-// Consultation -> LS/CMI Collateral Endpoints
+// Consultation -> LS/CMI Collateral Endpoints (privacy-protected on public login screen)
 app.get('/api/interviews/consultation-candidates', (req, res) => {
     try {
-        const candidates = listConsultationLscmiCandidates();
-        res.json({ success: true, candidates });
+        const optionalUser = tryAttachOptionalUser(req);
+        if (!optionalUser) {
+            return res.json({ success: true, candidates: [] });
+        }
+        const rawCandidates = listConsultationLscmiCandidates();
+        if (isAdminUser(optionalUser)) {
+            return res.json({ success: true, candidates: rawCandidates });
+        }
+        const { metaBySlug } = computeParticipantMetaMap();
+        const filtered = rawCandidates.filter(c => {
+            const slug = resolveCanonicalSlug(c.fullName || c.name || '');
+            const meta = metaBySlug.get(slug);
+            if (meta) return canUserAccessCenters(optionalUser, meta.centers);
+            const fallbackCenter = normalizeCenterName(c.center);
+            return fallbackCenter ? canUserAccessCenters(optionalUser, [fallbackCenter]) : false;
+        });
+        res.json({ success: true, candidates: filtered });
     } catch (err) {
         console.error('Error listing consultation candidates:', err);
         res.status(500).json({ error: err.message });
     }
 });
 
-app.get('/api/interviews/consultation-context', (req, res) => {
+app.get('/api/interviews/consultation-context', authenticateToken, (req, res) => {
     try {
         const query = req.query.query || req.query.name || req.query.recordId || '';
         const apricContext = getParticipantConsultationLscmiContext(query);
@@ -8360,8 +8452,8 @@ const {
 } = require('./llm_pipeline');
 const { CM_SESSION_TEMPLATE } = require('./cm_evaluator');
 
-// 1. Per-Participant Folders, Historical Archive & Search Portal APIs
-app.get('/api/participants/folders', (req, res) => {
+// 1. Per-Participant Folders, Historical Archive & Search Portal APIs (Center-Scoped Auth)
+app.get('/api/participants/folders', authenticateToken, (req, res) => {
     try {
         const forceRefresh = req.query.refresh === '1' || req.query.refresh === 'true';
         const q = (req.query.q || '').trim().toLowerCase();
@@ -8370,10 +8462,20 @@ app.get('/api/participants/folders', (req, res) => {
         const docFilter = (req.query.filter || 'all').trim().toLowerCase();
 
         const allParticipants = syncAllParticipantFolders({ force: forceRefresh });
-        let list = allParticipants;
+        const { metaBySlug } = computeParticipantMetaMap({ forceRefresh });
+        let list = allParticipants.filter(p => {
+            const meta = metaBySlug.get(p.participant_key);
+            const centers = meta ? meta.centers : [normalizeCenterName(p.location) || 'Charleston'];
+            return canUserAccessCenters(req.user, centers);
+        });
 
         if (locationFilter && locationFilter !== 'all' && locationFilter !== 'statewide') {
-            list = list.filter(p => String(p.location || '').toLowerCase().includes(locationFilter));
+            const targetCenter = normalizeCenterName(locationFilter);
+            list = list.filter(p => {
+                const meta = metaBySlug.get(p.participant_key);
+                if (meta && targetCenter) return meta.centers.includes(targetCenter);
+                return String(p.location || '').toLowerCase().includes(locationFilter);
+            });
         }
         if (trackFilter && trackFilter !== 'all') {
             list = list.filter(p => String(p.track || '').toLowerCase().includes(trackFilter));
@@ -8402,44 +8504,53 @@ app.get('/api/participants/folders', (req, res) => {
         }
 
         res.json({
-            total: allParticipants.length,
+            total: list.length,
             filtered_total: list.length,
             synced_at: new Date().toISOString(),
             participants: list
         });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(err.status || 500).json({ error: err.message });
     }
 });
 
-app.post('/api/participants/folders/sync', (req, res) => {
+app.post('/api/participants/folders/sync', authenticateToken, (req, res) => {
     try {
+        invalidateWorkspaceCaches();
         const participants = syncAllParticipantFolders({ force: true });
+        const { metaBySlug } = computeParticipantMetaMap();
+        const scoped = participants.filter(p => {
+            const meta = metaBySlug.get(p.participant_key);
+            const centers = meta ? meta.centers : [normalizeCenterName(p.location) || 'Charleston'];
+            return canUserAccessCenters(req.user, centers);
+        });
         res.json({
             success: true,
-            total: participants.length,
+            total: scoped.length,
             synced_at: new Date().toISOString(),
-            participants
+            participants: scoped
         });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(err.status || 500).json({ error: err.message });
     }
 });
 
-app.get('/api/participants/folder/:slug', (req, res) => {
+app.get('/api/participants/folder/:slug', authenticateToken, (req, res) => {
     try {
-        const bundle = getParticipantFolderBundle(req.params.slug);
+        const { slug } = assertParticipantAccess(req.params.slug, req.user);
+        const bundle = getParticipantFolderBundle(slug);
         if (!bundle) {
             return res.status(404).json({ error: 'Participant folder not found.' });
         }
         res.json(bundle);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(err.status || 500).json({ error: err.message });
     }
 });
 
-app.get('/api/participants/folder/:slug/file/:scope/:filename', (req, res) => {
+app.get('/api/participants/folder/:slug/file/:scope/:filename', authenticateToken, (req, res) => {
     try {
+        const { slug: canonicalSlug } = assertParticipantAccess(req.params.slug, req.user);
         const { scope, filename } = req.params;
         if (!['documents', 'history', 'root'].includes(scope)) {
             return res.status(400).json({ error: 'Invalid folder file scope.' });
@@ -8447,7 +8558,6 @@ app.get('/api/participants/folder/:slug/file/:scope/:filename', (req, res) => {
         if (!filename || filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
             return res.status(400).json({ error: 'Invalid filename requested.' });
         }
-        const canonicalSlug = resolveCanonicalSlug(req.params.slug);
         const pDir = path.join(dataDir, 'participants', canonicalSlug);
         const baseDir = scope === 'root' ? pDir : path.join(pDir, scope);
         const resolvedBase = path.resolve(baseDir);
@@ -8482,18 +8592,19 @@ app.get('/api/participants/folder/:slug/file/:scope/:filename', (req, res) => {
         res.setHeader('Content-Disposition', `${isDownload ? 'attachment' : 'inline'}; filename="${filename}"`);
         fs.createReadStream(resolvedFile).pipe(res);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(err.status || 500).json({ error: err.message });
     }
 });
 
-app.post('/api/participants/folder/:slug/save-document', async (req, res) => {
+app.post('/api/participants/folder/:slug/save-document', authenticateToken, async (req, res) => {
     try {
+        const { slug } = assertParticipantAccess(req.params.slug, req.user);
         const { docType, content, reason, actor } = req.body || {};
-        const saved = saveParticipantEditableDocument(req.params.slug, {
+        const saved = saveParticipantEditableDocument(slug, {
             docType,
             content,
             reason: reason || '',
-            actor: actor || 'Turn90 Staff'
+            actor: actor || req.user.name || 'Turn90 Staff'
         });
 
         try {
@@ -8507,6 +8618,7 @@ app.post('/api/participants/folder/:slug/save-document', async (req, res) => {
             console.warn('[Folder Save Document] PDF/DOCX conversion warning:', convErr.message);
         }
 
+        invalidateWorkspaceCaches();
         const bundle = getParticipantFolderBundle(saved.slug);
         res.json({
             success: true,
@@ -8514,24 +8626,24 @@ app.post('/api/participants/folder/:slug/save-document', async (req, res) => {
             bundle
         });
     } catch (err) {
-        res.status(400).json({ error: err.message });
+        res.status(err.status || 400).json({ error: err.message });
     }
 });
 
-app.post('/api/participants/folder/:slug/case-note', (req, res) => {
+app.post('/api/participants/folder/:slug/case-note', authenticateToken, (req, res) => {
     try {
+        const { slug } = assertParticipantAccess(req.params.slug, req.user);
         const { content, note_type, category, session_date, author_name } = req.body || {};
         if (!content || !String(content).trim()) {
             return res.status(400).json({ error: 'Case note content is required.' });
         }
-        const slug = resolveCanonicalSlug(req.params.slug);
         const bundle = getParticipantFolderBundle(slug);
         if (!bundle) {
             return res.status(404).json({ error: 'Participant folder not found.' });
         }
 
         const noteDate = session_date || new Date().toISOString().split('T')[0];
-        const author = (author_name || 'Turn90 Staff').trim();
+        const author = (author_name || req.user.name || 'Turn90 Staff').trim();
         const nType = (note_type || 'Individual Session').trim();
         const nCat = (category || 'Case Management').trim();
         const trimmedContent = String(content).trim();
@@ -8539,8 +8651,8 @@ app.post('/api/participants/folder/:slug/case-note', (req, res) => {
         if (bundle.profile && bundle.profile.user_id) {
             db.prepare(`
                 INSERT INTO case_notes (user_id, author_id, author_name, session_date, note_type, category, content)
-                VALUES (?, NULL, ?, ?, ?, ?, ?)
-            `).run(bundle.profile.user_id, author, noteDate, nType, nCat, trimmedContent);
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            `).run(bundle.profile.user_id, req.user.id || null, author, noteDate, nType, nCat, trimmedContent);
         } else {
             const cmPath = path.join(dataDir, 'participants', slug, 'case_management_notes.json');
             let cmData = { case_notes: [], cm_session_evaluations: [], manual_folder_notes: [] };
@@ -8568,15 +8680,16 @@ app.post('/api/participants/folder/:slug/case-note', (req, res) => {
             filename: 'case_management_notes.json',
             actor: author
         });
-        invalidateFolderIndexCache();
+        invalidateWorkspaceCaches();
         syncAllParticipantFolders({ force: true });
+        syncCaseNoteTodosForAllParticipants();
 
         res.json({
             success: true,
             bundle: getParticipantFolderBundle(slug)
         });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(err.status || 500).json({ error: err.message });
     }
 });
 
@@ -8585,9 +8698,10 @@ app.get('/api/briefcase/schema', (req, res) => {
     res.json(UNIFIED_BRIEFCASE_SCHEMA);
 });
 
-app.get('/api/briefcase/:slug', (req, res) => {
+app.get('/api/briefcase/:slug', authenticateToken, (req, res) => {
     try {
-        const bundle = getParticipantFolderBundle(req.params.slug);
+        const { slug } = assertParticipantAccess(req.params.slug, req.user);
+        const bundle = getParticipantFolderBundle(slug);
         if (!bundle) {
             return res.status(404).json({ error: 'Participant not found.' });
         }
@@ -8596,33 +8710,48 @@ app.get('/api/briefcase/:slug', (req, res) => {
             briefcase: bundle.briefcase
         });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(err.status || 500).json({ error: err.message });
     }
 });
 
-app.post('/api/briefcase/:slug', (req, res) => {
+app.post('/api/briefcase/:slug', authenticateToken, (req, res) => {
     try {
-        const updated = updateParticipantUnifiedBriefcase(req.params.slug, req.body || {});
+        const { slug } = assertParticipantAccess(req.params.slug, req.user);
+        const updated = updateParticipantUnifiedBriefcase(slug, {
+            ...(req.body || {}),
+            actor: req.user.name || 'Turn90 Staff'
+        });
+        invalidateWorkspaceCaches();
         res.json({
             success: true,
             briefcase: updated
         });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(err.status || 500).json({ error: err.message });
     }
 });
 
 // 3. Screening Consultations -> Eligibility & Auto-Briefcase Creation -> Feeds LS/CMI
-app.get('/api/screening/consultations', (req, res) => {
+app.get('/api/screening/consultations', authenticateToken, (req, res) => {
     try {
         const rows = db.prepare('SELECT * FROM screening_consultations ORDER BY created_at DESC LIMIT 100').all();
-        res.json({ consultations: rows });
+        if (isAdminUser(req.user)) {
+            return res.json({ consultations: rows });
+        }
+        const { metaBySlug } = computeParticipantMetaMap();
+        const filtered = rows.filter(r => {
+            const meta = metaBySlug.get(r.participant_key);
+            if (meta) return canUserAccessCenters(req.user, meta.centers);
+            const loc = normalizeCenterName(r.location);
+            return loc ? canUserAccessCenters(req.user, [loc]) : false;
+        });
+        res.json({ consultations: filtered });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
-app.post('/api/screening/consult', (req, res) => {
+app.post('/api/screening/consult', authenticateToken, (req, res) => {
     try {
         const body = req.body || {};
         const participantName = (body.participant_name || '').trim();
@@ -8630,7 +8759,11 @@ app.post('/api/screening/consult', (req, res) => {
             return res.status(400).json({ error: 'Participant name is required.' });
         }
         const slug = sanitizeParticipantSlug(participantName);
-        const location = body.location || 'Charleston';
+        const requestedLocation = normalizeCenterName(body.location) || getAllowedCentersForUser(req.user)[0] || 'Charleston';
+        if (!isAdminUser(req.user) && !canUserAccessCenters(req.user, [requestedLocation])) {
+            return res.status(403).json({ error: `Access restricted to ${getAllowedCentersForUser(req.user).join(', ')}.` });
+        }
+        const location = requestedLocation;
         const age = Number(body.age || 30);
         const releasedWithin12Mo = body.released_within_12_months !== 'no';
         const pendingChargesCleared = body.pending_charges_status !== 'blocking_unresolved';
@@ -8646,23 +8779,26 @@ app.post('/api/screening/consult', (req, res) => {
             child_support_applicable: csApplicable,
             supervision_officer_details: body.supervision_notes || '',
             chronic_condition_details: hasChronic === 'yes' ? (body.chronic_condition_notes || '') : '',
+            actor: req.user.name || 'Turn90 Staff',
             items: {
-                state_id_or_dl: { value: body.state_id_or_dl || 'missing', notes: body.id_notes || '' },
-                ss_card: { value: body.ss_card || 'missing', notes: '' },
-                birth_certificate: { value: body.birth_certificate || 'missing', notes: '' },
+                state_id_or_dl: { value: body.state_id_or_dl || 'missing', notes: body.id_notes || '', source: 'consultation' },
+                ss_card: { value: body.ss_card || 'missing', notes: '', source: 'consultation' },
+                birth_certificate: { value: body.birth_certificate || 'missing', notes: '', source: 'consultation' },
                 chronic_health_and_meds: {
                     value: hasChronic === 'no' ? 'no_chronic_conditions_na' : (body.chronic_health_and_meds || 'treated_and_has_daily_meds'),
-                    notes: hasChronic === 'no' ? 'No chronic health conditions — medical appointments not required' : (body.chronic_condition_notes || '')
+                    notes: hasChronic === 'no' ? 'No chronic health conditions — medical appointments not required' : (body.chronic_condition_notes || ''),
+                    source: 'consultation'
                 },
-                stable_housing: { value: body.stable_housing || 'stable_verified', notes: body.housing_notes || '' },
-                reliable_phone: { value: body.reliable_phone || 'active_verified', notes: body.phone || '' },
+                stable_housing: { value: body.stable_housing || 'stable_verified', notes: body.housing_notes || '', source: 'consultation' },
+                reliable_phone: { value: body.reliable_phone || 'active_verified', notes: body.phone || '', source: 'consultation' },
                 dmv_suspended_inquiry: {
                     value: dlSuspended === 'no' ? 'not_applicable_valid' : (body.dmv_suspended_inquiry || 'needs_dmv_visit'),
-                    notes: body.dmv_notes || ''
+                    notes: body.dmv_notes || '',
+                    source: 'consultation'
                 },
-                child_support_contact: { value: body.child_support_contact || 'not_applicable', notes: body.child_support_notes || '' },
-                supervision_information: { value: body.supervision_information || 'active_logged_no_conflict', notes: body.supervision_notes || '' },
-                skillcat_pathway: { value: body.skillcat_pathway || 'HVAC', notes: 'Selected during Screening Consultation' }
+                child_support_contact: { value: body.child_support_contact || 'not_applicable', notes: body.child_support_notes || '', source: 'consultation' },
+                supervision_information: { value: body.supervision_information || 'active_logged_no_conflict', notes: body.supervision_notes || '', source: 'consultation' },
+                skillcat_pathway: { value: body.skillcat_pathway || 'HVAC', notes: 'Selected during Screening Consultation', source: 'consultation' }
             }
         });
 
@@ -8969,10 +9105,17 @@ const {
     initSupervisionCron
 } = require('./services/supervision_pipeline_runner');
 
-app.get('/api/supervision/combined-report', (req, res) => {
+app.get('/api/supervision/combined-report', authenticateToken, (req, res) => {
     try {
         const locationFilter = (req.query.location || '').trim().toLowerCase();
         const folders = syncAllParticipantFolders();
+        const { metaBySlug } = computeParticipantMetaMap();
+        const scopedFolders = isAdminUser(req.user)
+            ? folders
+            : folders.filter(p => {
+                const meta = metaBySlug.get(p.participant_key);
+                return canUserAccessCenters(req.user, meta ? meta.centers : [normalizeCenterName(p.location) || 'Charleston']);
+            });
         const supervisionDir = getSupervisionPipelineDir();
 
         let skillcatHistory = {};
@@ -8985,9 +9128,9 @@ app.get('/api/supervision/combined-report', (req, res) => {
         const latestDate = Object.keys(snapshots).sort().pop() || null;
         const skillcatLearners = latestDate ? Object.values(snapshots[latestDate]) : [];
 
-        // Build Data Evaluation Flagging Template rows across all participants
+        // Build Data Evaluation Flagging Template rows across permitted participants
         const dataFlags = [];
-        for (const p of folders) {
+        for (const p of scopedFolders) {
             if (locationFilter && locationFilter !== 'all' && !String(p.location || '').toLowerCase().includes(locationFilter)) {
                 continue;
             }
@@ -9007,12 +9150,18 @@ app.get('/api/supervision/combined-report', (req, res) => {
 
         // Classroom Do's & Don'ts recent evaluations
         let classEvals = db.prepare('SELECT id, location, session_title, facilitator_name, class_date, summary_markdown, created_at FROM class_facilitation_evaluations ORDER BY created_at DESC LIMIT 30').all();
+        if (!isAdminUser(req.user)) {
+            classEvals = classEvals.filter(c => canUserAccessCenters(req.user, [normalizeCenterName(c.location)]));
+        }
         if (locationFilter && locationFilter !== 'all') {
             classEvals = classEvals.filter(c => String(c.location || '').toLowerCase().includes(locationFilter));
         }
 
         // Case Management Template Adherence recent evaluations
         let cmEvals = db.prepare('SELECT id, location, session_title, cm_name, apricot_id, session_type, total_score, summary_markdown, created_at FROM case_management_evaluations ORDER BY created_at DESC LIMIT 30').all();
+        if (!isAdminUser(req.user)) {
+            cmEvals = cmEvals.filter(c => canUserAccessCenters(req.user, [normalizeCenterName(c.location)]));
+        }
         if (locationFilter && locationFilter !== 'all') {
             cmEvals = cmEvals.filter(c => String(c.location || '').toLowerCase().includes(locationFilter));
         }
@@ -9026,9 +9175,9 @@ app.get('/api/supervision/combined-report', (req, res) => {
                 learners: skillcatLearners
             },
             waitlist_readiness_summary: {
-                total_participants: folders.length,
-                waitlist_ready_count: folders.filter(f => f.waitlist_ready).length,
-                stabilizing_count: folders.filter(f => !f.waitlist_ready).length
+                total_participants: scopedFolders.length,
+                waitlist_ready_count: scopedFolders.filter(f => f.waitlist_ready).length,
+                stabilizing_count: scopedFolders.filter(f => !f.waitlist_ready).length
             },
             data_evaluation_flags: dataFlags,
             recent_classroom_coaching: classEvals,
@@ -9155,6 +9304,270 @@ app.get('/api/templates/all', (req, res) => {
         });
     } catch (err) {
         res.status(500).json({ error: err.message });
+    }
+});
+
+// 8. Admin Staff User Account Management APIs (Admin Only)
+app.get('/api/admin/staff-users', authenticateToken, requireAdmin, (req, res) => {
+    try {
+        res.json({
+            users: listStaffAccounts(),
+            valid_centers: VALID_CENTERS
+        });
+    } catch (err) {
+        res.status(err.status || 500).json({ error: err.message });
+    }
+});
+
+app.post('/api/admin/staff-users', authenticateToken, requireAdmin, async (req, res) => {
+    try {
+        const created = await createStaffAccount(req.body || {}, req.user);
+        res.status(201).json({ success: true, user: created });
+    } catch (err) {
+        res.status(err.status || 500).json({ error: err.message });
+    }
+});
+
+app.patch('/api/admin/staff-users/:id', authenticateToken, requireAdmin, async (req, res) => {
+    try {
+        const updated = await updateStaffAccount(Number(req.params.id), req.body || {}, req.user);
+        res.json({ success: true, user: updated });
+    } catch (err) {
+        res.status(err.status || 500).json({ error: err.message });
+    }
+});
+
+app.delete('/api/admin/staff-users/:id', authenticateToken, requireAdmin, (req, res) => {
+    try {
+        const result = deleteStaffAccount(Number(req.params.id), req.user);
+        res.json({ success: true, ...result });
+    } catch (err) {
+        res.status(err.status || 500).json({ error: err.message });
+    }
+});
+
+// 9. Progressive-Disclosure Center Workspace, To-Dos & 5-Section Participant File APIs
+app.get('/api/workspace/overview', authenticateToken, (req, res) => {
+    try {
+        const forceRefresh = req.query.refresh === '1' || req.query.refresh === 'true';
+        const overview = getScopedWorkspaceOverview(req.user, { forceRefresh });
+        res.json(overview);
+    } catch (err) {
+        res.status(err.status || 500).json({ error: err.message });
+    }
+});
+
+app.get('/api/workspace/search', authenticateToken, (req, res) => {
+    try {
+        const result = searchScopedParticipants(req.user, {
+            q: req.query.q || '',
+            center: req.query.center || 'all',
+            filter: req.query.filter || 'all'
+        });
+        res.json(result);
+    } catch (err) {
+        res.status(err.status || 500).json({ error: err.message });
+    }
+});
+
+app.post('/api/workspace/participants', authenticateToken, (req, res) => {
+    try {
+        const file = createNewParticipantFile(req.body || {}, req.user);
+        res.status(201).json({ success: true, file });
+    } catch (err) {
+        res.status(err.status || 500).json({ error: err.message });
+    }
+});
+
+app.get('/api/workspace/participant/:slug', authenticateToken, (req, res) => {
+    try {
+        const file = getParticipantFileBundle(req.params.slug, req.user);
+        res.json(file);
+    } catch (err) {
+        res.status(err.status || 500).json({ error: err.message });
+    }
+});
+
+app.patch('/api/workspace/participant/:slug/basic-info', authenticateToken, (req, res) => {
+    try {
+        const file = saveParticipantBasicInfo(req.params.slug, req.body || {}, req.user);
+        res.json({ success: true, file });
+    } catch (err) {
+        res.status(err.status || 500).json({ error: err.message });
+    }
+});
+
+app.post('/api/workspace/participant/:slug/screening', authenticateToken, (req, res) => {
+    try {
+        const file = saveParticipantScreening(req.params.slug, req.body || {}, req.user);
+        res.json({ success: true, file });
+    } catch (err) {
+        res.status(err.status || 500).json({ error: err.message });
+    }
+});
+
+app.post('/api/workspace/participant/:slug/consultation', authenticateToken, (req, res) => {
+    try {
+        const file = saveParticipantConsultation(req.params.slug, req.body || {}, req.user);
+        res.json({ success: true, file });
+    } catch (err) {
+        res.status(err.status || 500).json({ error: err.message });
+    }
+});
+
+app.post('/api/workspace/participant/:slug/briefcase', authenticateToken, (req, res) => {
+    try {
+        const { slug } = assertParticipantAccess(req.params.slug, req.user);
+        updateParticipantUnifiedBriefcase(slug, {
+            ...(req.body || {}),
+            default_source: 'manual_dropdown',
+            history_action: 'Updated Briefcase (Manual Entry)',
+            actor: req.user.name || 'Turn90 Staff'
+        });
+        invalidateWorkspaceCaches();
+        const file = getParticipantFileBundle(slug, req.user);
+        res.json({ success: true, file });
+    } catch (err) {
+        res.status(err.status || 500).json({ error: err.message });
+    }
+});
+
+app.post('/api/workspace/participant/:slug/briefcase/autofill', authenticateToken, (req, res) => {
+    try {
+        const { slug } = assertParticipantAccess(req.params.slug, req.user);
+        const result = autofillBriefcaseFromSources(slug, {
+            overwriteManual: Boolean(req.body && req.body.overwrite_manual),
+            actor: req.user.name || 'Auto-Fill Engine'
+        });
+        const file = getParticipantFileBundle(slug, req.user);
+        res.json({
+            success: true,
+            updated_fields: result.updated_fields,
+            file
+        });
+    } catch (err) {
+        res.status(err.status || 500).json({ error: err.message });
+    }
+});
+
+app.post('/api/workspace/participant/:slug/case-note', authenticateToken, (req, res) => {
+    try {
+        const { slug } = assertParticipantAccess(req.params.slug, req.user);
+        const { content, note_type, category, session_date, auto_fill_briefcase } = req.body || {};
+        if (!content || !String(content).trim()) {
+            return res.status(400).json({ error: 'Case note content is required.' });
+        }
+        const bundle = getParticipantFolderBundle(slug);
+        if (!bundle) return res.status(404).json({ error: 'Participant folder not found.' });
+
+        const noteDate = session_date || new Date().toISOString().split('T')[0];
+        const author = (req.user.name || 'Turn90 Staff').trim();
+        const nType = (note_type || 'Individual Session').trim();
+        const nCat = (category || 'Case Management').trim();
+        const trimmedContent = String(content).trim();
+
+        if (bundle.profile && bundle.profile.user_id) {
+            db.prepare(`
+                INSERT INTO case_notes (user_id, author_id, author_name, session_date, note_type, category, content)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            `).run(bundle.profile.user_id, req.user.id || null, author, noteDate, nType, nCat, trimmedContent);
+        } else {
+            const cmPath = path.join(dataDir, 'participants', slug, 'case_management_notes.json');
+            let cmData = { case_notes: [], cm_session_evaluations: [], manual_folder_notes: [] };
+            if (fs.existsSync(cmPath)) {
+                try { cmData = JSON.parse(fs.readFileSync(cmPath, 'utf8')); } catch (e) {}
+            }
+            if (!Array.isArray(cmData.manual_folder_notes)) cmData.manual_folder_notes = [];
+            cmData.manual_folder_notes.unshift({
+                id: `mn_${Date.now()}`,
+                session_date: noteDate,
+                author_name: author,
+                note_type: nType,
+                category: nCat,
+                content: trimmedContent,
+                created_at: new Date().toISOString()
+            });
+            fs.writeFileSync(cmPath, JSON.stringify(cmData, null, 2));
+        }
+
+        appendParticipantHistoryEvent(slug, {
+            timestamp: new Date(noteDate).toISOString(),
+            category: 'case_note',
+            action: `Case Note Added (${nType})`,
+            summary: trimmedContent.slice(0, 220),
+            filename: 'case_management_notes.json',
+            actor: author
+        });
+        invalidateWorkspaceCaches();
+        syncAllParticipantFolders({ force: true });
+        syncCaseNoteTodosForAllParticipants();
+
+        let autoFilledFields = [];
+        if (auto_fill_briefcase !== false) {
+            const afRes = autofillBriefcaseFromSources(slug, { overwriteManual: false, actor: author });
+            autoFilledFields = afRes.updated_fields || [];
+        }
+
+        const file = getParticipantFileBundle(slug, req.user);
+        res.json({ success: true, auto_filled_fields: autoFilledFields, file });
+    } catch (err) {
+        res.status(err.status || 500).json({ error: err.message });
+    }
+});
+
+app.get('/api/workspace/todos', authenticateToken, (req, res) => {
+    try {
+        const includeCompleted = req.query.include_completed !== '0';
+        const autoSync = req.query.refresh === '1';
+        const participantKey = req.query.participant_key || '';
+        const todos = getScopedTodos(req.user, { includeCompleted, participantKey, autoSync });
+        res.json(todos);
+    } catch (err) {
+        res.status(err.status || 500).json({ error: err.message });
+    }
+});
+
+app.post('/api/workspace/todos', authenticateToken, (req, res) => {
+    try {
+        const { participant_key, participant_name } = req.body || {};
+        if (!participant_key && !participant_name) {
+            return res.status(400).json({ error: 'participant_key is required.' });
+        }
+        const created = addManualTodo(participant_key || participant_name, req.body || {}, req.user);
+        res.status(201).json({ success: true, todo: created });
+    } catch (err) {
+        res.status(err.status || 500).json({ error: err.message });
+    }
+});
+
+app.patch('/api/workspace/todos/:id', authenticateToken, (req, res) => {
+    try {
+        const completed = Boolean(req.body && req.body.completed);
+        const updated = toggleTodoComplete(Number(req.params.id), completed, req.user);
+        res.json({ success: true, todo: updated });
+    } catch (err) {
+        res.status(err.status || 500).json({ error: err.message });
+    }
+});
+
+app.delete('/api/workspace/todos/:id', authenticateToken, (req, res) => {
+    try {
+        const result = deleteTodo(Number(req.params.id), req.user);
+        res.json({ success: true, ...result });
+    } catch (err) {
+        res.status(err.status || 500).json({ error: err.message });
+    }
+});
+
+app.post('/api/workspace/todos/refresh', authenticateToken, (req, res) => {
+    try {
+        invalidateWorkspaceCaches();
+        const { metaBySlug } = computeParticipantMetaMap({ forceRefresh: true });
+        syncCaseNoteTodosForAllParticipants({ metaBySlug });
+        const todos = getScopedTodos(req.user, { includeCompleted: true, autoSync: false });
+        res.json({ success: true, todos });
+    } catch (err) {
+        res.status(err.status || 500).json({ error: err.message });
     }
 });
 

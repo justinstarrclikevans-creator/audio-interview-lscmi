@@ -756,7 +756,57 @@ CREATE TABLE IF NOT EXISTS reentry_client_briefcase (
     FOREIGN KEY(client_id) REFERENCES reentry_clients(id) ON DELETE CASCADE,
     UNIQUE(client_id, item_key)
 );
+
+-- Progressive-Disclosure Portal Tables: Participant Basic Info, Case-Note To-Dos, Screening & Consultation
+CREATE TABLE IF NOT EXISTS participant_basic_info (
+    participant_key TEXT PRIMARY KEY,
+    full_name TEXT,
+    street_address TEXT,
+    city TEXT,
+    state TEXT DEFAULT 'SC',
+    zip TEXT,
+    phone TEXT,
+    email TEXT,
+    dob TEXT,
+    ssn TEXT,
+    assigned_program_manager TEXT,
+    attached_centers_json TEXT,
+    primary_center TEXT,
+    track TEXT,
+    status TEXT DEFAULT 'active',
+    updated_by TEXT,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS participant_todos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    participant_key TEXT NOT NULL,
+    participant_name TEXT,
+    centers_json TEXT,
+    title TEXT NOT NULL,
+    details TEXT,
+    source TEXT DEFAULT 'case_note', -- 'case_note', 'apricot_eval', 'manual'
+    source_key TEXT,
+    source_date TEXT,
+    completed INTEGER DEFAULT 0,
+    completed_by TEXT,
+    completed_at DATETIME,
+    created_by TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(participant_key, source_key)
+);
+
+CREATE TABLE IF NOT EXISTS participant_screening_consultation (
+    participant_key TEXT PRIMARY KEY,
+    screening_json TEXT,
+    consultation_json TEXT,
+    updated_by TEXT,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
 `);
+
+try { db.exec("ALTER TABLE users ADD COLUMN is_active INTEGER DEFAULT 1;"); } catch (e) {}
 
 function initReentryClientBriefcase(clientId) {
     const insertStmt = db.prepare(`
@@ -842,20 +892,44 @@ function seedDefaultAccounts() {
 
     for (const seed of PORTAL_SEEDS) {
         const pinHash = bcrypt.hashSync(seed.passcode, 10);
-        const existing = db.prepare('SELECT id FROM users WHERE login_name = ? OR email = ?').get(seed.login_name, seed.email);
+        const existing = db.prepare('SELECT id, passcode_hash FROM users WHERE login_name = ? OR email = ?').get(seed.login_name, seed.email);
         if (existing) {
-            db.prepare(`
-                UPDATE users 
-                SET login_name = ?, passcode_hash = ?, portal_type = ?, role = ?, location = ?, name = ?
-                WHERE id = ?
-            `).run(seed.login_name, pinHash, seed.portal_type, seed.role, seed.location, seed.name, existing.id);
+            if (!existing.passcode_hash) {
+                db.prepare(`UPDATE users SET passcode_hash = ? WHERE id = ?`).run(pinHash, existing.id);
+            }
         } else {
             db.prepare(`
-                INSERT INTO users (name, login_name, email, passcode_hash, password_hash, role, track, location, portal_type)
-                VALUES (?, ?, ?, ?, ?, ?, 'first_shift', ?, ?)
+                INSERT INTO users (name, login_name, email, passcode_hash, password_hash, role, track, location, portal_type, is_active)
+                VALUES (?, ?, ?, ?, ?, ?, 'first_shift', ?, ?, 1)
             `).run(seed.name, seed.login_name, seed.email, pinHash, defaultPasswordHash, seed.role, seed.location, seed.portal_type);
         }
-        console.log(`[DB Seed] Configured portal account: ${seed.name} (${seed.login_name}) with passcode.`);
+    }
+
+    // Idempotently seed individual Turn90 staff email & password accounts (never overwrite edited passwords, roles, or centers)
+    const defaultStaffPasswordHash = bcrypt.hashSync(process.env.DEFAULT_STAFF_PASSWORD || 'Turn90!2026', 10);
+    const STAFF_SEEDS = [
+        { email: 'justin@turnninety.com', name: 'Justin Evans', role: 'admin', location: 'All', portal_type: 'admin' },
+        { email: 'daisy@turnninety.com', name: 'Daisy Boynton', role: 'user', location: 'Reentry Navigation', portal_type: 'center' },
+        { email: 'terrence.brown@turnninety.com', name: 'Terrence Brown', role: 'user', location: 'Charleston', portal_type: 'center' },
+        { email: 'terrance@turnninety.com', name: 'Terrance Ferrell', role: 'user', location: 'Columbia', portal_type: 'center' },
+        { email: 'jenn@turnninety.com', name: 'Jenn Jeanquart', role: 'user', location: 'Columbia', portal_type: 'center' },
+        { email: 'matt@turnninety.com', name: 'Matt Carlisle', role: 'user', location: 'Spartanburg', portal_type: 'center' },
+        { email: 'diyoung@turnninety.com', name: 'Diyoung Dantzler', role: 'user', location: 'Spartanburg', portal_type: 'center' },
+        { email: 'prison@turnninety.com', name: 'Prison Program Staff', role: 'user', location: 'Prison Program', portal_type: 'center' }
+    ];
+
+    for (const staff of STAFF_SEEDS) {
+        const emailLower = staff.email.toLowerCase().trim();
+        const existing = db.prepare('SELECT id, password_hash FROM users WHERE LOWER(email) = ?').get(emailLower);
+        if (!existing) {
+            db.prepare(`
+                INSERT INTO users (name, email, password_hash, role, track, location, portal_type, is_active)
+                VALUES (?, ?, ?, ?, 'first_shift', ?, ?, 1)
+            `).run(staff.name, emailLower, defaultStaffPasswordHash, staff.role, staff.location, staff.portal_type);
+            console.log(`[DB Seed] Seeded staff account: ${staff.name} (${emailLower}) [${staff.role} / ${staff.location}]`);
+        } else if (!existing.password_hash || !String(existing.password_hash).trim()) {
+            db.prepare('UPDATE users SET password_hash = ? WHERE id = ?').run(defaultStaffPasswordHash, existing.id);
+        }
     }
 
     // Sync all participants with latest briefcase, gate criteria, and benefits

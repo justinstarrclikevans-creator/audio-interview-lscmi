@@ -27,6 +27,14 @@ function escapeHtml(str) {
         .replace(/'/g, '&#039;');
 }
 
+function getOptionalAuthHeaders(extra = {}) {
+    const token = localStorage.getItem('fs_token');
+    if (token) {
+        return { ...extra, 'Authorization': `Bearer ${token}` };
+    }
+    return { ...extra };
+}
+
 // -------------------------------------------------------------
 // HELPER: SAFE API RESPONSE PARSER (Gracefully handles HTML/Expired Sessions)
 // -------------------------------------------------------------
@@ -123,51 +131,48 @@ async function restoreSession(token) {
         if (res.ok) {
             const data = await res.json();
             currentUser = data.user;
+            window.currentUser = currentUser;
             currentProfile = data.profile;
             updateNav();
             routeUserToPortal();
         } else {
             localStorage.removeItem('fs_token');
+            currentUser = null;
+            window.currentUser = null;
+            updateNav();
             routeUserToPortal();
         }
     } catch (err) {
         console.error('Session restore failed:', err);
+        currentUser = null;
+        window.currentUser = null;
+        updateNav();
         routeUserToPortal();
     }
 }
 
 function updateNav() {
+    if (typeof window.renderWorkspaceHeaderControls === 'function') {
+        window.renderWorkspaceHeaderControls(currentUser);
+        return;
+    }
     const navRight = document.getElementById('nav-user-section');
     const dashBar = document.getElementById('six-dashboards-bar');
     if (!currentUser) {
         if (dashBar) dashBar.classList.add('hidden');
-        navRight.innerHTML = `
-            <span style="font-size: 12.5px; color: #64748b; font-weight: 600;">🔒 Protected Operations Portal</span>
-        `;
+        if (navRight) {
+            navRight.innerHTML = `<span style="font-size: 12.5px; color: #cbd5e1; font-weight: 600;">🔒 Protected Staff Portal</span>`;
+        }
         return;
     }
-
-    if (dashBar) dashBar.classList.remove('hidden');
-
-    const activeDash = window.activeSixDashboardKey || currentUser.active_dashboard || currentUser.login_name || 'supervisor';
-    const badgeLabels = {
-        lscmi: '📋 Dashboard 1: LS/CMI & Screening',
-        charleston: '🏢 Dashboard 2: Charleston Center (CHS)',
-        columbia: '🏢 Dashboard 3: Columbia Center (COL)',
-        spartanburg: '🏢 Dashboard 4: Spartanburg Center (SPB)',
-        reentry_nav: '🧭 Dashboard 5: Reentry Navigation',
-        supervisor: '🌐 Dashboard 6: All-Information Master'
-    };
-    const portalBadge = badgeLabels[activeDash] || `🏢 ${currentUser.location || 'Turn90'} Dashboard`;
-
-    navRight.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <span style="font-size: 12px; padding: 4px 10px; border-radius: 6px; background: #eff6ff; color: #1e3a8a; font-weight: 700; border: 1px solid #bfdbfe;">
-                ${portalBadge}
-            </span>
-            <button class="btn btn-outline" style="padding: 5px 12px; font-size: 12px; font-weight: 600;" onclick="handleLogout()">Sign Out</button>
-        </div>
-    `;
+    if (navRight) {
+        navRight.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 12px; color: #f8fafc; font-weight: 700;">${escapeHtml(currentUser.name || '')}</span>
+                <button class="btn btn-outline" style="padding: 5px 12px; font-size: 12px; font-weight: 600;" onclick="handleLogout()">Sign Out</button>
+            </div>
+        `;
+    }
 }
 
 function routeUserToPortal() {
@@ -176,30 +181,17 @@ function routeUserToPortal() {
         return;
     }
 
-    const targetDash = currentUser.active_dashboard || currentUser.login_name || (currentUser.portal_type === 'lscmi' ? 'lscmi' : (currentUser.portal_type === 'reentry_nav' ? 'reentry_nav' : (currentUser.portal_type === 'supervisor' ? 'supervisor' : (currentUser.location || 'supervisor').toLowerCase())));
-    if (typeof window.switchSixDashboard === 'function') {
-        window.switchSixDashboard(targetDash);
+    if (currentUser.role === 'participant') {
+        showView('view-fs-dashboard');
+        if (typeof loadFsDashboard === 'function') loadFsDashboard();
         return;
     }
 
-    const portalType = currentUser.portal_type || (currentUser.track === 'reentry_nav' ? 'reentry_nav' : (currentUser.role === 'director' ? 'supervisor' : 'center'));
-
-    if (portalType === 'supervisor') {
-        showView('view-supervisor-dashboard');
-        if (typeof loadSupervisorDashboard === 'function') loadSupervisorDashboard();
-    } else if (portalType === 'reentry_nav' || currentUser.role === 'navigator') {
-        showView('view-reentry-dashboard');
-        if (typeof loadReentryCaseload === 'function') loadReentryCaseload();
-        if (typeof loadReentryMasterActions === 'function') loadReentryMasterActions();
-    } else if (portalType === 'center' || currentUser.role === 'program_manager' || currentUser.role === 'facilitator') {
-        showView('view-pm-portal');
-        if (typeof setupCenterPortalView === 'function') setupCenterPortalView();
-        else {
-            switchPmSubView('caseload');
-            if (typeof loadCaseload === 'function') loadCaseload();
-        }
-    } else {
-        showView('view-supervisor-dashboard');
+    showView('view-workspace-portal');
+    if (typeof window.initWorkspacePortal === 'function') {
+        window.initWorkspacePortal();
+    } else if (typeof window.switchSixDashboard === 'function') {
+        window.switchSixDashboard(currentUser.active_dashboard || currentUser.login_name || 'supervisor');
     }
 }
 
@@ -284,6 +276,7 @@ async function handleRegister(e) {
 function handleLogout() {
     localStorage.removeItem('fs_token');
     currentUser = null;
+    window.currentUser = null;
     currentProfile = null;
     updateNav();
     routeUserToPortal();
@@ -3420,7 +3413,9 @@ let activeConsultationCollateralCache = null;
 
 async function populateConsultationCandidateSelects() {
     try {
-        const res = await fetch('/api/interviews/consultation-candidates');
+        const res = await fetch('/api/interviews/consultation-candidates', {
+            headers: getOptionalAuthHeaders()
+        });
         if (!res.ok) return;
         const data = await res.json();
         const candidates = data.candidates || [];
@@ -3490,7 +3485,9 @@ async function loadInterviewConsultationSummary(mode, queryName) {
     }
 
     try {
-        const res = await fetch(`/api/interviews/consultation-context?query=${encodeURIComponent(q)}`);
+        const res = await fetch(`/api/interviews/consultation-context?query=${encodeURIComponent(q)}`, {
+            headers: getOptionalAuthHeaders()
+        });
         if (!res.ok) {
             if (box) box.classList.add('hidden');
             if (mode === 'manual' && insertBtn) insertBtn.classList.add('hidden');
@@ -4194,6 +4191,9 @@ async function handleSupervisorFeedbackSubmit(e) {
         if (typeof window.refreshActiveClientFolderIfOpen === 'function') {
             window.refreshActiveClientFolderIfOpen();
         }
+        if (typeof window.refreshActiveParticipantFileIfOpen === 'function') {
+            window.refreshActiveParticipantFileIfOpen();
+        }
     } catch (err) {
         alert('Phase 2 error: ' + err.message);
     } finally {
@@ -4235,6 +4235,9 @@ window.handleSupervisorAdjustActionPlanOnly = async function(e) {
         loadPmDrafts();
         if (typeof window.refreshActiveClientFolderIfOpen === 'function') {
             window.refreshActiveClientFolderIfOpen();
+        }
+        if (typeof window.refreshActiveParticipantFileIfOpen === 'function') {
+            window.refreshActiveParticipantFileIfOpen();
         }
         if (data.planFileName) {
             previewDocument(data.planFileName);
@@ -4312,6 +4315,9 @@ window.handleAdjustActionPlanSubmit = async function(e) {
         loadPmDrafts();
         if (typeof window.refreshActiveClientFolderIfOpen === 'function') {
             window.refreshActiveClientFolderIfOpen();
+        }
+        if (typeof window.refreshActiveParticipantFileIfOpen === 'function') {
+            window.refreshActiveParticipantFileIfOpen();
         }
         if (data.planFileName) {
             previewDocument(data.planFileName);
@@ -5580,10 +5586,14 @@ async function finishInterview() {
         
         alert('Thank you! Your interview has been submitted successfully.');
         closeModal('modal-interview');
-        if (currentUser && (currentUser.role === 'program_manager' || currentUser.role === 'staff' || currentUser.role === 'admin')) {
-            loadPmDrafts();
-        } else {
+        if (!currentUser) {
+            return;
+        }
+        if (currentUser.role === 'participant') {
             loadFsDashboard();
+        } else {
+            loadPmDrafts();
+            if (typeof window.initWorkspacePortal === 'function') window.initWorkspacePortal(true);
         }
         return;
     } catch (err) {
@@ -5611,10 +5621,14 @@ async function finishInterview() {
         
         alert('Thank you! Your interview responses have been submitted successfully.');
         closeModal('modal-interview');
-        if (currentUser && (currentUser.role === 'program_manager' || currentUser.role === 'staff' || currentUser.role === 'admin')) {
-            loadPmDrafts();
-        } else {
+        if (!currentUser) {
+            return;
+        }
+        if (currentUser.role === 'participant') {
             loadFsDashboard();
+        } else {
+            loadPmDrafts();
+            if (typeof window.initWorkspacePortal === 'function') window.initWorkspacePortal(true);
         }
     } catch (err2) {
         btn.disabled = false;
@@ -9756,7 +9770,9 @@ async function renderFolderBriefcase(items) {
     const clientName = document.getElementById('folder-client-name')?.innerText?.trim() || '';
     if (clientName && clientName !== 'Loading Client...') {
         try {
-            const res = await fetch(`/api/briefcase/${encodeURIComponent(clientName)}`);
+            const res = await fetch(`/api/briefcase/${encodeURIComponent(clientName)}`, {
+                headers: getOptionalAuthHeaders()
+            });
             if (res.ok) {
                 const { schema, briefcase } = await res.json();
                 const bcItems = briefcase.items || {};
@@ -11881,7 +11897,7 @@ window.submitScreeningConsultation = async function(e) {
     try {
         const res = await fetch('/api/screening/consult', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: getOptionalAuthHeaders({ 'Content-Type': 'application/json' }),
             body: JSON.stringify(payload)
         });
         const data = await res.json();
@@ -12022,7 +12038,9 @@ window.loadLscmiDedicatedDashboard = async function() {
     const grid = document.getElementById('lscmi-dash-folders-grid');
     if (!grid) return;
     try {
-        const res = await fetch('/api/participants/folders');
+        const res = await fetch('/api/participants/folders', {
+            headers: getOptionalAuthHeaders()
+        });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Failed to load folders (HTTP ' + res.status + ')');
         window.cachedUnifiedFolders = data.participants || [];
@@ -12133,7 +12151,9 @@ window.loadClientFoldersPortal = async function(preselectSlug = null, forceRefre
                 console.warn('Could not load briefcase schema (HTTP ' + sRes.status + ')');
             }
         }
-        const res = await fetch(`/api/participants/folders${forceRefresh ? '?refresh=1' : ''}`);
+        const res = await fetch(`/api/participants/folders${forceRefresh ? '?refresh=1' : ''}`, {
+            headers: getOptionalAuthHeaders()
+        });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Failed to load client folders (HTTP ' + res.status + ')');
         window.cachedUnifiedFolders = data.participants || [];
@@ -12164,7 +12184,10 @@ window.syncAllClientFoldersNow = async function(btn) {
         btn.innerText = '⏳ Syncing All Historical Archives...';
     }
     try {
-        const res = await fetch('/api/participants/folders/sync', { method: 'POST' });
+        const res = await fetch('/api/participants/folders/sync', {
+            method: 'POST',
+            headers: getOptionalAuthHeaders()
+        });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Sync failed');
         window.cachedUnifiedFolders = data.participants || [];
@@ -12321,7 +12344,9 @@ window.previewFolderFile = async function(slug, scope, filename, displayTitle = 
     openModal('modal-draft-viewer');
 
     try {
-        const res = await fetch(`/api/participants/folder/${encodeURIComponent(slug)}/file/${encodeURIComponent(scope)}/${encodeURIComponent(filename)}?format=json`);
+        const res = await fetch(`/api/participants/folder/${encodeURIComponent(slug)}/file/${encodeURIComponent(scope)}/${encodeURIComponent(filename)}?format=json`, {
+            headers: getOptionalAuthHeaders()
+        });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Could not load snapshot');
         if (filename.toLowerCase().endsWith('.md')) {
@@ -12359,7 +12384,7 @@ window.saveClientFolderDocument = async function(slug, docType) {
     try {
         const res = await fetch(`/api/participants/folder/${encodeURIComponent(slug)}/save-document`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: getOptionalAuthHeaders({ 'Content-Type': 'application/json' }),
             body: JSON.stringify({ docType, content, reason, actor: currentUser?.name || 'Turn90 Staff' })
         });
         const data = await res.json();
@@ -12433,7 +12458,7 @@ window.submitFolderCaseNote = async function(e, slug) {
     try {
         const res = await fetch(`/api/participants/folder/${encodeURIComponent(slug)}/case-note`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: getOptionalAuthHeaders({ 'Content-Type': 'application/json' }),
             body: JSON.stringify({
                 content,
                 note_type: noteType,
@@ -12527,7 +12552,9 @@ window.selectClientFolderInPortal = async function(slug, activeTab = 'lscmi') {
     pane.innerHTML = `<div style="padding: 36px; text-align: center; color: #64748b;">Loading folder <code>data/participants/${escapeHtml(slug)}</code>...</div>`;
 
     try {
-        const res = await fetch(`/api/participants/folder/${encodeURIComponent(slug)}`);
+        const res = await fetch(`/api/participants/folder/${encodeURIComponent(slug)}`, {
+            headers: getOptionalAuthHeaders()
+        });
         const bundle = await res.json();
         if (!res.ok) throw new Error(bundle.error || 'Could not load folder');
         window.activeClientFolderBundle = bundle;
@@ -13038,7 +13065,7 @@ window.saveUnifiedBriefcaseDropdown = async function(slug, fieldKey, value) {
     try {
         await fetch(`/api/briefcase/${encodeURIComponent(slug)}`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: getOptionalAuthHeaders({ 'Content-Type': 'application/json' }),
             body: JSON.stringify({
                 items: { [fieldKey]: { value } }
             })
@@ -13056,7 +13083,7 @@ window.saveUnifiedBriefcaseChronicToggle = async function(slug, hasChronicVal) {
     try {
         await fetch(`/api/briefcase/${encodeURIComponent(slug)}`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: getOptionalAuthHeaders({ 'Content-Type': 'application/json' }),
             body: JSON.stringify({
                 has_chronic_health_condition: hasChronicVal,
                 items: {
@@ -13200,8 +13227,11 @@ window.openCombinedSupervisionReportModal = async function() {
 
     try {
         const loc = ['charleston', 'columbia', 'spartanburg'].includes(window.activeSixDashboardKey) ? window.activeSixDashboardKey : 'all';
-        const res = await fetch(`/api/supervision/combined-report?location=${encodeURIComponent(loc)}`);
+        const res = await fetch(`/api/supervision/combined-report?location=${encodeURIComponent(loc)}`, {
+            headers: getOptionalAuthHeaders()
+        });
         const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Could not load supervision report');
         const scLearners = data.skillcat_summary?.learners || [];
         const flags = data.data_evaluation_flags || [];
         const archive = data.reports_archive || {};

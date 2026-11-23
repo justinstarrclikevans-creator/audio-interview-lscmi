@@ -1105,6 +1105,44 @@ function syncAllParticipantFolders({ force = false } = {}) {
         }
     } catch (e) {}
 
+    // 8. From Prison Program (Pre-Release / MacDougal Prison in Apricot sheet cache) and manually edited participant_basic_info
+    try {
+        for (const sheetKey of ['caseloads', 'enrollments']) {
+            const sheetRow = safeQueryGet('SELECT rows_json FROM apricot_sheet_cache WHERE sheet_key = ?', [sheetKey]);
+            if (sheetRow && sheetRow.rows_json) {
+                const rows = JSON.parse(sheetRow.rows_json);
+                if (Array.isArray(rows)) {
+                    for (const r of rows) {
+                        const prog = String(r['Program Enrollment:'] || r['Which Program?'] || '');
+                        const fac = String(r['At which facility are the classes taking...'] || '');
+                        if (/pre-release|prison|macdougal/i.test(prog) || /prison|macdougal/i.test(fac)) {
+                            const full = `${r.First || ''} ${r.Last || ''}`.trim();
+                            if (!full) continue;
+                            registerPerson(full, {
+                                apricot_id: r['Record ID'] || null,
+                                location: 'Prison Program',
+                                track: 'prison_program',
+                                status: r['Date enrollment ended:'] ? 'exited' : 'active'
+                            });
+                        }
+                    }
+                }
+            }
+        }
+    } catch (e) {}
+
+    for (const bi of safeQueryAll('SELECT participant_key, full_name, primary_center, track, status, phone, email FROM participant_basic_info')) {
+        if (bi.full_name || bi.participant_key) {
+            registerPerson(bi.full_name || bi.participant_key.replace(/_/g, ' '), {
+                location: bi.primary_center || 'Charleston',
+                track: bi.track || 'first_shift',
+                status: bi.status || 'active',
+                phone: bi.phone || '',
+                email: bi.email || ''
+            });
+        }
+    }
+
     // Build list of alias dirs on disk per canonical slug so legacy alias folders merge seamlessly forward
     const aliasDirsByCanonical = new Map();
     for (const [aliasLower, canonical] of Object.entries(PARTICIPANT_SLUG_ALIASES)) {
@@ -1915,15 +1953,22 @@ function updateParticipantUnifiedBriefcase(slugOrName, updates = {}) {
     if (updates.chronic_condition_details !== undefined) {
         state.chronic_condition_details = updates.chronic_condition_details;
     }
+    if (updates.manual_notes !== undefined) {
+        state.manual_notes = updates.manual_notes;
+    }
 
     if (updates.items && typeof updates.items === 'object') {
         for (const [k, v] of Object.entries(updates.items)) {
             const val = typeof v === 'object' ? v.value : v;
-            const notes = typeof v === 'object' ? (v.notes || '') : ((state.items[k] && state.items[k].notes) || '');
+            const prevItem = state.items[k] || {};
+            const notes = typeof v === 'object'
+                ? (v.notes !== undefined ? v.notes : (prevItem.notes || ''))
+                : (prevItem.notes || '');
+            const src = (typeof v === 'object' && v.source) ? v.source : (updates.default_source || 'manual_dropdown');
             state.items[k] = {
                 value: val,
                 notes,
-                source: 'manual_dropdown',
+                source: src,
                 updated_at: new Date().toISOString()
             };
             // Check if chronic_health_and_meds option sets has_chronic_health_condition
@@ -1967,10 +2012,10 @@ function updateParticipantUnifiedBriefcase(slugOrName, updates = {}) {
     const updatedKeys = updates.items ? Object.keys(updates.items).join(', ') : 'settings';
     appendParticipantHistoryEvent(slug, {
         category: 'briefcase',
-        action: 'Updated Unified Briefcase',
+        action: updates.history_action || 'Updated Unified Briefcase',
         summary: `Updated ${updatedKeys} (Waitlist readiness: ${state.waitlist_met_count}/9).`,
         filename: 'briefcase.json',
-        actor: 'Turn90 Staff'
+        actor: updates.actor || 'Turn90 Staff'
     });
     invalidateFolderIndexCache();
 

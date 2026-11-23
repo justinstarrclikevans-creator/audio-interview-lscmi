@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>First Shift & Re-entry Navigation Platform</title>
+    <title>Turn90 Operations &amp; Case Management Portal</title>
     <link rel="stylesheet" href="style.css?v=1792000000005">
+    <link rel="stylesheet" href="workspace_portal.css?v=1792000000009">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
@@ -44,9 +45,10 @@
             <div class="nav-right" id="nav-user-section">
                 <!-- Dynamically populated based on auth status -->
             </div>
+            <div id="wp-tools-popover" class="wp-tools-popover" popover="auto" aria-label="Workspace Tools"></div>
         </div>
-        <!-- Persistent 6-Dashboard Switcher & Quick Command Bar (Shown when authenticated) -->
-        <div id="six-dashboards-bar" class="hidden" style="background: #0f172a; border-top: 1px solid #1e293b; padding: 8px 20px;">
+        <!-- Persistent 6-Dashboard Switcher & Quick Command Bar (Hidden by default in favor of Tools Popover) -->
+        <div id="six-dashboards-bar" class="hidden wp-hidden" style="background: #0f172a; border-top: 1px solid #1e293b; padding: 8px 20px;">
             <div style="max-width: 1440px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                 <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
                     <span style="font-size: 11px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-right: 4px;">6 Dashboards:</span>
@@ -69,41 +71,140 @@
 
     <main class="main-content">
         <!-- ========================================================= -->
-        <!-- MAIN LANDING VIEW: ACCESS CODE LOGIN ONLY                 -->
+        <!-- MAIN LANDING VIEW: EMAIL & PASSWORD LOGIN + LS/CMI INTAKE -->
         <!-- ========================================================= -->
         <section id="view-auth" class="app-view active">
-            <div class="auth-card" style="max-width: 420px; margin: 90px auto; background: white; border-radius: 14px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); padding: 32px; border: 1px solid #e2e8f0;">
-                <div class="auth-header" style="text-align: center; margin-bottom: 22px;">
-                    <div style="font-size: 36px; margin-bottom: 8px;">🔐</div>
-                    <h2 style="font-size: 22px; font-weight: 800; color: #0f172a; margin: 0 0 6px 0;">Turn90 Portal Login</h2>
-                    <p class="subtitle" style="font-size: 13.5px; color: #64748b; margin: 0;">Enter your access code to continue.</p>
+            <div class="wp-login-card">
+                <div class="wp-login-header">
+                    <div style="font-size: 32px; margin-bottom: 6px;" aria-hidden="true">🔐</div>
+                    <h1>Turn90 Portal Sign In</h1>
+                    <p>Sign in with your Turn90 email and password to access your center workspace.</p>
                 </div>
 
-                <!-- Access Code Entry Form -->
-                <form id="form-pin-login" onsubmit="handlePinLogin(event)">
-                    <input type="hidden" id="selected-portal-val" value="supervisor">
-                    
-                    <div class="form-group" style="margin-bottom: 16px;">
-                        <label for="portal-passcode" style="font-weight: 700; font-size: 13px; color: #1e293b; display: block; margin-bottom: 6px;">
-                            Access Code
-                        </label>
-                        <input type="password" id="portal-passcode" inputmode="numeric" required placeholder="Enter Access Code" autofocus style="width: 100%; padding: 12px 14px; font-size: 18px; letter-spacing: 4px; text-align: center; border: 1.5px solid #cbd5e1; border-radius: 8px; box-sizing: border-box;">
+                <form id="form-email-login" method="POST" action="/api/auth/login">
+                    <div class="wp-field">
+                        <label for="login-email">Email</label>
+                        <input
+                            type="email"
+                            id="login-email"
+                            name="email"
+                            class="wp-input"
+                            autocomplete="username"
+                            spellcheck="false"
+                            enterkeyhint="next"
+                            placeholder="name@turnninety.com"
+                            autofocus
+                            required
+                        >
                     </div>
 
-                    <div id="pin-login-error" class="hidden" style="margin-bottom: 14px; padding: 10px; border-radius: 6px; background: #fee2e2; color: #b91c1c; font-size: 12.5px; text-align: center; font-weight: 600;"></div>
+                    <div class="wp-field">
+                        <label for="login-password">Password</label>
+                        <div class="wp-password-wrap">
+                            <input
+                                type="password"
+                                id="login-password"
+                                name="password"
+                                class="wp-input"
+                                autocomplete="current-password"
+                                enterkeyhint="done"
+                                placeholder="Enter password"
+                                required
+                            >
+                            <button
+                                type="button"
+                                id="btn-toggle-login-password"
+                                class="wp-btn wp-btn-sm"
+                                aria-pressed="false"
+                                aria-label="Show password"
+                            >Show</button>
+                        </div>
+                    </div>
 
-                    <button type="submit" id="btn-pin-signin" class="btn btn-primary btn-block" style="padding: 13px; font-size: 15px; font-weight: 700; border-radius: 8px; width: 100%; cursor: pointer;">
+                    <div id="email-login-error" class="wp-error-banner hidden" role="alert"></div>
+
+                    <button type="submit" id="btn-email-signin" class="wp-btn wp-btn-primary" style="width: 100%;">
                         Sign In
                     </button>
                 </form>
 
-                <!-- Hidden legacy form container kept for DOM safety -->
-                <div id="legacy-email-login" class="hidden">
-                    <form id="form-login" onsubmit="handleLogin(event)">
-                        <input type="email" id="login-email">
-                        <input type="password" id="login-password">
+                <div class="wp-login-divider">Intake Interview</div>
+
+                <button type="button" id="btn-login-record-lscmi" class="wp-btn wp-btn-teal" style="width: 100%;">
+                    🎙️ Record New LS/CMI Interview
+                </button>
+                <p style="margin: 8px 0 0 0; font-size: 0.84rem; color: #475569; text-align: center;">
+                    Starting a live intake assessment? No login required.
+                </p>
+
+                <!-- Legacy hidden form elements preserved for compatibility -->
+                <div class="hidden" aria-hidden="true">
+                    <form id="form-pin-login">
+                        <input type="hidden" id="selected-portal-val" value="supervisor">
+                        <input type="password" id="portal-passcode">
                     </form>
                 </div>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- MAIN AUTHENTICATED VIEW: PROGRESSIVE DISCLOSURE WORKSPACE -->
+        <!-- ========================================================= -->
+        <section id="view-workspace-portal" class="app-view hidden">
+            <div class="wp-workspace">
+                <div class="wp-workspace-topbar">
+                    <div>
+                        <h1 id="wp-workspace-heading">Turn90 Workspace</h1>
+                        <p id="wp-workspace-subtitle" class="wp-workspace-subtitle">Loading your center caseload, next steps, and client files...</p>
+                    </div>
+                    <div class="wp-actions-row">
+                        <button type="button" id="btn-wp-refresh" class="wp-btn wp-btn-sm">🔄 Refresh</button>
+                        <button type="button" id="btn-wp-record-lscmi" class="wp-btn wp-btn-teal wp-btn-sm">🎙️ Record New LS/CMI Interview</button>
+                    </div>
+                </div>
+
+                <div id="wp-global-status" class="wp-status-banner hidden" role="status" aria-live="polite"></div>
+
+                <!-- Overview 3 Ordered Progressive-Disclosure Sections -->
+                <div id="wp-main-sections">
+                    <section class="wp-accordion" aria-label="Turn90 Operations Sections">
+                        <!-- SECTION 1 (TOP): CENTER CASELOADS -->
+                        <details id="wp-sec-caseload" class="wp-disclosure wp-section" open>
+                            <summary>
+                                <span class="wp-summary-title">Center Caseloads</span>
+                                <span id="wp-caseload-summary-badge" class="wp-summary-badge wp-summary-badge-blue">Loading...</span>
+                            </summary>
+                            <div class="wp-disclosure-body" id="wp-caseload-body">
+                                <p style="color: #475569;">Loading center rosters...</p>
+                            </div>
+                        </details>
+
+                        <!-- SECTION 2 (MIDDLE): CASE-NOTE TO-DOS -->
+                        <details id="wp-sec-todos" class="wp-disclosure wp-section">
+                            <summary>
+                                <span class="wp-summary-title">To-Dos (Next Steps from Case Notes)</span>
+                                <span id="wp-todos-summary-badge" class="wp-summary-badge wp-summary-badge-amber">0 open</span>
+                            </summary>
+                            <div class="wp-disclosure-body" id="wp-todos-body">
+                                <p style="color: #475569;">Loading next steps...</p>
+                            </div>
+                        </details>
+
+                        <!-- SECTION 3 (BOTTOM): SEARCH CLIENT -->
+                        <details id="wp-sec-search" class="wp-disclosure wp-section" open>
+                            <summary>
+                                <span class="wp-summary-title">Search Client</span>
+                                <span id="wp-search-summary-badge" class="wp-summary-badge wp-summary-badge-teal">0 clients</span>
+                            </summary>
+                            <div class="wp-disclosure-body" id="wp-search-body">
+                                <p style="color: #475569;">Loading client search...</p>
+                            </div>
+                        </details>
+                    </section>
+                </div>
+
+                <!-- Individual 5-Section Progressive-Disclosure Participant File -->
+                <div id="wp-participant-file-shell" class="hidden" tabindex="-1"></div>
             </div>
         </section>
 
@@ -1741,6 +1842,8 @@
                             <option value="Charleston">Charleston</option>
                             <option value="Columbia">Columbia</option>
                             <option value="Spartanburg">Spartanburg</option>
+                            <option value="Reentry Navigation">Reentry Navigation</option>
+                            <option value="Prison Program">Prison Program</option>
                         </select>
                     </div>
                 </div>
@@ -3357,8 +3460,6 @@
         </div>
     </div>
 
-    <script src="app.js?v=1792000000008"></script>
-
     <!-- MODAL: Participant File (Consolidated) -->
     <div id="modal-participant-file" class="modal hidden">
         <div class="modal-content" style="max-width: 800px; padding: 0; overflow: hidden; background: #f8fafc;">
@@ -3529,6 +3630,47 @@
         </div>
     </div>
 
+    <!-- MODAL 5: ADMIN MANAGE USERS -->
+    <div id="modal-admin-users" class="modal hidden" style="z-index: 9600;">
+        <div class="modal-content" style="max-width: 960px; width: 95%; max-height: 90vh; overflow-y: auto; padding: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 16px;">
+                <div>
+                    <h2 style="margin: 0; font-size: 20px; font-weight: 800; color: #0f172a;">👥 Staff Accounts &amp; Center Permissions</h2>
+                    <p style="margin: 4px 0 0 0; font-size: 13px; color: #475569;">Manage Email &amp; Password logins, User Type (User vs. Admin), assigned Center access, and account activation.</p>
+                </div>
+                <button type="button" id="btn-close-admin-users" class="wp-btn wp-btn-sm">✕ Close</button>
+            </div>
+            <div id="admin-users-modal-body">Loading staff accounts...</div>
+        </div>
+    </div>
+
+    <!-- MODAL 6: CHANGE MY PASSWORD -->
+    <div id="modal-change-password" class="modal hidden" style="z-index: 9650;">
+        <div class="modal-content" style="max-width: 460px; width: 94%; padding: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px;">
+                <h2 style="margin: 0; font-size: 19px; font-weight: 800; color: #0f172a;">🔑 Change My Password</h2>
+                <button type="button" id="btn-close-change-password" class="wp-btn wp-btn-sm">✕ Close</button>
+            </div>
+            <form id="form-change-password">
+                <div class="wp-field">
+                    <label for="cp-current-password">Current Password</label>
+                    <input type="password" id="cp-current-password" name="currentPassword" class="wp-input" autocomplete="current-password" required>
+                </div>
+                <div class="wp-field">
+                    <label for="cp-new-password">New Password (minimum 8 characters)</label>
+                    <input type="password" id="cp-new-password" name="newPassword" class="wp-input" autocomplete="new-password" minlength="8" required>
+                </div>
+                <div id="cp-status-msg" class="hidden" role="status" aria-live="polite" style="margin-bottom: 12px; font-size: 0.9rem; font-weight: 600;"></div>
+                <div style="display: flex; justify-content: flex-end; gap: 8px;">
+                    <button type="button" id="btn-cancel-change-password" class="wp-btn wp-btn-sm">Cancel</button>
+                    <button type="submit" id="btn-save-change-password" class="wp-btn wp-btn-primary wp-btn-sm">Save New Password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js?v=1792000000009"></script>
+    <script src="workspace_portal.js?v=1792000000009"></script>
 </body>
 </html>
 
