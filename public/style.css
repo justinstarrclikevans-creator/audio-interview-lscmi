@@ -693,7 +693,23 @@ body {
     justify-content: flex-end;
 }
 
+#modal-draft-viewer,
+#modal-supervisor-review,
+#modal-adjust-action-plan {
+    z-index: 9800;
+}
+
 /* INTERVIEW MODAL */
+.interview-participant-overlay {
+    background: #f1f5f9;
+}
+
+.interview-participant-overlay .modal-content {
+    max-width: 780px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+}
+
 .interview-progress-bar {
     height: 8px;
     background: #e2e8f0;

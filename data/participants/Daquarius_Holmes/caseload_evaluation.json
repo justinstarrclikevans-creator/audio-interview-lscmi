@@ -3,10 +3,12 @@
   "participant_name": "Daquarius Holmes",
   "location": "Charleston",
   "track": "reentry_nav",
+  "lscmi_client_id": "Daquarius_Holmes_Charleston",
   "folder_path": "data/participants/Daquarius_Holmes",
   "has_lscmi_brief": false,
   "has_lscmi_scoring": false,
   "has_action_plan": false,
+  "has_legacy_case_briefs": false,
   "action_plan_agreement": "pending_review",
   "waitlist_ready": true,
   "waitlist_score": "9/9",
@@ -14,6 +16,10 @@
   "skillcat_pathway": "HVAC",
   "skillcat_modules_completed": 0,
   "cm_notes_count": 0,
+  "apricot_notes_count": 13,
+  "reentry_sessions_count": 0,
+  "history_events_count": 1,
+  "documents_count": 0,
   "data_evaluation_flags": [],
-  "updated_at": "2026-11-22T17:18:01.484Z"
+  "updated_at": "2026-11-23T13:46:28.569Z"
 }

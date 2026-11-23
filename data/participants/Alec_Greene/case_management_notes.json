@@ -1,6 +1,30 @@
 {
   "case_notes": [
     {
+      "id": 204,
+      "user_id": 81,
+      "author_id": null,
+      "author_name": "Diyoung Dantzler",
+      "session_date": "2026-11-11",
+      "note_type": "Coaching / case management session – structured or in-depth meeting",
+      "category": "First Shift",
+      "content": "Session Type: First Session (Initial Intake & Action Plan Alignment)\n\nUpdates & Briefcase / Gates Progress:\n- Gate 1 (Vital Docs): Client has State ID and SSN. Needs Birth Certificate; plans to use ID and SSN to schedule an appointment to obtain it.\n- Gate 1 (Medical/Meds): Client is taking Naproxen for inflammation regarding his rotator cuff tear. Health insurance is active through Molina.\n- Gate 1 (Appointments): Scheduled for an orthopedic check-in/PT follow-up (date needs final confirmation, approximately 6 weeks out). Awaiting phone call to begin physical therapy.\n- Gate 2 (Housing): Continues to reside at Turn 12 (Sober Living).\n- Gate 2 (Probation): PO is Officer Haney. Currently has no regular check-ins scheduled per his last call to the office; goal is to get off probation in 6 months via compliance points.\n- Gate 4 (Employment/Vocational): Actively working on EPA Certification for small appliances/HVAC via the SkillCat app. Needs Forklift Certification for future warehouse/machine operator goals.\n\nCBT / Behavior Check-In:\n- Discussed physiological warning signs of frustration (sweating, shaking, hot-headed). Client reports no triggering events this week ('avoiding the BS').\n- Explored behavioral choices when feeling disrespected; Client identified 'walking away' and 'practicing deep breathing' to protect his freedom and employment.\n\nNext Steps / Action Plan:\n1. Client to complete EPA Certification on SkillCat this week.\n2. Client to practice deep breathing and 'staying focused' if frustrated.\n3. Client to await PT scheduling call.\n4. CM to follow up on Birth Certificate appointment progress next week.",
+      "apricot_exported": 1,
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 205,
+      "user_id": 81,
+      "author_id": null,
+      "author_name": "Diyoung Dantzler",
+      "session_date": "2026-11-03",
+      "note_type": "Coaching / case management session – structured or in-depth meeting",
+      "category": "First Shift",
+      "content": "Session Type: Initial Intake & Action Plan Alignment\n\nClient Updates & Immediate Needs:\n- [Client] relocated from NC, seeking machine operation/warehouse work.\n- Pending medical issue: Seeing doctor on Monday regarding shoulder damage; currently restricted from heavy lifting.\n- Housing: Currently paying $215/week for rent.\n\nJustice Involvement / Financials:\n- On probation for 2 years (can get off in 6 months with compliance points).\n- Owes FAFSA/student loan debt.\n- Saving for a vehicle (estimated need ~$3600).\n\nAction Plan & CBT Progress:\n- 90-Day Goals: Forklift certification (accommodates shoulder), saving for a vehicle, getting off probation early.\n- Long-term Vision: Finish business associate degree (1 year left), become a lead/supervisor, own franchises/real estate.\n- CBT Focus: Explored anger triggers. [Client] identified physical warning signs of 'losing his cool' (hot-headed, shaking, sweating). Practiced positive self-talk for frustration ('It's going to pay out in the long run').\n\nNext Steps:\n- CM to verify [Client]'s ID/DL status for forklift certification.\n- CM to check if [Client] needs Welvista/medical insurance for his shoulder treatment.\n- [Client] to attend doctor's appointment on Monday for shoulder evaluation.",
+      "apricot_exported": 1,
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
       "id": 157,
       "user_id": 81,
       "author_id": null,
@@ -49,5 +73,6 @@
       "created_at": "2026-11-03 23:04:00"
     }
   ],
-  "cm_session_evaluations": []
+  "cm_session_evaluations": [],
+  "manual_folder_notes": []
 }

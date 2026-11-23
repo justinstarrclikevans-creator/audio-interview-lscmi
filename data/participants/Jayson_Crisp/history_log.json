@@ -1,0 +1,50 @@
+{
+  "participant_key": "Jayson_Crisp",
+  "updated_at": "2026-11-23T13:46:28.905Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-16T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "3 chronological Apricot note(s) archived (No Plan on File).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_casenote:168",
+      "event_key": "casenote:168",
+      "timestamp": "2026-11-16T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Case Note (documentation only) – no interaction or service|Documentation support – ID, housing forms, paperwork)",
+      "summary": "Received drivers license, his mom put insurance on the car, and they now have the tag. He also has a phone and is waiting to cut it on this week.",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Terrence Brown"
+    },
+    {
+      "id": "ms_casenote:167",
+      "event_key": "casenote:167",
+      "timestamp": "2026-11-16T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "### Session Summary\n\nDuring this second-week counseling/case management session, the facilitator and client reviewed recent practical milestones, processed a real-life interpersonal trigger, and practiced cognitive-behav",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Terrence Brown"
+    },
+    {
+      "id": "ms_casenote:169",
+      "event_key": "casenote:169",
+      "timestamp": "2026-11-12T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "### Session Summary\n\nDuring this initial intake and coaching session, the case manager and client (Jason) reviewed Jason’s personal behavioral patterns, impulsive triggers, and reentry readiness. The session focused on d",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Terrence Brown"
+    }
+  ]
+}

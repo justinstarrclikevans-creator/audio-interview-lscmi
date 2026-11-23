@@ -9,22 +9,20 @@
   "apricot_id": "82462",
   "phone": "",
   "email": "",
-  "files": [
-    "Brandon_Jones_Columbia_criminal_history.docx",
-    "Brandon_Jones_Columbia_criminal_history.md",
-    "Brandon_Jones_Columbia_draft_scoring_form.docx",
-    "Brandon_Jones_Columbia_draft_scoring_form.md",
-    "Brandon_Jones_Columbia_interview_guide.docx",
-    "Brandon_Jones_Columbia_interview_guide.md",
-    "Brandon_Jones_Columbia_transcript.txt"
-  ],
+  "lscmi_client_id": "Brandon_Jones_Columbia",
   "folder_slug": "Brandon_Jones",
   "folder_path": "data/participants/Brandon_Jones",
   "has_lscmi_brief": false,
   "has_lscmi_scoring": true,
   "has_action_plan": false,
+  "has_legacy_case_briefs": false,
   "waitlist_ready": true,
   "waitlist_met_count": 9,
   "data_flags_count": 1,
-  "updated_at": "2026-11-22T17:18:01.660Z"
+  "cm_notes_count": 0,
+  "apricot_notes_count": 5,
+  "reentry_sessions_count": 5,
+  "history_events_count": 13,
+  "documents_count": 7,
+  "updated_at": "2026-11-23T13:46:29.315Z"
 }

@@ -1,0 +1,149 @@
+{
+  "participant_key": "Vincent_Gailliard",
+  "updated_at": "2026-11-23T13:46:28.723Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "12 chronological Apricot note(s) archived (Partial (Situations missing)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_casenote:180",
+      "event_key": "casenote:180",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "Subjective / Client Report\nEmployment Search: Client reported continued frustration with lack of callbacks despite submitting approximately 19 job applications. He noted that he is targeting slightly higher-paying roles ",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Jenn Jeanquart"
+    },
+    {
+      "id": "ms_casenote:181",
+      "event_key": "casenote:181",
+      "timestamp": "2026-11-09T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "Subjective / Client Report:\n\nWeekend & Family Update: Client reported a good weekend, noting he babysat a 5-year-old female relative. The child interacted well with his older son but had conflict with his younger child.\n",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Jenn Jeanquart"
+    },
+    {
+      "id": "ms_casenote:120",
+      "event_key": "casenote:120",
+      "timestamp": "2026-11-02T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "**Session Summary:**\nConducted weekly follow-up focusing on emotional regulation in high-stress family situations, halfway house dynamics, and Gate 4 (Job Placement).\n\n**Gate Progress & Briefcase Updates:**\n- **Gate 4 (J",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Jenn Jeanquart"
+    },
+    {
+      "id": "ms_casenote:121",
+      "event_key": "casenote:121",
+      "timestamp": "2026-10-27T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "**Session Summary:**\nConducted weekly follow-up focusing heavily on Gate 4 (Job Placement), family dynamics, and emotional regulation at the halfway house. \n\n**Gate Progress & Briefcase Updates:**\n- Gate 4 (Job Placement",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Jenn Jeanquart"
+    },
+    {
+      "id": "ms_casenote:46",
+      "event_key": "casenote:46",
+      "timestamp": "2026-10-19T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "Employment Updates: [Client] has several applications out (Cargill, AZZ Metals, International Paper, Spire Bakeries). CM researched active listings and identified $20.50/hr 3rd shift roles, sending direct application lin",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Jenn Jeanquart"
+    },
+    {
+      "id": "ms_casenote:47",
+      "event_key": "casenote:47",
+      "timestamp": "2026-10-14T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "[Client] attended case management meeting. CM reviewed action items from the previous week to ensure accountability. Discussed employment applications, specifically focusing on International Paper. CM clarified location ",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Jenn Jeanquart"
+    },
+    {
+      "id": "ms_casenote:48",
+      "event_key": "casenote:48",
+      "timestamp": "2026-10-08T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "Client reported frustration with the application process at International Paper (Covington) due to technical barriers (phone app/pay stubs); felt the system is designed for failure. Client pivoted and applied to the Lexi",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Jenn Jeanquart"
+    },
+    {
+      "id": "ms_casenote:49",
+      "event_key": "casenote:49",
+      "timestamp": "2026-10-02T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "Overview & Program Progress\n\n Check-In: Client completed his first week in the program. He expressed that the structured classroom dialogue has been beneficial and different from past experiences, encouraging positive se",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Jenn Jeanquart"
+    },
+    {
+      "id": "ms_casenote:50",
+      "event_key": "casenote:50",
+      "timestamp": "2026-09-21T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Check-in conversation – brief status update)",
+      "summary": "Scheduled orientation for 9/23.",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Jenn Jeanquart"
+    },
+    {
+      "id": "ms_casenote:51",
+      "event_key": "casenote:51",
+      "timestamp": "2026-09-15T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Check-in conversation – brief status update)",
+      "summary": "He called asking about his spot on the waitlist. When I called back, he didn't answer, but I let him know there are 2 people ahead of him and to give me a call back if there's anything I can help him with as he waits to ",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Daisy Boynton"
+    },
+    {
+      "id": "ms_casenote:52",
+      "event_key": "casenote:52",
+      "timestamp": "2026-08-19T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Intake Appointment COMPLETED)",
+      "summary": "He is a good fit and ready to start. Added to waitlist. Will work on reentry nav and employment while we wait for an opening. Will be moving back to Sumter in February 27",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Justin Evans"
+    },
+    {
+      "id": "ms_casenote:53",
+      "event_key": "casenote:53",
+      "timestamp": "2026-08-18T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Intake Appointment SCHEDULED)",
+      "summary": "Intake Appointment SCHEDULED",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Daisy Boynton"
+    }
+  ]
+}

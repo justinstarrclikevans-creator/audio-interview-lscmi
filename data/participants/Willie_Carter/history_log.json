@@ -1,0 +1,17 @@
+{
+  "participant_key": "Willie_Carter",
+  "updated_at": "2026-11-23T13:46:29.741Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-06-24T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "10 chronological Apricot note(s) archived (Historical Record).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    }
+  ]
+}

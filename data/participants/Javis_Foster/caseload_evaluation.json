@@ -3,23 +3,29 @@
   "participant_name": "Javis Foster",
   "location": "Spartanburg",
   "track": "reentry_nav",
+  "lscmi_client_id": "Javis_Foster_Spartanburg",
   "folder_path": "data/participants/Javis_Foster",
   "has_lscmi_brief": false,
   "has_lscmi_scoring": false,
   "has_action_plan": true,
+  "has_legacy_case_briefs": true,
   "action_plan_agreement": "agreed",
   "waitlist_ready": false,
-  "waitlist_score": "6/9",
+  "waitlist_score": "5/9",
   "medical_appointments_applicable": false,
   "skillcat_pathway": "HVAC",
   "skillcat_modules_completed": 0,
   "cm_notes_count": 0,
+  "apricot_notes_count": 11,
+  "reentry_sessions_count": 0,
+  "history_events_count": 11,
+  "documents_count": 10,
   "data_evaluation_flags": [
     {
       "code": "FLAG-WAITLIST-GAP",
       "severity": "warning",
-      "message": "6/9 First Shift Waitlist Briefcase items ready. Missing: 1. State ID or Driver's License (DL), 2. Social Security Card, 3. Birth Certificate"
+      "message": "5/9 First Shift Waitlist Briefcase items ready. Missing: 1. State ID or Driver's License (DL), 2. Social Security Card, 3. Birth Certificate"
     }
   ],
-  "updated_at": "2026-11-22T17:18:01.526Z"
+  "updated_at": "2026-11-23T13:46:28.698Z"
 }

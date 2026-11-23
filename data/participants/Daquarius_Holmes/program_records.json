@@ -1,0 +1,93 @@
+{
+  "participant_key": "Daquarius_Holmes",
+  "participant_name": "Daquarius Holmes",
+  "profile_records": [
+    {
+      "id": 44,
+      "user_id": 46,
+      "current_gate": 4,
+      "w9_status": "verified",
+      "dl_status": "suspended",
+      "dl_notes": "Im riding the bus right now until I get my license & buy a car",
+      "child_support_status": "none",
+      "child_support_notes": "",
+      "housing_status": "stable",
+      "substance_status": "none",
+      "mental_health_status": "none",
+      "transportation_status": "CARTA Bus Line",
+      "court_dates": null,
+      "overall_status": "archived",
+      "termination_reason": null,
+      "termination_date": null,
+      "updated_at": "2026-09-23 11:52:26",
+      "stability_red_flags": null,
+      "director_override": 0,
+      "director_override_notes": null,
+      "director_override_by": null,
+      "reentry_status": "none",
+      "has_reentry_plan": 0,
+      "enrollment_date": null,
+      "correction_notes": null,
+      "supabase_id": "da78e17a-1673-4064-9fdb-2de5bdb7ae88",
+      "record_id": null
+    }
+  ],
+  "case_plan_triggers": [],
+  "daily_points": [],
+  "drug_tests": [],
+  "benefits": [
+    {
+      "id": 82,
+      "user_id": 46,
+      "benefit_type": "medicaid",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    },
+    {
+      "id": 83,
+      "user_id": 46,
+      "benefit_type": "snap",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    },
+    {
+      "id": 84,
+      "user_id": 46,
+      "benefit_type": "tanf",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    },
+    {
+      "id": 81,
+      "user_id": 46,
+      "benefit_type": "welvista",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    }
+  ],
+  "resumes": [],
+  "db_documents": [],
+  "legacy_briefcase_items_count": 66,
+  "legacy_gate_criteria_count": 22,
+  "updated_at": "2026-11-23T13:46:28.568Z"
+}

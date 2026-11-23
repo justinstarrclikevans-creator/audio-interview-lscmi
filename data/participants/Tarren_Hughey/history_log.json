@@ -1,0 +1,83 @@
+{
+  "participant_key": "Tarren_Hughey",
+  "updated_at": "2026-11-23T13:46:29.131Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-02T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "7 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:162",
+      "event_key": "reentry_session:162",
+      "timestamp": "2026-10-20T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Jenn Jeanquart)",
+      "summary": "No contact, removed from waitlist.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:163",
+      "event_key": "reentry_session:163",
+      "timestamp": "2026-10-19T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Jenn Jeanquart)",
+      "summary": "Called and text to schedule orientation. Requested return call/text by 8am 10/20.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:164",
+      "event_key": "reentry_session:164",
+      "timestamp": "2026-10-13T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Let Tarren know that he's approaching the top of the waitlist. He said he's good to go.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:165",
+      "event_key": "reentry_session:165",
+      "timestamp": "2026-10-08T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Sent him the info for 3Eleven housing as an option for him to move out of his Aunt's.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:166",
+      "event_key": "reentry_session:166",
+      "timestamp": "2026-10-06T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Daisy Boynton)",
+      "summary": "Currently staying with Aunt, but needs a longer term housing solution. I will look into options.\nReinstatement fee of $300 (RDF referral?)\nHas a mental health counselor that he meets with regularly (diagnosed with PTSD),",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:167",
+      "event_key": "reentry_session:167",
+      "timestamp": "2026-10-05T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "NCNS",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "participant_key": "Tracy_Lorick",
+  "updated_at": "2026-11-23T13:46:29.084Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-11T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "9 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:366",
+      "event_key": "reentry_session:366",
+      "timestamp": "2026-11-11T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "Called to check in about him paying his DMV fees off and to let him know that the Rainy Day Fund (RDF) is out of funds for the month, so if he hasn't paid them off yet, he should set Dec 1st as a goal so we can get his a",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:365",
+      "event_key": "reentry_session:365",
+      "timestamp": "2026-11-11T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Tracy called back. He gets his paycheck at end of week ($800 before taxes) and plans to put something towards his driver's license. He's going to the DMV at end of the week to get an updated print out of the fees he owes",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:367",
+      "event_key": "reentry_session:367",
+      "timestamp": "2026-11-03T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Tracy reached out with his new number asking about whether RDF was still an option. He said he's saved up enough to get it down to $750. I told him to make the payment and get the updated DMV sheet stating that he only o",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:275",
+      "event_key": "reentry_session:275",
+      "timestamp": "2026-10-29T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "Still no word from Tracy.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:145",
+      "event_key": "reentry_session:145",
+      "timestamp": "2026-10-21T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "Tracy still hasn't reached out with a new phone number.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:146",
+      "event_key": "reentry_session:146",
+      "timestamp": "2026-10-13T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Tracy reached out on the number that initially replied \"I'm not Tracy\". Said he's been using a temporary number because he had to order a new phone and he'll give me his new number tomorrow. He was asking about an RDF re",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:147",
+      "event_key": "reentry_session:147",
+      "timestamp": "2026-10-05T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "Reached out to Tracy over text and received a message saying \"I am not Tracy\"... will need to figure out updated contact info.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:148",
+      "event_key": "reentry_session:148",
+      "timestamp": "2026-10-02T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Daisy Boynton)",
+      "summary": "Currently doing part-time landscaping. Has $1000-1500 in reinstatement fees. Pending charge is possession of weapon by convicted felon (court date 10/30 for violation of probation), wants help looking for work. I asked h",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:149",
+      "event_key": "reentry_session:149",
+      "timestamp": "2026-10-01T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "Didn't answer. Let VM",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "participant_key": "Ammett_Fulton",
+  "participant_name": "Ammett Fulton",
+  "client_records": [
+    {
+      "id": 36,
+      "first_name": "Ammett",
+      "last_name": "Fulton",
+      "apricot_id": "81324",
+      "location": "Columbia",
+      "status": "archived",
+      "stability_tier": "at_risk",
+      "phone": null,
+      "email": null,
+      "notes": "",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-10-27 13:40:03",
+      "case_manager": "Unassigned",
+      "enrollment_start": "2026-10-02",
+      "gate1_pct": 0,
+      "gate2_pct": 0,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "last_contact_date": "2026-10-16",
+      "last_contact_staff": "Jenn Jeanquart",
+      "last_contact_activity": "Case Note (documentation only) – no interaction or service",
+      "has_case_plan": 0,
+      "case_plan_text": ""
+    }
+  ],
+  "sessions": [
+    {
+      "id": 150,
+      "client_id": 36,
+      "session_date": "2026-10-16",
+      "session_title": "Case Note (documentation only) – no interaction or service (Jenn Jeanquart)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "No showed orientation. I called and sent him a text, no response.",
+      "notes_text": "No showed orientation. I called and sent him a text, no response.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 151,
+      "client_id": 36,
+      "session_date": "2026-10-14",
+      "session_title": "Check-in conversation – brief status update (Jenn Jeanquart)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Scheduled for orientation for 10/16. Reminded about drug testing requirements.",
+      "notes_text": "Scheduled for orientation for 10/16. Reminded about drug testing requirements.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 152,
+      "client_id": 36,
+      "session_date": "2026-10-05",
+      "session_title": "Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Currently stable and has all ID. Reached out to let him know he's on the waitlist and he will be drug screened when he comes in. He's interested in finding his own apartment (not urgent, currently staying with his mother). I told him to reach out with any other needs in the meantime.",
+      "notes_text": "Currently stable and has all ID. Reached out to let him know he's on the waitlist and he will be drug screened when he comes in. He's interested in finding his own apartment (not urgent, currently staying with his mother). I told him to reach out with any other needs in the meantime.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 153,
+      "client_id": 36,
+      "session_date": "2026-10-02",
+      "session_title": "Intake Appointment COMPLETED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Intake notes in reentry nav case plan. Added to FS waitlist",
+      "notes_text": "Intake notes in reentry nav case plan. Added to FS waitlist",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 154,
+      "client_id": 36,
+      "session_date": "2026-10-01",
+      "session_title": "Intake Appointment SCHEDULED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Intake Appointment SCHEDULED",
+      "notes_text": "Intake Appointment SCHEDULED",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "goals": [],
+  "case_plans": [],
+  "updated_at": "2026-11-23T13:46:29.095Z"
+}

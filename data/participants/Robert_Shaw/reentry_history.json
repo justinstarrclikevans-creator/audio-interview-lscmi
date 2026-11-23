@@ -1,0 +1,113 @@
+{
+  "participant_key": "Robert_Shaw",
+  "participant_name": "Robert Shaw",
+  "client_records": [
+    {
+      "id": 50,
+      "first_name": "Robert",
+      "last_name": "Shaw",
+      "apricot_id": "82004",
+      "location": "Charleston",
+      "status": "archived",
+      "stability_tier": "immediate_triage",
+      "phone": null,
+      "email": null,
+      "notes": "1. Find stable housing\n2. SS card and birth certificate\n\nWould like some meds/to see a doctor for his psoriasis (not urgent). Currently staying in a hotel room. He loves cooking and would love to do that for work. Needs stable housing to be eligible for FS. Currently working at Staff Zone everyday.",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-10-27 13:40:03",
+      "case_manager": "Daisy Boynton",
+      "enrollment_start": "2026-10-13",
+      "gate1_pct": 25,
+      "gate2_pct": 30,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "last_contact_date": "2026-10-20",
+      "last_contact_staff": "Daisy Boynton",
+      "last_contact_activity": "Case Note (documentation only) – no interaction or service",
+      "has_case_plan": 1,
+      "case_plan_text": "1. Find stable housing\n2. SS card and birth certificate\n\nWould like some meds/to see a doctor for his psoriasis (not urgent). Currently staying in a hotel room. He loves cooking and would love to do that for work. Needs stable housing to be eligible for FS. Currently working at Staff Zone everyday."
+    }
+  ],
+  "sessions": [
+    {
+      "id": 214,
+      "client_id": 50,
+      "session_date": "2026-10-20",
+      "session_title": "Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Called and texted Robert to check if he had moved into Bounce Back on Thursday as we had planned. No answer.",
+      "notes_text": "Called and texted Robert to check if he had moved into Bounce Back on Thursday as we had planned. No answer.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 216,
+      "client_id": 50,
+      "session_date": "2026-10-13",
+      "session_title": "Intake Appointment COMPLETED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Would like some meds/to see a doctor for his psoriasis (not urgent). Currently staying in a hotel room. He loves cooking and would love to do that for work. Needs stable housing to be eligible for FS. Currently working at Staff Zone everyday.",
+      "notes_text": "Would like some meds/to see a doctor for his psoriasis (not urgent). Currently staying in a hotel room. He loves cooking and would love to do that for work. Needs stable housing to be eligible for FS. Currently working at Staff Zone everyday.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 215,
+      "client_id": 50,
+      "session_date": "2026-10-13",
+      "session_title": "Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Called Bounce Back while he was here for his intake. Made a plan for him to move in there Thursday. I told him I'd reach out to him over text and to let me know that everything goes smoothly Thursday. Once he's settled there, I will add him to the waitlist.",
+      "notes_text": "Called Bounce Back while he was here for his intake. Made a plan for him to move in there Thursday. I told him I'd reach out to him over text and to let me know that everything goes smoothly Thursday. Once he's settled there, I will add him to the waitlist.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 217,
+      "client_id": 50,
+      "session_date": "2026-10-12",
+      "session_title": "Intake Appointment SCHEDULED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "In person",
+      "notes_text": "In person",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "goals": [
+    {
+      "id": 119,
+      "client_id": 50,
+      "goal_title": "SS card and birth certificate",
+      "target_date": "2026-11-09",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"SS card and birth certificate\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 118,
+      "client_id": 50,
+      "goal_title": "Find stable housing",
+      "target_date": "2026-11-09",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"Find stable housing\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "case_plans": [],
+  "updated_at": "2026-11-23T13:46:29.210Z"
+}

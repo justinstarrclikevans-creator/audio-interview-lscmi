@@ -51,13 +51,13 @@
     "dmv_suspended_inquiry": {
       "value": "not_applicable_valid",
       "notes": "DL not suspended / valid ID on file.",
-      "updated_at": "2026-11-22T17:18:01.504Z"
+      "updated_at": "2026-11-23T13:46:28.623Z"
     },
     "child_support_contact": {
       "value": "contact_made_compliant",
       "notes": "Child support status verified",
       "source": "db_import",
-      "updated_at": "2026-11-22T17:18:01.504Z"
+      "updated_at": "2026-11-23T13:46:28.623Z"
     },
     "supervision_information": {
       "value": "active_logged_no_conflict",
@@ -75,7 +75,7 @@
       "value": "not_started",
       "notes": "0 modules completed (0.0 hrs)",
       "source": "skillcat_scraper",
-      "updated_at": "2026-11-22T17:18:01.504Z"
+      "updated_at": "2026-11-23T13:46:28.623Z"
     },
     "resume_and_email": {
       "value": "not_started",

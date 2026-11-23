@@ -9,14 +9,20 @@
   "apricot_id": null,
   "phone": "",
   "email": "",
-  "files": [],
+  "lscmi_client_id": "Marcus_McMillian_Charleston",
   "folder_slug": "Marcus_McMillian",
   "folder_path": "data/participants/Marcus_McMillian",
   "has_lscmi_brief": false,
   "has_lscmi_scoring": false,
   "has_action_plan": false,
+  "has_legacy_case_briefs": false,
   "waitlist_ready": false,
   "waitlist_met_count": 6,
   "data_flags_count": 3,
-  "updated_at": "2026-11-22T17:18:01.726Z"
+  "cm_notes_count": 0,
+  "apricot_notes_count": 0,
+  "reentry_sessions_count": 0,
+  "history_events_count": 0,
+  "documents_count": 0,
+  "updated_at": "2026-11-23T13:46:30.037Z"
 }

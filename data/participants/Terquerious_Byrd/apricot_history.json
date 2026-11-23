@@ -1,0 +1,72 @@
+{
+  "participant_key": "Terquerious_Byrd",
+  "participant_name": "Terquerious Byrd",
+  "apricot_ids": [
+    "83029"
+  ],
+  "evaluations": [],
+  "notes_count": 4,
+  "processed_notes": [
+    {
+      "id": 1085,
+      "record_id": "83029",
+      "first_name": "Terquerious",
+      "last_name": "Byrd",
+      "activity_date": "2026-11-19",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Check-in conversation – brief status update",
+      "note_text": "Called to check in. He said he's moving back to North Carolina today. I let him know he's always welcome to reach out in the future if he needs anything.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1084,
+      "record_id": "83029",
+      "first_name": "Terquerious",
+      "last_name": "Byrd",
+      "activity_date": "2026-11-10",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Barrier removal – problem-solving or coordination support",
+      "note_text": "Referred him to Spartanburg Rescue Mission for housing and let him know the intake procedure (walk in at 7am). He called and learned they are full at the moment, so I gave him the phone number for Divinity Care Facility to check if they have openings. Also sent him the application for Soteria.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1083,
+      "record_id": "83029",
+      "first_name": "Terquerious",
+      "last_name": "Byrd",
+      "activity_date": "2026-11-09",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Intake Appointment COMPLETED",
+      "note_text": "Session Type: Initial Intake / Consultation\n\nContact Summary: \nConducted an initial phone consultation with Terquerious Byrd to assess his current stability, needs, and eligibility for the Turn90 program. Terquerious was recently released from prison (April 30) and is currently on both federal and state probation, wearing an ankle monitor (26 days remaining). His most pressing issue is housing; his current living situation in Spartanburg is highly unstable, and his federal probation officer is considering transferring him back to North Carolina unless he can secure independent housing in SC.\n\nCase Plan Goal Progress: \n- Not yet entered; this was the initial intake assessment.\n\nBriefcase & Gate 1-4 Updates: \n- Identification: Client has physical possession of his Birth Certificate, Social Security Card, and State ID (all issued in North Carolina). \n- Driver's License: Client has never held a driver's license.\n- Housing Plan: Urgent barrier. Client needs immediate housing in SC to avoid being transferred to NC.\n- Transportation Plan: Major barrier. Client is currently relying on expensive Uber/Lyft rides because public transit does not reach his current location.\n- Employment: Client is actively applying for jobs but facing rejections due to his background. Previously attempted to work with Voc Rehab but the compensation ($200/week) was insufficient to survive.\n\nReferrals/Resources Provided: \n- Discussed Turn90's housing partnerships; offered to look into available housing resources in the Spartanburg area to support his desire to stay in SC.\n\nContact Summary: Completed Part 2 of the initial intake consultation with Terquerious Byrd via phone. Discussed family background, legal stipulations, education, employment history, and housing barriers. Client comes from a family with heavy generational criminal justice involvement (parents incarcerated). \n\nCase Plan Goal Progress: Client is highly interested in starting the Turn90 program but currently lacks the stable housing and transportation required to enroll and successfully attend. Discussed securing transitional housing in Spartanburg as the immediate priority.\n\nBriefcase & Gate 1-4 Updates: \n- Legal: On dual state (SC) and federal (NC) probation. Currently on state home-detention/ankle monitor until December 18th. State supervision ends April 30th next year; Federal supervised release continues until June 2028. Client is currently compliant. \n- Education: Highest grade completed is 8th grade. \n- Certifications: Holds an OSHA 10 certification. \n- Child Support: Client reports no child support obligations. \n- Financial: Currently working sporadically via Labor Finders but has no savings to put toward rent.\n\nReferrals/Resources Provided: Navigator is researching local transitional housing options in Spartanburg that do not require high upfront costs.\n\nNext Steps: Client will meet with their Probation Officer today/tomorrow to discuss housing. Navigator will follow up with client via text/call in the next 1-2 days with transitional housing options.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1082,
+      "record_id": "83029",
+      "first_name": "Terquerious",
+      "last_name": "Byrd",
+      "activity_date": "2026-11-06",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment SCHEDULED",
+      "note_text": "",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "updated_at": "2026-11-23T13:46:30.024Z"
+}

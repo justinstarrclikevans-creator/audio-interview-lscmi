@@ -1,0 +1,83 @@
+{
+  "participant_key": "Nat_Lobengilo",
+  "updated_at": "2026-11-23T13:46:28.941Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-19T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "6 chronological Apricot note(s) archived (No Plan on File).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_casenote:218",
+      "event_key": "casenote:218",
+      "timestamp": "2026-11-19T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "### Session Summary\n\nThis session is a one-on-one meeting between a case manager/counselor and a client, **Nat Turner** (who references a background in Greenville and three years of sobriety), regarding his current housi",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Terrence Brown"
+    },
+    {
+      "id": "ms_casenote:219",
+      "event_key": "casenote:219",
+      "timestamp": "2026-11-12T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "### Session Summary\n\nA case manager conducted a structured one-on-one intake and goal-setting session with a client (Nat) enrolled in the **Turn 90** reentry program.\n\nThe session began with reviewing the client's person",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Terrence Brown"
+    },
+    {
+      "id": "ms_casenote:221",
+      "event_key": "casenote:221",
+      "timestamp": "2026-11-05T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Documentation support – ID, housing forms, paperwork)",
+      "summary": "Participant came in about housing. He is about to be put on contract at his Oxford House (Chippendale Rd, North Charleston 29420) because he hasn’t started working yet and still owes $370 on his deposit. The contract sta",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Daisy Boynton"
+    },
+    {
+      "id": "ms_casenote:220",
+      "event_key": "casenote:220",
+      "timestamp": "2026-11-05T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Check-in conversation – brief status update)",
+      "summary": "TB let me know that one guy he called in for orientation didn't get back to him, so I let Nat know that he can come in this week for orientation.",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Daisy Boynton"
+    },
+    {
+      "id": "ms_casenote:222",
+      "event_key": "casenote:222",
+      "timestamp": "2026-11-04T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Intake Appointment COMPLETED)",
+      "summary": "Grasshopper call recording failed.\n\nRecently moved into a Charleston Oxford House on Ashley Phosphate from Greenville, SC. Has maintained sobriety for 3 years (3 years incarcerated, was released to a recovery program in ",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Daisy Boynton"
+    },
+    {
+      "id": "ms_casenote:223",
+      "event_key": "casenote:223",
+      "timestamp": "2026-11-02T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Intake Appointment SCHEDULED)",
+      "summary": "Intake Appointment SCHEDULED",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Daisy Boynton"
+    }
+  ]
+}

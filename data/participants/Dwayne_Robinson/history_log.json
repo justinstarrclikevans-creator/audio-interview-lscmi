@@ -1,0 +1,138 @@
+{
+  "participant_key": "Dwayne_Robinson",
+  "updated_at": "2026-11-23T13:46:28.966Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "11 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:315",
+      "event_key": "reentry_session:315",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "summary": "Rescheduling our call to make his resume. He is going to call me when he's available. I sent him info for a job fair in Clarendon.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:317",
+      "event_key": "reentry_session:317",
+      "timestamp": "2026-11-16T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Talked with Dwayne on the phone and set up a call at 3pm today to apply for Medicaid. After that, his two main goals are getting his GED and finding employment. He said he spoke to Voc Rehab and SC Works but neither were",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:316",
+      "event_key": "reentry_session:316",
+      "timestamp": "2026-11-16T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Documentation support – ID, housing forms, paperwork (Daisy Boynton)",
+      "summary": "CONTACT SUMMARY & SESSION OVERVIEW\n- Session Stage: Weekly Follow-Up (~15 min, phone)\n- Summary: CM and [Client] reconnected after missed calls on both sides. CM followed up on the Welvista application; [Client] believes",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:318",
+      "event_key": "reentry_session:318",
+      "timestamp": "2026-11-12T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "Dwayne reached out with a new phone number. I called him back but got no answer. Left a VM letting him know we're off tomorrow but I will try him again on Monday.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:319",
+      "event_key": "reentry_session:319",
+      "timestamp": "2026-11-06T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Dwayne said he wanted help applying for disability. I sent him the info for Voc Rehab and told him to make an appointment.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:241",
+      "event_key": "reentry_session:241",
+      "timestamp": "2026-10-29T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "summary": "Sent Dwayne info for SC Works and told him to make an appointment. I offered to make him a resume to bring with him as well.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:242",
+      "event_key": "reentry_session:242",
+      "timestamp": "2026-10-27T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Documentation support – ID, housing forms, paperwork (Daisy Boynton)",
+      "summary": "### Contact Summary\nReentry Navigator Daisy Boynton met with client Dwayne Robinson (Apricot ID: 22888) to complete his Welvista and SNAP applications. Dwayne reported he is currently living in a transitional house in Ma",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:229",
+      "event_key": "reentry_session:229",
+      "timestamp": "2026-10-23T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "Scheduled Dwayne for 12:30 on Tuesday to fill out SNAP and Welvista apps",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:15",
+      "event_key": "reentry_session:15",
+      "timestamp": "2026-10-22T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Reached out to schedule a time to fill out SNAP and Welvista application.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:16",
+      "event_key": "reentry_session:16",
+      "timestamp": "2026-10-20T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Daisy Boynton)",
+      "summary": "Currently in a transitional housing program in Manning, SC. Rent is $800/month, needs a job, behind on rent right now by $600. Has a 2 month supply of his mental health meds, but needs help getting more (Welvista). Wants",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:17",
+      "event_key": "reentry_session:17",
+      "timestamp": "2026-10-19T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "Intake Appointment SCHEDULED",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

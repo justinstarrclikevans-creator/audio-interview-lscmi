@@ -1,0 +1,160 @@
+{
+  "participant_key": "Zerrick_Morris",
+  "updated_at": "2026-11-23T13:46:29.327Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "6 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:414",
+      "event_key": "reentry_session:414",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "3Eleven Living Solutions called saying they have openings. I let Zerrick know and he said he's interested, so I referred him. 3Eleven has his name and is expecting his call today.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:415",
+      "event_key": "reentry_session:415",
+      "timestamp": "2026-11-11T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "Sent a text asking if he had any luck with the housing options I sent. No response.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_doc:Zerrick_Morris_Columbia_interview_guide.docx",
+      "event_key": "doc:Zerrick_Morris_Columbia_interview_guide.docx",
+      "timestamp": "2026-11-04T16:28:24.488Z",
+      "category": "document",
+      "action": "Archived interview guide",
+      "summary": "Document stored in folder: Zerrick_Morris_Columbia_interview_guide.docx",
+      "filename": "Zerrick_Morris_Columbia_interview_guide.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Zerrick_Morris_Columbia_draft_scoring_form.docx",
+      "event_key": "doc:Zerrick_Morris_Columbia_draft_scoring_form.docx",
+      "timestamp": "2026-11-04T16:28:24.114Z",
+      "category": "document",
+      "action": "Archived draft scoring",
+      "summary": "Document stored in folder: Zerrick_Morris_Columbia_draft_scoring_form.docx",
+      "filename": "Zerrick_Morris_Columbia_draft_scoring_form.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Zerrick_Morris_Columbia_criminal_history.docx",
+      "event_key": "doc:Zerrick_Morris_Columbia_criminal_history.docx",
+      "timestamp": "2026-11-04T16:28:23.181Z",
+      "category": "document",
+      "action": "Archived criminal history",
+      "summary": "Document stored in folder: Zerrick_Morris_Columbia_criminal_history.docx",
+      "filename": "Zerrick_Morris_Columbia_criminal_history.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Zerrick_Morris_Columbia_criminal_history.md",
+      "event_key": "doc:Zerrick_Morris_Columbia_criminal_history.md",
+      "timestamp": "2026-11-04T16:28:21.423Z",
+      "category": "document",
+      "action": "Archived criminal history",
+      "summary": "Document stored in folder: Zerrick_Morris_Columbia_criminal_history.md",
+      "filename": "Zerrick_Morris_Columbia_criminal_history.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Zerrick_Morris_Columbia_draft_scoring_form.md",
+      "event_key": "doc:Zerrick_Morris_Columbia_draft_scoring_form.md",
+      "timestamp": "2026-11-04T16:28:21.423Z",
+      "category": "document",
+      "action": "Archived draft scoring",
+      "summary": "Document stored in folder: Zerrick_Morris_Columbia_draft_scoring_form.md",
+      "filename": "Zerrick_Morris_Columbia_draft_scoring_form.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Zerrick_Morris_Columbia_interview_guide.md",
+      "event_key": "doc:Zerrick_Morris_Columbia_interview_guide.md",
+      "timestamp": "2026-11-04T16:28:21.422Z",
+      "category": "document",
+      "action": "Archived interview guide",
+      "summary": "Document stored in folder: Zerrick_Morris_Columbia_interview_guide.md",
+      "filename": "Zerrick_Morris_Columbia_interview_guide.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Zerrick_Morris_Columbia_transcript.txt",
+      "event_key": "doc:Zerrick_Morris_Columbia_transcript.txt",
+      "timestamp": "2026-11-04T16:28:21.420Z",
+      "category": "document",
+      "action": "Archived transcript",
+      "summary": "Document stored in folder: Zerrick_Morris_Columbia_transcript.txt",
+      "filename": "Zerrick_Morris_Columbia_transcript.txt",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_reentry_session:416",
+      "event_key": "reentry_session:416",
+      "timestamp": "2026-11-03T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Confirmed with Zerrick over the phone that those housing options worked for him. I sent him the applications and phone numbers for each. I reached out to Adelle at Chinquapin Housing to let her know to expect his call.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:304",
+      "event_key": "reentry_session:304",
+      "timestamp": "2026-10-30T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Sent Zerrick info for Chinquapin housing, 3Eleven Living Solutions, and Timeless Freedom Transitional Homes to see if any interested him.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:305",
+      "event_key": "reentry_session:305",
+      "timestamp": "2026-10-29T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Daisy Boynton)",
+      "summary": "Intake Screening: Zerrick Morris\nDate: 10/29/2026 | Staff: Daisy | Type: Phone consultation, reentry navigation\nOutcome: He lives in Sumter County, which is outside our service area, so he’s starting with reentry navigat",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:306",
+      "event_key": "reentry_session:306",
+      "timestamp": "2026-10-26T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "No answer",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

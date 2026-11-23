@@ -38,9 +38,9 @@
     },
     "stable_housing": {
       "value": "stable_verified",
-      "notes": "",
-      "source": "default",
-      "updated_at": "2026-11-20T19:55:12.670Z"
+      "notes": "Stable housing verified in profile",
+      "source": "db_import",
+      "updated_at": "2026-11-23T13:46:27.132Z"
     },
     "reliable_phone": {
       "value": "active_verified",
@@ -62,9 +62,9 @@
     },
     "supervision_information": {
       "value": "active_logged_no_conflict",
-      "notes": "",
-      "source": "default",
-      "updated_at": "2026-11-20T19:55:12.670Z"
+      "notes": "Supervision information referenced in loaded assessment/case records",
+      "source": "loaded_text",
+      "updated_at": "2026-11-23T13:46:27.132Z"
     },
     "skillcat_pathway": {
       "value": "HVAC",
@@ -76,7 +76,7 @@
       "value": "stalled_flagged",
       "notes": "4 modules completed (6.0 hrs)",
       "source": "skillcat_scraper",
-      "updated_at": "2026-11-22T17:18:01.726Z"
+      "updated_at": "2026-11-23T13:46:28.917Z"
     },
     "resume_and_email": {
       "value": "not_started",
@@ -162,7 +162,7 @@
       "value": "stable_verified",
       "label": "Stable Housing / Lease / Family Home Verified",
       "ready": true,
-      "notes": ""
+      "notes": "Stable housing verified in profile"
     },
     {
       "key": "reliable_phone",
@@ -198,7 +198,7 @@
       "value": "active_logged_no_conflict",
       "label": "Active Supervision — Officer Info, Schedule & Conditions Logged (No Work Conflict)",
       "ready": true,
-      "notes": ""
+      "notes": "Supervision information referenced in loaded assessment/case records"
     }
   ]
 }

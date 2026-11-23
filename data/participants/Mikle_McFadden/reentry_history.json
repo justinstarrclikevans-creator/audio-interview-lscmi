@@ -1,0 +1,88 @@
+{
+  "participant_key": "Mikle_McFadden",
+  "participant_name": "Mikle McFadden",
+  "client_records": [
+    {
+      "id": 63,
+      "first_name": "Mikle",
+      "last_name": "McFadden",
+      "apricot_id": "82682",
+      "location": "Charleston",
+      "status": "active",
+      "stability_tier": "stable",
+      "phone": null,
+      "email": null,
+      "notes": "Ensure medical needs are met and find employment",
+      "created_at": "2026-11-03 23:04:00",
+      "updated_at": "2026-11-22 17:36:06",
+      "case_manager": "Daisy Boynton",
+      "enrollment_start": "2026-11-03",
+      "gate1_pct": 38,
+      "gate2_pct": 20,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "last_contact_date": "2026-11-11",
+      "last_contact_staff": "Daisy Boynton",
+      "last_contact_activity": "Check-in conversation – brief status update",
+      "has_case_plan": 1,
+      "case_plan_text": "Ensure medical needs are met and find employment"
+    }
+  ],
+  "sessions": [
+    {
+      "id": 425,
+      "client_id": 63,
+      "session_date": "2026-11-11",
+      "session_title": "Check-in conversation – brief status update (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Called to check in on how his appointment with MUSC went. They canceled his appointment because they already got his medical records from another doctor. The next step is for MUSC to get back to him about scheduling his surgery. He's currently working with Voc Rehab and doesn't need much help from us at this point. I told him I'd check in next week.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 311,
+      "client_id": 63,
+      "session_date": "2026-11-03",
+      "session_title": "Intake Appointment COMPLETED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Contact Summary: Completed initial Reentry Navigation phone intake with Mikle McFadden. Explained both the Turn90 in-person program and remote Reentry Navigation tracks. Mikle was released on August 3rd after 38 years of incarceration. \n\nCase Plan & Briefcase Updates: Mikle has made excellent independent progress. He verified that he has his valid Driver's License (obtained 3 weeks ago), Social Security Card, and Birth Certificate. He resides in a home he owns with his wife and has access to a vehicle. \n\nBarriers Identified: Mikle's primary barrier is a severe spinal condition that prevents him from standing for long periods or lifting heavy objects, making the physical demands of the Turn90 center program unsuitable at this time. He is connected to Voc Rehab and has an appointment with a spinal surgeon at MUSC this coming Monday to evaluate his need for surgery.\n\nReferrals/Resources Provided: Offered financial or community assistance, but Mikle stated he and his wife are currently stable and do not require emergency assistance. \n\nNext Steps: Mikle will remain in Reentry Navigation for phone-based case management. Daisy will follow up next week to check on the results of his MUSC appointment and discuss building a resume focused on his clerical work history.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 312,
+      "client_id": 63,
+      "session_date": "2026-10-30",
+      "session_title": "Intake Appointment SCHEDULED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "No answer, VM left",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-03 23:04:00"
+    }
+  ],
+  "goals": [
+    {
+      "id": 144,
+      "client_id": 63,
+      "goal_title": "Ensure medical needs are met and find employment",
+      "target_date": "2026-12-06",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"Ensure medical needs are met and find employment\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-11-22 17:35:09",
+      "updated_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "case_plans": [],
+  "updated_at": "2026-11-23T13:46:29.350Z"
+}

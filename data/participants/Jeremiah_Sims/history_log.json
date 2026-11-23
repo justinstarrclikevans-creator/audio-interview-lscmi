@@ -1,0 +1,94 @@
+{
+  "participant_key": "Jeremiah_Sims",
+  "updated_at": "2026-11-23T13:46:29.049Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-10T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "7 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:355",
+      "event_key": "reentry_session:355",
+      "timestamp": "2026-11-10T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Terrence Brown)",
+      "summary": "Checked in with me about getting back into the program and added him to the waitlist",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:271",
+      "event_key": "reentry_session:271",
+      "timestamp": "2026-10-26T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Terrence Brown)",
+      "summary": "he is looking to rejoin the program and is currently working at staff zone and will be checking in until its time to rejoin the program",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:116",
+      "event_key": "reentry_session:116",
+      "timestamp": "2026-10-19T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Terrence Brown)",
+      "summary": "Pulled from the program for failed drug test and sent him home early on 10/16 and was supposed to come back in to take a retest 10/19 and he was a no call no show.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:115",
+      "event_key": "reentry_session:115",
+      "timestamp": "2026-10-19T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Terrence Brown)",
+      "summary": "Called and informed his mother that he got pulled out of the program and to call us back if he wants to be re-added to the waitlist",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:117",
+      "event_key": "reentry_session:117",
+      "timestamp": "2026-10-01T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "He called us, couldn't remember whether he'd had an intake meeting with Justin (there are notes from the meeting in his file and they line up with where he's at). He wants his CDL. He is taking his DL test Friday or next",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:118",
+      "event_key": "reentry_session:118",
+      "timestamp": "2026-09-24T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Justin Evans)",
+      "summary": "Creating a structured reentry plan for Jeremiah involves addressing his immediate needs, setting short-term and long-term goals, and providing ongoing support to ensure successful reintegration into society. Here's a ste",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:119",
+      "event_key": "reentry_session:119",
+      "timestamp": "2026-09-22T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Kat Norsworthy)",
+      "summary": "Intake Appointment SCHEDULED",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

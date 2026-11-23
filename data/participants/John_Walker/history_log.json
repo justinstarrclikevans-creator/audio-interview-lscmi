@@ -1,0 +1,127 @@
+{
+  "participant_key": "John_Walker",
+  "updated_at": "2026-11-23T13:46:29.416Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-18T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "10 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:385",
+      "event_key": "reentry_session:385",
+      "timestamp": "2026-11-18T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "summary": "Sent him the HoneyBaked season job openings page.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:386",
+      "event_key": "reentry_session:386",
+      "timestamp": "2026-11-12T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED|Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "summary": "Rescreened John for FS. Nothing has changed, he just chose temp work over his program slot last time and that work has run out. His main focus is employment and paying off his license fees. He's stable and I added him to",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:388",
+      "event_key": "reentry_session:388",
+      "timestamp": "2026-11-11T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Jenn Jeanquart)",
+      "summary": "John sent me a text requesting to get back on the waitlist. Referred to Daisy to rescreen.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:387",
+      "event_key": "reentry_session:387",
+      "timestamp": "2026-11-11T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "Scheduled an updated consultation with John for tomorrow.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:389",
+      "event_key": "reentry_session:389",
+      "timestamp": "2026-10-23T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Jenn Jeanquart)",
+      "summary": "Sent message to confirm orientation for today and he responded that he got a job and will not be enrolling. Removed from waitlist.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:391",
+      "event_key": "reentry_session:391",
+      "timestamp": "2026-10-19T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Called to let him know he's near the top of the waitlist and confirm he's still interested. He said he's good to go and has transportation.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:390",
+      "event_key": "reentry_session:390",
+      "timestamp": "2026-10-19T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Jenn Jeanquart)",
+      "summary": "Scheduled orientation for 10/23.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:393",
+      "event_key": "reentry_session:393",
+      "timestamp": "2026-10-08T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Called to touch base and figure out where he's at (Kat did screening). Main focus is finding work, didn't want help with anything else at this point. Has transportation, open to any work. I'm going to find some job openi",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:392",
+      "event_key": "reentry_session:392",
+      "timestamp": "2026-10-08T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "summary": "Sent him 4 job postings from Indeed.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:394",
+      "event_key": "reentry_session:394",
+      "timestamp": "2026-10-07T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED|Intake Appointment COMPLETED (Kat Norsworthy)",
+      "summary": "did consultation, passes all gates, adding to waitlist",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

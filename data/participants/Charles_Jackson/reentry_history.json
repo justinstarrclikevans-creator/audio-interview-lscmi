@@ -1,0 +1,88 @@
+{
+  "participant_key": "Charles_Jackson",
+  "participant_name": "Charles Jackson",
+  "client_records": [
+    {
+      "id": 74,
+      "first_name": "Charles",
+      "last_name": "Jackson",
+      "apricot_id": "83003",
+      "location": "Spartanburg",
+      "status": "active",
+      "stability_tier": "stable",
+      "phone": null,
+      "email": null,
+      "notes": "Reinstate DL so he can use his car for transportation for FS",
+      "created_at": "2026-11-22 17:35:09",
+      "updated_at": "2026-11-22 17:36:06",
+      "case_manager": "Daisy Boynton",
+      "enrollment_start": "2026-11-09",
+      "gate1_pct": 25,
+      "gate2_pct": 50,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "last_contact_date": "2026-11-17",
+      "last_contact_staff": "Daisy Boynton",
+      "last_contact_activity": "Check-in conversation – brief status update",
+      "has_case_plan": 1,
+      "case_plan_text": "Reinstate DL so he can use his car for transportation for FS"
+    }
+  ],
+  "sessions": [
+    {
+      "id": 445,
+      "client_id": 74,
+      "session_date": "2026-11-17",
+      "session_title": "Check-in conversation – brief status update (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "I called Charles back. He was about to return my call because he thought he’d missed a voicemail. He’s working on transportation so he can join the program. To get his car back on the road, he needs tires and insurance. He already has the money for the tires and plans to buy them next week. His mother and sister will help him pay for insurance. He expects to have both done by the end of this month and was worried that would be too late. I reassured him that it won’t be, and that we’ll be here whenever he’s ready.\n\nHis license is suspended. He estimates reinstatement will cost $300–400 and hasn’t been to the DMV yet. I explained that we can’t pay it directly but can apply to the Rainy Day Fund once he brings the DMV printout of what he owes. The next funding cycle opens 12/1, and decisions come at the end of the month, so he likely wouldn’t hear until late December, and approval isn’t guaranteed. I recommended paying it himself if he can, since that’s faster. He thinks he can probably cover it on his own after the tires and insurance. Until then, he’s willing to have someone with a valid license drive his car.\n\nNext steps: he’ll call once his tires and insurance are done. Once he has reliable transportation, we’ll add him to the waitlist and check the timing then. He didn’t need anything else right now.\n\nFollow-ups\n\nWait for his call once tires and insurance are done, likely by the end of November\nAdd him to the waitlist once his transportation is confirmed\nIf he can’t cover the reinstatement fees himself, get his DMV printout and submit a Rainy Day Fund application on 12/1",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 446,
+      "client_id": 74,
+      "session_date": "2026-11-09",
+      "session_title": "Intake Appointment COMPLETED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "### Contact Summary\nCompleted initial intake screening with Charles for the Turn90 program in Spartanburg. Reviewed housing, documentation, transportation, criminal history, employment background, and immediate needs. Client is currently housed stably with his mother and has no emergency health or substance use concerns. \n\n### Case Plan Goal Progress\nClient opted to start on the Reentry Navigation caseload rather than the full-time Monday-Friday program. His primary focus is clearing his suspended driver's license so he can drive his own vehicle to the center without relying on others or paying for rides out of his stipend.\n\n### Briefcase & Gate 1-4 Updates\n- Housing: Stable (living with mother).\n- Identification: Has State ID. \n- Vital Docs: Has either his Birth Certificate or Social Security card in his car; needs to verify which one is missing.\n- Transportation/License: Driver's license suspended due to owing approx. $200 in fees. Has a reliable vehicle once license is reinstated.\n- Education: GED completed.\n\n### Referrals/Resources Provided\n- Explained Turn90 Reentry Navigation track and potential funding assistance for DMV reinstatement fees.\n\n### Next Steps\n- Charles will contact the DMV to get an exact printout of his tickets/reinstatement fees.\n- Once the DMV printout is received, Daisy will explore RDF funding to cover the fees.\n- After transportation is secured, Charles will be added to the waitlist for the full-time Turn90 program.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 447,
+      "client_id": 74,
+      "session_date": "2026-11-06",
+      "session_title": "Intake Appointment SCHEDULED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Intake Appointment SCHEDULED",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "goals": [
+    {
+      "id": 148,
+      "client_id": 74,
+      "goal_title": "Reinstate DL so he can use his car for transportation for FS",
+      "target_date": "2026-12-06",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"Reinstate DL so he can use his car for transportation for FS\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-11-22 17:35:09",
+      "updated_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "case_plans": [],
+  "updated_at": "2026-11-23T13:46:29.484Z"
+}

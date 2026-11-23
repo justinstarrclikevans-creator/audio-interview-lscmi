@@ -1,0 +1,72 @@
+{
+  "participant_key": "Micquell_Kirk",
+  "updated_at": "2026-11-23T13:46:29.497Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-18T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "5 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:448",
+      "event_key": "reentry_session:448",
+      "timestamp": "2026-11-18T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "summary": "Sent Micquell the link to HoneyBaked for their season job openings. He said he applied and also plans to attend the SC Works job fair tomorrow (11/19)  in Columbia. He has a resume he plans to print out.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:449",
+      "event_key": "reentry_session:449",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "summary": "Sent Micquell 2 more job fairs in Columbia.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:451",
+      "event_key": "reentry_session:451",
+      "timestamp": "2026-11-09T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Daisy Boynton)",
+      "summary": "**Contact Summary:** Completed initial Reentry Navigation consultation with Micquell Kirk for the Columbia center. Client expressed strong interest in the in-person 8-week program. Due to a current waitlist of 1+ months ",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:450",
+      "event_key": "reentry_session:450",
+      "timestamp": "2026-11-09T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "summary": "Sent Micquell the info for the 2 job fairs coming up in Columbia (11/12 and 11/19).",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:452",
+      "event_key": "reentry_session:452",
+      "timestamp": "2026-11-06T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "Intake Appointment SCHEDULED",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

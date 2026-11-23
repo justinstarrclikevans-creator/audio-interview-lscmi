@@ -1,0 +1,127 @@
+{
+  "participant_key": "Tyler_Kershaw",
+  "participant_name": "Tyler Kershaw",
+  "client_records": [
+    {
+      "id": 72,
+      "first_name": "Tyler",
+      "last_name": "Kershaw",
+      "apricot_id": "82929",
+      "location": "Columbia",
+      "status": "active",
+      "stability_tier": "stable",
+      "phone": null,
+      "email": null,
+      "notes": "Find employment\n\n*still having trouble saving PDFs from the web app",
+      "created_at": "2026-11-22 17:35:09",
+      "updated_at": "2026-11-22 17:36:06",
+      "case_manager": "Daisy Boynton",
+      "enrollment_start": "2026-11-06",
+      "gate1_pct": 50,
+      "gate2_pct": 80,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "last_contact_date": "2026-11-18",
+      "last_contact_staff": "Daisy Boynton",
+      "last_contact_activity": "Employment support – applications, resume, interview prep",
+      "has_case_plan": 1,
+      "case_plan_text": "Find employment\n\n*still having trouble saving PDFs from the web app"
+    }
+  ],
+  "sessions": [
+    {
+      "id": 436,
+      "client_id": 72,
+      "session_date": "2026-11-18",
+      "session_title": "Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Made Tyler a resume (in reentry nav case plan) and resent the info for the upcoming job fairs.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 435,
+      "client_id": 72,
+      "session_date": "2026-11-18",
+      "session_title": "Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Sent him the hiring page for HoneyBaked season job openings",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 437,
+      "client_id": 72,
+      "session_date": "2026-11-17",
+      "session_title": "Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Sent Tyler 3 job fairs and offered to set up a time to make his resume.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 438,
+      "client_id": 72,
+      "session_date": "2026-11-06",
+      "session_title": "Intake Appointment COMPLETED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "### Contact Summary\nCompleted initial intake consultation with Tyler Kershaw. Explained Turn90 program expectations, including the Monday-Friday 9 AM - 3 PM schedule, $450/week stipend, job training, forklift certification, and the point system for attendance. Tyler was released from Broad River Correctional on July 1st after serving a 13-year sentence for armed robbery and weapon possession. He is on state supervision until 2028. Tyler is currently stable, living with his fiancé in a rented townhouse, and reported having no emergency needs. \n\n### Case Plan Goal Progress\nClient is on a 3-4 week waitlist for the Turn90 program. Primary immediate goal is to secure interim employment while waiting for program admission.\n\n### Briefcase & Gate 1-4 Updates\n- SS Card: Pending (Client states it is arriving in the mail).\n- State ID / Birth Certificate: Client states he has these.\n- Driver's License: Suspended.\n- Transportation: Relying on Uber (Client noted this is costly and needs a more sustainable backup plan).\n- Resume: None (Client has no prior work history as he was incarcerated at age 17). \n\n### Referrals/Resources Provided\n- Will create and provide a functional resume based on client's GED and any skills acquired during incarceration.\n- Will send information on the Scout Motors job fair happening on the 12th.\n- Will send leads for second-chance employers in the Columbia area.\n\n### Next Steps\n- Daisy to draft a resume and send it to Tyler.\n- Daisy to text job fair details and interim employment leads.\n- Tyler to attend the job fair and apply for interim roles.\n- Follow up regarding receipt of his Social Security card.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 440,
+      "client_id": 72,
+      "session_date": "2026-11-04",
+      "session_title": "Intake Appointment SCHEDULED (Jenn Jeanquart)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Intake Appointment SCHEDULED",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 439,
+      "client_id": 72,
+      "session_date": "2026-11-04",
+      "session_title": "Employment support – applications, resume, interview prep (Jenn Jeanquart)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Tyler walked in to inquire about employment support. He released from SCDC within the last few  months and has been struggling to find consistent work. I reviewed second chance employers including temp agencies and day work options with Tyler. I also recommended SCWorks and provided information about the WIOA program through SC Works for paid certification programming.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "goals": [
+    {
+      "id": 146,
+      "client_id": 72,
+      "goal_title": "Find employment\n\n*still having trouble saving PDFs from the web app",
+      "target_date": "2026-12-06",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"Find employment\\n\\n*still having trouble saving PDFs from the web app\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-11-22 17:35:09",
+      "updated_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "case_plans": [],
+  "updated_at": "2026-11-23T13:46:29.461Z"
+}

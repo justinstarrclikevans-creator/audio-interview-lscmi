@@ -1,0 +1,94 @@
+{
+  "participant_key": "Dakari_Johnson",
+  "updated_at": "2026-11-23T13:46:28.954Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-18T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "7 chronological Apricot note(s) archived (No Plan on File).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_casenote:224",
+      "event_key": "casenote:224",
+      "timestamp": "2026-11-18T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "### Session Summary\n\nA counselor/case manager and a 19-year-old male client in a structured rehabilitation/reentry program review the client's recent attendance, behavioral progress, legal/documentation needs, and immedi",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Terrence Brown"
+    },
+    {
+      "id": "ms_casenote:225",
+      "event_key": "casenote:225",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Case Note (documentation only) – no interaction or service|Financial assistance – funds provided (bus pass, fees, etc.))",
+      "summary": "Had a conversation about attendance and tardiness and how it may effect his future at Turn90 letting him know that he may get pulled out of the classroom if his attendance does not improve. After the conversation, we pro",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Terrence Brown"
+    },
+    {
+      "id": "ms_casenote:226",
+      "event_key": "casenote:226",
+      "timestamp": "2026-11-12T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "### Session Summary\n\nDuring this intake and case-planning session, the case manager and client (**Dacari Johnson**) established a foundational case plan. The session centered on identifying the client's core behavioral f",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Terrence Brown"
+    },
+    {
+      "id": "ms_casenote:227",
+      "event_key": "casenote:227",
+      "timestamp": "2026-11-11T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Case Note (documentation only) – no interaction or service)",
+      "summary": "Out sick",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Justin Evans"
+    },
+    {
+      "id": "ms_casenote:228",
+      "event_key": "casenote:228",
+      "timestamp": "2026-11-10T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Case Note (documentation only) – no interaction or service)",
+      "summary": "Went home sick at 11",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Justin Evans"
+    },
+    {
+      "id": "ms_casenote:229",
+      "event_key": "casenote:229",
+      "timestamp": "2026-11-04T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Barrier removal – problem-solving or coordination support)",
+      "summary": "Called Lantern and Felecia at Calm Quarters. Lantern had space but Dakari didn't want somewhere that forces a curfew. Calm Quarters also has space but Felecia was driving and asked for Dakari to call her tomorrow at 10am",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Daisy Boynton"
+    },
+    {
+      "id": "ms_casenote:230",
+      "event_key": "casenote:230",
+      "timestamp": "2026-11-03T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Case Note (documentation only) – no interaction or service)",
+      "summary": "Dakari is an old client of Alex, who has helped us with license reinstatements for years, and of Amanda Quiles. He received probation for his most recent charge and is being released today. We need to immediately help hi",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Justin Evans"
+    }
+  ]
+}

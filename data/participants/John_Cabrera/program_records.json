@@ -1,0 +1,125 @@
+{
+  "participant_key": "John_Cabrera",
+  "participant_name": "John Cabrera",
+  "profile_records": [
+    {
+      "id": 35,
+      "user_id": 37,
+      "current_gate": 4,
+      "w9_status": "verified",
+      "dl_status": "valid",
+      "dl_notes": "I plan on getting me a car in a couple of months.",
+      "child_support_status": "none",
+      "child_support_notes": "Child support contact/enforcement reviewed",
+      "housing_status": "stable",
+      "substance_status": "none",
+      "mental_health_status": "none",
+      "transportation_status": "Personal Vehicle / Ride",
+      "court_dates": null,
+      "overall_status": "archived",
+      "termination_reason": null,
+      "termination_date": null,
+      "updated_at": "2026-09-23 11:52:26",
+      "stability_red_flags": "[{\"category\":\"Cognitive / Attitude\",\"flag\":\"Insistence on Carrying Firearm while on Supervision\",\"evidence\":\"Maintains procriminal attitudes, insisting on carrying a firearm for self-protection while on supervision.\",\"severity\":\"high\",\"navigator_recommendation\":\"Apply Modeling Neutrality (Standard 1.5). Avoid debating the safety concern directly; use reflective questions linking firearm possession directly to supervision revocation risks and loss of personal freedom.\"},{\"category\":\"Cognitive / Attitude\",\"flag\":\"Externalizing Blame and Impulsive Interpersonal Conflict Escalation\",\"evidence\":\"Reacts impulsively and aggressively to perceived disrespect, tending to escalate conflicts verbally and physically before attempting to de-escalate.\",\"severity\":\"high\",\"navigator_recommendation\":\"Use CBT cognitive reframing to slow down reaction time between trigger and response, tying workplace emotional regulation to keeping steady pay.\"},{\"category\":\"Substance / Health\",\"flag\":\"Active Marijuana Use Impacting CDL & Employment Goals\",\"evidence\":\"Reports recent marijuana use; recent marijuana use could present barriers to certain employment sectors or his goal of obtaining a CDL.\",\"severity\":\"medium\",\"navigator_recommendation\":\"Explore self-interest around CDL ambition and drug testing requirements without preaching; connect to community substance/behavioral support if requested.\"},{\"category\":\"Stability Risk\",\"flag\":\"Severe PTSD, Paranoia, and Mental Health Instability\",\"evidence\":\"High levels of untreated PTSD and anxiety impacting daily functioning... diagnosed with ADHD, depression, and paranoid schizophrenia.\",\"severity\":\"high\",\"navigator_recommendation\":\"Facilitate warm handoff to community mental health provider (Fetter Health / Charleston Center) and maintain consistent, predictable one-on-one staff contact.\"}]",
+      "director_override": 0,
+      "director_override_notes": null,
+      "director_override_by": null,
+      "reentry_status": "at_risk",
+      "has_reentry_plan": 1,
+      "enrollment_date": "2026-07-06",
+      "correction_notes": null,
+      "supabase_id": "1262015d-feb3-4231-88b0-4fd894550ff4",
+      "record_id": null
+    }
+  ],
+  "case_plan_triggers": [],
+  "daily_points": [
+    {
+      "id": 54,
+      "user_id": 37,
+      "date": "2026-09-21",
+      "points_earned": 6,
+      "max_points": 50,
+      "attendance_status": "present",
+      "notes": "Imported via Render Report",
+      "imported_from_apricot": 1,
+      "created_at": "2026-09-22 17:44:36"
+    }
+  ],
+  "drug_tests": [],
+  "benefits": [
+    {
+      "id": 46,
+      "user_id": 37,
+      "benefit_type": "medicaid",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    },
+    {
+      "id": 47,
+      "user_id": 37,
+      "benefit_type": "snap",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    },
+    {
+      "id": 48,
+      "user_id": 37,
+      "benefit_type": "tanf",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    },
+    {
+      "id": 45,
+      "user_id": 37,
+      "benefit_type": "welvista",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    }
+  ],
+  "resumes": [
+    {
+      "id": 5,
+      "user_id": 37,
+      "resume_data_json": "{\"skills\":\"Forklift certified, \",\"summary\":\"my goal is to obtain employment in the trucking industry and to one day own my own business in import and my export my strong points are I'm a people person and I try to make people happy and I try to solve problems to the best of my ability!\",\"experience\":\"\"}",
+      "updated_at": "2026-09-23 11:52:26"
+    }
+  ],
+  "db_documents": [
+    {
+      "id": 28,
+      "user_id": 37,
+      "doc_type": "case_brief",
+      "title": "Clinical Case Brief - John Cabrera",
+      "filename": "John_Cabrera_Case_Brief_1788826740061.pdf",
+      "file_path": "/data/John_Cabrera_Case_Brief_1788826740061.pdf",
+      "file_size": 70319,
+      "status": "active",
+      "metadata_json": "{\"originalName\":\"4385_JohnCabrera-brief.pdf\"}",
+      "uploaded_at": "2026-09-08 00:19:00"
+    }
+  ],
+  "legacy_briefcase_items_count": 66,
+  "legacy_gate_criteria_count": 27,
+  "updated_at": "2026-11-23T13:46:28.428Z"
+}

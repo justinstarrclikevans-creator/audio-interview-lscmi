@@ -1,0 +1,171 @@
+{
+  "participant_key": "Darian_Prather",
+  "updated_at": "2026-11-23T13:46:29.072Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-11T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "18 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:274",
+      "event_key": "reentry_session:274",
+      "timestamp": "2026-10-27T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Darian sent a text asking if I was mad at him. I told him I am happy to keep working with him as long as he can keep things professional. If he crosses any lines again, I will remove him from RN.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:230",
+      "event_key": "reentry_session:230",
+      "timestamp": "2026-10-23T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Darian let me know he got a car. He has not paid off his DL fines yet. Does not plan to go to Calm Quarters because it's too expensive. Sounded drunk when I talked to him - slurring words, calling me \"boo\", repeating thi",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:134",
+      "event_key": "reentry_session:134",
+      "timestamp": "2026-10-22T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Darian looked at the reviews of Bounce Back and apparently they mention having bed bugs. He asked for other housing options, so I sent him the info for Calm Quarters.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:133",
+      "event_key": "reentry_session:133",
+      "timestamp": "2026-10-22T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "Darian called Mrs. Felecia at Calm Quarters. She asked to talk to me, so I called her and gave her the info I had about Darian and explained that if he's able to move in there, he'll be able to join the program. She said",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:135",
+      "event_key": "reentry_session:135",
+      "timestamp": "2026-10-21T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "Darian was not accepted for RDF funding for clippers. I let him know.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:136",
+      "event_key": "reentry_session:136",
+      "timestamp": "2026-10-20T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Darian let me know he called Bounce Back and plans to move there this week. If he does, I will add him to the waitlist. I told him to confirm when he officially moves in.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:137",
+      "event_key": "reentry_session:137",
+      "timestamp": "2026-10-19T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "Darian attended his Father to Father meeting.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:138",
+      "event_key": "reentry_session:138",
+      "timestamp": "2026-10-09T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Sent Darian a bunch of Facebook Marketplace listings to look through of used clippers and trimmers. Circled back with him because he was approaching the top of the waitlist and I realized he didn't have a strong transpor",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:139",
+      "event_key": "reentry_session:139",
+      "timestamp": "2026-10-07T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "Darian let me know that he called Father to Father and has an appointment on 10/13.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:140",
+      "event_key": "reentry_session:140",
+      "timestamp": "2026-10-06T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "Submitted an RDF referral for clippers and other tools needed to get a job as a barber. Voc rehab said they can't help him because he doesn't have a disability.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:141",
+      "event_key": "reentry_session:141",
+      "timestamp": "2026-10-01T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "summary": "Sent him an opening for a barber job in Summerville. He has a resume. Left VM for Voc Rehab to see if they have any resources to cover the cost of clippers.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:142",
+      "event_key": "reentry_session:142",
+      "timestamp": "2026-09-30T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Transportation support (non-financial) – planning or coordination only|Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Called to let him know about the possibility of a payment plan to get DL back. He owes around $2000 in arrears, but is going to call the DMV today to ask about a plan he can start so the DMV knows he's compliant and can ",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:143",
+      "event_key": "reentry_session:143",
+      "timestamp": "2026-09-28T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Daisy Boynton)",
+      "summary": "TO DO:\n- no State ID and DL is suspended because he owes child support ($2000)\n- no social security card\n- no transportation other than Uber/Lyft\n\n* Went to trade school to become a Barber, also certified in HVAC. Living",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:144",
+      "event_key": "reentry_session:144",
+      "timestamp": "2026-09-25T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Kat Norsworthy)",
+      "summary": "Intake appointment Monday @11am.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

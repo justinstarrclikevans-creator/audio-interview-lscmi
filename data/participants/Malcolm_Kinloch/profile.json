@@ -9,14 +9,20 @@
   "apricot_id": "81824",
   "phone": "",
   "email": "",
-  "files": [],
+  "lscmi_client_id": "Malcolm_Kinloch_Charleston",
   "folder_slug": "Malcolm_Kinloch",
   "folder_path": "data/participants/Malcolm_Kinloch",
   "has_lscmi_brief": false,
   "has_lscmi_scoring": false,
   "has_action_plan": false,
+  "has_legacy_case_briefs": false,
   "waitlist_ready": true,
   "waitlist_met_count": 9,
   "data_flags_count": 0,
-  "updated_at": "2026-11-22T17:18:01.630Z"
+  "cm_notes_count": 0,
+  "apricot_notes_count": 7,
+  "reentry_sessions_count": 7,
+  "history_events_count": 8,
+  "documents_count": 0,
+  "updated_at": "2026-11-23T13:46:29.200Z"
 }

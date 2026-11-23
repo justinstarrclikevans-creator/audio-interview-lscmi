@@ -1,0 +1,149 @@
+{
+  "participant_key": "Benito_Jackson",
+  "updated_at": "2026-11-23T13:46:29.266Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-16T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "6 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:404",
+      "event_key": "reentry_session:404",
+      "timestamp": "2026-11-16T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "summary": "Called, no answer, VM left. Sent Benito the information for the job fair this Thursday 11/19 in Columbia.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_doc:Benito_Jackson_Columbia_interview_guide.docx",
+      "event_key": "doc:Benito_Jackson_Columbia_interview_guide.docx",
+      "timestamp": "2026-11-04T16:28:24.374Z",
+      "category": "document",
+      "action": "Archived interview guide",
+      "summary": "Document stored in folder: Benito_Jackson_Columbia_interview_guide.docx",
+      "filename": "Benito_Jackson_Columbia_interview_guide.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Benito_Jackson_Columbia_draft_scoring_form.docx",
+      "event_key": "doc:Benito_Jackson_Columbia_draft_scoring_form.docx",
+      "timestamp": "2026-11-04T16:28:23.821Z",
+      "category": "document",
+      "action": "Archived draft scoring",
+      "summary": "Document stored in folder: Benito_Jackson_Columbia_draft_scoring_form.docx",
+      "filename": "Benito_Jackson_Columbia_draft_scoring_form.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Benito_Jackson_Columbia_criminal_history.docx",
+      "event_key": "doc:Benito_Jackson_Columbia_criminal_history.docx",
+      "timestamp": "2026-11-04T16:28:22.732Z",
+      "category": "document",
+      "action": "Archived criminal history",
+      "summary": "Document stored in folder: Benito_Jackson_Columbia_criminal_history.docx",
+      "filename": "Benito_Jackson_Columbia_criminal_history.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Benito_Jackson_Columbia_criminal_history.md",
+      "event_key": "doc:Benito_Jackson_Columbia_criminal_history.md",
+      "timestamp": "2026-11-04T16:28:20.694Z",
+      "category": "document",
+      "action": "Archived criminal history",
+      "summary": "Document stored in folder: Benito_Jackson_Columbia_criminal_history.md",
+      "filename": "Benito_Jackson_Columbia_criminal_history.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Benito_Jackson_Columbia_draft_scoring_form.md",
+      "event_key": "doc:Benito_Jackson_Columbia_draft_scoring_form.md",
+      "timestamp": "2026-11-04T16:28:20.694Z",
+      "category": "document",
+      "action": "Archived draft scoring",
+      "summary": "Document stored in folder: Benito_Jackson_Columbia_draft_scoring_form.md",
+      "filename": "Benito_Jackson_Columbia_draft_scoring_form.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Benito_Jackson_Columbia_interview_guide.md",
+      "event_key": "doc:Benito_Jackson_Columbia_interview_guide.md",
+      "timestamp": "2026-11-04T16:28:20.694Z",
+      "category": "document",
+      "action": "Archived interview guide",
+      "summary": "Document stored in folder: Benito_Jackson_Columbia_interview_guide.md",
+      "filename": "Benito_Jackson_Columbia_interview_guide.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Benito_Jackson_Columbia_transcript.txt",
+      "event_key": "doc:Benito_Jackson_Columbia_transcript.txt",
+      "timestamp": "2026-11-04T16:28:20.693Z",
+      "category": "document",
+      "action": "Archived transcript",
+      "summary": "Document stored in folder: Benito_Jackson_Columbia_transcript.txt",
+      "filename": "Benito_Jackson_Columbia_transcript.txt",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_reentry_session:405",
+      "event_key": "reentry_session:405",
+      "timestamp": "2026-11-04T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Sent Benito the information for The Free Medical Clinic in Columbia, SC as an option to see a doctor about getting his Remeron prescribed again.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:237",
+      "event_key": "reentry_session:237",
+      "timestamp": "2026-10-26T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Daisy Boynton)",
+      "summary": "Contact Summary: Conducted an initial intake and consultation with Benito Jackson. Explained the two tracks of the Turn90 program (in-person vs. reentry navigation). Client opted for the in-person 8-week program and will",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:236",
+      "event_key": "reentry_session:236",
+      "timestamp": "2026-10-26T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "summary": "Sent Benito a job posting for a Warehouse Technician at Trane Technologies.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:238",
+      "event_key": "reentry_session:238",
+      "timestamp": "2026-10-23T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "Intake Appointment SCHEDULED",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "participant_key": "Spencer_Mcdaniel",
+  "participant_name": "Spencer Mcdaniel",
+  "apricot_ids": [
+    "73464"
+  ],
+  "evaluations": [],
+  "notes_count": 3,
+  "processed_notes": [
+    {
+      "id": 110,
+      "record_id": "73464",
+      "first_name": "Spencer",
+      "last_name": "Mcdaniel",
+      "activity_date": "2026-06-10",
+      "staff_name": "Matt Carlisle",
+      "service_context": "Transitional Jobs",
+      "interaction_type": "Check-in conversation – brief status update",
+      "note_text": "Reached out to Spencer today to follow up with him, as today is his final day on the Turn90 payroll. He was provided paid leave this past week to focus on securing employment. Spencer reported that he has accepted a position with OP Mobility in Greer and is scheduled to start work on Monday.\n\nHe expressed his gratitude for Turn90 and appreciation for the support and employment connection that was provided. Spencer stated that he plans to stay in touch moving forward.",
+      "center_location": "Spartanburg",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 109,
+      "record_id": "73464",
+      "first_name": "Spencer",
+      "last_name": "Mcdaniel",
+      "activity_date": "2026-05-29",
+      "staff_name": "Matt Carlisle",
+      "service_context": "Transitional Jobs",
+      "interaction_type": "Coaching / case management session – structured or in-depth meeting",
+      "note_text": "An update on Spencer:\n\nSpencer met with me Tuesday morning after leaving the DMV to obtain his driver’s license and informed me that he planned to seek employment outside of Turn90. A few weeks prior, I had approached him regarding the second Team Lead position within the program. Although he expressed interest at that time, he also indicated that he may pursue other employment opportunities offering higher pay after we discussed the compensation.\n\nDuring our conversation Tuesday, I offered assistance with job placement and employment searches. Spencer declined at that time, stating that he already planned to visit SC Works on Friday (today) to explore employment opportunities.\n\nAfter he returned this morning, I followed up with him, and he confirmed that he had completed the intake process with SC Works. He also shared that he is interested in obtaining employment with BMW. I forwarded him the application links for MAU and IK Hofmann, which are staffing agencies that hire for BMW positions.\n\nAdditionally, I assisted Spencer with downloading the Indeed app and provided guidance on navigating the platform, including how to filter job searches and receive notifications for positions matching his preferences. Spencer expressed appreciation for the assistance and stated that he would reach out if he needed any further support.",
+      "center_location": "Spartanburg",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 108,
+      "record_id": "73464",
+      "first_name": "Spencer",
+      "last_name": "Mcdaniel",
+      "activity_date": "2026-04-29",
+      "staff_name": "Matt Carlisle",
+      "service_context": "Transitional Jobs",
+      "interaction_type": "Check-in conversation – brief status update",
+      "note_text": "Previously, we had presented an opportunity to Spencer to go over to Spartan Felt Mon-Fri. immediately following class (from 11a-4:30p).  After some consideration, Spencer declined the offer.  I shared this with Justin who then stated that there may be a possibility to bring Spencer on as a Team Lead to which he has expressed interest in in past conversations.",
+      "center_location": "Spartanburg",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "updated_at": "2026-11-23T13:46:29.677Z"
+}

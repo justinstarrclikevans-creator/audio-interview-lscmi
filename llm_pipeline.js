@@ -229,7 +229,7 @@ function detectDeterministicConsultationDiscrepancy(questionText, liveAnswer, an
                 consultation_value: bc.state_id_or_dl,
                 live_value: liveAnswer,
                 details: 'Consultation/Briefcase indicates DL is suspended, while participant stated license is valid/active.',
-                follow_up: 'I want to make sure my notes are accurate—on the screening notes there was a mention of a suspended license, and you mentioned your license is good right now. Walk me through where things stand with the DMV so I don\'t put the wrong info down.'
+                follow_up: 'Thanks for sharing that. Have you checked in with the DMV recently about your license status, or is there anything still open there?'
             };
         }
         if (bcId.includes('valid_dl') && /\b(suspended|revoked|no license|never had)\b/.test(a)) {
@@ -237,7 +237,7 @@ function detectDeterministicConsultationDiscrepancy(questionText, liveAnswer, an
                 consultation_value: bc.state_id_or_dl,
                 live_value: liveAnswer,
                 details: 'Consultation/Briefcase lists a valid Driver\'s License, while participant stated it is suspended or missing.',
-                follow_up: 'Just to make sure I have the right status—our initial screening listed a valid license, and just now you mentioned it\'s suspended/missing. When did that change?'
+                follow_up: 'Thanks for letting me know. About when did your license status change, and is there anything needed with the DMV to get it sorted out?'
             };
         }
     }
@@ -250,7 +250,7 @@ function detectDeterministicConsultationDiscrepancy(questionText, liveAnswer, an
                 consultation_value: bc.stable_housing || 'Temporary/Unstable housing on screening',
                 live_value: liveAnswer,
                 details: 'Screening consultation noted temporary/unstable housing, while participant reported stable housing.',
-                follow_up: 'Earlier at screening there was a note about housing still getting settled, and today you mentioned things are stable. Help me picture where you\'re sleeping night-to-night right now so we make sure nothing gets in the way.'
+                follow_up: 'Thanks for sharing. Could you tell me a little more about your current living setup and how long you\'ve been staying there?'
             };
         }
     }
@@ -263,7 +263,7 @@ function detectDeterministicConsultationDiscrepancy(questionText, liveAnswer, an
                 consultation_value: cw.criminalHistory?.supervisionStatus || bc.supervision_information || 'Active supervision/charges noted on consultation',
                 live_value: liveAnswer,
                 details: 'Consultation/intake records note supervision or charges, while participant denied supervision/arrests.',
-                follow_up: 'I want to make sure I have your timeline completely straight—on the consultation sheet there was a note about supervision/charges, and you just mentioned you\'re off supervision. Walk me through when that wrapped up so I have accurate dates.'
+                follow_up: 'Thanks for letting me know. About when did everything with court or supervision wrap up, or is anything still active?'
             };
         }
     }
@@ -276,7 +276,7 @@ function detectDeterministicConsultationDiscrepancy(questionText, liveAnswer, an
                 consultation_value: cw.alcoholDrug?.substanceSummary || 'Prior substance/screen note in consultation',
                 live_value: liveAnswer,
                 details: 'Consultation/collateral notes reference substance history or positive screen, while participant denied any use.',
-                follow_up: 'I\'m not here to judge—I just want to make sure our Briefcase matches reality. On the consultation notes there was a mention of past use or a screen; tell me a little about your history with that so we support you accurately.'
+                follow_up: 'Thanks for sharing. Have alcohol or substances ever played a part in things for you in the past, even a while back?'
             };
         }
     }
@@ -330,7 +330,7 @@ async function evaluateLive158QuestionTurn({
                 question_number: questionNumber,
                 discrepancy_detected: false,
                 discrepancy_details: null,
-                follow_up_question: `Appreciate you sharing that. To make sure I capture Q${questionNumber} completely: ${subHint}walk me through a specific example or timeline for that.`,
+                follow_up_question: `Thanks for sharing that. ${subHint}Could you tell me a little more about that in your own words?`,
                 matched_probation_planner_definitions: [],
                 ready_to_advance: false,
                 engine_mode: modeLabel
@@ -378,7 +378,7 @@ Follow-Up Probes Already Used on Q${questionNumber}: ${discrepancyFollowupsUsed}
    a) Pre-loaded Screening Consultation / Briefcase / Apricot Consultation records, AND
    b) Prior answers already given in this 158-question interview.
 3. NEVER pull examples, names, or anecdotes from reference manuals.
-4. If a discrepancy exists (and follow-ups used < 1): set "move_type": "gentle_discrepancy", "discrepancy_detected": true, and write ONE non-challenging, curious MI/SYNAPSE follow-up question ("I want to make sure my notes are accurate—on the consultation sheet there was a note about [X], and you mentioned [Y]. Walk me through what happened there.").
+4. If a discrepancy exists (and follow-ups used < 1): set "move_type": "gentle_discrepancy", "discrepancy_detected": true, and record the hidden staff details in "discrepancy_details" and "consultation_value_on_file". IMPORTANT: "follow_up_question" is shown directly to the participant on a plain, comfortable participant-facing screen—it MUST NEVER mention or hint at consultation sheets, screening notes, Briefcase, prior records, discrepancies, contradictions, conflicts, "on file", "our records", or question numbers. Write ONLY one short, warm, plain-English clarifying question (1 sentence) inviting helpful context or timeline (e.g. "Thanks for sharing that. Could you tell me a little more about how that's been going recently?").
 5. If the answer is vague, minimized, or misses the sub-prompt (and follow-ups used < 1): set "move_type": "probe_deeper" and ask ONE open-ended episodic follow-up ("Walk me through the last time...", "What does a typical day look like?").
 6. Otherwise set "move_type": "advance_next_question" and "ready_to_advance": true.
 
@@ -415,6 +415,10 @@ Return ONE valid JSON object:
         parsed.engine_mode = 'gemini';
         if (parsed.follow_up_question) {
             parsed.follow_up_question = stripReferenceExampleContamination(parsed.follow_up_question, trimmedAnswer);
+            const LEAKY_DISCREPANCY_RE = /\b(discrepanc\w*|contradict\w*|inconsisten\w*|mismatch\w*|consultation\w*|screening\s+(?:sheet|notes?|record|form)s?|earlier\s+at\s+screening|briefcase|collateral|on\s+file|our\s+records|prior\s+records?|probation\s+planner|flagged)\b/i;
+            if (LEAKY_DISCREPANCY_RE.test(parsed.follow_up_question)) {
+                parsed.follow_up_question = 'Thanks for sharing that. Could you tell me a little more about how that played out or the timing of it?';
+            }
         }
         return parsed;
     } catch (apiErr) {

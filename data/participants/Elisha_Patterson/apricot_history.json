@@ -1,0 +1,109 @@
+{
+  "participant_key": "Elisha_Patterson",
+  "participant_name": "Elisha Patterson",
+  "apricot_ids": [
+    "82811"
+  ],
+  "evaluations": [
+    {
+      "record_id": "82811",
+      "full_name": "Elisha Patterson",
+      "program": "Reentry Navigation",
+      "center": "Charleston",
+      "case_manager": "Daisy Boynton",
+      "case_plan_status": "Yes (Goals & Gates Active)",
+      "focus_areas_or_goals": "Apply for RDF for DL, fine temp jobs or 2nd/3rd shift jobs while waiting for FS\n\n*computer still having problems saving PDFs so can't upload case plan from web app",
+      "briefcase_status_text": "Gate 1: 50%, Gate 2: 60%, Gate 3: 0%, Gate 4: 0%",
+      "gate1_pct": 50,
+      "gate2_pct": 60,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "case_note_analysis": "Enrolled 11/04/2026. Most recent contact on 11/17/2026 by Daisy Boynton (Check-in conversation – brief status update): \"Elisha said he hasn't gone to the DMV yet and plans to do it next week.\"\n\n**Latest Case Note Updates:** [Update 11/17/2026 • Daisy Boynton]: Elisha said he hasn't gone to the DMV yet and plans to do it next week. | [Update 11/06/2026 • Daisy Boynton]: Followed up with Elisha letting him know he'll need to DMV print out for the RDF application. He said he'd go on Monday. | [Update 11/06/2026 • Daisy Boynton]: I called Elisha Patterson to apply for funding to reinstate his license and to build his resume. He logged into his SCDMV account and texted me screenshots of the reinstatement fees he owes, which are two fees of $100 and $200. I submitted a Rainy Day Fund application for $300, to be paid directly to the DMV. He said a reinstated license would help him because he’s supposed to get a vehicle on Monday. I let him know decisions usually take 2–3 weeks and that I’ll update him when we hear back.\n\nDetails from the application: he’s 24 and lives in Charleston [verify – he gave zip 29456] with his girlfriend and his mother. He came home three days ago and has no income yet. His girlfriend does caregiving work and his mother works part-time. He isn’t a caretaker for any minor children [verify], and his foster care answer didn’t come through clearly [verify].\n\nResume: we went through his work history together.\n\nSkills: carpentry, and restoration work on fire and water damage. He’s interested in getting his CDL and welding certification. He has no current certifications. Education: he left high school in 12th grade and earned his GED [verify year]. He also attended Trident Tech, possibly for plumbing [verify]. I’ll format the resume and send it to him by both text and email.\n\nWaitlist: he’s about #2 or #3, so it should be 1–2 more weeks before he’s called in.\n\nFollow-ups\n\nFinish formatting the resume and send it by text and email\nTrack the Rainy Day Fund decision (~2–3 weeks) and update Elisha | [Update 11/04/2026 • Daisy Boynton]: **Contact Summary:** Completed initial intake consultation with Elisha Patterson. Discussed program expectations, hours (9 AM - 3 PM), stipend structure, and drug testing policies. Elisha is currently at a halfway house on federal supervised release (transitioning to regular supervised release in February). He is compliant with all justice system requirements.\n\n**Case Plan Goal Progress:** Initialized goals for Reentry Navigation. Elisha is currently on the program waitlist (estimated wait: ~3 weeks).\n\n**Briefcase & Gate 1–4 Updates:** Confirmed Elisha has his birth certificate and social security card in hand. Driver's license is currently suspended due to ~$300 in reinstatement fees. Elisha does not currently have a completed resume. Transportation is secure via his wife who gets off work at 8:30 AM.\n\n**Referrals/Resources Provided:** Discussed applying for the Rainy Day Fund to cover driver's license reinstatement fees while on the program waitlist.\n\n**Next Steps:** RN to call Elisha on Friday to build his resume over the phone and complete the Rainy Day Fund application. Elisha to provide a photo of the DMV reinstatement fee sheet. | [Update 11/03/2026 • Daisy Boynton]: ",
+      "operational_feedback": "Continue advancing Reentry Navigation Case Plan goals and Briefcase Gates 1–4 (Gate 1: 50%, Gate 2: 60%, Gate 3: 0%, Gate 4: 0%). Focus on barrier removal, employment readiness, and community resource referrals.",
+      "next_cm_steps_json": "[\"🎯 **Advance Stated Case Plan Goals:** Review progress on active Reentry Nav goals (Apply for RDF for DL, fine temp jobs or 2nd/3rd shift jobs while waiting for FS *computer still having problems saving PDFs so can't upload case plan from web a...) and verify concrete barrier-removal steps completed since last check-in.\",\"🔓 **Complete Remaining Gate 1 Items (50% done):** Target Explore healthcare options (Medicaid / Free Medical Clinic), Supervision information documented (County, Officer, Report Dates).\",\"🔓 **Advance Gate 2 Stability & Readiness (60% done):** Work on Probation / Legal Obligations aligned with work hours, DMV License Suspension check & reinstatement plan, Turn90 Resume completed.\",\"🩺 **Address Gate 3 Health & Banking Milestones (0% done):** Follow up on Primary Care / Medical checkup scheduled or cleared, Vision Appointment / screening, Steady access to daily prescriptions (Welvista).\",\"🚀 **Finalize Gate 4 Job Placement & Financial Readiness (0% done):** Complete Work Tools & Clothing (Steel-toe boots, non-slip shoes, work gear), Verified Daily Transportation Plan (Bus route, car, ride plan), Personal Budget completed.\",\"🔄 **Follow Up on Latest Session (11/17/2026 by Daisy Boynton):** Check accountability on items discussed (\\\"Elisha said he hasn't gone to the DMV yet and plans to do it next week.\\\").\"]",
+      "recent_cm_notes_json": null,
+      "last_note_date": "2026-11-17",
+      "notes_count": 5,
+      "updated_at": "2026-11-22 17:36:06"
+    }
+  ],
+  "notes_count": 5,
+  "processed_notes": [
+    {
+      "id": 1055,
+      "record_id": "82811",
+      "first_name": "Elisha",
+      "last_name": "Patterson",
+      "activity_date": "2026-11-17",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Check-in conversation – brief status update",
+      "note_text": "Elisha said he hasn't gone to the DMV yet and plans to do it next week.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1054,
+      "record_id": "82811",
+      "first_name": "Elisha",
+      "last_name": "Patterson",
+      "activity_date": "2026-11-06",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Check-in conversation – brief status update",
+      "note_text": "Followed up with Elisha letting him know he'll need to DMV print out for the RDF application. He said he'd go on Monday.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1053,
+      "record_id": "82811",
+      "first_name": "Elisha",
+      "last_name": "Patterson",
+      "activity_date": "2026-11-06",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Employment support – applications, resume, interview prep|Documentation support – ID, housing forms, paperwork",
+      "note_text": "I called Elisha Patterson to apply for funding to reinstate his license and to build his resume. He logged into his SCDMV account and texted me screenshots of the reinstatement fees he owes, which are two fees of $100 and $200. I submitted a Rainy Day Fund application for $300, to be paid directly to the DMV. He said a reinstated license would help him because he’s supposed to get a vehicle on Monday. I let him know decisions usually take 2–3 weeks and that I’ll update him when we hear back.\n\nDetails from the application: he’s 24 and lives in Charleston [verify – he gave zip 29456] with his girlfriend and his mother. He came home three days ago and has no income yet. His girlfriend does caregiving work and his mother works part-time. He isn’t a caretaker for any minor children [verify], and his foster care answer didn’t come through clearly [verify].\n\nResume: we went through his work history together.\n\nSkills: carpentry, and restoration work on fire and water damage. He’s interested in getting his CDL and welding certification. He has no current certifications. Education: he left high school in 12th grade and earned his GED [verify year]. He also attended Trident Tech, possibly for plumbing [verify]. I’ll format the resume and send it to him by both text and email.\n\nWaitlist: he’s about #2 or #3, so it should be 1–2 more weeks before he’s called in.\n\nFollow-ups\n\nFinish formatting the resume and send it by text and email\nTrack the Rainy Day Fund decision (~2–3 weeks) and update Elisha",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1052,
+      "record_id": "82811",
+      "first_name": "Elisha",
+      "last_name": "Patterson",
+      "activity_date": "2026-11-04",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment COMPLETED",
+      "note_text": "**Contact Summary:** Completed initial intake consultation with Elisha Patterson. Discussed program expectations, hours (9 AM - 3 PM), stipend structure, and drug testing policies. Elisha is currently at a halfway house on federal supervised release (transitioning to regular supervised release in February). He is compliant with all justice system requirements.\n\n**Case Plan Goal Progress:** Initialized goals for Reentry Navigation. Elisha is currently on the program waitlist (estimated wait: ~3 weeks).\n\n**Briefcase & Gate 1–4 Updates:** Confirmed Elisha has his birth certificate and social security card in hand. Driver's license is currently suspended due to ~$300 in reinstatement fees. Elisha does not currently have a completed resume. Transportation is secure via his wife who gets off work at 8:30 AM.\n\n**Referrals/Resources Provided:** Discussed applying for the Rainy Day Fund to cover driver's license reinstatement fees while on the program waitlist.\n\n**Next Steps:** RN to call Elisha on Friday to build his resume over the phone and complete the Rainy Day Fund application. Elisha to provide a photo of the DMV reinstatement fee sheet.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1051,
+      "record_id": "82811",
+      "first_name": "Elisha",
+      "last_name": "Patterson",
+      "activity_date": "2026-11-03",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment SCHEDULED",
+      "note_text": "",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "updated_at": "2026-11-23T13:46:29.449Z"
+}

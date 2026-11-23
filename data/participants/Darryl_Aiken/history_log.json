@@ -1,0 +1,171 @@
+{
+  "participant_key": "Darryl_Aiken",
+  "updated_at": "2026-11-23T13:46:28.749Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-05T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "9 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:354",
+      "event_key": "reentry_session:354",
+      "timestamp": "2026-11-05T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Terrence Brown)",
+      "summary": "Talked with him about rejoining the program and he says that he is working at a job where the schedules conflict, and he said if anything changes he will let me know.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:263",
+      "event_key": "reentry_session:263",
+      "timestamp": "2026-10-30T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Terrence Brown)",
+      "summary": "Had a conversation about what transpired and he admitted to it. He wants to find a clear pathway back into the program. He found a restaurant job where he will be working night shift.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:264",
+      "event_key": "reentry_session:264",
+      "timestamp": "2026-10-29T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Justin Evans)",
+      "summary": "DeCardio and I kept smelling marijuana in the break room but could not determine its source. It was very faint. On 10/28, he and I both independently searched the lockers and found a book bag inside. I noticed that it sm",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:265",
+      "event_key": "reentry_session:265",
+      "timestamp": "2026-10-26T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Coaching / case management session – structured or in-depth meeting (Terrence Brown)",
+      "summary": "### Case Summary\n\nThe participant, Darryl, attended his scheduled check-in and discussed his daily routine, past employment and finances, criminal history, and current goals. Darryl reported fatigue due to sleep difficul",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_casenote:70",
+      "event_key": "casenote:70",
+      "timestamp": "2026-10-19T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "* **Co-Parenting & Family Dynamics:** The client discussed an ongoing conflict with his son's mother, who was recently incarcerated for a week following an argument. Upon her release, she allegedly coerced their young so",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Terrence Brown"
+    },
+    {
+      "id": "ms_reentry_session:266",
+      "event_key": "reentry_session:266",
+      "timestamp": "2026-10-19T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Coaching / case management session – structured or in-depth meeting (Terrence Brown)",
+      "summary": "* **Co-Parenting & Family Dynamics:** The client discussed an ongoing conflict with his son's mother, who was recently incarcerated for a week following an argument. Upon her release, she allegedly coerced their young so",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_casenote:71",
+      "event_key": "casenote:71",
+      "timestamp": "2026-10-12T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "Here is a summary of the dialogue and structured case notes based on the session transcript.\n\n---\n\n### **Executive Summary**\n\nThe participant and case manager/instructor discussed the participant’s personal progress, fam",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Terrence Brown"
+    },
+    {
+      "id": "ms_reentry_session:267",
+      "event_key": "reentry_session:267",
+      "timestamp": "2026-10-12T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Coaching / case management session – structured or in-depth meeting (Terrence Brown)",
+      "summary": "Here is a summary of the dialogue and structured case notes based on the session transcript.\n\n---\n\n### **Executive Summary**\n\nThe participant and case manager/instructor discussed the participant’s personal progress, fam",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_casenote:72",
+      "event_key": "casenote:72",
+      "timestamp": "2026-10-07T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "The participant met with his case manager to establish his initial case plan for the 8-week program. The manager explained that the program is confidential and non-punitive (not law enforcement). Out of several core focu",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Terrence Brown"
+    },
+    {
+      "id": "ms_reentry_session:268",
+      "event_key": "reentry_session:268",
+      "timestamp": "2026-10-07T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Coaching / case management session – structured or in-depth meeting (Terrence Brown)",
+      "summary": "The participant met with his case manager to establish his initial case plan for the 8-week program. The manager explained that the program is confidential and non-punitive (not law enforcement). Out of several core focu",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_casenote:73",
+      "event_key": "casenote:73",
+      "timestamp": "2026-09-17T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Intake Appointment COMPLETED)",
+      "summary": "Program Overview  \n• Three levels of service offered:  \n  ◦ Resource Coordination: Phone-based, provides information (e.g., job lists, service referrals) for clients with minimal needs.  \n  ◦ Re-entry Navigation: Hands-o",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Justin Evans"
+    },
+    {
+      "id": "ms_reentry_session:269",
+      "event_key": "reentry_session:269",
+      "timestamp": "2026-09-17T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Justin Evans)",
+      "summary": "Program Overview  \n• Three levels of service offered:  \n  ◦ Resource Coordination: Phone-based, provides information (e.g., job lists, service referrals) for clients with minimal needs.  \n  ◦ Re-entry Navigation: Hands-o",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_casenote:74",
+      "event_key": "casenote:74",
+      "timestamp": "2026-09-16T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Intake Appointment SCHEDULED)",
+      "summary": "Out on bond, but should be all good as long as he completes an outpatient program at The Charleston Center (he's on the waiting list to start that). The outpatient program doesn't interfere with our program hours.",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Daisy Boynton"
+    },
+    {
+      "id": "ms_reentry_session:270",
+      "event_key": "reentry_session:270",
+      "timestamp": "2026-09-16T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "Out on bond, but should be all good as long as he completes an outpatient program at The Charleston Center (he's on the waiting list to start that). The outpatient program doesn't interfere with our program hours.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

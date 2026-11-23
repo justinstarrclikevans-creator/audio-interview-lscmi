@@ -1,0 +1,127 @@
+{
+  "participant_key": "Tikita_Foster",
+  "participant_name": "Tikita Foster",
+  "client_records": [
+    {
+      "id": 64,
+      "first_name": "Tikita",
+      "last_name": "Foster",
+      "apricot_id": "82719",
+      "location": "Spartanburg",
+      "status": "active",
+      "stability_tier": "at_risk",
+      "phone": null,
+      "email": null,
+      "notes": "Find stable housing and transportation. Get State ID and prescriptions glasses (he lost his).\n\n*computer won't save his official case plan from the app, will upload once I figure out the issue",
+      "created_at": "2026-11-03 23:04:00",
+      "updated_at": "2026-11-22 17:36:06",
+      "case_manager": "Daisy Boynton",
+      "enrollment_start": "2026-11-03",
+      "gate1_pct": 0,
+      "gate2_pct": 0,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "last_contact_date": "2026-11-17",
+      "last_contact_staff": "Daisy Boynton",
+      "last_contact_activity": "Employment support – applications, resume, interview prep",
+      "has_case_plan": 1,
+      "case_plan_text": "Find stable housing and transportation. Get State ID and prescriptions glasses (he lost his).\n\n*computer won't save his official case plan from the app, will upload once I figure out the issue"
+    }
+  ],
+  "sessions": [
+    {
+      "id": 427,
+      "client_id": 64,
+      "session_date": "2026-11-17",
+      "session_title": "Check-in conversation – brief status update (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Hasn't started his job yet. Apparently has to wait until another guy is fired and then the woman will hire him. He can't get his glasses because he has no money currently. His brother wrecked his car, so he doesn't have transportation. He wants to focus on employment. I said I'd send him some openings for jobs in the area.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 426,
+      "client_id": 64,
+      "session_date": "2026-11-17",
+      "session_title": "Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Found a job fair that's happening today in Spartanburg. Sent Tikita the info.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 429,
+      "client_id": 64,
+      "session_date": "2026-11-06",
+      "session_title": "Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Called Mike at Central West Spartanburg Co-Living and he said he had a vacancy and would love to talk to Tikita. Let Tikita know. Tikita also said he should be starting a job at Innovative Plastics next week.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 428,
+      "client_id": 64,
+      "session_date": "2026-11-06",
+      "session_title": "Check-in conversation – brief status update|Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Tikita spoke with Mike but can't move in yet because he needs to pay $900 up front (and then rent is $750/month after that). Tikita plans to save up from his new job the next week or so and move in once he can pay the $900. I also sent him the link to book an appointment at Stanton Optical (eye exam and 2 pairs of glasses for $75).",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 313,
+      "client_id": 64,
+      "session_date": "2026-11-03",
+      "session_title": "Intake Appointment COMPLETED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Contact Summary: Conducted initial intake and consultation over the phone with client Tikita Foster. Explained the 8-week Turn90 program structure, expectations, and compensation. Gathered baseline information regarding housing, ID, transportation, and legal history to begin building a Reentry Navigation plan.\n\nCase Plan Goal Progress: N/A - Initial intake assessment.\n\nBriefcase & Gate 1-4 Updates: \n- Identification: Client has SS card and Birth Certificate. Lacks a State ID. Has a Driver's License but requires SR22 insurance to be valid.\n- Housing: Highly precarious. Currently staying with his mother but reports he is \"basically homeless\" as the arrangement is temporary.\n- Transportation: No personal vehicle. Will need to explore public transit (Dial-a-Ride) to access the center.\n- Health: Needs replacement prescription glasses (left previous pair while incarcerated). Not currently on any medications.\n- Legal/Financial: Owes child support arrears (exact amount unknown) and $700-$1000 in court fees. No active probation or parole.\n\nReferrals/Resources Provided: Discussed \"Dial-a-Ride\" for Spartanburg transportation. Offered to send temporary job openings while working on Reentry Navigation prerequisites.\n\nNext Steps: Navigator will research Dial-a-Ride options from client's address, identify local housing partners, and assist with securing a State ID and prescription glasses before transitioning client into the full-time program.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 314,
+      "client_id": 64,
+      "session_date": "2026-10-30",
+      "session_title": "Intake Appointment SCHEDULED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Intake Appointment SCHEDULED",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-03 23:04:00"
+    }
+  ],
+  "goals": [
+    {
+      "id": 140,
+      "client_id": 64,
+      "goal_title": "Find stable housing and transportation. Get State ID and prescriptions glasses (he lost his).\n\n*computer won't save his official case plan f",
+      "target_date": "2026-11-17",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"Find stable housing and transportation. Get State ID and prescriptions glasses (he lost his).\\n\\n*computer won't save his official case plan f\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-11-03 23:04:00",
+      "updated_at": "2026-11-03 23:04:00"
+    }
+  ],
+  "case_plans": [],
+  "updated_at": "2026-11-23T13:46:29.363Z"
+}

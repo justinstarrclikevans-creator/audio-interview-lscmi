@@ -1,0 +1,300 @@
+{
+  "participant_key": "Charlie_Graham_Jr",
+  "participant_name": "Charlie Graham Jr",
+  "profile_records": [
+    {
+      "id": 67,
+      "user_id": 74,
+      "current_gate": 2,
+      "w9_status": "pending",
+      "dl_status": "unknown",
+      "dl_notes": null,
+      "child_support_status": "unknown",
+      "child_support_notes": null,
+      "housing_status": "stable",
+      "substance_status": "none",
+      "mental_health_status": "none",
+      "transportation_status": "bus",
+      "court_dates": null,
+      "overall_status": "archived",
+      "termination_reason": null,
+      "termination_date": null,
+      "updated_at": "2026-10-26 01:13:54",
+      "stability_red_flags": null,
+      "director_override": 0,
+      "director_override_notes": null,
+      "director_override_by": null,
+      "reentry_status": "none",
+      "has_reentry_plan": 0,
+      "enrollment_date": "2026-10-12",
+      "correction_notes": null,
+      "supabase_id": null,
+      "record_id": "81055"
+    }
+  ],
+  "case_plan_triggers": [
+    {
+      "id": 15,
+      "user_id": 74,
+      "domain": "People and Influence (Peer Associations)",
+      "pattern": "Focus Area 2",
+      "trigger_situations": "[\"Living in the environment, where it’s more easier for him to lean on the knowledge of what he new versus all over what he can explore by himself in order for him to succeed\"]",
+      "toolkit_tools": "[\"Decisional Balance\",\"Problem Solving 4-Step Method\"]",
+      "updated_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 14,
+      "user_id": 74,
+      "domain": "Work and Follow-Through (Employment/Education)",
+      "pattern": "Focus Area 1",
+      "trigger_situations": "[\"Having problems with setting boundaries or cutting off peers due to the support that he got from that lifestyle\"]",
+      "toolkit_tools": "[\"Stop and Think (STAC)\",\"Thinking Report\"]",
+      "updated_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "daily_points": [
+    {
+      "id": 1809,
+      "user_id": 74,
+      "date": "2026-11-03",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 1808,
+      "user_id": 74,
+      "date": "2026-11-02",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 1806,
+      "user_id": 74,
+      "date": "2026-10-30",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 1807,
+      "user_id": 74,
+      "date": "2026-10-29",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 1805,
+      "user_id": 74,
+      "date": "2026-10-28",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 1803,
+      "user_id": 74,
+      "date": "2026-10-27",
+      "points_earned": 8,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 1191,
+      "user_id": 74,
+      "date": "2026-10-26",
+      "points_earned": 9,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-10-26 17:56:43"
+    },
+    {
+      "id": 1804,
+      "user_id": 74,
+      "date": "2026-10-23",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 238,
+      "user_id": 74,
+      "date": "2026-10-22",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 236,
+      "user_id": 74,
+      "date": "2026-10-21",
+      "points_earned": 8,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 237,
+      "user_id": 74,
+      "date": "2026-10-20",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 235,
+      "user_id": 74,
+      "date": "2026-10-19",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 234,
+      "user_id": 74,
+      "date": "2026-10-16",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 233,
+      "user_id": 74,
+      "date": "2026-10-15",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 232,
+      "user_id": 74,
+      "date": "2026-10-14",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 231,
+      "user_id": 74,
+      "date": "2026-10-13",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 230,
+      "user_id": 74,
+      "date": "2026-10-12",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "drug_tests": [],
+  "benefits": [
+    {
+      "id": 36268,
+      "user_id": 74,
+      "benefit_type": "medicaid",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 36269,
+      "user_id": 74,
+      "benefit_type": "snap",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 36270,
+      "user_id": 74,
+      "benefit_type": "tanf",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 36267,
+      "user_id": 74,
+      "benefit_type": "welvista",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "resumes": [],
+  "db_documents": [],
+  "legacy_briefcase_items_count": 35,
+  "legacy_gate_criteria_count": 27,
+  "updated_at": "2026-11-23T13:46:28.774Z"
+}

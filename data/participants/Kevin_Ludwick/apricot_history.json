@@ -1,0 +1,72 @@
+{
+  "participant_key": "Kevin_Ludwick",
+  "participant_name": "Kevin Ludwick",
+  "apricot_ids": [
+    "81284"
+  ],
+  "evaluations": [],
+  "notes_count": 4,
+  "processed_notes": [
+    {
+      "id": 645,
+      "record_id": "81284",
+      "first_name": "Kevin",
+      "last_name": "Ludwick",
+      "activity_date": "2026-10-21",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Case Note (documentation only) – no interaction or service",
+      "note_text": "Still no contact. Removing from Reentry Nav.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 644,
+      "record_id": "81284",
+      "first_name": "Kevin",
+      "last_name": "Ludwick",
+      "activity_date": "2026-10-08",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Case Note (documentation only) – no interaction or service",
+      "note_text": "Still no contact.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 643,
+      "record_id": "81284",
+      "first_name": "Kevin",
+      "last_name": "Ludwick",
+      "activity_date": "2026-10-01",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Case Note (documentation only) – no interaction or service",
+      "note_text": "NCNS today for his phone interview with Felecia at Calm Quarters.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 642,
+      "record_id": "81284",
+      "first_name": "Kevin",
+      "last_name": "Ludwick",
+      "activity_date": "2026-09-30",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment SCHEDULED|Intake Appointment COMPLETED",
+      "note_text": "Walk-in. Completed screening, interested in FS but is homeless. Currently on probation until he takes a DV class (waiting to be enrolled in that), otherwise very little oversight. Released from Orangeburg County jail after serving 8 months. Reached out to Lantern (no space), Keys to Change (haven't heard back), and Calm Quarters. Felecia from Calm Quarters will interview him tomorrow over the phone. He has a phone but only works on wifi. He is coming back to the center tomorrow to do that interview. He also needs antidepressant medication that he had access to in jail but no longer has access to. If he can find stable housing, he will be eligible for FS and will be placed on waitlist. In the meantime, we will work to get his medication, birth certificate, and social security card. For transportation he is currently walking and using the bus when he has the funds.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "updated_at": "2026-11-23T13:46:29.991Z"
+}

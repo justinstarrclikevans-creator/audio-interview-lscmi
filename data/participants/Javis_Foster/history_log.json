@@ -1,0 +1,127 @@
+{
+  "participant_key": "Javis_Foster",
+  "updated_at": "2026-11-23T13:46:28.698Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-10-23T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "11 chronological Apricot note(s) archived (Historical Record).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_doc:1790194152697_Javis_Foster_reentry_participant_action_guide.docx",
+      "event_key": "doc:1790194152697_Javis_Foster_reentry_participant_action_guide.docx",
+      "timestamp": "2026-09-23T20:09:55.088Z",
+      "category": "document",
+      "action": "Archived reentry plan",
+      "summary": "Document stored in folder: 1790194152697_Javis_Foster_reentry_participant_action_guide.docx",
+      "filename": "1790194152697_Javis_Foster_reentry_participant_action_guide.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:1790194152697_Javis_Foster_reentry_staff_case_plan.docx",
+      "event_key": "doc:1790194152697_Javis_Foster_reentry_staff_case_plan.docx",
+      "timestamp": "2026-09-23T20:09:54.982Z",
+      "category": "document",
+      "action": "Archived reentry plan",
+      "summary": "Document stored in folder: 1790194152697_Javis_Foster_reentry_staff_case_plan.docx",
+      "filename": "1790194152697_Javis_Foster_reentry_staff_case_plan.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:1790194152697_Javis_Foster_reentry_assessment_data.json",
+      "event_key": "doc:1790194152697_Javis_Foster_reentry_assessment_data.json",
+      "timestamp": "2026-09-23T20:09:54.767Z",
+      "category": "document",
+      "action": "Archived reentry plan",
+      "summary": "Document stored in folder: 1790194152697_Javis_Foster_reentry_assessment_data.json",
+      "filename": "1790194152697_Javis_Foster_reentry_assessment_data.json",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:1790194152697_Javis_Foster_reentry_participant_action_guide.md",
+      "event_key": "doc:1790194152697_Javis_Foster_reentry_participant_action_guide.md",
+      "timestamp": "2026-09-23T20:09:54.767Z",
+      "category": "document",
+      "action": "Archived reentry plan",
+      "summary": "Document stored in folder: 1790194152697_Javis_Foster_reentry_participant_action_guide.md",
+      "filename": "1790194152697_Javis_Foster_reentry_participant_action_guide.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:1790194152697_Javis_Foster_reentry_staff_case_plan.md",
+      "event_key": "doc:1790194152697_Javis_Foster_reentry_staff_case_plan.md",
+      "timestamp": "2026-09-23T20:09:54.766Z",
+      "category": "document",
+      "action": "Archived reentry plan",
+      "summary": "Document stored in folder: 1790194152697_Javis_Foster_reentry_staff_case_plan.md",
+      "filename": "1790194152697_Javis_Foster_reentry_staff_case_plan.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Javis_Foster_Case_Brief_1790194152697.pdf",
+      "event_key": "doc:Javis_Foster_Case_Brief_1790194152697.pdf",
+      "timestamp": "2026-09-23T20:09:12.698Z",
+      "category": "document",
+      "action": "Archived legacy brief",
+      "summary": "Document stored in folder: Javis_Foster_Case_Brief_1790194152697.pdf",
+      "filename": "Javis_Foster_Case_Brief_1790194152697.pdf",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Javis_Foster_Case_Brief_1790193817719.pdf",
+      "event_key": "doc:Javis_Foster_Case_Brief_1790193817719.pdf",
+      "timestamp": "2026-09-23T20:03:37.719Z",
+      "category": "document",
+      "action": "Archived legacy brief",
+      "summary": "Document stored in folder: Javis_Foster_Case_Brief_1790193817719.pdf",
+      "filename": "Javis_Foster_Case_Brief_1790193817719.pdf",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Javis_Foster_Case_Brief_1790193708190.pdf",
+      "event_key": "doc:Javis_Foster_Case_Brief_1790193708190.pdf",
+      "timestamp": "2026-09-23T20:01:48.190Z",
+      "category": "document",
+      "action": "Archived legacy brief",
+      "summary": "Document stored in folder: Javis_Foster_Case_Brief_1790193708190.pdf",
+      "filename": "Javis_Foster_Case_Brief_1790193708190.pdf",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Javis_Foster_Case_Brief_1790192738458.pdf",
+      "event_key": "doc:Javis_Foster_Case_Brief_1790192738458.pdf",
+      "timestamp": "2026-09-23T19:45:38.459Z",
+      "category": "document",
+      "action": "Archived legacy brief",
+      "summary": "Document stored in folder: Javis_Foster_Case_Brief_1790192738458.pdf",
+      "filename": "Javis_Foster_Case_Brief_1790192738458.pdf",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Javis_Foster_Case_Brief_1790192571401.pdf",
+      "event_key": "doc:Javis_Foster_Case_Brief_1790192571401.pdf",
+      "timestamp": "2026-09-23T19:42:51.401Z",
+      "category": "document",
+      "action": "Archived legacy brief",
+      "summary": "Document stored in folder: Javis_Foster_Case_Brief_1790192571401.pdf",
+      "filename": "Javis_Foster_Case_Brief_1790192571401.pdf",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    }
+  ]
+}

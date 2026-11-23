@@ -1,0 +1,281 @@
+{
+  "participant_key": "Kevin_White",
+  "updated_at": "2026-11-23T13:46:29.061Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-18T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "24 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:356",
+      "event_key": "reentry_session:356",
+      "timestamp": "2026-11-18T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Called to let Kevin know he was accepted for Welvista! I gave him the number to call to try to get it started so he can have access to his prescriptions ASAP. He said he'd call back if there are any issues. I also let hi",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:361",
+      "event_key": "reentry_session:361",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Called to check in. He has a resume and plans to attend the Friday Walmart Distribution Center job fair. He still hasn't gotten his SNAP card or Welvista and he runs out of his medication tomorrow and can't afford more. ",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:360",
+      "event_key": "reentry_session:360",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Documentation support – ID, housing forms, paperwork (Daisy Boynton)",
+      "summary": "Called Welvista to ask about his application, no answer, left a VM. He said SNAP said 7 days ago that they were resending his card. He still hasn't received it. I sent Kevin a food bank that's open today.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:359",
+      "event_key": "reentry_session:359",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Documentation support – ID, housing forms, paperwork (Daisy Boynton)",
+      "summary": "Welvista said they are waiting on Kevin's proof of address and proof of income. I let him know.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:358",
+      "event_key": "reentry_session:358",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Spoke to Kevin and said that I'm going to refer him to Harvest and if he can get to those appointments and get his Diabetes treated so he can work, we can add him to the waitlist here. I sent his proof of address to Welv",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:357",
+      "event_key": "reentry_session:357",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Got Kevin an appointment at Harvest on Nov. 30th at 2:40pm. Harvest said he had 2 prior appointments in October and didn't show up to either, so this is his last shot. I let him know.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:362",
+      "event_key": "reentry_session:362",
+      "timestamp": "2026-11-16T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "summary": "Sent Kevin the info for the Walmart Distribution Center job fair on Friday 11/20. He said he's interested and he has a resume to bring.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:363",
+      "event_key": "reentry_session:363",
+      "timestamp": "2026-11-10T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "Called to check in with Kevin. No answer, no VM set up. Sent a text.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:364",
+      "event_key": "reentry_session:364",
+      "timestamp": "2026-11-04T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "Checked in to see if he called SNAP or Welvista to get an update on his applications. No answer.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:272",
+      "event_key": "reentry_session:272",
+      "timestamp": "2026-10-28T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Sent Kevin the numbers to call to check on his SNAP and Welvista.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:273",
+      "event_key": "reentry_session:273",
+      "timestamp": "2026-10-27T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Called to check in. Still hasn't heard from SNAP or Welvista. Missed his SC Works appt yesterday. He has prescriptions from the hospital at CVS now, but he's not able to pick them up because he can't pay for them. He's s",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:120",
+      "event_key": "reentry_session:120",
+      "timestamp": "2026-10-21T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Kevin called Welvista and they told him they hadn't gotten to his paperwork yet. He also made an appointment at SC Works.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:122",
+      "event_key": "reentry_session:122",
+      "timestamp": "2026-10-19T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "He's still waiting on his SNAP card to come in the mail. I sent him 3 more food banks for this week. He is out of the hospital. I will follow up with him about how the visit was and what the current state of his health i",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:121",
+      "event_key": "reentry_session:121",
+      "timestamp": "2026-10-19T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Kevin got prescriptions from the hospital to manage his Diabetes, but he has no money to pick them up from CVS. We applied for Welvista weeks ago, so he is going to check if he heard anything from them. He really struggl",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:123",
+      "event_key": "reentry_session:123",
+      "timestamp": "2026-10-15T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "He let me know he was admitted to HCA Healthcare Summerville Hospital and has been there all week very sick. I told him to let me know when he's released and we'll see what next steps look like.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:124",
+      "event_key": "reentry_session:124",
+      "timestamp": "2026-10-12T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "summary": "Sent Kevin the number to SC Works in Moncks Corner. I told him to call and make an appointment with a career coach. I think this is his best option for finding employment with his pending charges.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:125",
+      "event_key": "reentry_session:125",
+      "timestamp": "2026-10-09T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Kevin decided not to go to urgent care because he has no money to pay if they charge him. I gave him the number for Harvest Free Medical Clinic to call check for an update on the new patient questionnaire we filled out.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:126",
+      "event_key": "reentry_session:126",
+      "timestamp": "2026-10-06T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "Referred Kevin to Care Now Urgent Care. We will keep the Fetter appointment in December for now, but he needed medical attention sooner than that.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:128",
+      "event_key": "reentry_session:128",
+      "timestamp": "2026-10-02T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Called to get a little more info on his medical situation because I'm trying to make him an appointment at the Fetter clinic in Moncks Corner (15 min drive from him). He was taken to MUSC from Charleston County jail. He ",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:127",
+      "event_key": "reentry_session:127",
+      "timestamp": "2026-10-02T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "Appointment made for Fetter Health on Dec. 3 at 3:20pm. Going to request a ride from RDF to make sure he can make it.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:130",
+      "event_key": "reentry_session:130",
+      "timestamp": "2026-09-30T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "He called us today to follow up. I let him know that I requested the Palmetto Palace Mobile Health Unit and am waiting to hear back from them. He also asked about food stamps. Set an appointment later today to fill out t",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:129",
+      "event_key": "reentry_session:129",
+      "timestamp": "2026-09-30T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Documentation support – ID, housing forms, paperwork|Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Filled out SNAP, Welvista, and Medicaid applications through SCThrive. Kevin is very unstable. Has no food and is very sick (diabetes). Unstable living conditions. I sent him 3 food and clothing banks (1 tomorrow, 1 Frid",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:131",
+      "event_key": "reentry_session:131",
+      "timestamp": "2026-09-29T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Daisy Boynton)",
+      "summary": "Not stable enough for FS. Has pending charges and was released from county jail because he got very sick. Diagnosed with very high blood pressure and potentially diabetes. Most immediate need is finding medical care for ",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:132",
+      "event_key": "reentry_session:132",
+      "timestamp": "2026-09-25T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "Intake Appointment SCHEDULED",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

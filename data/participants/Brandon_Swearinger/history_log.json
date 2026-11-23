@@ -1,0 +1,105 @@
+{
+  "participant_key": "Brandon_Swearinger",
+  "updated_at": "2026-11-23T13:46:28.455Z",
+  "events": [
+    {
+      "id": "ms_doc:1788826713431_Brandon_Swearinger_reentry_staff_case_plan.md",
+      "event_key": "doc:1788826713431_Brandon_Swearinger_reentry_staff_case_plan.md",
+      "timestamp": "2026-09-13T21:26:42.912Z",
+      "category": "document",
+      "action": "Archived reentry plan",
+      "summary": "Document stored in folder: 1788826713431_Brandon_Swearinger_reentry_staff_case_plan.md",
+      "filename": "1788826713431_Brandon_Swearinger_reentry_staff_case_plan.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:1788826713431_Brandon_Swearinger_reentry_participant_action_guide.pdf",
+      "event_key": "doc:1788826713431_Brandon_Swearinger_reentry_participant_action_guide.pdf",
+      "timestamp": "2026-09-08T00:19:02.231Z",
+      "category": "document",
+      "action": "Archived reentry plan",
+      "summary": "Document stored in folder: 1788826713431_Brandon_Swearinger_reentry_participant_action_guide.pdf",
+      "filename": "1788826713431_Brandon_Swearinger_reentry_participant_action_guide.pdf",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:1788826713431_Brandon_Swearinger_reentry_staff_case_plan.pdf",
+      "event_key": "doc:1788826713431_Brandon_Swearinger_reentry_staff_case_plan.pdf",
+      "timestamp": "2026-09-08T00:19:02.225Z",
+      "category": "document",
+      "action": "Archived reentry plan",
+      "summary": "Document stored in folder: 1788826713431_Brandon_Swearinger_reentry_staff_case_plan.pdf",
+      "filename": "1788826713431_Brandon_Swearinger_reentry_staff_case_plan.pdf",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:1788826713431_Brandon_Swearinger_reentry_participant_action_guide.docx",
+      "event_key": "doc:1788826713431_Brandon_Swearinger_reentry_participant_action_guide.docx",
+      "timestamp": "2026-09-08T00:19:00.005Z",
+      "category": "document",
+      "action": "Archived reentry plan",
+      "summary": "Document stored in folder: 1788826713431_Brandon_Swearinger_reentry_participant_action_guide.docx",
+      "filename": "1788826713431_Brandon_Swearinger_reentry_participant_action_guide.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:1788826713431_Brandon_Swearinger_reentry_staff_case_plan.docx",
+      "event_key": "doc:1788826713431_Brandon_Swearinger_reentry_staff_case_plan.docx",
+      "timestamp": "2026-09-08T00:18:59.860Z",
+      "category": "document",
+      "action": "Archived reentry plan",
+      "summary": "Document stored in folder: 1788826713431_Brandon_Swearinger_reentry_staff_case_plan.docx",
+      "filename": "1788826713431_Brandon_Swearinger_reentry_staff_case_plan.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:1788826713431_Brandon_Swearinger_reentry_assessment_data.json",
+      "event_key": "doc:1788826713431_Brandon_Swearinger_reentry_assessment_data.json",
+      "timestamp": "2026-09-08T00:18:59.607Z",
+      "category": "document",
+      "action": "Archived reentry plan",
+      "summary": "Document stored in folder: 1788826713431_Brandon_Swearinger_reentry_assessment_data.json",
+      "filename": "1788826713431_Brandon_Swearinger_reentry_assessment_data.json",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:1788826713431_Brandon_Swearinger_reentry_participant_action_guide.md",
+      "event_key": "doc:1788826713431_Brandon_Swearinger_reentry_participant_action_guide.md",
+      "timestamp": "2026-09-08T00:18:59.607Z",
+      "category": "document",
+      "action": "Archived reentry plan",
+      "summary": "Document stored in folder: 1788826713431_Brandon_Swearinger_reentry_participant_action_guide.md",
+      "filename": "1788826713431_Brandon_Swearinger_reentry_participant_action_guide.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Brandon_Swearinger_Case_Brief_1788826713431.pdf",
+      "event_key": "doc:Brandon_Swearinger_Case_Brief_1788826713431.pdf",
+      "timestamp": "2026-09-08T00:18:33.432Z",
+      "category": "document",
+      "action": "Archived legacy brief",
+      "summary": "Document stored in folder: Brandon_Swearinger_Case_Brief_1788826713431.pdf",
+      "filename": "Brandon_Swearinger_Case_Brief_1788826713431.pdf",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-08-26T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "8 chronological Apricot note(s) archived (Historical Record).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    }
+  ]
+}

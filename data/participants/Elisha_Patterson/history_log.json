@@ -1,0 +1,72 @@
+{
+  "participant_key": "Elisha_Patterson",
+  "updated_at": "2026-11-23T13:46:29.450Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "5 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:430",
+      "event_key": "reentry_session:430",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Elisha said he hasn't gone to the DMV yet and plans to do it next week.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:432",
+      "event_key": "reentry_session:432",
+      "timestamp": "2026-11-06T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Employment support – applications, resume, interview prep|Documentation support – ID, housing forms, paperwork (Daisy Boynton)",
+      "summary": "I called Elisha Patterson to apply for funding to reinstate his license and to build his resume. He logged into his SCDMV account and texted me screenshots of the reinstatement fees he owes, which are two fees of $100 an",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:431",
+      "event_key": "reentry_session:431",
+      "timestamp": "2026-11-06T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Followed up with Elisha letting him know he'll need to DMV print out for the RDF application. He said he'd go on Monday.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:433",
+      "event_key": "reentry_session:433",
+      "timestamp": "2026-11-04T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Daisy Boynton)",
+      "summary": "**Contact Summary:** Completed initial intake consultation with Elisha Patterson. Discussed program expectations, hours (9 AM - 3 PM), stipend structure, and drug testing policies. Elisha is currently at a halfway house ",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:434",
+      "event_key": "reentry_session:434",
+      "timestamp": "2026-11-03T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "Intake Appointment SCHEDULED",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

@@ -1,0 +1,278 @@
+{
+  "participant_key": "Darryl_Aiken",
+  "participant_name": "Darryl Aiken",
+  "profile_records": [
+    {
+      "id": 65,
+      "user_id": 72,
+      "current_gate": 4,
+      "w9_status": "pending",
+      "dl_status": "unknown",
+      "dl_notes": null,
+      "child_support_status": "unknown",
+      "child_support_notes": null,
+      "housing_status": "stable",
+      "substance_status": "none",
+      "mental_health_status": "none",
+      "transportation_status": "bus",
+      "court_dates": null,
+      "overall_status": "archived",
+      "termination_reason": null,
+      "termination_date": null,
+      "updated_at": "2026-10-26 01:13:54",
+      "stability_red_flags": null,
+      "director_override": 0,
+      "director_override_notes": null,
+      "director_override_by": null,
+      "reentry_status": "none",
+      "has_reentry_plan": 0,
+      "enrollment_date": "2026-10-05",
+      "correction_notes": null,
+      "supabase_id": null,
+      "record_id": "80789"
+    }
+  ],
+  "case_plan_triggers": [
+    {
+      "id": 12,
+      "user_id": 72,
+      "domain": "Family and Relationships (Family/Marital)",
+      "pattern": "Focus Area 1",
+      "trigger_situations": "[\"When it comes to his son and making sure he can take care of him.\"]",
+      "toolkit_tools": "[\"Stop and Think (STAC)\",\"Thinking Report\"]",
+      "updated_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 13,
+      "user_id": 72,
+      "domain": "Substance Use",
+      "pattern": "Focus Area 2",
+      "trigger_situations": "[\"When he is by himself because growing up he was around the wrong environment.\"]",
+      "toolkit_tools": "[\"Decisional Balance\",\"Problem Solving 4-Step Method\"]",
+      "updated_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "daily_points": [
+    {
+      "id": 533,
+      "user_id": 72,
+      "date": "2026-10-23",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-10-26 13:47:10"
+    },
+    {
+      "id": 229,
+      "user_id": 72,
+      "date": "2026-10-22",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 228,
+      "user_id": 72,
+      "date": "2026-10-21",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 227,
+      "user_id": 72,
+      "date": "2026-10-20",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 226,
+      "user_id": 72,
+      "date": "2026-10-19",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 225,
+      "user_id": 72,
+      "date": "2026-10-16",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 224,
+      "user_id": 72,
+      "date": "2026-10-15",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 223,
+      "user_id": 72,
+      "date": "2026-10-14",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 222,
+      "user_id": 72,
+      "date": "2026-10-13",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 221,
+      "user_id": 72,
+      "date": "2026-10-12",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 220,
+      "user_id": 72,
+      "date": "2026-10-09",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 219,
+      "user_id": 72,
+      "date": "2026-10-08",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 218,
+      "user_id": 72,
+      "date": "2026-10-07",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 217,
+      "user_id": 72,
+      "date": "2026-10-06",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 216,
+      "user_id": 72,
+      "date": "2026-10-05",
+      "points_earned": 9,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "drug_tests": [],
+  "benefits": [
+    {
+      "id": 36260,
+      "user_id": 72,
+      "benefit_type": "medicaid",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 36261,
+      "user_id": 72,
+      "benefit_type": "snap",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 36262,
+      "user_id": 72,
+      "benefit_type": "tanf",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 36259,
+      "user_id": 72,
+      "benefit_type": "welvista",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "resumes": [],
+  "db_documents": [],
+  "legacy_briefcase_items_count": 35,
+  "legacy_gate_criteria_count": 27,
+  "updated_at": "2026-11-23T13:46:28.748Z"
+}

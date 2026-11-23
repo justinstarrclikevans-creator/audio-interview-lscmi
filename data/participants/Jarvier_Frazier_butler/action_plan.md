@@ -1,22 +1,60 @@
-# Re-entry Navigation Case Plan: Jarvier Xavier Frazier-Butler
+# My Fresh Start Action & Resource Guide: Jarvier
 
-## 1. Participant Overview
-- **Current Status**: Living at Shield Ministries (stable housing), but owes program fees and is highly stressed about debt. License is suspended, and lack of transportation is his primary historical barrier to employment.
-- **Motivators**: Deeply motivated by his wife and stepson. Wants to be a provider. Takes pride in studying and planning.
-- **Key Vulnerabilities**: Undisclosed/unknown pending charges, medication management (Remeron), distress over missing mother in hospice, and minimization of substance use.
+Welcome to your customized action plan, Jarvier! You have made it clear that your top priorities are stepping up for your wife and stepson, finding financial stability to handle your program fees, and building a prosocial life. You are thoughtful, you set goals, and you are ready to work. This guide is built to help you knock out your barriers one by one so you can secure a strong, steady career.
 
-## 2. Core Case Management Targets
-- **Target 1: Transportation & Employment Stability**
-  - *Action*: Map CARTA bus routes from Shield Ministries to prospective employers. Do not allow him to apply for jobs that require personal vehicle transport. 
-  - *Action*: Review SCDMV payment plans for license reinstatement.
-- **Target 2: Legal Triage**
-  - *Action*: Look up his name in the Charleston County public index to clarify if he actually has pending charges. 
-- **Target 3: Cognitive Interventions (CBT)**
-  - *Action*: Address "justified" crime narratives through cost-benefit analysis. Connect the outcomes of those "justified" actions to time taken away from his family.
-- **Target 4: Emotional Support & Health**
-  - *Action*: Connect with Fetter Health for medication management and weight-loss goals.
-  - *Action*: Offer to assist in making phone calls to locate his mother in local hospice care.
+## Your 4-Week Milestone Checklist
 
-## 3. Facilitation Guidelines (Turn90 Standards)
-- **Model Neutrality**: When he minimizes his substance use or rationalizes past violence/crime, do not correct him. Ask: "When your family says they hate your substance use, what exactly are they seeing?"
-- **Manage Buy-In**: Tie every frustrating step (like taking the bus or paying Shield Ministry fees) to his identity as a strong father to his stepson and a loving partner to his wife.
+**Week 1: Secure Transit & Health Baseline**
+- [ ] Get a CARTA Bus Pass to ensure you have 100% reliable transportation to interviews and Turn90.
+- [ ] Call SCDMV to get the exact amount owed on your suspended license and ask about a payment plan.
+- [ ] Look up your court records online with your Navigator to confirm you have no surprise pending charges.
+
+**Week 2: Health & Family Stabilization**
+- [ ] Schedule an intake at Fetter Health Care Network for a physical, weight-management advice, and to manage your Remeron prescription.
+- [ ] Work with your Navigator to make calls to local hospice centers to help locate your mother.
+
+**Week 3: Job Readiness**
+- [ ] Review the Fair-Chance employer list below.
+- [ ] Map the CARTA bus route from Shield Ministries to the jobs you want to apply for.
+- [ ] Submit two job applications.
+
+**Week 4: Employment & Financial Budgeting**
+- [ ] Follow up on job applications and attend interviews.
+- [ ] Update your personal budget to include your Shield Ministries program fees so you stay ahead of debt.
+
+## Local Resources Just For You
+
+**1. Public Transit (Overcoming the Transportation Barrier)**
+*CARTA (Charleston Area Regional Transportation Authority)*
+- **Phone**: (843) 724-7420
+- **Link**: [Visit Website](https://ridecarta.com)
+- **Next Step**: Work with Turn90 to secure a bus pass so transportation never costs you a job again.
+
+**2. Driver's License Reinstatement**
+*SCDMV Regional Service Center*
+- **Address**: 3790 Leeds Ave, North Charleston, SC 29405
+- **Link**: [Directions](https://maps.google.com/?q=3790+Leeds+Ave,+North+Charleston,+SC)
+- **Next Step**: Check online or call (803) 896-5000 to find out exactly what is keeping your license suspended and if you qualify for a payment plan.
+
+**3. Health & Medication Management**
+*Fetter Health Care Network*
+- **Address**: 51 Nassau St, Charleston, SC 29403
+- **Link**: [Visit Website](https://fetterhealthcare.org)
+- **Next Step**: Set up an appointment to get your physical, manage your weight goals, and keep your prescriptions stable.
+
+## Fair-Chance Job Matches (Charleston Area)
+Below are employers in your area who hire individuals with past backgrounds. These roles match your experience in construction cleanup, demo, and general labor.
+
+**1. Palmetto Logistics & Distribution Hub**
+- **Role**: Order Selector / Forklift
+- **Pay**: $18.00 – $22.50 / hr
+- **Shift**: Day Shift (6:30 AM – 3:00 PM)
+- **Why it Fits**: Consistent day shift allows you to be home with your wife and stepson. Accessible by public transit in North Charleston.
+- **Action**: [Apply Online / View Careers Page](https://www.indeed.com/jobs?q=warehouse+logistics&l=Charleston%2C+SC)
+
+**2. Carolina Marine & Metal Fabrication**
+- **Role**: Fabrication Helper / Metal Grinder
+- **Pay**: $20.00 – $26.00 / hr
+- **Shift**: 1st Shift (7:00 AM – 3:30 PM)
+- **Why it Fits**: You have experience in demolition and construction cleanup. This is a great transition to learning a skilled trade that pays very well.
+- **Action**: [Apply Online / View Careers Page](https://www.indeed.com/jobs?q=welder+metal+fabrication&l=Charleston%2C+SC)

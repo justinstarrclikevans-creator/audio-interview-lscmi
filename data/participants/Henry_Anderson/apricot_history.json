@@ -1,0 +1,109 @@
+{
+  "participant_key": "Henry_Anderson",
+  "participant_name": "Henry Anderson",
+  "apricot_ids": [
+    "66049"
+  ],
+  "evaluations": [
+    {
+      "record_id": "66049",
+      "full_name": "Henry Anderson",
+      "program": "Reentry Navigation",
+      "center": "Charleston",
+      "case_manager": "Unassigned",
+      "case_plan_status": "No (Needs Reentry Nav Case Plan)",
+      "focus_areas_or_goals": "No formal Reentry Nav Case Plan filed in Apricot yet",
+      "briefcase_status_text": "Not created in Apricot Briefcase module (0% across Gates 1–4)",
+      "gate1_pct": 0,
+      "gate2_pct": 0,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "case_note_analysis": "Enrolled 11/02/2026. Most recent contact on 11/12/2026 by Kat Norsworthy (Check-in conversation – brief status update): \"Henry had his first home visit today and everything went well.\"\n\n**Latest Case Note Updates:** [Update 11/12/2026 • Kat Norsworthy]: Henry had his first home visit today and everything went well. | [Update 11/10/2026 • Kat Norsworthy]: Henry called because he was supposed to have a home visit from his supervision officer but was downtown and not at his house. We talked about it and he decided he should call and let the officer know he was downtown helping family that was just released from the hospital and would not be there for the visit and they were able to reschedule. | [Update 11/09/2026 • Kat Norsworthy]: Henry came in to go over his disability app using the computer but we could not verify his account with SSI because he lost his ID card. We ordered him a new ID card and will return to the SSI app when we have it and can verify his identity. He was also concerned about the fact that his brother had his social security card so we checked his credit report to make sure nothing had been opened or changed since he was inside. I also made and emailed him a resume to assist in finding a job. | [Update 11/06/2026 • Kat Norsworthy]: We spoke, Henry expressed that he used his phone to apply for disability but wasn't confident that it was done correctly so I told him to come in Monday and we would take a look. He has applied to some restaurant jobs downtown and is working to get through all of his various mail to see if he can find some information related to some payments he is supposed to have received from when he was working before he got arrested. | [Update 11/02/2026 • Kat Norsworthy]: Henry went to 82 Queen downtown to see about getting a job as he worked there previously. We also did a Welvista and SNAP application. The Welvista is his main focus as he is on medication and indicated that while SCDC gave him a month or two worth, it is very generic and not as good as medication he could be receiving. He is going to be applying for disability so I gave him the number for SSI so he can speak with someone about the best way to go about that.",
+      "operational_feedback": "Initialize Apricot Briefcase record to track Gate 1–4 milestones alongside Reentry Nav Case Plan goals (Goals & Gates only; no CBT in Reentry Nav). Follow up on Henry Anderson's stated goals and verify vital documents.",
+      "next_cm_steps_json": "[\"📋 **Author Reentry Navigation Case Plan (Goals & Gates Only):** Collaboratively establish 1–3 concrete stabilization and employment goals with Henry Anderson and log them in the Reentry Nav Case Plan (no CBT required for Reentry Nav).\",\"🧰 **Initialize Briefcase & Gate 1 Vital Documents:** Create the Apricot Briefcase record and verify Gate 1 essentials: State ID / Driver's License, Social Security Card, Birth Certificate, prescription needs (Welvista), healthcare options, and supervision details.\",\"🔄 **Follow Up on Latest Session (11/12/2026 by Kat Norsworthy):** Check accountability on items discussed (\\\"Henry had his first home visit today and everything went well.\\\").\"]",
+      "recent_cm_notes_json": null,
+      "last_note_date": "2026-11-12",
+      "notes_count": 5,
+      "updated_at": "2026-11-22 17:36:06"
+    }
+  ],
+  "notes_count": 5,
+  "processed_notes": [
+    {
+      "id": 881,
+      "record_id": "66049",
+      "first_name": "Henry",
+      "last_name": "Anderson",
+      "activity_date": "2026-11-12",
+      "staff_name": "Kat Norsworthy",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Check-in conversation – brief status update",
+      "note_text": "Henry had his first home visit today and everything went well.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 880,
+      "record_id": "66049",
+      "first_name": "Henry",
+      "last_name": "Anderson",
+      "activity_date": "2026-11-10",
+      "staff_name": "Kat Norsworthy",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Check-in conversation – brief status update",
+      "note_text": "Henry called because he was supposed to have a home visit from his supervision officer but was downtown and not at his house. We talked about it and he decided he should call and let the officer know he was downtown helping family that was just released from the hospital and would not be there for the visit and they were able to reschedule.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 879,
+      "record_id": "66049",
+      "first_name": "Henry",
+      "last_name": "Anderson",
+      "activity_date": "2026-11-09",
+      "staff_name": "Kat Norsworthy",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Check-in conversation – brief status update",
+      "note_text": "Henry came in to go over his disability app using the computer but we could not verify his account with SSI because he lost his ID card. We ordered him a new ID card and will return to the SSI app when we have it and can verify his identity. He was also concerned about the fact that his brother had his social security card so we checked his credit report to make sure nothing had been opened or changed since he was inside. I also made and emailed him a resume to assist in finding a job.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 878,
+      "record_id": "66049",
+      "first_name": "Henry",
+      "last_name": "Anderson",
+      "activity_date": "2026-11-06",
+      "staff_name": "Kat Norsworthy",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Check-in conversation – brief status update",
+      "note_text": "We spoke, Henry expressed that he used his phone to apply for disability but wasn't confident that it was done correctly so I told him to come in Monday and we would take a look. He has applied to some restaurant jobs downtown and is working to get through all of his various mail to see if he can find some information related to some payments he is supposed to have received from when he was working before he got arrested.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 877,
+      "record_id": "66049",
+      "first_name": "Henry",
+      "last_name": "Anderson",
+      "activity_date": "2026-11-02",
+      "staff_name": "Kat Norsworthy",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Check-in conversation – brief status update",
+      "note_text": "Henry went to 82 Queen downtown to see about getting a job as he worked there previously. We also did a Welvista and SNAP application. The Welvista is his main focus as he is on medication and indicated that while SCDC gave him a month or two worth, it is very generic and not as good as medication he could be receiving. He is going to be applying for disability so I gave him the number for SSI so he can speak with someone about the best way to go about that.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "updated_at": "2026-11-23T13:46:29.390Z"
+}

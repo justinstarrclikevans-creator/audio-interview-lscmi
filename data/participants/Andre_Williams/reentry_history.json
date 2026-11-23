@@ -1,0 +1,75 @@
+{
+  "participant_key": "Andre_Williams",
+  "participant_name": "Andre Williams",
+  "client_records": [
+    {
+      "id": 81,
+      "first_name": "Andre",
+      "last_name": "Williams",
+      "apricot_id": "83386",
+      "location": "Columbia",
+      "status": "active",
+      "stability_tier": "stable",
+      "phone": null,
+      "email": null,
+      "notes": "Find employment",
+      "created_at": "2026-11-22 17:35:09",
+      "updated_at": "2026-11-22 17:36:06",
+      "case_manager": "Unassigned",
+      "enrollment_start": "2026-11-17",
+      "gate1_pct": 25,
+      "gate2_pct": 20,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "last_contact_date": "2026-11-17",
+      "last_contact_staff": "Daisy Boynton",
+      "last_contact_activity": "Intake Appointment COMPLETED",
+      "has_case_plan": 0,
+      "case_plan_text": "Find employment"
+    }
+  ],
+  "sessions": [
+    {
+      "id": 471,
+      "client_id": 81,
+      "session_date": "2026-11-17",
+      "session_title": "Intake Appointment COMPLETED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "CONTACT SUMMARY & SESSION OVERVIEW\n- Session Stage: First Session / Intake \n- Summary: Completed phone consultation with [Client]. Staff explained both programs: in-person First Shift (M–F 9–3, 8 weeks, $450/week stipend, job placement) and Reentry Navigation (phone-based help with license reinstatement, funding for fees, job search, resume, child support planning, etc.). [Client] said he needs help with \"all of that.\" Staff explained that the Columbia First Shift waitlist is long (almost 20 people, possibly a couple of months). [Client] was added to the First Shift waitlist and enrolled in Reentry Navigation while he waits. He was cooperative and engaged.\n\nCASE PLAN ALIGNMENT (REENTRY NAVIGATION)\n- Stability Tier: At Risk. Housing is informal (he describes himself as \"kind of homeless\"), he is unemployed, and his food assistance just ran out.\n- Stated Goals Progress: [Client] named two priority goals: (1) reinstate his driver's license and (2) find a job. He also wants more stable housing eventually. Case plan to be built by CM.\n\nBRIEFCASE & GATES 1-4 UPDATES\n- Gate 1 (Vital IDs, Meds, Supervision): Has ID. Birth certificate status unclear (recording garbled). No prescribed medications in the past five years. He mentioned a past surgery but is not on any current treatment. On probation, expected to end in 2027. Reports monthly and is in compliance. His probation officer does home visits at his current address.\n- Gate 2 (Housing, Comms, Legal, Resume): Staying at someone else's home and paying about $125/week. Can stay there for the near future, and it is his mailing address and probation address. Driver's license is suspended for unpaid tickets, about $2,500 per a DMV check a couple of months ago. Court-ordered child support, currently not paying because he has no job. No Turn90 resume yet.\n- Gate 3 (Health, Recovery, Banking): Reports past cocaine use once or twice and alcohol use (frequency unclear in the recording, possibly every other day). Reports a health issue that doesn't affect his ability to work (unclear in recording). Bank account not discussed. SNAP/food assistance ran out in November.\n- Gate 4 (Work Gear, Transit, Employment/Finance): Gets around by bus and sometimes by rides. Unemployed. Forklift experience, but he thinks his certification has expired.\n\nEMPLOYMENT, HOUSING & STABILITY UPDATES\n- Work history: mostly warehouse/forklift work. Equipment operator from 2004 to 2009 (left when the company was sold). Warehouse in Williamsboro (as transcribed) for about 4 years (company sold). Mechanic shop for about 3 years. Asphalt company and other odd jobs for about 2 years each, which he left over pay.\n- Education: left school in 12th grade. No diploma or GED.\n- Justice history: first arrest at age 16, about 8 arrests total. Released from prison on 06/01/2026 after about 10 months. Most recent conviction: violating a restraining order. Pending charges: not clearly answered in the recording. Father has a jail history (about twice). Mother has no record.\n- No schedule conflicts with 9–3 programming apart from monthly probation check-ins.\n\nREFERRALS & RESOURCE COORDINATION\n- Enrolled in Reentry Navigation and added to the Columbia First Shift waitlist.\n- No outside referrals made this session.\n\nNEXT STEPS (\"WHAT TO WORK ON NEXT\")\n1. CM to build [Client]'s Reentry Navigation case plan around his stated goals (license reinstatement and employment) and contact him within the next week to get started.\n2. CM/[Client] to start license reinstatement: confirm the DMV balance (~$2,500 in tickets) and look into funding for the fees. Begin job search and a Turn90 resume, including a check on renewing his forklift certification.\n3. Apricot Admin Check: create the intake record, add him to the Columbia waitlist, initialize his Briefcase record, and confirm his birth certificate and pending-charges status at the next contact.\n\n** he first described himself as somewhat homeless, but then he said he's living with a friend, paying $125/week for rent, and that this is where his probation officer visits him. He said he's stable enough for now, but would like to look at other housing long-term.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 472,
+      "client_id": 81,
+      "session_date": "2026-11-16",
+      "session_title": "Intake Appointment SCHEDULED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Intake Appointment SCHEDULED",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "goals": [
+    {
+      "id": 155,
+      "client_id": 81,
+      "goal_title": "Find employment",
+      "target_date": "2026-12-06",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"Find employment\\\" during weekly Reentry Navigation check-in with Unassigned\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-11-22 17:35:09",
+      "updated_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "case_plans": [],
+  "updated_at": "2026-11-23T13:46:29.567Z"
+}

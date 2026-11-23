@@ -1,0 +1,101 @@
+{
+  "participant_key": "Michael_Butler",
+  "participant_name": "Michael Butler",
+  "client_records": [
+    {
+      "id": 82,
+      "first_name": "Michael",
+      "last_name": "Butler",
+      "apricot_id": "83410",
+      "location": "Columbia",
+      "status": "active",
+      "stability_tier": "stable",
+      "phone": null,
+      "email": null,
+      "notes": "Stable housing and employment",
+      "created_at": "2026-11-22 17:35:09",
+      "updated_at": "2026-11-22 17:36:06",
+      "case_manager": "Unassigned",
+      "enrollment_start": "2026-11-17",
+      "gate1_pct": 25,
+      "gate2_pct": 50,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "last_contact_date": "2026-11-19",
+      "last_contact_staff": "Daisy Boynton",
+      "last_contact_activity": "Check-in conversation – brief status update",
+      "has_case_plan": 0,
+      "case_plan_text": "Stable housing and employment"
+    }
+  ],
+  "sessions": [
+    {
+      "id": 473,
+      "client_id": 82,
+      "session_date": "2026-11-19",
+      "session_title": "Check-in conversation – brief status update (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Michael called to tell me he has a meeting with an Oxford House this afternoon. I told him to keep us posted on how it goes.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 475,
+      "client_id": 82,
+      "session_date": "2026-11-17",
+      "session_title": "Intake Appointment COMPLETED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "CONTACT SUMMARY & SESSION OVERVIEW\n- Session Stage: First Session / Intake\n- Summary: Phone intake and screening with [Client], who was released from federal custody (BOP/halfway house) on Friday 11/13/2026 and is now on federal probation. [Client] was engaged and motivated throughout (\"I need help ASAP\") but is currently unhoused. He stayed one night with a friend to get out of the cold, cannot stay there again, and has nowhere to go tonight. Reviewed both Turn90 programs. Because First Shift requires stable housing and has a long waitlist, [Client] was enrolled in Reentry Navigation to work on housing, license reinstatement, employment, and dental care. [Client] agreed with this plan.\n\nCASE PLAN ALIGNMENT\n- Stability Tier: Immediate Triage\n- Stated Goals Progress: Goals identified at intake: (1) emergency/stable housing, top priority; (2) driver's license reinstatement; (3) employment (\"I go to work seven days a week\"); (4) dental care for a loose tooth and missing teeth causing pain when eating. CM will build out the Case Plan. No progress yet; this was the first session.\n\nBRIEFCASE & GATES 1-4 UPDATES\n- Gate 1 (Vital IDs, Meds, Supervision): Has Social Security card and state ID. No birth certificate. He could not afford the $20 fee while at the halfway house and plans to get one. Currently taking iron supplements only. He stopped his blood pressure medication about 8-9 months ago due to stomach pain. On federal probation and checked in with his PO on 11/16/2026. Probation is projected to end in 2029, possibly early (about 1 year) with full compliance. No home confinement and no halfway house check-in requirement.\n- Gate 2 (Housing, Comms, Legal, Resume): Unhoused with no place to stay tonight. Reachable by phone at the number on file. Driver's license is suspended. Tickets are paid and there was no DUI or points loss, but a $600 reinstatement fee remains. No child support (no children). No pending charges. Will need a Turn90 resume.\n- Gate 3 (Health, Recovery, Banking): Dental need as noted above. Past cocaine and marijuana use, which he reports contributed to past homelessness. Last use about 2018, and he reports no current desire to use. No alcohol use. Not yet discussed: primary care (including the stopped BP medication) and bank account.\n- Gate 4 (Work Gear, Transit, Employment/Finance): Currently walking and using the city bus. His nephew gives occasional rides when available. He has about $150 cash and no savings, and is reluctant to spend it on a hotel. Budget, credit, and a 6-month career plan were not yet addressed.\n\nEMPLOYMENT, HOUSING & STABILITY UPDATES\n- Housing: Unhoused as of today and needs emergency shelter tonight. CM is actively looking for same-day options.\n- Employment history: Overnight driving (non-CDL) for about 4-5 years; overnight stocking for a similar length of time; also McDonald's, inventory specialist, and landscaping. Past jobs ended when the companies relocated or closed. No current certifications (forklift, CPR, etc.).\n- Education: Completed 11th grade. No GED; he was one test away when transferred between facilities.\n- Physical: No significant limitations. Prolonged standing or bending may be mildly difficult.\n- Compliance: Reporting to federal probation as required. No pending charges.\n\nREFERRALS & RESOURCE COORDINATION\n- Emergency housing / Turn90 housing partners (Columbia): CM searching for same-day placement.\n- Rainy Day Fund: Discussed applying for help with the $600 DMV reinstatement fee. Application pending.\n- Dental: Discussed connecting [Client] with dental care. Referral pending.\n- Resume and employment support: Offered through Reentry Navigation.\n\nNEXT STEPS (\"WHAT TO WORK ON NEXT\")\n1. CM to look for an emergency shelter or housing option for tonight and call [Client] back if one is found. [Client] to call or text if his situation changes or he finds a place.\n2. CM (Daisy or Justin) to follow up within the next few days to submit the RDF application for license reinstatement, start the dental referral, and plan the birth certificate request.\n3. Apricot Admin Check: Build the Reentry Navigation Case Plan and initialize the Briefcase record with intake data (IDs, supervision, license status).",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 474,
+      "client_id": 82,
+      "session_date": "2026-11-17",
+      "session_title": "Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Sent him info for Transitions Homeless Center and Oliver Gospel Mission.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 476,
+      "client_id": 82,
+      "session_date": "2026-11-16",
+      "session_title": "Intake Appointment SCHEDULED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Intake Appointment SCHEDULED",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "goals": [
+    {
+      "id": 156,
+      "client_id": 82,
+      "goal_title": "Stable housing and employment",
+      "target_date": "2026-12-06",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"Stable housing and employment\\\" during weekly Reentry Navigation check-in with Unassigned\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-11-22 17:35:09",
+      "updated_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "case_plans": [],
+  "updated_at": "2026-11-23T13:46:29.578Z"
+}

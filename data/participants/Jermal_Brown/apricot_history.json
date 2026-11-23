@@ -1,0 +1,79 @@
+{
+  "participant_key": "Jermal_Brown",
+  "participant_name": "Jermal Brown",
+  "apricot_ids": [
+    "75956"
+  ],
+  "evaluations": [
+    {
+      "record_id": "75956",
+      "full_name": "Jermal Brown",
+      "program": "Reentry Navigation",
+      "center": "Charleston",
+      "case_manager": "Unassigned",
+      "case_plan_status": "No (Needs Reentry Nav Case Plan)",
+      "focus_areas_or_goals": "No formal Reentry Nav Case Plan filed in Apricot yet",
+      "briefcase_status_text": "Not created in Apricot Briefcase module (0% across Gates 1–4)",
+      "gate1_pct": 0,
+      "gate2_pct": 0,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "case_note_analysis": "Enrolled 11/19/2026. Most recent contact on 11/19/2026 by Daisy Boynton (Employment support – applications, resume, interview prep): \"Jermal is looking for seasonal work until a spot opens up here for FS. I sent him the hiring page for HoneyBaked seasonal job openings and told him I'd keep an eye out for any other opportunities. He has a resume.\"\n\n**Latest Case Note Updates:** [Update 11/19/2026 • Daisy Boynton]: Jermal is looking for seasonal work until a spot opens up here for FS. I sent him the hiring page for HoneyBaked seasonal job openings and told him I'd keep an eye out for any other opportunities. He has a resume. | [Update 11/19/2026 • Daisy Boynton]: CONTACT SUMMARY & SESSION OVERVIEW\n- Session Stage: First Session / Intake (~21 min, phone consultation)\n- Summary: Completed phone screening with [Client], who was released from prison in April 2026 after serving 5 years, 11 months. [Client] reviewed both programs and is most focused on getting employment immediately; he shared that his record has been the main barrier in his job search despite being bonded. [Client] was screened for First Shift and added to the waitlist (#9), and agreed to begin Reentry Navigation in the meantime. He was engaged and receptive throughout, and reported current stress, depression, and anxiety, particularly with the holidays approaching and no income.\n\nCASE PLAN ALIGNMENT\n- Stability Tier: At Risk\n- Stated Goals Progress: [Client] identified the following goals: (1) find seasonal/temporary work while waiting for a First Shift spot, (2) receive SNAP benefits (already approved, card pending), and (3) longer term, earn certifications (e.g., forklift, flagging) and secure stable housing once employed. Goals set this session; progress to be tracked at follow-up.\n\nBRIEFCASE & GATES 1-4 UPDATES\n- Gate 1 (Vital IDs, Meds, Supervision): Has birth certificate, SS card, state ID, and valid driver's license. Medication status not confirmed. Currently on supervision and reports being in compliance; [supervision type (federal/state) and end date to be confirmed].\n- Gate 2 (Housing, Comms, Legal, Resume): Staying on a friend's/family member's couch; able to remain there until employed and interested in housing help once working. Has a resume. Child support status not confirmed.\n- Gate 3 (Health, Recovery, Banking): Reported stress, depression, and anxiety. Reports occasional marijuana use, denies other substance use; understands First Shift drug testing includes THC and states he can stop. Previously referred to Charleston Center (~3 years ago) but did not attend. SNAP approved per client; card pending.\n- Gate 4 (Work Gear, Transit, Employment/Finance): Uses city bus for transportation. Prior work history includes restaurant, customer service (Office Depot, ~3 years, longest held), construction labor, warehouse, general labor, material handling, and assembly line. Past jobs ended mainly due to transportation issues or poor fit. No physical limitations. High school graduate.\n\nEMPLOYMENT, HOUSING & STABILITY UPDATES\n- Currently unemployed and actively applying, including on Indeed and ZipRecruiter. Encouraged to keep applying, with Indeed recommended as the strongest option. Housing is temporary but stable for now. Transit is city bus. Reports compliance with supervision. Program hours (M-F, 9-3) confirmed as workable. Reviewed waitlist process, orientation drug test, weekly drug testing (including THC), and the stipend (paid starting after week 2).\n\nREFERRALS & RESOURCE COORDINATION\n- Sent Honey Baked Ham seasonal hiring page (Thanksgiving/Christmas hiring; fair-chance status varies by location).\n- SNAP: Interview completed last week and client reports approval; card to be mailed to his current address. Will follow up if not received in 1-2 weeks.\n\nNEXT STEPS (\"WHAT TO WORK ON NEXT\")\n1. [Client] to apply to Honey Baked Ham seasonal roles and continue applying through Indeed.\n2. CM (Daisy or Justin) to contact [Client] within one week with additional seasonal/fair-chance job leads, and to check on SNAP card receipt (follow up with DSS if not received within 1-2 weeks).\n3. Apricot Admin Check: Add [Client] to First Shift waitlist (#9); initialize Briefcase record; confirm supervision type/end date, medication status, and child support status at next contact. | [Update 11/18/2026 • Daisy Boynton]: Called and asked about First Shift. I let him know he'd need to be rescreened since his last consultation was in May. We scheduled it for tomorrow.",
+      "operational_feedback": "Initialize Apricot Briefcase record to track Gate 1–4 milestones alongside Reentry Nav Case Plan goals (Goals & Gates only; no CBT in Reentry Nav). Follow up on Jermal Brown's stated goals and verify vital documents.",
+      "next_cm_steps_json": "[\"📋 **Author Reentry Navigation Case Plan (Goals & Gates Only):** Collaboratively establish 1–3 concrete stabilization and employment goals with Jermal Brown and log them in the Reentry Nav Case Plan (no CBT required for Reentry Nav).\",\"🧰 **Initialize Briefcase & Gate 1 Vital Documents:** Create the Apricot Briefcase record and verify Gate 1 essentials: State ID / Driver's License, Social Security Card, Birth Certificate, prescription needs (Welvista), healthcare options, and supervision details.\",\"🔄 **Follow Up on Latest Session (11/19/2026 by Daisy Boynton):** Check accountability on items discussed (\\\"Jermal is looking for seasonal work until a spot opens up here for FS. I sent him the hiring page for HoneyBaked seasonal job openings and t...\\\").\"]",
+      "recent_cm_notes_json": null,
+      "last_note_date": "2026-11-19",
+      "notes_count": 3,
+      "updated_at": "2026-11-22 17:36:06"
+    }
+  ],
+  "notes_count": 3,
+  "processed_notes": [
+    {
+      "id": 897,
+      "record_id": "75956",
+      "first_name": "Jermal",
+      "last_name": "Brown",
+      "activity_date": "2026-11-19",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Employment support – applications, resume, interview prep",
+      "note_text": "Jermal is looking for seasonal work until a spot opens up here for FS. I sent him the hiring page for HoneyBaked seasonal job openings and told him I'd keep an eye out for any other opportunities. He has a resume.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 896,
+      "record_id": "75956",
+      "first_name": "Jermal",
+      "last_name": "Brown",
+      "activity_date": "2026-11-19",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment COMPLETED",
+      "note_text": "CONTACT SUMMARY & SESSION OVERVIEW\n- Session Stage: First Session / Intake (~21 min, phone consultation)\n- Summary: Completed phone screening with [Client], who was released from prison in April 2026 after serving 5 years, 11 months. [Client] reviewed both programs and is most focused on getting employment immediately; he shared that his record has been the main barrier in his job search despite being bonded. [Client] was screened for First Shift and added to the waitlist (#9), and agreed to begin Reentry Navigation in the meantime. He was engaged and receptive throughout, and reported current stress, depression, and anxiety, particularly with the holidays approaching and no income.\n\nCASE PLAN ALIGNMENT\n- Stability Tier: At Risk\n- Stated Goals Progress: [Client] identified the following goals: (1) find seasonal/temporary work while waiting for a First Shift spot, (2) receive SNAP benefits (already approved, card pending), and (3) longer term, earn certifications (e.g., forklift, flagging) and secure stable housing once employed. Goals set this session; progress to be tracked at follow-up.\n\nBRIEFCASE & GATES 1-4 UPDATES\n- Gate 1 (Vital IDs, Meds, Supervision): Has birth certificate, SS card, state ID, and valid driver's license. Medication status not confirmed. Currently on supervision and reports being in compliance; [supervision type (federal/state) and end date to be confirmed].\n- Gate 2 (Housing, Comms, Legal, Resume): Staying on a friend's/family member's couch; able to remain there until employed and interested in housing help once working. Has a resume. Child support status not confirmed.\n- Gate 3 (Health, Recovery, Banking): Reported stress, depression, and anxiety. Reports occasional marijuana use, denies other substance use; understands First Shift drug testing includes THC and states he can stop. Previously referred to Charleston Center (~3 years ago) but did not attend. SNAP approved per client; card pending.\n- Gate 4 (Work Gear, Transit, Employment/Finance): Uses city bus for transportation. Prior work history includes restaurant, customer service (Office Depot, ~3 years, longest held), construction labor, warehouse, general labor, material handling, and assembly line. Past jobs ended mainly due to transportation issues or poor fit. No physical limitations. High school graduate.\n\nEMPLOYMENT, HOUSING & STABILITY UPDATES\n- Currently unemployed and actively applying, including on Indeed and ZipRecruiter. Encouraged to keep applying, with Indeed recommended as the strongest option. Housing is temporary but stable for now. Transit is city bus. Reports compliance with supervision. Program hours (M-F, 9-3) confirmed as workable. Reviewed waitlist process, orientation drug test, weekly drug testing (including THC), and the stipend (paid starting after week 2).\n\nREFERRALS & RESOURCE COORDINATION\n- Sent Honey Baked Ham seasonal hiring page (Thanksgiving/Christmas hiring; fair-chance status varies by location).\n- SNAP: Interview completed last week and client reports approval; card to be mailed to his current address. Will follow up if not received in 1-2 weeks.\n\nNEXT STEPS (\"WHAT TO WORK ON NEXT\")\n1. [Client] to apply to Honey Baked Ham seasonal roles and continue applying through Indeed.\n2. CM (Daisy or Justin) to contact [Client] within one week with additional seasonal/fair-chance job leads, and to check on SNAP card receipt (follow up with DSS if not received within 1-2 weeks).\n3. Apricot Admin Check: Add [Client] to First Shift waitlist (#9); initialize Briefcase record; confirm supervision type/end date, medication status, and child support status at next contact.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 895,
+      "record_id": "75956",
+      "first_name": "Jermal",
+      "last_name": "Brown",
+      "activity_date": "2026-11-18",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment SCHEDULED",
+      "note_text": "Called and asked about First Shift. I let him know he'd need to be rescreened since his last consultation was in May. We scheduled it for tomorrow.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "updated_at": "2026-11-23T13:46:29.403Z"
+}

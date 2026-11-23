@@ -1,0 +1,152 @@
+{
+  "participant_key": "Donte_Gilliard",
+  "participant_name": "Donte Gilliard",
+  "client_records": [
+    {
+      "id": 51,
+      "first_name": "Donte",
+      "last_name": "Gilliard",
+      "apricot_id": "82021",
+      "location": "Charleston",
+      "status": "active",
+      "stability_tier": "stable",
+      "phone": null,
+      "email": null,
+      "notes": "1. Send warehouse jobs\n2. Birth certificate\n\nCurrently lives with his mom, has a valid driver's license but no car. His mom can drive him to and from T90. While he waits for a program spot, he wants help finding work. Hasn't been to temp agencies in person, I suggested he do that. He has a resume and is interested in warehouse work. I will send him any job opportunities in the area for him to apply to.",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-11-22 17:36:06",
+      "case_manager": "Daisy Boynton",
+      "enrollment_start": "2026-10-15",
+      "gate1_pct": 38,
+      "gate2_pct": 60,
+      "gate3_pct": 14,
+      "gate4_pct": 0,
+      "last_contact_date": "2026-11-18",
+      "last_contact_staff": "Daisy Boynton",
+      "last_contact_activity": "Barrier removal – problem-solving or coordination support",
+      "has_case_plan": 1,
+      "case_plan_text": "1. Send warehouse jobs\n2. Birth certificate\n\nCurrently lives with his mom, has a valid driver's license but no car. His mom can drive him to and from T90. While he waits for a program spot, he wants help finding work. Hasn't been to temp agencies in person, I suggested he do that. He has a resume and is interested in warehouse work. I will send him any job opportunities in the area for him to apply to."
+    }
+  ],
+  "sessions": [
+    {
+      "id": 396,
+      "client_id": 51,
+      "session_date": "2026-11-18",
+      "session_title": "Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Called to check in to see if he was still interested in reentry nav. He said he was. He hasn't gotten his birth certificate yet, so I gave him the information on how to do that. He said he'd work on that and I told him to keep me posted. No other needs as of now. Still working at Sonic.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 290,
+      "client_id": 51,
+      "session_date": "2026-11-02",
+      "session_title": "Check-in conversation – brief status update (Terrence Brown)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Contacted Donte Gillard to follow up on his missed orientation scheduled for the previous Friday. Donte explained that he had an interview with Sonic and secured a night-shift position starting this week. Because his shift begins at 3:00 PM, which conflicts directly with the program schedule (9:00 AM to 3:00 PM), Donte stated he cannot participate. Noted that Dante would be removed from the waitlist, reiterated the program’s job-placement benefits, and encouraged him to reach back out if he wants to join in the future.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 233,
+      "client_id": 51,
+      "session_date": "2026-10-26",
+      "session_title": "Check-in conversation – brief status update (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Let Donte know that he's 2nd on the waitlist and should be getting a call to schedule orientation in the next week or 2.",
+      "notes_text": "Let Donte know that he's 2nd on the waitlist and should be getting a call to schedule orientation in the next week or 2.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 17:51:41"
+    },
+    {
+      "id": 218,
+      "client_id": 51,
+      "session_date": "2026-10-22",
+      "session_title": "Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Sent Donte the info for an SC Works job fair this coming Tuesday.",
+      "notes_text": "Sent Donte the info for an SC Works job fair this coming Tuesday.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 219,
+      "client_id": 51,
+      "session_date": "2026-10-19",
+      "session_title": "Documentation support – ID, housing forms, paperwork (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Sent Donte the address for the Charleston Vital Records Office so he can order his birth certificate. Also told him I'd look for some job postings this week for him.",
+      "notes_text": "Sent Donte the address for the Charleston Vital Records Office so he can order his birth certificate. Also told him I'd look for some job postings this week for him.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 220,
+      "client_id": 51,
+      "session_date": "2026-10-15",
+      "session_title": "Intake Appointment COMPLETED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Currently lives with his mom, has a valid driver's license but no car. His mom can drive him to and from T90. While he waits for a program spot, he wants help finding work. Hasn't been to temp agencies in person, I suggested he do that. He has a resume and is interested in warehouse work. I will send him any job opportunities in the area for him to apply to.",
+      "notes_text": "Currently lives with his mom, has a valid driver's license but no car. His mom can drive him to and from T90. While he waits for a program spot, he wants help finding work. Hasn't been to temp agencies in person, I suggested he do that. He has a resume and is interested in warehouse work. I will send him any job opportunities in the area for him to apply to.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 221,
+      "client_id": 51,
+      "session_date": "2026-10-13",
+      "session_title": "Intake Appointment SCHEDULED (Kat Norsworthy)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "over the phone (854)246-9434",
+      "notes_text": "over the phone (854)246-9434",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "goals": [
+    {
+      "id": 121,
+      "client_id": 51,
+      "goal_title": "Birth certificate",
+      "target_date": "2026-11-09",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"Birth certificate\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 120,
+      "client_id": 51,
+      "goal_title": "Send warehouse jobs",
+      "target_date": "2026-11-09",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"Send warehouse jobs\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "case_plans": [],
+  "updated_at": "2026-11-23T13:46:29.222Z"
+}

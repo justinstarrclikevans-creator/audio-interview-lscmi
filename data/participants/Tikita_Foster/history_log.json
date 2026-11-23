@@ -1,0 +1,160 @@
+{
+  "participant_key": "Tikita_Foster",
+  "updated_at": "2026-11-23T13:46:29.365Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "6 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:427",
+      "event_key": "reentry_session:427",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Hasn't started his job yet. Apparently has to wait until another guy is fired and then the woman will hire him. He can't get his glasses because he has no money currently. His brother wrecked his car, so he doesn't have ",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:426",
+      "event_key": "reentry_session:426",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "summary": "Found a job fair that's happening today in Spartanburg. Sent Tikita the info.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:429",
+      "event_key": "reentry_session:429",
+      "timestamp": "2026-11-06T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Called Mike at Central West Spartanburg Co-Living and he said he had a vacancy and would love to talk to Tikita. Let Tikita know. Tikita also said he should be starting a job at Innovative Plastics next week.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:428",
+      "event_key": "reentry_session:428",
+      "timestamp": "2026-11-06T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update|Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Tikita spoke with Mike but can't move in yet because he needs to pay $900 up front (and then rent is $750/month after that). Tikita plans to save up from his new job the next week or so and move in once he can pay the $9",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_doc:Tikita_Foster_Spartanburg_interview_guide.docx",
+      "event_key": "doc:Tikita_Foster_Spartanburg_interview_guide.docx",
+      "timestamp": "2026-11-04T16:28:24.463Z",
+      "category": "document",
+      "action": "Archived interview guide",
+      "summary": "Document stored in folder: Tikita_Foster_Spartanburg_interview_guide.docx",
+      "filename": "Tikita_Foster_Spartanburg_interview_guide.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Tikita_Foster_Spartanburg_draft_scoring_form.docx",
+      "event_key": "doc:Tikita_Foster_Spartanburg_draft_scoring_form.docx",
+      "timestamp": "2026-11-04T16:28:24.010Z",
+      "category": "document",
+      "action": "Archived draft scoring",
+      "summary": "Document stored in folder: Tikita_Foster_Spartanburg_draft_scoring_form.docx",
+      "filename": "Tikita_Foster_Spartanburg_draft_scoring_form.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Tikita_Foster_Spartanburg_criminal_history.docx",
+      "event_key": "doc:Tikita_Foster_Spartanburg_criminal_history.docx",
+      "timestamp": "2026-11-04T16:28:23.468Z",
+      "category": "document",
+      "action": "Archived criminal history",
+      "summary": "Document stored in folder: Tikita_Foster_Spartanburg_criminal_history.docx",
+      "filename": "Tikita_Foster_Spartanburg_criminal_history.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Tikita_Foster_Spartanburg_criminal_history.md",
+      "event_key": "doc:Tikita_Foster_Spartanburg_criminal_history.md",
+      "timestamp": "2026-11-04T16:28:21.916Z",
+      "category": "document",
+      "action": "Archived criminal history",
+      "summary": "Document stored in folder: Tikita_Foster_Spartanburg_criminal_history.md",
+      "filename": "Tikita_Foster_Spartanburg_criminal_history.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Tikita_Foster_Spartanburg_draft_scoring_form.md",
+      "event_key": "doc:Tikita_Foster_Spartanburg_draft_scoring_form.md",
+      "timestamp": "2026-11-04T16:28:21.916Z",
+      "category": "document",
+      "action": "Archived draft scoring",
+      "summary": "Document stored in folder: Tikita_Foster_Spartanburg_draft_scoring_form.md",
+      "filename": "Tikita_Foster_Spartanburg_draft_scoring_form.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Tikita_Foster_Spartanburg_interview_guide.md",
+      "event_key": "doc:Tikita_Foster_Spartanburg_interview_guide.md",
+      "timestamp": "2026-11-04T16:28:21.916Z",
+      "category": "document",
+      "action": "Archived interview guide",
+      "summary": "Document stored in folder: Tikita_Foster_Spartanburg_interview_guide.md",
+      "filename": "Tikita_Foster_Spartanburg_interview_guide.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Tikita_Foster_Spartanburg_transcript.txt",
+      "event_key": "doc:Tikita_Foster_Spartanburg_transcript.txt",
+      "timestamp": "2026-11-04T16:28:21.915Z",
+      "category": "document",
+      "action": "Archived transcript",
+      "summary": "Document stored in folder: Tikita_Foster_Spartanburg_transcript.txt",
+      "filename": "Tikita_Foster_Spartanburg_transcript.txt",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_reentry_session:313",
+      "event_key": "reentry_session:313",
+      "timestamp": "2026-11-03T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Daisy Boynton)",
+      "summary": "Contact Summary: Conducted initial intake and consultation over the phone with client Tikita Foster. Explained the 8-week Turn90 program structure, expectations, and compensation. Gathered baseline information regarding ",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:314",
+      "event_key": "reentry_session:314",
+      "timestamp": "2026-10-30T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "Intake Appointment SCHEDULED",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

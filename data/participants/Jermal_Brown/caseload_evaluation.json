@@ -1,0 +1,31 @@
+{
+  "participant_key": "Jermal_Brown",
+  "participant_name": "Jermal Brown",
+  "location": "Charleston",
+  "track": "reentry_nav",
+  "lscmi_client_id": "Jermal_Brown_Charleston",
+  "folder_path": "data/participants/Jermal_Brown",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": false,
+  "has_action_plan": false,
+  "has_legacy_case_briefs": false,
+  "action_plan_agreement": "pending_review",
+  "waitlist_ready": false,
+  "waitlist_score": "6/9",
+  "medical_appointments_applicable": false,
+  "skillcat_pathway": "HVAC",
+  "skillcat_modules_completed": 0,
+  "cm_notes_count": 0,
+  "apricot_notes_count": 3,
+  "reentry_sessions_count": 3,
+  "history_events_count": 4,
+  "documents_count": 0,
+  "data_evaluation_flags": [
+    {
+      "code": "FLAG-WAITLIST-GAP",
+      "severity": "warning",
+      "message": "6/9 First Shift Waitlist Briefcase items ready. Missing: 1. State ID or Driver's License (DL), 2. Social Security Card, 3. Birth Certificate"
+    }
+  ],
+  "updated_at": "2026-11-23T13:46:29.404Z"
+}

@@ -1,0 +1,61 @@
+{
+  "participant_key": "Michael_Butler",
+  "updated_at": "2026-11-23T13:46:29.579Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-19T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "4 chronological Apricot note(s) archived (No (Needs Reentry Nav Case Plan)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:473",
+      "event_key": "reentry_session:473",
+      "timestamp": "2026-11-19T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Michael called to tell me he has a meeting with an Oxford House this afternoon. I told him to keep us posted on how it goes.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:475",
+      "event_key": "reentry_session:475",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Daisy Boynton)",
+      "summary": "CONTACT SUMMARY & SESSION OVERVIEW\n- Session Stage: First Session / Intake\n- Summary: Phone intake and screening with [Client], who was released from federal custody (BOP/halfway house) on Friday 11/13/2026 and is now on",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:474",
+      "event_key": "reentry_session:474",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Sent him info for Transitions Homeless Center and Oliver Gospel Mission.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:476",
+      "event_key": "reentry_session:476",
+      "timestamp": "2026-11-16T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "Intake Appointment SCHEDULED",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

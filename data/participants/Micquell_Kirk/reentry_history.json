@@ -1,0 +1,114 @@
+{
+  "participant_key": "Micquell_Kirk",
+  "participant_name": "Micquell Kirk",
+  "client_records": [
+    {
+      "id": 75,
+      "first_name": "Micquell",
+      "last_name": "Kirk",
+      "apricot_id": "83051",
+      "location": "Columbia",
+      "status": "active",
+      "stability_tier": "stable",
+      "phone": null,
+      "email": null,
+      "notes": "Find employment",
+      "created_at": "2026-11-22 17:35:09",
+      "updated_at": "2026-11-22 17:36:06",
+      "case_manager": "Daisy Boynton",
+      "enrollment_start": "2026-11-09",
+      "gate1_pct": 50,
+      "gate2_pct": 70,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "last_contact_date": "2026-11-18",
+      "last_contact_staff": "Daisy Boynton",
+      "last_contact_activity": "Employment support – applications, resume, interview prep",
+      "has_case_plan": 1,
+      "case_plan_text": "Find employment"
+    }
+  ],
+  "sessions": [
+    {
+      "id": 448,
+      "client_id": 75,
+      "session_date": "2026-11-18",
+      "session_title": "Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Sent Micquell the link to HoneyBaked for their season job openings. He said he applied and also plans to attend the SC Works job fair tomorrow (11/19)  in Columbia. He has a resume he plans to print out.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 449,
+      "client_id": 75,
+      "session_date": "2026-11-17",
+      "session_title": "Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Sent Micquell 2 more job fairs in Columbia.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 451,
+      "client_id": 75,
+      "session_date": "2026-11-09",
+      "session_title": "Intake Appointment COMPLETED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "**Contact Summary:** Completed initial Reentry Navigation consultation with Micquell Kirk for the Columbia center. Client expressed strong interest in the in-person 8-week program. Due to a current waitlist of 1+ months in Columbia, Micquell agreed to utilize Reentry Navigation services to seek immediate interim employment. Client is highly stable with no immediate barriers: he has a car, an active driver's license, stable housing, all vital documents, a high school diploma, and a completed resume. \n\n**Case Plan Goal Progress:** Initiated Reentry Navigation; established a primary goal of securing interim employment while awaiting a Turn90 cohort slot.\n\n**Briefcase & Gate 1-4 Updates:** Verified as COMPLETE (Green): State ID, Social Security Card, Birth Certificate, Driver's License, Transportation Plan (owns car), Housing Plan (stable apartment), and Resume Completed. \n\n**Referrals/Resources Provided:** Navigator agreed to text the client details for two upcoming job fairs in Columbia (this Thursday and next Thursday) along with other specific job openings that match his warehouse/retail experience.\n\n**Next Steps:** Send job fair and job opening text messages today. Follow up next week to review his job fair attendance and application progress.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 450,
+      "client_id": 75,
+      "session_date": "2026-11-09",
+      "session_title": "Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Sent Micquell the info for the 2 job fairs coming up in Columbia (11/12 and 11/19).",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 452,
+      "client_id": 75,
+      "session_date": "2026-11-06",
+      "session_title": "Intake Appointment SCHEDULED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Intake Appointment SCHEDULED",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "goals": [
+    {
+      "id": 149,
+      "client_id": 75,
+      "goal_title": "Find employment",
+      "target_date": "2026-12-06",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"Find employment\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-11-22 17:35:09",
+      "updated_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "case_plans": [],
+  "updated_at": "2026-11-23T13:46:29.496Z"
+}

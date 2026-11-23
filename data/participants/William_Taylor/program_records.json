@@ -1,0 +1,116 @@
+{
+  "participant_key": "William_Taylor",
+  "participant_name": "William Taylor",
+  "profile_records": [
+    {
+      "id": 53,
+      "user_id": 55,
+      "current_gate": 3,
+      "w9_status": "verified",
+      "dl_status": "valid",
+      "dl_notes": "some days my mom or girlfriend can't take me work so I'm going to have to catch the city bus",
+      "child_support_status": "none",
+      "child_support_notes": "",
+      "housing_status": "stable",
+      "substance_status": "none",
+      "mental_health_status": "none",
+      "transportation_status": "CARTA Bus Line",
+      "court_dates": null,
+      "overall_status": "archived",
+      "termination_reason": null,
+      "termination_date": null,
+      "updated_at": "2026-09-23 11:52:26",
+      "stability_red_flags": null,
+      "director_override": 0,
+      "director_override_notes": null,
+      "director_override_by": null,
+      "reentry_status": "none",
+      "has_reentry_plan": 0,
+      "enrollment_date": "2026-09-14",
+      "correction_notes": null,
+      "supabase_id": "9a49bf7d-6057-4661-bc1a-71e9d63aa251",
+      "record_id": null
+    }
+  ],
+  "case_plan_triggers": [],
+  "daily_points": [
+    {
+      "id": 69,
+      "user_id": 55,
+      "date": "2026-09-21",
+      "points_earned": 10,
+      "max_points": 50,
+      "attendance_status": "present",
+      "notes": "Imported via Render Report",
+      "imported_from_apricot": 1,
+      "created_at": "2026-09-22 17:55:53"
+    }
+  ],
+  "drug_tests": [
+    {
+      "id": 10,
+      "user_id": 55,
+      "test_date": "2026-09-22",
+      "result": "negative",
+      "substances_detected": null,
+      "notes": "Imported via Render Report",
+      "administered_by": null,
+      "created_at": "2026-09-22 17:55:53"
+    }
+  ],
+  "benefits": [
+    {
+      "id": 6988,
+      "user_id": 55,
+      "benefit_type": "medicaid",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-20 20:58:18"
+    },
+    {
+      "id": 6989,
+      "user_id": 55,
+      "benefit_type": "snap",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-20 20:58:18"
+    },
+    {
+      "id": 6990,
+      "user_id": 55,
+      "benefit_type": "tanf",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-20 20:58:18"
+    },
+    {
+      "id": 6987,
+      "user_id": 55,
+      "benefit_type": "welvista",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-20 20:58:18"
+    }
+  ],
+  "resumes": [],
+  "db_documents": [],
+  "legacy_briefcase_items_count": 35,
+  "legacy_gate_criteria_count": 27,
+  "updated_at": "2026-11-23T13:46:28.673Z"
+}

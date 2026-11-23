@@ -1,0 +1,101 @@
+{
+  "participant_key": "Rayshad_Prioleau",
+  "participant_name": "Rayshad Prioleau",
+  "client_records": [
+    {
+      "id": 76,
+      "first_name": "Rayshad",
+      "last_name": "Prioleau",
+      "apricot_id": "83149",
+      "location": "Charleston",
+      "status": "active",
+      "stability_tier": "stable",
+      "phone": null,
+      "email": null,
+      "notes": "Apply for SNAP and get social security card",
+      "created_at": "2026-11-22 17:35:09",
+      "updated_at": "2026-11-22 17:36:06",
+      "case_manager": "Daisy Boynton",
+      "enrollment_start": "2026-11-10",
+      "gate1_pct": 38,
+      "gate2_pct": 50,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "last_contact_date": "2026-11-18",
+      "last_contact_staff": "Daisy Boynton",
+      "last_contact_activity": "Employment support – applications, resume, interview prep",
+      "has_case_plan": 1,
+      "case_plan_text": "Apply for SNAP and get social security card"
+    }
+  ],
+  "sessions": [
+    {
+      "id": 453,
+      "client_id": 76,
+      "session_date": "2026-11-18",
+      "session_title": "Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Sent the hiring page for HoneyBaked season job openings.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 454,
+      "client_id": 76,
+      "session_date": "2026-11-11",
+      "session_title": "Documentation support – ID, housing forms, paperwork (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Filled out applications for SNAP, Medicaid, voter registration, and Social Security Card replacement",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 455,
+      "client_id": 76,
+      "session_date": "2026-11-10",
+      "session_title": "Intake Appointment COMPLETED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Contact Summary: Completed initial phone consultation with Reyshad Prioleau. Assessed housing, transportation, criminal history, education, and employment history. Reyshad has stable housing, a valid SC driver's license, and his own vehicle. He has all primary vital documents (Birth Certificate, SS Card, ID). He was released from prison 9 days ago after serving a mandatory sentence for firearm and attempted armed robbery charges. Currently on community supervision until December 30th 2027. He completed the 9th grade and is interested in obtaining forklift certification. \nCase Plan Goal Progress: No active goals yet. Discussed applying for SNAP benefits while on the waitlist.\nBriefcase & Gate 1-4 Updates: Verified possession of Birth Certificate, SS Card, and valid Driver's License. Assessed need for SNAP food stamps. Added to Turn90 waitlist (approx. 2-3 weeks).\nReferrals/Resources Provided: Offered Reentry Navigation services while on the waitlist. Scheduled phone appointment to apply for SNAP.\nNext Steps: Call client tomorrow at 9:30 AM to complete SNAP application.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 456,
+      "client_id": 76,
+      "session_date": "2026-11-09",
+      "session_title": "Intake Appointment SCHEDULED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Intake Appointment SCHEDULED",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "goals": [
+    {
+      "id": 150,
+      "client_id": 76,
+      "goal_title": "Apply for SNAP and get social security card",
+      "target_date": "2026-12-06",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"Apply for SNAP and get social security card\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-11-22 17:35:09",
+      "updated_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "case_plans": [],
+  "updated_at": "2026-11-23T13:46:29.508Z"
+}

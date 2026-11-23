@@ -7,7 +7,7 @@
   "client_id": null,
   "has_chronic_health_condition": "no",
   "dl_is_suspended": "yes",
-  "child_support_applicable": "no",
+  "child_support_applicable": "yes",
   "supervision_officer_details": "",
   "chronic_condition_details": "",
   "medical_appointments_applicable": false,
@@ -55,10 +55,10 @@
       "updated_at": "2026-11-20T19:43:31.661Z"
     },
     "child_support_contact": {
-      "value": "not_applicable",
-      "notes": "",
-      "source": "default",
-      "updated_at": "2026-11-20T19:43:31.661Z"
+      "value": "needs_contact",
+      "notes": "Detected child support reference in loaded records",
+      "source": "loaded_text",
+      "updated_at": "2026-11-23T13:46:26.469Z"
     },
     "supervision_information": {
       "value": "active_logged_no_conflict",
@@ -76,19 +76,19 @@
       "value": "not_started",
       "notes": "0 modules completed (0.0 hrs)",
       "source": "skillcat_scraper",
-      "updated_at": "2026-11-22T17:18:01.432Z"
+      "updated_at": "2026-11-23T13:46:28.361Z"
     },
     "resume_and_email": {
       "value": "completed",
       "notes": "Resume completed",
       "source": "db_import",
-      "updated_at": "2026-11-22T17:18:01.432Z"
+      "updated_at": "2026-11-23T13:46:28.361Z"
     },
     "w9_and_banking": {
       "value": "verified",
       "notes": "Bank account / W-9 verified",
       "source": "db_import",
-      "updated_at": "2026-11-22T17:18:01.432Z"
+      "updated_at": "2026-11-23T13:46:28.361Z"
     },
     "transportation_and_gear": {
       "value": "commute_only_needs_gear",
@@ -115,9 +115,9 @@
       "updated_at": "2026-11-20T19:43:31.661Z"
     }
   },
-  "waitlist_met_count": 9,
+  "waitlist_met_count": 8,
   "waitlist_total_required": 9,
-  "waitlist_ready": true,
+  "waitlist_ready": false,
   "waitlist_checklist": [
     {
       "key": "state_id_or_dl",
@@ -186,10 +186,10 @@
       "key": "child_support_contact",
       "number": 8,
       "title": "8. Contact Made with Child Support (if applicable)",
-      "value": "not_applicable",
-      "label": "Not Applicable (No Child Support Case / Order)",
-      "ready": true,
-      "notes": ""
+      "value": "needs_contact",
+      "label": "Applicable — Needs Contact with Child Support / Unaddressed Arrears",
+      "ready": false,
+      "notes": "Detected child support reference in loaded records"
     },
     {
       "key": "supervision_information",

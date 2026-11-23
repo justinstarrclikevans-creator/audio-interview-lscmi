@@ -1,0 +1,113 @@
+{
+  "participant_key": "Brandon_Still",
+  "participant_name": "Brandon Still",
+  "profile_records": [
+    {
+      "id": 43,
+      "user_id": 45,
+      "current_gate": 4,
+      "w9_status": "verified",
+      "dl_status": "valid",
+      "dl_notes": "Have a car",
+      "child_support_status": "none",
+      "child_support_notes": "",
+      "housing_status": "stable",
+      "substance_status": "none",
+      "mental_health_status": "none",
+      "transportation_status": "Personal Vehicle / Ride",
+      "court_dates": null,
+      "overall_status": "archived",
+      "termination_reason": null,
+      "termination_date": null,
+      "updated_at": "2026-09-23 11:52:26",
+      "stability_red_flags": "[{\"category\":\"Cognitive / Attitude\",\"flag\":\"Reactive Hostility & Aggressive Boundary-Setting\",\"evidence\":\"Explains that he 'sets the tone' and lets people know he 'ain't going to play' to avoid being 'run over', which historically led to a physical altercation while in federal prison.\",\"severity\":\"high\",\"navigator_recommendation\":\"Use Modeling Neutrality (1.5). Do not debate or challenge his boundary-setting statements. Use reflective questioning to examine the cost/benefit of aggressive responses on his goal of early federal supervision termination.\"},{\"category\":\"Substance / Health\",\"flag\":\"Untreated ADHD & Daytime Sleepiness\",\"evidence\":\"Federal Supervision restrictions prevent Adderall use in the halfway house, causing severe daytime sleepiness, lack of focus, and restlessness.\",\"severity\":\"high\",\"navigator_recommendation\":\"Immediately coordinate with medical providers at Cooperative Health or Welvista for a non-stimulant ADHD assessment to stabilize focus and energy before placing him in high-vigilance work environments.\"},{\"category\":\"Cognitive / Attitude\",\"flag\":\"Externalizing Blame & Minimization\",\"evidence\":\"Exhibits significant denial/minimization, making excuses for past behavior and blaming external sources for current difficulties.\",\"severity\":\"medium\",\"navigator_recommendation\":\"Acknowledge frustrations without validating excuses (3.2). Link all program expectations and employer rules directly to his self-interest: maintaining steady pay and securing early release from supervision.\"},{\"category\":\"Stability Risk\",\"flag\":\"Severe Vocational Deficits & Unemployment History\",\"evidence\":\"Has only held two jobs in his life (both in his 20s), experienced a continuous 3-year gap prior to arrest, and lacks formal trade credentials.\",\"severity\":\"high\",\"navigator_recommendation\":\"Match with high-structure, physical, 1st-shift labor roles where his weightlifting regimen and energy can be productively channeled while providing daily routine.\"}]",
+      "director_override": 0,
+      "director_override_notes": null,
+      "director_override_by": null,
+      "reentry_status": "at_risk",
+      "has_reentry_plan": 1,
+      "enrollment_date": null,
+      "correction_notes": null,
+      "supabase_id": "22540693-bac0-4d22-86e0-7297a26e986b",
+      "record_id": null
+    }
+  ],
+  "case_plan_triggers": [],
+  "daily_points": [],
+  "drug_tests": [],
+  "benefits": [
+    {
+      "id": 78,
+      "user_id": 45,
+      "benefit_type": "medicaid",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    },
+    {
+      "id": 79,
+      "user_id": 45,
+      "benefit_type": "snap",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    },
+    {
+      "id": 80,
+      "user_id": 45,
+      "benefit_type": "tanf",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    },
+    {
+      "id": 77,
+      "user_id": 45,
+      "benefit_type": "welvista",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    }
+  ],
+  "resumes": [
+    {
+      "id": 11,
+      "user_id": 45,
+      "resume_data_json": "{\"skills\":\"Team player \\nWelding certification \",\"experience\":\"Frc construction pipe layer\"}",
+      "updated_at": "2026-09-23 11:52:26"
+    }
+  ],
+  "db_documents": [
+    {
+      "id": 26,
+      "user_id": 45,
+      "doc_type": "case_brief",
+      "title": "Clinical Case Brief - Brandon Still",
+      "filename": "Brandon_Still_Case_Brief_1788826686755.pdf",
+      "file_path": "/data/Brandon_Still_Case_Brief_1788826686755.pdf",
+      "file_size": 60140,
+      "status": "active",
+      "metadata_json": "{\"originalName\":\"4385_2579_BrandonStillCaseMnagementBrief.pdf\"}",
+      "uploaded_at": "2026-09-08 00:18:06"
+    }
+  ],
+  "legacy_briefcase_items_count": 66,
+  "legacy_gate_criteria_count": 22,
+  "updated_at": "2026-11-23T13:46:28.556Z"
+}

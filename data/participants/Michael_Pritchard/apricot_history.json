@@ -1,0 +1,72 @@
+{
+  "participant_key": "Michael_Pritchard",
+  "participant_name": "Michael Pritchard",
+  "apricot_ids": [
+    "81142"
+  ],
+  "evaluations": [],
+  "notes_count": 4,
+  "processed_notes": [
+    {
+      "id": 636,
+      "record_id": "81142",
+      "first_name": "Michael",
+      "last_name": "Pritchard",
+      "activity_date": "2026-10-12",
+      "staff_name": "Matt Carlisle",
+      "service_context": "First Shift",
+      "interaction_type": "Behavioral incident – disruption, conflict, or left early",
+      "note_text": "After the participants had left for the day, Matthew Brannon, a Turn90 employee, approached me to report an incident that occurred during the lunch break. Mr. Brannon stated that Mr. Pritchard had approached him and asked if he would be interested in purchasing Suboxone. Mr. Brannon declined, and the conversation ended. However, he stated that the interaction had continued to bother him.\n\nI contacted Mr. Pritchard and informed him that I needed to discuss a conversation that was overheard, in which he had offered Suboxone to another individual. Mr. Pritchard did not deny the allegation and instead apologized for his actions.\n\nI explained to Mr. Pritchard that this behavior was unacceptable and could not be permitted within the program. As a result, I informed him that he would not be permitted to return to Turn90. I offered to assist him in identifying alternative resources and services. Mr. Pritchard expressed appreciation for the offer and stated that he planned to reach out the following day.",
+      "center_location": "",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 635,
+      "record_id": "81142",
+      "first_name": "Michael",
+      "last_name": "Pritchard",
+      "activity_date": "2026-10-09",
+      "staff_name": "Matt Carlisle",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Check-in conversation – brief status update",
+      "note_text": "Mr. Pritchard came in this afternoon and provided documentation of his Suboxone prescription. He then completed a urinalysis, which returned negative for all other substances tested. He is cleared to begin the program on Monday.",
+      "center_location": "",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 634,
+      "record_id": "81142",
+      "first_name": "Michael",
+      "last_name": "Pritchard",
+      "activity_date": "2026-09-28",
+      "staff_name": "Matt Carlisle",
+      "service_context": "First Shift",
+      "interaction_type": "Check-in conversation – brief status update",
+      "note_text": "Michael’s enrollment is being postponed for one week due to a positive urinalysis for BUP. He acknowledged using Suboxone last week without a prescription. Michael was upfront and forthcoming about the use and expressed sincere remorse.\n\nI explained that he will be eligible to begin the First Shift Program next Monday, provided he is able to pass a urinalysis at that time.",
+      "center_location": "",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 633,
+      "record_id": "81142",
+      "first_name": "Michael",
+      "last_name": "Pritchard",
+      "activity_date": "2026-09-25",
+      "staff_name": "Matt Carlisle",
+      "service_context": "First Shift",
+      "interaction_type": "Intake Appointment SCHEDULED|Intake Appointment COMPLETED",
+      "note_text": "Michael is a 55-year-old male from Mayo, South Carolina. He was widowed in 2017 and has four children. Three are adults, and his 14-year-old daughter is currently in kinship foster care. Michael was adopted and reports that both of his adoptive parents are deceased. He currently has no relationship with his siblings. He reports that his biological brother was killed during a standoff with law enforcement.\n\nMichael is working to rebuild his relationship with his oldest daughter, Daisy. He reports that his two sons are doing well but is currently separated from them.\n\nMichael reports a history of methamphetamine use beginning at age 19. He has maintained sobriety for approximately seven months and identifies his grandchildren as a primary motivation for maintaining his sobriety.\n\nHe reports a history of property-related offenses. He was most recently released from Spartanburg County custody last Wednesday following a probation violation. He is currently on home detention but is no longer on probation.\n\nMichael was diagnosed with colon cancer in 2023 and reports that he underwent surgery to remove the cancer.\n\nMichael has been accepted into Turn90's First Shift Program and is scheduled to begin the program on Monday.",
+      "center_location": "",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "updated_at": "2026-11-23T13:46:29.968Z"
+}

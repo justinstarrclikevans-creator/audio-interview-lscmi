@@ -1,0 +1,171 @@
+{
+  "participant_key": "Vantrone_Mack",
+  "updated_at": "2026-11-23T13:46:29.179Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-11T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "14 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:381",
+      "event_key": "reentry_session:381",
+      "timestamp": "2026-11-11T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Transportation support (non-financial) – planning or coordination only (Daisy Boynton)",
+      "summary": "Called to check in, no answer. Sent the following text: \"Hey Vantrone. Mr. Swick got back to me and said the extra $20 coming out of your paycheck is due to your arrears. He's going to look into whether there's anything ",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:380",
+      "event_key": "reentry_session:380",
+      "timestamp": "2026-11-11T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Spoke on the phone with Vantrone. This week he started getting $30 rides from the woman who lives next door to him which is saving him a lot on transportation. He wants to hold off of finding housing closer to his work i",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:382",
+      "event_key": "reentry_session:382",
+      "timestamp": "2026-11-10T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Mr. Swick got back to me about Vantrone's child support:\n\n\"For Mr. Mack, his Case ID is 3004579 with a monthly obligation of $400 and a current arrearage of $9,012.13. There are 2 children in the case and it is possible ",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:383",
+      "event_key": "reentry_session:383",
+      "timestamp": "2026-11-09T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Sent Mr. Swick an email asking what Vantrone owes in child support currently.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:384",
+      "event_key": "reentry_session:384",
+      "timestamp": "2026-11-04T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Vantrone asked again about help with his license. I reiterated that RDF can only pay off $750 in fees, so if he can start paying it down until he gets to $750 left, that will probably give us the best chance of an RDF ap",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:282",
+      "event_key": "reentry_session:282",
+      "timestamp": "2026-11-02T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Vantrone sent me his work schedule for November and told me when I'd be able to get in touch with him. I updated him that I haven't heard back from DSS yet about his child support and asked him if he has found any clothe",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:283",
+      "event_key": "reentry_session:283",
+      "timestamp": "2026-10-30T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Vantrone asked to join the program for the month of Nov. because he works nights starting next month. I let him know to join the program he'd need transportation and that our program is 8 weeks long so it would continue ",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:285",
+      "event_key": "reentry_session:285",
+      "timestamp": "2026-10-27T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Wasn't able to get to the clothing closet because it was too soon to schedule a ride. I offered to look into housing programs closer to pubic transportation, but he said he really likes where he is. He has a ride schedul",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:284",
+      "event_key": "reentry_session:284",
+      "timestamp": "2026-10-27T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "He owes $1700 in fees and a $100 reinstatement fee for his license (files in RN case plan). I told him if he can save up to cover $1000 of the fees, we can apply for RDF funding for the rest. I also reached out to Lexing",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:286",
+      "event_key": "reentry_session:286",
+      "timestamp": "2026-10-26T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Couldn't get the phone to ring through, so sent a text with the info for a free clothing closet that's open tomorrow. He originally said he's off tomorrow, so I told him to let me know if that's not the case and he needs",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:287",
+      "event_key": "reentry_session:287",
+      "timestamp": "2026-10-23T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Daisy Boynton)",
+      "summary": "Vantrone completed his initial intake and consultation over the phone. He is currently residing at Timeless Transitional Housing and recently secured employment at Jushi, working 12-hour swing shifts. While he has his ba",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:191",
+      "event_key": "reentry_session:191",
+      "timestamp": "2026-10-23T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Daisy Boynton)",
+      "summary": "Phone Intake/Screening: Vantrone Mack, 10/23/26\n\nBackground/Referral: Vantrone knew about Turn90 from a letter he received while in prison. He got his current job through Turn90, and Turn90 also set up a Vocational Rehab",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:192",
+      "event_key": "reentry_session:192",
+      "timestamp": "2026-10-22T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "Called from new number to make another appt.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:193",
+      "event_key": "reentry_session:193",
+      "timestamp": "2026-10-05T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "No answer. VM left.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

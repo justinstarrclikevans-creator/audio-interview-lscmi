@@ -1,0 +1,72 @@
+{
+  "participant_key": "Henry_Anderson",
+  "updated_at": "2026-11-23T13:46:29.392Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-12T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "5 chronological Apricot note(s) archived (No (Needs Reentry Nav Case Plan)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:334",
+      "event_key": "reentry_session:334",
+      "timestamp": "2026-11-12T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Kat Norsworthy)",
+      "summary": "Henry had his first home visit today and everything went well.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:335",
+      "event_key": "reentry_session:335",
+      "timestamp": "2026-11-10T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Kat Norsworthy)",
+      "summary": "Henry called because he was supposed to have a home visit from his supervision officer but was downtown and not at his house. We talked about it and he decided he should call and let the officer know he was downtown help",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:336",
+      "event_key": "reentry_session:336",
+      "timestamp": "2026-11-09T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Kat Norsworthy)",
+      "summary": "Henry came in to go over his disability app using the computer but we could not verify his account with SSI because he lost his ID card. We ordered him a new ID card and will return to the SSI app when we have it and can",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:337",
+      "event_key": "reentry_session:337",
+      "timestamp": "2026-11-06T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Kat Norsworthy)",
+      "summary": "We spoke, Henry expressed that he used his phone to apply for disability but wasn't confident that it was done correctly so I told him to come in Monday and we would take a look. He has applied to some restaurant jobs do",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:338",
+      "event_key": "reentry_session:338",
+      "timestamp": "2026-11-02T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Kat Norsworthy)",
+      "summary": "Henry went to 82 Queen downtown to see about getting a job as he worked there previously. We also did a Welvista and SNAP application. The Welvista is his main focus as he is on medication and indicated that while SCDC g",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

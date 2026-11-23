@@ -2,18 +2,24 @@
   "participant_key": "Chance_Simmons",
   "participant_name": "Chance Simmons",
   "location": "Charleston",
-  "track": "first_shift",
+  "track": "reentry_nav",
+  "lscmi_client_id": "Chance_Simmons_Charleston",
   "folder_path": "data/participants/Chance_Simmons",
   "has_lscmi_brief": false,
   "has_lscmi_scoring": true,
   "has_action_plan": true,
+  "has_legacy_case_briefs": true,
   "action_plan_agreement": "agreed",
   "waitlist_ready": false,
   "waitlist_score": "8/9",
   "medical_appointments_applicable": false,
   "skillcat_pathway": "HVAC",
   "skillcat_modules_completed": 5,
-  "cm_notes_count": 12,
+  "cm_notes_count": 16,
+  "apricot_notes_count": 15,
+  "reentry_sessions_count": 10,
+  "history_events_count": 42,
+  "documents_count": 15,
   "data_evaluation_flags": [
     {
       "code": "FLAG-WAITLIST-GAP",
@@ -26,5 +32,5 @@
       "message": "SkillCat stalled on HVAC pathway (0 modules completed)."
     }
   ],
-  "updated_at": "2026-11-22T17:18:01.503Z"
+  "updated_at": "2026-11-23T13:46:28.612Z"
 }

@@ -9,22 +9,20 @@
   "apricot_id": "77653",
   "phone": "",
   "email": "robert.taylor.77653@firstshift.org",
-  "files": [
-    "Robert_Taylor_Columbia_criminal_history.docx",
-    "Robert_Taylor_Columbia_criminal_history.md",
-    "Robert_Taylor_Columbia_draft_scoring_form.docx",
-    "Robert_Taylor_Columbia_draft_scoring_form.md",
-    "Robert_Taylor_Columbia_interview_guide.docx",
-    "Robert_Taylor_Columbia_interview_guide.md",
-    "Robert_Taylor_Columbia_transcript.txt"
-  ],
+  "lscmi_client_id": "Robert_Taylor_Columbia",
   "folder_slug": "Robert_Taylor",
   "folder_path": "data/participants/Robert_Taylor",
   "has_lscmi_brief": false,
   "has_lscmi_scoring": true,
   "has_action_plan": false,
+  "has_legacy_case_briefs": false,
   "waitlist_ready": false,
   "waitlist_met_count": 5,
   "data_flags_count": 1,
-  "updated_at": "2026-11-22T17:18:01.566Z"
+  "cm_notes_count": 11,
+  "apricot_notes_count": 11,
+  "reentry_sessions_count": 8,
+  "history_events_count": 27,
+  "documents_count": 7,
+  "updated_at": "2026-11-23T13:46:28.814Z"
 }

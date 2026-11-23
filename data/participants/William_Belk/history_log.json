@@ -1,0 +1,237 @@
+{
+  "participant_key": "William_Belk",
+  "updated_at": "2026-11-23T13:46:28.762Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-16T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "13 chronological Apricot note(s) archived (No Plan on File).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_casenote:188",
+      "event_key": "casenote:188",
+      "timestamp": "2026-11-16T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "Summary of Interaction\nEducation & Training (CDL School):\nClient reported he has been approved for CDL (Commercial Driver’s License) school and recently faxed over his required enrollment paperwork.\nClient is awaiting co",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Jenn Jeanquart"
+    },
+    {
+      "id": "ms_casenote:189",
+      "event_key": "casenote:189",
+      "timestamp": "2026-11-09T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "1. Employment & Education Updates\nInterviews & Applications:\nPull-A-Part: Client scheduled an interview tomorrow at 3:30 PM for a machine operator position ($19–$20/hr, 8:00 AM – 5:00 PM operating hours) found via Indeed",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Jenn Jeanquart"
+    },
+    {
+      "id": "ms_doc:William_Belk_Columbia_interview_guide.docx",
+      "event_key": "doc:William_Belk_Columbia_interview_guide.docx",
+      "timestamp": "2026-11-04T16:28:24.542Z",
+      "category": "document",
+      "action": "Archived interview guide",
+      "summary": "Document stored in folder: William_Belk_Columbia_interview_guide.docx",
+      "filename": "William_Belk_Columbia_interview_guide.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:William_Belk_Columbia_draft_scoring_form.docx",
+      "event_key": "doc:William_Belk_Columbia_draft_scoring_form.docx",
+      "timestamp": "2026-11-04T16:28:23.440Z",
+      "category": "document",
+      "action": "Archived draft scoring",
+      "summary": "Document stored in folder: William_Belk_Columbia_draft_scoring_form.docx",
+      "filename": "William_Belk_Columbia_draft_scoring_form.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:William_Belk_Columbia_criminal_history.docx",
+      "event_key": "doc:William_Belk_Columbia_criminal_history.docx",
+      "timestamp": "2026-11-04T16:28:22.145Z",
+      "category": "document",
+      "action": "Archived criminal history",
+      "summary": "Document stored in folder: William_Belk_Columbia_criminal_history.docx",
+      "filename": "William_Belk_Columbia_criminal_history.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:William_Belk_Columbia_criminal_history.md",
+      "event_key": "doc:William_Belk_Columbia_criminal_history.md",
+      "timestamp": "2026-11-04T16:28:20.452Z",
+      "category": "document",
+      "action": "Archived criminal history",
+      "summary": "Document stored in folder: William_Belk_Columbia_criminal_history.md",
+      "filename": "William_Belk_Columbia_criminal_history.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:William_Belk_Columbia_draft_scoring_form.md",
+      "event_key": "doc:William_Belk_Columbia_draft_scoring_form.md",
+      "timestamp": "2026-11-04T16:28:20.451Z",
+      "category": "document",
+      "action": "Archived draft scoring",
+      "summary": "Document stored in folder: William_Belk_Columbia_draft_scoring_form.md",
+      "filename": "William_Belk_Columbia_draft_scoring_form.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:William_Belk_Columbia_interview_guide.md",
+      "event_key": "doc:William_Belk_Columbia_interview_guide.md",
+      "timestamp": "2026-11-04T16:28:20.451Z",
+      "category": "document",
+      "action": "Archived interview guide",
+      "summary": "Document stored in folder: William_Belk_Columbia_interview_guide.md",
+      "filename": "William_Belk_Columbia_interview_guide.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:William_Belk_Columbia_transcript.txt",
+      "event_key": "doc:William_Belk_Columbia_transcript.txt",
+      "timestamp": "2026-11-04T16:28:20.450Z",
+      "category": "document",
+      "action": "Archived transcript",
+      "summary": "Document stored in folder: William_Belk_Columbia_transcript.txt",
+      "filename": "William_Belk_Columbia_transcript.txt",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_casenote:190",
+      "event_key": "casenote:190",
+      "timestamp": "2026-11-03T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "Got his provisional drivers license, which means he can drive anywhere in South Carolina. He starts the ADSAP class this weekend, and will be able to get his full license back after successfully completing the four week ",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Jenn Jeanquart"
+    },
+    {
+      "id": "ms_casenote:137",
+      "event_key": "casenote:137",
+      "timestamp": "2026-10-27T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "[Client] reported a highly successful week with strong progress toward his goals. \n- Briefcase/Gate 2 (DMV): [Client] has a concrete, scheduled plan to finalize his license this week (Permit test Wed, Driving test Thu, L",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Jenn Jeanquart"
+    },
+    {
+      "id": "ms_casenote:75",
+      "event_key": "casenote:75",
+      "timestamp": "2026-10-21T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "[Client] reported a positive week overall. Addressed ongoing halfway house frustrations; [Client] successfully utilized emotional regulation and accountability regarding a recent write-up, recognizing a personal mistake ",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Jenn Jeanquart"
+    },
+    {
+      "id": "ms_casenote:76",
+      "event_key": "casenote:76",
+      "timestamp": "2026-10-19T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Financial assistance – funds provided (bus pass, fees, etc.))",
+      "summary": "Paid $800 in reinstatement fees with the DMV.",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Jenn Jeanquart"
+    },
+    {
+      "id": "ms_casenote:77",
+      "event_key": "casenote:77",
+      "timestamp": "2026-10-15T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "Briefcase/Documentation: [Client] confirmed possession of State ID, SS card, Birth Certificate, stable address, reliable phone, email, and bank account. [Client] does not currently have a resume; CM provided a worksheet ",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Jenn Jeanquart"
+    },
+    {
+      "id": "ms_casenote:78",
+      "event_key": "casenote:78",
+      "timestamp": "2026-10-07T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Check-in conversation – brief status update)",
+      "summary": "Scheduled orientation for 10/9/26.",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Jenn Jeanquart"
+    },
+    {
+      "id": "ms_casenote:79",
+      "event_key": "casenote:79",
+      "timestamp": "2026-10-05T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Case Note (documentation only) – no interaction or service)",
+      "summary": "Made an appt. for Friday to fill out an RDF referral",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Daisy Boynton"
+    },
+    {
+      "id": "ms_casenote:80",
+      "event_key": "casenote:80",
+      "timestamp": "2026-09-28T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Check-in conversation – brief status update)",
+      "summary": "Let him know he's 2nd on waitlist and if he isn't off the waitlist in a couple weeks, I'll write a referral for him for RDF to help with his DL fees.",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Daisy Boynton"
+    },
+    {
+      "id": "ms_casenote:81",
+      "event_key": "casenote:81",
+      "timestamp": "2026-09-22T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Check-in conversation – brief status update)",
+      "summary": "Has been to DMV, has reinstatement fees ($1000) and fines ($330) he's looking for us to help cover them. I let him know we can only cover the fees for the guys in First Shift and that I will update him as he moves up the",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Daisy Boynton"
+    },
+    {
+      "id": "ms_casenote:82",
+      "event_key": "casenote:82",
+      "timestamp": "2026-09-17T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Intake Appointment COMPLETED)",
+      "summary": "## Turn 90: Re-entry Navigation Intake & Check-in Notes\n\n**Participants:**\n\n* Justin (Program Director, Turn 90)\n* William (Client)\n* *Mentioned:* Daisy (Re-entry Navigator, Turn 90)\n\n**Meeting Objective:**\nInitial check",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Justin Evans"
+    },
+    {
+      "id": "ms_casenote:83",
+      "event_key": "casenote:83",
+      "timestamp": "2026-09-16T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Intake Appointment SCHEDULED)",
+      "summary": "Intake Appointment SCHEDULED",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Daisy Boynton"
+    }
+  ]
+}

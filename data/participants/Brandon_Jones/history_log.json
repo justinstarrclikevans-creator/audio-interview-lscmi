@@ -1,0 +1,149 @@
+{
+  "participant_key": "Brandon_Jones",
+  "updated_at": "2026-11-23T13:46:29.315Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "5 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:412",
+      "event_key": "reentry_session:412",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "summary": "Sent Brandon 3 job fairs coming up in Columbia and let him know he's #8 on the waitlist.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:413",
+      "event_key": "reentry_session:413",
+      "timestamp": "2026-11-06T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "summary": "Checked in with Brandon and he said he wanted me to send him more jobs. Sent him the spreadsheet of second chance employers in Columbia and reminded him of the SCOUT job fair on 11/12.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_doc:Brandon_Jones_Columbia_interview_guide.docx",
+      "event_key": "doc:Brandon_Jones_Columbia_interview_guide.docx",
+      "timestamp": "2026-11-04T16:28:24.435Z",
+      "category": "document",
+      "action": "Archived interview guide",
+      "summary": "Document stored in folder: Brandon_Jones_Columbia_interview_guide.docx",
+      "filename": "Brandon_Jones_Columbia_interview_guide.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Brandon_Jones_Columbia_draft_scoring_form.docx",
+      "event_key": "doc:Brandon_Jones_Columbia_draft_scoring_form.docx",
+      "timestamp": "2026-11-04T16:28:23.982Z",
+      "category": "document",
+      "action": "Archived draft scoring",
+      "summary": "Document stored in folder: Brandon_Jones_Columbia_draft_scoring_form.docx",
+      "filename": "Brandon_Jones_Columbia_draft_scoring_form.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Brandon_Jones_Columbia_criminal_history.docx",
+      "event_key": "doc:Brandon_Jones_Columbia_criminal_history.docx",
+      "timestamp": "2026-11-04T16:28:23.367Z",
+      "category": "document",
+      "action": "Archived criminal history",
+      "summary": "Document stored in folder: Brandon_Jones_Columbia_criminal_history.docx",
+      "filename": "Brandon_Jones_Columbia_criminal_history.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Brandon_Jones_Columbia_criminal_history.md",
+      "event_key": "doc:Brandon_Jones_Columbia_criminal_history.md",
+      "timestamp": "2026-11-04T16:28:21.204Z",
+      "category": "document",
+      "action": "Archived criminal history",
+      "summary": "Document stored in folder: Brandon_Jones_Columbia_criminal_history.md",
+      "filename": "Brandon_Jones_Columbia_criminal_history.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Brandon_Jones_Columbia_draft_scoring_form.md",
+      "event_key": "doc:Brandon_Jones_Columbia_draft_scoring_form.md",
+      "timestamp": "2026-11-04T16:28:21.204Z",
+      "category": "document",
+      "action": "Archived draft scoring",
+      "summary": "Document stored in folder: Brandon_Jones_Columbia_draft_scoring_form.md",
+      "filename": "Brandon_Jones_Columbia_draft_scoring_form.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Brandon_Jones_Columbia_interview_guide.md",
+      "event_key": "doc:Brandon_Jones_Columbia_interview_guide.md",
+      "timestamp": "2026-11-04T16:28:21.202Z",
+      "category": "document",
+      "action": "Archived interview guide",
+      "summary": "Document stored in folder: Brandon_Jones_Columbia_interview_guide.md",
+      "filename": "Brandon_Jones_Columbia_interview_guide.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Brandon_Jones_Columbia_transcript.txt",
+      "event_key": "doc:Brandon_Jones_Columbia_transcript.txt",
+      "timestamp": "2026-11-04T16:28:21.200Z",
+      "category": "document",
+      "action": "Archived transcript",
+      "summary": "Document stored in folder: Brandon_Jones_Columbia_transcript.txt",
+      "filename": "Brandon_Jones_Columbia_transcript.txt",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_reentry_session:301",
+      "event_key": "reentry_session:301",
+      "timestamp": "2026-10-29T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "summary": "Sent Brandon a Warehouse Technician job opening to apply for and the flyer for the SCOUT Motors job fair on 11/12.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:302",
+      "event_key": "reentry_session:302",
+      "timestamp": "2026-10-28T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Daisy Boynton)",
+      "summary": "Contact Summary: Initial intake and screening conducted via phone. Brandon is currently residing in a Federal Halfway House in Columbia with approximately 50 days remaining before discharge. He has his birth certificate,",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:303",
+      "event_key": "reentry_session:303",
+      "timestamp": "2026-10-26T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "Intake Appointment SCHEDULED",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "participant_key": "Frederick_Beaufort",
+  "participant_name": "Frederick Beaufort",
+  "client_records": [
+    {
+      "id": 69,
+      "first_name": "Frederick",
+      "last_name": "Beaufort",
+      "apricot_id": "82422",
+      "location": "Columbia",
+      "status": "active",
+      "stability_tier": "at_risk",
+      "phone": null,
+      "email": null,
+      "notes": "",
+      "created_at": "2026-11-22 17:35:09",
+      "updated_at": "2026-11-22 17:36:06",
+      "case_manager": "Unassigned",
+      "enrollment_start": "2026-11-18",
+      "gate1_pct": 0,
+      "gate2_pct": 0,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "last_contact_date": "2026-11-18",
+      "last_contact_staff": "Daisy Boynton",
+      "last_contact_activity": "Intake Appointment COMPLETED",
+      "has_case_plan": 0,
+      "case_plan_text": ""
+    }
+  ],
+  "sessions": [
+    {
+      "id": 407,
+      "client_id": 69,
+      "session_date": "2026-11-18",
+      "session_title": "Intake Appointment COMPLETED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "CONTACT SUMMARY & SESSION OVERVIEW\n- Session Stage: First Session / Intake\n- Summary: Completed phone consultation/intake with [Client], who was released from prison on 10/20/2026 and is currently residing at a halfway house. [Client] was engaged and cooperative and reports no emergency needs. Reviewed documents, license suspension, housing plans, work history, and justice history. [Client] was added to the program waitlist (approx. 18 people ahead; estimated wait of a couple months) and agreed to begin Reentry Navigation by phone in the meantime.\n\nCASE PLAN ALIGNMENT\n- Stability Tier: Stable\n- Stated Goals Progress: [Client] identified three goals: (1) reinstate driver's license, (2) employment, (3) housing in his own apartment. Goals set this session; no progress yet. A case plan will be built around these goals.\n\nBRIEFCASE & GATES 1-4 UPDATES\n- Gate 1 (Vital IDs, Meds, Supervision): Has birth certificate and SS card. His only photo ID is a driver's license, which is currently suspended. He has no separate state ID. Takes no medications. Currently at a halfway house with a projected release of 12/29/2026, possibly earlier as good-time days are applied (per conversation with halfway house staff today). Three years of supervision will follow release.\n- Gate 2 (Housing, Comms, Legal, Resume): Housing: currently at halfway house. Not interested in transitional or shared housing and wants his own apartment. Has family he can stay with as a fallback. DMV: license was suspended during incarceration after his fiancée had an uninsured accident in a vehicle registered in his name, and he is being held liable. To reinstate, he reports he must pay approx. $1,400 plus a $2,500 deposit (to go to the other party) and carry SR-22 insurance for 3 years. Child support: none. Resume: no Turn90 resume yet.\n- Gate 3 (Health, Recovery, Banking): No limiting health conditions. Denies current drug or alcohol use and reports past marijuana use only in his youth. Reported selling drugs but not using them. Bank account not discussed.\n- Gate 4 (Work Gear, Transit, Employment/Finance): Transit: currently walking. Recently purchased a car but it is not on site, and he is not driving it while his license is suspended. Employment/finance plan not yet started.\n\nEMPLOYMENT, HOUSING & STABILITY UPDATES\n- Education: GED.\n- Work history: machine operator at Kawashima (Lugoff, SC),",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 408,
+      "client_id": 69,
+      "session_date": "2026-11-17",
+      "session_title": "Intake Appointment SCHEDULED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Frederick called saying he changed his mind and is interested in the program. We scheduled his consultation for tomorrow.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 409,
+      "client_id": 69,
+      "session_date": "2026-10-23",
+      "session_title": "Intake Appointment SCHEDULED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "When I called to do his consultation, he decided he's not interested in our program for right now because he has some job prospects that look promising. I told him he's welcome to give us a call back if things don't work out.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "goals": [],
+  "case_plans": [],
+  "updated_at": "2026-11-23T13:46:29.426Z"
+}

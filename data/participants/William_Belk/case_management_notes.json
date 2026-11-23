@@ -1,6 +1,42 @@
 {
   "case_notes": [
     {
+      "id": 188,
+      "user_id": 73,
+      "author_id": null,
+      "author_name": "Jenn Jeanquart",
+      "session_date": "2026-11-16",
+      "note_type": "Coaching / case management session – structured or in-depth meeting",
+      "category": "First Shift",
+      "content": "Summary of Interaction\nEducation & Training (CDL School):\nClient reported he has been approved for CDL (Commercial Driver’s License) school and recently faxed over his required enrollment paperwork.\nClient is awaiting confirmation from the school representative regarding his official start date. He noted that classes start weekly on Mondays, meaning his wait time should be minimal pending waitlist availability.\nFacility Passes & Recreation:\nClient plans to submit his pass requests today, utilizing three passes from his case manager alongside two social passes to maintain a five-day-a-week gym schedule while also visiting his father on the weekend.\nEmployment Search & Barriers:\nPull-A-Part: Client has not yet heard back regarding an application. Client and case manager discussed that the employer may be hesitant due to the client's halfway house status and background. Client also noted that non-operator roles at that facility would not be a good fit due to facility rules regarding work boots and exposure to oil/gas.\nLocal Canvassing: Client has submitted numerous applications with limited responses so far. He plans to visit several local businesses in person—including CAT, equipment rental companies, trucking businesses, and Hardee's—to drop off physical copies of his resume.\nInternational Paper: Case manager identified a new opening for a 2nd-shift forklift driver at the West Columbia location starting at $23.69/hour. While the Columbia location does not accept halfway house residents, the client previously applied to the Lexington branch.\nResume Updates & Technical Support:\nCase manager reviewed the client's resume and identified that his prior forklift experience from Charlotte Pipe and Foundry was missing.\nCase manager updated the shared Google Drive resume to include his forklift experience and verified his forklift certification is listed. Printed physical copies for the client's in-person job canvassing.\nAction Plan & Next Steps\nClient:\nFollow up with the CDL school representative today to confirm receipt of faxed paperwork and secure a Monday start date.\nSubmit pass requests today for gym access and weekend family visit.\nSubmit an online application specifically for the 2nd-shift forklift driver position at International Paper (West Columbia).\nDownload the updated resume as a PDF from Google Drive (deleting old versions to avoid confusion) and distribute printed copies to local businesses (CAT, equipment rentals, etc.).\nCase Manager:\nShow the client how to access the updated resume via the \"Shared with me\" tab on Google Drive and save it as a PDF before he leaves.\nEmail the hiring contact at International Paper to advocate for the client once his application for the West Columbia forklift position is submitted.\nClient Presentation\nClient was engaged, proactive, and receptive to feedback throughout the session. Rapport remains strong, and client demonstrated a positive attitude toward his reentry goals and job search strategy.",
+      "apricot_exported": 1,
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 189,
+      "user_id": 73,
+      "author_id": null,
+      "author_name": "Jenn Jeanquart",
+      "session_date": "2026-11-09",
+      "note_type": "Coaching / case management session – structured or in-depth meeting",
+      "category": "First Shift",
+      "content": "1. Employment & Education Updates\nInterviews & Applications:\nPull-A-Part: Client scheduled an interview tomorrow at 3:30 PM for a machine operator position ($19–$20/hr, 8:00 AM – 5:00 PM operating hours) found via Indeed.\nElectrical Company: Client noted they reached out regarding a second-shift opening (3:30 PM – 2:00 AM). Client expressed concerns about this schedule interfering with morning schooling and adequate rest.\nFedEx Delivery: Client submitted an application but discussed the feasibility/restrictions of delivery driving while on GPS/supervision.\nMichelin: Discussed potential warehouse/forklift opportunities ($16–$18/hr starting wage). Client noted reservations regarding the rotating swing shift schedule (3-on/2-off rotating day/night every 2–4 weeks), which would disrupt schooling.\nStaffing Lead: Client provided contact information for a hiring/temp lead named Trish at Novo (803-334-3021) for case manager follow-up.\nEducation & Training:\nClient is attending an orientation this Friday for CDL school.\nExploring weekend schedule options (8–12 weeks) to allow flexibility around potential job shifts.\n2. Program Compliance, Supervision & Risk Discussion\nAccountability / Halfway House Rules:\nClient admitted to a significant non-compliance risk during a recent social pass: left the approved location, left their GPS-monitoring phone inside a parked vehicle, and checked into an unauthorized hotel room with a visiting friend for a few hours before returning to the venue and facility.\nCase manager reinforced the severe consequences of rule violations (immediate return to secure custody/prison). Client acknowledged the poor judgment and stated they felt significant anxiety during the infraction.\nCase manager challenged client on risk patterns, impulse control, and how interpersonal relationships have historically triggered compliance risks. Client agreed to implement \"long-term thinking\" and avoid placing passes/privileges in jeopardy.\nUpcoming Privileges & Logistics:\nClient turned in required documentation (phone bill approved) to pursue \"52\" home weekend passes to visit family in North Carolina; awaiting director approval and home inspection arrangements.\nClient arranged vehicle drop-off with family and is coordinating vehicle permission paperwork through facility staff/case manager (Marshall/Tumer).\nClient reported that the 30-day GPS phone requirement is eligible for removal this week.\n3. Behavioral Health & Cognitive Interventions\nCBT / Group Classes:\nClient attended a required cognitive/decision-making class over the weekend. Client reported active participation and noted feeling more confident speaking up and communicating.\nDiscussion touched on bridging class concepts (\"making better decisions\") directly into real-world behavior and resisting impulsive situations.\nAppointments:\nClient scheduled to meet with the facility psychologist today and obtain approval/passes for the gym.\n4. Case Manager Plan & Next Steps\n[ ] Follow up on client’s Pull-A-Part interview outcome.\n[ ] Contact Trish at Novo (803-334-3021) regarding employer partnerships and direct-hire possibilities.\n[ ] Continue sourcing job leads with compatible schedules (targeting first or stable third shift; monitoring Zirces opening status).\n[ ] Monitor client’s CDL orientation attendance on Friday.\n[ ] Follow up on vehicle paperwork submission and home pass approval status.\n[ ] Continue structured cognitive-behavioral prompts focusing on decision-making boundaries regarding social contacts and pass accountability.",
+      "apricot_exported": 1,
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 190,
+      "user_id": 73,
+      "author_id": null,
+      "author_name": "Jenn Jeanquart",
+      "session_date": "2026-11-03",
+      "note_type": "Coaching / case management session – structured or in-depth meeting",
+      "category": "First Shift",
+      "content": "Got his provisional drivers license, which means he can drive anywhere in South Carolina. He starts the ADSAP class this weekend, and will be able to get his full license back after successfully completing the four week program. WIOA orientation is November 17 and he is on track to enroll in CDL school by the end of the year. Discussed past behavior that got him fired from jobs in the past and how his mindset has shifted. In the past he would do what he wanted to do, clock in late, sleep in his car, etc. He is more disciplined now and is committed to staying out of prison.",
+      "apricot_exported": 1,
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
       "id": 137,
       "user_id": 73,
       "author_id": null,
@@ -121,5 +157,6 @@
       "created_at": "2026-10-26 01:13:54"
     }
   ],
-  "cm_session_evaluations": []
+  "cm_session_evaluations": [],
+  "manual_folder_notes": []
 }

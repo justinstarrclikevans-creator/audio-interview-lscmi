@@ -2,11 +2,13 @@
   "participant_key": "Shelah_Norman",
   "participant_name": "Shelah Norman",
   "location": "Spartanburg",
-  "track": "first_shift",
+  "track": "reentry_nav",
+  "lscmi_client_id": "Shelah_Norman_Spartanburg",
   "folder_path": "data/participants/Shelah_Norman",
   "has_lscmi_brief": false,
   "has_lscmi_scoring": false,
   "has_action_plan": false,
+  "has_legacy_case_briefs": true,
   "action_plan_agreement": "pending_review",
   "waitlist_ready": false,
   "waitlist_score": "8/9",
@@ -14,17 +16,16 @@
   "skillcat_pathway": "HVAC",
   "skillcat_modules_completed": 0,
   "cm_notes_count": 0,
+  "apricot_notes_count": 13,
+  "reentry_sessions_count": 11,
+  "history_events_count": 18,
+  "documents_count": 5,
   "data_evaluation_flags": [
     {
       "code": "FLAG-WAITLIST-GAP",
       "severity": "warning",
       "message": "8/9 First Shift Waitlist Briefcase items ready. Missing: 3. Birth Certificate"
-    },
-    {
-      "code": "FLAG-CM-CADENCE",
-      "severity": "warning",
-      "message": "No 1-on-1 Case Management session note logged in participant folder."
     }
   ],
-  "updated_at": "2026-11-22T17:18:01.474Z"
+  "updated_at": "2026-11-23T13:46:28.520Z"
 }

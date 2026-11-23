@@ -1,0 +1,182 @@
+{
+  "participant_key": "Lokheim_Campbell",
+  "updated_at": "2026-11-23T13:46:28.442Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-10-16T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "14 chronological Apricot note(s) archived (Historical Record).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_doc:Lokheim_Campbell_Case_Brief_1790194936172.pdf",
+      "event_key": "doc:Lokheim_Campbell_Case_Brief_1790194936172.pdf",
+      "timestamp": "2026-09-23T20:22:16.172Z",
+      "category": "document",
+      "action": "Archived legacy brief",
+      "summary": "Document stored in folder: Lokheim_Campbell_Case_Brief_1790194936172.pdf",
+      "filename": "Lokheim_Campbell_Case_Brief_1790194936172.pdf",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Lokheim_Campbell_Case_Brief_1790193819171.pdf",
+      "event_key": "doc:Lokheim_Campbell_Case_Brief_1790193819171.pdf",
+      "timestamp": "2026-09-23T20:03:39.171Z",
+      "category": "document",
+      "action": "Archived legacy brief",
+      "summary": "Document stored in folder: Lokheim_Campbell_Case_Brief_1790193819171.pdf",
+      "filename": "Lokheim_Campbell_Case_Brief_1790193819171.pdf",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Lokheim_Campbell_Case_Brief_1790193709724.pdf",
+      "event_key": "doc:Lokheim_Campbell_Case_Brief_1790193709724.pdf",
+      "timestamp": "2026-09-23T20:01:49.725Z",
+      "category": "document",
+      "action": "Archived legacy brief",
+      "summary": "Document stored in folder: Lokheim_Campbell_Case_Brief_1790193709724.pdf",
+      "filename": "Lokheim_Campbell_Case_Brief_1790193709724.pdf",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Lokheim_Campbell_Case_Brief_1790193212293.pdf",
+      "event_key": "doc:Lokheim_Campbell_Case_Brief_1790193212293.pdf",
+      "timestamp": "2026-09-23T19:53:32.294Z",
+      "category": "document",
+      "action": "Archived legacy brief",
+      "summary": "Document stored in folder: Lokheim_Campbell_Case_Brief_1790193212293.pdf",
+      "filename": "Lokheim_Campbell_Case_Brief_1790193212293.pdf",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Lokheim_Campbell_Case_Brief_1790192585833.pdf",
+      "event_key": "doc:Lokheim_Campbell_Case_Brief_1790192585833.pdf",
+      "timestamp": "2026-09-23T19:43:05.834Z",
+      "category": "document",
+      "action": "Archived legacy brief",
+      "summary": "Document stored in folder: Lokheim_Campbell_Case_Brief_1790192585833.pdf",
+      "filename": "Lokheim_Campbell_Case_Brief_1790192585833.pdf",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_drugtest:5",
+      "event_key": "drugtest:5",
+      "timestamp": "2026-09-22T00:00:00.000Z",
+      "category": "drug_test",
+      "action": "Drug Screen: negative",
+      "summary": "Imported via Render Report",
+      "filename": "program_records.json",
+      "snapshot_file": "",
+      "actor": "Turn90 Staff"
+    },
+    {
+      "id": "ms_casenote:11",
+      "event_key": "casenote:11",
+      "timestamp": "2026-09-21T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (1-on-1)",
+      "summary": "Coaching / case management session – structured or in-depth meeting",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Apricot Import"
+    },
+    {
+      "id": "ms_doc:1788826903385_Lokheim_Campbell_reentry_staff_case_plan.md",
+      "event_key": "doc:1788826903385_Lokheim_Campbell_reentry_staff_case_plan.md",
+      "timestamp": "2026-09-13T21:26:42.916Z",
+      "category": "document",
+      "action": "Archived reentry plan",
+      "summary": "Document stored in folder: 1788826903385_Lokheim_Campbell_reentry_staff_case_plan.md",
+      "filename": "1788826903385_Lokheim_Campbell_reentry_staff_case_plan.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:1788826903385_Lokheim_Campbell_reentry_participant_action_guide.pdf",
+      "event_key": "doc:1788826903385_Lokheim_Campbell_reentry_participant_action_guide.pdf",
+      "timestamp": "2026-09-08T00:22:14.211Z",
+      "category": "document",
+      "action": "Archived reentry plan",
+      "summary": "Document stored in folder: 1788826903385_Lokheim_Campbell_reentry_participant_action_guide.pdf",
+      "filename": "1788826903385_Lokheim_Campbell_reentry_participant_action_guide.pdf",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:1788826903385_Lokheim_Campbell_reentry_staff_case_plan.pdf",
+      "event_key": "doc:1788826903385_Lokheim_Campbell_reentry_staff_case_plan.pdf",
+      "timestamp": "2026-09-08T00:22:13.288Z",
+      "category": "document",
+      "action": "Archived reentry plan",
+      "summary": "Document stored in folder: 1788826903385_Lokheim_Campbell_reentry_staff_case_plan.pdf",
+      "filename": "1788826903385_Lokheim_Campbell_reentry_staff_case_plan.pdf",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:1788826903385_Lokheim_Campbell_reentry_participant_action_guide.docx",
+      "event_key": "doc:1788826903385_Lokheim_Campbell_reentry_participant_action_guide.docx",
+      "timestamp": "2026-09-08T00:22:11.678Z",
+      "category": "document",
+      "action": "Archived reentry plan",
+      "summary": "Document stored in folder: 1788826903385_Lokheim_Campbell_reentry_participant_action_guide.docx",
+      "filename": "1788826903385_Lokheim_Campbell_reentry_participant_action_guide.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:1788826903385_Lokheim_Campbell_reentry_staff_case_plan.docx",
+      "event_key": "doc:1788826903385_Lokheim_Campbell_reentry_staff_case_plan.docx",
+      "timestamp": "2026-09-08T00:22:11.380Z",
+      "category": "document",
+      "action": "Archived reentry plan",
+      "summary": "Document stored in folder: 1788826903385_Lokheim_Campbell_reentry_staff_case_plan.docx",
+      "filename": "1788826903385_Lokheim_Campbell_reentry_staff_case_plan.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:1788826903385_Lokheim_Campbell_reentry_assessment_data.json",
+      "event_key": "doc:1788826903385_Lokheim_Campbell_reentry_assessment_data.json",
+      "timestamp": "2026-09-08T00:22:11.140Z",
+      "category": "document",
+      "action": "Archived reentry plan",
+      "summary": "Document stored in folder: 1788826903385_Lokheim_Campbell_reentry_assessment_data.json",
+      "filename": "1788826903385_Lokheim_Campbell_reentry_assessment_data.json",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:1788826903385_Lokheim_Campbell_reentry_participant_action_guide.md",
+      "event_key": "doc:1788826903385_Lokheim_Campbell_reentry_participant_action_guide.md",
+      "timestamp": "2026-09-08T00:22:11.139Z",
+      "category": "document",
+      "action": "Archived reentry plan",
+      "summary": "Document stored in folder: 1788826903385_Lokheim_Campbell_reentry_participant_action_guide.md",
+      "filename": "1788826903385_Lokheim_Campbell_reentry_participant_action_guide.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Lokheim_Campbell_Case_Brief_1788826903385.pdf",
+      "event_key": "doc:Lokheim_Campbell_Case_Brief_1788826903385.pdf",
+      "timestamp": "2026-09-08T00:21:43.386Z",
+      "category": "document",
+      "action": "Archived legacy brief",
+      "summary": "Document stored in folder: Lokheim_Campbell_Case_Brief_1788826903385.pdf",
+      "filename": "Lokheim_Campbell_Case_Brief_1788826903385.pdf",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    }
+  ]
+}

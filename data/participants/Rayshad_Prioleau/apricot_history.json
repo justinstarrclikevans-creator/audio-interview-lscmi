@@ -1,0 +1,94 @@
+{
+  "participant_key": "Rayshad_Prioleau",
+  "participant_name": "Rayshad Prioleau",
+  "apricot_ids": [
+    "83149"
+  ],
+  "evaluations": [
+    {
+      "record_id": "83149",
+      "full_name": "Rayshad Prioleau",
+      "program": "Reentry Navigation",
+      "center": "Charleston",
+      "case_manager": "Daisy Boynton",
+      "case_plan_status": "Yes (Goals & Gates Active)",
+      "focus_areas_or_goals": "Apply for SNAP and get social security card",
+      "briefcase_status_text": "Gate 1: 38%, Gate 2: 50%, Gate 3: 0%, Gate 4: 0%",
+      "gate1_pct": 38,
+      "gate2_pct": 50,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "case_note_analysis": "Enrolled 11/10/2026. Most recent contact on 11/18/2026 by Daisy Boynton (Employment support – applications, resume, interview prep): \"Sent the hiring page for HoneyBaked season job openings.\"\n\n**Latest Case Note Updates:** [Update 11/18/2026 • Daisy Boynton]: Sent the hiring page for HoneyBaked season job openings. | [Update 11/11/2026 • Daisy Boynton]: Filled out applications for SNAP, Medicaid, voter registration, and Social Security Card replacement | [Update 11/10/2026 • Daisy Boynton]: Contact Summary: Completed initial phone consultation with Reyshad Prioleau. Assessed housing, transportation, criminal history, education, and employment history. Reyshad has stable housing, a valid SC driver's license, and his own vehicle. He has all primary vital documents (Birth Certificate, SS Card, ID). He was released from prison 9 days ago after serving a mandatory sentence for firearm and attempted armed robbery charges. Currently on community supervision until December 30th 2027. He completed the 9th grade and is interested in obtaining forklift certification. \nCase Plan Goal Progress: No active goals yet. Discussed applying for SNAP benefits while on the waitlist.\nBriefcase & Gate 1-4 Updates: Verified possession of Birth Certificate, SS Card, and valid Driver's License. Assessed need for SNAP food stamps. Added to Turn90 waitlist (approx. 2-3 weeks).\nReferrals/Resources Provided: Offered Reentry Navigation services while on the waitlist. Scheduled phone appointment to apply for SNAP.\nNext Steps: Call client tomorrow at 9:30 AM to complete SNAP application. | [Update 11/09/2026 • Daisy Boynton]: ",
+      "operational_feedback": "Continue advancing Reentry Navigation Case Plan goals and Briefcase Gates 1–4 (Gate 1: 38%, Gate 2: 50%, Gate 3: 0%, Gate 4: 0%). Focus on barrier removal, employment readiness, and community resource referrals.",
+      "next_cm_steps_json": "[\"🎯 **Advance Stated Case Plan Goals:** Review progress on active Reentry Nav goals (Apply for SNAP and get social security card) and verify concrete barrier-removal steps completed since last check-in.\",\"🔓 **Complete Remaining Gate 1 Items (38% done):** Target Social Security Card (Physical card, SSA receipt, or appointment), Explore healthcare options (Medicaid / Free Medical Clinic), Supervision information documented (County, Officer, Report Dates).\",\"🔓 **Advance Gate 2 Stability & Readiness (50% done):** Work on Probation / Legal Obligations aligned with work hours, DMV License Suspension check & reinstatement plan, Turn90 Resume completed.\",\"🩺 **Address Gate 3 Health & Banking Milestones (0% done):** Follow up on Primary Care / Medical checkup scheduled or cleared, Vision Appointment / screening, Steady access to daily prescriptions (Welvista).\",\"🚀 **Finalize Gate 4 Job Placement & Financial Readiness (0% done):** Complete Work Tools & Clothing (Steel-toe boots, non-slip shoes, work gear), Verified Daily Transportation Plan (Bus route, car, ride plan), Personal Budget completed.\",\"🔄 **Follow Up on Latest Session (11/18/2026 by Daisy Boynton):** Check accountability on items discussed (\\\"Sent the hiring page for HoneyBaked season job openings.\\\").\"]",
+      "recent_cm_notes_json": null,
+      "last_note_date": "2026-11-18",
+      "notes_count": 4,
+      "updated_at": "2026-11-22 17:36:06"
+    }
+  ],
+  "notes_count": 4,
+  "processed_notes": [
+    {
+      "id": 1094,
+      "record_id": "83149",
+      "first_name": "Rayshad",
+      "last_name": "Prioleau",
+      "activity_date": "2026-11-18",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Employment support – applications, resume, interview prep",
+      "note_text": "Sent the hiring page for HoneyBaked season job openings.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1093,
+      "record_id": "83149",
+      "first_name": "Rayshad",
+      "last_name": "Prioleau",
+      "activity_date": "2026-11-11",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Documentation support – ID, housing forms, paperwork",
+      "note_text": "Filled out applications for SNAP, Medicaid, voter registration, and Social Security Card replacement",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1092,
+      "record_id": "83149",
+      "first_name": "Rayshad",
+      "last_name": "Prioleau",
+      "activity_date": "2026-11-10",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment COMPLETED",
+      "note_text": "Contact Summary: Completed initial phone consultation with Reyshad Prioleau. Assessed housing, transportation, criminal history, education, and employment history. Reyshad has stable housing, a valid SC driver's license, and his own vehicle. He has all primary vital documents (Birth Certificate, SS Card, ID). He was released from prison 9 days ago after serving a mandatory sentence for firearm and attempted armed robbery charges. Currently on community supervision until December 30th 2027. He completed the 9th grade and is interested in obtaining forklift certification. \nCase Plan Goal Progress: No active goals yet. Discussed applying for SNAP benefits while on the waitlist.\nBriefcase & Gate 1-4 Updates: Verified possession of Birth Certificate, SS Card, and valid Driver's License. Assessed need for SNAP food stamps. Added to Turn90 waitlist (approx. 2-3 weeks).\nReferrals/Resources Provided: Offered Reentry Navigation services while on the waitlist. Scheduled phone appointment to apply for SNAP.\nNext Steps: Call client tomorrow at 9:30 AM to complete SNAP application.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1091,
+      "record_id": "83149",
+      "first_name": "Rayshad",
+      "last_name": "Prioleau",
+      "activity_date": "2026-11-09",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment SCHEDULED",
+      "note_text": "",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "updated_at": "2026-11-23T13:46:29.508Z"
+}

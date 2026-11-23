@@ -13,7 +13,7 @@
   "medical_appointments_applicable": false,
   "items": {
     "state_id_or_dl": {
-      "value": "missing",
+      "value": "valid_state_id",
       "notes": "",
       "source": "default",
       "updated_at": "2026-11-20T19:43:32.002Z"
@@ -25,7 +25,7 @@
       "updated_at": "2026-11-20T19:43:32.002Z"
     },
     "birth_certificate": {
-      "value": "missing",
+      "value": "verified_copy",
       "notes": "",
       "source": "default",
       "updated_at": "2026-11-20T19:43:32.002Z"
@@ -50,9 +50,8 @@
     },
     "dmv_suspended_inquiry": {
       "value": "not_applicable_valid",
-      "notes": "",
-      "source": "default",
-      "updated_at": "2026-11-20T19:43:32.002Z"
+      "notes": "DL not suspended / valid ID on file.",
+      "updated_at": "2026-11-23T13:46:29.060Z"
     },
     "child_support_contact": {
       "value": "not_applicable",
@@ -76,7 +75,7 @@
       "value": "not_started",
       "notes": "0 modules completed (0.0 hrs)",
       "source": "skillcat_scraper",
-      "updated_at": "2026-11-22T17:18:01.610Z"
+      "updated_at": "2026-11-23T13:46:29.060Z"
     },
     "resume_and_email": {
       "value": "not_started",
@@ -115,7 +114,7 @@
       "updated_at": "2026-11-20T19:43:32.003Z"
     }
   },
-  "waitlist_met_count": 6,
+  "waitlist_met_count": 8,
   "waitlist_total_required": 9,
   "waitlist_ready": false,
   "waitlist_checklist": [
@@ -123,9 +122,9 @@
       "key": "state_id_or_dl",
       "number": 1,
       "title": "1. State ID or Driver's License (DL)",
-      "value": "missing",
-      "label": "Missing — Needs State ID / DL",
-      "ready": false,
+      "value": "valid_state_id",
+      "label": "Valid State ID Verified (No DL)",
+      "ready": true,
       "notes": ""
     },
     {
@@ -141,9 +140,9 @@
       "key": "birth_certificate",
       "number": 3,
       "title": "3. Birth Certificate",
-      "value": "missing",
-      "label": "Missing — Needs Birth Certificate",
-      "ready": false,
+      "value": "verified_copy",
+      "label": "Certified Birth Certificate Verified",
+      "ready": true,
       "notes": ""
     },
     {
@@ -180,7 +179,7 @@
       "value": "not_applicable_valid",
       "label": "Not Applicable (DL Valid or Not Suspended)",
       "ready": true,
-      "notes": ""
+      "notes": "DL not suspended / valid ID on file."
     },
     {
       "key": "child_support_contact",

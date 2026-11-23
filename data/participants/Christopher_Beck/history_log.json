@@ -1,0 +1,160 @@
+{
+  "participant_key": "Christopher_Beck",
+  "updated_at": "2026-11-23T13:46:28.709Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "13 chronological Apricot note(s) archived (Partial (Situations missing)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_casenote:173",
+      "event_key": "casenote:173",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "### **Case Meeting Notes**\n\n**Client Overview & Session Context**\n* **Session Type:** Week 6 routine progress check-in meeting [1].\n* **Primary Topics:** Legal status, job search, health goals, CBT skill application, and",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Diyoung Dantzler"
+    },
+    {
+      "id": "ms_casenote:174",
+      "event_key": "casenote:174",
+      "timestamp": "2026-11-16T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Check-in conversation – brief status update)",
+      "summary": "Mr. Beck approached me after lunch seeking assistance with finding alternative housing. He explained that he now has custody of his son and requires housing with at least two bedrooms to accommodate them both. I referred",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Matt Carlisle"
+    },
+    {
+      "id": "ms_casenote:175",
+      "event_key": "casenote:175",
+      "timestamp": "2026-11-09T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "Client Updates: [Client] and CM met for an Action Plan Alignment session. [Client] continues to utilize CBT skills well, reporting he successfully maintained his cool despite job search frustrations. \n\nBriefcase & Gates ",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Diyoung Dantzler"
+    },
+    {
+      "id": "ms_casenote:107",
+      "event_key": "casenote:107",
+      "timestamp": "2026-11-03T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "Client Updates: [Client] continues to demonstrate high motivation and practical application of CBT skills. He shared a success story of using 'Stop and Think' when frustrated by his stepdad rushing him at the store, effe",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Diyoung Dantzler"
+    },
+    {
+      "id": "ms_casenote:108",
+      "event_key": "casenote:108",
+      "timestamp": "2026-10-29T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "Client Updates: [Client] reported high motivation and continued application of the 'Stop and Think' CBT skill, specifically noting improved interactions with his daughter and a desire to lead by example rather than just ",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Diyoung Dantzler"
+    },
+    {
+      "id": "ms_casenote:27",
+      "event_key": "casenote:27",
+      "timestamp": "2026-10-21T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "Client] participated in a Weekly Follow-Up session. Discussed a recent conflict where he successfully utilized the 'Stop and Think' CBT skill to de-escalate a physical altercation by offering the individual two choices i",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Diyoung Dantzler"
+    },
+    {
+      "id": "ms_casenote:28",
+      "event_key": "casenote:28",
+      "timestamp": "2026-10-13T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "Client Updates: [Client] reported feeling highly motivated and noted that their mindset has improved significantly. Employment: [Client] had to reset their application with Highland Bakery due to a disability checkbox er",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Diyoung Dantzler"
+    },
+    {
+      "id": "ms_casenote:29",
+      "event_key": "casenote:29",
+      "timestamp": "2026-08-19T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Case Note (documentation only) – no interaction or service|Employment support – applications, resume, interview prep)",
+      "summary": "connected him with match staffing got job at Pork ryan factory passed out an went to er. due heat",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Diyoung Dantzler"
+    },
+    {
+      "id": "ms_casenote:30",
+      "event_key": "casenote:30",
+      "timestamp": "2026-08-18T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Check-in conversation – brief status update)",
+      "summary": "Today I reached out to Christopher on the behalf of the plan that we started up due to him missing a day each week in the program we set new goals as far as still putting an application while he’s waiting to get back in ",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Diyoung Dantzler"
+    },
+    {
+      "id": "ms_casenote:31",
+      "event_key": "casenote:31",
+      "timestamp": "2026-08-12T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Case Note (documentation only) – no interaction or service)",
+      "summary": "At approximately 9:30 a.m., Mr. Beck informed me that he had just received a phone call stating that his daughter had been involved in a fight with another student at school. Mr. Beck stated that he needed to leave for t",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Matt Carlisle"
+    },
+    {
+      "id": "ms_casenote:32",
+      "event_key": "casenote:32",
+      "timestamp": "2026-08-06T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "Christopher reported that he is adjusting well to the Turn90 program and described the experience as changing the way he thinks. He shared that the cognitive behavioral lessons on impulsivity have helped him compare who ",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Diyoung Dantzler"
+    },
+    {
+      "id": "ms_casenote:33",
+      "event_key": "casenote:33",
+      "timestamp": "2026-07-24T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Intake Appointment COMPLETED)",
+      "summary": "Mr. Beck is a 37 y/o man from Spartanburg. He has been living with the mother of his 15 y/o daughter since his release from Kershaw C.I. in June. He served 18 months for a shoplifting conviction. Prior to his incarcerati",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Matt Carlisle"
+    },
+    {
+      "id": "ms_casenote:34",
+      "event_key": "casenote:34",
+      "timestamp": "2026-07-20T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Intake Appointment SCHEDULED)",
+      "summary": "Intake Appointment SCHEDULED",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Daisy Boynton"
+    }
+  ]
+}

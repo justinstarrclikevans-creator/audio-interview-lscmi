@@ -1,0 +1,127 @@
+{
+  "participant_key": "Tarren_Hughey",
+  "participant_name": "Tarren Hughey",
+  "client_records": [
+    {
+      "id": 39,
+      "first_name": "Tarren",
+      "last_name": "Hughey",
+      "apricot_id": "81428",
+      "location": "Columbia",
+      "status": "archived",
+      "stability_tier": "at_risk",
+      "phone": null,
+      "email": null,
+      "notes": "Currently staying with Aunt, but needs a longer term housing solution. I will look into options.\nReinstatement fee of $300 (will complete a RDF referral)\nHas a mental health counselor that he meets with regularly (diagnosed with PTSD), Dr. Woods\nHas a Voc Rehab counselor. Both them and Dr. Woods are helping him apply for DSS (needs to reinstate it)\nMr. Rutledge, federal parole, meet every month, 7 more months compliant and he'll be off\nVoc rehab paying for electrician certified classes. He needs to get the details of the classes and start them.",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-10-27 13:40:03",
+      "case_manager": "Daisy Boynton",
+      "enrollment_start": "2026-10-06",
+      "gate1_pct": 0,
+      "gate2_pct": 0,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "last_contact_date": "2026-10-20",
+      "last_contact_staff": "Jenn Jeanquart",
+      "last_contact_activity": "Case Note (documentation only) – no interaction or service",
+      "has_case_plan": 1,
+      "case_plan_text": "Currently staying with Aunt, but needs a longer term housing solution. I will look into options.\nReinstatement fee of $300 (will complete a RDF referral)\nHas a mental health counselor that he meets with regularly (diagnosed with PTSD), Dr. Woods\nHas a Voc Rehab counselor. Both them and Dr. Woods are helping him apply for DSS (needs to reinstate it)\nMr. Rutledge, federal parole, meet every month, 7 more months compliant and he'll be off\nVoc rehab paying for electrician certified classes. He needs to get the details of the classes and start them."
+    }
+  ],
+  "sessions": [
+    {
+      "id": 162,
+      "client_id": 39,
+      "session_date": "2026-10-20",
+      "session_title": "Case Note (documentation only) – no interaction or service (Jenn Jeanquart)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "No contact, removed from waitlist.",
+      "notes_text": "No contact, removed from waitlist.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 163,
+      "client_id": 39,
+      "session_date": "2026-10-19",
+      "session_title": "Case Note (documentation only) – no interaction or service (Jenn Jeanquart)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Called and text to schedule orientation. Requested return call/text by 8am 10/20.",
+      "notes_text": "Called and text to schedule orientation. Requested return call/text by 8am 10/20.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 164,
+      "client_id": 39,
+      "session_date": "2026-10-13",
+      "session_title": "Check-in conversation – brief status update (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Let Tarren know that he's approaching the top of the waitlist. He said he's good to go.",
+      "notes_text": "Let Tarren know that he's approaching the top of the waitlist. He said he's good to go.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 165,
+      "client_id": 39,
+      "session_date": "2026-10-08",
+      "session_title": "Check-in conversation – brief status update (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Sent him the info for 3Eleven housing as an option for him to move out of his Aunt's.",
+      "notes_text": "Sent him the info for 3Eleven housing as an option for him to move out of his Aunt's.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 166,
+      "client_id": 39,
+      "session_date": "2026-10-06",
+      "session_title": "Intake Appointment COMPLETED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Currently staying with Aunt, but needs a longer term housing solution. I will look into options.\nReinstatement fee of $300 (RDF referral?)\nHas a mental health counselor that he meets with regularly (diagnosed with PTSD), Dr. Woods\nHas a Voc Rehab counselor. Both them and Dr. Woods are helping him apply for DSS (needs to reinstate it)\nMr. Rutledge, federal parole, meet every month, 7 more months compliant and he'll be off\nVoc rehab paying for electrician certified classes. He needs to get the details of the classes and start them.",
+      "notes_text": "Currently staying with Aunt, but needs a longer term housing solution. I will look into options.\nReinstatement fee of $300 (RDF referral?)\nHas a mental health counselor that he meets with regularly (diagnosed with PTSD), Dr. Woods\nHas a Voc Rehab counselor. Both them and Dr. Woods are helping him apply for DSS (needs to reinstate it)\nMr. Rutledge, federal parole, meet every month, 7 more months compliant and he'll be off\nVoc rehab paying for electrician certified classes. He needs to get the details of the classes and start them.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 167,
+      "client_id": 39,
+      "session_date": "2026-10-05",
+      "session_title": "Intake Appointment SCHEDULED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "NCNS",
+      "notes_text": "NCNS",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "goals": [
+    {
+      "id": 84,
+      "client_id": 39,
+      "goal_title": "Currently staying with Aunt, but needs a longer term housing solution. I will look into options.\nReinstatement fee of $300 (will complete a ",
+      "target_date": "2026-11-09",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"Currently staying with Aunt, but needs a longer term housing solution. I will look into options.\\nReinstatement fee of $300 (will complete a \\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "case_plans": [],
+  "updated_at": "2026-11-23T13:46:29.130Z"
+}

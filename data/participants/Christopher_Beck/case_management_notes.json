@@ -1,6 +1,42 @@
 {
   "case_notes": [
     {
+      "id": 173,
+      "user_id": 68,
+      "author_id": null,
+      "author_name": "Diyoung Dantzler",
+      "session_date": "2026-11-17",
+      "note_type": "Coaching / case management session – structured or in-depth meeting",
+      "category": "First Shift",
+      "content": "### **Case Meeting Notes**\n\n**Client Overview & Session Context**\n* **Session Type:** Week 6 routine progress check-in meeting [1].\n* **Primary Topics:** Legal status, job search, health goals, CBT skill application, and parenting responsibilities [1-4].\n\n---\n\n#### **1. Legal & Supervision Status**\n* **Home Detention Status:** Supervision and home detention are progressing without issue [2].\n* **Public Defender Contact:** Scheduled to contact public defender on the Monday following Thanksgiving [5].\n* **Housing:** Maintains stable housing [5].\n* **Child Support:** Client is not currently paying child support; plans to initiate child support against his son's mother [5].\n* **Legal Fees & SR22 Insurance:** Saving **\\$100 per week** toward legal costs (currently has \\$500 saved for legal fees) [6]. Intends to pay **6 months of SR22 insurance** (\\$60/month, ~\\$300 total) upfront once court fines are finalized [1, 6, 7].\n\n---\n\n#### **2. Employment & Career Development**\n* **Administrative Setup:** Resume construction set for next week; professional email and phone voicemail are active [2, 5].\n* **Applications Submitted:**\n  * **The Beacon:** Application submitted; starting rate is **\\$14.00/hr** [7, 8].\n  * **Golden Corral:** Application submitted; starting rate is **\\$14.50/hr** without experience, or **\\$15.50–\\$16.00/hr** with experience [7, 9].\n* **Work History:** Possesses **5+ years of restaurant experience** [7]. Selected food service positions to remain in a familiar industry and avoid physical setbacks [9].\n* **Long-Term Career Goal:** Aims to earn a **Commercial Driver's License (CDL)** to drive commercial trucks [10].\n\n---\n\n#### **3. Personal Identification & Banking**\n* **Birth Certificate:** Plans to obtain his birth certificate in person at the office rather than ordering online [8].\n* **Financial Accounts:** Currently uses **Chime**; plans to open an account with **Founders Federal Credit Union** [11].\n\n---\n\n#### **4. Medical & Health Updates**\n* **Family Health:** Client’s mother submitted medical samples; positive results suggest potential cancer, with official confirmation expected after Thanksgiving [12].\n* **Weight & Health Management:** Resuming prescription weight loss medication (**Zepbound**) alongside improved diet and exercise (squats) [3, 11].\n* **Vision Care:** Recently acquired new prescription glasses [11].\n\n---\n\n#### **5. Cognitive Behavioral Therapy (CBT) Skills & Stress Management**\n* **Skills Applied:** Identified **Managing Expectations** and **Stop and Think** [13-15].\n* **Stress Response & Mindset:** Addresses issues immediately or uses positive distraction when resolution is delayed [13]. Recognizes that emotional overreaction signals a need to pause, re-evaluate, and change his approach [13, 14].\n* **Interpersonal Situations:** Applied **Stop and Think** during a past situation with his stepdad, recognizing it was his stepdad's vehicle and time, leading to a response of consideration and gratitude [4, 15].\n\n---\n\n#### **6. Parenting, Sobriety & Relapse Prevention**\n* **Parenting Responsibilities:** Full-time parent to a **4-year-old son** and **14-year-old daughter** [4, 16]. Manages cooking, dinners, bath routines, and evening schedules before his partner returns from work at 7:00 PM [17, 18].\n* **Protective Factors:** Full-time childcare duties eliminate idle time and exposure to high-risk situations [4, 18, 19]. Prioritizes children's needs over personal wants [19].\n* **Sobriety Motivators:** Relapse of his son's mother confirmed, reinforcing his focus on maintaining legal compliance so he can remain present for his children [20, 21].\n* **Reflective Perspective:** Reflects on past incarceration to stay appreciative of current stability and maintain focus [22].\n\n***",
+      "apricot_exported": 1,
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 174,
+      "user_id": 68,
+      "author_id": null,
+      "author_name": "Matt Carlisle",
+      "session_date": "2026-11-16",
+      "note_type": "Check-in conversation – brief status update",
+      "category": "First Shift",
+      "content": "Mr. Beck approached me after lunch seeking assistance with finding alternative housing. He explained that he now has custody of his son and requires housing with at least two bedrooms to accommodate them both. I referred him to Noah Property Management as a potential housing resource.",
+      "apricot_exported": 1,
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 175,
+      "user_id": 68,
+      "author_id": null,
+      "author_name": "Diyoung Dantzler",
+      "session_date": "2026-11-09",
+      "note_type": "Coaching / case management session – structured or in-depth meeting",
+      "category": "First Shift",
+      "content": "Client Updates: [Client] and CM met for an Action Plan Alignment session. [Client] continues to utilize CBT skills well, reporting he successfully maintained his cool despite job search frustrations. \n\nBriefcase & Gates Progress:\n- Gate 1 (Vital IDs): [Client] and CM reviewed the SC DHEC website process for ordering his Birth Certificate. [Client] will order it this week.\n- Gate 2 (Employment): [Client] followed up with Highland Bakery HR in-person. He was informed they are on a temporary hiring freeze. CM and [Client] pivoted the plan to explore 2 new job leads this week.\n- Financial/Legal: [Client] successfully saved the planned $200 and gave it to his mother for safekeeping toward legal fines. He is currently navigating his $60/month SR-22 insurance requirement.\n- Action Plan: Reviewed and aligned on triggers; identified 'family members rushing/pressuring' as a primary risky situation for Focus Area 1.\n\nNext Steps:\n1. [Client] to formally order his Birth Certificate online.\n2. [Client] to identify and review 2 new employment leads to replace Highland Bakery.\n3. CM to monitor Gate 1 completion and follow up on the job leads in the next session.",
+      "apricot_exported": 1,
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
       "id": 107,
       "user_id": 68,
       "author_id": null,
@@ -121,5 +157,6 @@
       "created_at": "2026-10-26 01:13:54"
     }
   ],
-  "cm_session_evaluations": []
+  "cm_session_evaluations": [],
+  "manual_folder_notes": []
 }

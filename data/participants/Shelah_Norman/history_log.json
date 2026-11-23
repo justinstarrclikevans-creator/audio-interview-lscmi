@@ -1,0 +1,204 @@
+{
+  "participant_key": "Shelah_Norman",
+  "updated_at": "2026-11-23T13:46:28.520Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-12T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "13 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:84",
+      "event_key": "reentry_session:84",
+      "timestamp": "2026-10-21T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Coaching / case management session – structured or in-depth meeting (Matt Carlisle)",
+      "summary": "She’Lah attended his scheduled Resource Navigation appointment today, marking his first appointment since being terminated from the program last month. He had previously missed two scheduled Resource Navigation appointme",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:85",
+      "event_key": "reentry_session:85",
+      "timestamp": "2026-09-28T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Behavioral incident – disruption, conflict, or left early (Diyoung Dantzler)",
+      "summary": "Came in smelled like marijuana so was put back on resource navigation\nTook full responsibility for his actions",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_doc:Shelah_Norman_Case_Brief_1790194460886.pdf",
+      "event_key": "doc:Shelah_Norman_Case_Brief_1790194460886.pdf",
+      "timestamp": "2026-09-23T20:14:20.886Z",
+      "category": "document",
+      "action": "Archived legacy brief",
+      "summary": "Document stored in folder: Shelah_Norman_Case_Brief_1790194460886.pdf",
+      "filename": "Shelah_Norman_Case_Brief_1790194460886.pdf",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Shelah_Norman_Case_Brief_1790193818275.pdf",
+      "event_key": "doc:Shelah_Norman_Case_Brief_1790193818275.pdf",
+      "timestamp": "2026-09-23T20:03:38.276Z",
+      "category": "document",
+      "action": "Archived legacy brief",
+      "summary": "Document stored in folder: Shelah_Norman_Case_Brief_1790193818275.pdf",
+      "filename": "Shelah_Norman_Case_Brief_1790193818275.pdf",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Shelah_Norman_Case_Brief_1790193708833.pdf",
+      "event_key": "doc:Shelah_Norman_Case_Brief_1790193708833.pdf",
+      "timestamp": "2026-09-23T20:01:48.833Z",
+      "category": "document",
+      "action": "Archived legacy brief",
+      "summary": "Document stored in folder: Shelah_Norman_Case_Brief_1790193708833.pdf",
+      "filename": "Shelah_Norman_Case_Brief_1790193708833.pdf",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Shelah_Norman_Case_Brief_1790192925456.pdf",
+      "event_key": "doc:Shelah_Norman_Case_Brief_1790192925456.pdf",
+      "timestamp": "2026-09-23T19:48:45.457Z",
+      "category": "document",
+      "action": "Archived legacy brief",
+      "summary": "Document stored in folder: Shelah_Norman_Case_Brief_1790192925456.pdf",
+      "filename": "Shelah_Norman_Case_Brief_1790192925456.pdf",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Shelah_Norman_Case_Brief_1790192580022.pdf",
+      "event_key": "doc:Shelah_Norman_Case_Brief_1790192580022.pdf",
+      "timestamp": "2026-09-23T19:43:00.023Z",
+      "category": "document",
+      "action": "Archived legacy brief",
+      "summary": "Document stored in folder: Shelah_Norman_Case_Brief_1790192580022.pdf",
+      "filename": "Shelah_Norman_Case_Brief_1790192580022.pdf",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_reentry_session:86",
+      "event_key": "reentry_session:86",
+      "timestamp": "2026-09-23T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Coaching / case management session – structured or in-depth meeting (Diyoung Dantzler)",
+      "summary": "Shelah demonstrated increased insight into his personal risk factors and how his decisions can affect his progress\\. He was able to identify that being mindful of his surroundings and considering how others may perceive ",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_drugtest:11",
+      "event_key": "drugtest:11",
+      "timestamp": "2026-09-22T00:00:00.000Z",
+      "category": "drug_test",
+      "action": "Drug Screen: negative",
+      "summary": "Imported via Render Report",
+      "filename": "program_records.json",
+      "snapshot_file": "",
+      "actor": "Turn90 Staff"
+    },
+    {
+      "id": "ms_reentry_session:87",
+      "event_key": "reentry_session:87",
+      "timestamp": "2026-09-21T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Matt Carlisle)",
+      "summary": "Had a conversation with She’Lah this morning regarding recent attendance and behavioral concerns.  She’Lah was sent home by DiYoung on Friday due to disruptive behavior.  Despite this, he arrived late this morning and le",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:88",
+      "event_key": "reentry_session:88",
+      "timestamp": "2026-09-18T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Behavioral incident – disruption, conflict, or left early (Diyoung Dantzler)",
+      "summary": "Shelah took accountability for his actions and was able to identify how his behavior affected his progress. He recognized that he needs to be more mindful of how he responds to emotional situations, especially in public ",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:89",
+      "event_key": "reentry_session:89",
+      "timestamp": "2026-09-16T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Coaching / case management session – structured or in-depth meeting (Diyoung Dantzler)",
+      "summary": "Strengths\n\nShelah continues to show increased awareness of the behaviors and thought patterns that support his goals. He identified the importance of balancing discipline and motivation and allowing himself time to respo",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:92",
+      "event_key": "reentry_session:92",
+      "timestamp": "2026-09-10T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Coaching / case management session – structured or in-depth meeting (Diyoung Dantzler)",
+      "summary": "Presenting Needs & Progress:\nShelah reported positive engagement with the program and stated that he appreciates the opportunities and doors the program provides. He identified improvement in his problem-solving and abil",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:91",
+      "event_key": "reentry_session:91",
+      "timestamp": "2026-09-10T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Diyoung Dantzler)",
+      "summary": "to get dl",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:90",
+      "event_key": "reentry_session:90",
+      "timestamp": "2026-09-10T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Diyoung Dantzler)",
+      "summary": "cdl goodwill apt",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:93",
+      "event_key": "reentry_session:93",
+      "timestamp": "2026-09-04T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Coaching / case management session – structured or in-depth meeting (Diyoung Dantzler)",
+      "summary": "Case Management Meeting – Shelah\n\nShelah reported that his experience at Turn90 has helped him recognize the consequences of past decisions and the importance of taking responsibility for his future. He identified challe",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:94",
+      "event_key": "reentry_session:94",
+      "timestamp": "2026-08-24T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Diyoung Dantzler)",
+      "summary": "Shalah Norman presented as a walk-in for case management services. He successfully completed and passed his drug screening. He reports having a supportive relationship with his mother and currently resides with her, prov",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

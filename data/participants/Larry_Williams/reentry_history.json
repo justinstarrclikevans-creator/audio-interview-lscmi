@@ -1,0 +1,101 @@
+{
+  "participant_key": "Larry_Williams",
+  "participant_name": "Larry Williams",
+  "client_records": [
+    {
+      "id": 79,
+      "first_name": "Larry",
+      "last_name": "Williams",
+      "apricot_id": "83238",
+      "location": "Charleston",
+      "status": "active",
+      "stability_tier": "stable",
+      "phone": null,
+      "email": null,
+      "notes": "Make resume, find employment (warehouse) - interested in Bosch",
+      "created_at": "2026-11-22 17:35:09",
+      "updated_at": "2026-11-22 17:36:06",
+      "case_manager": "Daisy Boynton",
+      "enrollment_start": "2026-11-11",
+      "gate1_pct": 38,
+      "gate2_pct": 60,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "last_contact_date": "2026-11-16",
+      "last_contact_staff": "Daisy Boynton",
+      "last_contact_activity": "Employment support – applications, resume, interview prep",
+      "has_case_plan": 1,
+      "case_plan_text": "Make resume, find employment (warehouse) - interested in Bosch"
+    }
+  ],
+  "sessions": [
+    {
+      "id": 463,
+      "client_id": 79,
+      "session_date": "2026-11-16",
+      "session_title": "Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Sent Larry the flyer for the Walmart Distribution Center job fair on 11/20.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 464,
+      "client_id": 79,
+      "session_date": "2026-11-12",
+      "session_title": "Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Created a resume with Larry over the phone (attached to his reentry nav case plan)",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 466,
+      "client_id": 79,
+      "session_date": "2026-11-11",
+      "session_title": "Intake Appointment SCHEDULED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Intake Appointment SCHEDULED",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 465,
+      "client_id": 79,
+      "session_date": "2026-11-11",
+      "session_title": "Intake Appointment COMPLETED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Contact Summary: Completed initial phone screening with client Larry Williams for the Turn90 program. Reviewed program expectations (8 weeks, M-F, 9am-3pm, $450/week stipend) and waitlist timeline (3-4 weeks). Gathered background information including housing (stable with parent), justice involvement (released Nov 2nd after 15 months for probation violation, currently on 2 years probation), and vital documents. \n\nCase Plan Goal Progress & Briefcase Updates: \n- Housing: Stable (lives with parent).\n- ID/Vital Docs: Holds a valid GA ID. Missing Birth Certificate (Savannah, GA) and Social Security Card. \n- Resume: Does not have one (Briefcase item active).\n- Employment: Looking for immediate temporary work while on the Turn90 waitlist.\n\nReferrals/Resources Provided: \n- Will send a list of temporary staffing agencies in the North Charleston/Charleston area today via text.\n\nNext Steps: \n- Navigator to call client tomorrow to complete a resume over the phone (approx. 10 mins). \n- Client to reach out to temp agencies for short-term employment.\n- Client to begin the process of replacing SS Card and Birth Certificate.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "goals": [
+    {
+      "id": 153,
+      "client_id": 79,
+      "goal_title": "Make resume, find employment (warehouse) - interested in Bosch",
+      "target_date": "2026-12-06",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"Make resume, find employment (warehouse) - interested in Bosch\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-11-22 17:35:09",
+      "updated_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "case_plans": [],
+  "updated_at": "2026-11-23T13:46:29.543Z"
+}

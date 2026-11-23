@@ -9,14 +9,20 @@
   "apricot_id": "80789",
   "phone": "",
   "email": "darryl.aiken.80789@firstshift.org",
-  "files": [],
+  "lscmi_client_id": "Darryl_Aiken_Charleston",
   "folder_slug": "Darryl_Aiken",
   "folder_path": "data/participants/Darryl_Aiken",
   "has_lscmi_brief": false,
   "has_lscmi_scoring": false,
   "has_action_plan": false,
+  "has_legacy_case_briefs": false,
   "waitlist_ready": false,
   "waitlist_met_count": 6,
   "data_flags_count": 1,
-  "updated_at": "2026-11-22T17:18:01.543Z"
+  "cm_notes_count": 5,
+  "apricot_notes_count": 9,
+  "reentry_sessions_count": 9,
+  "history_events_count": 15,
+  "documents_count": 0,
+  "updated_at": "2026-11-23T13:46:28.749Z"
 }

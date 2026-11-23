@@ -1,0 +1,124 @@
+{
+  "participant_key": "Michael_Maness",
+  "participant_name": "Michael Maness",
+  "client_records": [
+    {
+      "id": 44,
+      "first_name": "Michael",
+      "last_name": "Maness",
+      "apricot_id": "81457",
+      "location": "Spartanburg",
+      "status": "archived",
+      "stability_tier": "at_risk",
+      "phone": null,
+      "email": null,
+      "notes": "- needs to go to DMV to figure out fines\n- recently got a bike he can use as transportation to program (one of his housemates currently in the program bikes)\n- history of meth addiction, is currently living at Turn12 sober living, reports being sober about a year\n- not sure of exact release date, \"a couple of months ago\"\n- experience with forklift and heavy equipment but since expired\n- has access to all his necessary medication",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-10-26 01:14:48",
+      "case_manager": "Daisy Boynton",
+      "enrollment_start": "2026-10-08",
+      "gate1_pct": 0,
+      "gate2_pct": 0,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "last_contact_date": "2026-10-15",
+      "last_contact_staff": "Daisy Boynton",
+      "last_contact_activity": "Check-in conversation – brief status update",
+      "has_case_plan": 1,
+      "case_plan_text": "- needs to go to DMV to figure out fines\n- recently got a bike he can use as transportation to program (one of his housemates currently in the program bikes)\n- history of meth addiction, is currently living at Turn12 sober living, reports being sober about a year\n- not sure of exact release date, \"a couple of months ago\"\n- experience with forklift and heavy equipment but since expired\n- has access to all his necessary medication"
+    }
+  ],
+  "sessions": [
+    {
+      "id": 188,
+      "client_id": 44,
+      "session_date": "2026-10-15",
+      "session_title": "Check-in conversation – brief status update (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Called and scheduled him for orientation on Friday 10/23 at 3pm.",
+      "notes_text": "Called and scheduled him for orientation on Friday 10/23 at 3pm.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 189,
+      "client_id": 44,
+      "session_date": "2026-10-08",
+      "session_title": "Intake Appointment COMPLETED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "- needs to go to DMV to figure out fines\n- recently got a bike he can use as transportation to program (one of his housemates currently in the program bikes)\n- history of meth addiction, is currently living at Turn12 sober living, reports being sober about a year\n- not sure of exact release date, \"a couple of months ago\"\n- experience with forklift and heavy equipment but since expired\n\n*added to SPB waitlist",
+      "notes_text": "- needs to go to DMV to figure out fines\n- recently got a bike he can use as transportation to program (one of his housemates currently in the program bikes)\n- history of meth addiction, is currently living at Turn12 sober living, reports being sober about a year\n- not sure of exact release date, \"a couple of months ago\"\n- experience with forklift and heavy equipment but since expired\n\n*added to SPB waitlist",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 190,
+      "client_id": 44,
+      "session_date": "2026-10-05",
+      "session_title": "Intake Appointment SCHEDULED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Intake Appointment SCHEDULED",
+      "notes_text": "Intake Appointment SCHEDULED",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "goals": [
+    {
+      "id": 100,
+      "client_id": 44,
+      "goal_title": "not sure of exact release date, \"a couple of months ago\"",
+      "target_date": "2026-11-09",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"not sure of exact release date, \\\"a couple of months ago\\\"\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 99,
+      "client_id": 44,
+      "goal_title": "history of meth addiction, is currently living at Turn12 sober living, reports being sober about a year",
+      "target_date": "2026-11-09",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"history of meth addiction, is currently living at Turn12 sober living, reports being sober about a year\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 98,
+      "client_id": 44,
+      "goal_title": "recently got a bike he can use as transportation to program (one of his housemates currently in the program bikes)",
+      "target_date": "2026-11-09",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"recently got a bike he can use as transportation to program (one of his housemates currently in the program bikes)\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 97,
+      "client_id": 44,
+      "goal_title": "needs to go to DMV to figure out fines",
+      "target_date": "2026-11-09",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"needs to go to DMV to figure out fines\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "case_plans": [],
+  "updated_at": "2026-11-23T13:46:28.799Z"
+}

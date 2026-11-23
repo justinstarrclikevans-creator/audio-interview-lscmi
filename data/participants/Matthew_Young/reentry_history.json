@@ -1,0 +1,101 @@
+{
+  "participant_key": "Matthew_Young",
+  "participant_name": "Matthew Young",
+  "client_records": [
+    {
+      "id": 37,
+      "first_name": "Matthew",
+      "last_name": "Young",
+      "apricot_id": "81371",
+      "location": "Charleston",
+      "status": "archived",
+      "stability_tier": "at_risk",
+      "phone": null,
+      "email": null,
+      "notes": "See attached. He does have his birth certificate and access to his prescriptions.",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-10-27 13:40:03",
+      "case_manager": "Daisy Boynton",
+      "enrollment_start": "2026-10-06",
+      "gate1_pct": 0,
+      "gate2_pct": 0,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "last_contact_date": "2026-10-19",
+      "last_contact_staff": "Daisy Boynton",
+      "last_contact_activity": "Check-in conversation – brief status update",
+      "has_case_plan": 1,
+      "case_plan_text": "See attached. He does have his birth certificate and access to his prescriptions."
+    }
+  ],
+  "sessions": [
+    {
+      "id": 155,
+      "client_id": 37,
+      "session_date": "2026-10-19",
+      "session_title": "Check-in conversation – brief status update (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Came by the center Friday and let Kat know that he was kicked out of Shield. He plans to take the bus back to Columbia where his family is. I reached out over text (had already left the office Friday) and told him we could reach out to our Columbia housing partners once he has an idea of his budget for rent. I removed him from the Charleston waitlist this morning and will not add him to the Columbia waitlist until he is stable in Columbia.",
+      "notes_text": "Came by the center Friday and let Kat know that he was kicked out of Shield. He plans to take the bus back to Columbia where his family is. I reached out over text (had already left the office Friday) and told him we could reach out to our Columbia housing partners once he has an idea of his budget for rent. I removed him from the Charleston waitlist this morning and will not add him to the Columbia waitlist until he is stable in Columbia.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 156,
+      "client_id": 37,
+      "session_date": "2026-10-15",
+      "session_title": "Check-in conversation – brief status update (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Came by the center to give me his phone number. May want to relocate to Columbia because he was put on Medication-Assisted Treatment (MAT) and isn't sure if Shield will allow that. He's from Columbia and his family is there. If he does need to relocate, he is interested in finding housing as well as transportation options to get there.",
+      "notes_text": "Came by the center to give me his phone number. May want to relocate to Columbia because he was put on Medication-Assisted Treatment (MAT) and isn't sure if Shield will allow that. He's from Columbia and his family is there. If he does need to relocate, he is interested in finding housing as well as transportation options to get there.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 157,
+      "client_id": 37,
+      "session_date": "2026-10-06",
+      "session_title": "Intake Appointment COMPLETED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Currently at Shield Ministries. Has access to necessary prescriptions. Has birth certificate and state ID. NO social security card. NO phone. Used Heroin and Meth in the past, says he's been sober 1.5 years. No drug-related charges that I can find. Receiving a settlement next week that he plans to use to pay off his license reinstatement fees. Signed up for StaffZone for work as he waits for a spot to open up in Charleston. Looking for support in the process of getting his DL back. He has no phone, so I gave him my card to use the Shield phone and let him know he can walk in as well.",
+      "notes_text": "Currently at Shield Ministries. Has access to necessary prescriptions. Has birth certificate and state ID. NO social security card. NO phone. Used Heroin and Meth in the past, says he's been sober 1.5 years. No drug-related charges that I can find. Receiving a settlement next week that he plans to use to pay off his license reinstatement fees. Signed up for StaffZone for work as he waits for a spot to open up in Charleston. Looking for support in the process of getting his DL back. He has no phone, so I gave him my card to use the Shield phone and let him know he can walk in as well.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 158,
+      "client_id": 37,
+      "session_date": "2026-10-02",
+      "session_title": "Intake Appointment SCHEDULED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Intake Appointment SCHEDULED",
+      "notes_text": "Intake Appointment SCHEDULED",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "goals": [
+    {
+      "id": 80,
+      "client_id": 37,
+      "goal_title": "See attached. He does have his birth certificate and access to his prescriptions.",
+      "target_date": "2026-11-09",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"See attached. He does have his birth certificate and access to his prescriptions.\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "case_plans": [],
+  "updated_at": "2026-11-23T13:46:29.107Z"
+}

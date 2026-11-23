@@ -1,0 +1,101 @@
+{
+  "participant_key": "Henry_Anderson",
+  "participant_name": "Henry Anderson",
+  "client_records": [
+    {
+      "id": 66,
+      "first_name": "Henry",
+      "last_name": "Anderson",
+      "apricot_id": "66049",
+      "location": "Charleston",
+      "status": "active",
+      "stability_tier": "at_risk",
+      "phone": null,
+      "email": null,
+      "notes": "",
+      "created_at": "2026-11-22 17:35:09",
+      "updated_at": "2026-11-22 17:36:06",
+      "case_manager": "Unassigned",
+      "enrollment_start": "2026-11-02",
+      "gate1_pct": 0,
+      "gate2_pct": 0,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "last_contact_date": "2026-11-12",
+      "last_contact_staff": "Kat Norsworthy",
+      "last_contact_activity": "Check-in conversation – brief status update",
+      "has_case_plan": 0,
+      "case_plan_text": ""
+    }
+  ],
+  "sessions": [
+    {
+      "id": 334,
+      "client_id": 66,
+      "session_date": "2026-11-12",
+      "session_title": "Check-in conversation – brief status update (Kat Norsworthy)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Henry had his first home visit today and everything went well.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 335,
+      "client_id": 66,
+      "session_date": "2026-11-10",
+      "session_title": "Check-in conversation – brief status update (Kat Norsworthy)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Henry called because he was supposed to have a home visit from his supervision officer but was downtown and not at his house. We talked about it and he decided he should call and let the officer know he was downtown helping family that was just released from the hospital and would not be there for the visit and they were able to reschedule.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 336,
+      "client_id": 66,
+      "session_date": "2026-11-09",
+      "session_title": "Check-in conversation – brief status update (Kat Norsworthy)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Henry came in to go over his disability app using the computer but we could not verify his account with SSI because he lost his ID card. We ordered him a new ID card and will return to the SSI app when we have it and can verify his identity. He was also concerned about the fact that his brother had his social security card so we checked his credit report to make sure nothing had been opened or changed since he was inside. I also made and emailed him a resume to assist in finding a job.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 337,
+      "client_id": 66,
+      "session_date": "2026-11-06",
+      "session_title": "Check-in conversation – brief status update (Kat Norsworthy)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "We spoke, Henry expressed that he used his phone to apply for disability but wasn't confident that it was done correctly so I told him to come in Monday and we would take a look. He has applied to some restaurant jobs downtown and is working to get through all of his various mail to see if he can find some information related to some payments he is supposed to have received from when he was working before he got arrested.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 338,
+      "client_id": 66,
+      "session_date": "2026-11-02",
+      "session_title": "Check-in conversation – brief status update (Kat Norsworthy)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Henry went to 82 Queen downtown to see about getting a job as he worked there previously. We also did a Welvista and SNAP application. The Welvista is his main focus as he is on medication and indicated that while SCDC gave him a month or two worth, it is very generic and not as good as medication he could be receiving. He is going to be applying for disability so I gave him the number for SSI so he can speak with someone about the best way to go about that.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "goals": [],
+  "case_plans": [],
+  "updated_at": "2026-11-23T13:46:29.391Z"
+}

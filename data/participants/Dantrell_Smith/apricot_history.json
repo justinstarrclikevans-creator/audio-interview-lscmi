@@ -1,0 +1,72 @@
+{
+  "participant_key": "Dantrell_Smith",
+  "participant_name": "Dantrell Smith",
+  "apricot_ids": [
+    "73043"
+  ],
+  "evaluations": [],
+  "notes_count": 4,
+  "processed_notes": [
+    {
+      "id": 107,
+      "record_id": "73043",
+      "first_name": "Dantrell",
+      "last_name": "Smith",
+      "activity_date": "2026-06-10",
+      "staff_name": "Jenn Jeanquart",
+      "service_context": "First Shift",
+      "interaction_type": "Coaching / case management session – structured or in-depth meeting",
+      "note_text": "Dantrell interviewed at Michelin through Novo Logistics last week and was offered the job. It is a forklift position, and he was offered $17.25/hour. I helped him complete the onboarding documents and he will start on Tuesday, 6/16. He continues to meet and exceed the expectations of the program and has no issues with the rules of home confinement. Dantrell denies any influences from peers or other challenges and continues to work toward his goals.",
+      "center_location": "Columbia",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 106,
+      "record_id": "73043",
+      "first_name": "Dantrell",
+      "last_name": "Smith",
+      "activity_date": "2026-06-04",
+      "staff_name": "Jenn Jeanquart",
+      "service_context": "First Shift",
+      "interaction_type": "Coaching / case management session – structured or in-depth meeting",
+      "note_text": "Dantrell continues to do well in the program and meets all of the expectations. He denies any current challenges and finds it easy to keep to himself and stay out of situations that could set him back. He spoke about his past behavior and how he has changed his mindset and upgrade his beliefs. The things that used to be important to him (money and material possessions) are not important to him anymore as he works to live a peaceful life. He has been jogging more regularly and is interested in getting a gym membership soon. Spoke about his sister as a primary support in his life and next steps after Turn90.",
+      "center_location": "Columbia",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 105,
+      "record_id": "73043",
+      "first_name": "Dantrell",
+      "last_name": "Smith",
+      "activity_date": "2026-05-28",
+      "staff_name": "Jenn Jeanquart",
+      "service_context": "First Shift",
+      "interaction_type": "Coaching / case management session – structured or in-depth meeting",
+      "note_text": "Dantrell continues to do well in the program and is consistently meeting program expectations. He remains engaged, cooperative, and compliant with program structure and expectations.\n\nDantrell discussed his long-term employment goal of obtaining his CDL. He reported that Ms. Covington from the halfway house informed him of a potential lead for a weekend CDL training program that may be fully funded; however, he has not been able to get in contact with her all week.\n\nDantrell also discussed his goal of improving his physical health. He reported recently beginning jogging as a form of exercise and stated the experience was humbling, but motivating. Client expressed understanding that improving his endurance and physical health will take time and stated he plans to continue building his work capacity gradually.\n\nDantrell denied any pro-criminal thoughts, urges, or behaviors. He reported spending most of his time keeping to himself and remaining at home in his yard during non-program hours.",
+      "center_location": "Columbia",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 104,
+      "record_id": "73043",
+      "first_name": "Dantrell",
+      "last_name": "Smith",
+      "activity_date": "2026-05-22",
+      "staff_name": "Jenn Jeanquart",
+      "service_context": "First Shift",
+      "interaction_type": "Coaching / case management session – structured or in-depth meeting",
+      "note_text": "Met with Dantrell for initial case management session. Reviewed brief and created case plan with him. Ninety day goals include getting a job, CDL, open a bank account, and find his own place to stay. Area of focus: Procriminal Attitude- and he identifies not thinking about consequences before acting. He will practice Stop and Think as the primary skill to learn to address this.",
+      "center_location": "Columbia",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "updated_at": "2026-11-23T13:46:29.666Z"
+}

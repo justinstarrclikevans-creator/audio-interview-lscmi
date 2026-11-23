@@ -1,0 +1,42 @@
+{
+  "participant_key": "Devon_Thomas",
+  "participant_name": "Devon Thomas",
+  "apricot_ids": [
+    "78374"
+  ],
+  "evaluations": [],
+  "notes_count": 2,
+  "processed_notes": [
+    {
+      "id": 311,
+      "record_id": "78374",
+      "first_name": "Devon",
+      "last_name": "Thomas",
+      "activity_date": "2026-07-08",
+      "staff_name": "Terrence Brown",
+      "service_context": "First Shift",
+      "interaction_type": "Case Note (documentation only) – no interaction or service|Documentation support – ID, housing forms, paperwork|Barrier removal – problem-solving or coordination support",
+      "note_text": "He got his ID and Birth Certificate",
+      "center_location": "Charleston",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 312,
+      "record_id": "78374",
+      "first_name": "Devon",
+      "last_name": "Thomas",
+      "activity_date": "2026-07-03",
+      "staff_name": "Terrence Brown",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment COMPLETED",
+      "note_text": "How did you hear about us and/or what institution were you most recently released from? halfway house reference, and was released from Miami Low FCI for consp. to traffic fetnayl and meth, served 9 years\nWhat is your living situation? living in the half way house\nHow will you get back and forth to work? uber and public transportation\nAny pending issues like court dates, doctors appointments, child care issues? no\nDo you want to work? yes\nAre you physically able to work full time and move and lift things? yes\nAre you legally able to work? yes\nWhen were you last released from incarceration? 7/8/26\nHave you ever been charged with a sexual offence? no\nDo you have any pending charges? no",
+      "center_location": "Charleston",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "updated_at": "2026-11-23T13:46:29.843Z"
+}

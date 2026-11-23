@@ -1,0 +1,248 @@
+{
+  "participant_key": "William_Countee",
+  "updated_at": "2026-11-23T13:46:28.979Z",
+  "events": [
+    {
+      "id": "ms_doc:William_Countee_Charleston_criminal_history.docx",
+      "event_key": "doc:William_Countee_Charleston_criminal_history.docx",
+      "timestamp": "2026-11-04T16:33:37.574Z",
+      "category": "document",
+      "action": "Archived criminal history",
+      "summary": "Document stored in folder: William_Countee_Charleston_criminal_history.docx",
+      "filename": "William_Countee_Charleston_criminal_history.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:William_Countee_Charleston_draft_scoring_form.docx",
+      "event_key": "doc:William_Countee_Charleston_draft_scoring_form.docx",
+      "timestamp": "2026-11-04T14:20:32.239Z",
+      "category": "document",
+      "action": "Archived draft scoring",
+      "summary": "Document stored in folder: William_Countee_Charleston_draft_scoring_form.docx",
+      "filename": "William_Countee_Charleston_draft_scoring_form.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:William_Countee_Charleston_final_scoring_form.docx",
+      "event_key": "doc:William_Countee_Charleston_final_scoring_form.docx",
+      "timestamp": "2026-11-04T14:20:32.229Z",
+      "category": "document",
+      "action": "Archived final scoring",
+      "summary": "Document stored in folder: William_Countee_Charleston_final_scoring_form.docx",
+      "filename": "William_Countee_Charleston_final_scoring_form.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:William_Countee_Charleston_final_scoring_form.md",
+      "event_key": "doc:William_Countee_Charleston_final_scoring_form.md",
+      "timestamp": "2026-11-04T14:20:31.985Z",
+      "category": "document",
+      "action": "Archived final scoring",
+      "summary": "Document stored in folder: William_Countee_Charleston_final_scoring_form.md",
+      "filename": "William_Countee_Charleston_final_scoring_form.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:William_Countee_Charleston_draft_scoring_form.md",
+      "event_key": "doc:William_Countee_Charleston_draft_scoring_form.md",
+      "timestamp": "2026-11-04T14:20:31.983Z",
+      "category": "document",
+      "action": "Archived draft scoring",
+      "summary": "Document stored in folder: William_Countee_Charleston_draft_scoring_form.md",
+      "filename": "William_Countee_Charleston_draft_scoring_form.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:William_Countee_Charleston_interview_guide.md",
+      "event_key": "doc:William_Countee_Charleston_interview_guide.md",
+      "timestamp": "2026-11-03T19:35:44.546Z",
+      "category": "document",
+      "action": "Archived interview guide",
+      "summary": "Document stored in folder: William_Countee_Charleston_interview_guide.md",
+      "filename": "William_Countee_Charleston_interview_guide.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:William_Countee_Charleston_transcript.txt",
+      "event_key": "doc:William_Countee_Charleston_transcript.txt",
+      "timestamp": "2026-11-03T19:35:44.546Z",
+      "category": "document",
+      "action": "Archived transcript",
+      "summary": "Document stored in folder: William_Countee_Charleston_transcript.txt",
+      "filename": "William_Countee_Charleston_transcript.txt",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-10-19T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "9 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:34",
+      "event_key": "reentry_session:34",
+      "timestamp": "2026-10-19T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Terrence Brown)",
+      "summary": "Called a participant to follow up on their interest in re-joining the program. The client confirmed they recently started a new job at Goodwill on the 27th. They plan to work daytime hours at Goodwill while continuing th",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:35",
+      "event_key": "reentry_session:35",
+      "timestamp": "2026-10-09T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Terrence Brown)",
+      "summary": "Texted me and asked about drivers license and seeking full time employment",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:36",
+      "event_key": "reentry_session:36",
+      "timestamp": "2026-09-30T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Coaching / case management session – structured or in-depth meeting (Terrence Brown)",
+      "summary": "### **Session Summary**\n\nThe participant and staff member discussed past group topics regarding maintaining focus, participating in discussions, and managing personal/social challenges. The participant shared ongoing con",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:37",
+      "event_key": "reentry_session:37",
+      "timestamp": "2026-09-29T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Terrence Brown)",
+      "summary": "Was moved back to rentry navigation due to failed drug test for THC",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:38",
+      "event_key": "reentry_session:38",
+      "timestamp": "2026-09-23T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Coaching / case management session – structured or in-depth meeting (Terrence Brown)",
+      "summary": "## Conversation Summary\n\nThis conversation is a case management and mentoring check-in between a Program Manager/Advisor and a client/participant. The dialogue covers personal relationship dynamics, program/class engagem",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_doc:William_Countee_Charleston_criminal_history.pdf",
+      "event_key": "doc:William_Countee_Charleston_criminal_history.pdf",
+      "timestamp": "2026-09-14T14:32:06.889Z",
+      "category": "document",
+      "action": "Archived criminal history",
+      "summary": "Document stored in folder: William_Countee_Charleston_criminal_history.pdf",
+      "filename": "William_Countee_Charleston_criminal_history.pdf",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:William_Countee_Charleston_criminal_history.md",
+      "event_key": "doc:William_Countee_Charleston_criminal_history.md",
+      "timestamp": "2026-09-14T14:30:54.271Z",
+      "category": "document",
+      "action": "Archived criminal history",
+      "summary": "Document stored in folder: William_Countee_Charleston_criminal_history.md",
+      "filename": "William_Countee_Charleston_criminal_history.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:William_Countee_intelius_raw.txt",
+      "event_key": "doc:William_Countee_intelius_raw.txt",
+      "timestamp": "2026-09-14T14:27:09.062Z",
+      "category": "document",
+      "action": "Archived criminal history",
+      "summary": "Document stored in folder: William_Countee_intelius_raw.txt",
+      "filename": "William_Countee_intelius_raw.txt",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_reentry_session:39",
+      "event_key": "reentry_session:39",
+      "timestamp": "2026-09-14T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Coaching / case management session – structured or in-depth meeting (Terrence Brown)",
+      "summary": "**Case Notes & Session Summary**\n\n**Client Goal**\nContinue growing mentally and emotionally to align with personal life plans.\n\n**Key Discussion Topics & Notes**\n\n* **Family & Relationships (Avoidance of Difficult Conver",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_doc:William_Countee_Charleston_final_scoring_form.pdf",
+      "event_key": "doc:William_Countee_Charleston_final_scoring_form.pdf",
+      "timestamp": "2026-09-13T22:37:06.894Z",
+      "category": "document",
+      "action": "Archived final scoring",
+      "summary": "Document stored in folder: William_Countee_Charleston_final_scoring_form.pdf",
+      "filename": "William_Countee_Charleston_final_scoring_form.pdf",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:William_Countee_Charleston_draft_scoring_form.pdf",
+      "event_key": "doc:William_Countee_Charleston_draft_scoring_form.pdf",
+      "timestamp": "2026-09-13T22:37:04.632Z",
+      "category": "document",
+      "action": "Archived draft scoring",
+      "summary": "Document stored in folder: William_Countee_Charleston_draft_scoring_form.pdf",
+      "filename": "William_Countee_Charleston_draft_scoring_form.pdf",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_reentry_session:40",
+      "event_key": "reentry_session:40",
+      "timestamp": "2026-09-11T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Coaching / case management session – structured or in-depth meeting (Terrence Brown)",
+      "summary": "Based on your request, here is a detailed summary and case note breakdown from the video and audio context provided:\n\n### **Case Note & Client Session Summary**\n\n**Client Information:**\n\n* **Client Name:** Theophilus (go",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:42",
+      "event_key": "reentry_session:42",
+      "timestamp": "2026-09-03T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "Intake Appointment SCHEDULED",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:41",
+      "event_key": "reentry_session:41",
+      "timestamp": "2026-09-03T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Justin Evans)",
+      "summary": "Intake Appointment COMPLETED",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

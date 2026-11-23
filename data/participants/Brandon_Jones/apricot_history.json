@@ -1,0 +1,109 @@
+{
+  "participant_key": "Brandon_Jones",
+  "participant_name": "Brandon Jones",
+  "apricot_ids": [
+    "82462"
+  ],
+  "evaluations": [
+    {
+      "record_id": "82462",
+      "full_name": "Brandon Jones",
+      "program": "Reentry Navigation",
+      "center": "Columbia",
+      "case_manager": "Daisy Boynton",
+      "case_plan_status": "Yes (Goals & Gates Active)",
+      "focus_areas_or_goals": "Find employment",
+      "briefcase_status_text": "Gate 1: 63%, Gate 2: 70%, Gate 3: 0%, Gate 4: 0%",
+      "gate1_pct": 63,
+      "gate2_pct": 70,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "case_note_analysis": "Enrolled 10/28/2026. Most recent contact on 11/17/2026 by Daisy Boynton (Employment support – applications, resume, interview prep): \"Sent Brandon 3 job fairs coming up in Columbia and let him know he's #8 on the waitlist.\"\n\n**Latest Case Note Updates:** [Update 11/17/2026 • Daisy Boynton]: Sent Brandon 3 job fairs coming up in Columbia and let him know he's #8 on the waitlist. | [Update 11/06/2026 • Daisy Boynton]: Checked in with Brandon and he said he wanted me to send him more jobs. Sent him the spreadsheet of second chance employers in Columbia and reminded him of the SCOUT job fair on 11/12. | [Update 10/29/2026 • Daisy Boynton]: Sent Brandon a Warehouse Technician job opening to apply for and the flyer for the SCOUT Motors job fair on 11/12. | [Update 10/28/2026 • Daisy Boynton]: Contact Summary: Initial intake and screening conducted via phone. Brandon is currently residing in a Federal Halfway House in Columbia with approximately 50 days remaining before discharge. He has his birth certificate, social security card, and a valid temporary paper driver's license (not suspended). Transportation is currently provided by his wife while he works on transferring the title and getting insurance for his own vehicle. He has a solid work history (machine operator, forklift, truck driver) and holds an OSHA-10 certification. He has a job interview scheduled for tomorrow. \n\nCase Plan Goal Progress: N/A - Initial Intake.\n\nBriefcase & Gate 1-4 Updates: Verified SS Card (Green), Birth Certificate (Green), and Driver's License (Green - Temporary Paper). Leaves halfway house in 50 days, but has a plan to move in with family. \n\nReferrals/Resources Provided: Navigator explained the Turn90 program structure, waitlist (approx. 3 weeks), and stipend pay schedule. Navigator agreed to email current job postings and local job fair information to assist Brandon in finding temporary work while on the waitlist.\n\nNext Steps: Navigator will send employment resources via email. Brandon will attend his job interview tomorrow and update the Navigator on the outcome. Navigator will contact Brandon as he moves up the waitlist. | [Update 10/26/2026 • Daisy Boynton]: ",
+      "operational_feedback": "Continue advancing Reentry Navigation Case Plan goals and Briefcase Gates 1–4 (Gate 1: 63%, Gate 2: 70%, Gate 3: 0%, Gate 4: 0%). Focus on barrier removal, employment readiness, and community resource referrals.",
+      "next_cm_steps_json": "[\"🎯 **Advance Stated Case Plan Goals:** Review progress on active Reentry Nav goals (Find employment) and verify concrete barrier-removal steps completed since last check-in.\",\"🔓 **Complete Remaining Gate 1 Items (63% done):** Target Explore healthcare options (Medicaid / Free Medical Clinic).\",\"🔓 **Advance Gate 2 Stability & Readiness (70% done):** Work on DMV License Suspension check & reinstatement plan, Turn90 Resume completed.\",\"🩺 **Address Gate 3 Health & Banking Milestones (0% done):** Follow up on Primary Care / Medical checkup scheduled or cleared, Vision Appointment / screening, Steady access to daily prescriptions (Welvista).\",\"🚀 **Finalize Gate 4 Job Placement & Financial Readiness (0% done):** Complete Work Tools & Clothing (Steel-toe boots, non-slip shoes, work gear), Verified Daily Transportation Plan (Bus route, car, ride plan), Personal Budget completed.\",\"🔄 **Follow Up on Latest Session (11/17/2026 by Daisy Boynton):** Check accountability on items discussed (\\\"Sent Brandon 3 job fairs coming up in Columbia and let him know he's #8 on the waitlist.\\\").\"]",
+      "recent_cm_notes_json": null,
+      "last_note_date": "2026-11-17",
+      "notes_count": 5,
+      "updated_at": "2026-11-22 17:36:06"
+    }
+  ],
+  "notes_count": 5,
+  "processed_notes": [
+    {
+      "id": 1018,
+      "record_id": "82462",
+      "first_name": "Brandon",
+      "last_name": "Jones",
+      "activity_date": "2026-11-17",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Employment support – applications, resume, interview prep",
+      "note_text": "Sent Brandon 3 job fairs coming up in Columbia and let him know he's #8 on the waitlist.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1017,
+      "record_id": "82462",
+      "first_name": "Brandon",
+      "last_name": "Jones",
+      "activity_date": "2026-11-06",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Employment support – applications, resume, interview prep",
+      "note_text": "Checked in with Brandon and he said he wanted me to send him more jobs. Sent him the spreadsheet of second chance employers in Columbia and reminded him of the SCOUT job fair on 11/12.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 843,
+      "record_id": "82462",
+      "first_name": "Brandon",
+      "last_name": "Jones",
+      "activity_date": "2026-10-29",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Employment support – applications, resume, interview prep",
+      "note_text": "Sent Brandon a Warehouse Technician job opening to apply for and the flyer for the SCOUT Motors job fair on 11/12.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 842,
+      "record_id": "82462",
+      "first_name": "Brandon",
+      "last_name": "Jones",
+      "activity_date": "2026-10-28",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment COMPLETED",
+      "note_text": "Contact Summary: Initial intake and screening conducted via phone. Brandon is currently residing in a Federal Halfway House in Columbia with approximately 50 days remaining before discharge. He has his birth certificate, social security card, and a valid temporary paper driver's license (not suspended). Transportation is currently provided by his wife while he works on transferring the title and getting insurance for his own vehicle. He has a solid work history (machine operator, forklift, truck driver) and holds an OSHA-10 certification. He has a job interview scheduled for tomorrow. \n\nCase Plan Goal Progress: N/A - Initial Intake.\n\nBriefcase & Gate 1-4 Updates: Verified SS Card (Green), Birth Certificate (Green), and Driver's License (Green - Temporary Paper). Leaves halfway house in 50 days, but has a plan to move in with family. \n\nReferrals/Resources Provided: Navigator explained the Turn90 program structure, waitlist (approx. 3 weeks), and stipend pay schedule. Navigator agreed to email current job postings and local job fair information to assist Brandon in finding temporary work while on the waitlist.\n\nNext Steps: Navigator will send employment resources via email. Brandon will attend his job interview tomorrow and update the Navigator on the outcome. Navigator will contact Brandon as he moves up the waitlist.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 841,
+      "record_id": "82462",
+      "first_name": "Brandon",
+      "last_name": "Jones",
+      "activity_date": "2026-10-26",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment SCHEDULED",
+      "note_text": "",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-03 23:04:00"
+    }
+  ],
+  "updated_at": "2026-11-23T13:46:29.314Z"
+}

@@ -3,10 +3,12 @@
   "participant_name": "Hakeem Alston",
   "location": "Charleston",
   "track": "first_shift",
+  "lscmi_client_id": "Hakeem_Alston_Charleston",
   "folder_path": "data/participants/Hakeem_Alston",
   "has_lscmi_brief": false,
   "has_lscmi_scoring": true,
   "has_action_plan": false,
+  "has_legacy_case_briefs": false,
   "action_plan_agreement": "pending_review",
   "waitlist_ready": true,
   "waitlist_score": "9/9",
@@ -14,6 +16,10 @@
   "skillcat_pathway": "HVAC",
   "skillcat_modules_completed": 0,
   "cm_notes_count": 0,
+  "apricot_notes_count": 7,
+  "reentry_sessions_count": 0,
+  "history_events_count": 20,
+  "documents_count": 19,
   "data_evaluation_flags": [
     {
       "code": "FLAG-CM-CADENCE",
@@ -21,5 +27,5 @@
       "message": "No 1-on-1 Case Management session note logged in participant folder."
     }
   ],
-  "updated_at": "2026-11-22T17:18:01.449Z"
+  "updated_at": "2026-11-23T13:46:28.404Z"
 }

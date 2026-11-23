@@ -2,24 +2,30 @@
   "participant_key": "Christopher_Barranco",
   "participant_name": "Christopher Barranco",
   "location": "Columbia",
-  "track": "first_shift",
+  "track": "reentry_nav",
+  "lscmi_client_id": "Christopher_Barranco_Columbia",
   "folder_path": "data/participants/Christopher_Barranco",
   "has_lscmi_brief": false,
   "has_lscmi_scoring": true,
-  "has_action_plan": false,
-  "action_plan_agreement": "pending_review",
+  "has_action_plan": true,
+  "has_legacy_case_briefs": true,
+  "action_plan_agreement": "agreed",
   "waitlist_ready": false,
-  "waitlist_score": "5/9",
+  "waitlist_score": "8/9",
   "medical_appointments_applicable": false,
   "skillcat_pathway": "HVAC",
   "skillcat_modules_completed": 0,
   "cm_notes_count": 11,
+  "apricot_notes_count": 11,
+  "reentry_sessions_count": 0,
+  "history_events_count": 50,
+  "documents_count": 37,
   "data_evaluation_flags": [
     {
       "code": "FLAG-WAITLIST-GAP",
       "severity": "warning",
-      "message": "5/9 First Shift Waitlist Briefcase items ready. Missing: 1. State ID or Driver's License (DL), 2. Social Security Card, 3. Birth Certificate"
+      "message": "8/9 First Shift Waitlist Briefcase items ready. Missing: 3. Birth Certificate"
     }
   ],
-  "updated_at": "2026-11-22T17:18:01.532Z"
+  "updated_at": "2026-11-23T13:46:28.584Z"
 }

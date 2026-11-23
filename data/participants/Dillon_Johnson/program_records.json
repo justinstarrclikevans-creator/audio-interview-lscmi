@@ -1,0 +1,208 @@
+{
+  "participant_key": "Dillon_Johnson",
+  "participant_name": "Dillon Johnson",
+  "profile_records": [
+    {
+      "id": 39,
+      "user_id": 41,
+      "current_gate": 3,
+      "w9_status": "verified",
+      "dl_status": "suspended",
+      "dl_notes": "I'm on the city bus line Until I get my permit and my license",
+      "child_support_status": "none",
+      "child_support_notes": "",
+      "housing_status": "transitional",
+      "substance_status": "none",
+      "mental_health_status": "none",
+      "transportation_status": "CARTA Bus Line",
+      "court_dates": null,
+      "overall_status": "archived",
+      "termination_reason": null,
+      "termination_date": null,
+      "updated_at": "2026-09-23 20:26:05",
+      "stability_red_flags": "[{\"category\":\"Cognitive / Attitude\",\"flag\":\"Emotional Reactivity & Workplace Violence\",\"evidence\":\"\\\"I ripped up the card machine 'cause she told me to get out of the restaurant and I wasn't being rude... bounced off I guess hit her knee.\\\"\",\"severity\":\"high\",\"navigator_recommendation\":\"Use Modeling Neutrality. Do not lecture on the danger of throwing objects. Instead, ask reflective questions: 'Walk me through what it feels like in your body when you feel ignored or disrespected?' Use CBT workbooks to map triggers.\"},{\"category\":\"Stability Risk\",\"flag\":\"Transportation Vulnerability\",\"evidence\":\"No driver's license. Relies on walking or city bus. Stated transportation might make it hard to attend every day.\",\"severity\":\"medium\",\"navigator_recommendation\":\"Immediately secure a CARTA bus pass and map the route from his transitional house to the Turn90 center. Discuss long-term steps for SCDMV ID/License reinstatement.\"},{\"category\":\"Substance / Health\",\"flag\":\"Mental Health & Past Substance Coping\",\"evidence\":\"Diagnosed with anxiety/depression, taking Hydroxyzine. Used THC heavily ('messed up my mental health'). Wants to see a psychologist/psychiatrist.\",\"severity\":\"medium\",\"navigator_recommendation\":\"Validate his proactive desire for mental health support. Link him with Fetter Health Care Network for accessible psychiatric care and counseling.\"},{\"category\":\"Supervision / Legal\",\"flag\":\"History of Probation Violations\",\"evidence\":\"\\\"I kept violating and it kept extending...\\\"\",\"severity\":\"medium\",\"navigator_recommendation\":\"Review current probation terms together. Frame Turn90 compliance purely in his self-interest: attending daily prevents violations and keeps his freedom.\"}]",
+      "director_override": 0,
+      "director_override_notes": null,
+      "director_override_by": null,
+      "reentry_status": "at_risk",
+      "has_reentry_plan": 1,
+      "enrollment_date": "2026-08-24",
+      "correction_notes": null,
+      "supabase_id": "7e3c3256-575a-457e-ab8a-3723f61c7fb9",
+      "record_id": null
+    }
+  ],
+  "case_plan_triggers": [],
+  "daily_points": [
+    {
+      "id": 57,
+      "user_id": 41,
+      "date": "2026-09-21",
+      "points_earned": 10,
+      "max_points": 50,
+      "attendance_status": "present",
+      "notes": "Imported via Render Report",
+      "imported_from_apricot": 1,
+      "created_at": "2026-09-22 17:44:36"
+    }
+  ],
+  "drug_tests": [
+    {
+      "id": 3,
+      "user_id": 41,
+      "test_date": "2026-09-22",
+      "result": "negative",
+      "substances_detected": null,
+      "notes": "Imported via Render Report",
+      "administered_by": null,
+      "created_at": "2026-09-22 17:43:35"
+    }
+  ],
+  "benefits": [
+    {
+      "id": 63,
+      "user_id": 41,
+      "benefit_type": "snap",
+      "status": "approved",
+      "application_number": "EBT-SC-4411",
+      "monthly_amount": "/ mo",
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": "Card received and active",
+      "updated_at": "2026-09-08 17:11:51"
+    },
+    {
+      "id": 61,
+      "user_id": 41,
+      "benefit_type": "welvista",
+      "status": "in_progress",
+      "application_number": "WEL-88992",
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": "Fetter Health sent Rx",
+      "updated_at": "2026-09-08 17:11:51"
+    },
+    {
+      "id": 62,
+      "user_id": 41,
+      "benefit_type": "medicaid",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    },
+    {
+      "id": 64,
+      "user_id": 41,
+      "benefit_type": "tanf",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    }
+  ],
+  "resumes": [
+    {
+      "id": 9,
+      "user_id": 41,
+      "resume_data_json": "{\"jobs\":[{\"id\":1,\"title\":\"cleaner\",\"company\":\"02 fitness\",\"endDate\":\"10/14/2019\",\"startDate\":\"01/05/2018\",\"description\":\"\"},{\"id\":2,\"title\":\"material handler\",\"company\":\"shimanos\",\"endDate\":\"01/12/2021\",\"startDate\":\"06/20/2020\",\"description\":\"\"},{\"id\":3,\"title\":\"dishwasher/salad bar\",\"company\":\"Ruby tuesdays\",\"endDate\":\"08/16/2022\",\"startDate\":\"03/19/2021\",\"description\":\"\"},{\"id\":4,\"title\":\"unloader/Matt roller \",\"company\":\"cintas\",\"endDate\":\"06/01/2025\",\"startDate\":\"03/16/2023\",\"description\":\"\"}],\"name\":\"Dillon Johnson\",\"email\":\"Dillydilly1607@gmail.com\",\"phone\":\"854-275-4312\"}",
+      "updated_at": "2026-09-23 11:52:26"
+    }
+  ],
+  "db_documents": [
+    {
+      "id": 80,
+      "user_id": 41,
+      "doc_type": "case_brief",
+      "title": "Case Brief - Dillon Johnson",
+      "filename": "Dillon_Johnson_Case_Brief_1790195053103.txt",
+      "file_path": "/data/Dillon_Johnson_Case_Brief_1790195053103.txt",
+      "file_size": 19401,
+      "status": "active",
+      "metadata_json": "{\"originalName\":\"5_Dillon_Full_Audio_Transcript.txt\"}",
+      "uploaded_at": "2026-09-23 20:24:13"
+    },
+    {
+      "id": 71,
+      "user_id": 41,
+      "doc_type": "case_brief",
+      "title": "Case Brief - Dillon Johnson",
+      "filename": "Dillon_Johnson_Case_Brief_1790193819491.txt",
+      "file_path": "/data/Dillon_Johnson_Case_Brief_1790193819491.txt",
+      "file_size": 19401,
+      "status": "active",
+      "metadata_json": "{\"originalName\":\"5_Dillon_Full_Audio_Transcript.txt\"}",
+      "uploaded_at": "2026-09-23 20:03:39"
+    },
+    {
+      "id": 62,
+      "user_id": 41,
+      "doc_type": "case_brief",
+      "title": "Case Brief - Dillon Johnson",
+      "filename": "Dillon_Johnson_Case_Brief_1790193710044.txt",
+      "file_path": "/data/Dillon_Johnson_Case_Brief_1790193710044.txt",
+      "file_size": 19401,
+      "status": "active",
+      "metadata_json": "{\"originalName\":\"5_Dillon_Full_Audio_Transcript.txt\"}",
+      "uploaded_at": "2026-09-23 20:01:50"
+    },
+    {
+      "id": 53,
+      "user_id": 41,
+      "doc_type": "case_brief",
+      "title": "Case Brief - Dillon Johnson",
+      "filename": "Dillon_Johnson_Case_Brief_1790193390188.txt",
+      "file_path": "/data/Dillon_Johnson_Case_Brief_1790193390188.txt",
+      "file_size": 19401,
+      "status": "active",
+      "metadata_json": "{\"originalName\":\"5_Dillon_Full_Audio_Transcript.txt\"}",
+      "uploaded_at": "2026-09-23 19:56:30"
+    },
+    {
+      "id": 45,
+      "user_id": 41,
+      "doc_type": "case_brief",
+      "title": "Case Brief - Dillon Johnson",
+      "filename": "Dillon_Johnson_Case_Brief_1790192589085.txt",
+      "file_path": "/data/Dillon_Johnson_Case_Brief_1790192589085.txt",
+      "file_size": 19401,
+      "status": "active",
+      "metadata_json": "{\"originalName\":\"5_Dillon_Full_Audio_Transcript.txt\"}",
+      "uploaded_at": "2026-09-23 19:43:09"
+    },
+    {
+      "id": 36,
+      "user_id": 41,
+      "doc_type": "case_brief",
+      "title": "Clinical Case Brief - Dillon Johnson",
+      "filename": "Dillon_Johnson_Case_Brief_1788826958487.pdf",
+      "file_path": "/data/Dillon_Johnson_Case_Brief_1788826958487.pdf",
+      "file_size": 65735,
+      "status": "active",
+      "metadata_json": "{\"originalName\":\"4_Dillon_Clinical_Case_Brief.pdf\"}",
+      "uploaded_at": "2026-09-08 00:22:38"
+    },
+    {
+      "id": 24,
+      "user_id": 41,
+      "doc_type": "case_brief",
+      "title": "Clinical Case Brief - Dillon Johnson",
+      "filename": "Dillon_Johnson_Case_Brief_1788824614000.pdf",
+      "file_path": "/data/Dillon_Johnson_Case_Brief_1788824614000.pdf",
+      "file_size": 65735,
+      "status": "active",
+      "metadata_json": "{\"originalName\":\"4_Dillon_Clinical_Case_Brief.pdf\"}",
+      "uploaded_at": "2026-09-07 23:43:34"
+    }
+  ],
+  "legacy_briefcase_items_count": 66,
+  "legacy_gate_criteria_count": 27,
+  "updated_at": "2026-11-23T13:46:28.482Z"
+}

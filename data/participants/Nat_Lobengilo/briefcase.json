@@ -7,7 +7,7 @@
   "client_id": null,
   "has_chronic_health_condition": "no",
   "dl_is_suspended": "no",
-  "child_support_applicable": "no",
+  "child_support_applicable": "yes",
   "supervision_officer_details": "",
   "chronic_condition_details": "",
   "medical_appointments_applicable": false,
@@ -38,9 +38,9 @@
     },
     "stable_housing": {
       "value": "stable_verified",
-      "notes": "",
-      "source": "default",
-      "updated_at": "2026-11-20T19:55:12.668Z"
+      "notes": "Stable housing verified in profile",
+      "source": "db_import",
+      "updated_at": "2026-11-23T13:46:27.160Z"
     },
     "reliable_phone": {
       "value": "active_verified",
@@ -55,16 +55,16 @@
       "updated_at": "2026-11-20T19:55:12.668Z"
     },
     "child_support_contact": {
-      "value": "not_applicable",
-      "notes": "",
-      "source": "default",
-      "updated_at": "2026-11-20T19:55:12.668Z"
+      "value": "needs_contact",
+      "notes": "Detected child support reference in loaded records",
+      "source": "loaded_text",
+      "updated_at": "2026-11-23T13:46:27.160Z"
     },
     "supervision_information": {
       "value": "active_logged_no_conflict",
-      "notes": "",
-      "source": "default",
-      "updated_at": "2026-11-20T19:55:12.668Z"
+      "notes": "Supervision information referenced in loaded assessment/case records",
+      "source": "loaded_text",
+      "updated_at": "2026-11-23T13:46:27.160Z"
     },
     "skillcat_pathway": {
       "value": "HVAC",
@@ -76,7 +76,7 @@
       "value": "stalled_flagged",
       "notes": "6 modules completed (9.0 hrs)",
       "source": "skillcat_scraper",
-      "updated_at": "2026-11-22T17:18:01.723Z"
+      "updated_at": "2026-11-23T13:46:28.941Z"
     },
     "resume_and_email": {
       "value": "not_started",
@@ -115,7 +115,7 @@
       "updated_at": "2026-11-20T19:55:12.668Z"
     }
   },
-  "waitlist_met_count": 6,
+  "waitlist_met_count": 5,
   "waitlist_total_required": 9,
   "waitlist_ready": false,
   "waitlist_checklist": [
@@ -162,7 +162,7 @@
       "value": "stable_verified",
       "label": "Stable Housing / Lease / Family Home Verified",
       "ready": true,
-      "notes": ""
+      "notes": "Stable housing verified in profile"
     },
     {
       "key": "reliable_phone",
@@ -186,10 +186,10 @@
       "key": "child_support_contact",
       "number": 8,
       "title": "8. Contact Made with Child Support (if applicable)",
-      "value": "not_applicable",
-      "label": "Not Applicable (No Child Support Case / Order)",
-      "ready": true,
-      "notes": ""
+      "value": "needs_contact",
+      "label": "Applicable — Needs Contact with Child Support / Unaddressed Arrears",
+      "ready": false,
+      "notes": "Detected child support reference in loaded records"
     },
     {
       "key": "supervision_information",
@@ -198,7 +198,7 @@
       "value": "active_logged_no_conflict",
       "label": "Active Supervision — Officer Info, Schedule & Conditions Logged (No Work Conflict)",
       "ready": true,
-      "notes": ""
+      "notes": "Supervision information referenced in loaded assessment/case records"
     }
   ]
 }

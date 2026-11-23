@@ -1,0 +1,87 @@
+{
+  "participant_key": "Harold_Evans",
+  "participant_name": "Harold Evans",
+  "apricot_ids": [
+    "72451"
+  ],
+  "evaluations": [],
+  "notes_count": 5,
+  "processed_notes": [
+    {
+      "id": 103,
+      "record_id": "72451",
+      "first_name": "Harold",
+      "last_name": "Evans",
+      "activity_date": "2026-07-31",
+      "staff_name": "Jenn Jeanquart",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Behavioral incident – disruption, conflict, or left early",
+      "note_text": "Harold was scheduled for orientation at 3pm. Just before 3pm he text to say he would be a little late d/t traffic. At 3:20 he was told he could go back on the waitlist. This was a pattern when Harold was in First Shift 1.0, as he either did not show or was late.",
+      "center_location": "Columbia",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 102,
+      "record_id": "72451",
+      "first_name": "Harold",
+      "last_name": "Evans",
+      "activity_date": "2026-06-30",
+      "staff_name": "Jenn Jeanquart",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Check-in conversation – brief status update",
+      "note_text": "Provided follow up information from RDF re: application to assist with drivers license fees. He is interested in re-enrolling in first shift program. Put on waiting list when slot opens.",
+      "center_location": "Columbia",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 101,
+      "record_id": "72451",
+      "first_name": "Harold",
+      "last_name": "Evans",
+      "activity_date": "2026-06-25",
+      "staff_name": "Jenn Jeanquart",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Check-in conversation – brief status update",
+      "note_text": "Received update from RDF about referral and missing information needed to process the application through a grant with the VA. Shared the info with Harold. His job ends this week and he is staying with his mom as he and his wife have separated.",
+      "center_location": "Columbia",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 100,
+      "record_id": "72451",
+      "first_name": "Harold",
+      "last_name": "Evans",
+      "activity_date": "2026-06-17",
+      "staff_name": "Jenn Jeanquart",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Employment support – applications, resume, interview prep",
+      "note_text": "Has not heard back from potential employers, and his assignment is ending in two weeks. Helped him apply for 2 jobs at Michelin through Novo. Also inquired about housing resources to assist with independent housing. Referred to Alston Wilkes.",
+      "center_location": "Columbia",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 99,
+      "record_id": "72451",
+      "first_name": "Harold",
+      "last_name": "Evans",
+      "activity_date": "2026-06-02",
+      "staff_name": "Jenn Jeanquart",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Employment support – applications, resume, interview prep",
+      "note_text": "He requested help applying for 3 jobs. The job that he secured is ending at the end of June, stating it was only temporary because of his recent incarceration. I helped him apply for the three jobs he found.",
+      "center_location": "Columbia",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "updated_at": "2026-11-23T13:46:29.655Z"
+}

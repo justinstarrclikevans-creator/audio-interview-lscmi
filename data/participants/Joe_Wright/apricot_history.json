@@ -1,0 +1,72 @@
+{
+  "participant_key": "Joe_Wright",
+  "participant_name": "Joe Wright",
+  "apricot_ids": [
+    "76770"
+  ],
+  "evaluations": [],
+  "notes_count": 4,
+  "processed_notes": [
+    {
+      "id": 204,
+      "record_id": "76770",
+      "first_name": "Joe",
+      "last_name": "Wright",
+      "activity_date": "2026-05-27",
+      "staff_name": "Matt Carlisle",
+      "service_context": "First Shift",
+      "interaction_type": "Check-in conversation – brief status update",
+      "note_text": "Spoke with Justin this morning, who informed me that Mr. Wright did not meet criteria to be in the program due to his health condition.  Because Mr. Wright had to leave early for a doctor’s appointment and would not be returning for the remainder of the day, I contacted him by phone to discuss the situation.  Mr. Wright was understanding and acknowledged that his medical needs, along with his probation requirements, could present challenges, as he also has another appointment scheduled for this Friday.  I informed him that we could still support him through resource navigation services and encouraged him to reach out with any needs or concerns.",
+      "center_location": "Spartanburg",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 203,
+      "record_id": "76770",
+      "first_name": "Joe",
+      "last_name": "Wright",
+      "activity_date": "2026-05-26",
+      "staff_name": "Matt Carlisle",
+      "service_context": "First Shift",
+      "interaction_type": "Case Note (documentation only) – no interaction or service",
+      "note_text": "During orientation, it was learned that Mr. Wright does not have a banking account.  This is something that we can attach to his goals to be completed while in the program.",
+      "center_location": "Spartanburg",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 202,
+      "record_id": "76770",
+      "first_name": "Joe",
+      "last_name": "Wright",
+      "activity_date": "2026-05-20",
+      "staff_name": "Matt Carlisle",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment COMPLETED",
+      "note_text": "Mr. Wright is a 61-year-old male originally from the Spartanburg area (Wellford, Lyman, and Duncan).  He reports having a close relationship with both his brother and sister who reside in Duncan.  He also has a sister in Greer; however, due to previous domestic charges, there is currently a no-contact order in place.  Mr. Wright stated that he was permitted to speak with her by phone while incarcerated and that she attended his parole hearings.  Per parole conditions, he is not permitted to have any contact with her at this time.  Mr. Wright also has one adult son who resides in Atlanta, with whom he remains in contact.\n\nMr. Wright was released from incarceration on 4/28/26 after serving 33 years and 10 months for a murder conviction.  As conditions of his parole, he is required to complete both a mental health assessment and substance abuse treatment classes.  Mr. Wright denies any prior mental health diagnoses and reports that he is not currently prescribed any mental health medications.  He stated that he is unsure what the substance abuse treatment program will entail, as his first appointment is scheduled for 5/27/26 at 1:30 PM.  His psychological evaluation is scheduled for 5/29/26.\n\nMr. Wright reports being diagnosed with Type 2 diabetes and hypertension and states that he is compliant with his prescribed medications, including insulin.  Despite these medical conditions, he appears to be in relatively stable health and reports that he is capable of performing light industrial work. This will need to be considered during case management for job placement.  Mr. Wright expressed interest in obtaining employment operating a forklift, noting that he previously held forklift certification.\n\nMr. Wright was screened and determined eligible for the First Shift program.  I spoke with Amy regarding his anticipated start date of next Tuesday, due to the Memorial Day holiday on Monday, and she approved his participation.",
+      "center_location": "Spartanburg",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 205,
+      "record_id": "76770",
+      "first_name": "Joe",
+      "last_name": "Wright",
+      "activity_date": "2026-05-18",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment SCHEDULED",
+      "note_text": "",
+      "center_location": "Spartanburg",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "updated_at": "2026-11-23T13:46:29.787Z"
+}

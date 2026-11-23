@@ -3,10 +3,12 @@
   "participant_name": "Harold Williams",
   "location": "Charleston",
   "track": "first_shift",
+  "lscmi_client_id": "Harold_Williams_Charleston",
   "folder_path": "data/participants/Harold_Williams",
   "has_lscmi_brief": false,
   "has_lscmi_scoring": true,
   "has_action_plan": false,
+  "has_legacy_case_briefs": false,
   "action_plan_agreement": "pending_review",
   "waitlist_ready": false,
   "waitlist_score": "5/9",
@@ -14,6 +16,10 @@
   "skillcat_pathway": "HVAC",
   "skillcat_modules_completed": 0,
   "cm_notes_count": 0,
+  "apricot_notes_count": 6,
+  "reentry_sessions_count": 6,
+  "history_events_count": 14,
+  "documents_count": 7,
   "data_evaluation_flags": [
     {
       "code": "FLAG-WAITLIST-GAP",
@@ -26,5 +32,5 @@
       "message": "No 1-on-1 Case Management session note logged in participant folder."
     }
   ],
-  "updated_at": "2026-11-22T17:18:01.656Z"
+  "updated_at": "2026-11-23T13:46:29.303Z"
 }

@@ -2,18 +2,24 @@
   "participant_key": "Eddie_Ballenger",
   "participant_name": "Eddie Ballenger",
   "location": "Spartanburg",
-  "track": "first_shift",
+  "track": "reentry_nav",
+  "lscmi_client_id": "Eddie_Ballenger_Spartanburg",
   "folder_path": "data/participants/Eddie_Ballenger",
   "has_lscmi_brief": false,
   "has_lscmi_scoring": true,
   "has_action_plan": true,
+  "has_legacy_case_briefs": true,
   "action_plan_agreement": "agreed",
   "waitlist_ready": false,
   "waitlist_score": "7/9",
   "medical_appointments_applicable": false,
   "skillcat_pathway": "Commercial_Safety",
   "skillcat_modules_completed": 11,
-  "cm_notes_count": 13,
+  "cm_notes_count": 18,
+  "apricot_notes_count": 18,
+  "reentry_sessions_count": 0,
+  "history_events_count": 37,
+  "documents_count": 17,
   "data_evaluation_flags": [
     {
       "code": "FLAG-WAITLIST-GAP",
@@ -26,5 +32,5 @@
       "message": "SkillCat stalled on Commercial_Safety pathway (0 modules completed)."
     }
   ],
-  "updated_at": "2026-11-22T17:18:01.511Z"
+  "updated_at": "2026-11-23T13:46:28.637Z"
 }

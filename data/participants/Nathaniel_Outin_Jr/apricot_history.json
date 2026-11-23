@@ -1,0 +1,109 @@
+{
+  "participant_key": "Nathaniel_Outin_Jr",
+  "participant_name": "Nathaniel Outin Jr.",
+  "apricot_ids": [
+    "82416"
+  ],
+  "evaluations": [
+    {
+      "record_id": "82416",
+      "full_name": "Nathaniel Outin Jr.",
+      "program": "Reentry Navigation",
+      "center": "Columbia",
+      "case_manager": "Daisy Boynton",
+      "case_plan_status": "Yes (Goals & Gates Active)",
+      "focus_areas_or_goals": "Look for carpentry and electrical training programs",
+      "briefcase_status_text": "Gate 1: 38%, Gate 2: 30%, Gate 3: 0%, Gate 4: 0%",
+      "gate1_pct": 38,
+      "gate2_pct": 30,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "case_note_analysis": "Enrolled 10/26/2026. Most recent contact on 11/12/2026 by Daisy Boynton (Employment support – applications, resume, interview prep): \"Nathaniel never heard back from the Electrician Apprenticeship program. I let him know he's #10 on the waitlist currently and it's moving very slowly. Offered to send him some job fairs/openings in the meantime. Sent info about job fairs today and on 11/19 and\"\n\n**Latest Case Note Updates:** [Update 11/12/2026 • Daisy Boynton]: Nathaniel never heard back from the Electrician Apprenticeship program. I let him know he's #10 on the waitlist currently and it's moving very slowly. Offered to send him some job fairs/openings in the meantime. Sent info about job fairs today and on 11/19 and will send some job openings next week. He said his main concern right now is his pending felony charge, but he has a court date on the 14th of December and feels good about it. Going to check in after his court date to confirm he's still eligible for FS. | [Update 11/02/2026 • Daisy Boynton]: Send Nathaniel the info for an electrician apprenticeship program at Gregory Electric. He called and left a VM. | [Update 10/30/2026 • Daisy Boynton]: Called to touch base about his scheduling conflict with FS (picking his kids up). He said he spoke to the kid's mom and was able to work out a schedule where she picks them up after an after-school program. | [Update 10/26/2026 • Daisy Boynton]: Contact Summary: Completed initial Reentry Navigation consultation with Nathaniel via phone. Explained the expectations and benefits of both the full-time in-person program and the Reentry Navigation program. Nathaniel is currently working a 3rd-shift sanitation job but is seeking more stable, higher-paying employment. He resides with his mother, has his own vehicle, and possesses a valid driver's license. Placed client on the waitlist for the Columbia full-time program. \n\nCase Plan Goal Progress & Briefcase Updates: Verified that client has access to his Birth Certificate, Social Security Card, State ID, valid Driver's License, and a completed resume (Briefcase Gate 1). Client expressed long-term goals of obtaining a CDL and gaining skills in carpentry/electrical trades to help renovate family properties. \n\nReferrals/Resources Provided: Navigator is sending a job application link for a warehouse position at Trane Technologies ($21-$25/hr).\n\nNext Steps: Navigator to consult with the Columbia Center Director (Jen) regarding client's need to pick up children at 2:30 PM on certain days to see if an accommodation can be made for the full-time program. Navigator to research local training programs for carpentry and electrical trades. Client to review and submit the application to Trane Technologies.",
+      "operational_feedback": "Continue advancing Reentry Navigation Case Plan goals and Briefcase Gates 1–4 (Gate 1: 38%, Gate 2: 30%, Gate 3: 0%, Gate 4: 0%). Focus on barrier removal, employment readiness, and community resource referrals.",
+      "next_cm_steps_json": "[\"🎯 **Advance Stated Case Plan Goals:** Review progress on active Reentry Nav goals (Look for carpentry and electrical training programs) and verify concrete barrier-removal steps completed since last check-in.\",\"🔓 **Complete Remaining Gate 1 Items (38% done):** Target Fill needed prescriptions (Welvista / local pharmacy), Explore healthcare options (Medicaid / Free Medical Clinic), Supervision information documented (County, Officer, Report Dates).\",\"🔓 **Advance Gate 2 Stability & Readiness (30% done):** Work on Child support plan made / Cases reviewed / DSS contact, Probation / Legal Obligations aligned with work hours, DMV License Suspension check & reinstatement plan.\",\"🩺 **Address Gate 3 Health & Banking Milestones (0% done):** Follow up on Primary Care / Medical checkup scheduled or cleared, Vision Appointment / screening, Steady access to daily prescriptions (Welvista).\",\"🔄 **Follow Up on Latest Session (11/12/2026 by Daisy Boynton):** Check accountability on items discussed (\\\"Nathaniel never heard back from the Electrician Apprenticeship program. I let him know he's #10 on the waitlist currently and it's moving ve...\\\").\"]",
+      "recent_cm_notes_json": null,
+      "last_note_date": "2026-11-12",
+      "notes_count": 5,
+      "updated_at": "2026-11-22 17:36:06"
+    }
+  ],
+  "notes_count": 5,
+  "processed_notes": [
+    {
+      "id": 1011,
+      "record_id": "82416",
+      "first_name": "Nathaniel",
+      "last_name": "Outin Jr.",
+      "activity_date": "2026-11-12",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Employment support – applications, resume, interview prep",
+      "note_text": "Nathaniel never heard back from the Electrician Apprenticeship program. I let him know he's #10 on the waitlist currently and it's moving very slowly. Offered to send him some job fairs/openings in the meantime. Sent info about job fairs today and on 11/19 and will send some job openings next week. He said his main concern right now is his pending felony charge, but he has a court date on the 14th of December and feels good about it. Going to check in after his court date to confirm he's still eligible for FS.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 836,
+      "record_id": "82416",
+      "first_name": "Nathaniel",
+      "last_name": "Outin Jr.",
+      "activity_date": "2026-11-02",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Employment support – applications, resume, interview prep",
+      "note_text": "Send Nathaniel the info for an electrician apprenticeship program at Gregory Electric. He called and left a VM.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 835,
+      "record_id": "82416",
+      "first_name": "Nathaniel",
+      "last_name": "Outin Jr.",
+      "activity_date": "2026-10-30",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Check-in conversation – brief status update",
+      "note_text": "Called to touch base about his scheduling conflict with FS (picking his kids up). He said he spoke to the kid's mom and was able to work out a schedule where she picks them up after an after-school program.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 751,
+      "record_id": "82416",
+      "first_name": "Nathaniel",
+      "last_name": "Outin Jr.",
+      "activity_date": "2026-10-26",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment COMPLETED",
+      "note_text": "Contact Summary: Completed initial Reentry Navigation consultation with Nathaniel via phone. Explained the expectations and benefits of both the full-time in-person program and the Reentry Navigation program. Nathaniel is currently working a 3rd-shift sanitation job but is seeking more stable, higher-paying employment. He resides with his mother, has his own vehicle, and possesses a valid driver's license. Placed client on the waitlist for the Columbia full-time program. \n\nCase Plan Goal Progress & Briefcase Updates: Verified that client has access to his Birth Certificate, Social Security Card, State ID, valid Driver's License, and a completed resume (Briefcase Gate 1). Client expressed long-term goals of obtaining a CDL and gaining skills in carpentry/electrical trades to help renovate family properties. \n\nReferrals/Resources Provided: Navigator is sending a job application link for a warehouse position at Trane Technologies ($21-$25/hr).\n\nNext Steps: Navigator to consult with the Columbia Center Director (Jen) regarding client's need to pick up children at 2:30 PM on certain days to see if an accommodation can be made for the full-time program. Navigator to research local training programs for carpentry and electrical trades. Client to review and submit the application to Trane Technologies.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 17:51:41"
+    },
+    {
+      "id": 750,
+      "record_id": "82416",
+      "first_name": "Nathaniel",
+      "last_name": "Outin Jr.",
+      "activity_date": "2026-10-23",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment SCHEDULED",
+      "note_text": "",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 17:51:41"
+    }
+  ],
+  "updated_at": "2026-11-23T13:46:29.277Z"
+}

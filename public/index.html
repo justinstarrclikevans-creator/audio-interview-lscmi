@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>First Shift & Re-entry Navigation Platform</title>
-    <link rel="stylesheet" href="style.css?v=1792000000003">
+    <link rel="stylesheet" href="style.css?v=1792000000005">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
@@ -58,7 +58,7 @@
                     <button type="button" class="dash6-tab-btn" data-dash="supervisor" onclick="switchSixDashboard('supervisor')" style="padding: 6px 12px; font-size: 12px; font-weight: 700; border-radius: 6px; border: 1px solid #334155; background: #1e293b; color: #f8fafc; cursor: pointer;">🌐 6. All-Information Master</button>
                 </div>
                 <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                    <button type="button" onclick="openUnifiedParticipantFoldersModal()" style="padding: 5px 11px; font-size: 11.5px; font-weight: 700; border-radius: 6px; border: 1px solid #38bdf8; background: #0284c7; color: white; cursor: pointer;">📁 Participant Folders & Gate-Free Briefcase</button>
+                    <button type="button" class="dash6-tab-btn" data-dash="client_folders" onclick="openClientFoldersPortal()" style="padding: 5px 11px; font-size: 11.5px; font-weight: 700; border-radius: 6px; border: 1px solid #38bdf8; background: #0284c7; color: white; cursor: pointer;">📁 Client Folders Portal</button>
                     <button type="button" onclick="openCombinedSupervisionReportModal()" style="padding: 5px 11px; font-size: 11.5px; font-weight: 700; border-radius: 6px; border: 1px solid #a78bfa; background: #4f46e5; color: white; cursor: pointer;">📊 SkillCat Pathways + Apricot Supervision Report</button>
                     <button type="button" onclick="openVoiceRecognitionModal()" style="padding: 5px 11px; font-size: 11.5px; font-weight: 700; border-radius: 6px; border: 1px solid #34d399; background: #059669; color: white; cursor: pointer;">🎙️ Voice Recognition (30s Staff Script)</button>
                     <button type="button" onclick="openTemplatesAndSkillsModal()" style="padding: 5px 11px; font-size: 11.5px; font-weight: 700; border-radius: 6px; border: 1px solid #fbbf24; background: #d97706; color: white; cursor: pointer;">📐 CM & Screening Templates / Skills</button>
@@ -1409,6 +1409,69 @@
             </div>
 
             </section>
+
+        <!-- ========================================================= -->
+        <!-- CLIENT FOLDERS & HISTORICAL ARCHIVE PORTAL                 -->
+        <!-- ========================================================= -->
+        <section id="view-client-folders-portal" class="app-view hidden">
+            <div class="portal-header" style="background: white; padding: 20px 28px; border-bottom: 1px solid var(--border); margin-bottom: 18px;">
+                <div style="max-width: 1440px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;">
+                    <div>
+                        <h1 style="font-size: 23px; font-weight: 800; color: #0f172a; margin: 0;">📁 Client Folders &amp; Historical Archive Portal</h1>
+                        <p style="font-size: 13px; color: #64748b; margin: 4px 0 0 0;">Search every Turn90 client (active &amp; historical), open their dedicated folder, view/print/adjust LS/CMI Case Briefs, Action Plans &amp; Scoring Forms, update their Unified Briefcase, and browse their complete historical record.</p>
+                    </div>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                        <span id="cfp-total-count" style="font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 999px; background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc;">Loading folders...</span>
+                        <button type="button" class="btn btn-outline" onclick="syncAllClientFoldersNow(this)" style="font-size: 12.5px; padding: 7px 14px; font-weight: 700;">🔄 Sync &amp; Archive All Folders</button>
+                        <button type="button" class="btn btn-primary" onclick="openInterviewModal()" style="font-size: 12.5px; padding: 7px 14px; font-weight: 700; background: #0f766e; border-color: #0f766e;">🎙️ Record New Intake</button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="max-width: 1440px; margin: 0 auto 36px auto; padding: 0 20px;">
+                <!-- Search & Filter Bar -->
+                <div style="background: white; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+                    <input type="text" id="cfp-search-input" placeholder="Search by client name, Apricot ID, center, phone, or email..." oninput="filterClientFoldersPortal()" style="flex: 2; min-width: 240px; padding: 9px 12px; font-size: 13.5px; border: 1.5px solid #cbd5e1; border-radius: 7px;">
+                    <select id="cfp-center-filter" onchange="filterClientFoldersPortal()" style="padding: 9px 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 7px; background: white; font-weight: 600;">
+                        <option value="all">All Centers</option>
+                        <option value="charleston">Charleston (CHS)</option>
+                        <option value="columbia">Columbia (COL)</option>
+                        <option value="spartanburg">Spartanburg (SPB)</option>
+                    </select>
+                    <select id="cfp-track-filter" onchange="filterClientFoldersPortal()" style="padding: 9px 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 7px; background: white; font-weight: 600;">
+                        <option value="all">All Tracks</option>
+                        <option value="first_shift">First Shift</option>
+                        <option value="reentry_nav">Reentry Navigation</option>
+                    </select>
+                    <select id="cfp-doc-filter" onchange="filterClientFoldersPortal()" style="padding: 9px 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 7px; background: white; font-weight: 600;">
+                        <option value="all">All Clients</option>
+                        <option value="has_brief">Has LS/CMI Brief</option>
+                        <option value="has_action_plan">Has Action Plan</option>
+                        <option value="has_scoring">Has Scoring Form</option>
+                        <option value="has_legacy_briefs">Has Legacy Case Briefs</option>
+                        <option value="waitlist_ready">Waitlist Ready (9/9)</option>
+                        <option value="needs_waitlist">Needs Waitlist Items</option>
+                    </select>
+                </div>
+
+                <!-- Two-Column Split Portal Layout -->
+                <div style="display: grid; grid-template-columns: 350px 1fr; gap: 20px; align-items: start;">
+                    <!-- Left Searchable Client Directory -->
+                    <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 12px; max-height: 76vh; display: flex; flex-direction: column;">
+                        <div style="font-size: 11.5px; font-weight: 800; color: #475569; text-transform: uppercase; letter-spacing: 0.4px; padding: 2px 4px 8px 4px; border-bottom: 1px solid #e2e8f0; margin-bottom: 8px; display: flex; justify-content: space-between;">
+                            <span>Client Directory</span>
+                            <span id="cfp-match-count">0 shown</span>
+                        </div>
+                        <div id="cfp-directory-list" style="overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 7px;"></div>
+                    </div>
+
+                    <!-- Right Individual Participant Folder Workspace -->
+                    <div id="cfp-folder-detail-pane" style="background: white; border: 1px solid #cbd5e1; border-radius: 12px; padding: 20px; min-height: 76vh; max-height: 76vh; overflow-y: auto; box-shadow: 0 1px 4px rgba(0,0,0,0.04);">
+                        <div style="color: #64748b; text-align: center; padding: 40px;">Loading client folders...</div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
     <!-- ========================================================= -->
@@ -1659,27 +1722,21 @@
         </div>
     </div>
 
-    <!-- LS/CMI Voice Interview Modal -->
-    <div id="modal-interview" class="modal hidden">
+    <!-- Turn90 Voice Intake Interview Modal -->
+    <div id="modal-interview" class="modal interview-participant-overlay hidden">
         <div class="modal-content modal-lg">
             <div class="modal-header">
-                <h3>LS/CMI Audio Intake Interview</h3>
+                <h3>Turn90 Intake Interview</h3>
                 <button class="modal-close" onclick="closeModal('modal-interview')">&times;</button>
             </div>
             <div class="interview-container">
                 <div class="form-row" style="margin-bottom: 12px; background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid var(--border); flex-wrap: wrap; gap: 10px;">
                     <div class="form-group" style="flex: 2; min-width: 220px;">
-                        <label>Quick-Select Participant (Recent Consultations &amp; Active First Shift)</label>
-                        <select id="live-interview-candidate-select" class="form-control" style="font-size: 13px;" onchange="handleSelectConsultationCandidate('live', this.value)">
-                            <option value="">-- Select Participant from Apricot Consultation Roster --</option>
-                        </select>
+                        <label for="live-interview-name">Your Full Name <span class="text-danger">*</span></label>
+                        <input type="text" id="live-interview-name" required placeholder="Enter your full name" class="form-control" style="font-size: 14px;" onchange="loadInterviewConsultationSummary('live', this.value)">
                     </div>
-                    <div class="form-group" style="flex: 2; min-width: 200px;">
-                        <label>Participant Full Name <span class="text-danger">*</span></label>
-                        <input type="text" id="live-interview-name" required placeholder="e.g. Carl Allen" class="form-control" style="font-size: 14px;" onchange="loadInterviewConsultationSummary('live', this.value)">
-                    </div>
-                    <div class="form-group" style="flex: 1; min-width: 140px;">
-                        <label>Turn90 Center Location</label>
+                    <div class="form-group" style="flex: 1; min-width: 160px;">
+                        <label for="live-interview-location">Turn90 Center</label>
                         <select id="live-interview-location" class="form-control" style="font-size: 14px;">
                             <option value="Charleston">Charleston</option>
                             <option value="Columbia">Columbia</option>
@@ -1687,52 +1744,43 @@
                         </select>
                     </div>
                 </div>
-                <div id="live-consultation-summary-box" class="hidden" style="margin-bottom: 12px; background: #eff6ff; border: 1.5px solid #93c5fd; border-radius: 8px; padding: 12px 14px; font-size: 12.5px;"></div>
-                <div style="margin-bottom: 12px; background: #fefce8; border: 1.5px solid #fde047; border-radius: 8px; padding: 9px 12px; font-size: 12px; color: #713f12; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                    <div>
-                        <strong>⚠️ Mandatory 158-Question Re-Ask &amp; Discrepancy Rule:</strong> Even if information was captured in Screening/Apricot Consultation, ask all <strong>158 original questions</strong> live to verify accuracy and flag discrepancies.
-                    </div>
+                <p style="font-size: 13px; color: #475569; margin: 0 0 12px 0; line-height: 1.5;">
+                    Take your time answering each question in your own words. Press Start Voice Recording when you're ready, and move through the questions at your own pace.
+                </p>
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+                    <span class="question-number" id="int-q-number">Question 1 of 158</span>
                     <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                        <span id="int-answered-counter" style="background: #dcfce7; color: #166534; border: 1px solid #86efac; padding: 2px 8px; border-radius: 999px; font-weight: 700;">Answered: 0 / 158</span>
-                        <span id="int-discrepancy-counter" style="background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; padding: 2px 8px; border-radius: 999px; font-weight: 700;">Discrepancies: 0</span>
-                        <button type="button" class="btn btn-outline" onclick="jumpToNextUnanswered158()" style="font-size: 11px; padding: 3px 8px;">⏭️ Next Unanswered</button>
-                        <button type="button" class="btn btn-outline" onclick="toggle158QuestionMap()" style="font-size: 11px; padding: 3px 8px;">📋 158-Q Map</button>
+                        <span id="int-answered-counter" style="background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600;">Completed: 0 / 158</span>
+                        <button type="button" class="btn btn-outline" onclick="jumpToNextUnanswered158()" style="font-size: 11.5px; padding: 4px 10px;">Next Unanswered</button>
+                        <button type="button" class="btn btn-outline" onclick="toggle158QuestionMap()" style="font-size: 11.5px; padding: 4px 10px;">Question List</button>
                     </div>
                 </div>
                 <div id="int-158-map-drawer" class="hidden" style="margin-bottom: 12px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; max-height: 170px; overflow-y: auto;">
-                    <div style="font-size: 11.5px; color: #475569; margin-bottom: 6px; font-weight: 600;">Click any question (1–158) to jump: Green = Answered Live | Red = Discrepancy Flagged | Slate = Pending</div>
+                    <div style="font-size: 11.5px; color: #475569; margin-bottom: 6px; font-weight: 600;">Select any question (1–158) to jump to it. Blue = Answered | White = Remaining</div>
                     <div id="int-158-map-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(34px, 1fr)); gap: 4px;"></div>
                 </div>
                 <div class="interview-progress-bar">
                     <div id="int-progress-fill" class="progress-fill" style="width: 2%;"></div>
                 </div>
                 <div class="question-box" style="text-align: left;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
-                        <span class="question-number" id="int-q-number">Question 1 of 158</span>
-                        <span id="int-q-domain-badge" style="font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: #e0e7ff; color: #3730a3;">Domain: Screening</span>
-                    </div>
-                    <h3 id="int-q-text" style="margin: 4px 0 6px;">Loading question...</h3>
-                    <p id="int-q-subtext" style="font-size: 12.5px; color: #475569; margin: 0 0 10px;"></p>
-                    <label for="int-live-answer-notes" style="display: block; font-size: 12px; font-weight: 700; color: #1e293b; margin-bottom: 4px;">Live Participant Answer / Quick Interviewer Note (used for discrepancy detection &amp; Probation Planner):</label>
-                    <textarea id="int-live-answer-notes" rows="2" class="form-control" placeholder="Type key points from participant's live answer here (or check discrepancy against Consultation)..." style="font-size: 13px; margin-bottom: 8px;"></textarea>
-                    <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
-                        <button type="button" id="btn-check-discrepancy" class="btn btn-outline" onclick="checkLive158QuestionDiscrepancy()" style="font-size: 12px; padding: 6px 12px; border-color: #7c3aed; color: #5b21b6; background: #f5f3ff; font-weight: 600;">🧠 Check Discrepancy &amp; Get Dynamic Follow-Up</button>
-                        <button type="button" id="btn-mark-answered-next" class="btn btn-primary" onclick="markCurrent158QuestionAnswered()" style="font-size: 12px; padding: 6px 12px; background: #15803d; border-color: #15803d; font-weight: 600;">✅ Mark Answered &amp; Next</button>
-                    </div>
-                    <div id="int-dynamic-feedback-box" class="hidden" style="margin-top: 10px; padding: 10px 12px; border-radius: 8px; border: 1.5px solid #c4b5fd; background: #faf5ff; font-size: 12.5px; color: #1e293b;"></div>
+                    <h3 id="int-q-text" style="margin: 0 0 8px;">Loading question...</h3>
+                    <p id="int-q-subtext" class="hidden" style="font-size: 13px; color: #64748b; margin: 0 0 12px;"></p>
+                    <label for="int-live-answer-notes" style="display: block; font-size: 12.5px; font-weight: 600; color: #334155; margin-bottom: 4px;">Optional Written Note (you can simply speak out loud, or type a short answer here):</label>
+                    <textarea id="int-live-answer-notes" rows="2" class="form-control" placeholder="Optional — speak out loud while recording, or type a brief answer here..." style="font-size: 13.5px;"></textarea>
+                    <div id="int-dynamic-feedback-box" class="hidden" style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 12px 14px; border-radius: 8px; margin-top: 12px; font-size: 13px; color: #1e293b;"></div>
                 </div>
                 <div class="recording-controls">
                     <button id="btn-record" class="btn btn-record" onclick="toggleRecording()">🔴 Start Voice Recording</button>
                     <span id="recording-indicator" class="recording-pill hidden">Recording in progress...</span>
                 </div>
                 <div class="transcript-preview">
-                    <h4>Live Speech Transcript:</h4>
-                    <div id="int-transcript-box" class="transcript-box">Listening for microphone audio...</div>
+                    <h4>Recording Status</h4>
+                    <div id="int-transcript-box" class="transcript-box">Press "Start Voice Recording" when you're ready to begin.</div>
                 </div>
                 <div class="interview-nav-buttons">
                     <button class="btn btn-outline" onclick="prevQuestion()">Previous</button>
-                    <button class="btn btn-primary" id="btn-next-question" onclick="nextQuestion()">Next Question</button>
-                    <button class="btn btn-accent hidden" id="btn-submit-interview" onclick="finishInterview()">Finish & Submit Audio Assessment</button>
+                    <button class="btn btn-primary" id="btn-next-question" onclick="handleLiveNextQuestion()">Next Question</button>
+                    <button class="btn btn-accent hidden" id="btn-submit-interview" onclick="finishInterview()">Finish &amp; Submit Interview</button>
                 </div>
             </div>
         </div>
@@ -3309,7 +3357,7 @@
         </div>
     </div>
 
-    <script src="app.js?v=1792000000005"></script>
+    <script src="app.js?v=1792000000007"></script>
 
     <!-- MODAL: Participant File (Consolidated) -->
     <div id="modal-participant-file" class="modal hidden">

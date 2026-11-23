@@ -1,0 +1,136 @@
+{
+  "participant_key": "Keyzelle_Thomas",
+  "participant_name": "Keyzelle Thomas",
+  "profile_records": [
+    {
+      "id": 31,
+      "user_id": 33,
+      "current_gate": 4,
+      "w9_status": "verified",
+      "dl_status": "valid",
+      "dl_notes": "I have a vehicle",
+      "child_support_status": "active_case",
+      "child_support_notes": "",
+      "housing_status": "stable",
+      "substance_status": "none",
+      "mental_health_status": "none",
+      "transportation_status": "Personal Vehicle / Ride",
+      "court_dates": null,
+      "overall_status": "archived",
+      "termination_reason": null,
+      "termination_date": null,
+      "updated_at": "2026-09-23 11:52:26",
+      "stability_red_flags": "[{\"category\":\"Cognitive / Attitude\",\"flag\":\"Minimization & Procriminal Neutralization\",\"evidence\":\"Stated that his offenses were 'only crimes because they are illegal' and neutralizes guilt by categorizing drug distribution strictly as a technical legal violation.\",\"severity\":\"medium\",\"navigator_recommendation\":\"Utilize Turn90 Modeling Neutrality (1.5). Do not challenge or debate the moral status of the law. Use reflective, neutral questions to link adherence to legal rules directly to his primary personal interests: staying free, supporting his children, and continuing his work as a youth sports coach.\"},{\"category\":\"Stability Risk\",\"flag\":\"Acute Homelessness Risk upon Halfway House Discharge\",\"evidence\":\"Currently residing in a federal halfway house with release scheduled for November 17, 2026, and zero permanent housing established.\",\"severity\":\"high\",\"navigator_recommendation\":\"Initiate immediate housing triage. Connect participant with Transitions Homeless Center and Oliver Gospel Mission long-term housing/transitional programs well before the November discharge date.\"},{\"category\":\"Substance / Health\",\"flag\":\"Untreated Medical Barrier / Sleep Apnea Threatening Job Retention\",\"evidence\":\"Terminated from two previous jobs due to inability to stay awake on shift attributed to severe obesity and suspected untreated sleep apnea.\",\"severity\":\"high\",\"navigator_recommendation\":\"Prioritize medical evaluation at Cooperative Health (Eau Claire) to obtain diagnostic sleep testing and continuous positive airway pressure (CPAP) therapy prior to full-time employment placement.\"},{\"category\":\"Supervision / Legal\",\"flag\":\"Impending Driver's License Suspension from Tag Debt\",\"evidence\":\"Owes $300+ in unpaid tag fees to the driver's license division, creating a risk of sudden license suspension.\",\"severity\":\"medium\",\"navigator_recommendation\":\"Coordinate with Midlands Fatherhood Coalition to establish an manageable SCDMV payment plan or debt relief pathway, preserving legal driving status.\"}]",
+      "director_override": 0,
+      "director_override_notes": null,
+      "director_override_by": null,
+      "reentry_status": "immediate_triage_needed",
+      "has_reentry_plan": 1,
+      "enrollment_date": "2026-08-24",
+      "correction_notes": null,
+      "supabase_id": "a3b093a6-f640-4184-9ae9-3e727b546eba",
+      "record_id": null
+    }
+  ],
+  "case_plan_triggers": [],
+  "daily_points": [
+    {
+      "id": 62,
+      "user_id": 33,
+      "date": "2026-09-21",
+      "points_earned": 10,
+      "max_points": 50,
+      "attendance_status": "present",
+      "notes": "Imported via Render Report",
+      "imported_from_apricot": 1,
+      "created_at": "2026-09-22 17:44:36"
+    }
+  ],
+  "drug_tests": [
+    {
+      "id": 7,
+      "user_id": 33,
+      "test_date": "2026-09-22",
+      "result": "negative",
+      "substances_detected": null,
+      "notes": "Imported via Render Report",
+      "administered_by": null,
+      "created_at": "2026-09-22 17:43:35"
+    }
+  ],
+  "benefits": [
+    {
+      "id": 30,
+      "user_id": 33,
+      "benefit_type": "medicaid",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    },
+    {
+      "id": 31,
+      "user_id": 33,
+      "benefit_type": "snap",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    },
+    {
+      "id": 32,
+      "user_id": 33,
+      "benefit_type": "tanf",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    },
+    {
+      "id": 29,
+      "user_id": 33,
+      "benefit_type": "welvista",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    }
+  ],
+  "resumes": [
+    {
+      "id": 2,
+      "user_id": 33,
+      "resume_data_json": "{\"skills\":\"forklift certified picker certified drive box trucks and familiar with a couple of diffrent warehouse systems deal well with customers \",\"summary\":\"i am customer friendly I and I am very good with others and I know how to repect authority figures \",\"experience\":\"military \\nmcentire \\nottis spunkmyer \\ntrane \\nHughes plumbinb supply\"}",
+      "updated_at": "2026-09-23 11:52:26"
+    }
+  ],
+  "db_documents": [
+    {
+      "id": 33,
+      "user_id": 33,
+      "doc_type": "case_brief",
+      "title": "Clinical Case Brief - Keyzelle Thomas",
+      "filename": "Keyzelle_Thomas_Case_Brief_1788826878511.pdf",
+      "file_path": "/data/Keyzelle_Thomas_Case_Brief_1788826878511.pdf",
+      "file_size": 7553,
+      "status": "active",
+      "metadata_json": "{\"originalName\":\"4385_keyzelle-thomas-case-brief.pdf\"}",
+      "uploaded_at": "2026-09-08 00:21:18"
+    }
+  ],
+  "legacy_briefcase_items_count": 66,
+  "legacy_gate_criteria_count": 27,
+  "updated_at": "2026-11-23T13:46:28.389Z"
+}

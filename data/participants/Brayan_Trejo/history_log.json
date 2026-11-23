@@ -1,0 +1,127 @@
+{
+  "participant_key": "Brayan_Trejo",
+  "updated_at": "2026-11-23T13:46:29.002Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-16T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "12 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:256",
+      "event_key": "reentry_session:256",
+      "timestamp": "2026-10-29T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "I've continuously reached out to Brayan letting him know that when he's moved down from his intensive program, we can add him to the waitlist. I haven't heard from him first in weeks. I'll give him another week or 2 to r",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:49",
+      "event_key": "reentry_session:49",
+      "timestamp": "2026-10-08T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Called to check in to see if he's been moved down to the last level of his program so we can add him to waitlist. Said they still need to have a meeting to discuss it and then will let him know. I told him to give us a c",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:50",
+      "event_key": "reentry_session:50",
+      "timestamp": "2026-10-01T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Called to ask what his status was after meeting with Justin. Checked meeting notes and they say he'll be eligible for program after completing the charleston program for substance use. He's on IOP (intensive outpatient) ",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:51",
+      "event_key": "reentry_session:51",
+      "timestamp": "2026-09-24T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Justin Evans)",
+      "summary": "Eligible for First Shift after completion of Charleston Center substance abuse program. \n\nCreating a structured reentry plan for Brian involves addressing several key areas to ensure a successful transition back into soc",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:52",
+      "event_key": "reentry_session:52",
+      "timestamp": "2026-09-22T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Called to check in. He's still job searching. I scheduled a consultation with Justin so we can get him on the waitlist here (if eligible)",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:54",
+      "event_key": "reentry_session:54",
+      "timestamp": "2026-09-15T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Daisy Boynton)",
+      "summary": "Most interested in getting a job. Says he is currently living in West Ashley and has transportation. He does not have a DL, when I asked about his transportation, he said he \"gets around\"... unclear how. Has a baby on th",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:53",
+      "event_key": "reentry_session:53",
+      "timestamp": "2026-09-15T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "summary": "Created a resume with Brayan over the phone. He's going to take it to staffing agencies. He's also taking classes at the Charleston Center and said he'd ask for their support (unsure what the classes are). I told him to ",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:55",
+      "event_key": "reentry_session:55",
+      "timestamp": "2026-09-11T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "Let him know over the phone that this is his last chance at an intake appt. He had transportation set up and said he would definitely be here.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:56",
+      "event_key": "reentry_session:56",
+      "timestamp": "2026-08-03T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "NCNS",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:57",
+      "event_key": "reentry_session:57",
+      "timestamp": "2026-07-27T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "NCNS",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

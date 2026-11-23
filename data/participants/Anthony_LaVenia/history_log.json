@@ -1,0 +1,50 @@
+{
+  "participant_key": "Anthony_LaVenia",
+  "updated_at": "2026-11-23T13:46:29.533Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "3 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:460",
+      "event_key": "reentry_session:460",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Called to check in. He figured out getting WIOA funding for Knight's CDL school through Voc Rehab and has those meetings set up. He got his ID in the mail and plans to use it to get his birth certificate and social secur",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:462",
+      "event_key": "reentry_session:462",
+      "timestamp": "2026-11-11T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "Intake Appointment SCHEDULED",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:461",
+      "event_key": "reentry_session:461",
+      "timestamp": "2026-11-11T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Daisy Boynton)",
+      "summary": "Contact Summary\nConducted initial Reentry Navigation consultation with Anthony Lavenia (Columbia). Explained the differences between phone-based Reentry Navigation and the in-person First Shift program. Anthony expressed",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

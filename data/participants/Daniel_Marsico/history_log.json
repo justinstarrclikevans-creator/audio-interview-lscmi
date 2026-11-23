@@ -1,0 +1,61 @@
+{
+  "participant_key": "Daniel_Marsico",
+  "updated_at": "2026-11-23T13:46:29.190Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-10-29T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "5 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:199",
+      "event_key": "reentry_session:199",
+      "timestamp": "2026-10-21T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Terrence Brown)",
+      "summary": "Called to inform him about starting the first shift program and that orientation was this friday 0ct.22 at 3:30pm. The participant stated that he has a job interview this friday as well and that he will update me on whet",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:200",
+      "event_key": "reentry_session:200",
+      "timestamp": "2026-10-13T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Employment support – applications, resume, interview prep|Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Sent Daniel staffing agencies in his area to go to. He has a resume. I also sent him the info for Bounce Back as an alternative housing option to his sister's. He decided he's going to stay with his sister until he can f",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:202",
+      "event_key": "reentry_session:202",
+      "timestamp": "2026-10-09T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "Intake Appointment SCHEDULED",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:201",
+      "event_key": "reentry_session:201",
+      "timestamp": "2026-10-09T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Daisy Boynton)",
+      "summary": "1. Temp agencies for work before FS spot opens up\n2. Housing options\n3. Confirm he schedules DL test \n\n- License expired while in prison, doesn't owe any fees, he just needs to go in for driver's test (he's going to prac",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

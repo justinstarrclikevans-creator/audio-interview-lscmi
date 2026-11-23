@@ -1,0 +1,100 @@
+{
+  "participant_key": "Michael_Blunt",
+  "participant_name": "Michael Blunt",
+  "profile_records": [
+    {
+      "id": 38,
+      "user_id": 40,
+      "current_gate": 3,
+      "w9_status": "verified",
+      "dl_status": "suspended",
+      "dl_notes": "Moped",
+      "child_support_status": "none",
+      "child_support_notes": "Child support contact/enforcement reviewed",
+      "housing_status": "stable",
+      "substance_status": "none",
+      "mental_health_status": "none",
+      "transportation_status": "Personal Vehicle / Ride",
+      "court_dates": null,
+      "overall_status": "archived",
+      "termination_reason": null,
+      "termination_date": null,
+      "updated_at": "2026-09-23 11:52:26",
+      "stability_red_flags": null,
+      "director_override": 0,
+      "director_override_notes": null,
+      "director_override_by": null,
+      "reentry_status": "none",
+      "has_reentry_plan": 0,
+      "enrollment_date": null,
+      "correction_notes": null,
+      "supabase_id": "087e8bf8-1968-442e-927c-441154972208",
+      "record_id": null
+    }
+  ],
+  "case_plan_triggers": [],
+  "daily_points": [],
+  "drug_tests": [],
+  "benefits": [
+    {
+      "id": 58,
+      "user_id": 40,
+      "benefit_type": "medicaid",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    },
+    {
+      "id": 59,
+      "user_id": 40,
+      "benefit_type": "snap",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    },
+    {
+      "id": 60,
+      "user_id": 40,
+      "benefit_type": "tanf",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    },
+    {
+      "id": 57,
+      "user_id": 40,
+      "benefit_type": "welvista",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    }
+  ],
+  "resumes": [
+    {
+      "id": 8,
+      "user_id": 40,
+      "resume_data_json": "{\"skills\":\"test\",\"summary\":\"test\",\"experience\":\"test\"}",
+      "updated_at": "2026-09-23 11:52:26"
+    }
+  ],
+  "db_documents": [],
+  "legacy_briefcase_items_count": 66,
+  "legacy_gate_criteria_count": 27,
+  "updated_at": "2026-11-23T13:46:28.467Z"
+}

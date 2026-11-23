@@ -1,0 +1,61 @@
+{
+  "participant_key": "Dreshaun_Carter",
+  "updated_at": "2026-11-23T13:46:28.917Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "4 chronological Apricot note(s) archived (No Plan on File).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_casenote:210",
+      "event_key": "casenote:210",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "### **Session Summary**\n\nThe session served as an in-depth intake and cognitive-behavioral coaching conversation between a case manager/mentor and a client, **Drayshawn Carter**.\n\n* **Background & Criminal History:** Dra",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Terrence Brown"
+    },
+    {
+      "id": "ms_casenote:211",
+      "event_key": "casenote:211",
+      "timestamp": "2026-11-10T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "### Session Summary\n\nThis session was an initial case-planning meeting between a Program Manager (former program graduate) and a 23-year-old participant named DreShawn Carter. The facilitator guided DreShawn through buil",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Terrence Brown"
+    },
+    {
+      "id": "ms_casenote:212",
+      "event_key": "casenote:212",
+      "timestamp": "2026-10-30T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Intake Appointment COMPLETED)",
+      "summary": "Intake Screening: Dreshaun Carter\nDate: 10/30/2026 | Staff: Daisy | Type: Phone consultation (return call)\nOutcome: Added to the Charleston waitlist. The waitlist is short (1–2 people ahead), so orientation is expected i",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Daisy Boynton"
+    },
+    {
+      "id": "ms_casenote:213",
+      "event_key": "casenote:213",
+      "timestamp": "2026-10-28T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Intake Appointment SCHEDULED)",
+      "summary": "No answer. VM left.",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Daisy Boynton"
+    }
+  ]
+}

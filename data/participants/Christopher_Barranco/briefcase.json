@@ -13,16 +13,16 @@
   "medical_appointments_applicable": false,
   "items": {
     "state_id_or_dl": {
-      "value": "missing",
-      "notes": "",
-      "source": "default",
-      "updated_at": "2026-11-20T19:43:31.862Z"
+      "value": "valid_state_id",
+      "notes": "Imported from existing verified ID record",
+      "source": "db_import",
+      "updated_at": "2026-11-23T13:46:26.771Z"
     },
     "ss_card": {
-      "value": "missing",
-      "notes": "",
-      "source": "default",
-      "updated_at": "2026-11-20T19:43:31.862Z"
+      "value": "verified_card",
+      "notes": "Imported from existing verified SSN record",
+      "source": "db_import",
+      "updated_at": "2026-11-23T13:46:26.771Z"
     },
     "birth_certificate": {
       "value": "missing",
@@ -44,21 +44,20 @@
     },
     "reliable_phone": {
       "value": "active_verified",
-      "notes": "",
-      "source": "default",
-      "updated_at": "2026-11-20T19:43:31.862Z"
+      "notes": "Reliable phone verified in profile",
+      "source": "db_import",
+      "updated_at": "2026-11-23T13:46:26.771Z"
     },
     "dmv_suspended_inquiry": {
       "value": "not_applicable_valid",
-      "notes": "",
-      "source": "default",
-      "updated_at": "2026-11-20T19:43:31.862Z"
+      "notes": "DL not suspended / valid ID on file.",
+      "updated_at": "2026-11-23T13:46:28.583Z"
     },
     "child_support_contact": {
-      "value": "needs_contact",
-      "notes": "Detected child support reference in loaded records",
-      "source": "loaded_text",
-      "updated_at": "2026-11-20T19:43:31.862Z"
+      "value": "contact_made_compliant",
+      "notes": "Child support status verified",
+      "source": "db_import",
+      "updated_at": "2026-11-23T13:46:28.583Z"
     },
     "supervision_information": {
       "value": "active_logged_no_conflict",
@@ -76,13 +75,13 @@
       "value": "not_started",
       "notes": "0 modules completed (0.0 hrs)",
       "source": "skillcat_scraper",
-      "updated_at": "2026-11-22T17:18:01.531Z"
+      "updated_at": "2026-11-23T13:46:28.583Z"
     },
     "resume_and_email": {
-      "value": "not_started",
-      "notes": "",
-      "source": "default",
-      "updated_at": "2026-11-20T19:43:31.862Z"
+      "value": "completed",
+      "notes": "Resume completed",
+      "source": "db_import",
+      "updated_at": "2026-11-23T13:46:28.583Z"
     },
     "w9_and_banking": {
       "value": "not_started",
@@ -115,7 +114,7 @@
       "updated_at": "2026-11-20T19:43:31.862Z"
     }
   },
-  "waitlist_met_count": 5,
+  "waitlist_met_count": 8,
   "waitlist_total_required": 9,
   "waitlist_ready": false,
   "waitlist_checklist": [
@@ -123,19 +122,19 @@
       "key": "state_id_or_dl",
       "number": 1,
       "title": "1. State ID or Driver's License (DL)",
-      "value": "missing",
-      "label": "Missing — Needs State ID / DL",
-      "ready": false,
-      "notes": ""
+      "value": "valid_state_id",
+      "label": "Valid State ID Verified (No DL)",
+      "ready": true,
+      "notes": "Imported from existing verified ID record"
     },
     {
       "key": "ss_card",
       "number": 2,
       "title": "2. Social Security Card",
-      "value": "missing",
-      "label": "Missing — Needs Social Security Card",
-      "ready": false,
-      "notes": ""
+      "value": "verified_card",
+      "label": "Physical Social Security Card Verified",
+      "ready": true,
+      "notes": "Imported from existing verified SSN record"
     },
     {
       "key": "birth_certificate",
@@ -171,7 +170,7 @@
       "value": "active_verified",
       "label": "Active & Reliable Phone Number Verified (Voicemail Working)",
       "ready": true,
-      "notes": ""
+      "notes": "Reliable phone verified in profile"
     },
     {
       "key": "dmv_suspended_inquiry",
@@ -180,16 +179,16 @@
       "value": "not_applicable_valid",
       "label": "Not Applicable (DL Valid or Not Suspended)",
       "ready": true,
-      "notes": ""
+      "notes": "DL not suspended / valid ID on file."
     },
     {
       "key": "child_support_contact",
       "number": 8,
       "title": "8. Contact Made with Child Support (if applicable)",
-      "value": "needs_contact",
-      "label": "Applicable — Needs Contact with Child Support / Unaddressed Arrears",
-      "ready": false,
-      "notes": "Detected child support reference in loaded records"
+      "value": "contact_made_compliant",
+      "label": "Contact Made with DSS Child Support & Compliance Plan Active",
+      "ready": true,
+      "notes": "Child support status verified"
     },
     {
       "key": "supervision_information",

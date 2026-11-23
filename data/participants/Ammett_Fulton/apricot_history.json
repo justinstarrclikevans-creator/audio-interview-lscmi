@@ -1,0 +1,109 @@
+{
+  "participant_key": "Ammett_Fulton",
+  "participant_name": "Ammett Fulton",
+  "apricot_ids": [
+    "81324"
+  ],
+  "evaluations": [
+    {
+      "record_id": "81324",
+      "full_name": "Ammett Fulton",
+      "program": "Reentry Navigation",
+      "center": "Columbia",
+      "case_manager": "Unassigned",
+      "case_plan_status": "No (Needs Reentry Nav Case Plan)",
+      "focus_areas_or_goals": "No formal Reentry Nav Case Plan filed in Apricot yet",
+      "briefcase_status_text": "Not created in Apricot Briefcase module (0% across Gates 1–4)",
+      "gate1_pct": 0,
+      "gate2_pct": 0,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "case_note_analysis": "Enrolled 10/02/2026. Most recent contact on 10/16/2026 by Jenn Jeanquart (Case Note (documentation only) – no interaction or service): \"No showed orientation. I called and sent him a text, no response.\"",
+      "operational_feedback": "Initialize Apricot Briefcase record to track Gate 1–4 milestones alongside Reentry Nav Case Plan goals (Goals & Gates only; no CBT in Reentry Nav). Follow up on Ammett Fulton's stated goals and verify vital documents.",
+      "next_cm_steps_json": "[\"📋 **Author Reentry Navigation Case Plan (Goals & Gates Only):** Collaboratively establish 1–3 concrete stabilization and employment goals with Ammett Fulton and log them in the Reentry Nav Case Plan (no CBT required for Reentry Nav).\",\"🧰 **Initialize Briefcase & Gate 1 Vital Documents:** Create the Apricot Briefcase record and verify Gate 1 essentials: State ID / Driver's License, Social Security Card, Birth Certificate, prescription needs (Welvista), healthcare options, and supervision details.\",\"🔄 **Follow Up on Latest Session (10/16/2026 by Jenn Jeanquart):** Check accountability on items discussed (\\\"No showed orientation. I called and sent him a text, no response.\\\").\"]",
+      "recent_cm_notes_json": null,
+      "last_note_date": "2026-10-16",
+      "notes_count": 5,
+      "updated_at": "2026-10-27 13:40:03"
+    }
+  ],
+  "notes_count": 5,
+  "processed_notes": [
+    {
+      "id": 655,
+      "record_id": "81324",
+      "first_name": "Ammett",
+      "last_name": "Fulton",
+      "activity_date": "2026-10-16",
+      "staff_name": "Jenn Jeanquart",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Case Note (documentation only) – no interaction or service",
+      "note_text": "No showed orientation. I called and sent him a text, no response.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 654,
+      "record_id": "81324",
+      "first_name": "Ammett",
+      "last_name": "Fulton",
+      "activity_date": "2026-10-14",
+      "staff_name": "Jenn Jeanquart",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Check-in conversation – brief status update",
+      "note_text": "Scheduled for orientation for 10/16. Reminded about drug testing requirements.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 653,
+      "record_id": "81324",
+      "first_name": "Ammett",
+      "last_name": "Fulton",
+      "activity_date": "2026-10-05",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Case Note (documentation only) – no interaction or service",
+      "note_text": "Currently stable and has all ID. Reached out to let him know he's on the waitlist and he will be drug screened when he comes in. He's interested in finding his own apartment (not urgent, currently staying with his mother). I told him to reach out with any other needs in the meantime.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 652,
+      "record_id": "81324",
+      "first_name": "Ammett",
+      "last_name": "Fulton",
+      "activity_date": "2026-10-02",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Intake Appointment COMPLETED",
+      "note_text": "Intake notes in reentry nav case plan. Added to FS waitlist",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 651,
+      "record_id": "81324",
+      "first_name": "Ammett",
+      "last_name": "Fulton",
+      "activity_date": "2026-10-01",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment SCHEDULED",
+      "note_text": "",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "updated_at": "2026-11-23T13:46:29.095Z"
+}

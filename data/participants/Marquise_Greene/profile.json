@@ -9,14 +9,20 @@
   "apricot_id": "66059",
   "phone": "",
   "email": "",
-  "files": [],
+  "lscmi_client_id": "Marquise_Greene_Charleston",
   "folder_slug": "Marquise_Greene",
   "folder_path": "data/participants/Marquise_Greene",
   "has_lscmi_brief": false,
   "has_lscmi_scoring": false,
   "has_action_plan": false,
+  "has_legacy_case_briefs": false,
   "waitlist_ready": true,
   "waitlist_met_count": 9,
   "data_flags_count": 0,
-  "updated_at": "2026-11-22T17:18:01.596Z"
+  "cm_notes_count": 0,
+  "apricot_notes_count": 12,
+  "reentry_sessions_count": 12,
+  "history_events_count": 13,
+  "documents_count": 0,
+  "updated_at": "2026-11-23T13:46:28.990Z"
 }

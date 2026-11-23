@@ -1,0 +1,93 @@
+{
+  "participant_key": "Arnold_Michel",
+  "participant_name": "Arnold Michel",
+  "profile_records": [
+    {
+      "id": 41,
+      "user_id": 43,
+      "current_gate": 4,
+      "w9_status": "verified",
+      "dl_status": "valid",
+      "dl_notes": "I have a car",
+      "child_support_status": "active_case",
+      "child_support_notes": "Child support contact/enforcement reviewed",
+      "housing_status": "stable",
+      "substance_status": "none",
+      "mental_health_status": "none",
+      "transportation_status": "Personal Vehicle / Ride",
+      "court_dates": null,
+      "overall_status": "archived",
+      "termination_reason": null,
+      "termination_date": null,
+      "updated_at": "2026-09-23 11:52:26",
+      "stability_red_flags": null,
+      "director_override": 0,
+      "director_override_notes": null,
+      "director_override_by": null,
+      "reentry_status": "none",
+      "has_reentry_plan": 0,
+      "enrollment_date": null,
+      "correction_notes": null,
+      "supabase_id": "c8fb1b78-ecf9-43c6-91e5-f25d0fcc740c",
+      "record_id": null
+    }
+  ],
+  "case_plan_triggers": [],
+  "daily_points": [],
+  "drug_tests": [],
+  "benefits": [
+    {
+      "id": 70,
+      "user_id": 43,
+      "benefit_type": "medicaid",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    },
+    {
+      "id": 71,
+      "user_id": 43,
+      "benefit_type": "snap",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    },
+    {
+      "id": 72,
+      "user_id": 43,
+      "benefit_type": "tanf",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    },
+    {
+      "id": 69,
+      "user_id": 43,
+      "benefit_type": "welvista",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    }
+  ],
+  "resumes": [],
+  "db_documents": [],
+  "legacy_briefcase_items_count": 66,
+  "legacy_gate_criteria_count": 27,
+  "updated_at": "2026-11-23T13:46:28.531Z"
+}

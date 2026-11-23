@@ -1,0 +1,139 @@
+{
+  "participant_key": "Zerrick_Morris",
+  "participant_name": "Zerrick Morris",
+  "client_records": [
+    {
+      "id": 61,
+      "first_name": "Zerrick",
+      "last_name": "Morris",
+      "apricot_id": "82496",
+      "location": "Columbia",
+      "status": "active",
+      "stability_tier": "stable",
+      "phone": null,
+      "email": null,
+      "notes": "1. Find housing in Cola\n2. Reinstate DL",
+      "created_at": "2026-11-03 23:04:00",
+      "updated_at": "2026-11-22 17:36:06",
+      "case_manager": "Daisy Boynton",
+      "enrollment_start": "2026-10-29",
+      "gate1_pct": 25,
+      "gate2_pct": 10,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "last_contact_date": "2026-11-17",
+      "last_contact_staff": "Daisy Boynton",
+      "last_contact_activity": "Barrier removal – problem-solving or coordination support",
+      "has_case_plan": 1,
+      "case_plan_text": "1. Find housing in Cola\n2. Reinstate DL"
+    }
+  ],
+  "sessions": [
+    {
+      "id": 414,
+      "client_id": 61,
+      "session_date": "2026-11-17",
+      "session_title": "Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "3Eleven Living Solutions called saying they have openings. I let Zerrick know and he said he's interested, so I referred him. 3Eleven has his name and is expecting his call today.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 415,
+      "client_id": 61,
+      "session_date": "2026-11-11",
+      "session_title": "Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Sent a text asking if he had any luck with the housing options I sent. No response.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 416,
+      "client_id": 61,
+      "session_date": "2026-11-03",
+      "session_title": "Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Confirmed with Zerrick over the phone that those housing options worked for him. I sent him the applications and phone numbers for each. I reached out to Adelle at Chinquapin Housing to let her know to expect his call.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 304,
+      "client_id": 61,
+      "session_date": "2026-10-30",
+      "session_title": "Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Sent Zerrick info for Chinquapin housing, 3Eleven Living Solutions, and Timeless Freedom Transitional Homes to see if any interested him.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 305,
+      "client_id": 61,
+      "session_date": "2026-10-29",
+      "session_title": "Intake Appointment COMPLETED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Intake Screening: Zerrick Morris\nDate: 10/29/2026 | Staff: Daisy | Type: Phone consultation, reentry navigation\nOutcome: He lives in Sumter County, which is outside our service area, so he’s starting with reentry navigation. He’s very interested in First Shift in Columbia. The plan is to find him housing in Columbia first, then add him to the Columbia waitlist. His top two priorities are housing and getting his license reinstated.\n\nHousing\n\nLiving with his mother. He’s not happy staying there long-term.\nGets denied almost everywhere he applies. He has no evictions and believes it’s because of his record.\nOpen to transitional or shared housing.\nWants to live on the Garners Ferry side of Columbia so he can still drop his son at school.\nIncome for rent: DoorDash plus occasional side clients. Earns about $700–$1,000 every two weeks.\n\nDocuments\n\nBirth certificate: Yes\nSocial Security card: No physical card. He has a copy on his phone and knows his number.\nState ID: Yes\nDriver’s license: Suspended (second suspension in a row) with over $2,000 in tickets. The DMV told him the suspension was over and he only needed to pay the tickets, but it showed as still suspended when he was stopped. He thinks he may be near the 2-year point where reinstatement opens up but isn’t sure.\n\nTransportation\n\nFamily members drive him when needed.\nHe said he’d drive his own car to the program (see To verify, since his license is suspended).\n\nAvailability\n\nTakes his son to school, with drop-off by 8 AM. He thinks he could reach a Columbia center around 9, depending on where he lives. No other weekday conflicts mentioned.\n\nHealth / Substance Use\n\nNo prescribed medications in the last 5 years.\nNo emergency needs (medical, mental health, housing, or prescriptions).\nNo history of major alcohol abuse.\nNo drug use other than marijuana that he considers “worth mentioning.” He said he “might have tried something once.”\nTold him about weekly drug testing, including marijuana. He said he isn’t currently using.\nLegally and physically able to work.\n\nJustice Involvement\n\nAge at first arrest: about 17 (a school fight)\nTotal arrests: about 10\nConvictions: pleaded guilty to 2 charges at the same time. He says the rest were pending or thrown out.\nIncarcerations: about 10 (first pass only, see To verify)\nMost recent release: last Friday (10/23) from jail, after a few days. He said he was locked up about a week ago and it cost him a job (see To verify).\nMost recent conviction included drug trafficking or firearm possession: No\nBiological parents’ criminal record: No\nProbation or parole: unclear, see To verify.\nPending charges: state, in Sumter County. Driving under suspension plus an added count tied to a DUI from some years ago (habitual or DUI offender). He was clear it’s not a new DUI.\n\nChild Support\n\nCourt-ordered and he pays. He’s not sure whether he’s in arrears and thinks he may owe around $4,000.\n\nEducation / Employment\n\nHighest education: some college\nWork history: quality inspection, material handling, forklift operation\nLongest job: about 3 years\nJobs usually ended because an assignment ended, he was fired, or he quit for a better opportunity. Not because of incarceration.\nCertifications: OSHA 10. Forklift certified once about 10 years ago (probably expired). Some kind of HVAC certification. A light industrial technical certification.\n\nProgram Info Given\n\nReentry navigation: phone-based help with resources, license reinstatement funding, resumes, and job leads.\nFirst Shift (Columbia): 8 weeks, Monday through Friday, 9–3. $450 a week stipend based on points (minus $9 for each lost point). Morning class, forklift certification, SkillCat trade courses, and a weekly case manager meeting. Job placement at the end.\nThere’s currently a waitlist. Told him the drug test only looks back about 2 weeks.\n\nNext Steps\n\nDaisy: Look into Columbia housing partners with vacancies or open beds, ideally near Garners Ferry. Follow up later today or tomorrow.\nZerrick: Go to the DMV today or tomorrow morning, get a printout of his reinstatement requirements, and send Daisy a photo.\nDaisy: Once the printout comes in, check whether he’s eligible for reinstatement funding.\nLater: Add him to the Columbia waitlist once his housing is set.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 306,
+      "client_id": 61,
+      "session_date": "2026-10-26",
+      "session_title": "Intake Appointment SCHEDULED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "No answer",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-03 23:04:00"
+    }
+  ],
+  "goals": [
+    {
+      "id": 138,
+      "client_id": 61,
+      "goal_title": "Reinstate DL",
+      "target_date": "2026-11-17",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"Reinstate DL\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-11-03 23:04:00",
+      "updated_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 137,
+      "client_id": 61,
+      "goal_title": "Find housing in Cola",
+      "target_date": "2026-11-17",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"Find housing in Cola\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-11-03 23:04:00",
+      "updated_at": "2026-11-03 23:04:00"
+    }
+  ],
+  "case_plans": [],
+  "updated_at": "2026-11-23T13:46:29.326Z"
+}

@@ -1,0 +1,138 @@
+{
+  "participant_key": "Irby_Dewitt",
+  "updated_at": "2026-11-23T13:46:29.243Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-19T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "11 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:399",
+      "event_key": "reentry_session:399",
+      "timestamp": "2026-11-19T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Irby was calling around to figure out if there's anything he can do about a payment plan, and he found out that his$465 ticket for littering while he was in jail was a mistake (you can't suspend a license for that) and h",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:400",
+      "event_key": "reentry_session:400",
+      "timestamp": "2026-11-18T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Called Irby to let him know I haven't heard anything back from Cole at RDF. I asked  if he wanted to work out a payment plan to try and cover the fees himself by Dec. 7th. He said the DMV agreed to put him on a payment p",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:401",
+      "event_key": "reentry_session:401",
+      "timestamp": "2026-11-16T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Irby called letting me know he starts at Knight's Academy CDL school on Dec. 7th. This means he will need his license by then. I reached out to Cole at the RDF with this email: \n\n\"Hey Cole,\nI hope everything is well. I'm",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:402",
+      "event_key": "reentry_session:402",
+      "timestamp": "2026-11-12T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Irby called to check in about what Homeless Court entails and to let me know he hasn't heard back yet about whether he's been accepted. I explained the process. I also asked if wants to stay on our waitlist because he's ",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:403",
+      "event_key": "reentry_session:403",
+      "timestamp": "2026-11-10T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Documentation support – ID, housing forms, paperwork (Daisy Boynton)",
+      "summary": "Called to let Irby know that RDF said if he does Homeless Court, he'll have his tickets waived and will only owe the reinstatement fee for his license! I filled out the Homeless Court application with him over the phone ",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:291",
+      "event_key": "reentry_session:291",
+      "timestamp": "2026-11-02T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Documentation support – ID, housing forms, paperwork (Daisy Boynton)",
+      "summary": "Submitted a request for RDF to cover the $490 in tickets that Irby owes before he can get his license reinstated.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:292",
+      "event_key": "reentry_session:292",
+      "timestamp": "2026-10-30T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Irby's case worker from Alston Wilkes called and asked about RDF applications because she was planning to apply for him too. She thinks it's best if we both submit an application for him (her for his reinstatement and me",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:293",
+      "event_key": "reentry_session:293",
+      "timestamp": "2026-10-28T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Documentation support – ID, housing forms, paperwork (Daisy Boynton)",
+      "summary": "**Contact Summary:** Completed a phone call with client Irby Dewitt to gather the necessary demographic, financial, and logistical information to complete his Rainy Day Fund (RDF) application for driver's license reinsta",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:294",
+      "event_key": "reentry_session:294",
+      "timestamp": "2026-10-26T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Irby called to let me know that he tried to go to Knight's CDL school, but they told him he needs to have a valid DL before enrolling. I told him to send me the DMV info for his fines (in his reentry nav case plan)  and ",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:225",
+      "event_key": "reentry_session:225",
+      "timestamp": "2026-10-22T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Daisy Boynton)",
+      "summary": "*Recording didn't work*\nIrby is currently at the Federal Halfway House in Columbia. He is most interested in getting his DL back so he can get his CDL. He was just released from 21.5 years in prison. I added him to the w",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:226",
+      "event_key": "reentry_session:226",
+      "timestamp": "2026-10-21T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "Intake Appointment SCHEDULED",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "participant_key": "Joseph_Alston",
+  "participant_name": "Joseph Alston",
+  "client_records": [
+    {
+      "id": 77,
+      "first_name": "Joseph",
+      "last_name": "Alston",
+      "apricot_id": "83211",
+      "location": "Charleston",
+      "status": "active",
+      "stability_tier": "stable",
+      "phone": null,
+      "email": null,
+      "notes": "Find stable housing, get all forms of ID, find employment",
+      "created_at": "2026-11-22 17:35:09",
+      "updated_at": "2026-11-22 17:36:06",
+      "case_manager": "Daisy Boynton",
+      "enrollment_start": "2026-11-11",
+      "gate1_pct": 25,
+      "gate2_pct": 20,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "last_contact_date": "2026-11-11",
+      "last_contact_staff": "Daisy Boynton",
+      "last_contact_activity": "Barrier removal – problem-solving or coordination support",
+      "has_case_plan": 1,
+      "case_plan_text": "Find stable housing, get all forms of ID, find employment"
+    }
+  ],
+  "sessions": [
+    {
+      "id": 459,
+      "client_id": 77,
+      "session_date": "2026-11-11",
+      "session_title": "Intake Appointment SCHEDULED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Intake Appointment SCHEDULED",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 458,
+      "client_id": 77,
+      "session_date": "2026-11-11",
+      "session_title": "Intake Appointment COMPLETED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Joseph was referred by One80 Place and came in mainly for housing help. He said he needs help with everything we can offer. He confirmed he has no sex offense convictions. He was released from jail last night 11/10 after about 8½ months, for what sounded like a theft charge. He has no income or money for rent right now, so housing options need to be free. He confirmed he has nowhere he can stay tonight.\n\nID: he doesn’t have his birth certificate, Social Security card, or a physical ID. He has copies of his SC driver’s license, which is suspended, and of an expired North Carolina license. He also has a front-and-back copy of his SS card. He was going to the police station after our meeting, because he believes they have his ID and wallet. He doesn’t know what he owes to reinstate his license. He previously held a CDL. We agreed he’ll start on his ID and birth certificate, and I explained these steps aren’t required but will help with his job search and stability.\n\nHe took medication for depression in the past and said he doesn’t need any medication now. He’d like help getting a few outfits of clothes. He knows a few places downtown, and I offered to look up clothing banks near him. For transportation he bikes and walks and prefers not to take the bus. He said he likes to arrive 30–60 minutes early to work.\n\nHe reported past cocaine use that started when he was selling. He completed a 12-step program and stayed there for two years in Greensboro, NC. He moved back to Charleston because his mother was sick, and he says faith and church help him stay sober. He said he’s 10 months sober.\n\nHe was first arrested around age 19–20. He estimates 4–5 arrests and 3–4 convictions, mostly drug-related. Neither biological parent has a record. He has a pending open container citation in downtown Charleston. No child support. He left school in 12th grade and doesn’t have a GED. He has no physical limitations. His work history includes container and rail yard work at the port (Mount Pleasant terminal / off Montague Ave. Drove trucks for 6 years.\n\nPlan: housing first, then ID, then employment. If he finds a job on his own, we’ll keep working with him.\n\nContact: One80 Place at 843-723-9477 (leave a message). His brother William Alston is his emergency contact and answers 24/7, at 843-437-3373.\n\nFollow-ups (today)\n\nLook into free or emergency housing options for tonight and beyond\nCall One80 Place and leave a message; if you can’t reach him, call his brother this afternoon\n\nFollow-ups (soon)\n\nHelp with birth certificate, SS card, and ID once he reports back from the police station\nCheck his license reinstatement requirements and open container court date\n\n\n843-437-3373 (Little Brother, William Alston)\n843-723-9477 (180 Place)",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 457,
+      "client_id": 77,
+      "session_date": "2026-11-11",
+      "session_title": "Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Called Joseph's brother to give him the numbers for Keys to Change and Delancy Street (our only other free housing options in Charleston), but there was no answer and his VM was full.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "goals": [
+    {
+      "id": 151,
+      "client_id": 77,
+      "goal_title": "Find stable housing, get all forms of ID, find employment",
+      "target_date": "2026-12-06",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"Find stable housing, get all forms of ID, find employment\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-11-22 17:35:09",
+      "updated_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "case_plans": [],
+  "updated_at": "2026-11-23T13:46:29.520Z"
+}

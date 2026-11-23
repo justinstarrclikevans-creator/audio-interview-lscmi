@@ -9,14 +9,20 @@
   "apricot_id": null,
   "phone": "",
   "email": "khalifcountee@t90.com",
-  "files": [],
+  "lscmi_client_id": "Khalif_Countee_Charleston",
   "folder_slug": "Khalif_Countee",
   "folder_path": "data/participants/Khalif_Countee",
   "has_lscmi_brief": false,
   "has_lscmi_scoring": false,
   "has_action_plan": false,
+  "has_legacy_case_briefs": false,
   "waitlist_ready": false,
   "waitlist_met_count": 8,
   "data_flags_count": 2,
-  "updated_at": "2026-11-22T17:18:01.506Z"
+  "cm_notes_count": 0,
+  "apricot_notes_count": 0,
+  "reentry_sessions_count": 0,
+  "history_events_count": 0,
+  "documents_count": 0,
+  "updated_at": "2026-11-23T13:46:28.623Z"
 }

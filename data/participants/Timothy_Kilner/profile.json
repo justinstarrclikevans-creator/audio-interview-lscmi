@@ -9,14 +9,20 @@
   "apricot_id": "81449",
   "phone": "",
   "email": "",
-  "files": [],
+  "lscmi_client_id": "Timothy_Kilner_Charleston",
   "folder_slug": "Timothy_Kilner",
   "folder_path": "data/participants/Timothy_Kilner",
   "has_lscmi_brief": false,
   "has_lscmi_scoring": false,
   "has_action_plan": false,
+  "has_legacy_case_briefs": false,
   "waitlist_ready": false,
   "waitlist_met_count": 8,
   "data_flags_count": 1,
-  "updated_at": "2026-11-22T17:18:01.626Z"
+  "cm_notes_count": 0,
+  "apricot_notes_count": 9,
+  "reentry_sessions_count": 9,
+  "history_events_count": 10,
+  "documents_count": 0,
+  "updated_at": "2026-11-23T13:46:29.168Z"
 }

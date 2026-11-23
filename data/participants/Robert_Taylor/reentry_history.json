@@ -1,0 +1,153 @@
+{
+  "participant_key": "Robert_Taylor",
+  "participant_name": "Robert Taylor",
+  "client_records": [
+    {
+      "id": 26,
+      "first_name": "Robert",
+      "last_name": "Taylor",
+      "apricot_id": "77653",
+      "location": "Columbia",
+      "status": "archived",
+      "stability_tier": "at_risk",
+      "phone": null,
+      "email": null,
+      "notes": "To make a resume and find employment until T90 spot opens up. Long term goal is a career job.",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-10-27 13:40:03",
+      "case_manager": "Daisy Boynton",
+      "enrollment_start": "2026-10-19",
+      "gate1_pct": 0,
+      "gate2_pct": 0,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "last_contact_date": "2026-10-26",
+      "last_contact_staff": "Daisy Boynton",
+      "last_contact_activity": "Case Note (documentation only) – no interaction or service",
+      "has_case_plan": 1,
+      "case_plan_text": "To make a resume and find employment until T90 spot opens up. Long term goal is a career job."
+    }
+  ],
+  "sessions": [
+    {
+      "id": 231,
+      "client_id": 26,
+      "session_date": "2026-10-26",
+      "session_title": "Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Called to let Robert know he's 2nd on the waitlist. No answer, let him know in a VM.",
+      "notes_text": "Called to let Robert know he's 2nd on the waitlist. No answer, let him know in a VM.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 17:51:41"
+    },
+    {
+      "id": 58,
+      "client_id": 26,
+      "session_date": "2026-10-20",
+      "session_title": "Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Made a resume and sent to Robert over text and email. Also attached to his reentry nav case plan.",
+      "notes_text": "Made a resume and sent to Robert over text and email. Also attached to his reentry nav case plan.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 59,
+      "client_id": 26,
+      "session_date": "2026-10-19",
+      "session_title": "Intake Appointment COMPLETED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Currently staying with his mom, has tickets and reinstatement fees for DL, has Welvista and gets prescriptions through that. Has only been able to get temp work. Wants long term employment. Lives 1.5 miles away from center, can walk on the days he's not able to get rides. Added him to waitlist. In the meantime, wants help job searching. Has no resume, so scheduled a phone call for tomorrow to make one.",
+      "notes_text": "Currently staying with his mom, has tickets and reinstatement fees for DL, has Welvista and gets prescriptions through that. Has only been able to get temp work. Wants long term employment. Lives 1.5 miles away from center, can walk on the days he's not able to get rides. Added him to waitlist. In the meantime, wants help job searching. Has no resume, so scheduled a phone call for tomorrow to make one.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 60,
+      "client_id": 26,
+      "session_date": "2026-10-15",
+      "session_title": "Intake Appointment SCHEDULED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Intake Appointment SCHEDULED",
+      "notes_text": "Intake Appointment SCHEDULED",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 61,
+      "client_id": 26,
+      "session_date": "2026-06-22",
+      "session_title": "Behavioral incident – disruption, conflict, or left early (Jenn Jeanquart)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Robert unable to start FS program due to failed UA.",
+      "notes_text": "Robert unable to start FS program due to failed UA.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 62,
+      "client_id": 26,
+      "session_date": "2026-06-15",
+      "session_title": "Barrier removal – problem-solving or coordination support (Jenn Jeanquart)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Robert came in to check his status to enroll in First Shift. He passed a preliminary drug test and was scheduled for orientation on 6/22. He was reminded he will need to pass a drug test on orientation and weekly thereafter. At the end of the conversation, Robert informed me he is in need of emergency housing. I contacted Greyce Transitional home who is willing to accept and do a payment plan for him pending enrollment in T90.",
+      "notes_text": "Robert came in to check his status to enroll in First Shift. He passed a preliminary drug test and was scheduled for orientation on 6/22. He was reminded he will need to pass a drug test on orientation and weekly thereafter. At the end of the conversation, Robert informed me he is in need of emergency housing. I contacted Greyce Transitional home who is willing to accept and do a payment plan for him pending enrollment in T90.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 63,
+      "client_id": 26,
+      "session_date": "2026-06-09",
+      "session_title": "Intake Appointment COMPLETED (Jenn Jeanquart)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Released from SCDC on Dec 31, 2025 and has not found a job since then. Has applied at fast food, warehouses, WalMart, Amazon, etc. with no return call. His VM is set up and checks his email regularly. Stays with his mother and although he is grateful, he wants his own place. Has four children and is not on child support. Does not have DL, has $1900 in reinstatement fees alone, and does not know how much he owes in tickets.  Will refer to RDF after gathering ticket info. Explained the First Shift program and reviewed eligibility for enrollment. He is usure if he can pass a drug test at this time but will test himself and follow up with me.",
+      "notes_text": "Released from SCDC on Dec 31, 2025 and has not found a job since then. Has applied at fast food, warehouses, WalMart, Amazon, etc. with no return call. His VM is set up and checks his email regularly. Stays with his mother and although he is grateful, he wants his own place. Has four children and is not on child support. Does not have DL, has $1900 in reinstatement fees alone, and does not know how much he owes in tickets.  Will refer to RDF after gathering ticket info. Explained the First Shift program and reviewed eligibility for enrollment. He is usure if he can pass a drug test at this time but will test himself and follow up with me.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 64,
+      "client_id": 26,
+      "session_date": "2026-06-02",
+      "session_title": "Intake Appointment SCHEDULED (Kat Norsworthy)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Rescheduled appointment twice. 6/9 is the most recently scheduled intake.",
+      "notes_text": "Rescheduled appointment twice. 6/9 is the most recently scheduled intake.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "goals": [
+    {
+      "id": 63,
+      "client_id": 26,
+      "goal_title": "To make a resume and find employment until T90 spot opens up. Long term goal is a career job.",
+      "target_date": "2026-11-09",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"To make a resume and find employment until T90 spot opens up. Long term goal is a career job.\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "case_plans": [],
+  "updated_at": "2026-11-23T13:46:28.812Z"
+}

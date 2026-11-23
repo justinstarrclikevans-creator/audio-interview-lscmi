@@ -1,0 +1,61 @@
+{
+  "participant_key": "Robert_Shaw",
+  "updated_at": "2026-11-23T13:46:29.212Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-02T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "5 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:214",
+      "event_key": "reentry_session:214",
+      "timestamp": "2026-10-20T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "Called and texted Robert to check if he had moved into Bounce Back on Thursday as we had planned. No answer.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:216",
+      "event_key": "reentry_session:216",
+      "timestamp": "2026-10-13T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Daisy Boynton)",
+      "summary": "Would like some meds/to see a doctor for his psoriasis (not urgent). Currently staying in a hotel room. He loves cooking and would love to do that for work. Needs stable housing to be eligible for FS. Currently working a",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:215",
+      "event_key": "reentry_session:215",
+      "timestamp": "2026-10-13T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Called Bounce Back while he was here for his intake. Made a plan for him to move in there Thursday. I told him I'd reach out to him over text and to let me know that everything goes smoothly Thursday. Once he's settled t",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:217",
+      "event_key": "reentry_session:217",
+      "timestamp": "2026-10-12T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "In person",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "participant_key": "Preston_Evans",
+  "updated_at": "2026-11-23T13:46:29.473Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-18T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "4 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:441",
+      "event_key": "reentry_session:441",
+      "timestamp": "2026-11-18T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update|Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "summary": "Sent a text checking in with Preston and asking if he wants to set up a time to apply for SNAP. Also sent him the flyer for the Friday Walmart Distribution Center hiring event.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:443",
+      "event_key": "reentry_session:443",
+      "timestamp": "2026-11-06T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Daisy Boynton)",
+      "summary": "### Contact Summary\nCompleted an initial phone consultation with Preston Evans to explain the Turn90 program and assess eligibility and immediate needs. Preston was in transit on the bus but engaged well. Reviewed housin",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:442",
+      "event_key": "reentry_session:442",
+      "timestamp": "2026-11-06T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Sent Preston 3 food banks in North Charleston.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:444",
+      "event_key": "reentry_session:444",
+      "timestamp": "2026-11-05T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "Intake Appointment SCHEDULED",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

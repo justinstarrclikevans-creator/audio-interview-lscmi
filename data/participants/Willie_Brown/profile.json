@@ -9,22 +9,20 @@
   "apricot_id": "82501",
   "phone": "",
   "email": "",
-  "files": [
-    "Willie_Brown_Columbia_criminal_history.docx",
-    "Willie_Brown_Columbia_criminal_history.md",
-    "Willie_Brown_Columbia_draft_scoring_form.docx",
-    "Willie_Brown_Columbia_draft_scoring_form.md",
-    "Willie_Brown_Columbia_interview_guide.docx",
-    "Willie_Brown_Columbia_interview_guide.md",
-    "Willie_Brown_Columbia_transcript.txt"
-  ],
+  "lscmi_client_id": "Willie_Brown_Columbia",
   "folder_slug": "Willie_Brown",
   "folder_path": "data/participants/Willie_Brown",
   "has_lscmi_brief": false,
   "has_lscmi_scoring": true,
   "has_action_plan": false,
+  "has_legacy_case_briefs": false,
   "waitlist_ready": false,
   "waitlist_met_count": 5,
   "data_flags_count": 2,
-  "updated_at": "2026-11-22T17:18:01.668Z"
+  "cm_notes_count": 0,
+  "apricot_notes_count": 6,
+  "reentry_sessions_count": 6,
+  "history_events_count": 14,
+  "documents_count": 7,
+  "updated_at": "2026-11-23T13:46:29.339Z"
 }

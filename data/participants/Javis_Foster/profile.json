@@ -6,23 +6,23 @@
   "status": "archived",
   "user_id": 58,
   "client_id": null,
-  "apricot_id": null,
+  "apricot_id": "80688",
   "phone": "",
   "email": "javisfoster@t90.com",
-  "files": [
-    "1790194152697_Javis_Foster_reentry_assessment_data.json",
-    "1790194152697_Javis_Foster_reentry_participant_action_guide.docx",
-    "1790194152697_Javis_Foster_reentry_participant_action_guide.md",
-    "1790194152697_Javis_Foster_reentry_staff_case_plan.docx",
-    "1790194152697_Javis_Foster_reentry_staff_case_plan.md"
-  ],
+  "lscmi_client_id": "Javis_Foster_Spartanburg",
   "folder_slug": "Javis_Foster",
   "folder_path": "data/participants/Javis_Foster",
   "has_lscmi_brief": false,
   "has_lscmi_scoring": false,
   "has_action_plan": true,
+  "has_legacy_case_briefs": true,
   "waitlist_ready": false,
-  "waitlist_met_count": 6,
+  "waitlist_met_count": 5,
   "data_flags_count": 1,
-  "updated_at": "2026-11-22T17:18:01.526Z"
+  "cm_notes_count": 0,
+  "apricot_notes_count": 11,
+  "reentry_sessions_count": 0,
+  "history_events_count": 11,
+  "documents_count": 10,
+  "updated_at": "2026-11-23T13:46:28.698Z"
 }

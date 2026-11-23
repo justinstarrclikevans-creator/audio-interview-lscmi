@@ -1,0 +1,101 @@
+{
+  "participant_key": "Donald_Horne",
+  "participant_name": "Donald Horne",
+  "client_records": [
+    {
+      "id": 80,
+      "first_name": "Donald",
+      "last_name": "Horne",
+      "apricot_id": "83382",
+      "location": "Spartanburg",
+      "status": "active",
+      "stability_tier": "stable",
+      "phone": null,
+      "email": null,
+      "notes": "Reinstate DL or get a route-restricted license",
+      "created_at": "2026-11-22 17:35:09",
+      "updated_at": "2026-11-22 17:36:06",
+      "case_manager": "Daisy Boynton",
+      "enrollment_start": "2026-11-16",
+      "gate1_pct": 50,
+      "gate2_pct": 50,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "last_contact_date": "2026-11-19",
+      "last_contact_staff": "Daisy Boynton",
+      "last_contact_activity": "Barrier removal – problem-solving or coordination support",
+      "has_case_plan": 1,
+      "case_plan_text": "Reinstate DL or get a route-restricted license"
+    }
+  ],
+  "sessions": [
+    {
+      "id": 467,
+      "client_id": 80,
+      "session_date": "2026-11-19",
+      "session_title": "Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Called to let me know he got in contact with the NC and SC DMV. He has $904 in fees + $83 in reinstatement for NC and $300 in reinstatement fees in SC. He wants to look into a route-restricted license. I told him for the RDF application, we'll need the paper print out from the DMV, so I suggested he go in person and get that and also ask about the route-restricted license to see what they say.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 468,
+      "client_id": 80,
+      "session_date": "2026-11-18",
+      "session_title": "Check-in conversation – brief status update (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Called to fill out RDF application, he said he's at work. He said he's gotten DMV info from NC but needs to get the rest from SC and will call us back once he does that.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 470,
+      "client_id": 80,
+      "session_date": "2026-11-16",
+      "session_title": "Intake Appointment SCHEDULED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "No answer, VM left.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 469,
+      "client_id": 80,
+      "session_date": "2026-11-16",
+      "session_title": "Intake Appointment COMPLETED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "CONTACT SUMMARY & SESSION OVERVIEW\n- Session Stage: First Session / Intake \n- Summary: [Client] returned CM's call and completed phone intake. CM gave an overview of First Shift and Reentry Navigation; [Client] was added to the First Shift waitlist (approx. 4th–5th) and agreed to begin Reentry Navigation while waiting. [Client] was engaged and cooperative, reports stable housing with his mother, and has no emergency needs. His primary goal is reinstating his driver's license, including a route-restricted license so he can drive to work.\n\nCASE PLAN ALIGNMENT\n- Stability Tier: Stable\n- Stated Goals Progress: Goal 1 – Reinstate driver's license / obtain route-restricted license. [Client] reports a hold from Polk County, NC (~$800 owed per his call to NC) plus approx. $300 owed to SC DMV. He previously submitted a restricted-license application, which was returned; he believes the NC balance must be paid first. [Client] cannot currently pay these fees. Plan is to gather exact amounts and submit an RDF request when the new funding cycle opens 12/1. No other goals identified at this time.\n\nBRIEFCASE & GATES 1-4 UPDATES\n- Gate 1 (Vital IDs, Meds, Supervision): Has birth certificate, SS card, and picture ID (driver's license suspended). Currently on home detention (end date reported as 2028; [Client] also mentioned 2027 — confirm). Permitted movement: to and from work, gas station on the way to work, grocery store 2x/week, government buildings, banks, and trash dumps.\n- Gate 2 (Housing, Comms, Legal, Resume): Lives with his mother in Boiling Springs; stable. DMV license check pending (needs SC DMV printout and NC documentation). No pending charges. Two daughters; not paying child support (reports being removed from support orders/parental rights).\n- Gate 3 (Health, Recovery, Banking): Receiving MAT (Suboxone injection), for nearly 12 months. Reports no drug use in the past 12 months other than medication administered by the hospital. Has not completed a formal substance use program. Reports no health conditions or physical limitations affecting work.\n- Gate 4 (Work Gear, Transit, Employment/Finance): Transit plan: mother as primary ride; Uber through referring agency as backup. Employment history: equipment/heavy machinery operator, mechanic, welding; longest tenure ~5 years; prior job changes were mostly voluntary moves to new jobs. Current forklift certification. Education: high school diploma (Christian academy).\n\nEMPLOYMENT, HOUSING & STABILITY UPDATES\n- Released from Spartanburg County jail on or around 11/9/2026 after a 60-day stay related to a positive drug test, which was later attributed to hospital-administered medication after a hand injury; judge reinstated home detention. Lost his previous home in Boiling Springs during that time and now lives with his mother. Confirmed he can attend First Shift hours (M–F, 9–3). Reviewed First Shift expectations: drug testing at start and weekly (including marijuana), and the stipend point system ($9 deduction per lost point). [Client] agreed.\n\nREFERRALS & RESOURCE COORDINATION\n- Rainy Day Fund (RDF) – DMV reinstatement fees; application to be submitted 12/1/2026 when the funding cycle opens.\n- SC DMV reinstatement – printout needed to confirm SC balance.\n- Polk County, NC / NC DMV – [Client] to confirm the hold and the exact amount owed.\n\nNEXT STEPS (\"WHAT TO WORK ON NEXT\")\n1. [Client] to contact Polk County, NC and NC DMV to get exact amounts owed and what the charges are for, in writing or by email, and send to CM; also get the SC DMV printout.\n2. CM to call [Client] Wednesday 11/18 around 10–11 a.m. to collect RDF application information; submit the RDF request on 12/1.\n3. Apricot Admin Check: Initialize Briefcase record; enter [Client] on the First Shift waitlist; call to schedule Friday orientation when a spot opens.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "goals": [
+    {
+      "id": 154,
+      "client_id": 80,
+      "goal_title": "Reinstate DL or get a route-restricted license",
+      "target_date": "2026-12-06",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"Reinstate DL or get a route-restricted license\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-11-22 17:35:09",
+      "updated_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "case_plans": [],
+  "updated_at": "2026-11-23T13:46:29.555Z"
+}

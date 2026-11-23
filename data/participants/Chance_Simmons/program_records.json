@@ -1,0 +1,342 @@
+{
+  "participant_key": "Chance_Simmons",
+  "participant_name": "Chance Simmons",
+  "profile_records": [
+    {
+      "id": 48,
+      "user_id": 50,
+      "current_gate": 4,
+      "w9_status": "verified",
+      "dl_status": "valid",
+      "dl_notes": "I operate the city bus line I have free",
+      "child_support_status": "none",
+      "child_support_notes": "",
+      "housing_status": "transitional",
+      "substance_status": "none",
+      "mental_health_status": "none",
+      "transportation_status": "CARTA Bus Line",
+      "court_dates": null,
+      "overall_status": "active",
+      "termination_reason": null,
+      "termination_date": null,
+      "updated_at": "2026-09-23 11:52:26",
+      "stability_red_flags": "[{\"category\":\"Stability Risk\",\"flag\":\"Driver's License & Transit Dependency (Johns Island)\",\"evidence\":\"Beginner's permit only. Requires transportation support and driver's education while residing on Johns Island.\",\"severity\":\"medium\",\"navigator_recommendation\":\"Connect with Father to Father Project for driver's license restoration and coordinate CARTA transit or carpool options for work commutes.\"},{\"category\":\"Cognitive / Attitude\",\"flag\":\"Vulnerability to Boredom & Minor Impatience\",\"evidence\":\"High amount of unstructured idle time spent watching TV all day. Mentions: 'learned patience, but I still can get impatient every now and again.'\",\"severity\":\"medium\",\"navigator_recommendation\":\"Utilize CBT daily scheduling tools to structure prosocial activities and job search tasks, reframing waiting periods as intentional skill-building steps.\"},{\"category\":\"Cognitive / Attitude\",\"flag\":\"Institutionalization Trauma & Workplace Acclimation Gap\",\"evidence\":\"Served nearly 20 continuous years in adult prison starting at age 17. Complete absence of community employment history, digital systems familiarity, or supervisor relations.\",\"severity\":\"medium\",\"navigator_recommendation\":\"Maintain an encouraging, appreciative coaching style. Provide hands-on digital literacy instruction and gradual work environment immersion without confrontational pressure.\"},{\"category\":\"Substance / Health\",\"flag\":\"Recent Substance Use History\",\"evidence\":\"Admitted drug use within the past year; currently abstinent at intake.\",\"severity\":\"low\",\"navigator_recommendation\":\"Establish a supportive relapse prevention plan and offer voluntary peer support check-ins via Charleston Center.\"}]",
+      "director_override": 0,
+      "director_override_notes": null,
+      "director_override_by": null,
+      "reentry_status": "stable",
+      "has_reentry_plan": 1,
+      "enrollment_date": "2026-10-26",
+      "correction_notes": null,
+      "supabase_id": "195df5f7-fb67-4a00-a899-43f5e5b0b62e",
+      "record_id": "78959"
+    }
+  ],
+  "case_plan_triggers": [
+    {
+      "id": 223,
+      "user_id": 50,
+      "domain": "Substance Use",
+      "pattern": "Focus Area 2",
+      "trigger_situations": "[]",
+      "toolkit_tools": "[\"Decisional Balance\",\"Problem Solving 4-Step Method\"]",
+      "updated_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 222,
+      "user_id": 50,
+      "domain": "Thinking Patterns (Procriminal Attitudes)",
+      "pattern": "Focus Area 1",
+      "trigger_situations": "[]",
+      "toolkit_tools": "[\"Stop and Think (STAC)\",\"Thinking Report\"]",
+      "updated_at": "2026-11-03 23:04:00"
+    }
+  ],
+  "daily_points": [
+    {
+      "id": 1893,
+      "user_id": 50,
+      "date": "2026-11-19",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1892,
+      "user_id": 50,
+      "date": "2026-11-18",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1891,
+      "user_id": 50,
+      "date": "2026-11-17",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1889,
+      "user_id": 50,
+      "date": "2026-11-16",
+      "points_earned": 9,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1890,
+      "user_id": 50,
+      "date": "2026-11-13",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1888,
+      "user_id": 50,
+      "date": "2026-11-12",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1887,
+      "user_id": 50,
+      "date": "2026-11-11",
+      "points_earned": 0,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1886,
+      "user_id": 50,
+      "date": "2026-11-10",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1885,
+      "user_id": 50,
+      "date": "2026-11-09",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1884,
+      "user_id": 50,
+      "date": "2026-11-05",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1883,
+      "user_id": 50,
+      "date": "2026-11-04",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1882,
+      "user_id": 50,
+      "date": "2026-11-03",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1696,
+      "user_id": 50,
+      "date": "2026-11-02",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 1695,
+      "user_id": 50,
+      "date": "2026-10-30",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 1694,
+      "user_id": 50,
+      "date": "2026-10-29",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 1693,
+      "user_id": 50,
+      "date": "2026-10-28",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 1692,
+      "user_id": 50,
+      "date": "2026-10-27",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 1691,
+      "user_id": 50,
+      "date": "2026-10-26",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 60,
+      "user_id": 50,
+      "date": "2026-09-21",
+      "points_earned": 0,
+      "max_points": 50,
+      "attendance_status": "present",
+      "notes": "Imported via Render Report",
+      "imported_from_apricot": 1,
+      "created_at": "2026-09-22 17:44:36"
+    }
+  ],
+  "drug_tests": [],
+  "benefits": [
+    {
+      "id": 94,
+      "user_id": 50,
+      "benefit_type": "medicaid",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    },
+    {
+      "id": 95,
+      "user_id": 50,
+      "benefit_type": "snap",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    },
+    {
+      "id": 96,
+      "user_id": 50,
+      "benefit_type": "tanf",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    },
+    {
+      "id": 93,
+      "user_id": 50,
+      "benefit_type": "welvista",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    }
+  ],
+  "resumes": [
+    {
+      "id": 23,
+      "user_id": 50,
+      "resume_data_json": "{\"summary\":\"my main goal is to put the past in the past and stay on track\"}",
+      "updated_at": "2026-09-23 11:52:26"
+    }
+  ],
+  "db_documents": [
+    {
+      "id": 29,
+      "user_id": 50,
+      "doc_type": "case_brief",
+      "title": "Clinical Case Brief - Chance Simmons",
+      "filename": "Chance_Simmons_Case_Brief_1788826760834.pdf",
+      "file_path": "/data/Chance_Simmons_Case_Brief_1788826760834.pdf",
+      "file_size": 8373,
+      "status": "active",
+      "metadata_json": "{\"originalName\":\"4385_chance-simmons-case-management-brief.pdf\"}",
+      "uploaded_at": "2026-09-08 00:19:20"
+    }
+  ],
+  "legacy_briefcase_items_count": 66,
+  "legacy_gate_criteria_count": 27,
+  "updated_at": "2026-11-23T13:46:28.610Z"
+}

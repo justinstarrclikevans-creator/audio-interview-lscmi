@@ -7,7 +7,7 @@
   "client_id": null,
   "has_chronic_health_condition": "no",
   "dl_is_suspended": "no",
-  "child_support_applicable": "no",
+  "child_support_applicable": "yes",
   "supervision_officer_details": "",
   "chronic_condition_details": "",
   "medical_appointments_applicable": false,
@@ -55,10 +55,10 @@
       "updated_at": "2026-11-20T19:43:31.851Z"
     },
     "child_support_contact": {
-      "value": "not_applicable",
-      "notes": "",
-      "source": "default",
-      "updated_at": "2026-11-20T19:43:31.851Z"
+      "value": "contact_made_compliant",
+      "notes": "Detected child support reference in loaded records",
+      "source": "loaded_text",
+      "updated_at": "2026-11-23T13:46:26.921Z"
     },
     "supervision_information": {
       "value": "active_logged_no_conflict",
@@ -76,7 +76,7 @@
       "value": "stalled_flagged",
       "notes": "38 modules completed (57.0 hrs)",
       "source": "skillcat_scraper",
-      "updated_at": "2026-11-22T17:18:01.527Z"
+      "updated_at": "2026-11-23T13:46:28.709Z"
     },
     "resume_and_email": {
       "value": "not_started",
@@ -186,10 +186,10 @@
       "key": "child_support_contact",
       "number": 8,
       "title": "8. Contact Made with Child Support (if applicable)",
-      "value": "not_applicable",
-      "label": "Not Applicable (No Child Support Case / Order)",
+      "value": "contact_made_compliant",
+      "label": "Contact Made with DSS Child Support & Compliance Plan Active",
       "ready": true,
-      "notes": ""
+      "notes": "Detected child support reference in loaded records"
     },
     {
       "key": "supervision_information",

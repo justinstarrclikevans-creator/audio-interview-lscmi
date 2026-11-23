@@ -1,0 +1,160 @@
+{
+  "participant_key": "George_Stevens",
+  "updated_at": "2026-11-23T13:46:29.143Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-12T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "13 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:368",
+      "event_key": "reentry_session:368",
+      "timestamp": "2026-11-12T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "Called to check in with George, no answer. Left a VM saying he's still first on WL, asking if he got his social security replacement card in the mail, and checking if he's found other employment.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:369",
+      "event_key": "reentry_session:369",
+      "timestamp": "2026-11-04T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Let George know he's still first on the waitlist, we're just waiting for a spot to open up.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:279",
+      "event_key": "reentry_session:279",
+      "timestamp": "2026-10-27T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Sent a text checking in about whether he's been to the DMV and if he's had any luck getting through to SNAP. He got his forms from the DMV with his fees. He owes around $1700 on top of child support (unknown) and needs t",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:278",
+      "event_key": "reentry_session:278",
+      "timestamp": "2026-10-27T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "George said according to DSS, he owes $94,500.73 of child support. I asked if they mentioned any sort of payment plan option. He said he needs to pay $150 a week. He asked for help, I said unfortunately we can't.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:277",
+      "event_key": "reentry_session:277",
+      "timestamp": "2026-10-27T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Called to let him know he's first on waitlist. He asked what our program does... Gave him all the details again and he said he's still interested and excited about it. He plans to take the bus from the halfway house. I t",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:171",
+      "event_key": "reentry_session:171",
+      "timestamp": "2026-10-23T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "George called asking about us helping with his DL fees. I said we can get an application together for Nov. 1st. He's supposed to go to the DMV next week to get the print out of everything he owes. He thinks he needs to t",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:172",
+      "event_key": "reentry_session:172",
+      "timestamp": "2026-10-20T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Let him know it's probably best for him to go to the Columbia Social Security Office to ask about getting his SSI back. Sent him the address.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:174",
+      "event_key": "reentry_session:174",
+      "timestamp": "2026-10-19T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "summary": "Started to complete the Welvista application, but he was heading to another appointment. I told him to call me back once he was settled and finished up with that.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:173",
+      "event_key": "reentry_session:173",
+      "timestamp": "2026-10-19T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Documentation support – ID, housing forms, paperwork (Daisy Boynton)",
+      "summary": "Finished application for Welvista and a social security card replacement. He also wants to apply for SSI benefits. He said he used to get social security benefits, but they stopped them when he was 22. Wants to reapply. ",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:175",
+      "event_key": "reentry_session:175",
+      "timestamp": "2026-10-15T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Let me know that he wants to apply for SSI and Welvista. Scheduled a call on Monday to do both. He also let me know that he isn't working his cafe job anymore and wants to be on our waitlist. I am going to confirm he's s",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:176",
+      "event_key": "reentry_session:176",
+      "timestamp": "2026-10-13T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Referred George to Eau Claire Behavioral Health to address his emergency mental health needs.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:177",
+      "event_key": "reentry_session:177",
+      "timestamp": "2026-10-09T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Daisy Boynton)",
+      "summary": "- License is suspended and he owes fees, needs to figure out exactly how much\n- Has pretty severe mental health diagnoses (Depression and Schizophrenia), has no mental health provider\n- Has some medication for about 1 mo",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:178",
+      "event_key": "reentry_session:178",
+      "timestamp": "2026-10-05T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "Intake Appointment SCHEDULED",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

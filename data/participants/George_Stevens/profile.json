@@ -9,14 +9,20 @@
   "apricot_id": "81446",
   "phone": "",
   "email": "",
-  "files": [],
+  "lscmi_client_id": "George_Stevens_Columbia",
   "folder_slug": "George_Stevens",
   "folder_path": "data/participants/George_Stevens",
   "has_lscmi_brief": false,
   "has_lscmi_scoring": false,
   "has_action_plan": false,
+  "has_legacy_case_briefs": false,
   "waitlist_ready": false,
   "waitlist_met_count": 6,
   "data_flags_count": 1,
-  "updated_at": "2026-11-22T17:18:01.623Z"
+  "cm_notes_count": 0,
+  "apricot_notes_count": 13,
+  "reentry_sessions_count": 13,
+  "history_events_count": 14,
+  "documents_count": 0,
+  "updated_at": "2026-11-23T13:46:29.143Z"
 }

@@ -1,0 +1,160 @@
+{
+  "participant_key": "Harold_Williams",
+  "updated_at": "2026-11-23T13:46:29.303Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-16T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "6 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:410",
+      "event_key": "reentry_session:410",
+      "timestamp": "2026-11-16T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "Called to check in, no answer, VM not set up.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_doc:Harold_Williams_Charleston_interview_guide.docx",
+      "event_key": "doc:Harold_Williams_Charleston_interview_guide.docx",
+      "timestamp": "2026-11-04T16:28:24.283Z",
+      "category": "document",
+      "action": "Archived interview guide",
+      "summary": "Document stored in folder: Harold_Williams_Charleston_interview_guide.docx",
+      "filename": "Harold_Williams_Charleston_interview_guide.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Harold_Williams_Charleston_draft_scoring_form.docx",
+      "event_key": "doc:Harold_Williams_Charleston_draft_scoring_form.docx",
+      "timestamp": "2026-11-04T16:28:23.854Z",
+      "category": "document",
+      "action": "Archived draft scoring",
+      "summary": "Document stored in folder: Harold_Williams_Charleston_draft_scoring_form.docx",
+      "filename": "Harold_Williams_Charleston_draft_scoring_form.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Harold_Williams_Charleston_criminal_history.docx",
+      "event_key": "doc:Harold_Williams_Charleston_criminal_history.docx",
+      "timestamp": "2026-11-04T16:28:23.075Z",
+      "category": "document",
+      "action": "Archived criminal history",
+      "summary": "Document stored in folder: Harold_Williams_Charleston_criminal_history.docx",
+      "filename": "Harold_Williams_Charleston_criminal_history.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Harold_Williams_Charleston_criminal_history.md",
+      "event_key": "doc:Harold_Williams_Charleston_criminal_history.md",
+      "timestamp": "2026-11-04T16:28:21.009Z",
+      "category": "document",
+      "action": "Archived criminal history",
+      "summary": "Document stored in folder: Harold_Williams_Charleston_criminal_history.md",
+      "filename": "Harold_Williams_Charleston_criminal_history.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Harold_Williams_Charleston_draft_scoring_form.md",
+      "event_key": "doc:Harold_Williams_Charleston_draft_scoring_form.md",
+      "timestamp": "2026-11-04T16:28:21.009Z",
+      "category": "document",
+      "action": "Archived draft scoring",
+      "summary": "Document stored in folder: Harold_Williams_Charleston_draft_scoring_form.md",
+      "filename": "Harold_Williams_Charleston_draft_scoring_form.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Harold_Williams_Charleston_interview_guide.md",
+      "event_key": "doc:Harold_Williams_Charleston_interview_guide.md",
+      "timestamp": "2026-11-04T16:28:21.009Z",
+      "category": "document",
+      "action": "Archived interview guide",
+      "summary": "Document stored in folder: Harold_Williams_Charleston_interview_guide.md",
+      "filename": "Harold_Williams_Charleston_interview_guide.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Harold_Williams_Charleston_transcript.txt",
+      "event_key": "doc:Harold_Williams_Charleston_transcript.txt",
+      "timestamp": "2026-11-04T16:28:21.009Z",
+      "category": "document",
+      "action": "Archived transcript",
+      "summary": "Document stored in folder: Harold_Williams_Charleston_transcript.txt",
+      "filename": "Harold_Williams_Charleston_transcript.txt",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_reentry_session:411",
+      "event_key": "reentry_session:411",
+      "timestamp": "2026-11-04T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "summary": "Harold had an interview at Coca Cola and went to Olsten's staffing agency last week. He got a temp job at a metal plant called Frazier through Olsten's. I sent him a list of 5 job openings in Bishopville, SC.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:298",
+      "event_key": "reentry_session:298",
+      "timestamp": "2026-10-29T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "summary": "Gave Harold the address, hours, and phone number for the SC Works in Bishopville, SC and recommended he call and make an appointment to get help with job searching.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:297",
+      "event_key": "reentry_session:297",
+      "timestamp": "2026-10-29T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Harold let me know he's been to SC Works and they weren't very helpful. I said I'd send him some job postings.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:299",
+      "event_key": "reentry_session:299",
+      "timestamp": "2026-10-27T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Daisy Boynton)",
+      "summary": "Contact Summary: Completed initial Reentry Navigation consultation with Harold Williams to assess his current stability, baseline needs, and establish case plan goals. Client is currently stably housed with his girlfrien",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:300",
+      "event_key": "reentry_session:300",
+      "timestamp": "2026-10-26T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "Intake Appointment SCHEDULED",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

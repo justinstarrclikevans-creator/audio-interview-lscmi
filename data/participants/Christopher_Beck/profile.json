@@ -9,14 +9,20 @@
   "apricot_id": "78777",
   "phone": "",
   "email": "christopher.beck.78777@firstshift.org",
-  "files": [],
+  "lscmi_client_id": "Christopher_Beck_Spartanburg",
   "folder_slug": "Christopher_Beck",
   "folder_path": "data/participants/Christopher_Beck",
   "has_lscmi_brief": false,
   "has_lscmi_scoring": false,
   "has_action_plan": false,
+  "has_legacy_case_briefs": false,
   "waitlist_ready": false,
   "waitlist_met_count": 6,
   "data_flags_count": 2,
-  "updated_at": "2026-11-22T17:18:01.528Z"
+  "cm_notes_count": 13,
+  "apricot_notes_count": 13,
+  "reentry_sessions_count": 0,
+  "history_events_count": 14,
+  "documents_count": 0,
+  "updated_at": "2026-11-23T13:46:28.710Z"
 }

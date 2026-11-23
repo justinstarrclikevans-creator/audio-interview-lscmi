@@ -1,0 +1,125 @@
+{
+  "participant_key": "Wesley_Morton",
+  "participant_name": "Wesley Morton",
+  "profile_records": [
+    {
+      "id": 34,
+      "user_id": 36,
+      "current_gate": 3,
+      "w9_status": "verified",
+      "dl_status": "suspended",
+      "dl_notes": "I have transportation",
+      "child_support_status": "none",
+      "child_support_notes": "Child support contact/enforcement reviewed",
+      "housing_status": "stable",
+      "substance_status": "none",
+      "mental_health_status": "none",
+      "transportation_status": "Personal Vehicle / Ride",
+      "court_dates": null,
+      "overall_status": "archived",
+      "termination_reason": null,
+      "termination_date": null,
+      "updated_at": "2026-09-23 11:52:26",
+      "stability_red_flags": "[{\"category\":\"Stability Risk\",\"flag\":\"'Cut Off' Coping Strategy Under Acute Stress\",\"evidence\":\"Interview and brief note that Wesley historically abruptly quit his pizza-delivery job and disengaged from conventional life when facing acute stress and homelessness.\",\"severity\":\"medium\",\"navigator_recommendation\":\"Utilize CBT problem-solving worksheets (Chain Analysis & Decatastrophizing) to help Wesley recognize early emotional indicators of stress. Practice structured communication so he learns to seek staff support rather than resorting to disengagement.\"},{\"category\":\"Cognitive / Attitude\",\"flag\":\"Impulsivity ('Acting Before Thinking')\",\"evidence\":\"Wesley admits that he 'often acts before he thinks' and sometimes gets into trouble 'almost by accident.'\",\"severity\":\"medium\",\"navigator_recommendation\":\"Engage Wesley in 'Stop, Think, Act' CBT role-play exercises. Reframe workplace instructions as structured step-by-step checklists to slow down his decision-making process.\"},{\"category\":\"Stability Risk\",\"flag\":\"Lack of Driver's License & Transit Dependency\",\"evidence\":\"Wesley does not possess a valid driver's license and relies strictly on public transit (CARTA) to travel to Turn90 and check-ins.\",\"severity\":\"medium\",\"navigator_recommendation\":\"Help Wesley obtain CARTA bus passes and map out direct transit routes to potential employment sites. Connect him with Father to Father Project for driver's license restoration guidance.\"},{\"category\":\"Substance / Health\",\"flag\":\"Early Substance Recovery Maintenance\",\"evidence\":\"Wesley has 10 months of continuous methamphetamine sobriety following a history of severe addiction that led to homelessness and burglary charges.\",\"severity\":\"medium\",\"navigator_recommendation\":\"Reinforce positive sobriety milestones during daily check-ins. Ensure Wesley maintains an active relapse prevention plan and peer recovery contacts through the Charleston Center.\"}]",
+      "director_override": 0,
+      "director_override_notes": null,
+      "director_override_by": null,
+      "reentry_status": "at_risk",
+      "has_reentry_plan": 1,
+      "enrollment_date": null,
+      "correction_notes": null,
+      "supabase_id": "9311827d-ae9e-4536-ab99-ca75f97dd8c7",
+      "record_id": null
+    }
+  ],
+  "case_plan_triggers": [],
+  "daily_points": [
+    {
+      "id": 55,
+      "user_id": 36,
+      "date": "2026-09-21",
+      "points_earned": 10,
+      "max_points": 50,
+      "attendance_status": "present",
+      "notes": "Imported via Render Report",
+      "imported_from_apricot": 1,
+      "created_at": "2026-09-22 17:44:36"
+    }
+  ],
+  "drug_tests": [],
+  "benefits": [
+    {
+      "id": 42,
+      "user_id": 36,
+      "benefit_type": "medicaid",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    },
+    {
+      "id": 43,
+      "user_id": 36,
+      "benefit_type": "snap",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    },
+    {
+      "id": 44,
+      "user_id": 36,
+      "benefit_type": "tanf",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    },
+    {
+      "id": 41,
+      "user_id": 36,
+      "benefit_type": "welvista",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    }
+  ],
+  "resumes": [
+    {
+      "id": 4,
+      "user_id": 36,
+      "resume_data_json": "{\"skills\":\"fast learner good listener get jobs done \",\"summary\":\"get a good stable job and buy a car \",\"experience\":\"cooking cleaning maintance lawn service open to try new things \"}",
+      "updated_at": "2026-09-23 11:52:26"
+    }
+  ],
+  "db_documents": [
+    {
+      "id": 35,
+      "user_id": 36,
+      "doc_type": "case_brief",
+      "title": "Clinical Case Brief - Wesley Morton",
+      "filename": "Wesley_Morton_Case_Brief_1788826931766.pdf",
+      "file_path": "/data/Wesley_Morton_Case_Brief_1788826931766.pdf",
+      "file_size": 9627,
+      "status": "active",
+      "metadata_json": "{\"originalName\":\"4385_wesley-morton-case-brief.pdf\"}",
+      "uploaded_at": "2026-09-08 00:22:11"
+    }
+  ],
+  "legacy_briefcase_items_count": 66,
+  "legacy_gate_criteria_count": 27,
+  "updated_at": "2026-11-23T13:46:28.416Z"
+}

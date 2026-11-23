@@ -1,0 +1,449 @@
+{
+  "participant_key": "Eddie_Ballenger",
+  "participant_name": "Eddie Ballenger",
+  "profile_records": [
+    {
+      "id": 50,
+      "user_id": 52,
+      "current_gate": 4,
+      "w9_status": "verified",
+      "dl_status": "suspended",
+      "dl_notes": "I got support to get me to work to i save up  my money to  get  me a car",
+      "child_support_status": "none",
+      "child_support_notes": "",
+      "housing_status": "stable",
+      "substance_status": "none",
+      "mental_health_status": "none",
+      "transportation_status": "Personal Vehicle / Ride",
+      "court_dates": null,
+      "overall_status": "active",
+      "termination_reason": null,
+      "termination_date": null,
+      "updated_at": "2026-09-23 20:14:20",
+      "stability_red_flags": "[{\"category\":\"Cognitive / Attitude\",\"flag\":\"Externalizing Blame / Minimization\",\"evidence\":\"When asked 'Do you feel like you had a choice in committing the crime?' Eddie responded, 'No, sir.'\",\"severity\":\"high\",\"navigator_recommendation\":\"Model Neutrality (1.5). Do not debate or challenge his assertion that he had no choice. Use neutral curiosity: 'Tell me more about what was happening that made you feel like there were no other options.' Guide him to identify his own agency without escalating resistance.\"},{\"category\":\"Cognitive / Attitude\",\"flag\":\"Impulsivity\",\"evidence\":\"When asked 'Do you often act before thinking?' Eddie responded, 'Yes, sir. Yes, sir.'\",\"severity\":\"medium\",\"navigator_recommendation\":\"Integrate CBT exercises focusing on the 'Thinking-Feeling-Acting' cycle. Practice the 'Pause' technique during role-play scenarios to help him build a gap between impulse and action.\"},{\"category\":\"Stability Risk\",\"flag\":\"Suspended Driver's License & Transportation Barrier\",\"evidence\":\"Stated his license status is 'suspended' and has a prior impaired driving conviction.\",\"severity\":\"high\",\"navigator_recommendation\":\"Immediate referral to Upstate Fatherhood Initiative for license restoration guidance, and establish a transit plan (Greenlink) so he can commute to First Shift and future job sites.\"},{\"category\":\"Cognitive / Attitude\",\"flag\":\"Antisocial Peer Associations\",\"evidence\":\"When asked if he has friends involved in crime, he said, 'Yes... One of my code. He's still involved in crime. Still out there doing the same thing to do.'\",\"severity\":\"medium\",\"navigator_recommendation\":\"Use CBT to explore the risks of maintaining ties with active offenders. Do not tell him to drop his friends; instead, ask reflective questions about how this friend's actions might impact Eddie's goal of staying out of prison.\"}]",
+      "director_override": 0,
+      "director_override_notes": null,
+      "director_override_by": null,
+      "reentry_status": "at_risk",
+      "has_reentry_plan": 1,
+      "enrollment_date": "2026-11-02",
+      "correction_notes": null,
+      "supabase_id": "ac7d2890-b377-43ac-a4cf-fe2d678daeed",
+      "record_id": "80088"
+    }
+  ],
+  "case_plan_triggers": [
+    {
+      "id": 231,
+      "user_id": 52,
+      "domain": "People and Influence (Peer Associations)",
+      "pattern": "Focus Area 2",
+      "trigger_situations": "[]",
+      "toolkit_tools": "[\"Decisional Balance\",\"Problem Solving 4-Step Method\"]",
+      "updated_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 230,
+      "user_id": 52,
+      "domain": "Work and Follow-Through (Employment/Education)",
+      "pattern": "Focus Area 1",
+      "trigger_situations": "[]",
+      "toolkit_tools": "[\"Stop and Think (STAC)\",\"Thinking Report\"]",
+      "updated_at": "2026-11-03 23:04:00"
+    }
+  ],
+  "daily_points": [
+    {
+      "id": 1985,
+      "user_id": 52,
+      "date": "2026-11-19",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1984,
+      "user_id": 52,
+      "date": "2026-11-18",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1983,
+      "user_id": 52,
+      "date": "2026-11-17",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1981,
+      "user_id": 52,
+      "date": "2026-11-16",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1982,
+      "user_id": 52,
+      "date": "2026-11-13",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1980,
+      "user_id": 52,
+      "date": "2026-11-12",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1979,
+      "user_id": 52,
+      "date": "2026-11-11",
+      "points_earned": 9,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1978,
+      "user_id": 52,
+      "date": "2026-11-10",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1977,
+      "user_id": 52,
+      "date": "2026-11-09",
+      "points_earned": 0,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1976,
+      "user_id": 52,
+      "date": "2026-11-06",
+      "points_earned": 0,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1975,
+      "user_id": 52,
+      "date": "2026-11-05",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1974,
+      "user_id": 52,
+      "date": "2026-11-04",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1768,
+      "user_id": 52,
+      "date": "2026-11-03",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 1767,
+      "user_id": 52,
+      "date": "2026-10-16",
+      "points_earned": 7,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 1765,
+      "user_id": 52,
+      "date": "2026-10-15",
+      "points_earned": 4,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 1764,
+      "user_id": 52,
+      "date": "2026-10-13",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 1763,
+      "user_id": 52,
+      "date": "2026-10-12",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 1762,
+      "user_id": 52,
+      "date": "2026-10-09",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 1766,
+      "user_id": 52,
+      "date": "2026-10-08",
+      "points_earned": 0,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 1761,
+      "user_id": 52,
+      "date": "2026-10-07",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 1760,
+      "user_id": 52,
+      "date": "2026-10-06",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 1759,
+      "user_id": 52,
+      "date": "2026-10-05",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 1758,
+      "user_id": 52,
+      "date": "2026-10-02",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 65,
+      "user_id": 52,
+      "date": "2026-09-21",
+      "points_earned": 0,
+      "max_points": 50,
+      "attendance_status": "present",
+      "notes": "Imported via Render Report",
+      "imported_from_apricot": 1,
+      "created_at": "2026-09-22 17:44:36"
+    }
+  ],
+  "drug_tests": [
+    {
+      "id": 9,
+      "user_id": 52,
+      "test_date": "2026-09-22",
+      "result": "negative",
+      "substances_detected": null,
+      "notes": "Imported via Render Report",
+      "administered_by": null,
+      "created_at": "2026-09-22 17:43:35"
+    }
+  ],
+  "benefits": [
+    {
+      "id": 262,
+      "user_id": 52,
+      "benefit_type": "medicaid",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:11:46"
+    },
+    {
+      "id": 263,
+      "user_id": 52,
+      "benefit_type": "snap",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:11:46"
+    },
+    {
+      "id": 264,
+      "user_id": 52,
+      "benefit_type": "tanf",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:11:46"
+    },
+    {
+      "id": 261,
+      "user_id": 52,
+      "benefit_type": "welvista",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:11:46"
+    }
+  ],
+  "resumes": [],
+  "db_documents": [
+    {
+      "id": 75,
+      "user_id": 52,
+      "doc_type": "case_brief",
+      "title": "Case Brief - Eddie Ballenger",
+      "filename": "Eddie_Ballenger_Case_Brief_1790194195122.pdf",
+      "file_path": "/data/Eddie_Ballenger_Case_Brief_1790194195122.pdf",
+      "file_size": 59401,
+      "status": "active",
+      "metadata_json": "{\"originalName\":\"4400_EddieBallengerAudioTranscript-GoogleDocs.pdf\"}",
+      "uploaded_at": "2026-09-23 20:09:55"
+    },
+    {
+      "id": 66,
+      "user_id": 52,
+      "doc_type": "case_brief",
+      "title": "Case Brief - Eddie Ballenger",
+      "filename": "Eddie_Ballenger_Case_Brief_1790193817989.pdf",
+      "file_path": "/data/Eddie_Ballenger_Case_Brief_1790193817989.pdf",
+      "file_size": 59401,
+      "status": "active",
+      "metadata_json": "{\"originalName\":\"4400_EddieBallengerAudioTranscript-GoogleDocs.pdf\"}",
+      "uploaded_at": "2026-09-23 20:03:37"
+    },
+    {
+      "id": 57,
+      "user_id": 52,
+      "doc_type": "case_brief",
+      "title": "Case Brief - Eddie Ballenger",
+      "filename": "Eddie_Ballenger_Case_Brief_1790193708506.pdf",
+      "file_path": "/data/Eddie_Ballenger_Case_Brief_1790193708506.pdf",
+      "file_size": 59401,
+      "status": "active",
+      "metadata_json": "{\"originalName\":\"4400_EddieBallengerAudioTranscript-GoogleDocs.pdf\"}",
+      "uploaded_at": "2026-09-23 20:01:48"
+    },
+    {
+      "id": 48,
+      "user_id": 52,
+      "doc_type": "case_brief",
+      "title": "Case Brief - Eddie Ballenger",
+      "filename": "Eddie_Ballenger_Case_Brief_1790192838806.pdf",
+      "file_path": "/data/Eddie_Ballenger_Case_Brief_1790192838806.pdf",
+      "file_size": 59401,
+      "status": "active",
+      "metadata_json": "{\"originalName\":\"4400_EddieBallengerAudioTranscript-GoogleDocs.pdf\"}",
+      "uploaded_at": "2026-09-23 19:47:18"
+    },
+    {
+      "id": 40,
+      "user_id": 52,
+      "doc_type": "case_brief",
+      "title": "Case Brief - Eddie Ballenger",
+      "filename": "Eddie_Ballenger_Case_Brief_1790192576485.pdf",
+      "file_path": "/data/Eddie_Ballenger_Case_Brief_1790192576485.pdf",
+      "file_size": 59401,
+      "status": "active",
+      "metadata_json": "{\"originalName\":\"4400_EddieBallengerAudioTranscript-GoogleDocs.pdf\"}",
+      "uploaded_at": "2026-09-23 19:42:56"
+    }
+  ],
+  "legacy_briefcase_items_count": 66,
+  "legacy_gate_criteria_count": 27,
+  "updated_at": "2026-11-23T13:46:28.636Z"
+}

@@ -1,0 +1,31 @@
+{
+  "participant_key": "Andre_Williams",
+  "participant_name": "Andre Williams",
+  "location": "Columbia",
+  "track": "reentry_nav",
+  "lscmi_client_id": "Andre_Williams_Columbia",
+  "folder_path": "data/participants/Andre_Williams",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": false,
+  "has_action_plan": false,
+  "has_legacy_case_briefs": false,
+  "action_plan_agreement": "pending_review",
+  "waitlist_ready": false,
+  "waitlist_score": "8/9",
+  "medical_appointments_applicable": false,
+  "skillcat_pathway": "HVAC",
+  "skillcat_modules_completed": 0,
+  "cm_notes_count": 0,
+  "apricot_notes_count": 2,
+  "reentry_sessions_count": 2,
+  "history_events_count": 3,
+  "documents_count": 0,
+  "data_evaluation_flags": [
+    {
+      "code": "FLAG-WAITLIST-GAP",
+      "severity": "warning",
+      "message": "8/9 First Shift Waitlist Briefcase items ready. Missing: 3. Birth Certificate"
+    }
+  ],
+  "updated_at": "2026-11-23T13:46:29.568Z"
+}

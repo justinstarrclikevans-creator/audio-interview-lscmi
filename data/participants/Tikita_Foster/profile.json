@@ -9,22 +9,20 @@
   "apricot_id": "82719",
   "phone": "",
   "email": "",
-  "files": [
-    "Tikita_Foster_Spartanburg_criminal_history.docx",
-    "Tikita_Foster_Spartanburg_criminal_history.md",
-    "Tikita_Foster_Spartanburg_draft_scoring_form.docx",
-    "Tikita_Foster_Spartanburg_draft_scoring_form.md",
-    "Tikita_Foster_Spartanburg_interview_guide.docx",
-    "Tikita_Foster_Spartanburg_interview_guide.md",
-    "Tikita_Foster_Spartanburg_transcript.txt"
-  ],
+  "lscmi_client_id": "Tikita_Foster_Spartanburg",
   "folder_slug": "Tikita_Foster",
   "folder_path": "data/participants/Tikita_Foster",
   "has_lscmi_brief": false,
   "has_lscmi_scoring": true,
   "has_action_plan": false,
+  "has_legacy_case_briefs": false,
   "waitlist_ready": false,
   "waitlist_met_count": 5,
   "data_flags_count": 2,
-  "updated_at": "2026-11-22T17:18:01.680Z"
+  "cm_notes_count": 0,
+  "apricot_notes_count": 6,
+  "reentry_sessions_count": 6,
+  "history_events_count": 14,
+  "documents_count": 7,
+  "updated_at": "2026-11-23T13:46:29.365Z"
 }

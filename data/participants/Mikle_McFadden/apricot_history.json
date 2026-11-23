@@ -1,0 +1,79 @@
+{
+  "participant_key": "Mikle_McFadden",
+  "participant_name": "Mikle McFadden",
+  "apricot_ids": [
+    "82682"
+  ],
+  "evaluations": [
+    {
+      "record_id": "82682",
+      "full_name": "Mikle McFadden",
+      "program": "Reentry Navigation",
+      "center": "Charleston",
+      "case_manager": "Daisy Boynton",
+      "case_plan_status": "Yes (Goals & Gates Active)",
+      "focus_areas_or_goals": "Ensure medical needs are met and find employment",
+      "briefcase_status_text": "Gate 1: 38%, Gate 2: 20%, Gate 3: 0%, Gate 4: 0%",
+      "gate1_pct": 38,
+      "gate2_pct": 20,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "case_note_analysis": "Enrolled 11/03/2026. Most recent contact on 11/11/2026 by Daisy Boynton (Check-in conversation – brief status update): \"Called to check in on how his appointment with MUSC went. They canceled his appointment because they already got his medical records from another doctor. The next step is for MUSC to get back to him about scheduling his surgery. He's currently working with Voc\"\n\n**Latest Case Note Updates:** [Update 11/11/2026 • Daisy Boynton]: Called to check in on how his appointment with MUSC went. They canceled his appointment because they already got his medical records from another doctor. The next step is for MUSC to get back to him about scheduling his surgery. He's currently working with Voc Rehab and doesn't need much help from us at this point. I told him I'd check in next week. | [Update 11/03/2026 • Daisy Boynton]: Contact Summary: Completed initial Reentry Navigation phone intake with Mikle McFadden. Explained both the Turn90 in-person program and remote Reentry Navigation tracks. Mikle was released on August 3rd after 38 years of incarceration. \n\nCase Plan & Briefcase Updates: Mikle has made excellent independent progress. He verified that he has his valid Driver's License (obtained 3 weeks ago), Social Security Card, and Birth Certificate. He resides in a home he owns with his wife and has access to a vehicle. \n\nBarriers Identified: Mikle's primary barrier is a severe spinal condition that prevents him from standing for long periods or lifting heavy objects, making the physical demands of the Turn90 center program unsuitable at this time. He is connected to Voc Rehab and has an appointment with a spinal surgeon at MUSC this coming Monday to evaluate his need for surgery.\n\nReferrals/Resources Provided: Offered financial or community assistance, but Mikle stated he and his wife are currently stable and do not require emergency assistance. \n\nNext Steps: Mikle will remain in Reentry Navigation for phone-based case management. Daisy will follow up next week to check on the results of his MUSC appointment and discuss building a resume focused on his clerical work history. | [Update 10/30/2026 • Daisy Boynton]: No answer, VM left",
+      "operational_feedback": "Continue advancing Reentry Navigation Case Plan goals and Briefcase Gates 1–4 (Gate 1: 38%, Gate 2: 20%, Gate 3: 0%, Gate 4: 0%). Focus on barrier removal, employment readiness, and community resource referrals.",
+      "next_cm_steps_json": "[\"🎯 **Advance Stated Case Plan Goals:** Review progress on active Reentry Nav goals (Ensure medical needs are met and find employment) and verify concrete barrier-removal steps completed since last check-in.\",\"🔓 **Complete Remaining Gate 1 Items (38% done):** Target Fill needed prescriptions (Welvista / local pharmacy), Explore healthcare options (Medicaid / Free Medical Clinic), Supervision information documented (County, Officer, Report Dates).\",\"🔓 **Advance Gate 2 Stability & Readiness (20% done):** Work on Child support plan made / Cases reviewed / DSS contact, Probation / Legal Obligations aligned with work hours, DMV License Suspension check & reinstatement plan.\",\"🩺 **Address Gate 3 Health & Banking Milestones (0% done):** Follow up on Primary Care / Medical checkup scheduled or cleared, Vision Appointment / screening, Steady access to daily prescriptions (Welvista).\",\"🔄 **Follow Up on Latest Session (11/11/2026 by Daisy Boynton):** Check accountability on items discussed (\\\"Called to check in on how his appointment with MUSC went. They canceled his appointment because they already got his medical records from an...\\\").\"]",
+      "recent_cm_notes_json": null,
+      "last_note_date": "2026-11-11",
+      "notes_count": 3,
+      "updated_at": "2026-11-22 17:36:06"
+    }
+  ],
+  "notes_count": 3,
+  "processed_notes": [
+    {
+      "id": 1040,
+      "record_id": "82682",
+      "first_name": "Mikle",
+      "last_name": "McFadden",
+      "activity_date": "2026-11-11",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Check-in conversation – brief status update",
+      "note_text": "Called to check in on how his appointment with MUSC went. They canceled his appointment because they already got his medical records from another doctor. The next step is for MUSC to get back to him about scheduling his surgery. He's currently working with Voc Rehab and doesn't need much help from us at this point. I told him I'd check in next week.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 855,
+      "record_id": "82682",
+      "first_name": "Mikle",
+      "last_name": "McFadden",
+      "activity_date": "2026-11-03",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Intake Appointment COMPLETED",
+      "note_text": "Contact Summary: Completed initial Reentry Navigation phone intake with Mikle McFadden. Explained both the Turn90 in-person program and remote Reentry Navigation tracks. Mikle was released on August 3rd after 38 years of incarceration. \n\nCase Plan & Briefcase Updates: Mikle has made excellent independent progress. He verified that he has his valid Driver's License (obtained 3 weeks ago), Social Security Card, and Birth Certificate. He resides in a home he owns with his wife and has access to a vehicle. \n\nBarriers Identified: Mikle's primary barrier is a severe spinal condition that prevents him from standing for long periods or lifting heavy objects, making the physical demands of the Turn90 center program unsuitable at this time. He is connected to Voc Rehab and has an appointment with a spinal surgeon at MUSC this coming Monday to evaluate his need for surgery.\n\nReferrals/Resources Provided: Offered financial or community assistance, but Mikle stated he and his wife are currently stable and do not require emergency assistance. \n\nNext Steps: Mikle will remain in Reentry Navigation for phone-based case management. Daisy will follow up next week to check on the results of his MUSC appointment and discuss building a resume focused on his clerical work history.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 854,
+      "record_id": "82682",
+      "first_name": "Mikle",
+      "last_name": "McFadden",
+      "activity_date": "2026-10-30",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment SCHEDULED",
+      "note_text": "No answer, VM left",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-03 23:04:00"
+    }
+  ],
+  "updated_at": "2026-11-23T13:46:29.350Z"
+}

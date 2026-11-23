@@ -1,0 +1,193 @@
+{
+  "participant_key": "Brandon_James",
+  "updated_at": "2026-11-23T13:46:29.255Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "9 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:328",
+      "event_key": "reentry_session:328",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Called to touch base. He said he sent pics of his tattoos, but I never received them. He said he'd send them again. Had a fight with the woman he's been living with. Went to his mom's house (where he is currently). His a",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:327",
+      "event_key": "reentry_session:327",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Employment support – applications, resume, interview prep|Documentation support – ID, housing forms, paperwork (Daisy Boynton)",
+      "summary": "Sent Brandon the details on how to get his social security card and the info for 3 job fairs coming up in Columbia.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:329",
+      "event_key": "reentry_session:329",
+      "timestamp": "2026-11-05T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Sent Brandon a text reminding him to send a picture of his tattoo if he still wants me to complete the INK-nitiaitve Removery application. Also asked if he's gotten his birth certificate or social security card yet and o",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_doc:Brandon_James_Columbia_interview_guide.docx",
+      "event_key": "doc:Brandon_James_Columbia_interview_guide.docx",
+      "timestamp": "2026-11-04T16:28:24.376Z",
+      "category": "document",
+      "action": "Archived interview guide",
+      "summary": "Document stored in folder: Brandon_James_Columbia_interview_guide.docx",
+      "filename": "Brandon_James_Columbia_interview_guide.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Brandon_James_Columbia_draft_scoring_form.docx",
+      "event_key": "doc:Brandon_James_Columbia_draft_scoring_form.docx",
+      "timestamp": "2026-11-04T16:28:23.700Z",
+      "category": "document",
+      "action": "Archived draft scoring",
+      "summary": "Document stored in folder: Brandon_James_Columbia_draft_scoring_form.docx",
+      "filename": "Brandon_James_Columbia_draft_scoring_form.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Brandon_James_Columbia_criminal_history.docx",
+      "event_key": "doc:Brandon_James_Columbia_criminal_history.docx",
+      "timestamp": "2026-11-04T16:28:22.011Z",
+      "category": "document",
+      "action": "Archived criminal history",
+      "summary": "Document stored in folder: Brandon_James_Columbia_criminal_history.docx",
+      "filename": "Brandon_James_Columbia_criminal_history.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Brandon_James_Columbia_criminal_history.md",
+      "event_key": "doc:Brandon_James_Columbia_criminal_history.md",
+      "timestamp": "2026-11-04T16:28:20.534Z",
+      "category": "document",
+      "action": "Archived criminal history",
+      "summary": "Document stored in folder: Brandon_James_Columbia_criminal_history.md",
+      "filename": "Brandon_James_Columbia_criminal_history.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Brandon_James_Columbia_draft_scoring_form.md",
+      "event_key": "doc:Brandon_James_Columbia_draft_scoring_form.md",
+      "timestamp": "2026-11-04T16:28:20.533Z",
+      "category": "document",
+      "action": "Archived draft scoring",
+      "summary": "Document stored in folder: Brandon_James_Columbia_draft_scoring_form.md",
+      "filename": "Brandon_James_Columbia_draft_scoring_form.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Brandon_James_Columbia_interview_guide.md",
+      "event_key": "doc:Brandon_James_Columbia_interview_guide.md",
+      "timestamp": "2026-11-04T16:28:20.532Z",
+      "category": "document",
+      "action": "Archived interview guide",
+      "summary": "Document stored in folder: Brandon_James_Columbia_interview_guide.md",
+      "filename": "Brandon_James_Columbia_interview_guide.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Brandon_James_Columbia_transcript.txt",
+      "event_key": "doc:Brandon_James_Columbia_transcript.txt",
+      "timestamp": "2026-11-04T16:28:20.531Z",
+      "category": "document",
+      "action": "Archived transcript",
+      "summary": "Document stored in folder: Brandon_James_Columbia_transcript.txt",
+      "filename": "Brandon_James_Columbia_transcript.txt",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_reentry_session:243",
+      "event_key": "reentry_session:243",
+      "timestamp": "2026-10-28T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Called to ask about the details of his tattoo and have him send pictures so we can apply for the INK-nitiative program. He's sending me pictures and I will look into completing the application.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:245",
+      "event_key": "reentry_session:245",
+      "timestamp": "2026-10-27T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Daisy Boynton)",
+      "summary": "Phone Intake/Screening: Brandon James, 10/23/26\n\nBackground/Referral: Brandon is a former participant/employee. He was previously connected through Terrence, and Ms. Carla did his orientation. He worked T-shirt inspectio",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:244",
+      "event_key": "reentry_session:244",
+      "timestamp": "2026-10-27T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Called Brandon to let him know the first step in getting his DL is going to the DMV with his ID and taking the permit test. I'm going to send him some permit practice tests to prepare before that. Also let him know about",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:227",
+      "event_key": "reentry_session:227",
+      "timestamp": "2026-10-23T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Daisy Boynton)",
+      "summary": "Phone Intake/Screening: Brandon James, 10/23/26\n\nBackground/Referral: Brandon is a former participant/employee. He was previously connected through Terrence, and Ms. Carla did his orientation. He worked T-shirt inspectio",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:246",
+      "event_key": "reentry_session:246",
+      "timestamp": "2026-10-22T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "Intake Appointment SCHEDULED",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:228",
+      "event_key": "reentry_session:228",
+      "timestamp": "2026-10-22T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "No answer. Left VM.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

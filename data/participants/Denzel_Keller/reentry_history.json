@@ -1,0 +1,62 @@
+{
+  "participant_key": "Denzel_Keller",
+  "participant_name": "Denzel Keller",
+  "client_records": [
+    {
+      "id": 83,
+      "first_name": "Denzel",
+      "last_name": "Keller",
+      "apricot_id": "83571",
+      "location": "Columbia",
+      "status": "active",
+      "stability_tier": "at_risk",
+      "phone": null,
+      "email": null,
+      "notes": "",
+      "created_at": "2026-11-22 17:35:09",
+      "updated_at": "2026-11-22 17:36:06",
+      "case_manager": "Unassigned",
+      "enrollment_start": "2026-11-18",
+      "gate1_pct": 0,
+      "gate2_pct": 0,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "last_contact_date": "2026-11-18",
+      "last_contact_staff": "Daisy Boynton",
+      "last_contact_activity": "Intake Appointment COMPLETED",
+      "has_case_plan": 0,
+      "case_plan_text": ""
+    }
+  ],
+  "sessions": [
+    {
+      "id": 478,
+      "client_id": 83,
+      "session_date": "2026-11-18",
+      "session_title": "Intake Appointment SCHEDULED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Intake Appointment SCHEDULED",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 477,
+      "client_id": 83,
+      "session_date": "2026-11-18",
+      "session_title": "Intake Appointment COMPLETED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "CONTACT SUMMARY & SESSION OVERVIEW\n- Session Stage: First Session / Intake (~16 min, phone screening)\n- Summary: Completed a phone screening with [Client], who was engaged and waiting for the call. Staff explained both programs. [Client] understood that the First Shift waitlist in Columbia is long (about 20 people, likely several months) and that Reentry Navigation is unpaid. [Client] currently lives at a federal halfway house, is set to leave on 01/08/2027, and has somewhere to go afterward. [Client] reported a broken talus bone that limits standing for long periods and wants to apply for disability. Because receiving disability makes a participant ineligible for First Shift, [Client] will stay in Reentry Navigation.\n\nCASE PLAN ALIGNMENT\n- Stability Tier: Stable\n- Stated Goals Progress: [Client]'s top priority is to get a job as soon as possible. [Client] also wants help applying for disability and then finding work that fits the physical limitation. Goals will be formalized in the case plan at the next contact.\n\nBRIEFCASE & GATES 1-4 UPDATES\n- Gate 1 (Vital IDs, Meds, Supervision): Has Social Security card. Birth certificate is lost, and [Client] plans to get a replacement locally. Expects state ID in about 7 days. Medication question asked; response unclear. Currently at a federal halfway house; supervision officer and reporting dates not discussed.\n- Gate 2 (Housing, Comms, Legal, Resume): Housed at the federal halfway house until 01/08/2027, with a confirmed place to go after release. Reachable by phone. Before incarceration [Client] held a learner's permit and now must retake the permit test and hold the permit for 6 months before getting a driver's license. No child support obligation. No resume discussed yet.\n- Gate 3 (Health, Recovery, Banking): Reports a broken talus bone that can be treated medically and limits standing for long periods. Past recreational cannabis use; [Client] reports no current use and no history of addiction, citing a focus on supporting their children. Primary care and bank account not discussed.\n- Gate 4 (Work Gear, Transit, Employment/Finance): Uses the bus for now. Looking to buy a car and has found a 2009 Lexus, not yet viewed. Work history includes construction, landscaping, warehouse, shipping and handling, dishwashing, and cooking. Longest time at one job was several years, and past jobs usually ended with a two-week notice to take a better job. Has some certifications but is unsure whether they are current. Highest grade completed was 11th; no GED or high school diploma.\n\nEMPLOYMENT, HOUSING & STABILITY UPDATES\n- Not currently employed; wants work as soon as possible. Says they can do warehouse work despite the standing limitation. Staff explained that Turn90 can help find temp agency or steady work in the meantime and can look for jobs that fit [Client]'s limitations.\n- Housing: federal halfway house through 01/08/2027, then a confirmed placement.\n- Transportation: bus; car purchase in progress.\n- Background (screening): first arrest at age 12 (DJJ). About 6 arrests and 3 convictions. Most recent sentence was 48 months for a federal felon-in-possession-of-a-firearm charge (18 U.S.C. 922(g)). Neither parent has a criminal record.\n\nREFERRALS & RESOURCE COORDINATION\n- None this session.\n\nNEXT STEPS (\"WHAT TO WORK ON NEXT\")\n1. [Client] will get state ID (expected within about 7 days) and request a replacement birth certificate.\n2. [Staff Name] or Justin will contact [Client] within one week to build the Reentry Navigation case plan, starting the disability application and identifying jobs that fit [Client]'s standing limitation.\n3. Apricot Admin Check: Initialize Briefcase record, enter Reentry Navigation stated goals, and note that [Client] is not on the First Shift waitlist because of the disability application.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "goals": [],
+  "case_plans": [],
+  "updated_at": "2026-11-23T13:46:29.590Z"
+}

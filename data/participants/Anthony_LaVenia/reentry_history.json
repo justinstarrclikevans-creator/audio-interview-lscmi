@@ -1,0 +1,88 @@
+{
+  "participant_key": "Anthony_LaVenia",
+  "participant_name": "Anthony LaVenia",
+  "client_records": [
+    {
+      "id": 78,
+      "first_name": "Anthony",
+      "last_name": "LaVenia",
+      "apricot_id": "83228",
+      "location": "Columbia",
+      "status": "active",
+      "stability_tier": "stable",
+      "phone": null,
+      "email": null,
+      "notes": "Interested in CDL school (needs it paid for)",
+      "created_at": "2026-11-22 17:35:09",
+      "updated_at": "2026-11-22 17:36:06",
+      "case_manager": "Daisy Boynton",
+      "enrollment_start": "2026-11-11",
+      "gate1_pct": 25,
+      "gate2_pct": 60,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "last_contact_date": "2026-11-17",
+      "last_contact_staff": "Daisy Boynton",
+      "last_contact_activity": "Check-in conversation – brief status update",
+      "has_case_plan": 1,
+      "case_plan_text": "Interested in CDL school (needs it paid for)"
+    }
+  ],
+  "sessions": [
+    {
+      "id": 460,
+      "client_id": 78,
+      "session_date": "2026-11-17",
+      "session_title": "Check-in conversation – brief status update (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Called to check in. He figured out getting WIOA funding for Knight's CDL school through Voc Rehab and has those meetings set up. He got his ID in the mail and plans to use it to get his birth certificate and social security card. The dentist he went to was walk-in and he went too late in the day, so he plans to try again on Monday. He said he wants to stay on our waitlist for now. I told him to update me on how voc rehab meeting goes and if he starts CDL school. He said he doesn't need any help at the moment but will reach out if something comes up. Going to keep him on reentry nav caseload for a bit longer to make sure everything goes smoothly with getting the WIOA funding and starting CDL school.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 462,
+      "client_id": 78,
+      "session_date": "2026-11-11",
+      "session_title": "Intake Appointment SCHEDULED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Intake Appointment SCHEDULED",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 461,
+      "client_id": 78,
+      "session_date": "2026-11-11",
+      "session_title": "Intake Appointment COMPLETED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Contact Summary\nConducted initial Reentry Navigation consultation with Anthony Lavenia (Columbia). Explained the differences between phone-based Reentry Navigation and the in-person First Shift program. Anthony expressed strong interest in First Shift but acknowledged the current 1-2 month waitlist; he agreed to join the waitlist and work on Navigation goals in the interim. \n\nCase Plan Goal Progress & Briefcase Updates\n- **Vital Documents:** Client has secured a valid driver's license (currently waiting for the physical card in the mail). He has also initiated the process for his Social Security card and Birth Certificate.\n- **Health/Medical:** Client has access to his current medications (cholesterol, omeprazole, blood pressure). He proactively scheduled a dental appointment for the upcoming Monday and plans to schedule a vision exam for new glasses immediately after. \n- **Accommodations:** Client reported hearing loss (hearing aids were confiscated during incarceration) and needs assistance obtaining a new pair.\n- **Employment/Career:** Client has extensive background (20+ years owning a mechanic shop, 15 years in contracting/carpentry). However, due to his age (51) and the physical toll of hard labor, he is seeking a career shift to CDL truck driving. He noted that driving over-the-road will remove him from environments that trigger his past criminal behavior (selling drugs for quick money).\n- **Justice Involvement:** Currently residing in a halfway house/reentry facility until March 24th, followed by 5 years of supervised release.\n\nReferrals/Resources Provided\n- Added to First Shift waitlist (Columbia).\n- Navigator committed to researching CDL training partners suitable for his background/status.\n\nNext Steps\n- Follow up call scheduled for Tuesday to accommodate his Monday dental appointment.\n- Review CDL training options and funding paths.\n- Check in on the arrival of his vital documents in the mail.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "goals": [
+    {
+      "id": 152,
+      "client_id": 78,
+      "goal_title": "Interested in CDL school (needs it paid for)",
+      "target_date": "2026-12-06",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"Interested in CDL school (needs it paid for)\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-11-22 17:35:09",
+      "updated_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "case_plans": [],
+  "updated_at": "2026-11-23T13:46:29.532Z"
+}

@@ -1,0 +1,75 @@
+{
+  "participant_key": "Kwatez_Carter",
+  "participant_name": "Kwatez Carter",
+  "client_records": [
+    {
+      "id": 40,
+      "first_name": "Kwatez",
+      "last_name": "Carter",
+      "apricot_id": "81443",
+      "location": "Columbia",
+      "status": "archived",
+      "stability_tier": "at_risk",
+      "phone": null,
+      "email": null,
+      "notes": "",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-10-27 13:40:03",
+      "case_manager": "Daisy Boynton",
+      "enrollment_start": "2026-10-08",
+      "gate1_pct": 0,
+      "gate2_pct": 0,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "last_contact_date": "2026-10-19",
+      "last_contact_staff": "Daisy Boynton",
+      "last_contact_activity": "Check-in conversation – brief status update",
+      "has_case_plan": 0,
+      "case_plan_text": ""
+    }
+  ],
+  "sessions": [
+    {
+      "id": 168,
+      "client_id": 40,
+      "session_date": "2026-10-19",
+      "session_title": "Check-in conversation – brief status update (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Called to let him know he's near the top of the waitlist and to check in. He didn't end up looking for temp work, instead he had his surgery for his hernia. He said he's recovered and available to come in for orientation when his time comes. He also confirmed he has transportation.",
+      "notes_text": "Called to let him know he's near the top of the waitlist and to check in. He didn't end up looking for temp work, instead he had his surgery for his hernia. He said he's recovered and available to come in for orientation when his time comes. He also confirmed he has transportation.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 169,
+      "client_id": 40,
+      "session_date": "2026-10-08",
+      "session_title": "Intake Appointment COMPLETED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "- Owes $845 in reinstatement fees. Went to the DMV yesterday and has the sheet with the fees he owes.\n- Needs a hernia removed, has seen a doctor and is waiting to schedule a surgery\n- Was sure that his mom and step dad would be able to get him to and from the program daily. I pushed it a bit to let him know if he's not able to get there even one day, he'll most likely be moved back to reentry nav and bottom of the waitlist. He was adamant that it would be fine.\n- On federal supervision\n\n*not looking for much reentry nav support. Is going to some sort of temp agency job fair tomorrow where you're \"hired on the spot\". He wasn't sure who it was with/what it was called, but I let him know to keep me posted on how that goes and to reach out with any other needs. If he isn't hired tomorrow, I will search for some temp agencies for him to try while he waits for a spot to open up. \n\n*adding to waitlist. Going to follow up about his surgery dates (may need to adjust when we bring him in if his surgery would interfere with program involvement",
+      "notes_text": "- Owes $845 in reinstatement fees. Went to the DMV yesterday and has the sheet with the fees he owes.\n- Needs a hernia removed, has seen a doctor and is waiting to schedule a surgery\n- Was sure that his mom and step dad would be able to get him to and from the program daily. I pushed it a bit to let him know if he's not able to get there even one day, he'll most likely be moved back to reentry nav and bottom of the waitlist. He was adamant that it would be fine.\n- On federal supervision\n\n*not looking for much reentry nav support. Is going to some sort of temp agency job fair tomorrow where you're \"hired on the spot\". He wasn't sure who it was with/what it was called, but I let him know to keep me posted on how that goes and to reach out with any other needs. If he isn't hired tomorrow, I will search for some temp agencies for him to try while he waits for a spot to open up. \n\n*adding to waitlist. Going to follow up about his surgery dates (may need to adjust when we bring him in if his surgery would interfere with program involvement",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 170,
+      "client_id": 40,
+      "session_date": "2026-10-05",
+      "session_title": "Intake Appointment SCHEDULED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Intake Appointment SCHEDULED",
+      "notes_text": "Intake Appointment SCHEDULED",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "goals": [],
+  "case_plans": [],
+  "updated_at": "2026-11-23T13:46:28.825Z"
+}

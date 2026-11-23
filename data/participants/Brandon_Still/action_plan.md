@@ -1,25 +1,63 @@
-# Re-entry Navigation Case Plan: Brandon Still
+# My Fresh Start Action & Resource Guide: Brandon Still
 
-## 1. Executive Summary & Risk Profile
-- **Participant Name:** Brandon Lee Still
-- **Risk Assessment Level:** High Risk (LSCMI Score: 141)
-- **Primary Criminogenic Drivers:** Antisocial Pattern (reactive hostility/impulsivity), Education/Employment deficits, Companions (criminal network vs. single anticriminal peer).
-- **Current Placement:** Transitional Federal Halfway House (Columbia, SC).
-- **Supervision Status:** 5 Years Federal Supervised Release.
+## Welcome to Your Next Chapter
+Brandon, you have already shown incredible resilience by keeping clean for over 5.5 years and maintaining a strong vision for your future. Your dedication to your physical fitness and your goal of building a lucrative, legal career—just like your friend who successfully transitioned—is your blueprint for success. This guide is designed to help you hit your goals, stay focused, and maintain full control over your future.
 
-## 2. Facilitation & Skill-Building Interventions
-### Modeling Neutrality & Managing Resistance (Standards 1.5 & 3.2)
-- **Antisocial / Defensive Statements:** When Brandon discusses 'setting the tone' or acting tough with strangers, avoid arguing or direct confrontation. Use neutral curiosity: *'How does setting the tone that way affect your federal probation status if someone escalates?'*
-- **Minimization & Excuses:** Acknowledge his feelings of frustration neutrally. Re-center every conversation on his self-interest: earning early discharge from supervision, earning steady income, and keeping his freedom.
-- **Prosocial Lever:** Actively integrate his positive relationship with his best friend (who achieved $180k legal income after incarceration) into goal-setting sessions as concrete proof of legal success.
+---
 
-## 3. Stability & Health Action Plan
-- **ADHD Non-Stimulant Management:** Schedule an evaluation with Cooperative Health for alternative non-stimulant ADHD medication to address daytime sleepiness and focus deficits without violating federal halfway house rules.
-- **Physical Outlet Integration:** Support and protect his daily structured gym/weightlifting schedule to manage restlessness and emotional stress.
-- **Vocational Readiness:** Focus placement on structured, fast-paced 1st-shift physical roles (e.g., concrete, manufacturing, distribution) that keep him engaged and minimize unstructured down-time.
+## Key Community Resources
 
-## 4. Case Management Goals & Milestones
-1. **Week 1:** Complete medical intake at Cooperative Health for non-stimulant ADHD treatment.
-2. **Week 2:** Submit applications to 3 fair-chance employers with 1st shift schedules.
-3. **Week 3:** Attend interview skills coaching focusing on non-defensive communication.
-4. **Week 4:** Secure full-time employment and establish a daily structured routine.
+### 1. Medical & ADHD Support (Non-Stimulant Evaluation)
+- **Cooperative Health (Eau Claire Health Center)**
+  - **Services:** Sliding-scale primary care and behavioral health evaluation for non-stimulant focus support.
+  - **Phone:** (803) 786-4831
+  - **Address:** 4605 Monticello Rd, Columbia, SC 29203
+  - **Links:** [Visit Website](https://cooperativehealth.org) | [Directions](https://maps.google.com/?q=4605+Monticello+Rd,+Columbia,+SC+29203)
+  - **Next Step:** Call to set up a primary care intake and request a non-stimulant ADHD assessment.
+
+### 2. Free Maintenance Prescriptions
+- **Welvista Headquarters**
+  - **Services:** Prescription assistance program for chronic condition management.
+  - **Phone:** (803) 933-9183
+  - **Address:** 2700 Middleburg Dr, Suite 105, Columbia, SC 29204
+  - **Links:** [Visit Website](https://welvista.org) | [Directions](https://maps.google.com/?q=2700+Middleburg+Dr,+Suite+105,+Columbia,+SC+29204)
+  - **Next Step:** Submit application through case manager once prescriptions are issued.
+
+### 3. Community & Re-entry Support
+- **Midlands Fatherhood Coalition**
+  - **Services:** Re-entry support, court navigation, and peer support groups.
+  - **Phone:** (803) 933-0530
+  - **Address:** 1821 Hampton St, Columbia, SC 29201
+  - **Links:** [Visit Website](https://midlandsfathers.com) | [Directions](https://maps.google.com/?q=1821+Hampton+St,+Columbia,+SC+29201)
+  - **Next Step:** Contact intake for orientation on peer support networks.
+
+---
+
+## Target Employment Opportunities
+
+### 1. Midlands Concrete & Paving Solutions
+- **Role:** Concrete Finisher Helper / General Laborer
+- **Pay & Shift:** $18.00 – $23.00 / hr | Day Shift (7:00 AM – 3:30 PM)
+- **Why It Fits:** Active, physical work that utilizes your strength and keeps you moving throughout the day on a predictable 1st-shift schedule.
+- **Apply:** [Apply Online / View Careers Page](https://www.indeed.com/jobs?q=concrete+paving+laborer&l=Columbia%2C+SC)
+
+### 2. CMC Steel South Carolina
+- **Role:** Mill Operator Trainee / Material Handler
+- **Pay & Shift:** $19.00 – $24.50 / hr | Day Shift (7:00 AM – 3:30 PM)
+- **Why It Fits:** High-paying, structured industrial environment with growth potential and full safety gear provided.
+- **Apply:** [Apply Online / View Careers Page](https://www.cmc.com/en-us/careers)
+
+### 3. Palmetto State Distribution Center
+- **Role:** Order Selector / Package Handler
+- **Pay & Shift:** $17.50 – $21.50 / hr | 1st Shift (7:00 AM – 3:30 PM)
+- **Why It Fits:** Fast-paced warehouse setting with direct weekly pay and consistent hours.
+- **Apply:** [Apply Online / View Careers Page](https://www.indeed.com/jobs?q=warehouse+order+selector&l=West+Columbia%2C+SC)
+
+---
+
+## Your 4-Week Action Checklist
+
+- [ ] **Week 1:** Complete medical consultation at Cooperative Health for non-stimulant focus medication.
+- [ ] **Week 2:** Complete application and phone screen for Midlands Concrete or CMC Steel.
+- [ ] **Week 3:** Practice communication strategies with your Navigator to handle workplace stress calmly.
+- [ ] **Week 4:** Start full-time 1st-shift employment and set up a savings plan for post-halfway house living.

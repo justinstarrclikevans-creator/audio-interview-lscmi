@@ -1,6 +1,30 @@
 {
   "case_notes": [
     {
+      "id": 206,
+      "user_id": 82,
+      "author_id": null,
+      "author_name": "Diyoung Dantzler",
+      "session_date": "2026-11-12",
+      "note_type": "Coaching / case management session – structured or in-depth meeting",
+      "category": "First Shift",
+      "content": "Session Type: First Case Management Meeting\n\n1. Participant Updates: [Client] reports things are going well; he is staying focused and using 'Thinking for a Change' tools with his girlfriend to manage conflicts. He acknowledges past temptations for 'quick plays' (fast money) but states he is now fully motivated by providing for his kids. Probation is scheduled to end on Feb 18th of next year.\n2. Gate & Briefcase Progress:\n- Gate 1 (Vital IDs & Health): Verified he possesses ID, SSN, and Birth Certificate. He is covered under Tricare (health insurance) through his father. No current prescriptions.\n- Gate 2 (DMV/Housing): Driver's License remains suspended due to a $600 fine. He is actively making payments on this.\n- Gate 4 (Education/Employment): Has completed the 'Skillcat' measurements test. Maintains goal to become an electrician/lineman and plans to attend Spartanburg Community College (SCC).\n3. Case Plan / CBT Alignment: Discussed relationship dynamics, specifically [Client]'s need for 'space' to de-escalate versus his partner's separation anxiety. Reinforced putting his children's needs before immediate wants.\n4. Next Steps / Action Plan:\n- Process Goal for Week 1: [Client] will make a payment toward his $600 DMV fine using his Walmart Spark income and bring the receipt to the next CM session.\n- CM will assist in researching the SCC Electrician program.",
+      "apricot_exported": 1,
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 207,
+      "user_id": 82,
+      "author_id": null,
+      "author_name": "Diyoung Dantzler",
+      "session_date": "2026-11-04",
+      "note_type": "Coaching / case management session – structured or in-depth meeting",
+      "category": "First Shift",
+      "content": "Session Type: First Case Management Meeting\n\n1. Participant Updates: [Client] is highly motivated. He previously attended Limestone College on a football scholarship but left after 2 years. He has a federal conviction for mail theft/scamming and a DV charge which he served 90 days for. He is currently supported by his girlfriend and is doing some Walmart Spark driving with her.\n2. Gate & Briefcase Progress:\n- Gate 1 (Vital IDs): Has Birth Cert, SSN, State ID. Driver's License is suspended due to an outstanding fine of ~$600.\n- Gate 2 (Housing/Benefits): Housing is stable (living with girlfriend). Has 1 biological daughter and 1 stepson. No current child support obligations.\n- Gate 4 (Education/Employment): Goal is to attend Spartanburg Community College (SCC) for the Electrician program. Previous employment includes Benteler.\n3. Case Plan / CBT Alignment: Discussed past triggers ('easy bread' / material things) and ignoring 'red flags' in relationships. [Client] acknowledges needing to put 'needs before wants' to support his children.\n4. Next Steps / Action Plan:\n- [Client] will research the SCC Electrician program requirements.\n- [Client] will begin saving money towards the $600 DMV fine.\n- [Client] will maintain perfect attendance/schedule for week 1.",
+      "apricot_exported": 1,
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
       "id": 161,
       "user_id": 82,
       "author_id": null,
@@ -37,5 +61,6 @@
       "created_at": "2026-11-03 23:04:00"
     }
   ],
-  "cm_session_evaluations": []
+  "cm_session_evaluations": [],
+  "manual_folder_notes": []
 }

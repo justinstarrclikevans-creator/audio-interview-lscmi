@@ -1,0 +1,113 @@
+{
+  "participant_key": "Brandon_Swearinger",
+  "participant_name": "Brandon Swearinger",
+  "profile_records": [
+    {
+      "id": 37,
+      "user_id": 39,
+      "current_gate": 4,
+      "w9_status": "verified",
+      "dl_status": "suspended",
+      "dl_notes": "ride with friend",
+      "child_support_status": "none",
+      "child_support_notes": "Child support contact/enforcement reviewed",
+      "housing_status": "stable",
+      "substance_status": "none",
+      "mental_health_status": "none",
+      "transportation_status": "Personal Vehicle / Ride",
+      "court_dates": null,
+      "overall_status": "archived",
+      "termination_reason": null,
+      "termination_date": null,
+      "updated_at": "2026-09-23 11:52:26",
+      "stability_red_flags": "[{\"category\":\"Cognitive / Attitude\",\"flag\":\"Minimization & Externalizing Blame\",\"evidence\":\"Claims federal conviction was based on 'sheer speculation' and 'word of mouth' without hard proof, expressing deep resentment that courts treated him unfairly.\",\"severity\":\"high\",\"navigator_recommendation\":\"Apply Turn90 Modeling Neutrality Standard 1.5. Never challenge or debate the fairness of his conviction or criminal record. Use neutral curiosity (e.g., 'Focusing on the past legal system takes a lot of energy—how can we pivot that energy toward getting your state ID and steady pay this week?').\"},{\"category\":\"Stability Risk\",\"flag\":\"Missing Foundational ID Documents\",\"evidence\":\"Lacks state ID, birth certificate, and social security card on hand, possessing only a prison identification card.\",\"severity\":\"high\",\"navigator_recommendation\":\"Execute immediate triage. Coordinate document replacement immediately through Midlands Fatherhood Coalition and Social Security Administration before job placement can occur.\"},{\"category\":\"Stability Risk\",\"flag\":\"Zero Community Payroll Employment Record\",\"evidence\":\"At 41 years old, participant has never held a payroll job or been employed for a full year in the community.\",\"severity\":\"high\",\"navigator_recommendation\":\"Connect soft-skills training in Turn90 First Shift directly to earning potential. Emphasize entry-level fair-chance trade positions with built-in daily routines and paid on-the-job training.\"},{\"category\":\"Cognitive / Attitude\",\"flag\":\"Social Avoidance & Institutional Trauma Triggers\",\"evidence\":\"Reports being a 'loner', avoiding eye contact, and experiencing PTSD triggers from prison environment (sounds of doors closing, counts).\",\"severity\":\"medium\",\"navigator_recommendation\":\"Utilize trauma-informed CBT reframing. Allow gradual social integration in small group settings, validate discomfort, and reinforce self-talk strategies that keep him focused on long-term stability.\"},{\"category\":\"Supervision / Legal\",\"flag\":\"Mandatory Federal Supervised Release Requirements\",\"evidence\":\"10-year federal supervised release mandating intensive substance abuse treatment with random testing, vocational training, and financial counseling.\",\"severity\":\"medium\",\"navigator_recommendation\":\"Integrate federal mandate appointments directly into participant's weekly schedule to ensure compliance and avoid probation conflicts.\"}]",
+      "director_override": 0,
+      "director_override_notes": null,
+      "director_override_by": null,
+      "reentry_status": "immediate_triage_needed",
+      "has_reentry_plan": 1,
+      "enrollment_date": null,
+      "correction_notes": null,
+      "supabase_id": "01429cc4-040b-4583-9b92-dfa7f24a8946",
+      "record_id": null
+    }
+  ],
+  "case_plan_triggers": [],
+  "daily_points": [],
+  "drug_tests": [],
+  "benefits": [
+    {
+      "id": 54,
+      "user_id": 39,
+      "benefit_type": "medicaid",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    },
+    {
+      "id": 55,
+      "user_id": 39,
+      "benefit_type": "snap",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    },
+    {
+      "id": 56,
+      "user_id": 39,
+      "benefit_type": "tanf",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    },
+    {
+      "id": 53,
+      "user_id": 39,
+      "benefit_type": "welvista",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    }
+  ],
+  "resumes": [
+    {
+      "id": 7,
+      "user_id": 39,
+      "resume_data_json": "{\"skills\":\"fast learner really smart and good on computers\",\"summary\":\"competing turn 90\",\"experience\":\"turn 90\"}",
+      "updated_at": "2026-09-23 11:52:26"
+    }
+  ],
+  "db_documents": [
+    {
+      "id": 27,
+      "user_id": 39,
+      "doc_type": "case_brief",
+      "title": "Clinical Case Brief - Brandon Swearinger",
+      "filename": "Brandon_Swearinger_Case_Brief_1788826713431.pdf",
+      "file_path": "/data/Brandon_Swearinger_Case_Brief_1788826713431.pdf",
+      "file_size": 61013,
+      "status": "active",
+      "metadata_json": "{\"originalName\":\"4385_2579_BrandonSwearingerCaseManagementBrief(1).pdf\"}",
+      "uploaded_at": "2026-09-08 00:18:33"
+    }
+  ],
+  "legacy_briefcase_items_count": 66,
+  "legacy_gate_criteria_count": 27,
+  "updated_at": "2026-11-23T13:46:28.454Z"
+}

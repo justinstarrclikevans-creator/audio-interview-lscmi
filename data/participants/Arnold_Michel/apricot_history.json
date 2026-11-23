@@ -1,0 +1,27 @@
+{
+  "participant_key": "Arnold_Michel",
+  "participant_name": "Arnold Michel",
+  "apricot_ids": [
+    "59189"
+  ],
+  "evaluations": [],
+  "notes_count": 1,
+  "processed_notes": [
+    {
+      "id": 41,
+      "record_id": "59189",
+      "first_name": "Arnold",
+      "last_name": "Michel",
+      "activity_date": "2026-08-12",
+      "staff_name": "Justin Evans",
+      "service_context": "First Shift",
+      "interaction_type": "Case Note (documentation only) – no interaction or service",
+      "note_text": "Acted nervously when drug tests were announced and then left and came right back. I spoke with him about the red flags and concerns and he admitted he would probably fail because he had handled drugs. He ran out to grab fake urine. Terminated him without taking a test because of his actions trying to falsify a test.",
+      "center_location": "Charleston",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "updated_at": "2026-11-23T13:46:28.531Z"
+}

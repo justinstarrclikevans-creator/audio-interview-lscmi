@@ -1,0 +1,149 @@
+{
+  "participant_key": "Charlton_Bryant",
+  "updated_at": "2026-11-23T13:46:29.156Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-18T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "13 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:370",
+      "event_key": "reentry_session:370",
+      "timestamp": "2026-11-18T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Sent a text to Mrs. Felecia because neither of us have heard back from her. She replied that she's referring him to one of their other locations. I confirmed it's on the bus line. She said she's just waiting for them to ",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:372",
+      "event_key": "reentry_session:372",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Sent a text checking in with Charlton to see if he's heard back from Mrs. Felecia because I never did. He said he spoke to her today and she plans to call me today.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:371",
+      "event_key": "reentry_session:371",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Tried to call Mrs. Felecia, no answer, left VM. Charlton can stay at his mom's house tonight. He has a dishwashing job interview at Salt Lake downtown. He thinks he'll get it because he was told to come in ready to work.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:374",
+      "event_key": "reentry_session:374",
+      "timestamp": "2026-11-12T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update|Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "CONTACT SUMMARY:\nReentry Navigator Daisy Boynton completed a check-in phone call with Charlton Bryant. Charlton reported that his current temporary agency work has slowed down significantly due to the holiday season. He ",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:373",
+      "event_key": "reentry_session:373",
+      "timestamp": "2026-11-12T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Charlton left voicemails at Bounce Back and Shield. I sent him the number for Calm Quarters as well. He spoke to Mrs. Felecia and she said she'd call me and then call him back in about an hour.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:375",
+      "event_key": "reentry_session:375",
+      "timestamp": "2026-11-04T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Reached out to see if he called Keys to Change.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:280",
+      "event_key": "reentry_session:280",
+      "timestamp": "2026-10-26T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "Reached out to see of he's found stable housing or if he still needs help.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:180",
+      "event_key": "reentry_session:180",
+      "timestamp": "2026-10-19T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Called to update me that he paid off all his fines and reinstatement fee, but he can't get his license unsuspended until he has a breathalyzer installed in his car. He doesn't own a car because his old one was junk, so h",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:179",
+      "event_key": "reentry_session:179",
+      "timestamp": "2026-10-19T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Documentation support – ID, housing forms, paperwork (Daisy Boynton)",
+      "summary": "Called to let him know how to get his social security card and birth certificate. Sent him the web address for ordering social and the physical address of vital records in North Charleston to request his birth certificat",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:181",
+      "event_key": "reentry_session:181",
+      "timestamp": "2026-10-12T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Went to the DMV and has paid off all fines and his reinstatement fee. They told him the last step was to complete a form because his car is in the junkyard, then he can get his DL back. He's going to the DMV today to get",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:182",
+      "event_key": "reentry_session:182",
+      "timestamp": "2026-10-07T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Daisy Boynton)",
+      "summary": "No housing, no job, yes resume. No transportation but was given a 7 day bus pass yesterday from Star Gospel Mission. He's waiting for them to call in the next few days about whether they have room. In the meantime, he ne",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:183",
+      "event_key": "reentry_session:183",
+      "timestamp": "2026-10-05T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "Intake Appointment SCHEDULED",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

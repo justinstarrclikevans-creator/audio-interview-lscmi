@@ -1,0 +1,64 @@
+{
+  "participant_key": "Andre_Williams",
+  "participant_name": "Andre Williams",
+  "apricot_ids": [
+    "83386"
+  ],
+  "evaluations": [
+    {
+      "record_id": "83386",
+      "full_name": "Andre Williams",
+      "program": "Reentry Navigation",
+      "center": "Columbia",
+      "case_manager": "Unassigned",
+      "case_plan_status": "No (Needs Reentry Nav Case Plan)",
+      "focus_areas_or_goals": "Find employment",
+      "briefcase_status_text": "Gate 1: 25%, Gate 2: 20%, Gate 3: 0%, Gate 4: 0%",
+      "gate1_pct": 25,
+      "gate2_pct": 20,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "case_note_analysis": "Enrolled 11/17/2026. Most recent contact on 11/17/2026 by Daisy Boynton (Intake Appointment COMPLETED): \"CONTACT SUMMARY & SESSION OVERVIEW - Session Stage: First Session / Intake - Summary: Completed phone consultation with [Client]. Staff explained both programs: in-person First Shift (M–F 9–3, 8 weeks, $450/week stipend, job placement) and Reentry Navigation (\"\n\n**Latest Case Note Updates:** [Update 11/17/2026 • Daisy Boynton]: CONTACT SUMMARY & SESSION OVERVIEW\n- Session Stage: First Session / Intake \n- Summary: Completed phone consultation with [Client]. Staff explained both programs: in-person First Shift (M–F 9–3, 8 weeks, $450/week stipend, job placement) and Reentry Navigation (phone-based help with license reinstatement, funding for fees, job search, resume, child support planning, etc.). [Client] said he needs help with \"all of that.\" Staff explained that the Columbia First Shift waitlist is long (almost 20 people, possibly a couple of months). [Client] was added to the First Shift waitlist and enrolled in Reentry Navigation while he waits. He was cooperative and engaged.\n\nCASE PLAN ALIGNMENT (REENTRY NAVIGATION)\n- Stability Tier: At Risk. Housing is informal (he describes himself as \"kind of homeless\"), he is unemployed, and his food assistance just ran out.\n- Stated Goals Progress: [Client] named two priority goals: (1) reinstate his driver's license and (2) find a job. He also wants more stable housing eventually. Case plan to be built by CM.\n\nBRIEFCASE & GATES 1-4 UPDATES\n- Gate 1 (Vital IDs, Meds, Supervision): Has ID. Birth certificate status unclear (recording garbled). No prescribed medications in the past five years. He mentioned a past surgery but is not on any current treatment. On probation, expected to end in 2027. Reports monthly and is in compliance. His probation officer does home visits at his current address.\n- Gate 2 (Housing, Comms, Legal, Resume): Staying at someone else's home and paying about $125/week. Can stay there for the near future, and it is his mailing address and probation address. Driver's license is suspended for unpaid tickets, about $2,500 per a DMV check a couple of months ago. Court-ordered child support, currently not paying because he has no job. No Turn90 resume yet.\n- Gate 3 (Health, Recovery, Banking): Reports past cocaine use once or twice and alcohol use (frequency unclear in the recording, possibly every other day). Reports a health issue that doesn't affect his ability to work (unclear in recording). Bank account not discussed. SNAP/food assistance ran out in November.\n- Gate 4 (Work Gear, Transit, Employment/Finance): Gets around by bus and sometimes by rides. Unemployed. Forklift experience, but he thinks his certification has expired.\n\nEMPLOYMENT, HOUSING & STABILITY UPDATES\n- Work history: mostly warehouse/forklift work. Equipment operator from 2004 to 2009 (left when the company was sold). Warehouse in Williamsboro (as transcribed) for about 4 years (company sold). Mechanic shop for about 3 years. Asphalt company and other odd jobs for about 2 years each, which he left over pay.\n- Education: left school in 12th grade. No diploma or GED.\n- Justice history: first arrest at age 16, about 8 arrests total. Released from prison on 06/01/2026 after about 10 months. Most recent conviction: violating a restraining order. Pending charges: not clearly answered in the recording. Father has a jail history (about twice). Mother has no record.\n- No schedule conflicts with 9–3 programming apart from monthly probation check-ins.\n\nREFERRALS & RESOURCE COORDINATION\n- Enrolled in Reentry Navigation and added to the Columbia First Shift waitlist.\n- No outside referrals made this session.\n\nNEXT STEPS (\"WHAT TO WORK ON NEXT\")\n1. CM to build [Client]'s Reentry Navigation case plan around his stated goals (license reinstatement and employment) and contact him within the next week to get started.\n2. CM/[Client] to start license reinstatement: confirm the DMV balance (~$2,500 in tickets) and look into funding for the fees. Begin job search and a Turn90 resume, including a check on renewing his forklift certification.\n3. Apricot Admin Check: create the intake record, add him to the Columbia waitlist, initialize his Briefcase record, and confirm his birth certificate and pending-charges status at the next contact.\n\n** he first described himself as somewhat homeless, but then he said he's living with a friend, paying $125/week for rent, and that this is where his probation officer visits him. He said he's stable enough for now, but would like to look at other housing long-term. | [Update 11/16/2026 • Daisy Boynton]: ",
+      "operational_feedback": "Continue advancing Reentry Navigation Case Plan goals and Briefcase Gates 1–4 (Gate 1: 25%, Gate 2: 20%, Gate 3: 0%, Gate 4: 0%). Focus on barrier removal, employment readiness, and community resource referrals.",
+      "next_cm_steps_json": "[\"🎯 **Advance Stated Case Plan Goals:** Review progress on active Reentry Nav goals (Find employment) and verify concrete barrier-removal steps completed since last check-in.\",\"🔓 **Complete Remaining Gate 1 Items (25% done):** Target Birth Certificate (Physical copy or Vital Statistics appointment), Fill needed prescriptions (Welvista / local pharmacy), Explore healthcare options (Medicaid / Free Medical Clinic).\",\"🔓 **Advance Gate 2 Stability & Readiness (20% done):** Work on Child support plan made / Cases reviewed / DSS contact, Probation / Legal Obligations aligned with work hours, DMV License Suspension check & reinstatement plan.\",\"🩺 **Address Gate 3 Health & Banking Milestones (0% done):** Follow up on Primary Care / Medical checkup scheduled or cleared, Vision Appointment / screening, Steady access to daily prescriptions (Welvista).\",\"🔄 **Follow Up on Latest Session (11/17/2026 by Daisy Boynton):** Check accountability on items discussed (\\\"CONTACT SUMMARY & SESSION OVERVIEW - Session Stage: First Session / Intake - Summary: Completed phone consultation with [Client]. Staff expl...\\\").\"]",
+      "recent_cm_notes_json": null,
+      "last_note_date": "2026-11-17",
+      "notes_count": 2,
+      "updated_at": "2026-11-22 17:36:06"
+    }
+  ],
+  "notes_count": 2,
+  "processed_notes": [
+    {
+      "id": 1110,
+      "record_id": "83386",
+      "first_name": "Andre",
+      "last_name": "Williams",
+      "activity_date": "2026-11-17",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment COMPLETED",
+      "note_text": "CONTACT SUMMARY & SESSION OVERVIEW\n- Session Stage: First Session / Intake \n- Summary: Completed phone consultation with [Client]. Staff explained both programs: in-person First Shift (M–F 9–3, 8 weeks, $450/week stipend, job placement) and Reentry Navigation (phone-based help with license reinstatement, funding for fees, job search, resume, child support planning, etc.). [Client] said he needs help with \"all of that.\" Staff explained that the Columbia First Shift waitlist is long (almost 20 people, possibly a couple of months). [Client] was added to the First Shift waitlist and enrolled in Reentry Navigation while he waits. He was cooperative and engaged.\n\nCASE PLAN ALIGNMENT (REENTRY NAVIGATION)\n- Stability Tier: At Risk. Housing is informal (he describes himself as \"kind of homeless\"), he is unemployed, and his food assistance just ran out.\n- Stated Goals Progress: [Client] named two priority goals: (1) reinstate his driver's license and (2) find a job. He also wants more stable housing eventually. Case plan to be built by CM.\n\nBRIEFCASE & GATES 1-4 UPDATES\n- Gate 1 (Vital IDs, Meds, Supervision): Has ID. Birth certificate status unclear (recording garbled). No prescribed medications in the past five years. He mentioned a past surgery but is not on any current treatment. On probation, expected to end in 2027. Reports monthly and is in compliance. His probation officer does home visits at his current address.\n- Gate 2 (Housing, Comms, Legal, Resume): Staying at someone else's home and paying about $125/week. Can stay there for the near future, and it is his mailing address and probation address. Driver's license is suspended for unpaid tickets, about $2,500 per a DMV check a couple of months ago. Court-ordered child support, currently not paying because he has no job. No Turn90 resume yet.\n- Gate 3 (Health, Recovery, Banking): Reports past cocaine use once or twice and alcohol use (frequency unclear in the recording, possibly every other day). Reports a health issue that doesn't affect his ability to work (unclear in recording). Bank account not discussed. SNAP/food assistance ran out in November.\n- Gate 4 (Work Gear, Transit, Employment/Finance): Gets around by bus and sometimes by rides. Unemployed. Forklift experience, but he thinks his certification has expired.\n\nEMPLOYMENT, HOUSING & STABILITY UPDATES\n- Work history: mostly warehouse/forklift work. Equipment operator from 2004 to 2009 (left when the company was sold). Warehouse in Williamsboro (as transcribed) for about 4 years (company sold). Mechanic shop for about 3 years. Asphalt company and other odd jobs for about 2 years each, which he left over pay.\n- Education: left school in 12th grade. No diploma or GED.\n- Justice history: first arrest at age 16, about 8 arrests total. Released from prison on 06/01/2026 after about 10 months. Most recent conviction: violating a restraining order. Pending charges: not clearly answered in the recording. Father has a jail history (about twice). Mother has no record.\n- No schedule conflicts with 9–3 programming apart from monthly probation check-ins.\n\nREFERRALS & RESOURCE COORDINATION\n- Enrolled in Reentry Navigation and added to the Columbia First Shift waitlist.\n- No outside referrals made this session.\n\nNEXT STEPS (\"WHAT TO WORK ON NEXT\")\n1. CM to build [Client]'s Reentry Navigation case plan around his stated goals (license reinstatement and employment) and contact him within the next week to get started.\n2. CM/[Client] to start license reinstatement: confirm the DMV balance (~$2,500 in tickets) and look into funding for the fees. Begin job search and a Turn90 resume, including a check on renewing his forklift certification.\n3. Apricot Admin Check: create the intake record, add him to the Columbia waitlist, initialize his Briefcase record, and confirm his birth certificate and pending-charges status at the next contact.\n\n** he first described himself as somewhat homeless, but then he said he's living with a friend, paying $125/week for rent, and that this is where his probation officer visits him. He said he's stable enough for now, but would like to look at other housing long-term.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1109,
+      "record_id": "83386",
+      "first_name": "Andre",
+      "last_name": "Williams",
+      "activity_date": "2026-11-16",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Intake Appointment SCHEDULED",
+      "note_text": "",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "updated_at": "2026-11-23T13:46:29.567Z"
+}

@@ -1,0 +1,196 @@
+{
+  "participant_key": "Jarvier_Frazier_butler",
+  "participant_name": "Jarvier Frazier-butler",
+  "profile_records": [
+    {
+      "id": 46,
+      "user_id": 48,
+      "current_gate": 4,
+      "w9_status": "verified",
+      "dl_status": "valid",
+      "dl_notes": "Walking/Bus",
+      "child_support_status": "none",
+      "child_support_notes": "",
+      "housing_status": "stable",
+      "substance_status": "none",
+      "mental_health_status": "none",
+      "transportation_status": "CARTA Bus Line",
+      "court_dates": null,
+      "overall_status": "archived",
+      "termination_reason": null,
+      "termination_date": null,
+      "updated_at": "2026-09-23 20:22:16",
+      "stability_red_flags": "[{\"category\":\"Cognitive / Attitude\",\"flag\":\"Rationalization of Criminal Behavior\",\"evidence\":\"\\\"the bad ones I do feel some kind of remorse, but some of them I feel are justified.\\\"\",\"severity\":\"high\",\"navigator_recommendation\":\"Model neutrality. Do not debate whether crimes were justified. Use reflective listening (e.g., 'So some felt necessary at the time. How did those choices ultimately impact your freedom?') to help him identify contradictions on his own.\"},{\"category\":\"Stability Risk\",\"flag\":\"Transportation & Suspended License\",\"evidence\":\"License status: \\\"suspended\\\". Left previous jobs because of \\\"Transportation.\\\"\",\"severity\":\"high\",\"navigator_recommendation\":\"Immediate triage needed for CARTA bus routes and SCDMV reinstatement plan. Link reliable transit directly to his goal of providing for his wife and stepson.\"},{\"category\":\"Substance / Health\",\"flag\":\"Substance Minimization\",\"evidence\":\"\\\"manageable, not addiction... I'm pretty sure they [family] hate it.\\\" Past probation revoked after a public intoxication charge.\",\"severity\":\"medium\",\"navigator_recommendation\":\"Use Motivational Interviewing to explore the discrepancy between his view that use is 'manageable' and his family's negative reaction, as well as past legal consequences. Avoid lecturing.\"},{\"category\":\"Supervision / Legal\",\"flag\":\"Unknown Pending Charges\",\"evidence\":\"When asked about pending charges: \\\"I might. I don't know. I might.\\\"\",\"severity\":\"high\",\"navigator_recommendation\":\"Assist Jarvier in checking the public county court index immediately to resolve ambiguity. Fear of unknown charges can trigger avoidance behaviors or absconding.\"}]",
+      "director_override": 0,
+      "director_override_notes": null,
+      "director_override_by": null,
+      "reentry_status": "at_risk",
+      "has_reentry_plan": 1,
+      "enrollment_date": "2026-08-10",
+      "correction_notes": null,
+      "supabase_id": "5c772a06-ade0-4471-9fa6-9d3a0d2b7836",
+      "record_id": null
+    }
+  ],
+  "case_plan_triggers": [],
+  "daily_points": [
+    {
+      "id": 61,
+      "user_id": 48,
+      "date": "2026-09-21",
+      "points_earned": 10,
+      "max_points": 50,
+      "attendance_status": "present",
+      "notes": "Imported via Render Report",
+      "imported_from_apricot": 1,
+      "created_at": "2026-09-22 17:44:36"
+    }
+  ],
+  "drug_tests": [
+    {
+      "id": 6,
+      "user_id": 48,
+      "test_date": "2026-09-22",
+      "result": "negative",
+      "substances_detected": null,
+      "notes": "Imported via Render Report",
+      "administered_by": null,
+      "created_at": "2026-09-22 17:43:35"
+    }
+  ],
+  "benefits": [
+    {
+      "id": 90,
+      "user_id": 48,
+      "benefit_type": "medicaid",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    },
+    {
+      "id": 91,
+      "user_id": 48,
+      "benefit_type": "snap",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    },
+    {
+      "id": 92,
+      "user_id": 48,
+      "benefit_type": "tanf",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    },
+    {
+      "id": 89,
+      "user_id": 48,
+      "benefit_type": "welvista",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    }
+  ],
+  "resumes": [
+    {
+      "id": 14,
+      "user_id": 48,
+      "resume_data_json": "{\"skills\":\"Team player, great leader, peer support, first aid certified, active listener\",\"summary\":\"My goal is to become a real estate marketing specialist\",\"experience\":\"Cashiering, grill operator, hospitality, food prep, demolition cleanup, apprenticeship in carpentry, finishing work, painting, lawn care\"}",
+      "updated_at": "2026-09-23 11:52:26"
+    }
+  ],
+  "db_documents": [
+    {
+      "id": 78,
+      "user_id": 48,
+      "doc_type": "case_brief",
+      "title": "Case Brief - Jarvier Frazier-butler",
+      "filename": "Jarvier_Frazier_butler_Case_Brief_1790194895482.pdf",
+      "file_path": "/data/Jarvier_Frazier_butler_Case_Brief_1790194895482.pdf",
+      "file_size": 14816,
+      "status": "active",
+      "metadata_json": "{\"originalName\":\"4400_jarvier-butler-transcript.pdf\"}",
+      "uploaded_at": "2026-09-23 20:21:35"
+    },
+    {
+      "id": 69,
+      "user_id": 48,
+      "doc_type": "case_brief",
+      "title": "Case Brief - Jarvier Frazier-butler",
+      "filename": "Jarvier_Frazier_butler_Case_Brief_1790193818884.pdf",
+      "file_path": "/data/Jarvier_Frazier_butler_Case_Brief_1790193818884.pdf",
+      "file_size": 14816,
+      "status": "active",
+      "metadata_json": "{\"originalName\":\"4400_jarvier-butler-transcript.pdf\"}",
+      "uploaded_at": "2026-09-23 20:03:38"
+    },
+    {
+      "id": 60,
+      "user_id": 48,
+      "doc_type": "case_brief",
+      "title": "Case Brief - Jarvier Frazier-butler",
+      "filename": "Jarvier_Frazier_butler_Case_Brief_1790193709447.pdf",
+      "file_path": "/data/Jarvier_Frazier_butler_Case_Brief_1790193709447.pdf",
+      "file_size": 14816,
+      "status": "active",
+      "metadata_json": "{\"originalName\":\"4400_jarvier-butler-transcript.pdf\"}",
+      "uploaded_at": "2026-09-23 20:01:49"
+    },
+    {
+      "id": 51,
+      "user_id": 48,
+      "doc_type": "case_brief",
+      "title": "Case Brief - Jarvier Frazier-butler",
+      "filename": "Jarvier_Frazier_butler_Case_Brief_1790193163664.pdf",
+      "file_path": "/data/Jarvier_Frazier_butler_Case_Brief_1790193163664.pdf",
+      "file_size": 14816,
+      "status": "active",
+      "metadata_json": "{\"originalName\":\"4400_jarvier-butler-transcript.pdf\"}",
+      "uploaded_at": "2026-09-23 19:52:43"
+    },
+    {
+      "id": 43,
+      "user_id": 48,
+      "doc_type": "case_brief",
+      "title": "Case Brief - Jarvier Frazier-butler",
+      "filename": "Jarvier_Frazier_butler_Case_Brief_1790192581585.pdf",
+      "file_path": "/data/Jarvier_Frazier_butler_Case_Brief_1790192581585.pdf",
+      "file_size": 14816,
+      "status": "active",
+      "metadata_json": "{\"originalName\":\"4400_jarvier-butler-transcript.pdf\"}",
+      "uploaded_at": "2026-09-23 19:43:01"
+    },
+    {
+      "id": 32,
+      "user_id": 48,
+      "doc_type": "case_brief",
+      "title": "Clinical Case Brief - Jarvier Frazier-butler",
+      "filename": "Jarvier_Frazier_butler_Case_Brief_1788826846876.pdf",
+      "file_path": "/data/Jarvier_Frazier_butler_Case_Brief_1788826846876.pdf",
+      "file_size": 9554,
+      "status": "active",
+      "metadata_json": "{\"originalName\":\"4385_jarvier-butler-case-brief.pdf\"}",
+      "uploaded_at": "2026-09-08 00:20:46"
+    }
+  ],
+  "legacy_briefcase_items_count": 66,
+  "legacy_gate_criteria_count": 27,
+  "updated_at": "2026-11-23T13:46:28.596Z"
+}

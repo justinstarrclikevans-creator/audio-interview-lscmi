@@ -51,7 +51,7 @@
     "dmv_suspended_inquiry": {
       "value": "not_applicable_valid",
       "notes": "DL not suspended / valid ID on file.",
-      "updated_at": "2026-11-22T17:18:01.425Z"
+      "updated_at": "2026-11-23T13:46:28.348Z"
     },
     "child_support_contact": {
       "value": "not_applicable",
@@ -75,19 +75,19 @@
       "value": "on_track",
       "notes": "15 modules completed (22.5 hrs)",
       "source": "skillcat_scraper",
-      "updated_at": "2026-11-22T17:18:01.425Z"
+      "updated_at": "2026-11-23T13:46:28.348Z"
     },
     "resume_and_email": {
       "value": "completed",
       "notes": "Resume completed",
       "source": "db_import",
-      "updated_at": "2026-11-22T17:18:01.425Z"
+      "updated_at": "2026-11-23T13:46:28.348Z"
     },
     "w9_and_banking": {
       "value": "verified",
       "notes": "Bank account / W-9 verified",
       "source": "db_import",
-      "updated_at": "2026-11-22T17:18:01.425Z"
+      "updated_at": "2026-11-23T13:46:28.348Z"
     },
     "transportation_and_gear": {
       "value": "commute_only_needs_gear",

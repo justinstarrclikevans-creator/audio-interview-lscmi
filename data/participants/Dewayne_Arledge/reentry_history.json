@@ -1,0 +1,125 @@
+{
+  "participant_key": "Dewayne_Arledge",
+  "participant_name": "Dewayne Arledge",
+  "client_records": [
+    {
+      "id": 38,
+      "first_name": "Dewayne",
+      "last_name": "Arledge",
+      "apricot_id": "81391",
+      "location": "Charleston",
+      "status": "archived",
+      "stability_tier": "stable",
+      "phone": null,
+      "email": null,
+      "notes": "1. get SSDI\n2. find a part time job\n3. get mental health support",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-11-03 23:04:00",
+      "case_manager": "Daisy Boynton",
+      "enrollment_start": "2026-10-20",
+      "gate1_pct": 38,
+      "gate2_pct": 30,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "last_contact_date": "2026-10-29",
+      "last_contact_staff": "Daisy Boynton",
+      "last_contact_activity": "Case Note (documentation only) – no interaction or service",
+      "has_case_plan": 1,
+      "case_plan_text": "1. get SSDI\n2. find a part time job\n3. get mental health support"
+    }
+  ],
+  "sessions": [
+    {
+      "id": 276,
+      "client_id": 38,
+      "session_date": "2026-10-29",
+      "session_title": "Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Dewayne has not stopped by the center again yet.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 159,
+      "client_id": 38,
+      "session_date": "2026-10-20",
+      "session_title": "Check-in conversation – brief status update|Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Dewayne is good for housing, he's currently staying at Calm Quarters. He had disability benefits for his Cerebral Palsy before he was incarcerated. He's been to the social security office and he should be getting his benefits back in the next 1-2 weeks. Made him a resume (in his Reentry Nav case plan) and gave him a print out of staffing agencies in the area with addresses. He smokes weed to help with his nerves and Cerebral Palsy, but says he hasn't used any other drugs in the past year. He plans to seek mental health support in the next week or 2. Made him an appointment for Voc Rehab on Nov. 13th at 9:30am. He plans to stop by sometime next week to check in.",
+      "notes_text": "Dewayne is good for housing, he's currently staying at Calm Quarters. He had disability benefits for his Cerebral Palsy before he was incarcerated. He's been to the social security office and he should be getting his benefits back in the next 1-2 weeks. Made him a resume (in his Reentry Nav case plan) and gave him a print out of staffing agencies in the area with addresses. He smokes weed to help with his nerves and Cerebral Palsy, but says he hasn't used any other drugs in the past year. He plans to seek mental health support in the next week or 2. Made him an appointment for Voc Rehab on Nov. 13th at 9:30am. He plans to stop by sometime next week to check in.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 160,
+      "client_id": 38,
+      "session_date": "2026-10-16",
+      "session_title": "Intake Appointment COMPLETED (Kat Norsworthy)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "came by on Friday 10/16, recent substance abuse as well as a SSI recipient so does not qualify for First Shift however is interested in Reentry Nav to assist with finding a part time job",
+      "notes_text": "came by on Friday 10/16, recent substance abuse as well as a SSI recipient so does not qualify for First Shift however is interested in Reentry Nav to assist with finding a part time job",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 161,
+      "client_id": 38,
+      "session_date": "2026-10-02",
+      "session_title": "Intake Appointment SCHEDULED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "NCNS",
+      "notes_text": "NCNS",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "goals": [
+    {
+      "id": 83,
+      "client_id": 38,
+      "goal_title": "get mental health support",
+      "target_date": "2026-11-09",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"get mental health support\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 82,
+      "client_id": 38,
+      "goal_title": "find a part time job",
+      "target_date": "2026-11-09",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"find a part time job\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 81,
+      "client_id": 38,
+      "goal_title": "get SSDI",
+      "target_date": "2026-11-09",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"get SSDI\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "case_plans": [],
+  "updated_at": "2026-11-23T13:46:29.119Z"
+}

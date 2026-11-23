@@ -41,5 +41,169 @@
   "stalled": true,
   "flags": [
     "FLAG-SKILLCAT-STALL: No modules completed in last 2 working days"
+  ],
+  "historical_snapshots": [
+    {
+      "date": "2026-11-20",
+      "pathway": "HVAC",
+      "total_courses": 4,
+      "total_hours": 6,
+      "completed_last_5_working_days": 0,
+      "daily_delta": 0,
+      "stalled": true
+    },
+    {
+      "date": "2026-11-19",
+      "pathway": "HVAC",
+      "total_courses": 4,
+      "total_hours": 6,
+      "completed_last_5_working_days": 0,
+      "daily_delta": 0,
+      "stalled": true
+    },
+    {
+      "date": "2026-11-18",
+      "pathway": "HVAC",
+      "total_courses": 4,
+      "total_hours": 6,
+      "completed_last_5_working_days": 2,
+      "daily_delta": 0,
+      "stalled": true
+    },
+    {
+      "date": "2026-11-17",
+      "pathway": "HVAC",
+      "total_courses": 4,
+      "total_hours": 6,
+      "completed_last_5_working_days": 3,
+      "daily_delta": 0,
+      "stalled": true
+    },
+    {
+      "date": "2026-11-16",
+      "pathway": "HVAC",
+      "total_courses": 4,
+      "total_hours": 6,
+      "completed_last_5_working_days": 3,
+      "daily_delta": 0,
+      "stalled": true
+    },
+    {
+      "date": "2026-11-15",
+      "pathway": "HVAC",
+      "total_courses": 4,
+      "total_hours": 6,
+      "completed_last_5_working_days": 0,
+      "daily_delta": 0,
+      "stalled": false
+    },
+    {
+      "date": "2026-11-14",
+      "pathway": "HVAC",
+      "total_courses": 4,
+      "total_hours": 6,
+      "completed_last_5_working_days": 0,
+      "daily_delta": 0,
+      "stalled": false
+    },
+    {
+      "date": "2026-11-13",
+      "pathway": "HVAC",
+      "total_courses": 4,
+      "total_hours": 6,
+      "completed_last_5_working_days": 0,
+      "daily_delta": 0,
+      "stalled": false
+    },
+    {
+      "date": "2026-11-12",
+      "pathway": "HVAC",
+      "total_courses": 4,
+      "total_hours": 6,
+      "completed_last_5_working_days": 0,
+      "daily_delta": 2,
+      "stalled": false
+    },
+    {
+      "date": "2026-11-11",
+      "pathway": "HVAC",
+      "total_courses": 2,
+      "total_hours": 3,
+      "completed_last_5_working_days": 0,
+      "daily_delta": 1,
+      "stalled": false
+    },
+    {
+      "date": "2026-11-10",
+      "pathway": "HVAC",
+      "total_courses": 1,
+      "total_hours": 1.5,
+      "completed_last_5_working_days": 0,
+      "daily_delta": 0,
+      "stalled": false
+    },
+    {
+      "date": "2026-11-09",
+      "pathway": "HVAC",
+      "total_courses": 1,
+      "total_hours": 1.5,
+      "completed_last_5_working_days": 0,
+      "daily_delta": 0,
+      "stalled": false
+    },
+    {
+      "date": "2026-11-08",
+      "pathway": "HVAC",
+      "total_courses": 0,
+      "total_hours": 0,
+      "completed_last_5_working_days": 0,
+      "daily_delta": 0,
+      "stalled": true
+    },
+    {
+      "date": "2026-11-07",
+      "pathway": "HVAC",
+      "total_courses": 0,
+      "total_hours": 0,
+      "completed_last_5_working_days": 0,
+      "daily_delta": 0,
+      "stalled": true
+    },
+    {
+      "date": "2026-11-06",
+      "pathway": "HVAC",
+      "total_courses": 0,
+      "total_hours": 0,
+      "completed_last_5_working_days": 0,
+      "daily_delta": 0,
+      "stalled": true
+    },
+    {
+      "date": "2026-11-05",
+      "pathway": "HVAC",
+      "total_courses": 0,
+      "total_hours": 0,
+      "completed_last_5_working_days": 0,
+      "daily_delta": 0,
+      "stalled": true
+    },
+    {
+      "date": "2026-11-04",
+      "pathway": "HVAC",
+      "total_courses": 0,
+      "total_hours": 0,
+      "completed_last_5_working_days": 0,
+      "daily_delta": 0,
+      "stalled": true
+    },
+    {
+      "date": "2026-11-03",
+      "pathway": "HVAC",
+      "total_courses": 0,
+      "total_hours": 0,
+      "completed_last_5_working_days": 0,
+      "daily_delta": 0,
+      "stalled": true
+    }
   ]
 }

@@ -38,9 +38,9 @@
     },
     "stable_housing": {
       "value": "stable_verified",
-      "notes": "",
-      "source": "default",
-      "updated_at": "2026-11-20T19:55:12.672Z"
+      "notes": "Stable housing verified in profile",
+      "source": "db_import",
+      "updated_at": "2026-11-23T13:46:27.121Z"
     },
     "reliable_phone": {
       "value": "active_verified",
@@ -76,7 +76,7 @@
       "value": "on_track",
       "notes": "11 modules completed (16.5 hrs)",
       "source": "skillcat_scraper",
-      "updated_at": "2026-11-22T17:18:01.731Z"
+      "updated_at": "2026-11-23T13:46:28.904Z"
     },
     "resume_and_email": {
       "value": "not_started",
@@ -162,7 +162,7 @@
       "value": "stable_verified",
       "label": "Stable Housing / Lease / Family Home Verified",
       "ready": true,
-      "notes": ""
+      "notes": "Stable housing verified in profile"
     },
     {
       "key": "reliable_phone",

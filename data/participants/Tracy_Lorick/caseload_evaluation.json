@@ -3,23 +3,23 @@
   "participant_name": "Tracy Lorick",
   "location": "Charleston",
   "track": "reentry_nav",
+  "lscmi_client_id": "Tracy_Lorick_Charleston",
   "folder_path": "data/participants/Tracy_Lorick",
   "has_lscmi_brief": false,
   "has_lscmi_scoring": false,
   "has_action_plan": false,
+  "has_legacy_case_briefs": false,
   "action_plan_agreement": "pending_review",
-  "waitlist_ready": false,
-  "waitlist_score": "6/9",
+  "waitlist_ready": true,
+  "waitlist_score": "9/9",
   "medical_appointments_applicable": false,
   "skillcat_pathway": "HVAC",
   "skillcat_modules_completed": 0,
   "cm_notes_count": 0,
-  "data_evaluation_flags": [
-    {
-      "code": "FLAG-WAITLIST-GAP",
-      "severity": "warning",
-      "message": "6/9 First Shift Waitlist Briefcase items ready. Missing: 1. State ID or Driver's License (DL), 2. Social Security Card, 3. Birth Certificate"
-    }
-  ],
-  "updated_at": "2026-11-22T17:18:01.614Z"
+  "apricot_notes_count": 9,
+  "reentry_sessions_count": 9,
+  "history_events_count": 10,
+  "documents_count": 0,
+  "data_evaluation_flags": [],
+  "updated_at": "2026-11-23T13:46:29.084Z"
 }

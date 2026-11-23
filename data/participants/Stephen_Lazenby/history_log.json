@@ -1,0 +1,171 @@
+{
+  "participant_key": "Stephen_Lazenby",
+  "updated_at": "2026-11-23T13:46:28.736Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-12T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "10 chronological Apricot note(s) archived (Yes (Complete)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_doc:Stephen_Lazenby_Charleston_interview_guide.docx",
+      "event_key": "doc:Stephen_Lazenby_Charleston_interview_guide.docx",
+      "timestamp": "2026-11-04T16:28:24.462Z",
+      "category": "document",
+      "action": "Archived interview guide",
+      "summary": "Document stored in folder: Stephen_Lazenby_Charleston_interview_guide.docx",
+      "filename": "Stephen_Lazenby_Charleston_interview_guide.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Stephen_Lazenby_Charleston_draft_scoring_form.docx",
+      "event_key": "doc:Stephen_Lazenby_Charleston_draft_scoring_form.docx",
+      "timestamp": "2026-11-04T16:28:23.489Z",
+      "category": "document",
+      "action": "Archived draft scoring",
+      "summary": "Document stored in folder: Stephen_Lazenby_Charleston_draft_scoring_form.docx",
+      "filename": "Stephen_Lazenby_Charleston_draft_scoring_form.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Stephen_Lazenby_Charleston_criminal_history.docx",
+      "event_key": "doc:Stephen_Lazenby_Charleston_criminal_history.docx",
+      "timestamp": "2026-11-04T16:28:21.913Z",
+      "category": "document",
+      "action": "Archived criminal history",
+      "summary": "Document stored in folder: Stephen_Lazenby_Charleston_criminal_history.docx",
+      "filename": "Stephen_Lazenby_Charleston_criminal_history.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Stephen_Lazenby_Charleston_criminal_history.md",
+      "event_key": "doc:Stephen_Lazenby_Charleston_criminal_history.md",
+      "timestamp": "2026-11-04T16:28:20.296Z",
+      "category": "document",
+      "action": "Archived criminal history",
+      "summary": "Document stored in folder: Stephen_Lazenby_Charleston_criminal_history.md",
+      "filename": "Stephen_Lazenby_Charleston_criminal_history.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Stephen_Lazenby_Charleston_draft_scoring_form.md",
+      "event_key": "doc:Stephen_Lazenby_Charleston_draft_scoring_form.md",
+      "timestamp": "2026-11-04T16:28:20.295Z",
+      "category": "document",
+      "action": "Archived draft scoring",
+      "summary": "Document stored in folder: Stephen_Lazenby_Charleston_draft_scoring_form.md",
+      "filename": "Stephen_Lazenby_Charleston_draft_scoring_form.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Stephen_Lazenby_Charleston_interview_guide.md",
+      "event_key": "doc:Stephen_Lazenby_Charleston_interview_guide.md",
+      "timestamp": "2026-11-04T16:28:20.295Z",
+      "category": "document",
+      "action": "Archived interview guide",
+      "summary": "Document stored in folder: Stephen_Lazenby_Charleston_interview_guide.md",
+      "filename": "Stephen_Lazenby_Charleston_interview_guide.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Stephen_Lazenby_Charleston_transcript.txt",
+      "event_key": "doc:Stephen_Lazenby_Charleston_transcript.txt",
+      "timestamp": "2026-11-04T16:28:20.294Z",
+      "category": "document",
+      "action": "Archived transcript",
+      "summary": "Document stored in folder: Stephen_Lazenby_Charleston_transcript.txt",
+      "filename": "Stephen_Lazenby_Charleston_transcript.txt",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_casenote:123",
+      "event_key": "casenote:123",
+      "timestamp": "2026-10-27T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "### Summary of Session\n\n* **Participant & Context:** Case management session conducted with client **Steven Lazenby** (age 36), currently in his third week of the program following release from incarceration (Stateville)",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Terrence Brown"
+    },
+    {
+      "id": "ms_casenote:64",
+      "event_key": "casenote:64",
+      "timestamp": "2026-10-20T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "The case manager and client conducted their first official case management session to review and build the client’s case plan. They discussed key focus areas, social skills, and actionable commitments aimed at avoiding p",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Terrence Brown"
+    },
+    {
+      "id": "ms_casenote:65",
+      "event_key": "casenote:65",
+      "timestamp": "2026-10-19T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Employment support – applications, resume, interview prep)",
+      "summary": "Created a resume with Stephen. Emailed it to him and printed him 4 copies.",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Daisy Boynton"
+    },
+    {
+      "id": "ms_casenote:66",
+      "event_key": "casenote:66",
+      "timestamp": "2026-09-28T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Case Note (documentation only) – no interaction or service)",
+      "summary": "Called him about being accepted into the program and start orientation, however I did not get an answer nor a call back.",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Terrence Brown"
+    },
+    {
+      "id": "ms_casenote:67",
+      "event_key": "casenote:67",
+      "timestamp": "2026-09-23T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Check-in conversation – brief status update)",
+      "summary": "He called asking about his place on the waitlist. I let him know he has moved up to 2nd (he was very excited) and that I'll keep him posted as he moves further up.",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Daisy Boynton"
+    },
+    {
+      "id": "ms_casenote:68",
+      "event_key": "casenote:68",
+      "timestamp": "2026-08-26T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Intake Appointment COMPLETED)",
+      "summary": "- Steven: Correct the spelling of the client's last name in the system to \"Lazenby.\"\n- Steven: Verify the client's residential address and ensure it is updated in the system to avoid parole violations.\n- Steven: Explore ",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Justin Evans"
+    },
+    {
+      "id": "ms_casenote:69",
+      "event_key": "casenote:69",
+      "timestamp": "2026-08-25T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Intake Appointment SCHEDULED)",
+      "summary": "Intake Appointment SCHEDULED",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Daisy Boynton"
+    }
+  ]
+}

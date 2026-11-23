@@ -1,0 +1,196 @@
+{
+  "participant_key": "Lokheim_Campbell",
+  "participant_name": "Lokheim Campbell",
+  "profile_records": [
+    {
+      "id": 36,
+      "user_id": 38,
+      "current_gate": 4,
+      "w9_status": "verified",
+      "dl_status": "suspended",
+      "dl_notes": "I need to get my license reinstated. I owe the Treasury department in Bennettsville SC for tags that were not turned in upon my incaraction. Right now I am catching a ride with a fellow turn90.",
+      "child_support_status": "none",
+      "child_support_notes": "Child support contact/enforcement reviewed",
+      "housing_status": "stable",
+      "substance_status": "none",
+      "mental_health_status": "none",
+      "transportation_status": "Personal Vehicle / Ride",
+      "court_dates": null,
+      "overall_status": "archived",
+      "termination_reason": null,
+      "termination_date": null,
+      "updated_at": "2026-09-23 11:52:26",
+      "stability_red_flags": "[{\"category\":\"Cognitive / Attitude\",\"flag\":\"Rationalization & Minimization of Firearm Possession\",\"evidence\":\"I feel the last case I feel I was defending myself, protecting myself. I was put in a bad situation and I'm protecting myself.\",\"severity\":\"high\",\"navigator_recommendation\":\"Adhere strictly to Turn90 Modeling Neutrality (Standard 1.5). Avoid debating or challenging the legal definition of self-defense. Use non-confrontational reflective questions and CBT cognitive restructuring (CBT Treatment Planner) to explore how carrying weapons under federal supervision creates an immediate risk to his primary self-interest (maintaining freedom and steady income).\"},{\"category\":\"Substance / Health\",\"flag\":\"Severe USP Prison Trauma & Hyper-Vigilant PTSD\",\"evidence\":\"I do suffer from PTSD due to me being in prison for so long... and in that environment, yes, I do suffer and I am afraid. And I do worry.\",\"severity\":\"high\",\"navigator_recommendation\":\"Utilize trauma-informed supportive coaching. Avoid authoritative, confrontational, or aggressive delivery styles which trigger USP survival defense mechanisms. Provide clear, predictable structures and involve him collaboratively in co-creating his transition schedule.\"},{\"category\":\"Stability Risk\",\"flag\":\"Severe Housing Transience & Transitional Status\",\"evidence\":\"Residing at Federal Halfway House in Columbia, SC; homeless outside institutional placement.\",\"severity\":\"high\",\"navigator_recommendation\":\"Prioritize long-term post-release housing placement prior to federal discharge (Dec 2026). Coordinate with Transitions Homeless Center and local supportive housing initiatives.\"},{\"category\":\"Stability Risk\",\"flag\":\"Driver's License Suspension & Missing Vital Identification\",\"evidence\":\"License SUSPENDED due to Treasury tags debt; lacks birth certificate preventing SCDMV license restoration.\",\"severity\":\"high\",\"navigator_recommendation\":\"Immediately connect Lokheim with Midlands Fatherhood Coalition and SC Legal Services for vital document retrieval (birth certificate) and SCDMV tag debt repayment/reinstatement counseling. Issue COMET bus passes for all immediate transportation.\"},{\"category\":\"Stability Risk\",\"flag\":\"Acute Unemployment & Unpracticed Workplace Competencies\",\"evidence\":\"Currently unemployed; 1 payroll month in the past year (temp shifts via Hire Quest); forced LS/CMI score of 0 on items 15-17.\",\"severity\":\"high\",\"navigator_recommendation\":\"Engage in CBT workplace role-plays focused on supervisor and coworker interactions. Match with first-shift, second-chance Columbia employers accessible via COMET transit lines.\"}]",
+      "director_override": 0,
+      "director_override_notes": null,
+      "director_override_by": null,
+      "reentry_status": "immediate_triage_needed",
+      "has_reentry_plan": 1,
+      "enrollment_date": "2026-08-17",
+      "correction_notes": null,
+      "supabase_id": "0f3f3355-9aaa-4d2f-b390-791462be3aac",
+      "record_id": null
+    }
+  ],
+  "case_plan_triggers": [],
+  "daily_points": [
+    {
+      "id": 59,
+      "user_id": 38,
+      "date": "2026-09-21",
+      "points_earned": 6,
+      "max_points": 50,
+      "attendance_status": "present",
+      "notes": "Imported via Render Report",
+      "imported_from_apricot": 1,
+      "created_at": "2026-09-22 17:44:36"
+    }
+  ],
+  "drug_tests": [
+    {
+      "id": 5,
+      "user_id": 38,
+      "test_date": "2026-09-22",
+      "result": "negative",
+      "substances_detected": null,
+      "notes": "Imported via Render Report",
+      "administered_by": null,
+      "created_at": "2026-09-22 17:43:35"
+    }
+  ],
+  "benefits": [
+    {
+      "id": 50,
+      "user_id": 38,
+      "benefit_type": "medicaid",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    },
+    {
+      "id": 51,
+      "user_id": 38,
+      "benefit_type": "snap",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    },
+    {
+      "id": 52,
+      "user_id": 38,
+      "benefit_type": "tanf",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    },
+    {
+      "id": 49,
+      "user_id": 38,
+      "benefit_type": "welvista",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-09-08 17:07:56"
+    }
+  ],
+  "resumes": [
+    {
+      "id": 6,
+      "user_id": 38,
+      "resume_data_json": "{\"skills\":\"Communications skills , management skills . work well with other , strength knowledge willing to learn\",\"summary\":\"I am 35 years old in good health. I have great communication skills. I can lift 75 pounds easily. I can operate a fork lift. I can follow directions as well as supervise. Fast learner. Hands on\",\"experience\":\"EZ Products I worked as a line operator and fork lift operator. Also I worked at Burger King as cashier and prepared food. I worked at McDonds while in high school\"}",
+      "updated_at": "2026-09-23 11:52:26"
+    }
+  ],
+  "db_documents": [
+    {
+      "id": 79,
+      "user_id": 38,
+      "doc_type": "case_brief",
+      "title": "Case Brief - Lokheim Campbell",
+      "filename": "Lokheim_Campbell_Case_Brief_1790194936172.pdf",
+      "file_path": "/data/Lokheim_Campbell_Case_Brief_1790194936172.pdf",
+      "file_size": 63166,
+      "status": "active",
+      "metadata_json": "{\"originalName\":\"4400_lokheim-campbell-transcript.pdf\"}",
+      "uploaded_at": "2026-09-23 20:22:16"
+    },
+    {
+      "id": 70,
+      "user_id": 38,
+      "doc_type": "case_brief",
+      "title": "Case Brief - Lokheim Campbell",
+      "filename": "Lokheim_Campbell_Case_Brief_1790193819171.pdf",
+      "file_path": "/data/Lokheim_Campbell_Case_Brief_1790193819171.pdf",
+      "file_size": 63166,
+      "status": "active",
+      "metadata_json": "{\"originalName\":\"4400_lokheim-campbell-transcript.pdf\"}",
+      "uploaded_at": "2026-09-23 20:03:39"
+    },
+    {
+      "id": 61,
+      "user_id": 38,
+      "doc_type": "case_brief",
+      "title": "Case Brief - Lokheim Campbell",
+      "filename": "Lokheim_Campbell_Case_Brief_1790193709724.pdf",
+      "file_path": "/data/Lokheim_Campbell_Case_Brief_1790193709724.pdf",
+      "file_size": 63166,
+      "status": "active",
+      "metadata_json": "{\"originalName\":\"4400_lokheim-campbell-transcript.pdf\"}",
+      "uploaded_at": "2026-09-23 20:01:49"
+    },
+    {
+      "id": 52,
+      "user_id": 38,
+      "doc_type": "case_brief",
+      "title": "Case Brief - Lokheim Campbell",
+      "filename": "Lokheim_Campbell_Case_Brief_1790193212293.pdf",
+      "file_path": "/data/Lokheim_Campbell_Case_Brief_1790193212293.pdf",
+      "file_size": 63166,
+      "status": "active",
+      "metadata_json": "{\"originalName\":\"4400_lokheim-campbell-transcript.pdf\"}",
+      "uploaded_at": "2026-09-23 19:53:32"
+    },
+    {
+      "id": 44,
+      "user_id": 38,
+      "doc_type": "case_brief",
+      "title": "Case Brief - Lokheim Campbell",
+      "filename": "Lokheim_Campbell_Case_Brief_1790192585833.pdf",
+      "file_path": "/data/Lokheim_Campbell_Case_Brief_1790192585833.pdf",
+      "file_size": 63166,
+      "status": "active",
+      "metadata_json": "{\"originalName\":\"4400_lokheim-campbell-transcript.pdf\"}",
+      "uploaded_at": "2026-09-23 19:43:05"
+    },
+    {
+      "id": 34,
+      "user_id": 38,
+      "doc_type": "case_brief",
+      "title": "Clinical Case Brief - Lokheim Campbell",
+      "filename": "Lokheim_Campbell_Case_Brief_1788826903385.pdf",
+      "file_path": "/data/Lokheim_Campbell_Case_Brief_1788826903385.pdf",
+      "file_size": 11358,
+      "status": "active",
+      "metadata_json": "{\"originalName\":\"4385_lokheim-campbell-case-brief-v2.pdf\"}",
+      "uploaded_at": "2026-09-08 00:21:43"
+    }
+  ],
+  "legacy_briefcase_items_count": 66,
+  "legacy_gate_criteria_count": 27,
+  "updated_at": "2026-11-23T13:46:28.441Z"
+}

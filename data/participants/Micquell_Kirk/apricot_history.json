@@ -1,0 +1,109 @@
+{
+  "participant_key": "Micquell_Kirk",
+  "participant_name": "Micquell Kirk",
+  "apricot_ids": [
+    "83051"
+  ],
+  "evaluations": [
+    {
+      "record_id": "83051",
+      "full_name": "Micquell Kirk",
+      "program": "Reentry Navigation",
+      "center": "Columbia",
+      "case_manager": "Daisy Boynton",
+      "case_plan_status": "Yes (Goals & Gates Active)",
+      "focus_areas_or_goals": "Find employment",
+      "briefcase_status_text": "Gate 1: 50%, Gate 2: 70%, Gate 3: 0%, Gate 4: 0%",
+      "gate1_pct": 50,
+      "gate2_pct": 70,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "case_note_analysis": "Enrolled 11/09/2026. Most recent contact on 11/18/2026 by Daisy Boynton (Employment support – applications, resume, interview prep): \"Sent Micquell the link to HoneyBaked for their season job openings. He said he applied and also plans to attend the SC Works job fair tomorrow (11/19) in Columbia. He has a resume he plans to print out.\"\n\n**Latest Case Note Updates:** [Update 11/18/2026 • Daisy Boynton]: Sent Micquell the link to HoneyBaked for their season job openings. He said he applied and also plans to attend the SC Works job fair tomorrow (11/19)  in Columbia. He has a resume he plans to print out. | [Update 11/17/2026 • Daisy Boynton]: Sent Micquell 2 more job fairs in Columbia. | [Update 11/09/2026 • Daisy Boynton]: Sent Micquell the info for the 2 job fairs coming up in Columbia (11/12 and 11/19). | [Update 11/09/2026 • Daisy Boynton]: **Contact Summary:** Completed initial Reentry Navigation consultation with Micquell Kirk for the Columbia center. Client expressed strong interest in the in-person 8-week program. Due to a current waitlist of 1+ months in Columbia, Micquell agreed to utilize Reentry Navigation services to seek immediate interim employment. Client is highly stable with no immediate barriers: he has a car, an active driver's license, stable housing, all vital documents, a high school diploma, and a completed resume. \n\n**Case Plan Goal Progress:** Initiated Reentry Navigation; established a primary goal of securing interim employment while awaiting a Turn90 cohort slot.\n\n**Briefcase & Gate 1-4 Updates:** Verified as COMPLETE (Green): State ID, Social Security Card, Birth Certificate, Driver's License, Transportation Plan (owns car), Housing Plan (stable apartment), and Resume Completed. \n\n**Referrals/Resources Provided:** Navigator agreed to text the client details for two upcoming job fairs in Columbia (this Thursday and next Thursday) along with other specific job openings that match his warehouse/retail experience.\n\n**Next Steps:** Send job fair and job opening text messages today. Follow up next week to review his job fair attendance and application progress. | [Update 11/06/2026 • Daisy Boynton]: ",
+      "operational_feedback": "Continue advancing Reentry Navigation Case Plan goals and Briefcase Gates 1–4 (Gate 1: 50%, Gate 2: 70%, Gate 3: 0%, Gate 4: 0%). Focus on barrier removal, employment readiness, and community resource referrals.",
+      "next_cm_steps_json": "[\"🎯 **Advance Stated Case Plan Goals:** Review progress on active Reentry Nav goals (Find employment) and verify concrete barrier-removal steps completed since last check-in.\",\"🔓 **Complete Remaining Gate 1 Items (50% done):** Target Explore healthcare options (Medicaid / Free Medical Clinic), Supervision information documented (County, Officer, Report Dates).\",\"🔓 **Advance Gate 2 Stability & Readiness (70% done):** Work on Probation / Legal Obligations aligned with work hours, DMV License Suspension check & reinstatement plan, Turn90 Resume completed.\",\"🩺 **Address Gate 3 Health & Banking Milestones (0% done):** Follow up on Primary Care / Medical checkup scheduled or cleared, Vision Appointment / screening, Steady access to daily prescriptions (Welvista).\",\"🚀 **Finalize Gate 4 Job Placement & Financial Readiness (0% done):** Complete Work Tools & Clothing (Steel-toe boots, non-slip shoes, work gear), Verified Daily Transportation Plan (Bus route, car, ride plan), Personal Budget completed.\",\"🔄 **Follow Up on Latest Session (11/18/2026 by Daisy Boynton):** Check accountability on items discussed (\\\"Sent Micquell the link to HoneyBaked for their season job openings. He said he applied and also plans to attend the SC Works job fair tomorr...\\\").\"]",
+      "recent_cm_notes_json": null,
+      "last_note_date": "2026-11-18",
+      "notes_count": 5,
+      "updated_at": "2026-11-22 17:36:06"
+    }
+  ],
+  "notes_count": 5,
+  "processed_notes": [
+    {
+      "id": 1090,
+      "record_id": "83051",
+      "first_name": "Micquell",
+      "last_name": "Kirk",
+      "activity_date": "2026-11-18",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Employment support – applications, resume, interview prep",
+      "note_text": "Sent Micquell the link to HoneyBaked for their season job openings. He said he applied and also plans to attend the SC Works job fair tomorrow (11/19)  in Columbia. He has a resume he plans to print out.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1089,
+      "record_id": "83051",
+      "first_name": "Micquell",
+      "last_name": "Kirk",
+      "activity_date": "2026-11-17",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Employment support – applications, resume, interview prep",
+      "note_text": "Sent Micquell 2 more job fairs in Columbia.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1088,
+      "record_id": "83051",
+      "first_name": "Micquell",
+      "last_name": "Kirk",
+      "activity_date": "2026-11-09",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Employment support – applications, resume, interview prep",
+      "note_text": "Sent Micquell the info for the 2 job fairs coming up in Columbia (11/12 and 11/19).",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1087,
+      "record_id": "83051",
+      "first_name": "Micquell",
+      "last_name": "Kirk",
+      "activity_date": "2026-11-09",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment COMPLETED",
+      "note_text": "**Contact Summary:** Completed initial Reentry Navigation consultation with Micquell Kirk for the Columbia center. Client expressed strong interest in the in-person 8-week program. Due to a current waitlist of 1+ months in Columbia, Micquell agreed to utilize Reentry Navigation services to seek immediate interim employment. Client is highly stable with no immediate barriers: he has a car, an active driver's license, stable housing, all vital documents, a high school diploma, and a completed resume. \n\n**Case Plan Goal Progress:** Initiated Reentry Navigation; established a primary goal of securing interim employment while awaiting a Turn90 cohort slot.\n\n**Briefcase & Gate 1-4 Updates:** Verified as COMPLETE (Green): State ID, Social Security Card, Birth Certificate, Driver's License, Transportation Plan (owns car), Housing Plan (stable apartment), and Resume Completed. \n\n**Referrals/Resources Provided:** Navigator agreed to text the client details for two upcoming job fairs in Columbia (this Thursday and next Thursday) along with other specific job openings that match his warehouse/retail experience.\n\n**Next Steps:** Send job fair and job opening text messages today. Follow up next week to review his job fair attendance and application progress.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1086,
+      "record_id": "83051",
+      "first_name": "Micquell",
+      "last_name": "Kirk",
+      "activity_date": "2026-11-06",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment SCHEDULED",
+      "note_text": "",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "updated_at": "2026-11-23T13:46:29.496Z"
+}

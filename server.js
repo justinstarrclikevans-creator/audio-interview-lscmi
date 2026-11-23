@@ -29,6 +29,18 @@ const { analyzeReentrySession } = require('./services/reentry_session_analyzer')
 const { runPhase1, runPhase1WithAudio, runPhase2, adjustActionPlan, safeJsonParse } = require('./llm_pipeline');
 const { convertSingleMdToPdf } = require('./convert_md_to_pdf');
 const { convertSingleMdToDocx } = require('./convert_md_to_docx');
+const {
+    UNIFIED_BRIEFCASE_SCHEMA,
+    sanitizeParticipantSlug,
+    resolveCanonicalSlug,
+    invalidateFolderIndexCache,
+    appendParticipantHistoryEvent,
+    archiveParticipantDocumentVersion,
+    saveParticipantEditableDocument,
+    syncAllParticipantFolders,
+    getParticipantFolderBundle,
+    updateParticipantUnifiedBriefcase
+} = require('./services/participant_folder_manager');
 const { evaluateClassTranscript, evaluateClassMedia, regenerateClassEvaluation, formatStaffFeedbackMarkdown } = require('./facilitation_evaluator');
 const { evaluateCaseManagementMedia } = require('./cm_evaluator');
 const { 
@@ -104,6 +116,53 @@ if (!fs.existsSync(dataDir)) {
     fs.mkdirSync(dataDir, { recursive: true });
 }
 app.use('/data', express.static(dataDir));
+
+function resolveDocumentFilePath(filename) {
+    if (!filename || filename === 'undefined' || filename === 'null' || filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
+        return null;
+    }
+    const baseDirs = [dataDir, path.join(__dirname, 'manuals'), path.join(__dirname, '..')];
+    for (const dir of baseDirs) {
+        const candidate = path.join(dir, filename);
+        if (fs.existsSync(candidate) && fs.statSync(candidate).isFile()) return candidate;
+    }
+    const lower = filename.toLowerCase();
+    for (const dir of baseDirs) {
+        if (!fs.existsSync(dir)) continue;
+        const match = fs.readdirSync(dir).find(f => f.toLowerCase() === lower);
+        if (match) {
+            const p = path.join(dir, match);
+            if (fs.existsSync(p) && fs.statSync(p).isFile()) return p;
+        }
+    }
+    const pRoot = path.join(dataDir, 'participants');
+    if (fs.existsSync(pRoot)) {
+        for (const slugDir of fs.readdirSync(pRoot)) {
+            for (const sub of ['documents', 'history']) {
+                const subDir = path.join(pRoot, slugDir, sub);
+                if (!fs.existsSync(subDir)) continue;
+                const direct = path.join(subDir, filename);
+                if (fs.existsSync(direct) && fs.statSync(direct).isFile()) return direct;
+                const insMatch = fs.readdirSync(subDir).find(f => f.toLowerCase() === lower);
+                if (insMatch) {
+                    const p = path.join(subDir, insMatch);
+                    if (fs.existsSync(p) && fs.statSync(p).isFile()) return p;
+                }
+            }
+        }
+    }
+    return null;
+}
+
+function copyFileIntoParticipantDocuments(participantName, sourceFilePath) {
+    try {
+        if (!sourceFilePath || !fs.existsSync(sourceFilePath)) return;
+        const slug = resolveCanonicalSlug(participantName);
+        const docsDir = path.join(dataDir, 'participants', slug, 'documents');
+        if (!fs.existsSync(docsDir)) fs.mkdirSync(docsDir, { recursive: true });
+        fs.copyFileSync(sourceFilePath, path.join(docsDir, path.basename(sourceFilePath)));
+    } catch (e) {}
+}
 
 // Storage configurations
 const memoryUpload = multer({ storage: multer.memoryStorage() });
@@ -663,6 +722,17 @@ app.post('/api/participant/benefits', authenticateToken, (req, res) => {
             INSERT INTO case_notes (user_id, author_name, note_type, category, content)
             VALUES (?, ?, 'Individual Session', 'Barriers & Stability', ?)
         `).run(targetUserId, req.user.name || 'Participant Self-Service', noteDetail.trim());
+        const targetUserRow = db.prepare('SELECT name FROM users WHERE id = ?').get(targetUserId);
+        if (targetUserRow && targetUserRow.name) {
+            appendParticipantHistoryEvent(targetUserRow.name, {
+                category: 'benefits',
+                action: `${progName} Updated (${safeStatus.toUpperCase()})`,
+                summary: noteDetail.trim(),
+                filename: 'program_records.json',
+                actor: req.user.name || 'Participant Self-Service'
+            });
+            invalidateFolderIndexCache();
+        }
     } catch(e) {
         console.error('Failed to log benefit case note:', e);
     }
@@ -992,6 +1062,21 @@ app.post('/api/pm/notes', authenticateToken, requireRole('program_manager', 'adm
         INSERT INTO case_notes (user_id, author_id, author_name, session_date, note_type, category, content)
         VALUES (?, ?, ?, ?, ?, ?, ?)
     `).run(userId, req.user.id, authorName, date, noteType || 'Individual Session', category || 'Case Management', content);
+
+    try {
+        const targetUserRow = db.prepare('SELECT name FROM users WHERE id = ?').get(userId);
+        if (targetUserRow && targetUserRow.name) {
+            appendParticipantHistoryEvent(targetUserRow.name, {
+                timestamp: new Date(date).toISOString(),
+                category: 'case_note',
+                action: `Case Note (${noteType || 'Individual Session'})`,
+                summary: String(content).slice(0, 220),
+                filename: 'case_management_notes.json',
+                actor: authorName
+            });
+            invalidateFolderIndexCache();
+        }
+    } catch (e) {}
 
     res.json({ message: 'Case note successfully saved.' });
 });
@@ -1429,6 +1514,19 @@ app.post('/api/pm/participant-correction', authenticateToken, requireRole('progr
             INSERT INTO case_notes (user_id, author_id, author_name, session_date, note_type, category, content)
             VALUES (?, ?, ?, DATE('now'), 'Record Correction', 'Information Correction', ?)
         `).run(userId, req.user.id, req.user.name || 'Program Manager', `[Staff Record Correction]: ${correctionNotes}`);
+        try {
+            const targetUserRow = db.prepare('SELECT name FROM users WHERE id = ?').get(userId);
+            if (targetUserRow && targetUserRow.name) {
+                appendParticipantHistoryEvent(targetUserRow.name, {
+                    category: 'case_note',
+                    action: 'Staff Record Correction',
+                    summary: String(correctionNotes).slice(0, 220),
+                    filename: 'case_management_notes.json',
+                    actor: req.user.name || 'Program Manager'
+                });
+                invalidateFolderIndexCache();
+            }
+        } catch (e) {}
     }
 
     res.json({ message: 'Participant record and correction notes updated successfully.' });
@@ -1700,26 +1798,7 @@ app.get('/api/file-content', (req, res) => {
         return res.status(400).json({ error: 'Invalid filename requested.' });
     }
 
-    let filePath = path.join(dataDir, filename);
-    if (!fs.existsSync(filePath)) {
-        filePath = path.join(__dirname, 'manuals', filename);
-    }
-    if (!fs.existsSync(filePath)) {
-        filePath = path.join(__dirname, '..', filename);
-    }
-    if (!fs.existsSync(filePath)) {
-        // Case-insensitive lookup fallback for Linux/Render environments
-        const findInsensitive = (dir, target) => {
-            if (!fs.existsSync(dir)) return null;
-            const dirFiles = fs.readdirSync(dir);
-            const match = dirFiles.find(f => f.toLowerCase() === target.toLowerCase());
-            return match ? path.join(dir, match) : null;
-        };
-        filePath = findInsensitive(dataDir, filename) || 
-                   findInsensitive(path.join(__dirname, 'manuals'), filename) ||
-                   findInsensitive(path.join(__dirname, '..'), filename);
-    }
-
+    const filePath = resolveDocumentFilePath(filename);
     if (!filePath || !fs.existsSync(filePath)) {
         return res.status(404).json({ error: `File "${filename}" not found.` });
     }
@@ -1746,14 +1825,8 @@ app.get('/api/documents/raw/:filename', (req, res) => {
     if (!filename || filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
         return res.status(400).json({ error: 'Invalid filename' });
     }
-    let filePath = path.join(dataDir, filename);
-    if (!fs.existsSync(filePath)) {
-        filePath = path.join(__dirname, 'manuals', filename);
-    }
-    if (!fs.existsSync(filePath)) {
-        filePath = path.join(__dirname, '..', filename);
-    }
-    if (!fs.existsSync(filePath)) {
+    const filePath = resolveDocumentFilePath(filename);
+    if (!filePath) {
         return res.status(404).json({ error: 'File not found' });
     }
 
@@ -2742,11 +2815,8 @@ app.get('/api/documents/print/:filename', (req, res) => {
     if (!filename || filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
         return res.status(400).send('Invalid filename');
     }
-    let filePath = path.join(dataDir, filename);
-    if (!fs.existsSync(filePath)) {
-        filePath = path.join(__dirname, 'manuals', filename);
-    }
-    if (!fs.existsSync(filePath)) {
+    const filePath = resolveDocumentFilePath(filename);
+    if (!filePath) {
         return res.status(404).send('Document file not found');
     }
 
@@ -3209,6 +3279,30 @@ app.post('/api/interviews/manual-entry', memoryUpload.single('audio'), async (re
             fs.writeFileSync(path.join(dataDir, `${clientId}_transcript.txt`), transcriptText);
         }
 
+        // Sync manual entry artifacts into participant folder & log history
+        try {
+            const slug = resolveCanonicalSlug(cleanName);
+            const pDir = path.join(dataDir, 'participants', slug);
+            if (!fs.existsSync(pDir)) fs.mkdirSync(pDir, { recursive: true });
+            for (const extSuf of ['_transcript.txt', '_interview_guide.md', '_interview_guide.pdf', '_interview_guide.docx', '_draft_scoring_form.md', '_draft_scoring_form.pdf', '_draft_scoring_form.docx']) {
+                copyFileIntoParticipantDocuments(cleanName, path.join(dataDir, `${clientId}${extSuf}`));
+            }
+            if (results && results.draft_scoring_form) {
+                fs.writeFileSync(path.join(pDir, 'lscmi_scoring.md'), results.draft_scoring_form);
+            }
+            if (transcriptText) {
+                fs.writeFileSync(path.join(pDir, 'lscmi_transcript.txt'), transcriptText);
+            }
+            appendParticipantHistoryEvent(cleanName, {
+                category: 'intake_interview',
+                action: results ? 'Intake Interview & Draft Generated' : 'Intake Transcript Saved',
+                summary: `Manual/uploaded intake saved for ${cleanName} (${location}).`,
+                filename: `${clientId}_transcript.txt`,
+                actor: 'Turn90 Staff'
+            });
+            invalidateFolderIndexCache();
+        } catch (syncErr) {}
+
         res.json({
             success: true,
             clientId,
@@ -3279,13 +3373,38 @@ app.post('/api/interviews/generate-draft', async (req, res) => {
             headerMeta
         );
 
+        if (fs.existsSync(guidePath)) {
+            archiveParticipantDocumentVersion(name, { docType: 'interview_guide', filename: `${clientId}_interview_guide.md`, sourcePath: guidePath, summary: 'Archived prior Interview Guide before AI re-score', actor: 'Supervisor' });
+        }
+        if (fs.existsSync(draftPath)) {
+            archiveParticipantDocumentVersion(name, { docType: 'draft_scoring', filename: `${clientId}_draft_scoring_form.md`, sourcePath: draftPath, summary: 'Archived prior Draft Scoring Form before AI re-score', actor: 'Supervisor' });
+        }
+
         fs.writeFileSync(guidePath, finalGuide);
         fs.writeFileSync(draftPath, finalDraft);
 
-        convertSingleMdToPdf(guidePath, guidePath.replace(/\.md$/, '.pdf'));
-        convertSingleMdToPdf(draftPath, draftPath.replace(/\.md$/, '.pdf'));
-        convertSingleMdToDocx(guidePath, guidePath.replace(/\.md$/, '.docx'));
-        convertSingleMdToDocx(draftPath, draftPath.replace(/\.md$/, '.docx'));
+        await Promise.resolve(convertSingleMdToPdf(guidePath, guidePath.replace(/\.md$/, '.pdf')));
+        await Promise.resolve(convertSingleMdToPdf(draftPath, draftPath.replace(/\.md$/, '.pdf')));
+        await Promise.resolve(convertSingleMdToDocx(guidePath, guidePath.replace(/\.md$/, '.docx')));
+        await Promise.resolve(convertSingleMdToDocx(draftPath, draftPath.replace(/\.md$/, '.docx')));
+
+        try {
+            const slug = resolveCanonicalSlug(name);
+            const pDir = path.join(dataDir, 'participants', slug);
+            if (!fs.existsSync(pDir)) fs.mkdirSync(pDir, { recursive: true });
+            fs.writeFileSync(path.join(pDir, 'lscmi_scoring.md'), finalDraft);
+            for (const fPath of [guidePath, draftPath, guidePath.replace(/\.md$/, '.pdf'), draftPath.replace(/\.md$/, '.pdf'), guidePath.replace(/\.md$/, '.docx'), draftPath.replace(/\.md$/, '.docx')]) {
+                copyFileIntoParticipantDocuments(name, fPath);
+            }
+            appendParticipantHistoryEvent(name, {
+                category: 'lscmi_phase1',
+                action: 'Phase 1 AI Scoring Draft Generated',
+                summary: `Generated updated Phase 1 scoring draft and interview guide (${clientId}).`,
+                filename: `${clientId}_draft_scoring_form.md`,
+                actor: 'Turn90 AI Scorer'
+            });
+            invalidateFolderIndexCache();
+        } catch (syncErr) {}
 
         // Clean up any old error file
         const errFile = path.join(dataDir, `${clientId}_error.txt`);
@@ -3771,25 +3890,37 @@ app.post('/api/submit-feedback', memoryUpload.single('criminalHistoryFile'), asy
         const participantPlanPath = path.join(dataDir, `${clientId}_participant_case_plan.md`);
 
         if (results.final_scoring_form) {
+            if (fs.existsSync(finalScoringPath)) {
+                archiveParticipantDocumentVersion(participantName, { docType: 'final_scoring', filename: `${clientId}_final_scoring_form.md`, sourcePath: finalScoringPath, summary: 'Archived prior version before Phase 2 update', actor: 'Supervisor' });
+            }
             fs.writeFileSync(finalScoringPath, results.final_scoring_form);
-            convertSingleMdToPdf(finalScoringPath, finalScoringPath.replace(/\.md$/, '.pdf'));
-            convertSingleMdToDocx(finalScoringPath, finalScoringPath.replace(/\.md$/, '.docx'));
+            await Promise.resolve(convertSingleMdToPdf(finalScoringPath, finalScoringPath.replace(/\.md$/, '.pdf')));
+            await Promise.resolve(convertSingleMdToDocx(finalScoringPath, finalScoringPath.replace(/\.md$/, '.docx')));
         }
         if (results.case_brief) {
+            if (fs.existsSync(finalBriefPath)) {
+                archiveParticipantDocumentVersion(participantName, { docType: 'brief', filename: `${clientId}_final_case_brief.md`, sourcePath: finalBriefPath, summary: 'Archived prior version before Phase 2 update', actor: 'Supervisor' });
+            }
             fs.writeFileSync(finalBriefPath, results.case_brief);
-            convertSingleMdToPdf(finalBriefPath, finalBriefPath.replace(/\.md$/, '.pdf'));
-            convertSingleMdToDocx(finalBriefPath, finalBriefPath.replace(/\.md$/, '.docx'));
+            await Promise.resolve(convertSingleMdToPdf(finalBriefPath, finalBriefPath.replace(/\.md$/, '.pdf')));
+            await Promise.resolve(convertSingleMdToDocx(finalBriefPath, finalBriefPath.replace(/\.md$/, '.docx')));
         }
         if (results.participant_case_plan) {
+            if (fs.existsSync(participantPlanPath)) {
+                archiveParticipantDocumentVersion(participantName, { docType: 'action_plan', filename: `${clientId}_participant_case_plan.md`, sourcePath: participantPlanPath, summary: 'Archived prior version before Phase 2 update', actor: 'Supervisor' });
+            }
             fs.writeFileSync(participantPlanPath, results.participant_case_plan);
-            convertSingleMdToPdf(participantPlanPath, participantPlanPath.replace(/\.md$/, '.pdf'));
-            convertSingleMdToDocx(participantPlanPath, participantPlanPath.replace(/\.md$/, '.docx'));
+            await Promise.resolve(convertSingleMdToPdf(participantPlanPath, participantPlanPath.replace(/\.md$/, '.pdf')));
+            await Promise.resolve(convertSingleMdToDocx(participantPlanPath, participantPlanPath.replace(/\.md$/, '.docx')));
         }
 
         // Generate / Update Official Criminal History Record if background text/file was submitted or if missing
         const crimPath = path.join(dataDir, `${clientId}_criminal_history.md`);
         if ((crimText && crimText.trim()) || !fs.existsSync(crimPath)) {
             try {
+                if (fs.existsSync(crimPath)) {
+                    archiveParticipantDocumentVersion(participantName, { docType: 'criminal_history', filename: `${clientId}_criminal_history.md`, sourcePath: crimPath, summary: 'Archived prior Criminal History before Phase 2 update', actor: 'Supervisor' });
+                }
                 const { buildCriminalHistoryMd, WEEKLY_INTERVIEW_PROFILES } = require('./generate_weekly_consultation_lscmi_packets');
                 const matchedProfile = WEEKLY_INTERVIEW_PROFILES.find(wp => wp.clientId === clientId || wp.fullName.toLowerCase() === participantName.toLowerCase());
                 if (matchedProfile) {
@@ -3802,8 +3933,8 @@ app.post('/api/submit-feedback', memoryUpload.single('criminalHistoryFile'), asy
                         : `# Official Criminal History & Charge Disposition Report\n\n**Participant:** ${participantName}\n\n---\n\n## Official Uploaded Background Check & Court Records\n\n\`\`\`text\n${crimText.trim()}\n\`\`\`\n`;
                     fs.writeFileSync(crimPath, updatedCrim, 'utf8');
                 }
-                convertSingleMdToDocx(crimPath, crimPath.replace(/\.md$/, '.docx'));
-                convertSingleMdToPdf(crimPath, crimPath.replace(/\.md$/, '.pdf'));
+                await Promise.resolve(convertSingleMdToDocx(crimPath, crimPath.replace(/\.md$/, '.docx')));
+                await Promise.resolve(convertSingleMdToPdf(crimPath, crimPath.replace(/\.md$/, '.pdf')));
             } catch (crimErr) {
                 console.warn('Could not auto-generate criminal history during submit-feedback:', crimErr.message);
             }
@@ -3881,6 +4012,29 @@ app.post('/api/submit-feedback', memoryUpload.single('criminalHistoryFile'), asy
             }
         }
 
+        // Sync generated Phase 2 artifacts into participant folder & log history
+        try {
+            const slug = resolveCanonicalSlug(participantName);
+            const pDir = path.join(dataDir, 'participants', slug);
+            if (!fs.existsSync(pDir)) fs.mkdirSync(pDir, { recursive: true });
+            if (results.case_brief) fs.writeFileSync(path.join(pDir, 'lscmi_brief.md'), results.case_brief);
+            if (results.final_scoring_form) fs.writeFileSync(path.join(pDir, 'lscmi_scoring.md'), results.final_scoring_form);
+            if (results.participant_case_plan) fs.writeFileSync(path.join(pDir, 'action_plan.md'), results.participant_case_plan);
+            for (const baseP of [finalScoringPath, finalBriefPath, participantPlanPath, crimPath]) {
+                copyFileIntoParticipantDocuments(participantName, baseP);
+                copyFileIntoParticipantDocuments(participantName, baseP.replace(/\.md$/, '.pdf'));
+                copyFileIntoParticipantDocuments(participantName, baseP.replace(/\.md$/, '.docx'));
+            }
+            appendParticipantHistoryEvent(participantName, {
+                category: 'lscmi_phase2',
+                action: 'Phase 2 Approved & Generated',
+                summary: `Generated final scoring form, case brief & action plan. Feedback: ${String(feedback || 'Approved as drafted').slice(0, 220)}`,
+                filename: `${clientId}_final_case_brief.md`,
+                actor: 'Supervisor'
+            });
+            invalidateFolderIndexCache();
+        } catch (syncErr) {}
+
         console.log(`Phase 2 complete for ${participantName} (${clientId})`);
         res.status(200).json({
             success: true,
@@ -3918,6 +4072,15 @@ app.post('/api/interviews/generate-criminal-history', memoryUpload.single('crimi
         const { buildCriminalHistoryMd, WEEKLY_INTERVIEW_PROFILES } = require('./generate_weekly_consultation_lscmi_packets');
         const matchedProfile = WEEKLY_INTERVIEW_PROFILES.find(wp => wp.clientId === clientId || wp.fullName.toLowerCase() === participantName.toLowerCase());
         const crimPath = path.join(dataDir, `${clientId}_criminal_history.md`);
+        if (fs.existsSync(crimPath)) {
+            archiveParticipantDocumentVersion(participantName, {
+                docType: 'criminal_history',
+                filename: `${clientId}_criminal_history.md`,
+                sourcePath: crimPath,
+                summary: 'Archived prior Criminal History before regeneration',
+                actor: 'Supervisor'
+            });
+        }
 
         if (matchedProfile) {
             const md = buildCriminalHistoryMd(matchedProfile, crimText);
@@ -3953,7 +4116,21 @@ app.post('/api/interviews/generate-criminal-history', memoryUpload.single('crimi
         }
 
         await convertSingleMdToDocx(crimPath, crimPath.replace(/\.md$/, '.docx'));
-        convertSingleMdToPdf(crimPath, crimPath.replace(/\.md$/, '.pdf'));
+        await Promise.resolve(convertSingleMdToPdf(crimPath, crimPath.replace(/\.md$/, '.pdf')));
+
+        try {
+            copyFileIntoParticipantDocuments(participantName, crimPath);
+            copyFileIntoParticipantDocuments(participantName, crimPath.replace(/\.md$/, '.docx'));
+            copyFileIntoParticipantDocuments(participantName, crimPath.replace(/\.md$/, '.pdf'));
+            appendParticipantHistoryEvent(participantName, {
+                category: 'criminal_history',
+                action: 'Criminal History Report Generated',
+                summary: `Generated chronological criminal history record (${clientId}_criminal_history.md).`,
+                filename: `${clientId}_criminal_history.md`,
+                actor: 'Supervisor'
+            });
+            invalidateFolderIndexCache();
+        } catch (syncErr) {}
 
         res.json({
             success: true,
@@ -4026,16 +4203,44 @@ app.post('/api/adjust-action-plan', memoryUpload.none(), async (req, res) => {
             throw new Error("AI did not return a valid participant action plan.");
         }
 
+        if (fs.existsSync(existingPlanPath)) {
+            archiveParticipantDocumentVersion(participantName, {
+                docType: 'action_plan',
+                filename: planFileName,
+                sourcePath: existingPlanPath,
+                summary: 'Archived prior Action Plan before AI adjustment',
+                actor: 'Supervisor'
+            });
+        }
+
         fs.writeFileSync(existingPlanPath, result.participant_case_plan);
         const pdfPath = existingPlanPath.replace(/\.md$/, '.pdf');
         const docxPath = existingPlanPath.replace(/\.md$/, '.docx');
 
         try {
-            convertSingleMdToPdf(existingPlanPath, pdfPath);
-            convertSingleMdToDocx(existingPlanPath, docxPath);
+            await Promise.resolve(convertSingleMdToPdf(existingPlanPath, pdfPath));
+            await Promise.resolve(convertSingleMdToDocx(existingPlanPath, docxPath));
         } catch (convErr) {
             console.warn("[Action Plan Adjustment] Document conversion warning:", convErr.message);
         }
+
+        try {
+            const slug = resolveCanonicalSlug(participantName);
+            const pDir = path.join(dataDir, 'participants', slug);
+            if (!fs.existsSync(pDir)) fs.mkdirSync(pDir, { recursive: true });
+            fs.writeFileSync(path.join(pDir, 'action_plan.md'), result.participant_case_plan);
+            copyFileIntoParticipantDocuments(participantName, existingPlanPath);
+            copyFileIntoParticipantDocuments(participantName, pdfPath);
+            copyFileIntoParticipantDocuments(participantName, docxPath);
+            appendParticipantHistoryEvent(participantName, {
+                category: 'action_plan_adjustment',
+                action: 'Action Plan Adjusted (AI)',
+                summary: `Feedback: ${feedback.slice(0, 220)}`,
+                filename: planFileName,
+                actor: 'Supervisor'
+            });
+            invalidateFolderIndexCache();
+        } catch (syncErr) {}
 
         res.status(200).json({
             success: true,
@@ -4912,6 +5117,20 @@ app.post('/api/reentry/clients/:id/upload-session', authenticateToken, requireRo
             }
         }
 
+        try {
+            const fullName = `${client.first_name || ''} ${client.last_name || ''}`.trim();
+            if (fullName) {
+                appendParticipantHistoryEvent(fullName, {
+                    category: 'reentry_session',
+                    action: `Reentry Session: ${sessionTitle || 'Check-in'}`,
+                    summary: String(rawContent || aiResult.next_conversation_agenda || '').slice(0, 220),
+                    filename: 'reentry_history.json',
+                    actor: 'Reentry Navigator'
+                });
+                invalidateFolderIndexCache();
+            }
+        } catch (e) {}
+
         res.json({
             success: true,
             sessionId: newSessionId,
@@ -4951,6 +5170,19 @@ app.post('/api/reentry/clients/:id/goals', authenticateToken, requireRole('navig
         );
 
         db.prepare('UPDATE reentry_clients SET updated_at = CURRENT_TIMESTAMP WHERE id = ?').run(clientId);
+        try {
+            const rc = db.prepare('SELECT first_name, last_name FROM reentry_clients WHERE id = ?').get(clientId);
+            if (rc) {
+                appendParticipantHistoryEvent(`${rc.first_name} ${rc.last_name}`, {
+                    category: 'reentry_goal',
+                    action: `Added Reentry Goal: ${goal_title.trim()}`,
+                    summary: `Category: ${category || 'general'} | Target: ${target_date || 'Open'}`,
+                    filename: 'reentry_history.json',
+                    actor: req.user?.name || 'Reentry Navigator'
+                });
+                invalidateFolderIndexCache();
+            }
+        } catch (e) {}
         res.status(201).json({ success: true, goalId: result.lastInsertRowid });
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -5472,7 +5704,21 @@ app.post('/api/upload-audio', memoryUpload.single('audio'), async (req, res) => 
                     deduplicateAndEnsureScoringHeaders(dataDir);
                 } catch (dedupErr) { /* ignore */ }
                 try {
-                    syncAllParticipantFolders();
+                    for (const extFile of [
+                        `${filePrefix}_transcript.txt`,
+                        `${filePrefix}_interview_guide.md`,
+                        `${filePrefix}_draft_scoring_form.md`
+                    ]) {
+                        copyFileIntoParticipantDocuments(name, path.join(dataDir, extFile));
+                    }
+                    appendParticipantHistoryEvent(name, {
+                        category: 'intake_interview',
+                        action: 'Phase 1 Audio Intake & AI Draft Generated',
+                        summary: `Audio intake (${answers158.length}/158 checklist items, ${flaggedDiscrepancies.length} background check flags logged).`,
+                        filename: `${filePrefix}_draft_scoring_form.md`,
+                        actor: 'Turn90 AI Scorer'
+                    });
+                    syncAllParticipantFolders({ force: true });
                 } catch (syncErr) { /* ignore */ }
                 console.log(`LLM Phase 1 finished for ${name}. Pending review.`);
             } catch (llmErr) {
@@ -5481,7 +5727,15 @@ app.post('/api/upload-audio', memoryUpload.single('audio'), async (req, res) => 
             }
         } else {
             try {
-                syncAllParticipantFolders();
+                copyFileIntoParticipantDocuments(name, path.join(dataDir, `${filePrefix}_transcript.txt`));
+                appendParticipantHistoryEvent(name, {
+                    category: 'intake_interview',
+                    action: 'Recorded Intake Uploaded',
+                    summary: `Live intake recording saved (${answers158.length}/158 checklist items).`,
+                    filename: `${filePrefix}_transcript.txt`,
+                    actor: 'Turn90 Intake'
+                });
+                syncAllParticipantFolders({ force: true });
             } catch (syncErr) { /* ignore */ }
             console.warn("GEMINI_API_KEY not found. Skipping LLM pipeline.");
             fs.writeFileSync(path.join(dataDir, `${filePrefix}_error.txt`), `Failed: GEMINI_API_KEY is missing from environment variables.`);
@@ -8104,34 +8358,72 @@ app.post('/api/participant/habit', authenticateToken, (req, res) => {
 // SCREENING CONSULTATION, VOICE RECOGNITION & COMBINED SUPERVISION REPORT APIs
 // ============================================================================
 const {
-    UNIFIED_BRIEFCASE_SCHEMA,
-    sanitizeParticipantSlug,
-    syncAllParticipantFolders,
-    getParticipantFolderBundle,
-    updateParticipantUnifiedBriefcase
-} = require('./services/participant_folder_manager');
-const {
     generateDynamicLscmiNextQuestion,
     evaluateLive158QuestionTurn,
     buildConsultationAnchorSummary
 } = require('./llm_pipeline');
 const { CM_SESSION_TEMPLATE } = require('./cm_evaluator');
 
-// 1. Per-Participant Folders & Caseload Evaluations
+// 1. Per-Participant Folders, Historical Archive & Search Portal APIs
 app.get('/api/participants/folders', (req, res) => {
     try {
+        const forceRefresh = req.query.refresh === '1' || req.query.refresh === 'true';
+        const q = (req.query.q || '').trim().toLowerCase();
         const locationFilter = (req.query.location || '').trim().toLowerCase();
         const trackFilter = (req.query.track || '').trim().toLowerCase();
-        let list = syncAllParticipantFolders();
+        const docFilter = (req.query.filter || 'all').trim().toLowerCase();
+
+        const allParticipants = syncAllParticipantFolders({ force: forceRefresh });
+        let list = allParticipants;
+
         if (locationFilter && locationFilter !== 'all' && locationFilter !== 'statewide') {
             list = list.filter(p => String(p.location || '').toLowerCase().includes(locationFilter));
         }
         if (trackFilter && trackFilter !== 'all') {
             list = list.filter(p => String(p.track || '').toLowerCase().includes(trackFilter));
         }
+        if (q) {
+            list = list.filter(p => {
+                const hay = [
+                    p.name,
+                    p.participant_key,
+                    p.location,
+                    p.apricot_id,
+                    p.phone,
+                    p.email,
+                    p.lscmi_client_id
+                ].filter(Boolean).join(' ').toLowerCase();
+                return hay.includes(q);
+            });
+        }
+        if (docFilter && docFilter !== 'all') {
+            if (docFilter === 'has_brief') list = list.filter(p => p.has_lscmi_brief);
+            else if (docFilter === 'has_action_plan') list = list.filter(p => p.has_action_plan);
+            else if (docFilter === 'has_scoring') list = list.filter(p => p.has_lscmi_scoring);
+            else if (docFilter === 'has_legacy_briefs') list = list.filter(p => p.has_legacy_case_briefs);
+            else if (docFilter === 'waitlist_ready') list = list.filter(p => p.waitlist_ready);
+            else if (docFilter === 'needs_waitlist') list = list.filter(p => !p.waitlist_ready);
+        }
+
         res.json({
-            total: list.length,
+            total: allParticipants.length,
+            filtered_total: list.length,
+            synced_at: new Date().toISOString(),
             participants: list
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/participants/folders/sync', (req, res) => {
+    try {
+        const participants = syncAllParticipantFolders({ force: true });
+        res.json({
+            success: true,
+            total: participants.length,
+            synced_at: new Date().toISOString(),
+            participants
         });
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -8145,6 +8437,148 @@ app.get('/api/participants/folder/:slug', (req, res) => {
             return res.status(404).json({ error: 'Participant folder not found.' });
         }
         res.json(bundle);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.get('/api/participants/folder/:slug/file/:scope/:filename', (req, res) => {
+    try {
+        const { scope, filename } = req.params;
+        if (!['documents', 'history', 'root'].includes(scope)) {
+            return res.status(400).json({ error: 'Invalid folder file scope.' });
+        }
+        if (!filename || filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
+            return res.status(400).json({ error: 'Invalid filename requested.' });
+        }
+        const canonicalSlug = resolveCanonicalSlug(req.params.slug);
+        const pDir = path.join(dataDir, 'participants', canonicalSlug);
+        const baseDir = scope === 'root' ? pDir : path.join(pDir, scope);
+        const resolvedBase = path.resolve(baseDir);
+        const resolvedFile = path.resolve(path.join(baseDir, filename));
+        if (!resolvedFile.startsWith(resolvedBase + path.sep) || !fs.existsSync(resolvedFile) || !fs.statSync(resolvedFile).isFile()) {
+            return res.status(404).json({ error: `File "${filename}" not found in folder.` });
+        }
+
+        if (req.query.format === 'json') {
+            const content = fs.readFileSync(resolvedFile, 'utf8');
+            return res.json({ content, filename, scope, slug: canonicalSlug });
+        }
+
+        if (req.query.print === '1' || req.query.print === 'true') {
+            if (!filename.toLowerCase().endsWith('.pdf')) {
+                const content = fs.readFileSync(resolvedFile, 'utf8');
+                const docHtml = buildPrintableDocumentHtml(filename, content);
+                const title = filename.replace(/\.(md|txt|json)$/i, '').replace(/_/g, ' ');
+                return res.send(buildPrintablePageHtml(title, docHtml, req.query.autoprint === 'true'));
+            }
+        }
+
+        let contentType = 'application/octet-stream';
+        const low = filename.toLowerCase();
+        if (low.endsWith('.pdf')) contentType = 'application/pdf';
+        else if (low.endsWith('.docx')) contentType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+        else if (low.endsWith('.json')) contentType = 'application/json; charset=utf-8';
+        else if (low.endsWith('.md') || low.endsWith('.txt')) contentType = 'text/plain; charset=utf-8';
+
+        const isDownload = req.query.download === '1' || req.query.download === 'true';
+        res.setHeader('Content-Type', contentType);
+        res.setHeader('Content-Disposition', `${isDownload ? 'attachment' : 'inline'}; filename="${filename}"`);
+        fs.createReadStream(resolvedFile).pipe(res);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.post('/api/participants/folder/:slug/save-document', async (req, res) => {
+    try {
+        const { docType, content, reason, actor } = req.body || {};
+        const saved = saveParticipantEditableDocument(req.params.slug, {
+            docType,
+            content,
+            reason: reason || '',
+            actor: actor || 'Turn90 Staff'
+        });
+
+        try {
+            const pdfPath = saved.dataFilePath.replace(/\.md$/, '.pdf');
+            const docxPath = saved.dataFilePath.replace(/\.md$/, '.docx');
+            await Promise.resolve(convertSingleMdToPdf(saved.dataFilePath, pdfPath));
+            await Promise.resolve(convertSingleMdToDocx(saved.dataFilePath, docxPath));
+            copyFileIntoParticipantDocuments(saved.slug, pdfPath);
+            copyFileIntoParticipantDocuments(saved.slug, docxPath);
+        } catch (convErr) {
+            console.warn('[Folder Save Document] PDF/DOCX conversion warning:', convErr.message);
+        }
+
+        const bundle = getParticipantFolderBundle(saved.slug);
+        res.json({
+            success: true,
+            ...saved,
+            bundle
+        });
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+});
+
+app.post('/api/participants/folder/:slug/case-note', (req, res) => {
+    try {
+        const { content, note_type, category, session_date, author_name } = req.body || {};
+        if (!content || !String(content).trim()) {
+            return res.status(400).json({ error: 'Case note content is required.' });
+        }
+        const slug = resolveCanonicalSlug(req.params.slug);
+        const bundle = getParticipantFolderBundle(slug);
+        if (!bundle) {
+            return res.status(404).json({ error: 'Participant folder not found.' });
+        }
+
+        const noteDate = session_date || new Date().toISOString().split('T')[0];
+        const author = (author_name || 'Turn90 Staff').trim();
+        const nType = (note_type || 'Individual Session').trim();
+        const nCat = (category || 'Case Management').trim();
+        const trimmedContent = String(content).trim();
+
+        if (bundle.profile && bundle.profile.user_id) {
+            db.prepare(`
+                INSERT INTO case_notes (user_id, author_id, author_name, session_date, note_type, category, content)
+                VALUES (?, NULL, ?, ?, ?, ?, ?)
+            `).run(bundle.profile.user_id, author, noteDate, nType, nCat, trimmedContent);
+        } else {
+            const cmPath = path.join(dataDir, 'participants', slug, 'case_management_notes.json');
+            let cmData = { case_notes: [], cm_session_evaluations: [], manual_folder_notes: [] };
+            if (fs.existsSync(cmPath)) {
+                try { cmData = JSON.parse(fs.readFileSync(cmPath, 'utf8')); } catch (e) {}
+            }
+            if (!Array.isArray(cmData.manual_folder_notes)) cmData.manual_folder_notes = [];
+            cmData.manual_folder_notes.unshift({
+                id: `mn_${Date.now()}`,
+                session_date: noteDate,
+                author_name: author,
+                note_type: nType,
+                category: nCat,
+                content: trimmedContent,
+                created_at: new Date().toISOString()
+            });
+            fs.writeFileSync(cmPath, JSON.stringify(cmData, null, 2));
+        }
+
+        appendParticipantHistoryEvent(slug, {
+            timestamp: new Date(noteDate).toISOString(),
+            category: 'case_note',
+            action: `Case Note Added (${nType})`,
+            summary: trimmedContent.slice(0, 220),
+            filename: 'case_management_notes.json',
+            actor: author
+        });
+        invalidateFolderIndexCache();
+        syncAllParticipantFolders({ force: true });
+
+        res.json({
+            success: true,
+            bundle: getParticipantFolderBundle(slug)
+        });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -8281,7 +8715,14 @@ app.post('/api/screening/consult', (req, res) => {
             summaryMd
         );
 
-        syncAllParticipantFolders();
+        appendParticipantHistoryEvent(slug, {
+            category: 'screening',
+            action: `Screening Consultation (${eligibilityDecision})`,
+            summary: ineligibilityReason,
+            filename: 'screening_consultation.json',
+            actor: 'Turn90 Staff'
+        });
+        syncAllParticipantFolders({ force: true });
 
         res.json({
             success: true,
@@ -8366,7 +8807,14 @@ app.post('/api/lscmi/feedback-loop', async (req, res) => {
                     agreed_replacement_target, selected_toolkit_tool, revised_action_plan_md
                 ) VALUES (?, ?, ?, 'agreed', 'None', 'Participant reviewed and agreed with Action Plan targets.', 'confirmed_agreement', 'Current Plan Approved', ?, ?)
             `).run(slug, participant_name, location, selected_toolkit_tool, currentPlan);
-            syncAllParticipantFolders();
+            appendParticipantHistoryEvent(slug, {
+                category: 'feedback_loop',
+                action: 'Action Plan Agreement Confirmed',
+                summary: 'Participant reviewed and agreed with current Action Plan targets.',
+                filename: 'feedback_loop_log.json',
+                actor: 'Turn90 Staff'
+            });
+            syncAllParticipantFolders({ force: true });
             return res.json({
                 success: true,
                 agreement_status: 'agreed',
@@ -8374,9 +8822,10 @@ app.post('/api/lscmi/feedback-loop', async (req, res) => {
             });
         }
 
-        // Run collaborative Feedback Loop revision via adjustActionPlan if Gemini key available, or deterministic update
+        // Run collaborative Feedback Loop revision via adjustActionPlan if Gemini key available, otherwise append deterministic update
         const feedbackInstruction = `Participant expressed disagreement with "${disagreed_target}" (Quote: "${participant_objection_quote}"). Staff executed 4-Step Feedback Loop (${staff_pivot_strategy}) and collaboratively agreed to focus on "${agreed_replacement_target}" using Tool Kit intervention "${selected_toolkit_tool}".`;
         let revisedPlan = currentPlan;
+        let usedAi = false;
         if (getGeminiApiKey() && currentPlan) {
             try {
                 const adj = await adjustActionPlan(
@@ -8394,29 +8843,42 @@ app.post('/api/lscmi/feedback-loop', async (req, res) => {
                 );
                 if (adj && adj.participant_case_plan) {
                     revisedPlan = adj.participant_case_plan;
+                    usedAi = true;
                 }
             } catch (e) {
                 console.warn('[Feedback Loop] Fallback deterministic plan update:', e.message);
             }
-        } else {
+        }
+        if (!usedAi) {
             revisedPlan = `${currentPlan}\n\n---\n### 🔄 Collaborative Action Plan Feedback Loop Update (${new Date().toLocaleDateString('en-US')})\n- **Previous Focus Adjusted:** ${disagreed_target}\n- **Participant Input:** "${participant_objection_quote}"\n- **Agreed New Target:** **${agreed_replacement_target}**\n- **Selected Turn90 CBT Tool Kit Intervention:** **${selected_toolkit_tool}**\n`;
-            db.prepare(`
-                INSERT INTO action_plan_feedback_loops (
-                    participant_key, participant_name, location, agreement_status,
-                    disagreed_target, participant_objection_quote, staff_pivot_strategy,
-                    agreed_replacement_target, selected_toolkit_tool, revised_action_plan_md
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            `).run(
-                slug, participant_name, location, agreement_status,
+        }
+
+        db.prepare(`
+            INSERT INTO action_plan_feedback_loops (
+                participant_key, participant_name, location, agreement_status,
                 disagreed_target, participant_objection_quote, staff_pivot_strategy,
-                agreed_replacement_target, selected_toolkit_tool, revisedPlan
-            );
+                agreed_replacement_target, selected_toolkit_tool, revised_action_plan_md
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `).run(
+            slug, participant_name, location, agreement_status,
+            disagreed_target, participant_objection_quote, staff_pivot_strategy,
+            agreed_replacement_target, selected_toolkit_tool, revisedPlan
+        );
+
+        try {
+            saveParticipantEditableDocument(slug, {
+                docType: 'action_plan',
+                content: revisedPlan,
+                reason: `Feedback Loop (${disagreed_target} -> ${agreed_replacement_target})`,
+                actor: 'Turn90 Staff'
+            });
+        } catch (saveErr) {
             const pDir = path.join(dataDir, 'participants', slug);
             if (fs.existsSync(pDir)) {
                 fs.writeFileSync(path.join(pDir, 'action_plan.md'), revisedPlan);
             }
-            syncAllParticipantFolders();
         }
+        syncAllParticipantFolders({ force: true });
 
         res.json({
             success: true,

@@ -9,22 +9,20 @@
   "apricot_id": "81443",
   "phone": "",
   "email": "kwatez.carter.81443@firstshift.org",
-  "files": [
-    "Kwatez_Carter_Columbia_criminal_history.docx",
-    "Kwatez_Carter_Columbia_criminal_history.md",
-    "Kwatez_Carter_Columbia_draft_scoring_form.docx",
-    "Kwatez_Carter_Columbia_draft_scoring_form.md",
-    "Kwatez_Carter_Columbia_interview_guide.docx",
-    "Kwatez_Carter_Columbia_interview_guide.md",
-    "Kwatez_Carter_Columbia_transcript.txt"
-  ],
+  "lscmi_client_id": "Kwatez_Carter_Columbia",
   "folder_slug": "Kwatez_Carter",
   "folder_path": "data/participants/Kwatez_Carter",
   "has_lscmi_brief": false,
   "has_lscmi_scoring": true,
   "has_action_plan": false,
+  "has_legacy_case_briefs": false,
   "waitlist_ready": false,
   "waitlist_met_count": 5,
   "data_flags_count": 1,
-  "updated_at": "2026-11-22T17:18:01.570Z"
+  "cm_notes_count": 7,
+  "apricot_notes_count": 7,
+  "reentry_sessions_count": 3,
+  "history_events_count": 18,
+  "documents_count": 7,
+  "updated_at": "2026-11-23T13:46:28.827Z"
 }

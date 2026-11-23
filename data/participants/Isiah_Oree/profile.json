@@ -9,24 +9,20 @@
   "apricot_id": "79622",
   "phone": "8542914520",
   "email": "isiahoree@t90.com",
-  "files": [
-    "Isiah_Oree_Charleston_criminal_history.docx",
-    "Isiah_Oree_Charleston_criminal_history.md",
-    "Isiah_Oree_Charleston_criminal_history.pdf",
-    "Isiah_Oree_Charleston_draft_scoring_form.docx",
-    "Isiah_Oree_Charleston_draft_scoring_form.md",
-    "Isiah_Oree_Charleston_final_scoring_form.docx",
-    "Isiah_Oree_Charleston_final_scoring_form.md",
-    "Isiah_Oree_Charleston_interview_guide.md",
-    "Isiah_Oree_Charleston_transcript.txt"
-  ],
+  "lscmi_client_id": "Isiah_Oree_Charleston",
   "folder_slug": "Isiah_Oree",
   "folder_path": "data/participants/Isiah_Oree",
   "has_lscmi_brief": false,
   "has_lscmi_scoring": true,
   "has_action_plan": false,
+  "has_legacy_case_briefs": false,
   "waitlist_ready": true,
   "waitlist_met_count": 9,
   "data_flags_count": 0,
-  "updated_at": "2026-11-22T17:18:01.427Z"
+  "cm_notes_count": 12,
+  "apricot_notes_count": 12,
+  "reentry_sessions_count": 0,
+  "history_events_count": 33,
+  "documents_count": 19,
+  "updated_at": "2026-11-23T13:46:28.349Z"
 }

@@ -1,0 +1,94 @@
+{
+  "participant_key": "Preston_Evans",
+  "participant_name": "Preston Evans",
+  "apricot_ids": [
+    "82979"
+  ],
+  "evaluations": [
+    {
+      "record_id": "82979",
+      "full_name": "Preston Evans",
+      "program": "Reentry Navigation",
+      "center": "Charleston",
+      "case_manager": "Daisy Boynton",
+      "case_plan_status": "Yes (Goals & Gates Active)",
+      "focus_areas_or_goals": "Address substance abuse issue and get all ID",
+      "briefcase_status_text": "Gate 1: 25%, Gate 2: 20%, Gate 3: 0%, Gate 4: 0%",
+      "gate1_pct": 25,
+      "gate2_pct": 20,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "case_note_analysis": "Enrolled 11/06/2026. Most recent contact on 11/18/2026 by Daisy Boynton (Check-in conversation – brief status update|Employment support – applications, resume, interview prep): \"Sent a text checking in with Preston and asking if he wants to set up a time to apply for SNAP. Also sent him the flyer for the Friday Walmart Distribution Center hiring event.\"\n\n**Latest Case Note Updates:** [Update 11/18/2026 • Daisy Boynton]: Sent a text checking in with Preston and asking if he wants to set up a time to apply for SNAP. Also sent him the flyer for the Friday Walmart Distribution Center hiring event. | [Update 11/06/2026 • Daisy Boynton]: Sent Preston 3 food banks in North Charleston. | [Update 11/06/2026 • Daisy Boynton]: ### Contact Summary\nCompleted an initial phone consultation with Preston Evans to explain the Turn90 program and assess eligibility and immediate needs. Preston was in transit on the bus but engaged well. Reviewed housing, identification, substance use history, criminal justice involvement, and work history.\n\n### Case Plan Goal Progress\n- No active goals prior to this session; established baseline for initial entry into the Reentry Navigation case plan.\n\n### Briefcase & Gate 1–4 Updates\n- Housing: Currently residing in an Oxford House in North Charleston (moved in recently, waiting to confirm exact address).\n- Vital Documents: Lost wallet recently. Paid DMV for a replacement Driver's License (has receipt, arriving by mail in ~10 days). Needs to replace Social Security Card and Birth Certificate (plans to apply for SS card online tonight).\n- Legal: Recently released from jail (~2 weeks ago). Has pending charges (Burglary 2nd, CDV, Domestic Violence). Not currently on probation or parole.\n- Financial/Child Support: Owes approximately $8,000 in child support arrears.\n- Substance Use: On methadone. Reported last use of unprescribed substances (heroin/fentanyl) a little over a week ago.\n- Food/Basic Needs: Experiencing immediate food insecurity; relying on downtown free feeding programs.\n\n### Referrals/Resources Provided\n- Sent local food bank and pantry resources via text/email.\n- Referred client to the Charleston Center for a mandatory substance use screening prior to program enrollment.\n\n### Next Steps\n- Preston to complete screening at the Charleston Center and share results with Turn90.\n- Follow up next week to confirm screening completion, verify receipt of Driver's License in the mail, and assist with SNAP/Food Stamp applications. | [Update 11/05/2026 • Daisy Boynton]: ",
+      "operational_feedback": "Continue advancing Reentry Navigation Case Plan goals and Briefcase Gates 1–4 (Gate 1: 25%, Gate 2: 20%, Gate 3: 0%, Gate 4: 0%). Focus on barrier removal, employment readiness, and community resource referrals.",
+      "next_cm_steps_json": "[\"🎯 **Advance Stated Case Plan Goals:** Review progress on active Reentry Nav goals (Address substance abuse issue and get all ID) and verify concrete barrier-removal steps completed since last check-in.\",\"🔓 **Complete Remaining Gate 1 Items (25% done):** Target Social Security Card (Physical card, SSA receipt, or appointment), Birth Certificate (Physical copy or Vital Statistics appointment), Explore healthcare options (Medicaid / Free Medical Clinic).\",\"🔓 **Advance Gate 2 Stability & Readiness (20% done):** Work on Child support plan made / Cases reviewed / DSS contact, Probation / Legal Obligations aligned with work hours, DMV License Suspension check & reinstatement plan.\",\"🩺 **Address Gate 3 Health & Banking Milestones (0% done):** Follow up on Primary Care / Medical checkup scheduled or cleared, Vision Appointment / screening, Steady access to daily prescriptions (Welvista).\",\"🔄 **Follow Up on Latest Session (11/18/2026 by Daisy Boynton):** Check accountability on items discussed (\\\"Sent a text checking in with Preston and asking if he wants to set up a time to apply for SNAP. Also sent him the flyer for the Friday Walma...\\\").\"]",
+      "recent_cm_notes_json": null,
+      "last_note_date": "2026-11-18",
+      "notes_count": 4,
+      "updated_at": "2026-11-22 17:36:06"
+    }
+  ],
+  "notes_count": 4,
+  "processed_notes": [
+    {
+      "id": 1078,
+      "record_id": "82979",
+      "first_name": "Preston",
+      "last_name": "Evans",
+      "activity_date": "2026-11-18",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Check-in conversation – brief status update|Employment support – applications, resume, interview prep",
+      "note_text": "Sent a text checking in with Preston and asking if he wants to set up a time to apply for SNAP. Also sent him the flyer for the Friday Walmart Distribution Center hiring event.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1077,
+      "record_id": "82979",
+      "first_name": "Preston",
+      "last_name": "Evans",
+      "activity_date": "2026-11-06",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Barrier removal – problem-solving or coordination support",
+      "note_text": "Sent Preston 3 food banks in North Charleston.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1076,
+      "record_id": "82979",
+      "first_name": "Preston",
+      "last_name": "Evans",
+      "activity_date": "2026-11-06",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment COMPLETED",
+      "note_text": "### Contact Summary\nCompleted an initial phone consultation with Preston Evans to explain the Turn90 program and assess eligibility and immediate needs. Preston was in transit on the bus but engaged well. Reviewed housing, identification, substance use history, criminal justice involvement, and work history.\n\n### Case Plan Goal Progress\n- No active goals prior to this session; established baseline for initial entry into the Reentry Navigation case plan.\n\n### Briefcase & Gate 1–4 Updates\n- Housing: Currently residing in an Oxford House in North Charleston (moved in recently, waiting to confirm exact address).\n- Vital Documents: Lost wallet recently. Paid DMV for a replacement Driver's License (has receipt, arriving by mail in ~10 days). Needs to replace Social Security Card and Birth Certificate (plans to apply for SS card online tonight).\n- Legal: Recently released from jail (~2 weeks ago). Has pending charges (Burglary 2nd, CDV, Domestic Violence). Not currently on probation or parole.\n- Financial/Child Support: Owes approximately $8,000 in child support arrears.\n- Substance Use: On methadone. Reported last use of unprescribed substances (heroin/fentanyl) a little over a week ago.\n- Food/Basic Needs: Experiencing immediate food insecurity; relying on downtown free feeding programs.\n\n### Referrals/Resources Provided\n- Sent local food bank and pantry resources via text/email.\n- Referred client to the Charleston Center for a mandatory substance use screening prior to program enrollment.\n\n### Next Steps\n- Preston to complete screening at the Charleston Center and share results with Turn90.\n- Follow up next week to confirm screening completion, verify receipt of Driver's License in the mail, and assist with SNAP/Food Stamp applications.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1075,
+      "record_id": "82979",
+      "first_name": "Preston",
+      "last_name": "Evans",
+      "activity_date": "2026-11-05",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment SCHEDULED",
+      "note_text": "",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "updated_at": "2026-11-23T13:46:29.472Z"
+}

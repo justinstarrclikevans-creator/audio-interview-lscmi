@@ -1,0 +1,303 @@
+{
+  "participant_key": "Robert_Taylor",
+  "updated_at": "2026-11-23T13:46:28.814Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-19T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "11 chronological Apricot note(s) archived (No Plan on File).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_casenote:170",
+      "event_key": "casenote:170",
+      "timestamp": "2026-11-19T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "Client Status & Housing\n\nClient is currently in Week 3 of the Turn 90 program.\nClient transitioned out of his mother’s residence and into a transitional house (managed by \"Jen\" at $225/week, deposit waived due to prior p",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Jenn Jeanquart"
+    },
+    {
+      "id": "ms_casenote:171",
+      "event_key": "casenote:171",
+      "timestamp": "2026-11-11T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "1. Topics Covered & Information Gathered\nEmployment & Background:\nClient expressed urgency to secure employment and discussed applying independently through staffing agencies (e.g., Automation Personnel Services) and dir",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Jenn Jeanquart"
+    },
+    {
+      "id": "ms_casenote:172",
+      "event_key": "casenote:172",
+      "timestamp": "2026-11-06T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "1. Education & Goals\n90-Day Goal: Obtain GED.\nHistory & Next Steps: Client previously took the test in high school (did not pass math). Client identified a free Saturday GED program in Lexington and has the contact numbe",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Jenn Jeanquart"
+    },
+    {
+      "id": "ms_doc:Robert_Taylor_Columbia_interview_guide.docx",
+      "event_key": "doc:Robert_Taylor_Columbia_interview_guide.docx",
+      "timestamp": "2026-11-04T16:28:23.920Z",
+      "category": "document",
+      "action": "Archived interview guide",
+      "summary": "Document stored in folder: Robert_Taylor_Columbia_interview_guide.docx",
+      "filename": "Robert_Taylor_Columbia_interview_guide.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Robert_Taylor_Columbia_draft_scoring_form.docx",
+      "event_key": "doc:Robert_Taylor_Columbia_draft_scoring_form.docx",
+      "timestamp": "2026-11-04T16:28:23.023Z",
+      "category": "document",
+      "action": "Archived draft scoring",
+      "summary": "Document stored in folder: Robert_Taylor_Columbia_draft_scoring_form.docx",
+      "filename": "Robert_Taylor_Columbia_draft_scoring_form.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Robert_Taylor_Columbia_criminal_history.docx",
+      "event_key": "doc:Robert_Taylor_Columbia_criminal_history.docx",
+      "timestamp": "2026-11-04T16:28:21.306Z",
+      "category": "document",
+      "action": "Archived criminal history",
+      "summary": "Document stored in folder: Robert_Taylor_Columbia_criminal_history.docx",
+      "filename": "Robert_Taylor_Columbia_criminal_history.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Robert_Taylor_Columbia_criminal_history.md",
+      "event_key": "doc:Robert_Taylor_Columbia_criminal_history.md",
+      "timestamp": "2026-11-04T16:28:19.833Z",
+      "category": "document",
+      "action": "Archived criminal history",
+      "summary": "Document stored in folder: Robert_Taylor_Columbia_criminal_history.md",
+      "filename": "Robert_Taylor_Columbia_criminal_history.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Robert_Taylor_Columbia_draft_scoring_form.md",
+      "event_key": "doc:Robert_Taylor_Columbia_draft_scoring_form.md",
+      "timestamp": "2026-11-04T16:28:19.832Z",
+      "category": "document",
+      "action": "Archived draft scoring",
+      "summary": "Document stored in folder: Robert_Taylor_Columbia_draft_scoring_form.md",
+      "filename": "Robert_Taylor_Columbia_draft_scoring_form.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Robert_Taylor_Columbia_interview_guide.md",
+      "event_key": "doc:Robert_Taylor_Columbia_interview_guide.md",
+      "timestamp": "2026-11-04T16:28:19.831Z",
+      "category": "document",
+      "action": "Archived interview guide",
+      "summary": "Document stored in folder: Robert_Taylor_Columbia_interview_guide.md",
+      "filename": "Robert_Taylor_Columbia_interview_guide.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Robert_Taylor_Columbia_transcript.txt",
+      "event_key": "doc:Robert_Taylor_Columbia_transcript.txt",
+      "timestamp": "2026-11-04T16:28:19.831Z",
+      "category": "document",
+      "action": "Archived transcript",
+      "summary": "Document stored in folder: Robert_Taylor_Columbia_transcript.txt",
+      "filename": "Robert_Taylor_Columbia_transcript.txt",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_casenote:99",
+      "event_key": "casenote:99",
+      "timestamp": "2026-10-26T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Case Note (documentation only) – no interaction or service)",
+      "summary": "Called to let Robert know he's 2nd on the waitlist. No answer, let him know in a VM.",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Daisy Boynton"
+    },
+    {
+      "id": "ms_reentry_session:231",
+      "event_key": "reentry_session:231",
+      "timestamp": "2026-10-26T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "Called to let Robert know he's 2nd on the waitlist. No answer, let him know in a VM.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_casenote:100",
+      "event_key": "casenote:100",
+      "timestamp": "2026-10-20T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Employment support – applications, resume, interview prep)",
+      "summary": "Made a resume and sent to Robert over text and email. Also attached to his reentry nav case plan.",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Daisy Boynton"
+    },
+    {
+      "id": "ms_reentry_session:58",
+      "event_key": "reentry_session:58",
+      "timestamp": "2026-10-20T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "summary": "Made a resume and sent to Robert over text and email. Also attached to his reentry nav case plan.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_casenote:101",
+      "event_key": "casenote:101",
+      "timestamp": "2026-10-19T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Intake Appointment COMPLETED)",
+      "summary": "Currently staying with his mom, has tickets and reinstatement fees for DL, has Welvista and gets prescriptions through that. Has only been able to get temp work. Wants long term employment. Lives 1.5 miles away from cent",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Daisy Boynton"
+    },
+    {
+      "id": "ms_reentry_session:59",
+      "event_key": "reentry_session:59",
+      "timestamp": "2026-10-19T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Daisy Boynton)",
+      "summary": "Currently staying with his mom, has tickets and reinstatement fees for DL, has Welvista and gets prescriptions through that. Has only been able to get temp work. Wants long term employment. Lives 1.5 miles away from cent",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_casenote:102",
+      "event_key": "casenote:102",
+      "timestamp": "2026-10-15T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Intake Appointment SCHEDULED)",
+      "summary": "Intake Appointment SCHEDULED",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Daisy Boynton"
+    },
+    {
+      "id": "ms_reentry_session:60",
+      "event_key": "reentry_session:60",
+      "timestamp": "2026-10-15T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "Intake Appointment SCHEDULED",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_casenote:103",
+      "event_key": "casenote:103",
+      "timestamp": "2026-06-22T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Behavioral incident – disruption, conflict, or left early)",
+      "summary": "Robert unable to start FS program due to failed UA.",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Jenn Jeanquart"
+    },
+    {
+      "id": "ms_reentry_session:61",
+      "event_key": "reentry_session:61",
+      "timestamp": "2026-06-22T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Behavioral incident – disruption, conflict, or left early (Jenn Jeanquart)",
+      "summary": "Robert unable to start FS program due to failed UA.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_casenote:104",
+      "event_key": "casenote:104",
+      "timestamp": "2026-06-15T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Barrier removal – problem-solving or coordination support)",
+      "summary": "Robert came in to check his status to enroll in First Shift. He passed a preliminary drug test and was scheduled for orientation on 6/22. He was reminded he will need to pass a drug test on orientation and weekly thereaf",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Jenn Jeanquart"
+    },
+    {
+      "id": "ms_reentry_session:62",
+      "event_key": "reentry_session:62",
+      "timestamp": "2026-06-15T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Jenn Jeanquart)",
+      "summary": "Robert came in to check his status to enroll in First Shift. He passed a preliminary drug test and was scheduled for orientation on 6/22. He was reminded he will need to pass a drug test on orientation and weekly thereaf",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_casenote:105",
+      "event_key": "casenote:105",
+      "timestamp": "2026-06-09T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Intake Appointment COMPLETED)",
+      "summary": "Released from SCDC on Dec 31, 2025 and has not found a job since then. Has applied at fast food, warehouses, WalMart, Amazon, etc. with no return call. His VM is set up and checks his email regularly. Stays with his moth",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Jenn Jeanquart"
+    },
+    {
+      "id": "ms_reentry_session:63",
+      "event_key": "reentry_session:63",
+      "timestamp": "2026-06-09T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Jenn Jeanquart)",
+      "summary": "Released from SCDC on Dec 31, 2025 and has not found a job since then. Has applied at fast food, warehouses, WalMart, Amazon, etc. with no return call. His VM is set up and checks his email regularly. Stays with his moth",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_casenote:106",
+      "event_key": "casenote:106",
+      "timestamp": "2026-06-02T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Intake Appointment SCHEDULED)",
+      "summary": "Rescheduled appointment twice. 6/9 is the most recently scheduled intake.",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Kat Norsworthy"
+    },
+    {
+      "id": "ms_reentry_session:64",
+      "event_key": "reentry_session:64",
+      "timestamp": "2026-06-02T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Kat Norsworthy)",
+      "summary": "Rescheduled appointment twice. 6/9 is the most recently scheduled intake.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

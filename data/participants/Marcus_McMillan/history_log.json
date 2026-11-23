@@ -1,0 +1,61 @@
+{
+  "participant_key": "Marcus_McMillan",
+  "updated_at": "2026-11-23T13:46:28.929Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-19T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "4 chronological Apricot note(s) archived (No Plan on File).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_casenote:214",
+      "event_key": "casenote:214",
+      "timestamp": "2026-11-19T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "### Session Summary\n\nDuring this case management check-in at **Turn90**, Case Manager Terrence Brown (\"TB\") met with the client to review personal history, behavioral patterns, current health needs, and upcoming obligati",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Terrence Brown"
+    },
+    {
+      "id": "ms_casenote:215",
+      "event_key": "casenote:215",
+      "timestamp": "2026-11-12T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "**Session Summary**\nThis initial case management intake session focused on building a structured Case Plan (\"Turn 90\") for a military veteran transitioning back into the community after serving six months in jail and cur",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Terrence Brown"
+    },
+    {
+      "id": "ms_casenote:216",
+      "event_key": "casenote:216",
+      "timestamp": "2026-11-02T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Intake Appointment COMPLETED)",
+      "summary": "Intake Screening: Marcus McMillan\nDate: 11/2/2026 | Staff: Daisy | Type: Phone consultation\nOutcome: Added to the Charleston waitlist. Expect a call within about 2 weeks. TB (Terrence) will call to schedule a Friday 3 PM",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Daisy Boynton"
+    },
+    {
+      "id": "ms_casenote:217",
+      "event_key": "casenote:217",
+      "timestamp": "2026-10-29T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Intake Appointment SCHEDULED)",
+      "summary": "Intake Appointment SCHEDULED",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Daisy Boynton"
+    }
+  ]
+}

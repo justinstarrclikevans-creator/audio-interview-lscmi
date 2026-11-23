@@ -1,0 +1,137 @@
+{
+  "participant_key": "Daniel_Marsico",
+  "participant_name": "Daniel Marsico",
+  "client_records": [
+    {
+      "id": 47,
+      "first_name": "Daniel",
+      "last_name": "Marsico",
+      "apricot_id": "81803",
+      "location": "Charleston",
+      "status": "archived",
+      "stability_tier": "stable",
+      "phone": null,
+      "email": null,
+      "notes": "1. Temp agencies for work before FS spot opens up\n2. Confirm he schedules DL test \n\n- License expired while in prison, doesn't owe any fees, he just needs to go in for driver's test (he's going to practice on Sunday and then will schedule his test for as soon as possible)\n- Once he gets his DL, he has a car he can drive\n- He has weekly mental health appointments. He schedules them, so is able to make them for later in the day (after 3), or on the weekends. Shouldn't interfere with program hours \n- His mom recently had surgery and he has siblings in the area as his support system\n- On 10/11 his home confinement with BOP begins. He is going to stay with his sister. She is happy to have him stay with her until he finds his own place, but she wants that to happen as soon as possible (I will start the search for openings)\n- He is okay sharing a room if necessary, but would prefer his own room. He has some savings and his brother and sister have offered to help him pay rent for the first 1-2 months\n- Going to send him some temp agency options as well in the meantime",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-10-27 13:40:03",
+      "case_manager": "Daisy Boynton",
+      "enrollment_start": "2026-10-09",
+      "gate1_pct": 50,
+      "gate2_pct": 50,
+      "gate3_pct": 29,
+      "gate4_pct": 0,
+      "last_contact_date": "2026-10-21",
+      "last_contact_staff": "Terrence Brown",
+      "last_contact_activity": "Check-in conversation – brief status update",
+      "has_case_plan": 1,
+      "case_plan_text": "1. Temp agencies for work before FS spot opens up\n2. Confirm he schedules DL test \n\n- License expired while in prison, doesn't owe any fees, he just needs to go in for driver's test (he's going to practice on Sunday and then will schedule his test for as soon as possible)\n- Once he gets his DL, he has a car he can drive\n- He has weekly mental health appointments. He schedules them, so is able to make them for later in the day (after 3), or on the weekends. Shouldn't interfere with program hours \n- His mom recently had surgery and he has siblings in the area as his support system\n- On 10/11 his home confinement with BOP begins. He is going to stay with his sister. She is happy to have him stay with her until he finds his own place, but she wants that to happen as soon as possible (I will start the search for openings)\n- He is okay sharing a room if necessary, but would prefer his own room. He has some savings and his brother and sister have offered to help him pay rent for the first 1-2 months\n- Going to send him some temp agency options as well in the meantime"
+    }
+  ],
+  "sessions": [
+    {
+      "id": 199,
+      "client_id": 47,
+      "session_date": "2026-10-21",
+      "session_title": "Check-in conversation – brief status update (Terrence Brown)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Called to inform him about starting the first shift program and that orientation was this friday 0ct.22 at 3:30pm. The participant stated that he has a job interview this friday as well and that he will update me on whether he still wants to join the program.",
+      "notes_text": "Called to inform him about starting the first shift program and that orientation was this friday 0ct.22 at 3:30pm. The participant stated that he has a job interview this friday as well and that he will update me on whether he still wants to join the program.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 200,
+      "client_id": 47,
+      "session_date": "2026-10-13",
+      "session_title": "Employment support – applications, resume, interview prep|Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Sent Daniel staffing agencies in his area to go to. He has a resume. I also sent him the info for Bounce Back as an alternative housing option to his sister's. He decided he's going to stay with his sister until he can find his own apartment closer to John's Island.",
+      "notes_text": "Sent Daniel staffing agencies in his area to go to. He has a resume. I also sent him the info for Bounce Back as an alternative housing option to his sister's. He decided he's going to stay with his sister until he can find his own apartment closer to John's Island.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 202,
+      "client_id": 47,
+      "session_date": "2026-10-09",
+      "session_title": "Intake Appointment SCHEDULED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Intake Appointment SCHEDULED",
+      "notes_text": "Intake Appointment SCHEDULED",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 201,
+      "client_id": 47,
+      "session_date": "2026-10-09",
+      "session_title": "Intake Appointment COMPLETED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "1. Temp agencies for work before FS spot opens up\n2. Housing options\n3. Confirm he schedules DL test \n\n- License expired while in prison, doesn't owe any fees, he just needs to go in for driver's test (he's going to practice on Sunday and then will schedule his test for as soon as possible)\n- Once he gets his DL, he has a car he can drive\n- He has weekly mental health appointments. He schedules them, so is able to make them for later in the day (after 3), or on the weekends. Shouldn't interfere with program hours \n- His mom recently had surgery and he has siblings in the area as his support system\n- On 10/11 his home confinement with BOP begins. He is going to stay with his sister. She is happy to have him stay with her until he finds his own place, but she wants that to happen as soon as possible (I will start the search for openings)\n- He is okay sharing a room if necessary, but would prefer his own room. He has some savings and his brother and sister have offered to help him pay rent for the first 1-2 months\n- Going to send him some temp agency options as well in the meantime\n\n*ADDED TO FS WAITLIST",
+      "notes_text": "1. Temp agencies for work before FS spot opens up\n2. Housing options\n3. Confirm he schedules DL test \n\n- License expired while in prison, doesn't owe any fees, he just needs to go in for driver's test (he's going to practice on Sunday and then will schedule his test for as soon as possible)\n- Once he gets his DL, he has a car he can drive\n- He has weekly mental health appointments. He schedules them, so is able to make them for later in the day (after 3), or on the weekends. Shouldn't interfere with program hours \n- His mom recently had surgery and he has siblings in the area as his support system\n- On 10/11 his home confinement with BOP begins. He is going to stay with his sister. She is happy to have him stay with her until he finds his own place, but she wants that to happen as soon as possible (I will start the search for openings)\n- He is okay sharing a room if necessary, but would prefer his own room. He has some savings and his brother and sister have offered to help him pay rent for the first 1-2 months\n- Going to send him some temp agency options as well in the meantime\n\n*ADDED TO FS WAITLIST",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "goals": [
+    {
+      "id": 109,
+      "client_id": 47,
+      "goal_title": "Once he gets his DL, he has a car he can drive",
+      "target_date": "2026-11-09",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"Once he gets his DL, he has a car he can drive\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 108,
+      "client_id": 47,
+      "goal_title": "License expired while in prison, doesn't owe any fees, he just needs to go in for driver's test (he's going to practice on Sunday and then will schedule his test for as soon as possible)",
+      "target_date": "2026-11-09",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"License expired while in prison, doesn't owe any fees, he just needs to go in for driver's test (he's going to practice on Sunday and then will schedule his test for as soon as possible)\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 107,
+      "client_id": 47,
+      "goal_title": "Confirm he schedules DL test",
+      "target_date": "2026-11-09",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"Confirm he schedules DL test\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 106,
+      "client_id": 47,
+      "goal_title": "Temp agencies for work before FS spot opens up",
+      "target_date": "2026-11-09",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"Temp agencies for work before FS spot opens up\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "case_plans": [],
+  "updated_at": "2026-11-23T13:46:29.188Z"
+}

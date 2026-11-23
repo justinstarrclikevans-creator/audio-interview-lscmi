@@ -1,0 +1,109 @@
+{
+  "participant_key": "Daniel_Marsico",
+  "participant_name": "Daniel Marsico",
+  "apricot_ids": [
+    "81803"
+  ],
+  "evaluations": [
+    {
+      "record_id": "81803",
+      "full_name": "Daniel Marsico",
+      "program": "Reentry Navigation",
+      "center": "Charleston",
+      "case_manager": "Daisy Boynton",
+      "case_plan_status": "Yes (Goals & Gates Active)",
+      "focus_areas_or_goals": "1. Temp agencies for work before FS spot opens up\n2. Confirm he schedules DL test \n\n- License expired while in prison, doesn't owe any fees, he just needs to go in for driver's test (he's going to practice on Sunday and then will schedule his test for as soon as possible)\n- Once he gets his DL, he has a car he can drive\n- He has weekly mental health appointments. He schedules them, so is able to make them for later in the day (after 3), or on the weekends. Shouldn't interfere with program hours \n- His mom recently had surgery and he has siblings in the area as his support system\n- On 10/11 his home confinement with BOP begins. He is going to stay with his sister. She is happy to have him stay with her until he finds his own place, but she wants that to happen as soon as possible (I will start the search for openings)\n- He is okay sharing a room if necessary, but would prefer his own room. He has some savings and his brother and sister have offered to help him pay rent for the first 1-2 months\n- Going to send him some temp agency options as well in the meantime",
+      "briefcase_status_text": "Gate 1: 50%, Gate 2: 50%, Gate 3: 29%, Gate 4: 0%",
+      "gate1_pct": 50,
+      "gate2_pct": 50,
+      "gate3_pct": 29,
+      "gate4_pct": 0,
+      "case_note_analysis": "Enrolled 10/09/2026. Most recent contact on 10/21/2026 by Terrence Brown (Check-in conversation – brief status update): \"Called to inform him about starting the first shift program and that orientation was this friday 0ct.22 at 3:30pm. The participant stated that he has a job interview this friday as well and that he will update me on whether he still wants to join the program.\"",
+      "operational_feedback": "Continue advancing Reentry Navigation Case Plan goals and Briefcase Gates 1–4 (Gate 1: 50%, Gate 2: 50%, Gate 3: 29%, Gate 4: 0%). Focus on barrier removal, employment readiness, and community resource referrals.",
+      "next_cm_steps_json": "[\"🎯 **Advance Stated Case Plan Goals:** Review progress on active Reentry Nav goals (1. Temp agencies for work before FS spot opens up 2. Confirm he schedules DL test - License expired while in prison, doesn't owe any fees, he just needs to go i...) and verify concrete barrier-removal steps completed since last check-in.\",\"🔓 **Complete Remaining Gate 1 Items (50% done):** Target Explore healthcare options (Medicaid / Free Medical Clinic), Supervision information documented (County, Officer, Report Dates).\",\"🔓 **Advance Gate 2 Stability & Readiness (50% done):** Work on Probation / Legal Obligations aligned with work hours, DMV License Suspension check & reinstatement plan, Turn90 Resume completed.\",\"🩺 **Address Gate 3 Health & Banking Milestones (29% done):** Follow up on Primary Care / Medical checkup scheduled or cleared, Vision Appointment / screening, Bank Account or direct deposit setup.\",\"🚀 **Finalize Gate 4 Job Placement & Financial Readiness (0% done):** Complete Work Tools & Clothing (Steel-toe boots, non-slip shoes, work gear), Verified Daily Transportation Plan (Bus route, car, ride plan), Personal Budget completed.\",\"🔄 **Follow Up on Latest Session (10/21/2026 by Terrence Brown):** Check accountability on items discussed (\\\"Called to inform him about starting the first shift program and that orientation was this friday 0ct.22 at 3:30pm. The participant stated th...\\\").\"]",
+      "recent_cm_notes_json": null,
+      "last_note_date": "2026-10-21",
+      "notes_count": 4,
+      "updated_at": "2026-10-27 13:40:03"
+    }
+  ],
+  "notes_count": 5,
+  "processed_notes": [
+    {
+      "id": 818,
+      "record_id": "81803",
+      "first_name": "Daniel",
+      "last_name": "Marsico",
+      "activity_date": "2026-10-29",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Check-in conversation – brief status update",
+      "note_text": "Called to check in. He said he got a warehouse job at Alternative Staffing that starts next week. I let him know he's welcome to call back in the future if he's interested in our program again. Removing from RN.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 709,
+      "record_id": "81803",
+      "first_name": "Daniel",
+      "last_name": "Marsico",
+      "activity_date": "2026-10-21",
+      "staff_name": "Terrence Brown",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Check-in conversation – brief status update",
+      "note_text": "Called to inform him about starting the first shift program and that orientation was this friday 0ct.22 at 3:30pm. The participant stated that he has a job interview this friday as well and that he will update me on whether he still wants to join the program.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 708,
+      "record_id": "81803",
+      "first_name": "Daniel",
+      "last_name": "Marsico",
+      "activity_date": "2026-10-13",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Employment support – applications, resume, interview prep|Barrier removal – problem-solving or coordination support",
+      "note_text": "Sent Daniel staffing agencies in his area to go to. He has a resume. I also sent him the info for Bounce Back as an alternative housing option to his sister's. He decided he's going to stay with his sister until he can find his own apartment closer to John's Island.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 707,
+      "record_id": "81803",
+      "first_name": "Daniel",
+      "last_name": "Marsico",
+      "activity_date": "2026-10-09",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment COMPLETED",
+      "note_text": "1. Temp agencies for work before FS spot opens up\n2. Housing options\n3. Confirm he schedules DL test \n\n- License expired while in prison, doesn't owe any fees, he just needs to go in for driver's test (he's going to practice on Sunday and then will schedule his test for as soon as possible)\n- Once he gets his DL, he has a car he can drive\n- He has weekly mental health appointments. He schedules them, so is able to make them for later in the day (after 3), or on the weekends. Shouldn't interfere with program hours \n- His mom recently had surgery and he has siblings in the area as his support system\n- On 10/11 his home confinement with BOP begins. He is going to stay with his sister. She is happy to have him stay with her until he finds his own place, but she wants that to happen as soon as possible (I will start the search for openings)\n- He is okay sharing a room if necessary, but would prefer his own room. He has some savings and his brother and sister have offered to help him pay rent for the first 1-2 months\n- Going to send him some temp agency options as well in the meantime\n\n*ADDED TO FS WAITLIST",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 706,
+      "record_id": "81803",
+      "first_name": "Daniel",
+      "last_name": "Marsico",
+      "activity_date": "2026-10-09",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment SCHEDULED",
+      "note_text": "",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "updated_at": "2026-11-23T13:46:29.188Z"
+}

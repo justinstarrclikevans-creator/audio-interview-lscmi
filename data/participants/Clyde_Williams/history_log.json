@@ -1,0 +1,259 @@
+{
+  "participant_key": "Clyde_Williams",
+  "updated_at": "2026-11-23T13:46:28.361Z",
+  "events": [
+    {
+      "id": "ms_doc:1788826814636_Clyde_Williams_reentry_staff_case_plan 2.docx",
+      "event_key": "doc:1788826814636_Clyde_Williams_reentry_staff_case_plan 2.docx",
+      "timestamp": "2026-11-20T19:43:31.000Z",
+      "category": "document",
+      "action": "Archived reentry plan",
+      "summary": "Document stored in folder: 1788826814636_Clyde_Williams_reentry_staff_case_plan 2.docx",
+      "filename": "1788826814636_Clyde_Williams_reentry_staff_case_plan 2.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:1788826814636_Clyde_Williams_reentry_staff_case_plan 2.pdf",
+      "event_key": "doc:1788826814636_Clyde_Williams_reentry_staff_case_plan 2.pdf",
+      "timestamp": "2026-11-20T19:43:31.000Z",
+      "category": "document",
+      "action": "Archived reentry plan",
+      "summary": "Document stored in folder: 1788826814636_Clyde_Williams_reentry_staff_case_plan 2.pdf",
+      "filename": "1788826814636_Clyde_Williams_reentry_staff_case_plan 2.pdf",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Clyde_Williams_Columbia_criminal_history 2.docx",
+      "event_key": "doc:Clyde_Williams_Columbia_criminal_history 2.docx",
+      "timestamp": "2026-11-20T19:43:31.000Z",
+      "category": "document",
+      "action": "Archived criminal history",
+      "summary": "Document stored in folder: Clyde_Williams_Columbia_criminal_history 2.docx",
+      "filename": "Clyde_Williams_Columbia_criminal_history 2.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Clyde_Williams_Columbia_draft_scoring_form 2.docx",
+      "event_key": "doc:Clyde_Williams_Columbia_draft_scoring_form 2.docx",
+      "timestamp": "2026-11-20T19:43:31.000Z",
+      "category": "document",
+      "action": "Archived draft scoring",
+      "summary": "Document stored in folder: Clyde_Williams_Columbia_draft_scoring_form 2.docx",
+      "filename": "Clyde_Williams_Columbia_draft_scoring_form 2.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Clyde_Williams_Columbia_criminal_history.docx",
+      "event_key": "doc:Clyde_Williams_Columbia_criminal_history.docx",
+      "timestamp": "2026-11-04T16:28:46.834Z",
+      "category": "document",
+      "action": "Archived criminal history",
+      "summary": "Document stored in folder: Clyde_Williams_Columbia_criminal_history.docx",
+      "filename": "Clyde_Williams_Columbia_criminal_history.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Clyde_Williams_Columbia_criminal_history.md",
+      "event_key": "doc:Clyde_Williams_Columbia_criminal_history.md",
+      "timestamp": "2026-11-04T16:28:45.683Z",
+      "category": "document",
+      "action": "Archived criminal history",
+      "summary": "Document stored in folder: Clyde_Williams_Columbia_criminal_history.md",
+      "filename": "Clyde_Williams_Columbia_criminal_history.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Clyde_Williams_Columbia_final_scoring_form.docx",
+      "event_key": "doc:Clyde_Williams_Columbia_final_scoring_form.docx",
+      "timestamp": "2026-11-04T14:20:32.137Z",
+      "category": "document",
+      "action": "Archived final scoring",
+      "summary": "Document stored in folder: Clyde_Williams_Columbia_final_scoring_form.docx",
+      "filename": "Clyde_Williams_Columbia_final_scoring_form.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Clyde_Williams_Columbia_draft_scoring_form.docx",
+      "event_key": "doc:Clyde_Williams_Columbia_draft_scoring_form.docx",
+      "timestamp": "2026-11-04T14:20:32.112Z",
+      "category": "document",
+      "action": "Archived draft scoring",
+      "summary": "Document stored in folder: Clyde_Williams_Columbia_draft_scoring_form.docx",
+      "filename": "Clyde_Williams_Columbia_draft_scoring_form.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Clyde_Williams_Columbia_final_scoring_form.md",
+      "event_key": "doc:Clyde_Williams_Columbia_final_scoring_form.md",
+      "timestamp": "2026-11-04T14:20:31.661Z",
+      "category": "document",
+      "action": "Archived final scoring",
+      "summary": "Document stored in folder: Clyde_Williams_Columbia_final_scoring_form.md",
+      "filename": "Clyde_Williams_Columbia_final_scoring_form.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Clyde_Williams_Columbia_draft_scoring_form.md",
+      "event_key": "doc:Clyde_Williams_Columbia_draft_scoring_form.md",
+      "timestamp": "2026-11-04T14:20:31.659Z",
+      "category": "document",
+      "action": "Archived draft scoring",
+      "summary": "Document stored in folder: Clyde_Williams_Columbia_draft_scoring_form.md",
+      "filename": "Clyde_Williams_Columbia_draft_scoring_form.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Clyde_Williams_Columbia_interview_guide.md",
+      "event_key": "doc:Clyde_Williams_Columbia_interview_guide.md",
+      "timestamp": "2026-11-03T19:35:44.547Z",
+      "category": "document",
+      "action": "Archived interview guide",
+      "summary": "Document stored in folder: Clyde_Williams_Columbia_interview_guide.md",
+      "filename": "Clyde_Williams_Columbia_interview_guide.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Clyde_Williams_Columbia_transcript.txt",
+      "event_key": "doc:Clyde_Williams_Columbia_transcript.txt",
+      "timestamp": "2026-11-03T19:35:44.546Z",
+      "category": "document",
+      "action": "Archived transcript",
+      "summary": "Document stored in folder: Clyde_Williams_Columbia_transcript.txt",
+      "filename": "Clyde_Williams_Columbia_transcript.txt",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-09-16T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "9 chronological Apricot note(s) archived (Historical Record).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_doc:Clyde_Williams_Columbia_final_scoring_form.pdf",
+      "event_key": "doc:Clyde_Williams_Columbia_final_scoring_form.pdf",
+      "timestamp": "2026-09-13T22:37:16.099Z",
+      "category": "document",
+      "action": "Archived final scoring",
+      "summary": "Document stored in folder: Clyde_Williams_Columbia_final_scoring_form.pdf",
+      "filename": "Clyde_Williams_Columbia_final_scoring_form.pdf",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Clyde_Williams_Columbia_draft_scoring_form.pdf",
+      "event_key": "doc:Clyde_Williams_Columbia_draft_scoring_form.pdf",
+      "timestamp": "2026-09-13T22:37:13.812Z",
+      "category": "document",
+      "action": "Archived draft scoring",
+      "summary": "Document stored in folder: Clyde_Williams_Columbia_draft_scoring_form.pdf",
+      "filename": "Clyde_Williams_Columbia_draft_scoring_form.pdf",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:1788826814636_Clyde_Williams_reentry_staff_case_plan.md",
+      "event_key": "doc:1788826814636_Clyde_Williams_reentry_staff_case_plan.md",
+      "timestamp": "2026-09-13T21:26:42.914Z",
+      "category": "document",
+      "action": "Archived reentry plan",
+      "summary": "Document stored in folder: 1788826814636_Clyde_Williams_reentry_staff_case_plan.md",
+      "filename": "1788826814636_Clyde_Williams_reentry_staff_case_plan.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:1788826814636_Clyde_Williams_reentry_participant_action_guide.pdf",
+      "event_key": "doc:1788826814636_Clyde_Williams_reentry_participant_action_guide.pdf",
+      "timestamp": "2026-09-08T00:20:49.802Z",
+      "category": "document",
+      "action": "Archived reentry plan",
+      "summary": "Document stored in folder: 1788826814636_Clyde_Williams_reentry_participant_action_guide.pdf",
+      "filename": "1788826814636_Clyde_Williams_reentry_participant_action_guide.pdf",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:1788826814636_Clyde_Williams_reentry_staff_case_plan.pdf",
+      "event_key": "doc:1788826814636_Clyde_Williams_reentry_staff_case_plan.pdf",
+      "timestamp": "2026-09-08T00:20:49.797Z",
+      "category": "document",
+      "action": "Archived reentry plan",
+      "summary": "Document stored in folder: 1788826814636_Clyde_Williams_reentry_staff_case_plan.pdf",
+      "filename": "1788826814636_Clyde_Williams_reentry_staff_case_plan.pdf",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:1788826814636_Clyde_Williams_reentry_participant_action_guide.docx",
+      "event_key": "doc:1788826814636_Clyde_Williams_reentry_participant_action_guide.docx",
+      "timestamp": "2026-09-08T00:20:46.828Z",
+      "category": "document",
+      "action": "Archived reentry plan",
+      "summary": "Document stored in folder: 1788826814636_Clyde_Williams_reentry_participant_action_guide.docx",
+      "filename": "1788826814636_Clyde_Williams_reentry_participant_action_guide.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:1788826814636_Clyde_Williams_reentry_staff_case_plan.docx",
+      "event_key": "doc:1788826814636_Clyde_Williams_reentry_staff_case_plan.docx",
+      "timestamp": "2026-09-08T00:20:46.683Z",
+      "category": "document",
+      "action": "Archived reentry plan",
+      "summary": "Document stored in folder: 1788826814636_Clyde_Williams_reentry_staff_case_plan.docx",
+      "filename": "1788826814636_Clyde_Williams_reentry_staff_case_plan.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:1788826814636_Clyde_Williams_reentry_assessment_data.json",
+      "event_key": "doc:1788826814636_Clyde_Williams_reentry_assessment_data.json",
+      "timestamp": "2026-09-08T00:20:46.412Z",
+      "category": "document",
+      "action": "Archived reentry plan",
+      "summary": "Document stored in folder: 1788826814636_Clyde_Williams_reentry_assessment_data.json",
+      "filename": "1788826814636_Clyde_Williams_reentry_assessment_data.json",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:1788826814636_Clyde_Williams_reentry_participant_action_guide.md",
+      "event_key": "doc:1788826814636_Clyde_Williams_reentry_participant_action_guide.md",
+      "timestamp": "2026-09-08T00:20:46.411Z",
+      "category": "document",
+      "action": "Archived reentry plan",
+      "summary": "Document stored in folder: 1788826814636_Clyde_Williams_reentry_participant_action_guide.md",
+      "filename": "1788826814636_Clyde_Williams_reentry_participant_action_guide.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Clyde_Williams_Case_Brief_1788826814636.pdf",
+      "event_key": "doc:Clyde_Williams_Case_Brief_1788826814636.pdf",
+      "timestamp": "2026-09-08T00:20:14.637Z",
+      "category": "document",
+      "action": "Archived legacy brief",
+      "summary": "Document stored in folder: Clyde_Williams_Case_Brief_1788826814636.pdf",
+      "filename": "Clyde_Williams_Case_Brief_1788826814636.pdf",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    }
+  ]
+}

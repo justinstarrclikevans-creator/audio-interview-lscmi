@@ -1,0 +1,114 @@
+{
+  "participant_key": "Elisha_Patterson",
+  "participant_name": "Elisha Patterson",
+  "client_records": [
+    {
+      "id": 71,
+      "first_name": "Elisha",
+      "last_name": "Patterson",
+      "apricot_id": "82811",
+      "location": "Charleston",
+      "status": "active",
+      "stability_tier": "stable",
+      "phone": null,
+      "email": null,
+      "notes": "Apply for RDF for DL, fine temp jobs or 2nd/3rd shift jobs while waiting for FS\n\n*computer still having problems saving PDFs so can't upload case plan from web app",
+      "created_at": "2026-11-22 17:35:09",
+      "updated_at": "2026-11-22 17:36:06",
+      "case_manager": "Daisy Boynton",
+      "enrollment_start": "2026-11-04",
+      "gate1_pct": 50,
+      "gate2_pct": 60,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "last_contact_date": "2026-11-17",
+      "last_contact_staff": "Daisy Boynton",
+      "last_contact_activity": "Check-in conversation – brief status update",
+      "has_case_plan": 1,
+      "case_plan_text": "Apply for RDF for DL, fine temp jobs or 2nd/3rd shift jobs while waiting for FS\n\n*computer still having problems saving PDFs so can't upload case plan from web app"
+    }
+  ],
+  "sessions": [
+    {
+      "id": 430,
+      "client_id": 71,
+      "session_date": "2026-11-17",
+      "session_title": "Check-in conversation – brief status update (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Elisha said he hasn't gone to the DMV yet and plans to do it next week.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 432,
+      "client_id": 71,
+      "session_date": "2026-11-06",
+      "session_title": "Employment support – applications, resume, interview prep|Documentation support – ID, housing forms, paperwork (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "I called Elisha Patterson to apply for funding to reinstate his license and to build his resume. He logged into his SCDMV account and texted me screenshots of the reinstatement fees he owes, which are two fees of $100 and $200. I submitted a Rainy Day Fund application for $300, to be paid directly to the DMV. He said a reinstated license would help him because he’s supposed to get a vehicle on Monday. I let him know decisions usually take 2–3 weeks and that I’ll update him when we hear back.\n\nDetails from the application: he’s 24 and lives in Charleston [verify – he gave zip 29456] with his girlfriend and his mother. He came home three days ago and has no income yet. His girlfriend does caregiving work and his mother works part-time. He isn’t a caretaker for any minor children [verify], and his foster care answer didn’t come through clearly [verify].\n\nResume: we went through his work history together.\n\nSkills: carpentry, and restoration work on fire and water damage. He’s interested in getting his CDL and welding certification. He has no current certifications. Education: he left high school in 12th grade and earned his GED [verify year]. He also attended Trident Tech, possibly for plumbing [verify]. I’ll format the resume and send it to him by both text and email.\n\nWaitlist: he’s about #2 or #3, so it should be 1–2 more weeks before he’s called in.\n\nFollow-ups\n\nFinish formatting the resume and send it by text and email\nTrack the Rainy Day Fund decision (~2–3 weeks) and update Elisha",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 431,
+      "client_id": 71,
+      "session_date": "2026-11-06",
+      "session_title": "Check-in conversation – brief status update (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Followed up with Elisha letting him know he'll need to DMV print out for the RDF application. He said he'd go on Monday.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 433,
+      "client_id": 71,
+      "session_date": "2026-11-04",
+      "session_title": "Intake Appointment COMPLETED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "**Contact Summary:** Completed initial intake consultation with Elisha Patterson. Discussed program expectations, hours (9 AM - 3 PM), stipend structure, and drug testing policies. Elisha is currently at a halfway house on federal supervised release (transitioning to regular supervised release in February). He is compliant with all justice system requirements.\n\n**Case Plan Goal Progress:** Initialized goals for Reentry Navigation. Elisha is currently on the program waitlist (estimated wait: ~3 weeks).\n\n**Briefcase & Gate 1–4 Updates:** Confirmed Elisha has his birth certificate and social security card in hand. Driver's license is currently suspended due to ~$300 in reinstatement fees. Elisha does not currently have a completed resume. Transportation is secure via his wife who gets off work at 8:30 AM.\n\n**Referrals/Resources Provided:** Discussed applying for the Rainy Day Fund to cover driver's license reinstatement fees while on the program waitlist.\n\n**Next Steps:** RN to call Elisha on Friday to build his resume over the phone and complete the Rainy Day Fund application. Elisha to provide a photo of the DMV reinstatement fee sheet.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 434,
+      "client_id": 71,
+      "session_date": "2026-11-03",
+      "session_title": "Intake Appointment SCHEDULED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Intake Appointment SCHEDULED",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "goals": [
+    {
+      "id": 145,
+      "client_id": 71,
+      "goal_title": "Apply for RDF for DL, fine temp jobs or 2nd/3rd shift jobs while waiting for FS\n\n*computer still having problems saving PDFs so can't upload",
+      "target_date": "2026-12-06",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"Apply for RDF for DL, fine temp jobs or 2nd/3rd shift jobs while waiting for FS\\n\\n*computer still having problems saving PDFs so can't upload\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-11-22 17:35:09",
+      "updated_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "case_plans": [],
+  "updated_at": "2026-11-23T13:46:29.449Z"
+}

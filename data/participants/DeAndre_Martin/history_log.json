@@ -1,0 +1,182 @@
+{
+  "participant_key": "DeAndre_Martin",
+  "updated_at": "2026-11-23T13:46:29.290Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-19T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "8 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:330",
+      "event_key": "reentry_session:330",
+      "timestamp": "2026-11-19T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Called to check in. He still hasn't heard back from BCBS about why his insurance was denied for his ear infection procedure. He asked about the waitlist, I let him know he's #6 and it's moving slowly. The only thing he's",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:331",
+      "event_key": "reentry_session:331",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "Sent a text asking DeAndre if he had heard back. No answer. Will give him a call in a day or 2.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:332",
+      "event_key": "reentry_session:332",
+      "timestamp": "2026-11-06T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "DeAndre sais he called BCBS and they said they'd call him back about why his insurance was denied. I told him to keep me posted and let him know he's second on the waitlist currently.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_doc:DeAndre_Martin_Columbia_interview_guide.docx",
+      "event_key": "doc:DeAndre_Martin_Columbia_interview_guide.docx",
+      "timestamp": "2026-11-04T16:28:24.195Z",
+      "category": "document",
+      "action": "Archived interview guide",
+      "summary": "Document stored in folder: DeAndre_Martin_Columbia_interview_guide.docx",
+      "filename": "DeAndre_Martin_Columbia_interview_guide.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:DeAndre_Martin_Columbia_draft_scoring_form.docx",
+      "event_key": "doc:DeAndre_Martin_Columbia_draft_scoring_form.docx",
+      "timestamp": "2026-11-04T16:28:23.356Z",
+      "category": "document",
+      "action": "Archived draft scoring",
+      "summary": "Document stored in folder: DeAndre_Martin_Columbia_draft_scoring_form.docx",
+      "filename": "DeAndre_Martin_Columbia_draft_scoring_form.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:DeAndre_Martin_Columbia_criminal_history.docx",
+      "event_key": "doc:DeAndre_Martin_Columbia_criminal_history.docx",
+      "timestamp": "2026-11-04T16:28:22.157Z",
+      "category": "document",
+      "action": "Archived criminal history",
+      "summary": "Document stored in folder: DeAndre_Martin_Columbia_criminal_history.docx",
+      "filename": "DeAndre_Martin_Columbia_criminal_history.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:DeAndre_Martin_Columbia_criminal_history.md",
+      "event_key": "doc:DeAndre_Martin_Columbia_criminal_history.md",
+      "timestamp": "2026-11-04T16:28:20.567Z",
+      "category": "document",
+      "action": "Archived criminal history",
+      "summary": "Document stored in folder: DeAndre_Martin_Columbia_criminal_history.md",
+      "filename": "DeAndre_Martin_Columbia_criminal_history.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:DeAndre_Martin_Columbia_draft_scoring_form.md",
+      "event_key": "doc:DeAndre_Martin_Columbia_draft_scoring_form.md",
+      "timestamp": "2026-11-04T16:28:20.566Z",
+      "category": "document",
+      "action": "Archived draft scoring",
+      "summary": "Document stored in folder: DeAndre_Martin_Columbia_draft_scoring_form.md",
+      "filename": "DeAndre_Martin_Columbia_draft_scoring_form.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:DeAndre_Martin_Columbia_interview_guide.md",
+      "event_key": "doc:DeAndre_Martin_Columbia_interview_guide.md",
+      "timestamp": "2026-11-04T16:28:20.564Z",
+      "category": "document",
+      "action": "Archived interview guide",
+      "summary": "Document stored in folder: DeAndre_Martin_Columbia_interview_guide.md",
+      "filename": "DeAndre_Martin_Columbia_interview_guide.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:DeAndre_Martin_Columbia_transcript.txt",
+      "event_key": "doc:DeAndre_Martin_Columbia_transcript.txt",
+      "timestamp": "2026-11-04T16:28:20.563Z",
+      "category": "document",
+      "action": "Archived transcript",
+      "summary": "Document stored in folder: DeAndre_Martin_Columbia_transcript.txt",
+      "filename": "DeAndre_Martin_Columbia_transcript.txt",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_reentry_session:333",
+      "event_key": "reentry_session:333",
+      "timestamp": "2026-11-03T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Reached out to DeAndre with some more questions about his current insurance to see if we could get his treatments covered under it instead of making him switch. He doesn't know why his ear infection treatment was denied,",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:247",
+      "event_key": "reentry_session:247",
+      "timestamp": "2026-10-30T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "**Contact Summary:**\nConducted a phone check-in with DeAndre regarding his acute dental and medical needs. I shared information regarding a free dental clinic in Columbia (2000 Hampton St). DeAndre reported he had previo",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:248",
+      "event_key": "reentry_session:248",
+      "timestamp": "2026-10-29T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Texted DeAndre to check whether he has dental and medical insurance so I know what services he'll qualify for. He does not have dental insurance.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:249",
+      "event_key": "reentry_session:249",
+      "timestamp": "2026-10-27T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Daisy Boynton)",
+      "summary": "**Contact Summary:**\nClient DeAndre Martin completed an initial intake consultation via phone to determine eligibility and interest in Turn90's programming. Client elected to join the waitlist for the in-person center pr",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:250",
+      "event_key": "reentry_session:250",
+      "timestamp": "2026-10-23T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "Intake Appointment SCHEDULED",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

@@ -1,0 +1,87 @@
+{
+  "participant_key": "Gerald_Sullivan",
+  "participant_name": "Gerald Sullivan",
+  "apricot_ids": [
+    "81168"
+  ],
+  "evaluations": [],
+  "notes_count": 5,
+  "processed_notes": [
+    {
+      "id": 641,
+      "record_id": "81168",
+      "first_name": "Gerald",
+      "last_name": "Sullivan",
+      "activity_date": "2026-10-20",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Case Note (documentation only) – no interaction or service",
+      "note_text": "Exited Gerald from reentry nav. Will reopen if he reaches back after his recovery program.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 640,
+      "record_id": "81168",
+      "first_name": "Gerald",
+      "last_name": "Sullivan",
+      "activity_date": "2026-10-07",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Check-in conversation – brief status update",
+      "note_text": "Followed up with Gerald today and he told me he was accepted into the Overcomers program with Miracle Hill. He's waiting for a bed to open up (1-2 week wait) and then will start. I let him know to reach out to us when he finishes if he's still interested.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 639,
+      "record_id": "81168",
+      "first_name": "Gerald",
+      "last_name": "Sullivan",
+      "activity_date": "2026-10-01",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Barrier removal – problem-solving or coordination support",
+      "note_text": "Gave him the application link for the Overcomers Program at Miracle Hill Ministries. He plans to fill it out on his phone and will keep me posted if he hears from them. Didn't mention needing anything else for now.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 638,
+      "record_id": "81168",
+      "first_name": "Gerald",
+      "last_name": "Sullivan",
+      "activity_date": "2026-09-29",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment COMPLETED",
+      "note_text": "Will upload case plan shortly. Needs to complete a recovery program before eligible for FS. Putting him on reentry nav to find a program and work through other stability issues (needs birth certificate)",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 637,
+      "record_id": "81168",
+      "first_name": "Gerald",
+      "last_name": "Sullivan",
+      "activity_date": "2026-09-28",
+      "staff_name": "Kat Norsworthy",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment SCHEDULED",
+      "note_text": "",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "updated_at": "2026-11-23T13:46:29.979Z"
+}

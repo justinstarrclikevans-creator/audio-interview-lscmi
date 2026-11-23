@@ -1,19 +1,54 @@
-# Re-entry Navigation Case Plan: Jovon Bonneau
+# My Fresh Start Action & Resource Guide: Jovon Bonneau
 
-## Participant Overview
-Jovon is a 39-year-old male with a strong foundational work history (8-9 years at Nucor Steel, 8 years Navy Reserve) and a Bachelor's degree in Sports Management. He recently served a 1-year sentence for his 3rd DUI. He owns his home in Moncks Corner but currently has zero income and relies entirely on family for bills and transportation due to a suspended driver's license.
+Welcome to your next chapter, Jovon. You bring a massive amount of talent to the table—an 8-year Navy Reserve veteran, a college graduate, and nearly a decade of dedicated work at Nucor Steel. You already have the tools, the adaptability, and the Microsoft Office/AS400 software skills that employers are desperate for. This guide is built to help you get your license back, secure solid pay to cover your bills, and build a bridge back to front-office management.
 
-## Core Criminogenic Targets & CBT Strategy
-**1. Procriminal Attitudes (Minimization):** Jovon stated, *"Drinking and alcohol responsibly is what got me DUIs."* 
-*   **Navigation Strategy:** **Model Neutrality (1.5).** Do not correct or debate his definition of "responsibly." Instead, validate his desire for structure and reflect his statements to highlight discrepancies (e.g., "You mentioned drinking responsibly, but also that DUIs cost you your job and a year away from your kids. How do you plan to protect your freedom moving forward?").
-**2. Emotional Regulation:** Jovon noted his own "attitude" is the primary risk to his daily attendance.
-*   **Navigation Strategy:** **Manage Resistance & Buy-In (3.2 & 18.0).** Frame program requirements not as rules, but as stepping stones to his self-interest: returning to accounting/front-office work. Acknowledge frustration proactively.
+## 🚀 Your Immediate Action Checklist
 
-## Stability Triage (Red-Flags)
-*   **Transportation / License:** Suspended license is the biggest barrier to long-term stability given he lives in Moncks Corner. Connect him with Father to Father immediately to address child support tracking and license reinstatement.
-*   **Financial Stress:** He is worried about debt, student loans, and keeping up with child support. Expedite job matching utilizing his new Turn90 Forklift certification and deep AS400/Oracle system knowledge.
+**Week 1: Stabilize & Strategize**
+- [ ] Update your resume to include your Navy service, Nucor experience, and your brand-new Forklift Certification.
+- [ ] Lock in your daily transportation schedule with your family for the next 30 days.
 
-## Action Steps for Staff
-1. Review his resume to highlight his Nucor experience (AS400, Oracle, mill work) and Navy Corpsman background.
-2. Develop a strict transportation backup plan (CARTA, carpooling) in case family support falls through.
-3. Keep check-ins brief, respectful, and focused on his immense potential and existing skills.
+**Week 2: Tackle the License & Finances**
+- [ ] Contact the **Center for Fathering (Father to Father Project)**. They specialize in helping men in your exact situation map out a payment plan to restore suspended driver's licenses and manage child support records.
+- [ ] Create a bare-bones survival budget for the next 60 days while you begin your job hunt.
+
+**Week 3: Target High-Value Employers**
+- [ ] Apply to 2-3 targeted roles in Logistics or Metal Fabrication (see recommendations below) that can utilize your forklift and AS400 system knowledge.
+- [ ] Look into local CARTA bus routes as a backup plan to family rides.
+
+**Week 4: Interviews & Career Pathway**
+- [ ] Complete mock interviews with your Navigator. 
+- [ ] Continue working on your bookkeeping certification to prepare for your jump back into front-office accounting.
+
+## 🔗 Local Resources Just For You
+
+**Center for Fathering / Father to Father Project**
+*Why:* They can assist you with your child support tracking and guide you step-by-step on getting your suspended license restored.
+*Contact:* (843) 744-2126 | 4925 Lacross Rd, North Charleston, SC 29406
+*Link:* [Visit Website](https://scfathersandfamilies.com)
+
+**SCDMV Regional Service Center (Leeds Ave)**
+*Why:* To pull your official driving record and set up a fee payment plan for reinstatement.
+*Contact:* (803) 896-5000 | 3790 Leeds Ave, North Charleston
+*Link:* [Visit Website](https://scdmvonline.com/Driver-Services/Reinstatement)
+
+**South Carolina SNAP & TANF (SC DSS)**
+*Why:* To reduce financial stress and help pay for food while you are transitioning into full-time employment.
+*Contact:* 1-800-616-1309
+*Link:* [Visit Website](https://benefitsportal.dss.sc.gov/)
+
+## 💼 Targeted Fair-Chance Job Matches
+
+**1. Palmetto Logistics & Distribution Hub**
+*   **Role:** Forklift Driver / Order Selector
+*   **Pay:** $18.00 - $22.50 / hr
+*   **Shift:** Day Shift (6:30 AM - 3:00 PM)
+*   **Why it fits:** You just got your Forklift Certification, and they need reliable operators. Your background with AS400 software for cataloging/receiving makes you a top-tier candidate to quickly move up into an inventory management or front-office role.
+*   **Apply Here:** [View Careers Page](https://www.indeed.com/jobs?q=warehouse+logistics&l=Charleston%2C+SC)
+
+**2. Carolina Marine & Metal Fabrication**
+*   **Role:** Fabrication Helper / Welder Trainee
+*   **Pay:** $20.00 - $26.00 / hr
+*   **Shift:** 1st Shift (7:00 AM - 3:30 PM)
+*   **Why it fits:** Your 8+ years making steel at the Nucor mill translates perfectly to metal fabrication. They are a Second-Chance partner offering high starting wages and full health benefits.
+*   **Apply Here:** [View Careers Page](https://www.indeed.com/jobs?q=welder+metal+fabrication&l=Charleston%2C+SC)

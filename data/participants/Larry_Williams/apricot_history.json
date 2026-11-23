@@ -1,0 +1,94 @@
+{
+  "participant_key": "Larry_Williams",
+  "participant_name": "Larry Williams",
+  "apricot_ids": [
+    "83238"
+  ],
+  "evaluations": [
+    {
+      "record_id": "83238",
+      "full_name": "Larry Williams",
+      "program": "Reentry Navigation",
+      "center": "Charleston",
+      "case_manager": "Daisy Boynton",
+      "case_plan_status": "Yes (Goals & Gates Active)",
+      "focus_areas_or_goals": "Make resume, find employment (warehouse) - interested in Bosch",
+      "briefcase_status_text": "Gate 1: 38%, Gate 2: 60%, Gate 3: 0%, Gate 4: 0%",
+      "gate1_pct": 38,
+      "gate2_pct": 60,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "case_note_analysis": "Enrolled 11/11/2026. Most recent contact on 11/16/2026 by Daisy Boynton (Employment support – applications, resume, interview prep): \"Sent Larry the flyer for the Walmart Distribution Center job fair on 11/20.\"\n\n**Latest Case Note Updates:** [Update 11/16/2026 • Daisy Boynton]: Sent Larry the flyer for the Walmart Distribution Center job fair on 11/20. | [Update 11/12/2026 • Daisy Boynton]: Created a resume with Larry over the phone (attached to his reentry nav case plan) | [Update 11/11/2026 • Daisy Boynton]: Contact Summary: Completed initial phone screening with client Larry Williams for the Turn90 program. Reviewed program expectations (8 weeks, M-F, 9am-3pm, $450/week stipend) and waitlist timeline (3-4 weeks). Gathered background information including housing (stable with parent), justice involvement (released Nov 2nd after 15 months for probation violation, currently on 2 years probation), and vital documents. \n\nCase Plan Goal Progress & Briefcase Updates: \n- Housing: Stable (lives with parent).\n- ID/Vital Docs: Holds a valid GA ID. Missing Birth Certificate (Savannah, GA) and Social Security Card. \n- Resume: Does not have one (Briefcase item active).\n- Employment: Looking for immediate temporary work while on the Turn90 waitlist.\n\nReferrals/Resources Provided: \n- Will send a list of temporary staffing agencies in the North Charleston/Charleston area today via text.\n\nNext Steps: \n- Navigator to call client tomorrow to complete a resume over the phone (approx. 10 mins). \n- Client to reach out to temp agencies for short-term employment.\n- Client to begin the process of replacing SS Card and Birth Certificate. | [Update 11/11/2026 • Daisy Boynton]: ",
+      "operational_feedback": "Continue advancing Reentry Navigation Case Plan goals and Briefcase Gates 1–4 (Gate 1: 38%, Gate 2: 60%, Gate 3: 0%, Gate 4: 0%). Focus on barrier removal, employment readiness, and community resource referrals.",
+      "next_cm_steps_json": "[\"🎯 **Advance Stated Case Plan Goals:** Review progress on active Reentry Nav goals (Make resume, find employment (warehouse) - interested in Bosch) and verify concrete barrier-removal steps completed since last check-in.\",\"🔓 **Complete Remaining Gate 1 Items (38% done):** Target Social Security Card (Physical card, SSA receipt, or appointment), Birth Certificate (Physical copy or Vital Statistics appointment), Explore healthcare options (Medicaid / Free Medical Clinic).\",\"🔓 **Advance Gate 2 Stability & Readiness (60% done):** Work on Probation / Legal Obligations aligned with work hours, DMV License Suspension check & reinstatement plan, Turn90 Resume completed.\",\"🩺 **Address Gate 3 Health & Banking Milestones (0% done):** Follow up on Primary Care / Medical checkup scheduled or cleared, Vision Appointment / screening, Steady access to daily prescriptions (Welvista).\",\"🚀 **Finalize Gate 4 Job Placement & Financial Readiness (0% done):** Complete Work Tools & Clothing (Steel-toe boots, non-slip shoes, work gear), Verified Daily Transportation Plan (Bus route, car, ride plan), Personal Budget completed.\",\"🔄 **Follow Up on Latest Session (11/16/2026 by Daisy Boynton):** Check accountability on items discussed (\\\"Sent Larry the flyer for the Walmart Distribution Center job fair on 11/20.\\\").\"]",
+      "recent_cm_notes_json": null,
+      "last_note_date": "2026-11-16",
+      "notes_count": 4,
+      "updated_at": "2026-11-22 17:36:06"
+    }
+  ],
+  "notes_count": 4,
+  "processed_notes": [
+    {
+      "id": 1104,
+      "record_id": "83238",
+      "first_name": "Larry",
+      "last_name": "Williams",
+      "activity_date": "2026-11-16",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Employment support – applications, resume, interview prep",
+      "note_text": "Sent Larry the flyer for the Walmart Distribution Center job fair on 11/20.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1103,
+      "record_id": "83238",
+      "first_name": "Larry",
+      "last_name": "Williams",
+      "activity_date": "2026-11-12",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Employment support – applications, resume, interview prep",
+      "note_text": "Created a resume with Larry over the phone (attached to his reentry nav case plan)",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1102,
+      "record_id": "83238",
+      "first_name": "Larry",
+      "last_name": "Williams",
+      "activity_date": "2026-11-11",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment COMPLETED",
+      "note_text": "Contact Summary: Completed initial phone screening with client Larry Williams for the Turn90 program. Reviewed program expectations (8 weeks, M-F, 9am-3pm, $450/week stipend) and waitlist timeline (3-4 weeks). Gathered background information including housing (stable with parent), justice involvement (released Nov 2nd after 15 months for probation violation, currently on 2 years probation), and vital documents. \n\nCase Plan Goal Progress & Briefcase Updates: \n- Housing: Stable (lives with parent).\n- ID/Vital Docs: Holds a valid GA ID. Missing Birth Certificate (Savannah, GA) and Social Security Card. \n- Resume: Does not have one (Briefcase item active).\n- Employment: Looking for immediate temporary work while on the Turn90 waitlist.\n\nReferrals/Resources Provided: \n- Will send a list of temporary staffing agencies in the North Charleston/Charleston area today via text.\n\nNext Steps: \n- Navigator to call client tomorrow to complete a resume over the phone (approx. 10 mins). \n- Client to reach out to temp agencies for short-term employment.\n- Client to begin the process of replacing SS Card and Birth Certificate.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1101,
+      "record_id": "83238",
+      "first_name": "Larry",
+      "last_name": "Williams",
+      "activity_date": "2026-11-11",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment SCHEDULED",
+      "note_text": "",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "updated_at": "2026-11-23T13:46:29.543Z"
+}

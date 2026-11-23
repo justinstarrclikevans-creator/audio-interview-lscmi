@@ -1,0 +1,109 @@
+{
+  "participant_key": "Robert_Shaw",
+  "participant_name": "Robert Shaw",
+  "apricot_ids": [
+    "82004"
+  ],
+  "evaluations": [
+    {
+      "record_id": "82004",
+      "full_name": "Robert Shaw",
+      "program": "Reentry Navigation",
+      "center": "Charleston",
+      "case_manager": "Daisy Boynton",
+      "case_plan_status": "Yes (Goals & Gates Active)",
+      "focus_areas_or_goals": "1. Find stable housing\n2. SS card and birth certificate\n\nWould like some meds/to see a doctor for his psoriasis (not urgent). Currently staying in a hotel room. He loves cooking and would love to do that for work. Needs stable housing to be eligible for FS. Currently working at Staff Zone everyday.",
+      "briefcase_status_text": "Gate 1: 25%, Gate 2: 30%, Gate 3: 0%, Gate 4: 0%",
+      "gate1_pct": 25,
+      "gate2_pct": 30,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "case_note_analysis": "Enrolled 10/13/2026. Most recent contact on 10/20/2026 by Daisy Boynton (Case Note (documentation only) – no interaction or service): \"Called and texted Robert to check if he had moved into Bounce Back on Thursday as we had planned. No answer.\"",
+      "operational_feedback": "Continue advancing Reentry Navigation Case Plan goals and Briefcase Gates 1–4 (Gate 1: 25%, Gate 2: 30%, Gate 3: 0%, Gate 4: 0%). Focus on barrier removal, employment readiness, and community resource referrals.",
+      "next_cm_steps_json": "[\"🎯 **Advance Stated Case Plan Goals:** Review progress on active Reentry Nav goals (1. Find stable housing 2. SS card and birth certificate Would like some meds/to see a doctor for his psoriasis (not urgent). Currently staying in a hotel room. ...) and verify concrete barrier-removal steps completed since last check-in.\",\"🔓 **Complete Remaining Gate 1 Items (25% done):** Target Social Security Card (Physical card, SSA receipt, or appointment), Birth Certificate (Physical copy or Vital Statistics appointment), Explore healthcare options (Medicaid / Free Medical Clinic).\",\"🔓 **Advance Gate 2 Stability & Readiness (30% done):** Work on Stable Address / Housing (30–60 day stability verified), Reliable Phone Number with professional voicemail, Probation / Legal Obligations aligned with work hours.\",\"🩺 **Address Gate 3 Health & Banking Milestones (0% done):** Follow up on Primary Care / Medical checkup scheduled or cleared, Vision Appointment / screening, Steady access to daily prescriptions (Welvista).\",\"🔄 **Follow Up on Latest Session (10/20/2026 by Daisy Boynton):** Check accountability on items discussed (\\\"Called and texted Robert to check if he had moved into Bounce Back on Thursday as we had planned. No answer.\\\").\"]",
+      "recent_cm_notes_json": null,
+      "last_note_date": "2026-10-20",
+      "notes_count": 4,
+      "updated_at": "2026-10-27 13:40:03"
+    }
+  ],
+  "notes_count": 5,
+  "processed_notes": [
+    {
+      "id": 821,
+      "record_id": "82004",
+      "first_name": "Robert",
+      "last_name": "Shaw",
+      "activity_date": "2026-11-02",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Case Note (documentation only) – no interaction or service",
+      "note_text": "Called again to try to check in. No answer and VM box full. Removing from RN.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 728,
+      "record_id": "82004",
+      "first_name": "Robert",
+      "last_name": "Shaw",
+      "activity_date": "2026-10-20",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Case Note (documentation only) – no interaction or service",
+      "note_text": "Called and texted Robert to check if he had moved into Bounce Back on Thursday as we had planned. No answer.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 727,
+      "record_id": "82004",
+      "first_name": "Robert",
+      "last_name": "Shaw",
+      "activity_date": "2026-10-13",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Barrier removal – problem-solving or coordination support",
+      "note_text": "Called Bounce Back while he was here for his intake. Made a plan for him to move in there Thursday. I told him I'd reach out to him over text and to let me know that everything goes smoothly Thursday. Once he's settled there, I will add him to the waitlist.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 726,
+      "record_id": "82004",
+      "first_name": "Robert",
+      "last_name": "Shaw",
+      "activity_date": "2026-10-13",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment COMPLETED",
+      "note_text": "Would like some meds/to see a doctor for his psoriasis (not urgent). Currently staying in a hotel room. He loves cooking and would love to do that for work. Needs stable housing to be eligible for FS. Currently working at Staff Zone everyday.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 725,
+      "record_id": "82004",
+      "first_name": "Robert",
+      "last_name": "Shaw",
+      "activity_date": "2026-10-12",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment SCHEDULED",
+      "note_text": "In person",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "updated_at": "2026-11-23T13:46:29.210Z"
+}

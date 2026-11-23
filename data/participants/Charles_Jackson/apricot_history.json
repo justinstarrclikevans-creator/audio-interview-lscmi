@@ -1,0 +1,79 @@
+{
+  "participant_key": "Charles_Jackson",
+  "participant_name": "Charles Jackson",
+  "apricot_ids": [
+    "83003"
+  ],
+  "evaluations": [
+    {
+      "record_id": "83003",
+      "full_name": "Charles Jackson",
+      "program": "Reentry Navigation",
+      "center": "Spartanburg",
+      "case_manager": "Daisy Boynton",
+      "case_plan_status": "Yes (Goals & Gates Active)",
+      "focus_areas_or_goals": "Reinstate DL so he can use his car for transportation for FS",
+      "briefcase_status_text": "Gate 1: 25%, Gate 2: 50%, Gate 3: 0%, Gate 4: 0%",
+      "gate1_pct": 25,
+      "gate2_pct": 50,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "case_note_analysis": "Enrolled 11/09/2026. Most recent contact on 11/17/2026 by Daisy Boynton (Check-in conversation – brief status update): \"I called Charles back. He was about to return my call because he thought he’d missed a voicemail. He’s working on transportation so he can join the program. To get his car back on the road, he needs tires and insurance. He already has the money for the tires a\"\n\n**Latest Case Note Updates:** [Update 11/17/2026 • Daisy Boynton]: I called Charles back. He was about to return my call because he thought he’d missed a voicemail. He’s working on transportation so he can join the program. To get his car back on the road, he needs tires and insurance. He already has the money for the tires and plans to buy them next week. His mother and sister will help him pay for insurance. He expects to have both done by the end of this month and was worried that would be too late. I reassured him that it won’t be, and that we’ll be here whenever he’s ready.\n\nHis license is suspended. He estimates reinstatement will cost $300–400 and hasn’t been to the DMV yet. I explained that we can’t pay it directly but can apply to the Rainy Day Fund once he brings the DMV printout of what he owes. The next funding cycle opens 12/1, and decisions come at the end of the month, so he likely wouldn’t hear until late December, and approval isn’t guaranteed. I recommended paying it himself if he can, since that’s faster. He thinks he can probably cover it on his own after the tires and insurance. Until then, he’s willing to have someone with a valid license drive his car.\n\nNext steps: he’ll call once his tires and insurance are done. Once he has reliable transportation, we’ll add him to the waitlist and check the timing then. He didn’t need anything else right now.\n\nFollow-ups\n\nWait for his call once tires and insurance are done, likely by the end of November\nAdd him to the waitlist once his transportation is confirmed\nIf he can’t cover the reinstatement fees himself, get his DMV printout and submit a Rainy Day Fund application on 12/1 | [Update 11/09/2026 • Daisy Boynton]: ### Contact Summary\nCompleted initial intake screening with Charles for the Turn90 program in Spartanburg. Reviewed housing, documentation, transportation, criminal history, employment background, and immediate needs. Client is currently housed stably with his mother and has no emergency health or substance use concerns. \n\n### Case Plan Goal Progress\nClient opted to start on the Reentry Navigation caseload rather than the full-time Monday-Friday program. His primary focus is clearing his suspended driver's license so he can drive his own vehicle to the center without relying on others or paying for rides out of his stipend.\n\n### Briefcase & Gate 1-4 Updates\n- Housing: Stable (living with mother).\n- Identification: Has State ID. \n- Vital Docs: Has either his Birth Certificate or Social Security card in his car; needs to verify which one is missing.\n- Transportation/License: Driver's license suspended due to owing approx. $200 in fees. Has a reliable vehicle once license is reinstated.\n- Education: GED completed.\n\n### Referrals/Resources Provided\n- Explained Turn90 Reentry Navigation track and potential funding assistance for DMV reinstatement fees.\n\n### Next Steps\n- Charles will contact the DMV to get an exact printout of his tickets/reinstatement fees.\n- Once the DMV printout is received, Daisy will explore RDF funding to cover the fees.\n- After transportation is secured, Charles will be added to the waitlist for the full-time Turn90 program. | [Update 11/06/2026 • Daisy Boynton]: ",
+      "operational_feedback": "Continue advancing Reentry Navigation Case Plan goals and Briefcase Gates 1–4 (Gate 1: 25%, Gate 2: 50%, Gate 3: 0%, Gate 4: 0%). Focus on barrier removal, employment readiness, and community resource referrals.",
+      "next_cm_steps_json": "[\"🎯 **Advance Stated Case Plan Goals:** Review progress on active Reentry Nav goals (Reinstate DL so he can use his car for transportation for FS) and verify concrete barrier-removal steps completed since last check-in.\",\"🔓 **Complete Remaining Gate 1 Items (25% done):** Target Social Security Card (Physical card, SSA receipt, or appointment), Fill needed prescriptions (Welvista / local pharmacy), Explore healthcare options (Medicaid / Free Medical Clinic).\",\"🔓 **Advance Gate 2 Stability & Readiness (50% done):** Work on Probation / Legal Obligations aligned with work hours, DMV License Suspension check & reinstatement plan, Turn90 Resume completed.\",\"🩺 **Address Gate 3 Health & Banking Milestones (0% done):** Follow up on Primary Care / Medical checkup scheduled or cleared, Vision Appointment / screening, Steady access to daily prescriptions (Welvista).\",\"🚀 **Finalize Gate 4 Job Placement & Financial Readiness (0% done):** Complete Work Tools & Clothing (Steel-toe boots, non-slip shoes, work gear), Verified Daily Transportation Plan (Bus route, car, ride plan), Personal Budget completed.\",\"🔄 **Follow Up on Latest Session (11/17/2026 by Daisy Boynton):** Check accountability on items discussed (\\\"I called Charles back. He was about to return my call because he thought he’d missed a voicemail. He’s working on transportation so he can j...\\\").\"]",
+      "recent_cm_notes_json": null,
+      "last_note_date": "2026-11-17",
+      "notes_count": 3,
+      "updated_at": "2026-11-22 17:36:06"
+    }
+  ],
+  "notes_count": 3,
+  "processed_notes": [
+    {
+      "id": 1081,
+      "record_id": "83003",
+      "first_name": "Charles",
+      "last_name": "Jackson",
+      "activity_date": "2026-11-17",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Check-in conversation – brief status update",
+      "note_text": "I called Charles back. He was about to return my call because he thought he’d missed a voicemail. He’s working on transportation so he can join the program. To get his car back on the road, he needs tires and insurance. He already has the money for the tires and plans to buy them next week. His mother and sister will help him pay for insurance. He expects to have both done by the end of this month and was worried that would be too late. I reassured him that it won’t be, and that we’ll be here whenever he’s ready.\n\nHis license is suspended. He estimates reinstatement will cost $300–400 and hasn’t been to the DMV yet. I explained that we can’t pay it directly but can apply to the Rainy Day Fund once he brings the DMV printout of what he owes. The next funding cycle opens 12/1, and decisions come at the end of the month, so he likely wouldn’t hear until late December, and approval isn’t guaranteed. I recommended paying it himself if he can, since that’s faster. He thinks he can probably cover it on his own after the tires and insurance. Until then, he’s willing to have someone with a valid license drive his car.\n\nNext steps: he’ll call once his tires and insurance are done. Once he has reliable transportation, we’ll add him to the waitlist and check the timing then. He didn’t need anything else right now.\n\nFollow-ups\n\nWait for his call once tires and insurance are done, likely by the end of November\nAdd him to the waitlist once his transportation is confirmed\nIf he can’t cover the reinstatement fees himself, get his DMV printout and submit a Rainy Day Fund application on 12/1",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1080,
+      "record_id": "83003",
+      "first_name": "Charles",
+      "last_name": "Jackson",
+      "activity_date": "2026-11-09",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment COMPLETED",
+      "note_text": "### Contact Summary\nCompleted initial intake screening with Charles for the Turn90 program in Spartanburg. Reviewed housing, documentation, transportation, criminal history, employment background, and immediate needs. Client is currently housed stably with his mother and has no emergency health or substance use concerns. \n\n### Case Plan Goal Progress\nClient opted to start on the Reentry Navigation caseload rather than the full-time Monday-Friday program. His primary focus is clearing his suspended driver's license so he can drive his own vehicle to the center without relying on others or paying for rides out of his stipend.\n\n### Briefcase & Gate 1-4 Updates\n- Housing: Stable (living with mother).\n- Identification: Has State ID. \n- Vital Docs: Has either his Birth Certificate or Social Security card in his car; needs to verify which one is missing.\n- Transportation/License: Driver's license suspended due to owing approx. $200 in fees. Has a reliable vehicle once license is reinstated.\n- Education: GED completed.\n\n### Referrals/Resources Provided\n- Explained Turn90 Reentry Navigation track and potential funding assistance for DMV reinstatement fees.\n\n### Next Steps\n- Charles will contact the DMV to get an exact printout of his tickets/reinstatement fees.\n- Once the DMV printout is received, Daisy will explore RDF funding to cover the fees.\n- After transportation is secured, Charles will be added to the waitlist for the full-time Turn90 program.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1079,
+      "record_id": "83003",
+      "first_name": "Charles",
+      "last_name": "Jackson",
+      "activity_date": "2026-11-06",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment SCHEDULED",
+      "note_text": "",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "updated_at": "2026-11-23T13:46:29.484Z"
+}

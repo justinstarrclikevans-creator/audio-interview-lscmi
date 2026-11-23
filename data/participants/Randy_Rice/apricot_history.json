@@ -1,0 +1,87 @@
+{
+  "participant_key": "Randy_Rice",
+  "participant_name": "Randy Rice",
+  "apricot_ids": [
+    "74616"
+  ],
+  "evaluations": [],
+  "notes_count": 5,
+  "processed_notes": [
+    {
+      "id": 114,
+      "record_id": "74616",
+      "first_name": "Randy",
+      "last_name": "Rice",
+      "activity_date": "2026-05-28",
+      "staff_name": "Matt Carlisle",
+      "service_context": "First Shift",
+      "interaction_type": "Check-in conversation – brief status update",
+      "note_text": "Immediately following class today, participants were administered a urinalysis. Mr. Rice tested positive for amphetamines (AMP). He stated that he had allowed a homeless couple to stay with him several nights ago and reported that they were smoking meth inside the room.\n\nI explained to Mr. Rice that, regardless of the circumstances, a failed drug screen is an automatic disqualifier for the program. I also informed him that we could continue to support him through resource navigation services. Additionally, I provided him with information on a program that offers sober-living housing and employment opportunities. Mr. Rice stated that he would stay in touch. Shortly afterward, Winard took him back to his hotel.",
+      "center_location": "Spartanburg",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 113,
+      "record_id": "74616",
+      "first_name": "Randy",
+      "last_name": "Rice",
+      "activity_date": "2026-05-20",
+      "staff_name": "Matt Carlisle",
+      "service_context": "First Shift",
+      "interaction_type": "Coaching / case management session – structured or in-depth meeting",
+      "note_text": "Had our first case management session today. After reviewing Mr. Rice’s 90-day goals and needs assessment, we identified securing more stable housing as a priority. As previously noted, Mr. Rice is currently residing at the Rodeway Inn and paying $420 per week. He reported that his family is currently assisting him with these lodging expenses. However, if that support were to end, his weekly stipend would barely cover the cost, even if he received the full stipend amount of $450 through points.\n\nMr. Rice has developed a friendship with Willie, another program participant who currently provides him transportation. I shared information with Mr. Rice regarding New Life, the transitional housing program where Willie and several other participants currently reside. The weekly cost at New Life is less than half of what Mr. Rice is currently paying at the hotel. Mr. Rice expressed interest in the program and gave permission for me to reach out to William Harrison, who oversees the transitional housing.\n\nI attempted to contact Mr. Harrison by phone but reached voicemail. I left a message and hope to receive a return call within the next few days. I also have a luncheon scheduled with Mr. Harrison next week and plan to discuss Mr. Rice’s housing situation further at that time.\n\nMr. Rice previously informed me that while he was incarcerated, Kat had been assisting him with obtaining his Social Security card. He stated that the card had been issued; however, prison staff failed to include it in his release packet upon discharge. Winard followed up with Kat regarding the matter, and she stated that she would follow up on the issue.",
+      "center_location": "Spartanburg",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 115,
+      "record_id": "74616",
+      "first_name": "Randy",
+      "last_name": "Rice",
+      "activity_date": "2026-05-13",
+      "staff_name": "Matt Carlisle",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment SCHEDULED",
+      "note_text": "Eligible for First Shift.  Scheduled to start 5/18/26",
+      "center_location": "Spartanburg",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 112,
+      "record_id": "74616",
+      "first_name": "Randy",
+      "last_name": "Rice",
+      "activity_date": "2026-05-13",
+      "staff_name": "Matt Carlisle",
+      "service_context": "First Shift",
+      "interaction_type": "Case Note (documentation only) – no interaction or service",
+      "note_text": "Mr. Rice was assessed and determined to be eligible for First Shift.  He was given the offer and did accept.  He begins next Monday 5/18/26.",
+      "center_location": "Spartanburg",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 111,
+      "record_id": "74616",
+      "first_name": "Randy",
+      "last_name": "Rice",
+      "activity_date": "2026-05-13",
+      "staff_name": "Matt Carlisle",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment COMPLETED",
+      "note_text": "Background Summary:\n\nMr. Rice is a 60-year-old male originally from Spartanburg, South Carolina. He was released from Turbeville Correctional Institution on May 4 after serving 30 months for four felony drug-related charges, including possession with intent to distribute (PWID) methamphetamine, fentanyl, crack cocaine, and hydrocodone.\n\nHe is currently serving a six-month furlough period projected to end on November 1. As part of his supervision requirements, he reports monthly and must submit to urinalysis screenings during visits.\n\nMr. Rice has been incarcerated three times and has served approximately 18–19 years total. His longest incarceration was from 2002 to 2015. Although all of his charges have been drug-related, he reports that he has never personally used drugs.\n\nMr. Rice has twin sons, age 41, who assisted him with transportation upon his release. He reports having a positive relationship with them. He also shared that his daughter passed away several years ago.\n\nAt this time, Mr. Rice is residing at the Rodeway Inn. Prior to this, he had been living with his mother; however, due to her declining health, she is expected to transition into an assisted living facility.\n\nMr. Rice reports a consistent work history between incarcerations. His previous employment experience includes production and machine operator positions.",
+      "center_location": "Spartanburg",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "updated_at": "2026-11-23T13:46:29.687Z"
+}

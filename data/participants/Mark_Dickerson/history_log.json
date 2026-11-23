@@ -1,0 +1,138 @@
+{
+  "participant_key": "Mark_Dickerson",
+  "updated_at": "2026-11-23T13:46:29.026Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-11T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "11 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:352",
+      "event_key": "reentry_session:352",
+      "timestamp": "2026-11-11T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Mark said Antwaun called him the other day and said he was going to check on the status of Mark's Voc Rehab case. I suggested Mark call him again if he doesn't hear back within a week. I also asked if he's made any progr",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:353",
+      "event_key": "reentry_session:353",
+      "timestamp": "2026-11-10T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "Called to check in with Mark. No answer, no VM set up. Sent a text.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:259",
+      "event_key": "reentry_session:259",
+      "timestamp": "2026-11-02T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "Got a hold of Antwaun at Voc Rehab. Gave him Mark's number and he said he'll give Mark a call.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:260",
+      "event_key": "reentry_session:260",
+      "timestamp": "2026-10-26T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Mark called Voc Rehab today to try to get a hold of Antwaun. No answer, he left a message. I told him I'd try again tomorrow if he hasn't heard back.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:95",
+      "event_key": "reentry_session:95",
+      "timestamp": "2026-10-15T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Called voc rehab to follow up on Mark's appointment. Antwaun (who he met with) was in a meeting. They tried to transfer me to his voicemail but the call was dropped. I sent the number to Mark and told him to try again in",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:96",
+      "event_key": "reentry_session:96",
+      "timestamp": "2026-10-08T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Mark had an appointment with voc rehab on 9/22 and hasn't heard anything since. He met with Antwaun and was told to reach out to him after the meeting. He has since reached out 4 times. I emailed Kelly Cordray at West Co",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:97",
+      "event_key": "reentry_session:97",
+      "timestamp": "2026-09-30T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Documentation support – ID, housing forms, paperwork (Daisy Boynton)",
+      "summary": "RDF Referral Meeting:\n\nLet him know that funding opens tomorrow and that I need some info from him. He owes $2700 in reinstatement fees and is getting a picture of that document today. DMV offered to have him pay $700 do",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:98",
+      "event_key": "reentry_session:98",
+      "timestamp": "2026-09-29T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Mark is interested in an RDF referral for DL fees. I scheduled an appt. for Wednesday to talk it through with him.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:99",
+      "event_key": "reentry_session:99",
+      "timestamp": "2026-09-23T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Sent a text establishing connection, that I'm taking over for Justin, and asking if we can be helpful at this point.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:100",
+      "event_key": "reentry_session:100",
+      "timestamp": "2026-09-03T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Justin Evans)",
+      "summary": "Driver's License and Legal Issues\nMark reports 2 indefinite license suspensions resulting from past DUI and driving under suspension convictions.\nPro bono attorneys are available to provide legal advice and prepare petit",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:101",
+      "event_key": "reentry_session:101",
+      "timestamp": "2026-09-02T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "Intake Appointment SCHEDULED",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

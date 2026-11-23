@@ -1,0 +1,204 @@
+{
+  "participant_key": "Morris_Heyward",
+  "updated_at": "2026-11-23T13:46:29.014Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-18T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "17 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:349",
+      "event_key": "reentry_session:349",
+      "timestamp": "2026-11-18T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Called to check in. He got his papers notarized and he has a ride to go downtown tomorrow to bring them to the Charleston Family Court. He's still working his janitorial job but is looking for more work. I mentioned the ",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:348",
+      "event_key": "reentry_session:348",
+      "timestamp": "2026-11-18T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "summary": "Sent Morris the seasonal hiring openings for the Thanksgiving and Christmas season at HoneyBaked Ham in Charleston.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:350",
+      "event_key": "reentry_session:350",
+      "timestamp": "2026-11-06T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Morris has the paperwork from Willis for the child support modification. He has a plan to go to the bank next week to get them signed and notarized and then get them filed. He is still working his janitor job, but hasn't",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:351",
+      "event_key": "reentry_session:351",
+      "timestamp": "2026-11-04T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "Willis said that he would help Morris with getting the forms notarized and filed. I sent him the updated forms and he let me know that he printed them and handed them off the Morris. Now we need Morris to get them signed",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:258",
+      "event_key": "reentry_session:258",
+      "timestamp": "2026-10-27T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Documentation support – ID, housing forms, paperwork (Daisy Boynton)",
+      "summary": "Morris thinks Willis may not work at A Father's Place anymore. I prepared the forms he needs to bring to the Family Court and asked Nancy Bloodgood to come by today to notarize them. Morris and Nancy should be here at 12",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:257",
+      "event_key": "reentry_session:257",
+      "timestamp": "2026-10-27T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Morris didn't show up today (didn't call either, I ended up calling him). Told him he has one more chance on Friday to have the forms notarized here with Nancy. Otherwise he'll have to figure it out himself.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:232",
+      "event_key": "reentry_session:232",
+      "timestamp": "2026-10-26T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "Mr. Swick said the last step to reinstating Morris' DL is to file the forms at the Family Court in Charleston. I reached out to Willis (A Father's Place) to see if he could help Morris with transportation for that.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:74",
+      "event_key": "reentry_session:74",
+      "timestamp": "2026-10-23T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Got a janitorial position in Goose Creek (7 days a week). He doesn't have all the details yet but is very excited. Waiting to hear back from Mr. Swick about his license so he can use his car as transportation.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:75",
+      "event_key": "reentry_session:75",
+      "timestamp": "2026-10-21T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Documentation support – ID, housing forms, paperwork|Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Morris sent confirmation of his $100 payment to DSS. I emailed that confirmation (in reentry nav case plan) and his forms requesting a modification of child support to Mr. Swick. We will wait for his reply to see what we",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:76",
+      "event_key": "reentry_session:76",
+      "timestamp": "2026-10-19T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Documentation support – ID, housing forms, paperwork (Daisy Boynton)",
+      "summary": "Morris and I filled out the forms to request a modification. I am now waiting on Morris to send me confirmation of his $100 payment. Then I will send the forms as well as the confirmation to Mr. Swick.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:77",
+      "event_key": "reentry_session:77",
+      "timestamp": "2026-10-09T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Spoke with Morris and Willis (his case manager at A Father's Place). We are going to submit a modification hearing for his child support and Morris will pay $100. According to Mr. Swick at DSS, this will allow Morris to ",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:78",
+      "event_key": "reentry_session:78",
+      "timestamp": "2026-10-05T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "summary": "Sent him some jobs to apply for.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:79",
+      "event_key": "reentry_session:79",
+      "timestamp": "2026-10-01T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Documentation support – ID, housing forms, paperwork (Daisy Boynton)",
+      "summary": "Spoke with Morris today about getting together his RDF application. He owes $1000. I reached out to his contact at DSS to get an updated confirmation of a possible payment plan (last month it was $600 down, $400 by 9/30 ",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:80",
+      "event_key": "reentry_session:80",
+      "timestamp": "2026-09-30T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Called asking about FS waitlist and that he would be willing to Uber daily. Lives an hour away, so adding him to reentry nav caseload.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:82",
+      "event_key": "reentry_session:82",
+      "timestamp": "2026-08-19T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Justin Evans)",
+      "summary": "Summary\nDiscussing re-entry program enrollment, navigating license revocation, and establishing financial literacy strategies for stabilizing employment outcomes.\n\nRe-entry Program Enrollment\nParticipation in the re-entr",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:81",
+      "event_key": "reentry_session:81",
+      "timestamp": "2026-08-19T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "Intake Appointment SCHEDULED",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:83",
+      "event_key": "reentry_session:83",
+      "timestamp": "2026-08-17T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "Intake Appointment SCHEDULED",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

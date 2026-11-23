@@ -1,0 +1,102 @@
+{
+  "participant_key": "Jose_Garcia",
+  "participant_name": "Jose Garcia",
+  "apricot_ids": [
+    "79596"
+  ],
+  "evaluations": [],
+  "notes_count": 6,
+  "processed_notes": [
+    {
+      "id": 478,
+      "record_id": "79596",
+      "first_name": "Jose",
+      "last_name": "Garcia",
+      "activity_date": "2026-09-03",
+      "staff_name": "Matt Carlisle",
+      "service_context": "First Shift",
+      "interaction_type": "Check-in conversation – brief status update",
+      "note_text": "Jose was selected for a random urinalysis this morning and tested positive for methamphetamine.  I met with Jose to discuss the results and provide an opportunity for him to address the situation.  Jose reported that he had been in a room with individuals who were smoking methamphetamine on Sunday and believes this may have contributed to the positive result.\n\nWe discussed peer influence as a potential risk factor, which Jose acknowledged.  He stated that he is committed to distancing himself from individuals who may negatively impact his recovery.  We also discussed available recovery program options, given his history of methamphetamine use.\n\nLastly, we discussed the possibility of Jose returning to the program under the conditions that he participates in weekly case management check-ins and can demonstrate one month of negative drug screenings.  Jose responded positively to this plan and stated that he will return Monday for his scheduled weekly case management appointment.",
+      "center_location": "Spartanburg",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 477,
+      "record_id": "79596",
+      "first_name": "Jose",
+      "last_name": "Garcia",
+      "activity_date": "2026-09-02",
+      "staff_name": "Diyoung Dantzler",
+      "service_context": "First Shift",
+      "interaction_type": "Case Note (documentation only) – no interaction or service",
+      "note_text": "missed today due to illness called in ahead of time",
+      "center_location": "Spartanburg",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 475,
+      "record_id": "79596",
+      "first_name": "Jose",
+      "last_name": "Garcia",
+      "activity_date": "2026-08-27",
+      "staff_name": "Diyoung Dantzler",
+      "service_context": "First Shift",
+      "interaction_type": "Coaching / case management session – structured or in-depth meeting",
+      "note_text": "Jose reported that things are generally going well at home and within the program. He stated that he has been somewhat tired but described the food and overall experience positively. He identified no significant current issues at home other than temporarily not having Wi-Fi, which he expects to be resolved within the week.\n\n2. Communication & Interpersonal Skills\n\nA major area of growth identified by Jose is communication. He acknowledged that he has historically been less talkative and that communication was not emphasized in many of his previous work environments.\n\nJose recognized that limited communication has negatively affected his personal relationships. He expressed a desire to become more communicative, build stronger relationships, and develop healthier friendships and support networks.\n\n3. 90-Day Goals\n\nJose stated that, over the next 90 days, he wants to experience greater stability and personal growth, particularly through:\n\n* Improving communication.\n* Becoming more comfortable expressing himself.\n* Building healthy friendships and support networks.\n* Establishing employment.\n* Becoming better at holding his ground and maintaining appropriate boundaries.\n* Continuing to address DUI-related requirements.\n* Completing FEMA-related training/certifications.\n\n4. Employment\n\nEmployment was identified as one of Jose’s immediate priorities. Jose reported having approximately 8–10 years of work experience and stated that he began working shortly after high school.\n\nJose prefers employment that provides:\n\n* A flexible work schedule.\n* Preferably second- or third-shift opportunities.\n* A schedule that is not strictly Monday through Friday.\n\nJose identified starting a resume as his immediate next step toward employment.\n\n5. Financial Responsibility\n\nJose discussed wanting to change how he manages his money. He expressed interest in not simply spending his paycheck but instead learning to plan, save, and invest his money more responsibly.\n\n6. High-Risk Situations & Boundaries\n\nJose demonstrated awareness of situations and relationships that may place him at risk of returning to unhealthy patterns. He stated that he is becoming more comfortable setting boundaries and recognizing when certain people or environments may be risky or triggering.\n\nHe identified the importance of being able to communicate boundaries by telling others, in appropriate terms, that he can maintain a relationship with them while no longer participating in certain behaviors.\n\n7. Coping & Skill Development\n\nJose reported that the program’s role-play exercises have been beneficial because they allow him to practice responding to situations rather than simply thinking about how he would respond.\n\nHe expressed interest in becoming more comfortable with expressing himself and taking healthy action rather than remaining reserved or emotionally flat in social situations.\n\n8. Support System\n\nJose identified his brother and sister as important sources of support. He also expressed that he would like to strengthen his relationship with his mother and continue learning from his family experiences while developing his own healthier approaches to communication and decision-making.\n\n9. Motivation & Confidence\n\nWhen asked to rate his confidence in accomplishing his 90-day goals on a scale of 1–10, Jose rated himself an 11/10, demonstrating a high level of confidence and motivation.\n\nHe stated that he is beginning to think more intentionally about planning his future and making decisions that support long-term stability.\n\n10. Action Plan / Accountability\n\nJose committed to the following before the next case management meeting:\n\n1. Begin creating his resume.\n2. Use his previous work experience to develop a strong employment history.\n3. Begin identifying suitable employment opportunities.\n4. Consider applying for positions through Indeed.\n5. Focus his job search on positions with flexible, second-, or third-shift schedules.\n6. Continue practicing communication and role-play skills.\n7. Continue establishing healthy boundaries and avoiding high-risk environments or relationships.\n8. Continue working toward his DUI-related requirements and FEMA training goals.\n\nAccountability: Jose agreed that the case manager can hold him accountable at the next weekly meeting for completing his resume and beginning employment applications.\n\nOverall Case Management Assessment\n\nJose presented as highly motivated and future-oriented during the session. He demonstrated insight into how limited communication, unhealthy relationships, and poor boundaries have affected his past. He is actively identifying healthier behaviors and appears receptive to practicing new skills through role-play and structured case management.\n\nPrimary focus for next session: Review completion of Jose’s resume, assess employment applications, discuss progress with communication and boundary-setting, and continue monitoring progress toward his 90-day goals.",
+      "center_location": "Spartanburg",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 474,
+      "record_id": "79596",
+      "first_name": "Jose",
+      "last_name": "Garcia",
+      "activity_date": "2026-08-24",
+      "staff_name": "Diyoung Dantzler",
+      "service_context": "First Shift",
+      "interaction_type": "Coaching / case management session – structured or in-depth meeting",
+      "note_text": ".\tPersonal vision: Continue building the life he envisions, including enjoying his low-rider lifestyle with Charlie and Max.\n2. Professional growth: Improve his ability to communicate professionally in the workplace.\n3. Handling criticism: Learn to accept and respond appropriately to harsh or professional criticism from management.\n4. Career development: Complete FEMA-related training/certifications and work toward credentials that could help him become an instructor, firefighter, or business owner.\n5. Stability: Take care of his DUI-related requirements/testing so he can move forward instead of waiting years for things to improve.",
+      "center_location": "Spartanburg",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 473,
+      "record_id": "79596",
+      "first_name": "Jose",
+      "last_name": "Garcia",
+      "activity_date": "2026-08-18",
+      "staff_name": "Diyoung Dantzler",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment COMPLETED",
+      "note_text": "Jose Garcia\nAge: 35\nAppointment Type: Initial In-Person Intake / Resource Navigation\nProgram: Turn90\n\nPresenting Needs\n\nJose Garcia completed an initial in-person intake to discuss his current circumstances, employment goals, barriers, and potential participation in Turn90. Jose reported that he is currently staying with family in the Spartanburg area and receives some family support. He currently relies primarily on walking for transportation and reported that his brother may be able to provide him with a scooter, which would improve his ability to travel to employment and appointments.\n\nJose has been unemployed since November 28, 2023, when he last worked for Pet Dairy. He reported previous experience with forklift operation, assembly-line work, and other employment. He expressed a desire to obtain meaningful employment rather than simply accepting a job without a sense of purpose.\n\nEmployment and Career Goals\n\nJose identified employment and career development as major goals. He is interested in developing skills in computer programming/coding and potentially pursuing additional education or training. He has previously explored welding and has a high school diploma from Dorman High School.\n\nJose expressed motivation to increase his skills, become financially independent, and establish a more stable future. He indicated that he does not want to remain dependent on physically demanding or low-growth employment and would like to develop a career that provides greater long-term opportunity.\n\nIdentified Barriers\n\n* Extended period of unemployment since November 2023.\n* Limited transportation; currently walking to locations and relying on family for transportation assistance.\n* Driver’s license is currently suspended and requires further clarification with the DMV/legal system.\n* Needs to obtain a replacement Social Security card; currently reports having his birth certificate and identification.\n* May need assistance updating or developing his resume and identifying suitable employment opportunities.\n* Needs guidance navigating education/training opportunities related to coding, computer programming, or technology.\n* May benefit from structured support with goal setting, communication, decision-making, and workplace readiness.\n* Reported previous concerns involving interpersonal conflict that contributed to hesitation about returning to certain work environments.\n\nCriminal/Legal History Relevant to Resource Navigation\n\nJose reported a recent period of approximately 46 days of incarceration related to outstanding legal/traffic matters. He reported that he currently has no pending charges, upcoming court dates, or probation requirements. He denied any sex-offense history.\n\nJose reported that his driver’s license is suspended and stated that he needs to determine the current requirements for reinstatement. Resource navigation may assist him with identifying the appropriate DMV/legal resources and determining what documentation or payments may be necessary.\n\nSubstance Use / Drug Screening\n\nJose reported a prior DUI from 2010 and stated that he has not engaged in ongoing alcohol or drug use. During the intake process, Jose was asked about his ability to pass a drug screen and was initially candid about recent marijuana use.\n\nProgram update: Jose subsequently completed the required drug test and passed the drug screen. This demonstrates his current ability to meet the program’s substance-screening requirement.\n\nStrengths and Protective Factors\n\n* Demonstrated willingness to seek assistance and engage with services.\n* Communicated openly regarding his circumstances and barriers.\n* Has stable family support at this time.\n* Has a high school diploma.\n* Has previous employment experience and transferable skills.\n* Has previous forklift and assembly-line experience.\n* Has expressed clear interest in developing new career skills.\n* Interested in computer programming/coding and continuing education.\n* Demonstrated awareness of the importance of avoiding conflict and reported that he generally attempts to de-escalate situations rather than continue arguments.\n* Expressed a desire to make positive changes and establish a new direction in life.\n* Successfully passed the required drug screening.\n\nPotential Turn90 Eligibility/Program Fit\n\nJose appears to have several factors that may make him an appropriate candidate for Turn90 services, subject to final program review and eligibility determination. His primary needs are consistent with the program’s focus on employment, resource navigation, transportation, personal development, and improving long-term stability.\n\nPotential reasons supporting consideration for enrollment include his extended unemployment, transportation barriers, suspended driver’s license, need for replacement identification documentation, interest in education and career development, limited current employment opportunities, and willingness to participate in structured support.\n\nJose also demonstrated motivation to improve his circumstances and was receptive to receiving assistance. His successful drug screen further supports his ability to meet the program’s substance-testing expectations.\n\nRecommended Resource Navigation Priorities\n\n1. Assist Jose with obtaining a replacement Social Security card.\n2. Assist with determining the current status and reinstatement requirements for his driver’s license.\n3. Explore reliable transportation options, including available community transportation resources.\n4. Assist with resume development/update and employment search.\n5. Identify employers that match Jose’s previous forklift/assembly experience while also exploring entry-level technology opportunities.\n6. Research education, workforce-development, coding, computer programming, and technology training opportunities.\n7. Explore available financial assistance or workforce resources that may support training or transportation.\n8. Maintain regular follow-up to monitor employment progress, transportation needs, documentation, and educational goals.\n9. Continue encouraging positive decision-making, communication, conflict management, and workplace-readiness skills.\n\nCase Meeting Summary\n\nJose presented as motivated to move forward with his life and establish greater stability. He identified employment, transportation, education, and career development as primary areas where he needs assistance. He demonstrated openness during the intake and acknowledged the importance of seeking help and making different decisions moving forward.\n\nBased on the information obtained during the initial appointment, Jose appears to have meaningful resource-navigation needs and several strengths that could make him a good fit for Turn90. Final acceptance should be determined following review by the appropriate Turn90 program staff and confirmation of all program eligibility requirements\nWe decided to to bring him in for orientation Friday 3:00",
+      "center_location": "Spartanburg",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 476,
+      "record_id": "79596",
+      "first_name": "Jose",
+      "last_name": "Garcia",
+      "activity_date": "2026-08-17",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment SCHEDULED",
+      "note_text": "Told me he was released from jail last year, but apparently told Matt in person that he's never been incarcerated.",
+      "center_location": "Spartanburg",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "updated_at": "2026-11-23T13:46:29.933Z"
+}

@@ -1,0 +1,150 @@
+{
+  "participant_key": "Davon_Thompson",
+  "participant_name": "Davon Thompson",
+  "client_records": [
+    {
+      "id": 46,
+      "first_name": "Davon",
+      "last_name": "Thompson",
+      "apricot_id": "81798",
+      "location": "Columbia",
+      "status": "archived",
+      "stability_tier": "at_risk",
+      "phone": null,
+      "email": null,
+      "notes": "1. make a resume\n2. staffing agencies\n3. DL test\n\n- Owes no fines, never had a license, does have a permit\n- Plans to take the bus to the center, totally fine with the 20 min walk from the bus stop\n- No history of drugs or alcohol\n- Has 5 kids, no child support, but is involved in their lives and supportive\n- Is very interested in reentry nav while he waits for a spot to open, needs to find other jobs, open to any work, hasn't been to any temp agencies yet\n- needs a resume",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-10-27 13:40:03",
+      "case_manager": "Daisy Boynton",
+      "enrollment_start": "2026-10-09",
+      "gate1_pct": 0,
+      "gate2_pct": 0,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "last_contact_date": "2026-10-23",
+      "last_contact_staff": "Jenn Jeanquart",
+      "last_contact_activity": "Check-in conversation – brief status update",
+      "has_case_plan": 1,
+      "case_plan_text": "1. make a resume\n2. staffing agencies\n3. DL test\n\n- Owes no fines, never had a license, does have a permit\n- Plans to take the bus to the center, totally fine with the 20 min walk from the bus stop\n- No history of drugs or alcohol\n- Has 5 kids, no child support, but is involved in their lives and supportive\n- Is very interested in reentry nav while he waits for a spot to open, needs to find other jobs, open to any work, hasn't been to any temp agencies yet\n- needs a resume"
+    }
+  ],
+  "sessions": [
+    {
+      "id": 194,
+      "client_id": 46,
+      "session_date": "2026-10-23",
+      "session_title": "Check-in conversation – brief status update (Jenn Jeanquart)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Scheduled orientation for 10/30/26.",
+      "notes_text": "Scheduled orientation for 10/30/26.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 195,
+      "client_id": 46,
+      "session_date": "2026-10-20",
+      "session_title": "Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Sent Davon the info for the second chance job fair happening this Thursday in Columbia.",
+      "notes_text": "Sent Davon the info for the second chance job fair happening this Thursday in Columbia.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 196,
+      "client_id": 46,
+      "session_date": "2026-10-12",
+      "session_title": "Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Created resume and sent him the final copy (also put it in his reentry nav case plan)",
+      "notes_text": "Created resume and sent him the final copy (also put it in his reentry nav case plan)",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 197,
+      "client_id": 46,
+      "session_date": "2026-10-09",
+      "session_title": "Intake Appointment COMPLETED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "- Owes no fines, never had a license, does have a permit\n- Plans to take the bus to the center, totally fine with the 20 min walk from the bus stop\n- No history of drugs or alcohol\n- Has 5 kids, no child support, but is involved in their lives and supportive\n- Is very interested in reentry nav while he waits for a spot to open, needs to find other jobs, open to any work, hasn't been to any temp agencies yet\n- needs a resume\n\n* added to waitlist\n\nMade an appointment for Monday to make a resume with him over the phone",
+      "notes_text": "- Owes no fines, never had a license, does have a permit\n- Plans to take the bus to the center, totally fine with the 20 min walk from the bus stop\n- No history of drugs or alcohol\n- Has 5 kids, no child support, but is involved in their lives and supportive\n- Is very interested in reentry nav while he waits for a spot to open, needs to find other jobs, open to any work, hasn't been to any temp agencies yet\n- needs a resume\n\n* added to waitlist\n\nMade an appointment for Monday to make a resume with him over the phone",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 198,
+      "client_id": 46,
+      "session_date": "2026-10-07",
+      "session_title": "Intake Appointment SCHEDULED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Intake Appointment SCHEDULED",
+      "notes_text": "Intake Appointment SCHEDULED",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "goals": [
+    {
+      "id": 105,
+      "client_id": 46,
+      "goal_title": "Owes no fines, never had a license, does have a permit",
+      "target_date": "2026-11-09",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"Owes no fines, never had a license, does have a permit\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 104,
+      "client_id": 46,
+      "goal_title": "DL test",
+      "target_date": "2026-11-09",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"DL test\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 103,
+      "client_id": 46,
+      "goal_title": "staffing agencies",
+      "target_date": "2026-11-09",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"staffing agencies\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 102,
+      "client_id": 46,
+      "goal_title": "make a resume",
+      "target_date": "2026-11-09",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"make a resume\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "case_plans": [],
+  "updated_at": "2026-11-23T13:46:28.839Z"
+}

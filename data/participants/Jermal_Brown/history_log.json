@@ -1,0 +1,50 @@
+{
+  "participant_key": "Jermal_Brown",
+  "updated_at": "2026-11-23T13:46:29.404Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-19T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "3 chronological Apricot note(s) archived (No (Needs Reentry Nav Case Plan)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:346",
+      "event_key": "reentry_session:346",
+      "timestamp": "2026-11-19T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Daisy Boynton)",
+      "summary": "CONTACT SUMMARY & SESSION OVERVIEW\n- Session Stage: First Session / Intake (~21 min, phone consultation)\n- Summary: Completed phone screening with [Client], who was released from prison in April 2026 after serving 5 year",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:345",
+      "event_key": "reentry_session:345",
+      "timestamp": "2026-11-19T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "summary": "Jermal is looking for seasonal work until a spot opens up here for FS. I sent him the hiring page for HoneyBaked seasonal job openings and told him I'd keep an eye out for any other opportunities. He has a resume.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:347",
+      "event_key": "reentry_session:347",
+      "timestamp": "2026-11-18T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "Called and asked about First Shift. I let him know he'd need to be rescreened since his last consultation was in May. We scheduled it for tomorrow.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

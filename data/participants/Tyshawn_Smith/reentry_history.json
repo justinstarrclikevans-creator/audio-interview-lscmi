@@ -1,0 +1,127 @@
+{
+  "participant_key": "Tyshawn_Smith",
+  "participant_name": "Tyshawn Smith",
+  "client_records": [
+    {
+      "id": 70,
+      "first_name": "Tyshawn",
+      "last_name": "Smith",
+      "apricot_id": "82656",
+      "location": "Columbia",
+      "status": "active",
+      "stability_tier": "at_risk",
+      "phone": null,
+      "email": null,
+      "notes": "Address substance use problems.",
+      "created_at": "2026-11-22 17:35:09",
+      "updated_at": "2026-11-22 17:36:06",
+      "case_manager": "Daisy Boynton",
+      "enrollment_start": "2026-11-06",
+      "gate1_pct": 0,
+      "gate2_pct": 0,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "last_contact_date": "2026-11-17",
+      "last_contact_staff": "Daisy Boynton",
+      "last_contact_activity": "Employment support – applications, resume, interview prep",
+      "has_case_plan": 1,
+      "case_plan_text": "Address substance use problems."
+    }
+  ],
+  "sessions": [
+    {
+      "id": 419,
+      "client_id": 70,
+      "session_date": "2026-11-17",
+      "session_title": "Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Sent 2 more job fairs and asked how the Alston Wilkes interview went on Thursday. No response.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 420,
+      "client_id": 70,
+      "session_date": "2026-11-10",
+      "session_title": "Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "I let him know I'd add him to the waitlist for now. LRADAC does not do screenings/assessments unless the person is volunteering themselves for their inpatient program. Tyshawn is going to Alston Wilkes on Thursday to apply for a job. I sent him the info for the 2 job fairs coming up in Columbia (11/12 and 11/19).",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 421,
+      "client_id": 70,
+      "session_date": "2026-11-06",
+      "session_title": "Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Let Tyshawn know that he needs to get screened at LRADAC and then we'll decide what treatment we'll require for our program from there.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 422,
+      "client_id": 70,
+      "session_date": "2026-11-03",
+      "session_title": "Check-in conversation – brief status update (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Follow-Up Call: Tyshawn Smith\nDate: 11/3/2026 | Staff: Daisy | Type: Phone follow-up to the 11/2 consultation\nOutcome: Told him he’ll need to complete a recovery program before joining First Shift. After pushing back for a while, he agreed to do it. Daisy will send him (1) low-cost or free recovery program options in his area and (2) second chance job openings, both this week.\n\nCall Summary\n\nExplained that no exception was granted, so completing a recovery program is required before he can start.\nHe disputed that he has an alcohol problem. He said he only drinks on weekends, not every day, that “everybody drinks,” and that what he shared yesterday was about his past (“not is, but was”). Later in the call he said, “I had a problem. I didn’t deal with the problem. I’m dealing with the problem still.”\nHe feels he’s being punished for being honest (“I should have just kept my mouth closed”) and “treated like an alcoholic.”\nHe asked whether he’d have to stop drinking completely. Daisy said Turn90 can’t control what he does, but the recovery program is required to join.\nHe said he’s overwhelmed right now.\nHe brought up re-enrolling in ADSAP, which he estimated at about $500. Daisy noted he’d already finished ADSAP and said she’d look for options that are free or low-cost.\nHe asked how long a recovery program takes. Daisy didn’t know yet and said it depends on the program.\nOffered a second path: if his main goal is a job, Daisy can send second chance job openings, and he wouldn’t need the recovery program for that.\nHe asked whether Turn90 can guarantee him a job after the program. Daisy answered, “I could guarantee that, yes.”\nHe ended by agreeing to the classes and asked for the second chance job openings too.\n\nNext Steps\n\nDaisy (this week): Research recovery programs near him that are free or low-cost, outpatient or residential, and send him options with how long each one takes.\nDaisy (this week): Send him second chance job openings.\nAfter he finishes a program: Revisit his First Shift enrollment and finish the rest of his consultation (justice history, education and work).\nStill open from 11/2: medical, dental and vision referrals, his ADSAP paperwork and ticket for the license, and housing stability.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 423,
+      "client_id": 70,
+      "session_date": "2026-11-02",
+      "session_title": "Intake Appointment COMPLETED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Intake Screening: Tyshawn Smith\nDate: 11/2/2026 | Staff: Daisy | Type: Phone consultation (Columbia), not finished\nOutcome: Eligibility for First Shift is on hold. He reported heavy, recent alcohol use (most recent drink was recent) and has never completed a treatment program. Under current policy, he’d need to complete a substance use program before starting in person. He asked for an exception. Daisy will talk to the program manager and call him back later today or tomorrow (by 11/3) at the latest.\n\nCall Notes\n\nHis consultation was scheduled for 11 AM. He thought it was at 10, so he missed your first call, and you did the consultation on the callback.\nHe was new to Turn90, so you went over both First Shift (Columbia) and reentry navigation.\n\nHousing\n\nHe currently has a place to stay. He said it depends on a relationship that’s going through “a little thing,” so he couldn’t say whether it’s stable long-term.\nTold him we can help with housing if he needs it.\n\nDocuments\n\nState ID, birth certificate, Social Security card: Yes, he has all of them.\nDriver’s license: Not yet valid. He owes about $170–175 for a speeding ticket from Aiken, SC. He recently finished ADSAP, but the program hadn’t sent the completion paperwork to the DMV. He contacted them about a week ago and hasn’t checked back with the DMV since.\n\nTransportation\n\nRides the bus. Told him the nearest stop is a 15–20 minute walk from the Columbia center.\nPlans to buy an e-bike in about 2 weeks to cover the gap between the bus and where he needs to go.\nWhether family can drive him wasn’t clear.\n\nAvailability\n\nNo conflicts with 9–3, Monday through Friday.\n\nHealth\n\nPrescribed Remeron while incarcerated. He doesn’t need it now.\nHe named health concerns as emergency needs:\nLower back pain that sometimes runs down the back of his leg\nA large cavity or hole in an upper back tooth on the right side\nVision getting blurry\nThese may call for medical, dental and vision referrals.\n\nSubstance Use\n\nDescribes himself as a heavy alcohol user and an alcoholic, with alcoholism in his family. Drinks mostly wine. No problems with other drugs besides marijuana.\nSays he now drinks mainly on weekends, not every day. He drank recently.\nSays alcohol has been involved in his incarceration, in falling out with family and his kids, and in violence when he feels disrespected.\nSays he drinks to “self-medicate” because he has no motivation or structure right now. He’s been filling out applications and going to job fairs, keeps getting turned down, and feels overwhelmed.\nHe’s never completed a substance use program. He said he’s open to one.\nHe says alcohol has never caused him trouble at a job (never fired or written up for it).\n\nProgram Conversation\n\nExplained that applicants with recent use need to finish a substance use program (residential or outpatient) before First Shift. That’s because it’s only 8 weeks before job placement, and employer partners trust Turn90 to send people who are ready.\nMade clear this delays his start but doesn’t shut him out. Offered help finding a program, plus resumes, job search and other support in the meantime.\nHe pushed back. He feels he was being honest and is now penalized for it (“I really should have told you I wasn’t drinking”), and he sees this program as his chance (“without y’all right now, I’m going back to square one”).\nHe said he’d go along with whatever is required (“whatever y’all commit me to do, I’m with it”).\n\nNext Steps\n\nDaisy: Call Tyshawn back later today or tomorrow, by 11/3.\nIf no exception: Find him a recovery program (outpatient or residential) through community partners, and enroll him in reentry navigation while he waits.\nEither way: Follow up on medical, dental and vision referrals, his ADSAP paperwork and ticket for the license, and housing stability.\nFinish the consultation: justice history, supervision, pending charges, child support, education, work history and certifications.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 424,
+      "client_id": 70,
+      "session_date": "2026-10-29",
+      "session_title": "Intake Appointment SCHEDULED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "No answer, VM not set up.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "goals": [
+    {
+      "id": 143,
+      "client_id": 70,
+      "goal_title": "Address substance use problems.",
+      "target_date": "2026-12-06",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"Address substance use problems.\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-11-22 17:35:09",
+      "updated_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "case_plans": [],
+  "updated_at": "2026-11-23T13:46:29.438Z"
+}

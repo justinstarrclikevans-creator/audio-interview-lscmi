@@ -1,0 +1,83 @@
+{
+  "participant_key": "Tyshawn_Smith",
+  "updated_at": "2026-11-23T13:46:29.439Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "6 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:419",
+      "event_key": "reentry_session:419",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "summary": "Sent 2 more job fairs and asked how the Alston Wilkes interview went on Thursday. No response.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:420",
+      "event_key": "reentry_session:420",
+      "timestamp": "2026-11-10T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "summary": "I let him know I'd add him to the waitlist for now. LRADAC does not do screenings/assessments unless the person is volunteering themselves for their inpatient program. Tyshawn is going to Alston Wilkes on Thursday to app",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:421",
+      "event_key": "reentry_session:421",
+      "timestamp": "2026-11-06T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "summary": "Let Tyshawn know that he needs to get screened at LRADAC and then we'll decide what treatment we'll require for our program from there.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:422",
+      "event_key": "reentry_session:422",
+      "timestamp": "2026-11-03T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Follow-Up Call: Tyshawn Smith\nDate: 11/3/2026 | Staff: Daisy | Type: Phone follow-up to the 11/2 consultation\nOutcome: Told him he’ll need to complete a recovery program before joining First Shift. After pushing back for",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:423",
+      "event_key": "reentry_session:423",
+      "timestamp": "2026-11-02T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Daisy Boynton)",
+      "summary": "Intake Screening: Tyshawn Smith\nDate: 11/2/2026 | Staff: Daisy | Type: Phone consultation (Columbia), not finished\nOutcome: Eligibility for First Shift is on hold. He reported heavy, recent alcohol use (most recent drink",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:424",
+      "event_key": "reentry_session:424",
+      "timestamp": "2026-10-29T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "No answer, VM not set up.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

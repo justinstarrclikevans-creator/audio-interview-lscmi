@@ -1,0 +1,105 @@
+{
+  "participant_key": "Michael_Maness",
+  "participant_name": "Michael Maness",
+  "profile_records": [
+    {
+      "id": 69,
+      "user_id": 76,
+      "current_gate": 1,
+      "w9_status": "pending",
+      "dl_status": "unknown",
+      "dl_notes": null,
+      "child_support_status": "unknown",
+      "child_support_notes": null,
+      "housing_status": "stable",
+      "substance_status": "none",
+      "mental_health_status": "none",
+      "transportation_status": "bus",
+      "court_dates": null,
+      "overall_status": "archived",
+      "termination_reason": null,
+      "termination_date": null,
+      "updated_at": "2026-10-26 13:47:10",
+      "stability_red_flags": null,
+      "director_override": 0,
+      "director_override_notes": null,
+      "director_override_by": null,
+      "reentry_status": "none",
+      "has_reentry_plan": 0,
+      "enrollment_date": "2026-10-26",
+      "correction_notes": null,
+      "supabase_id": null,
+      "record_id": "81457"
+    }
+  ],
+  "case_plan_triggers": [],
+  "daily_points": [
+    {
+      "id": 1192,
+      "user_id": 76,
+      "date": "2026-10-26",
+      "points_earned": 10,
+      "max_points": 10,
+      "attendance_status": "present",
+      "notes": "Apricot Sync",
+      "imported_from_apricot": 1,
+      "created_at": "2026-10-26 17:56:43"
+    }
+  ],
+  "drug_tests": [],
+  "benefits": [
+    {
+      "id": 38664,
+      "user_id": 76,
+      "benefit_type": "medicaid",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-10-26 13:47:10"
+    },
+    {
+      "id": 38665,
+      "user_id": 76,
+      "benefit_type": "snap",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-10-26 13:47:10"
+    },
+    {
+      "id": 38666,
+      "user_id": 76,
+      "benefit_type": "tanf",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-10-26 13:47:10"
+    },
+    {
+      "id": 38663,
+      "user_id": 76,
+      "benefit_type": "welvista",
+      "status": "not_started",
+      "application_number": null,
+      "monthly_amount": null,
+      "renewal_date": null,
+      "caseworker_contact": null,
+      "notes": null,
+      "updated_at": "2026-10-26 13:47:10"
+    }
+  ],
+  "resumes": [],
+  "db_documents": [],
+  "legacy_briefcase_items_count": 35,
+  "legacy_gate_criteria_count": 27,
+  "updated_at": "2026-11-23T13:46:28.799Z"
+}

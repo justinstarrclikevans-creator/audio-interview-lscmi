@@ -9,22 +9,20 @@
   "apricot_id": "81798",
   "phone": "",
   "email": "davon.thompson.81798@firstshift.org",
-  "files": [
-    "Davon_Thompson_Columbia_criminal_history.docx",
-    "Davon_Thompson_Columbia_criminal_history.md",
-    "Davon_Thompson_Columbia_draft_scoring_form.docx",
-    "Davon_Thompson_Columbia_draft_scoring_form.md",
-    "Davon_Thompson_Columbia_interview_guide.docx",
-    "Davon_Thompson_Columbia_interview_guide.md",
-    "Davon_Thompson_Columbia_transcript.txt"
-  ],
+  "lscmi_client_id": "Davon_Thompson_Columbia",
   "folder_slug": "Davon_Thompson",
   "folder_path": "data/participants/Davon_Thompson",
   "has_lscmi_brief": false,
   "has_lscmi_scoring": true,
   "has_action_plan": false,
+  "has_legacy_case_briefs": false,
   "waitlist_ready": false,
   "waitlist_met_count": 6,
   "data_flags_count": 1,
-  "updated_at": "2026-11-22T17:18:01.574Z"
+  "cm_notes_count": 8,
+  "apricot_notes_count": 8,
+  "reentry_sessions_count": 5,
+  "history_events_count": 21,
+  "documents_count": 7,
+  "updated_at": "2026-11-23T13:46:28.841Z"
 }

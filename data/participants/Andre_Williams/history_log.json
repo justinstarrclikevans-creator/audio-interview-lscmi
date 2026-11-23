@@ -1,0 +1,39 @@
+{
+  "participant_key": "Andre_Williams",
+  "updated_at": "2026-11-23T13:46:29.568Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "2 chronological Apricot note(s) archived (No (Needs Reentry Nav Case Plan)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:471",
+      "event_key": "reentry_session:471",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Daisy Boynton)",
+      "summary": "CONTACT SUMMARY & SESSION OVERVIEW\n- Session Stage: First Session / Intake \n- Summary: Completed phone consultation with [Client]. Staff explained both programs: in-person First Shift (M–F 9–3, 8 weeks, $450/week stipend",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:472",
+      "event_key": "reentry_session:472",
+      "timestamp": "2026-11-16T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "Intake Appointment SCHEDULED",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

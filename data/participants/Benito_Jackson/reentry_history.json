@@ -1,0 +1,138 @@
+{
+  "participant_key": "Benito_Jackson",
+  "participant_name": "Benito Jackson",
+  "client_records": [
+    {
+      "id": 55,
+      "first_name": "Benito",
+      "last_name": "Jackson",
+      "apricot_id": "82379",
+      "location": "Columbia",
+      "status": "active",
+      "stability_tier": "stable",
+      "phone": null,
+      "email": null,
+      "notes": "1. Employment\n2. Reinstate DL\n3. Get PCP for prescription",
+      "created_at": "2026-10-26 17:51:41",
+      "updated_at": "2026-11-22 17:36:06",
+      "case_manager": "Daisy Boynton",
+      "enrollment_start": "2026-10-26",
+      "gate1_pct": 38,
+      "gate2_pct": 60,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "last_contact_date": "2026-11-16",
+      "last_contact_staff": "Daisy Boynton",
+      "last_contact_activity": "Employment support – applications, resume, interview prep",
+      "has_case_plan": 1,
+      "case_plan_text": "1. Employment\n2. Reinstate DL\n3. Get PCP for prescription"
+    }
+  ],
+  "sessions": [
+    {
+      "id": 404,
+      "client_id": 55,
+      "session_date": "2026-11-16",
+      "session_title": "Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Called, no answer, VM left. Sent Benito the information for the job fair this Thursday 11/19 in Columbia.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 405,
+      "client_id": 55,
+      "session_date": "2026-11-04",
+      "session_title": "Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Sent Benito the information for The Free Medical Clinic in Columbia, SC as an option to see a doctor about getting his Remeron prescribed again.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 237,
+      "client_id": 55,
+      "session_date": "2026-10-26",
+      "session_title": "Intake Appointment COMPLETED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Contact Summary: Conducted an initial intake and consultation with Benito Jackson. Explained the two tracks of the Turn90 program (in-person vs. reentry navigation). Client opted for the in-person 8-week program and will be placed on the waitlist (estimated 2-3 weeks). In the interim, client will receive reentry navigation support. Completed intake assessment covering housing, documentation, legal history, employment, and medical needs.\n\nCase Plan & Briefcase Updates: \n- Identification: Client has Birth Certificate, Social Security Card, and State ID (Verified/Green).\n- Transportation/License: Driver's License is suspended until November 27th due to a pending DUI. Client needs SR-22 insurance, $100 fee, and a DUI class to reinstate (Flagged/Red).\n- Medical: Client was prescribed Remeron in prison but is currently out. Needs a Primary Care Physician (PCP) to get a new prescription (Flagged/Red).\n- Legal: Released (Oct 9, 2025); on parole but gets off next month. Pending court date for DUI charge (represented by lawyer). \n- Child Support: Owes approximately $900 in arrears (Flagged/Red).\n- Employment/Education: 12th grade (no diploma/GED). Has 17 years of painting experience and a carpentry certificate from prison. Highly interested in forklift certification.\n\nReferrals/Resources Provided: Discussed upcoming job fairs and agreed to text client details for a job fair on November 12th.\n\nNext Steps: Place client on the center's waitlist. Send job fair information via text. Assist client in identifying a local PCP to restart medication. Map out steps for driver's license reinstatement for when suspension lifts on Nov 27th.",
+      "notes_text": "Contact Summary: Conducted an initial intake and consultation with Benito Jackson. Explained the two tracks of the Turn90 program (in-person vs. reentry navigation). Client opted for the in-person 8-week program and will be placed on the waitlist (estimated 2-3 weeks). In the interim, client will receive reentry navigation support. Completed intake assessment covering housing, documentation, legal history, employment, and medical needs.\n\nCase Plan & Briefcase Updates: \n- Identification: Client has Birth Certificate, Social Security Card, and State ID (Verified/Green).\n- Transportation/License: Driver's License is suspended until November 27th due to a pending DUI. Client needs SR-22 insurance, $100 fee, and a DUI class to reinstate (Flagged/Red).\n- Medical: Client was prescribed Remeron in prison but is currently out. Needs a Primary Care Physician (PCP) to get a new prescription (Flagged/Red).\n- Legal: Released (Oct 9, 2025); on parole but gets off next month. Pending court date for DUI charge (represented by lawyer). \n- Child Support: Owes approximately $900 in arrears (Flagged/Red).\n- Employment/Education: 12th grade (no diploma/GED). Has 17 years of painting experience and a carpentry certificate from prison. Highly interested in forklift certification.\n\nReferrals/Resources Provided: Discussed upcoming job fairs and agreed to text client details for a job fair on November 12th.\n\nNext Steps: Place client on the center's waitlist. Send job fair information via text. Assist client in identifying a local PCP to restart medication. Map out steps for driver's license reinstatement for when suspension lifts on Nov 27th.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 17:51:41"
+    },
+    {
+      "id": 236,
+      "client_id": 55,
+      "session_date": "2026-10-26",
+      "session_title": "Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Sent Benito a job posting for a Warehouse Technician at Trane Technologies.",
+      "notes_text": "Sent Benito a job posting for a Warehouse Technician at Trane Technologies.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 17:51:41"
+    },
+    {
+      "id": 238,
+      "client_id": 55,
+      "session_date": "2026-10-23",
+      "session_title": "Intake Appointment SCHEDULED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Intake Appointment SCHEDULED",
+      "notes_text": "Intake Appointment SCHEDULED",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 17:51:41"
+    }
+  ],
+  "goals": [
+    {
+      "id": 131,
+      "client_id": 55,
+      "goal_title": "Get PCP for prescription",
+      "target_date": "2026-11-09",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"Get PCP for prescription\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-10-26 17:51:41",
+      "updated_at": "2026-10-26 17:51:41"
+    },
+    {
+      "id": 130,
+      "client_id": 55,
+      "goal_title": "Reinstate DL",
+      "target_date": "2026-11-09",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"Reinstate DL\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-10-26 17:51:41",
+      "updated_at": "2026-10-26 17:51:41"
+    },
+    {
+      "id": 129,
+      "client_id": 55,
+      "goal_title": "Employment",
+      "target_date": "2026-11-09",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"Employment\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-10-26 17:51:41",
+      "updated_at": "2026-10-26 17:51:41"
+    }
+  ],
+  "case_plans": [],
+  "updated_at": "2026-11-23T13:46:29.265Z"
+}

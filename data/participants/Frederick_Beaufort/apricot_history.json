@@ -1,0 +1,79 @@
+{
+  "participant_key": "Frederick_Beaufort",
+  "participant_name": "Frederick Beaufort",
+  "apricot_ids": [
+    "82422"
+  ],
+  "evaluations": [
+    {
+      "record_id": "82422",
+      "full_name": "Frederick Beaufort",
+      "program": "Reentry Navigation",
+      "center": "Columbia",
+      "case_manager": "Unassigned",
+      "case_plan_status": "No (Needs Reentry Nav Case Plan)",
+      "focus_areas_or_goals": "No formal Reentry Nav Case Plan filed in Apricot yet",
+      "briefcase_status_text": "Not created in Apricot Briefcase module (0% across Gates 1–4)",
+      "gate1_pct": 0,
+      "gate2_pct": 0,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "case_note_analysis": "Enrolled 11/18/2026. Most recent contact on 11/18/2026 by Daisy Boynton (Intake Appointment COMPLETED): \"CONTACT SUMMARY & SESSION OVERVIEW - Session Stage: First Session / Intake - Summary: Completed phone consultation/intake with [Client], who was released from prison on 10/20/2026 and is currently residing at a halfway house. [Client] was engaged and cooperati\"\n\n**Latest Case Note Updates:** [Update 11/18/2026 • Daisy Boynton]: CONTACT SUMMARY & SESSION OVERVIEW\n- Session Stage: First Session / Intake\n- Summary: Completed phone consultation/intake with [Client], who was released from prison on 10/20/2026 and is currently residing at a halfway house. [Client] was engaged and cooperative and reports no emergency needs. Reviewed documents, license suspension, housing plans, work history, and justice history. [Client] was added to the program waitlist (approx. 18 people ahead; estimated wait of a couple months) and agreed to begin Reentry Navigation by phone in the meantime.\n\nCASE PLAN ALIGNMENT\n- Stability Tier: Stable\n- Stated Goals Progress: [Client] identified three goals: (1) reinstate driver's license, (2) employment, (3) housing in his own apartment. Goals set this session; no progress yet. A case plan will be built around these goals.\n\nBRIEFCASE & GATES 1-4 UPDATES\n- Gate 1 (Vital IDs, Meds, Supervision): Has birth certificate and SS card. His only photo ID is a driver's license, which is currently suspended. He has no separate state ID. Takes no medications. Currently at a halfway house with a projected release of 12/29/2026, possibly earlier as good-time days are applied (per conversation with halfway house staff today). Three years of supervision will follow release.\n- Gate 2 (Housing, Comms, Legal, Resume): Housing: currently at halfway house. Not interested in transitional or shared housing and wants his own apartment. Has family he can stay with as a fallback. DMV: license was suspended during incarceration after his fiancée had an uninsured accident in a vehicle registered in his name, and he is being held liable. To reinstate, he reports he must pay approx. $1,400 plus a $2,500 deposit (to go to the other party) and carry SR-22 insurance for 3 years. Child support: none. Resume: no Turn90 resume yet.\n- Gate 3 (Health, Recovery, Banking): No limiting health conditions. Denies current drug or alcohol use and reports past marijuana use only in his youth. Reported selling drugs but not using them. Bank account not discussed.\n- Gate 4 (Work Gear, Transit, Employment/Finance): Transit: currently walking. Recently purchased a car but it is not on site, and he is not driving it while his license is suspended. Employment/finance plan not yet started.\n\nEMPLOYMENT, HOUSING & STABILITY UPDATES\n- Education: GED.\n- Work history: machine operator at Kawashima (Lugoff, SC), | [Update 11/17/2026 • Daisy Boynton]: Frederick called saying he changed his mind and is interested in the program. We scheduled his consultation for tomorrow.",
+      "operational_feedback": "Initialize Apricot Briefcase record to track Gate 1–4 milestones alongside Reentry Nav Case Plan goals (Goals & Gates only; no CBT in Reentry Nav). Follow up on Frederick Beaufort's stated goals and verify vital documents.",
+      "next_cm_steps_json": "[\"📋 **Author Reentry Navigation Case Plan (Goals & Gates Only):** Collaboratively establish 1–3 concrete stabilization and employment goals with Frederick Beaufort and log them in the Reentry Nav Case Plan (no CBT required for Reentry Nav).\",\"🧰 **Initialize Briefcase & Gate 1 Vital Documents:** Create the Apricot Briefcase record and verify Gate 1 essentials: State ID / Driver's License, Social Security Card, Birth Certificate, prescription needs (Welvista), healthcare options, and supervision details.\",\"🔄 **Follow Up on Latest Session (11/18/2026 by Daisy Boynton):** Check accountability on items discussed (\\\"CONTACT SUMMARY & SESSION OVERVIEW - Session Stage: First Session / Intake - Summary: Completed phone consultation/intake with [Client], who...\\\").\"]",
+      "recent_cm_notes_json": null,
+      "last_note_date": "2026-11-18",
+      "notes_count": 3,
+      "updated_at": "2026-11-22 17:36:06"
+    }
+  ],
+  "notes_count": 3,
+  "processed_notes": [
+    {
+      "id": 1014,
+      "record_id": "82422",
+      "first_name": "Frederick",
+      "last_name": "Beaufort",
+      "activity_date": "2026-11-18",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment COMPLETED",
+      "note_text": "CONTACT SUMMARY & SESSION OVERVIEW\n- Session Stage: First Session / Intake\n- Summary: Completed phone consultation/intake with [Client], who was released from prison on 10/20/2026 and is currently residing at a halfway house. [Client] was engaged and cooperative and reports no emergency needs. Reviewed documents, license suspension, housing plans, work history, and justice history. [Client] was added to the program waitlist (approx. 18 people ahead; estimated wait of a couple months) and agreed to begin Reentry Navigation by phone in the meantime.\n\nCASE PLAN ALIGNMENT\n- Stability Tier: Stable\n- Stated Goals Progress: [Client] identified three goals: (1) reinstate driver's license, (2) employment, (3) housing in his own apartment. Goals set this session; no progress yet. A case plan will be built around these goals.\n\nBRIEFCASE & GATES 1-4 UPDATES\n- Gate 1 (Vital IDs, Meds, Supervision): Has birth certificate and SS card. His only photo ID is a driver's license, which is currently suspended. He has no separate state ID. Takes no medications. Currently at a halfway house with a projected release of 12/29/2026, possibly earlier as good-time days are applied (per conversation with halfway house staff today). Three years of supervision will follow release.\n- Gate 2 (Housing, Comms, Legal, Resume): Housing: currently at halfway house. Not interested in transitional or shared housing and wants his own apartment. Has family he can stay with as a fallback. DMV: license was suspended during incarceration after his fiancée had an uninsured accident in a vehicle registered in his name, and he is being held liable. To reinstate, he reports he must pay approx. $1,400 plus a $2,500 deposit (to go to the other party) and carry SR-22 insurance for 3 years. Child support: none. Resume: no Turn90 resume yet.\n- Gate 3 (Health, Recovery, Banking): No limiting health conditions. Denies current drug or alcohol use and reports past marijuana use only in his youth. Reported selling drugs but not using them. Bank account not discussed.\n- Gate 4 (Work Gear, Transit, Employment/Finance): Transit: currently walking. Recently purchased a car but it is not on site, and he is not driving it while his license is suspended. Employment/finance plan not yet started.\n\nEMPLOYMENT, HOUSING & STABILITY UPDATES\n- Education: GED.\n- Work history: machine operator at Kawashima (Lugoff, SC),",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1013,
+      "record_id": "82422",
+      "first_name": "Frederick",
+      "last_name": "Beaufort",
+      "activity_date": "2026-11-17",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment SCHEDULED",
+      "note_text": "Frederick called saying he changed his mind and is interested in the program. We scheduled his consultation for tomorrow.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1012,
+      "record_id": "82422",
+      "first_name": "Frederick",
+      "last_name": "Beaufort",
+      "activity_date": "2026-10-23",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment SCHEDULED",
+      "note_text": "When I called to do his consultation, he decided he's not interested in our program for right now because he has some job prospects that look promising. I told him he's welcome to give us a call back if things don't work out.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "updated_at": "2026-11-23T13:46:29.426Z"
+}

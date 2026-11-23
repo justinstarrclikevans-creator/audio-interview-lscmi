@@ -1,0 +1,94 @@
+{
+  "participant_key": "Randy_Grant",
+  "updated_at": "2026-11-23T13:46:29.038Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-19T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "9 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:261",
+      "event_key": "reentry_session:261",
+      "timestamp": "2026-10-29T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "Called to check in with Randy, no answer and VM not set up.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:262",
+      "event_key": "reentry_session:262",
+      "timestamp": "2026-10-23T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Randy's aunt called and asked why Randy is not eligible for the program. I explained the stability requirements for the program. She called me racist for judging Randy based on his looks and said Randy is living with her",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:102",
+      "event_key": "reentry_session:102",
+      "timestamp": "2026-10-19T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Still looking for work. Said he's been to the thrift store, Family Dollar, Taco Bell, KFC, MacDonalds, and some restaurant in the mall. I recommended he try Kiki's. I also recommended Goodwill but he wasn't super interes",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:103",
+      "event_key": "reentry_session:103",
+      "timestamp": "2026-10-15T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Wants help getting a job in the Turn90 area. Walking as transportation. No resume and very little job experience. Has been to a bunch of the restaurants in the area, is not interested in any gas station jobs. I told him ",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:104",
+      "event_key": "reentry_session:104",
+      "timestamp": "2026-10-13T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Randy stopped by in person asking about the program. I told him I'd give him a call to start reentry navigation. Still staying with sister.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:105",
+      "event_key": "reentry_session:105",
+      "timestamp": "2026-09-15T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Justin Evans)",
+      "summary": "Current Living and Employment Situation  \n• Has rarely worked throughout his life.  \n• Currently staying on his sister's couch; she wants him to leave.  \n• Has not worked during the 10 months since release from jail.  \n•",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:106",
+      "event_key": "reentry_session:106",
+      "timestamp": "2026-09-11T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "Intake Appointment SCHEDULED",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

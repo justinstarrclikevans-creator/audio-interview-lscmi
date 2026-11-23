@@ -1,0 +1,42 @@
+{
+  "participant_key": "Jarrell_Greene",
+  "participant_name": "Jarrell Greene",
+  "apricot_ids": [
+    "74979"
+  ],
+  "evaluations": [],
+  "notes_count": 2,
+  "processed_notes": [
+    {
+      "id": 134,
+      "record_id": "74979",
+      "first_name": "Jarrell",
+      "last_name": "Greene",
+      "activity_date": "2026-05-28",
+      "staff_name": "Jenn Jeanquart",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Case Note (documentation only) – no interaction or service",
+      "note_text": "Sent a message to Jarrell  about availability to enroll in First Shift program.  Have not head back yet.",
+      "center_location": "Charleston",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 133,
+      "record_id": "74979",
+      "first_name": "Jarrell",
+      "last_name": "Greene",
+      "activity_date": "2026-05-13",
+      "staff_name": "Jenn Jeanquart",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment COMPLETED",
+      "note_text": "Jarrell moved to Columbia from Charleston on 5/6. He was initially released to the halfway house in Charleston because there was no bed space at the Columbia halfway house. He is now on home confinement, and stays with his fiance. He does not have an ID, and applied for his birth certificate when he was in Charleston and was told it should arrive in June. He needs that in order to get his ID, which is also making employment difficult. He was able to work at KFC in Charleston without his ID and has applied to Burlington, Stars & Strikes, and Frankies Fun Park. I gave him a list of second chance employers in the Columbia area. He also filled out the resume worksheet and I will create his resume so he is able to apply for jobs. He is also interested in getting his GED, and has passed the Social Studies test. Provided adult ed information closest to him. He also said he received social security as a child for mental health, and inquired about applying for disability. I provided information about the process to apply and he will work to gather his medical records. He is interested in enrolling in FS, and will notify me when he receives his birth certificate.",
+      "center_location": "Charleston",
+      "program_enrollment": "First Shift",
+      "source": "apricot_import",
+      "processed_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "updated_at": "2026-11-23T13:46:29.712Z"
+}

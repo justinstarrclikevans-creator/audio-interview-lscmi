@@ -1,0 +1,79 @@
+{
+  "participant_key": "Joseph_Alston",
+  "participant_name": "Joseph Alston",
+  "apricot_ids": [
+    "83211"
+  ],
+  "evaluations": [
+    {
+      "record_id": "83211",
+      "full_name": "Joseph Alston",
+      "program": "Reentry Navigation",
+      "center": "Charleston",
+      "case_manager": "Daisy Boynton",
+      "case_plan_status": "Yes (Goals & Gates Active)",
+      "focus_areas_or_goals": "Find stable housing, get all forms of ID, find employment",
+      "briefcase_status_text": "Gate 1: 25%, Gate 2: 20%, Gate 3: 0%, Gate 4: 0%",
+      "gate1_pct": 25,
+      "gate2_pct": 20,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "case_note_analysis": "Enrolled 11/11/2026. Most recent contact on 11/11/2026 by Daisy Boynton (Barrier removal – problem-solving or coordination support): \"Called Joseph's brother to give him the numbers for Keys to Change and Delancy Street (our only other free housing options in Charleston), but there was no answer and his VM was full.\"\n\n**Latest Case Note Updates:** [Update 11/11/2026 • Daisy Boynton]: Called Joseph's brother to give him the numbers for Keys to Change and Delancy Street (our only other free housing options in Charleston), but there was no answer and his VM was full. | [Update 11/11/2026 • Daisy Boynton]: Joseph was referred by One80 Place and came in mainly for housing help. He said he needs help with everything we can offer. He confirmed he has no sex offense convictions. He was released from jail last night 11/10 after about 8½ months, for what sounded like a theft charge. He has no income or money for rent right now, so housing options need to be free. He confirmed he has nowhere he can stay tonight.\n\nID: he doesn’t have his birth certificate, Social Security card, or a physical ID. He has copies of his SC driver’s license, which is suspended, and of an expired North Carolina license. He also has a front-and-back copy of his SS card. He was going to the police station after our meeting, because he believes they have his ID and wallet. He doesn’t know what he owes to reinstate his license. He previously held a CDL. We agreed he’ll start on his ID and birth certificate, and I explained these steps aren’t required but will help with his job search and stability.\n\nHe took medication for depression in the past and said he doesn’t need any medication now. He’d like help getting a few outfits of clothes. He knows a few places downtown, and I offered to look up clothing banks near him. For transportation he bikes and walks and prefers not to take the bus. He said he likes to arrive 30–60 minutes early to work.\n\nHe reported past cocaine use that started when he was selling. He completed a 12-step program and stayed there for two years in Greensboro, NC. He moved back to Charleston because his mother was sick, and he says faith and church help him stay sober. He said he’s 10 months sober.\n\nHe was first arrested around age 19–20. He estimates 4–5 arrests and 3–4 convictions, mostly drug-related. Neither biological parent has a record. He has a pending open container citation in downtown Charleston. No child support. He left school in 12th grade and doesn’t have a GED. He has no physical limitations. His work history includes container and rail yard work at the port (Mount Pleasant terminal / off Montague Ave. Drove trucks for 6 years.\n\nPlan: housing first, then ID, then employment. If he finds a job on his own, we’ll keep working with him.\n\nContact: One80 Place at 843-723-9477 (leave a message). His brother William Alston is his emergency contact and answers 24/7, at 843-437-3373.\n\nFollow-ups (today)\n\nLook into free or emergency housing options for tonight and beyond\nCall One80 Place and leave a message; if you can’t reach him, call his brother this afternoon\n\nFollow-ups (soon)\n\nHelp with birth certificate, SS card, and ID once he reports back from the police station\nCheck his license reinstatement requirements and open container court date\n\n\n843-437-3373 (Little Brother, William Alston)\n843-723-9477 (180 Place) | [Update 11/11/2026 • Daisy Boynton]: ",
+      "operational_feedback": "Continue advancing Reentry Navigation Case Plan goals and Briefcase Gates 1–4 (Gate 1: 25%, Gate 2: 20%, Gate 3: 0%, Gate 4: 0%). Focus on barrier removal, employment readiness, and community resource referrals.",
+      "next_cm_steps_json": "[\"🎯 **Advance Stated Case Plan Goals:** Review progress on active Reentry Nav goals (Find stable housing, get all forms of ID, find employment) and verify concrete barrier-removal steps completed since last check-in.\",\"🔓 **Complete Remaining Gate 1 Items (25% done):** Target State ID or Driver's License (Valid ID or DMV appointment booked), Social Security Card (Physical card, SSA receipt, or appointment), Birth Certificate (Physical copy or Vital Statistics appointment).\",\"🔓 **Advance Gate 2 Stability & Readiness (20% done):** Work on Stable Address / Housing (30–60 day stability verified), Reliable Phone Number with professional voicemail, Probation / Legal Obligations aligned with work hours.\",\"🩺 **Address Gate 3 Health & Banking Milestones (0% done):** Follow up on Primary Care / Medical checkup scheduled or cleared, Vision Appointment / screening, Steady access to daily prescriptions (Welvista).\",\"🔄 **Follow Up on Latest Session (11/11/2026 by Daisy Boynton):** Check accountability on items discussed (\\\"Called Joseph's brother to give him the numbers for Keys to Change and Delancy Street (our only other free housing options in Charleston), b...\\\").\"]",
+      "recent_cm_notes_json": null,
+      "last_note_date": "2026-11-11",
+      "notes_count": 3,
+      "updated_at": "2026-11-22 17:36:06"
+    }
+  ],
+  "notes_count": 3,
+  "processed_notes": [
+    {
+      "id": 1097,
+      "record_id": "83211",
+      "first_name": "Joseph",
+      "last_name": "Alston",
+      "activity_date": "2026-11-11",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Reentry Navigation",
+      "interaction_type": "Barrier removal – problem-solving or coordination support",
+      "note_text": "Called Joseph's brother to give him the numbers for Keys to Change and Delancy Street (our only other free housing options in Charleston), but there was no answer and his VM was full.",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1096,
+      "record_id": "83211",
+      "first_name": "Joseph",
+      "last_name": "Alston",
+      "activity_date": "2026-11-11",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment COMPLETED",
+      "note_text": "Joseph was referred by One80 Place and came in mainly for housing help. He said he needs help with everything we can offer. He confirmed he has no sex offense convictions. He was released from jail last night 11/10 after about 8½ months, for what sounded like a theft charge. He has no income or money for rent right now, so housing options need to be free. He confirmed he has nowhere he can stay tonight.\n\nID: he doesn’t have his birth certificate, Social Security card, or a physical ID. He has copies of his SC driver’s license, which is suspended, and of an expired North Carolina license. He also has a front-and-back copy of his SS card. He was going to the police station after our meeting, because he believes they have his ID and wallet. He doesn’t know what he owes to reinstate his license. He previously held a CDL. We agreed he’ll start on his ID and birth certificate, and I explained these steps aren’t required but will help with his job search and stability.\n\nHe took medication for depression in the past and said he doesn’t need any medication now. He’d like help getting a few outfits of clothes. He knows a few places downtown, and I offered to look up clothing banks near him. For transportation he bikes and walks and prefers not to take the bus. He said he likes to arrive 30–60 minutes early to work.\n\nHe reported past cocaine use that started when he was selling. He completed a 12-step program and stayed there for two years in Greensboro, NC. He moved back to Charleston because his mother was sick, and he says faith and church help him stay sober. He said he’s 10 months sober.\n\nHe was first arrested around age 19–20. He estimates 4–5 arrests and 3–4 convictions, mostly drug-related. Neither biological parent has a record. He has a pending open container citation in downtown Charleston. No child support. He left school in 12th grade and doesn’t have a GED. He has no physical limitations. His work history includes container and rail yard work at the port (Mount Pleasant terminal / off Montague Ave. Drove trucks for 6 years.\n\nPlan: housing first, then ID, then employment. If he finds a job on his own, we’ll keep working with him.\n\nContact: One80 Place at 843-723-9477 (leave a message). His brother William Alston is his emergency contact and answers 24/7, at 843-437-3373.\n\nFollow-ups (today)\n\nLook into free or emergency housing options for tonight and beyond\nCall One80 Place and leave a message; if you can’t reach him, call his brother this afternoon\n\nFollow-ups (soon)\n\nHelp with birth certificate, SS card, and ID once he reports back from the police station\nCheck his license reinstatement requirements and open container court date\n\n\n843-437-3373 (Little Brother, William Alston)\n843-723-9477 (180 Place)",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 1095,
+      "record_id": "83211",
+      "first_name": "Joseph",
+      "last_name": "Alston",
+      "activity_date": "2026-11-11",
+      "staff_name": "Daisy Boynton",
+      "service_context": "Intake Appointment",
+      "interaction_type": "Intake Appointment SCHEDULED",
+      "note_text": "",
+      "center_location": "",
+      "program_enrollment": "Reentry Navigation",
+      "source": "apricot_import",
+      "processed_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "updated_at": "2026-11-23T13:46:29.520Z"
+}

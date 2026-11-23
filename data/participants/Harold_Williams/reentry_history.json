@@ -1,0 +1,127 @@
+{
+  "participant_key": "Harold_Williams",
+  "participant_name": "Harold Williams",
+  "client_records": [
+    {
+      "id": 59,
+      "first_name": "Harold",
+      "last_name": "Williams",
+      "apricot_id": "82456",
+      "location": "Charleston",
+      "status": "active",
+      "stability_tier": "at_risk",
+      "phone": null,
+      "email": null,
+      "notes": "Find employment",
+      "created_at": "2026-11-03 23:04:00",
+      "updated_at": "2026-11-22 17:36:06",
+      "case_manager": "Daisy Boynton",
+      "enrollment_start": "2026-10-27",
+      "gate1_pct": 0,
+      "gate2_pct": 0,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "last_contact_date": "2026-11-16",
+      "last_contact_staff": "Daisy Boynton",
+      "last_contact_activity": "Case Note (documentation only) – no interaction or service",
+      "has_case_plan": 1,
+      "case_plan_text": "Find employment"
+    }
+  ],
+  "sessions": [
+    {
+      "id": 410,
+      "client_id": 59,
+      "session_date": "2026-11-16",
+      "session_title": "Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Called to check in, no answer, VM not set up.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 411,
+      "client_id": 59,
+      "session_date": "2026-11-04",
+      "session_title": "Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Harold had an interview at Coca Cola and went to Olsten's staffing agency last week. He got a temp job at a metal plant called Frazier through Olsten's. I sent him a list of 5 job openings in Bishopville, SC.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 298,
+      "client_id": 59,
+      "session_date": "2026-10-29",
+      "session_title": "Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Gave Harold the address, hours, and phone number for the SC Works in Bishopville, SC and recommended he call and make an appointment to get help with job searching.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 297,
+      "client_id": 59,
+      "session_date": "2026-10-29",
+      "session_title": "Check-in conversation – brief status update (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Harold let me know he's been to SC Works and they weren't very helpful. I said I'd send him some job postings.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 299,
+      "client_id": 59,
+      "session_date": "2026-10-27",
+      "session_title": "Intake Appointment COMPLETED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Contact Summary: Completed initial Reentry Navigation consultation with Harold Williams to assess his current stability, baseline needs, and establish case plan goals. Client is currently stably housed with his girlfriend and relying on her for transportation, though this is becoming inconvenient due to her work schedule. He recently obtained his learner's permit and will be eligible to take his driver's license test in approximately one month. Client was released on October 1st after serving 17 years and is on state community supervision until September 2028 (in compliance). He is seeking hands-on employment (warehouse, factory, construction) and wishes to avoid fast food/retail. \n\nCase Plan Goal Progress: Established primary goal of securing full-time employment in a preferred industry. Client has a completed resume and several trade certifications (Brick Masonry, Carpentry, NCCER, WorkKeys, and possibly OSHA) obtained during incarceration. \n\nBriefcase & Gate 1-4 Updates: Verified possession of Birth Certificate, Social Security Card, State ID, and Resume (Green). Driver's License is in progress (Red/Yellow - has permit, waiting period active). \n\nReferrals/Resources Provided: Navigator will research and text job postings in the Hartsville and Sumter areas. \n\nNext Steps: Navigator to send job leads; Client to review leads, apply, and prepare to take his road test next month.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 300,
+      "client_id": 59,
+      "session_date": "2026-10-26",
+      "session_title": "Intake Appointment SCHEDULED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Intake Appointment SCHEDULED",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-03 23:04:00"
+    }
+  ],
+  "goals": [
+    {
+      "id": 135,
+      "client_id": 59,
+      "goal_title": "Find employment",
+      "target_date": "2026-11-17",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"Find employment\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-11-03 23:04:00",
+      "updated_at": "2026-11-03 23:04:00"
+    }
+  ],
+  "case_plans": [],
+  "updated_at": "2026-11-23T13:46:29.302Z"
+}

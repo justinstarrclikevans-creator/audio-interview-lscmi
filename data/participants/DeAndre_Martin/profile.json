@@ -9,22 +9,20 @@
   "apricot_id": "63905",
   "phone": "",
   "email": "",
-  "files": [
-    "DeAndre_Martin_Columbia_criminal_history.docx",
-    "DeAndre_Martin_Columbia_criminal_history.md",
-    "DeAndre_Martin_Columbia_draft_scoring_form.docx",
-    "DeAndre_Martin_Columbia_draft_scoring_form.md",
-    "DeAndre_Martin_Columbia_interview_guide.docx",
-    "DeAndre_Martin_Columbia_interview_guide.md",
-    "DeAndre_Martin_Columbia_transcript.txt"
-  ],
+  "lscmi_client_id": "DeAndre_Martin_Columbia",
   "folder_slug": "DeAndre_Martin",
   "folder_path": "data/participants/DeAndre_Martin",
   "has_lscmi_brief": false,
   "has_lscmi_scoring": true,
   "has_action_plan": false,
+  "has_legacy_case_briefs": false,
   "waitlist_ready": false,
   "waitlist_met_count": 8,
   "data_flags_count": 2,
-  "updated_at": "2026-11-22T17:18:01.653Z"
+  "cm_notes_count": 0,
+  "apricot_notes_count": 8,
+  "reentry_sessions_count": 8,
+  "history_events_count": 16,
+  "documents_count": 7,
+  "updated_at": "2026-11-23T13:46:29.291Z"
 }

@@ -1,0 +1,36 @@
+{
+  "participant_key": "Christian_Isham",
+  "participant_name": "Christian Isham",
+  "location": "Spartanburg",
+  "track": "first_shift",
+  "lscmi_client_id": "Christian_Isham_Spartanburg",
+  "folder_path": "data/participants/Christian_Isham",
+  "has_lscmi_brief": false,
+  "has_lscmi_scoring": false,
+  "has_action_plan": false,
+  "has_legacy_case_briefs": false,
+  "action_plan_agreement": "pending_review",
+  "waitlist_ready": false,
+  "waitlist_score": "6/9",
+  "medical_appointments_applicable": false,
+  "skillcat_pathway": "HVAC",
+  "skillcat_modules_completed": 0,
+  "cm_notes_count": 0,
+  "apricot_notes_count": 10,
+  "reentry_sessions_count": 0,
+  "history_events_count": 1,
+  "documents_count": 0,
+  "data_evaluation_flags": [
+    {
+      "code": "FLAG-WAITLIST-GAP",
+      "severity": "warning",
+      "message": "6/9 First Shift Waitlist Briefcase items ready. Missing: 1. State ID or Driver's License (DL), 2. Social Security Card, 3. Birth Certificate"
+    },
+    {
+      "code": "FLAG-CM-CADENCE",
+      "severity": "warning",
+      "message": "No 1-on-1 Case Management session note logged in participant folder."
+    }
+  ],
+  "updated_at": "2026-11-23T13:46:29.957Z"
+}

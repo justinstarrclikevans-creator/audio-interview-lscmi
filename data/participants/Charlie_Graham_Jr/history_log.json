@@ -1,0 +1,160 @@
+{
+  "participant_key": "Charlie_Graham_Jr",
+  "updated_at": "2026-11-23T13:46:28.775Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-11T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "10 chronological Apricot note(s) archived (Yes (Complete)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_doc:Charlie_Graham_Jr_Spartanburg_interview_guide.docx",
+      "event_key": "doc:Charlie_Graham_Jr_Spartanburg_interview_guide.docx",
+      "timestamp": "2026-11-04T16:28:24.364Z",
+      "category": "document",
+      "action": "Archived interview guide",
+      "summary": "Document stored in folder: Charlie_Graham_Jr_Spartanburg_interview_guide.docx",
+      "filename": "Charlie_Graham_Jr_Spartanburg_interview_guide.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Charlie_Graham_Jr_Spartanburg_draft_scoring_form.docx",
+      "event_key": "doc:Charlie_Graham_Jr_Spartanburg_draft_scoring_form.docx",
+      "timestamp": "2026-11-04T16:28:23.477Z",
+      "category": "document",
+      "action": "Archived draft scoring",
+      "summary": "Document stored in folder: Charlie_Graham_Jr_Spartanburg_draft_scoring_form.docx",
+      "filename": "Charlie_Graham_Jr_Spartanburg_draft_scoring_form.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Charlie_Graham_Jr_Spartanburg_criminal_history.docx",
+      "event_key": "doc:Charlie_Graham_Jr_Spartanburg_criminal_history.docx",
+      "timestamp": "2026-11-04T16:28:21.815Z",
+      "category": "document",
+      "action": "Archived criminal history",
+      "summary": "Document stored in folder: Charlie_Graham_Jr_Spartanburg_criminal_history.docx",
+      "filename": "Charlie_Graham_Jr_Spartanburg_criminal_history.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Charlie_Graham_Jr_Spartanburg_criminal_history.md",
+      "event_key": "doc:Charlie_Graham_Jr_Spartanburg_criminal_history.md",
+      "timestamp": "2026-11-04T16:28:20.245Z",
+      "category": "document",
+      "action": "Archived criminal history",
+      "summary": "Document stored in folder: Charlie_Graham_Jr_Spartanburg_criminal_history.md",
+      "filename": "Charlie_Graham_Jr_Spartanburg_criminal_history.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Charlie_Graham_Jr_Spartanburg_draft_scoring_form.md",
+      "event_key": "doc:Charlie_Graham_Jr_Spartanburg_draft_scoring_form.md",
+      "timestamp": "2026-11-04T16:28:20.245Z",
+      "category": "document",
+      "action": "Archived draft scoring",
+      "summary": "Document stored in folder: Charlie_Graham_Jr_Spartanburg_draft_scoring_form.md",
+      "filename": "Charlie_Graham_Jr_Spartanburg_draft_scoring_form.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Charlie_Graham_Jr_Spartanburg_interview_guide.md",
+      "event_key": "doc:Charlie_Graham_Jr_Spartanburg_interview_guide.md",
+      "timestamp": "2026-11-04T16:28:20.243Z",
+      "category": "document",
+      "action": "Archived interview guide",
+      "summary": "Document stored in folder: Charlie_Graham_Jr_Spartanburg_interview_guide.md",
+      "filename": "Charlie_Graham_Jr_Spartanburg_interview_guide.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Charlie_Graham_Jr_Spartanburg_transcript.txt",
+      "event_key": "doc:Charlie_Graham_Jr_Spartanburg_transcript.txt",
+      "timestamp": "2026-11-04T16:28:20.243Z",
+      "category": "document",
+      "action": "Archived transcript",
+      "summary": "Document stored in folder: Charlie_Graham_Jr_Spartanburg_transcript.txt",
+      "filename": "Charlie_Graham_Jr_Spartanburg_transcript.txt",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_casenote:139",
+      "event_key": "casenote:139",
+      "timestamp": "2026-10-30T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "Session Type: Initial Intake & Action Plan Alignment\n\nBriefcase & Gate Updates:\n- Gate 2 (Housing): Participant successfully stuck to a budget with his partner. He is paying his overdue light bill today so his family can",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Diyoung Dantzler"
+    },
+    {
+      "id": "ms_casenote:140",
+      "event_key": "casenote:140",
+      "timestamp": "2026-10-27T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Behavioral incident – disruption, conflict, or left early)",
+      "summary": "Charlie arrived late for Q1 this morning, stating that he and his girlfriend had gotten into an argument. He was also late returning from lunch, attributing the delay to being stuck in traffic.\n\nDiYoung and I met with Ch",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Matt Carlisle"
+    },
+    {
+      "id": "ms_casenote:84",
+      "event_key": "casenote:84",
+      "timestamp": "2026-10-22T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "Session Type: Initial Intake & Action Plan Alignment (Note: CM reviewed existing goals, indicating some prior contact, but session functioned as a foundational Action Plan review). \n\n[Client] reported successfully creati",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Diyoung Dantzler"
+    },
+    {
+      "id": "ms_casenote:85",
+      "event_key": "casenote:85",
+      "timestamp": "2026-10-14T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "Client] identified 90-day goals including catching up on bills, securing reliable transportation (fixing current car or getting a new one), and restarting their clothing brand. Education goals include obtaining a GED, as",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Diyoung Dantzler"
+    },
+    {
+      "id": "ms_casenote:86",
+      "event_key": "casenote:86",
+      "timestamp": "2026-09-24T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Intake Appointment COMPLETED)",
+      "summary": "Participant: Charlie Graham\nAge: 27\nDate of Birth: January 5, 1999\n\nIntake/Case Management Summary:\nCharlie Graham participated in an initial case management intake and motivational interview. Charlie reported that his p",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Diyoung Dantzler"
+    },
+    {
+      "id": "ms_casenote:87",
+      "event_key": "casenote:87",
+      "timestamp": "2026-09-23T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Intake Appointment SCHEDULED)",
+      "summary": "Intake Appointment SCHEDULED",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Kat Norsworthy"
+    }
+  ]
+}

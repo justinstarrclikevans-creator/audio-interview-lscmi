@@ -1,0 +1,114 @@
+{
+  "participant_key": "Nathaniel_Outin_Jr",
+  "participant_name": "Nathaniel Outin Jr.",
+  "client_records": [
+    {
+      "id": 56,
+      "first_name": "Nathaniel",
+      "last_name": "Outin Jr.",
+      "apricot_id": "82416",
+      "location": "Columbia",
+      "status": "active",
+      "stability_tier": "stable",
+      "phone": null,
+      "email": null,
+      "notes": "Look for carpentry and electrical training programs",
+      "created_at": "2026-10-26 17:51:41",
+      "updated_at": "2026-11-22 17:36:06",
+      "case_manager": "Daisy Boynton",
+      "enrollment_start": "2026-10-26",
+      "gate1_pct": 38,
+      "gate2_pct": 30,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "last_contact_date": "2026-11-12",
+      "last_contact_staff": "Daisy Boynton",
+      "last_contact_activity": "Employment support – applications, resume, interview prep",
+      "has_case_plan": 1,
+      "case_plan_text": "Look for carpentry and electrical training programs"
+    }
+  ],
+  "sessions": [
+    {
+      "id": 406,
+      "client_id": 56,
+      "session_date": "2026-11-12",
+      "session_title": "Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Nathaniel never heard back from the Electrician Apprenticeship program. I let him know he's #10 on the waitlist currently and it's moving very slowly. Offered to send him some job fairs/openings in the meantime. Sent info about job fairs today and on 11/19 and will send some job openings next week. He said his main concern right now is his pending felony charge, but he has a court date on the 14th of December and feels good about it. Going to check in after his court date to confirm he's still eligible for FS.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 295,
+      "client_id": 56,
+      "session_date": "2026-11-02",
+      "session_title": "Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Send Nathaniel the info for an electrician apprenticeship program at Gregory Electric. He called and left a VM.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 296,
+      "client_id": 56,
+      "session_date": "2026-10-30",
+      "session_title": "Check-in conversation – brief status update (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Called to touch base about his scheduling conflict with FS (picking his kids up). He said he spoke to the kid's mom and was able to work out a schedule where she picks them up after an after-school program.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 239,
+      "client_id": 56,
+      "session_date": "2026-10-26",
+      "session_title": "Intake Appointment COMPLETED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Contact Summary: Completed initial Reentry Navigation consultation with Nathaniel via phone. Explained the expectations and benefits of both the full-time in-person program and the Reentry Navigation program. Nathaniel is currently working a 3rd-shift sanitation job but is seeking more stable, higher-paying employment. He resides with his mother, has his own vehicle, and possesses a valid driver's license. Placed client on the waitlist for the Columbia full-time program. \n\nCase Plan Goal Progress & Briefcase Updates: Verified that client has access to his Birth Certificate, Social Security Card, State ID, valid Driver's License, and a completed resume (Briefcase Gate 1). Client expressed long-term goals of obtaining a CDL and gaining skills in carpentry/electrical trades to help renovate family properties. \n\nReferrals/Resources Provided: Navigator is sending a job application link for a warehouse position at Trane Technologies ($21-$25/hr).\n\nNext Steps: Navigator to consult with the Columbia Center Director (Jen) regarding client's need to pick up children at 2:30 PM on certain days to see if an accommodation can be made for the full-time program. Navigator to research local training programs for carpentry and electrical trades. Client to review and submit the application to Trane Technologies.",
+      "notes_text": "Contact Summary: Completed initial Reentry Navigation consultation with Nathaniel via phone. Explained the expectations and benefits of both the full-time in-person program and the Reentry Navigation program. Nathaniel is currently working a 3rd-shift sanitation job but is seeking more stable, higher-paying employment. He resides with his mother, has his own vehicle, and possesses a valid driver's license. Placed client on the waitlist for the Columbia full-time program. \n\nCase Plan Goal Progress & Briefcase Updates: Verified that client has access to his Birth Certificate, Social Security Card, State ID, valid Driver's License, and a completed resume (Briefcase Gate 1). Client expressed long-term goals of obtaining a CDL and gaining skills in carpentry/electrical trades to help renovate family properties. \n\nReferrals/Resources Provided: Navigator is sending a job application link for a warehouse position at Trane Technologies ($21-$25/hr).\n\nNext Steps: Navigator to consult with the Columbia Center Director (Jen) regarding client's need to pick up children at 2:30 PM on certain days to see if an accommodation can be made for the full-time program. Navigator to research local training programs for carpentry and electrical trades. Client to review and submit the application to Trane Technologies.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 17:51:41"
+    },
+    {
+      "id": 240,
+      "client_id": 56,
+      "session_date": "2026-10-23",
+      "session_title": "Intake Appointment SCHEDULED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Intake Appointment SCHEDULED",
+      "notes_text": "Intake Appointment SCHEDULED",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 17:51:41"
+    }
+  ],
+  "goals": [
+    {
+      "id": 132,
+      "client_id": 56,
+      "goal_title": "Look for carpentry and electrical training programs",
+      "target_date": "2026-11-09",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"Look for carpentry and electrical training programs\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-10-26 17:51:41",
+      "updated_at": "2026-10-26 17:51:41"
+    }
+  ],
+  "case_plans": [],
+  "updated_at": "2026-11-23T13:46:29.277Z"
+}

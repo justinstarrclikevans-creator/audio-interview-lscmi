@@ -380,12 +380,12 @@ async function loadFsDashboard() {
         const intakeBtn = document.getElementById('fs-intake-btn');
         
         if (interviewCrit && interviewCrit.status === 'green') {
-            intakeDesc.innerHTML = `<span class="badge badge-green" style="margin-bottom: 6px; display: inline-block;">✅ Assessment Completed (Pending Supervisor Review)</span><p style="font-size: 13px; color: var(--slate); margin-top: 4px;">Your 158-question LS/CMI intake interview has been recorded and submitted for case brief generation.</p>`;
+            intakeDesc.innerHTML = `<span class="badge badge-green" style="margin-bottom: 6px; display: inline-block;">✅ Assessment Completed</span><p style="font-size: 13px; color: var(--slate); margin-top: 4px;">Your intake interview has been recorded and submitted. Thank you!</p>`;
             intakeBtn.innerText = 'Intake Completed';
             intakeBtn.className = 'btn btn-outline';
-            intakeBtn.onclick = () => alert('Your LS/CMI intake interview is already completed and recorded.');
+            intakeBtn.onclick = () => alert('Your intake interview has already been completed and recorded.');
         } else {
-            intakeDesc.innerText = 'Complete the full 158-question LS/CMI intake interview. Your audio is recorded and scored directly for your case brief and Apricot import.';
+            intakeDesc.innerText = 'Complete your Turn90 voice intake interview at your own pace.';
             intakeBtn.innerText = 'Start Voice Interview';
             intakeBtn.className = 'btn btn-accent';
             intakeBtn.onclick = openInterviewModal;
@@ -3268,6 +3268,9 @@ async function quickGenerateCriminalHistory(clientId, clientName) {
         if (!res.ok) throw new Error(data.error || 'Generation failed');
         alert(data.message || `Criminal history created for ${clientName}!`);
         loadPmDrafts();
+        if (typeof window.refreshActiveClientFolderIfOpen === 'function') {
+            window.refreshActiveClientFolderIfOpen();
+        }
         previewDocument(data.filename);
     } catch (err) {
         alert('Could not generate criminal history: ' + err.message);
@@ -3401,6 +3404,9 @@ async function triggerGenerateAiDraft(clientId, cleanName) {
 
         alert(data.message || 'Scoring draft generated successfully!');
         loadPmDrafts();
+        if (typeof window.refreshActiveClientFolderIfOpen === 'function') {
+            window.refreshActiveClientFolderIfOpen();
+        }
     } catch(err) {
         alert('AI Scoring Error: ' + err.message);
         if (btn) {
@@ -3474,11 +3480,11 @@ async function loadInterviewConsultationSummary(mode, queryName) {
     const boxId = mode === 'live' ? 'live-consultation-summary-box' : 'man-consultation-summary-box';
     const box = document.getElementById(boxId);
     const insertBtn = document.getElementById('btn-insert-consult-collateral');
-    if (!box) return;
+    if (mode !== 'live' && !box) return;
 
     const q = (queryName || '').trim();
     if (!q || q.length < 3) {
-        box.classList.add('hidden');
+        if (box) box.classList.add('hidden');
         if (mode === 'manual' && insertBtn) insertBtn.classList.add('hidden');
         return;
     }
@@ -3486,13 +3492,13 @@ async function loadInterviewConsultationSummary(mode, queryName) {
     try {
         const res = await fetch(`/api/interviews/consultation-context?query=${encodeURIComponent(q)}`);
         if (!res.ok) {
-            box.classList.add('hidden');
+            if (box) box.classList.add('hidden');
             if (mode === 'manual' && insertBtn) insertBtn.classList.add('hidden');
             return;
         }
         const data = await res.json();
         if (!data.found || !data.context) {
-            box.classList.add('hidden');
+            if (box) box.classList.add('hidden');
             if (mode === 'manual' && insertBtn) insertBtn.classList.add('hidden');
             return;
         }
@@ -3505,6 +3511,11 @@ async function loadInterviewConsultationSummary(mode, queryName) {
         const locSelect = document.getElementById(locSelectId);
         if (locSelect && ctx.center && ['Charleston', 'Columbia', 'Spartanburg'].includes(ctx.center)) {
             locSelect.value = ctx.center;
+        }
+
+        // Keep consultation collateral strictly behind the scenes in live participant-facing mode
+        if (mode === 'live' || !box) {
+            return;
         }
 
         if (mode === 'manual' && insertBtn) {
@@ -4180,11 +4191,14 @@ async function handleSupervisorFeedbackSubmit(e) {
         alert(data.message || '✅ Phase 2 complete! Final scoring form, case brief, and participant action plan generated.');
         closeModal('modal-supervisor-review');
         loadPmDrafts();
+        if (typeof window.refreshActiveClientFolderIfOpen === 'function') {
+            window.refreshActiveClientFolderIfOpen();
+        }
     } catch (err) {
         alert('Phase 2 error: ' + err.message);
     } finally {
         btn.disabled = false;
-        btn.innerText = 'Approve & Generate Case Documents';
+        btn.innerText = 'Approve & Generate All Case Documents';
     }
 }
 
@@ -4219,6 +4233,9 @@ window.handleSupervisorAdjustActionPlanOnly = async function(e) {
         alert(data.message || '✅ Action Plan updated successfully!');
         closeModal('modal-supervisor-review');
         loadPmDrafts();
+        if (typeof window.refreshActiveClientFolderIfOpen === 'function') {
+            window.refreshActiveClientFolderIfOpen();
+        }
         if (data.planFileName) {
             previewDocument(data.planFileName);
         }
@@ -4293,6 +4310,9 @@ window.handleAdjustActionPlanSubmit = async function(e) {
         alert(data.message || '✅ Action Plan updated successfully!');
         closeModal('modal-adjust-action-plan');
         loadPmDrafts();
+        if (typeof window.refreshActiveClientFolderIfOpen === 'function') {
+            window.refreshActiveClientFolderIfOpen();
+        }
         if (data.planFileName) {
             previewDocument(data.planFileName);
         }
@@ -5092,30 +5112,17 @@ let live158State = {
     answersByIndex: {},
     discrepanciesByIndex: {},
     followupsUsedByIndex: {},
-    lastEvalByIndex: {}
+    lastEvalByIndex: {},
+    evaluatedAnswerByIndex: {}
 };
-
-function getLive158DomainLabel(idx) {
-    const qNum = idx + 1;
-    if (qNum <= 3) return 'Admin / IDs & License';
-    if (qNum <= 11 || (qNum >= 106 && qNum <= 127)) return '01 Criminal History & Supervision';
-    if ((qNum >= 12 && qNum <= 20) || (qNum >= 50 && qNum <= 59) || (qNum >= 138 && qNum <= 149)) return '02 Education / Employment & Finance';
-    if ((qNum >= 21 && qNum <= 25) || qNum === 128 || (qNum >= 133 && qNum <= 135)) return '03 Family / Marital & Child Support';
-    if (qNum >= 26 && qNum <= 28) return '04 Leisure / Recreation';
-    if ((qNum >= 29 && qNum <= 33) || qNum === 136) return '05 Companions';
-    if ((qNum >= 34 && qNum <= 37) || (qNum >= 129 && qNum <= 132)) return '06 Alcohol / Drug Problem';
-    if ((qNum >= 38 && qNum <= 43) || qNum === 137) return '07 Procriminal Attitude';
-    if (qNum >= 89 && qNum <= 105) return 'Personal Health & Responsivity';
-    if (qNum >= 150) return 'Transportation, Barriers & Goals';
-    return '08 Antisocial Pattern / Living';
-}
 
 function resetLive158State() {
     live158State = {
         answersByIndex: {},
         discrepanciesByIndex: {},
         followupsUsedByIndex: {},
-        lastEvalByIndex: {}
+        lastEvalByIndex: {},
+        evaluatedAnswerByIndex: {}
     };
 }
 
@@ -5134,10 +5141,10 @@ function saveCurrent158QuestionNote(markAnswered = false) {
             index: idx,
             questionNumber: idx + 1,
             questionText: q.text || q.question || '',
-            liveAnswer: liveAnswer || existing.liveAnswer || (markAnswered ? '[Answered Live on Audio]' : ''),
+            liveAnswer: liveAnswer || existing.liveAnswer || '',
             followUpQuestion: (live158State.lastEvalByIndex[idx] && live158State.lastEvalByIndex[idx].follow_up_question) || existing.followUpQuestion || '',
             followUpAnswer: followUpAnswer || existing.followUpAnswer || '',
-            answeredLive: Boolean(markAnswered || liveAnswer || existing.answeredLive),
+            answeredLive: Boolean(markAnswered || liveAnswer || followUpAnswer || existing.answeredLive),
             updatedAt: new Date().toISOString()
         };
     }
@@ -5145,17 +5152,14 @@ function saveCurrent158QuestionNote(markAnswered = false) {
 
 function render158QuestionStatusAndMap() {
     const answeredCount = Object.values(live158State.answersByIndex).filter(a => a && a.answeredLive).length;
-    const discCount = Object.keys(live158State.discrepanciesByIndex).length;
     const total = currentQuestions.length || 158;
 
     const ansCounter = document.getElementById('int-answered-counter');
     if (ansCounter) {
-        ansCounter.innerText = `Answered: ${answeredCount} / ${total}`;
-        ansCounter.style.background = answeredCount >= total ? '#bbf7d0' : '#dcfce7';
-    }
-    const discCounter = document.getElementById('int-discrepancy-counter');
-    if (discCounter) {
-        discCounter.innerText = `Discrepancies: ${discCount}`;
+        ansCounter.innerText = `Completed: ${answeredCount} / ${total}`;
+        ansCounter.style.background = answeredCount >= total ? '#e0f2fe' : '#f1f5f9';
+        ansCounter.style.color = answeredCount >= total ? '#0369a1' : '#334155';
+        ansCounter.style.borderColor = answeredCount >= total ? '#7dd3fc' : '#cbd5e1';
     }
 
     const submitBtn = document.getElementById('btn-submit-interview');
@@ -5171,11 +5175,10 @@ function render158QuestionStatusAndMap() {
     if (grid && currentQuestions.length) {
         grid.innerHTML = currentQuestions.map((_, i) => {
             const isCurrent = i === currentQuestionIndex;
-            const hasDisc = Boolean(live158State.discrepanciesByIndex[i]);
             const isAns = Boolean(live158State.answersByIndex[i] && live158State.answersByIndex[i].answeredLive);
-            const bg = hasDisc ? '#fee2e2' : (isAns ? '#dcfce7' : '#ffffff');
-            const fg = hasDisc ? '#991b1b' : (isAns ? '#166534' : '#334155');
-            const border = isCurrent ? '2px solid #2563eb' : `1px solid ${hasDisc ? '#f87171' : (isAns ? '#86efac' : '#cbd5e1')}`;
+            const bg = isAns ? '#e0f2fe' : '#ffffff';
+            const fg = isAns ? '#0369a1' : '#334155';
+            const border = isCurrent ? '2px solid #2563eb' : `1px solid ${isAns ? '#7dd3fc' : '#cbd5e1'}`;
             return `<button type="button" onclick="jumpToLive158Question(${i})" style="font-size: 11px; font-weight: 700; padding: 3px 0; border-radius: 4px; cursor: pointer; background: ${bg}; color: ${fg}; border: ${border};">${i + 1}</button>`;
         }).join('');
     }
@@ -5212,7 +5215,7 @@ function jumpToNextUnanswered158() {
             return;
         }
     }
-    alert(`All ${currentQuestions.length} original LS/CMI questions are marked answered live!`);
+    alert(`All ${currentQuestions.length} questions have been answered. You are ready to submit!`);
 }
 
 function renderDynamic158FeedbackBox(idx) {
@@ -5220,130 +5223,161 @@ function renderDynamic158FeedbackBox(idx) {
     if (!box) return;
     const evalData = live158State.lastEvalByIndex[idx];
     const saved = live158State.answersByIndex[idx] || {};
-    if (!evalData) {
+    const fuQuestion = (evalData && evalData.follow_up_question) ? String(evalData.follow_up_question).trim() : '';
+
+    if (!fuQuestion) {
         box.classList.add('hidden');
         box.innerHTML = '';
         return;
     }
 
-    const discHtml = evalData.discrepancy_detected
-        ? `<div style="background: #fef2f2; border: 1px solid #f87171; color: #991b1b; padding: 7px 9px; border-radius: 6px; margin-bottom: 8px;">
-               <strong>⚠️ DISCREPANCY FLAGGED vs. Consultation / Prior Record:</strong> ${escapeHtml(evalData.discrepancy_details || '')}
-               ${evalData.consultation_value_on_file ? `<div style="font-size: 11.5px; margin-top: 3px;"><strong>On File:</strong> ${escapeHtml(evalData.consultation_value_on_file)} | <strong>Live:</strong> ${escapeHtml(evalData.live_participant_value || '')}</div>` : ''}
-           </div>`
-        : `<div style="background: #ecfdf5; border: 1px solid #6ee7b7; color: #065f46; padding: 5px 9px; border-radius: 6px; margin-bottom: 8px; font-weight: 600;">
-               ✅ No conflict flagged against Consultation collateral (${escapeHtml(evalData.engine_mode === 'gemini' ? 'Dynamic AI Check' : 'Deterministic Cross-Check')}).
-           </div>`;
-
-    const defs = Array.isArray(evalData.matched_probation_planner_definitions) ? evalData.matched_probation_planner_definitions : [];
-    const defsHtml = defs.length
-        ? `<div style="margin-top: 6px; font-size: 11.5px; color: #334155;">
-               <strong>📘 Probation Planner Definitions:</strong>
-               ${defs.map(d => `<span style="display: inline-block; background: #ede9fe; color: #4c1d95; padding: 1px 7px; border-radius: 999px; margin: 2px 4px 2px 0;">${escapeHtml(d.problem_area || '')}: ${escapeHtml((d.behavioral_definition || '').slice(0, 90))}</span>`).join('')}
-           </div>`
-        : '';
-
-    const fuQuestion = evalData.follow_up_question || '';
-    const fuHtml = fuQuestion
-        ? `<div style="margin-top: 4px;">
-               <strong style="color: #5b21b6;">💬 Suggested Non-Challenging MI Follow-Up:</strong>
-               <div style="background: white; border: 1px solid #ddd6fe; border-radius: 6px; padding: 6px 9px; margin-top: 4px; font-style: italic;">"${escapeHtml(fuQuestion)}"</div>
-               <input type="text" id="int-followup-answer-notes" class="form-control" value="${escapeHtml(saved.followUpAnswer || '')}" placeholder="Participant's follow-up response (optional)..." style="font-size: 12px; margin-top: 6px;">
-           </div>`
-        : '';
-
     box.classList.remove('hidden');
-    box.innerHTML = `${discHtml}${fuHtml}${defsHtml}`;
+    box.innerHTML = `
+        <div>
+            <div style="font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 4px;">Quick follow-up question:</div>
+            <div style="font-size: 14px; font-weight: 600; color: #0f172a; line-height: 1.5; margin-bottom: 8px;">${escapeHtml(fuQuestion)}</div>
+            <input type="text" id="int-followup-answer-notes" class="form-control" value="${escapeHtml(saved.followUpAnswer || '')}" placeholder="Optional — answer out loud or type a short note here..." style="font-size: 13px;">
+        </div>
+    `;
 }
 
-async function checkLive158QuestionDiscrepancy() {
+async function handleLiveNextQuestion() {
     if (!currentQuestions.length) return;
     const idx = currentQuestionIndex;
     const q = currentQuestions[idx];
     const pNameEl = document.getElementById('live-interview-name');
     const pLocEl = document.getElementById('live-interview-location');
     const notesEl = document.getElementById('int-live-answer-notes');
-    const btn = document.getElementById('btn-check-discrepancy');
+    const fuAnsEl = document.getElementById('int-followup-answer-notes');
+    const nextBtn = document.getElementById('btn-next-question');
 
-    const clientName = pNameEl ? pNameEl.value.trim() : '';
-    const location = pLocEl ? pLocEl.value : 'Charleston';
+    const existing = live158State.answersByIndex[idx] || {};
     const liveAnswer = notesEl ? notesEl.value.trim() : '';
-    if (!liveAnswer) {
-        alert('Type a brief summary of what the participant just answered live before running discrepancy detection.');
-        return;
-    }
+    const followUpAnswer = fuAnsEl ? fuAnsEl.value.trim() : '';
+    const isRecordingOrHasAudio = Boolean(
+        (mediaRecorder && mediaRecorder.state === 'recording') ||
+        (Array.isArray(audioChunks) && audioChunks.length > 0)
+    );
+    const shouldMarkAnswered = Boolean(isRecordingOrHasAudio || liveAnswer || followUpAnswer || existing.answeredLive);
 
-    saveCurrent158QuestionNote(true);
-    if (btn) {
-        btn.disabled = true;
-        btn.innerText = 'Checking Consultation & MI Follow-Up...';
-    }
+    saveCurrent158QuestionNote(shouldMarkAnswered);
 
-    try {
-        const answersList = Object.values(live158State.answersByIndex).sort((a, b) => a.index - b.index);
-        const res = await fetch('/api/lscmi/interview-158-turn', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                clientName,
-                location,
-                questionIndex: idx,
-                questionNumber: idx + 1,
-                questionText: q.text || q.question || '',
-                questionSubtext: q.subtext || '',
-                liveAnswer,
-                answers158: answersList,
-                discrepancyFollowupsUsed: live158State.followupsUsedByIndex[idx] || 0
-            })
-        });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Dynamic evaluation failed');
+    if (
+        liveAnswer &&
+        live158State.evaluatedAnswerByIndex[idx] !== liveAnswer &&
+        (live158State.followupsUsedByIndex[idx] || 0) < 1
+    ) {
+        const clientName = pNameEl ? pNameEl.value.trim() : '';
+        const location = pLocEl ? pLocEl.value : 'Charleston';
 
-        live158State.lastEvalByIndex[idx] = data;
-        if (data.follow_up_question) {
-            live158State.followupsUsedByIndex[idx] = (live158State.followupsUsedByIndex[idx] || 0) + 1;
+        if (nextBtn) {
+            nextBtn.disabled = true;
+            nextBtn.innerText = 'Loading...';
         }
-        if (data.discrepancy_detected) {
-            live158State.discrepanciesByIndex[idx] = {
-                questionIndex: idx,
-                questionNumber: idx + 1,
-                questionText: q.text || q.question || '',
-                details: data.discrepancy_details || '',
-                consultationValue: data.consultation_value_on_file || '',
-                liveValue: data.live_participant_value || liveAnswer,
-                followUpQuestion: data.follow_up_question || ''
-            };
-        }
-        renderDynamic158FeedbackBox(idx);
-        render158QuestionStatusAndMap();
-    } catch (err) {
-        alert('Could not run discrepancy check: ' + err.message);
-    } finally {
-        if (btn) {
-            btn.disabled = false;
-            btn.innerText = '🧠 Check Discrepancy & Get Dynamic Follow-Up';
-        }
-    }
-}
 
-function markCurrent158QuestionAnswered() {
-    if (!currentQuestions.length) return;
-    saveCurrent158QuestionNote(true);
-    if (currentQuestionIndex < currentQuestions.length - 1) {
-        nextQuestion(true);
-    } else {
-        render158QuestionStatusAndMap();
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 6000);
+
+        try {
+            const answersList = Object.values(live158State.answersByIndex).sort((a, b) => a.index - b.index);
+            const res = await fetch('/api/lscmi/interview-158-turn', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                signal: controller.signal,
+                body: JSON.stringify({
+                    clientName,
+                    location,
+                    questionIndex: idx,
+                    questionNumber: idx + 1,
+                    questionText: q.text || q.question || '',
+                    questionSubtext: q.subtext || '',
+                    liveAnswer,
+                    answers158: answersList,
+                    discrepancyFollowupsUsed: live158State.followupsUsedByIndex[idx] || 0
+                })
+            });
+            clearTimeout(timeoutId);
+
+            if (res.ok) {
+                const data = await res.json();
+                live158State.lastEvalByIndex[idx] = data;
+                live158State.evaluatedAnswerByIndex[idx] = liveAnswer;
+
+                if (data.discrepancy_detected) {
+                    live158State.discrepanciesByIndex[idx] = {
+                        questionIndex: idx,
+                        questionNumber: idx + 1,
+                        questionText: q.text || q.question || '',
+                        details: data.discrepancy_details || '',
+                        consultationValue: data.consultation_value_on_file || '',
+                        liveValue: data.live_participant_value || liveAnswer,
+                        followUpQuestion: data.follow_up_question || ''
+                    };
+                }
+
+                const fuText = data.follow_up_question ? String(data.follow_up_question).trim() : '';
+                if (fuText && !data.ready_to_advance) {
+                    live158State.followupsUsedByIndex[idx] = (live158State.followupsUsedByIndex[idx] || 0) + 1;
+                    renderDynamic158FeedbackBox(idx);
+                    render158QuestionStatusAndMap();
+                    if (nextBtn) {
+                        nextBtn.disabled = false;
+                        nextBtn.innerText = 'Continue to Next Question';
+                    }
+                    return;
+                }
+            }
+        } catch (err) {
+            clearTimeout(timeoutId);
+            console.warn('Silent intake follow-up skipped:', err.message);
+        } finally {
+            if (nextBtn && nextBtn.disabled) {
+                nextBtn.disabled = false;
+                nextBtn.innerText = 'Next Question';
+            }
+        }
     }
+
+    nextQuestion(shouldMarkAnswered);
 }
 
 function openInterviewModal() {
     currentQuestionIndex = 0;
     fullTranscript = '';
+    audioChunks = [];
     resetLive158State();
-    const sumBox = document.getElementById('live-consultation-summary-box');
-    if (sumBox) sumBox.classList.add('hidden');
     const drawer = document.getElementById('int-158-map-drawer');
     if (drawer) drawer.classList.add('hidden');
+    const transcriptBox = document.getElementById('int-transcript-box');
+    if (transcriptBox) transcriptBox.innerText = 'Press "Start Voice Recording" when you\'re ready to begin.';
+    const recBtn = document.getElementById('btn-record');
+    if (recBtn) {
+        recBtn.innerText = '🔴 Start Voice Recording';
+        recBtn.classList.remove('btn-danger');
+    }
+    const recInd = document.getElementById('recording-indicator');
+    if (recInd) recInd.classList.add('hidden');
+    const submitBtn = document.getElementById('btn-submit-interview');
+    if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Finish & Submit Interview';
+    }
+    const nextBtn = document.getElementById('btn-next-question');
+    if (nextBtn) {
+        nextBtn.disabled = false;
+        nextBtn.innerText = 'Next Question';
+    }
+
+    const nameInput = document.getElementById('live-interview-name');
+    const locSelect = document.getElementById('live-interview-location');
+    if (currentUser && currentUser.role === 'participant') {
+        if (nameInput && currentUser.name) nameInput.value = currentUser.name;
+        if (locSelect && currentUser.location && ['Charleston', 'Columbia', 'Spartanburg'].includes(currentUser.location)) {
+            locSelect.value = currentUser.location;
+        }
+        if (currentUser.name) loadInterviewConsultationSummary('live', currentUser.name);
+    }
+
     displayCurrentQuestion();
     populateConsultationCandidateSelects();
     openModal('modal-interview');
@@ -5355,11 +5389,14 @@ function displayCurrentQuestion() {
     const saved = live158State.answersByIndex[currentQuestionIndex] || {};
 
     document.getElementById('int-q-number').innerText = `Question ${currentQuestionIndex + 1} of ${currentQuestions.length}`;
-    const badgeEl = document.getElementById('int-q-domain-badge');
-    if (badgeEl) badgeEl.innerText = `Domain: ${getLive158DomainLabel(currentQuestionIndex)}`;
     document.getElementById('int-q-text').innerText = q.text || q.question || 'Interview Question';
     const subEl = document.getElementById('int-q-subtext');
-    if (subEl) subEl.innerText = q.subtext ? `Probe guidance: ${q.subtext}` : '';
+    if (subEl) {
+        const subText = (q.subtext || '').trim();
+        subEl.innerText = subText;
+        if (subText) subEl.classList.remove('hidden');
+        else subEl.classList.add('hidden');
+    }
 
     const notesEl = document.getElementById('int-live-answer-notes');
     if (notesEl) notesEl.value = saved.liveAnswer || '';
@@ -5367,10 +5404,20 @@ function displayCurrentQuestion() {
     const pct = Math.round(((currentQuestionIndex + 1) / currentQuestions.length) * 100);
     document.getElementById('int-progress-fill').style.width = `${pct}%`;
 
-    if (currentQuestionIndex === currentQuestions.length - 1) {
-        document.getElementById('btn-next-question').classList.add('hidden');
-    } else {
-        document.getElementById('btn-next-question').classList.remove('hidden');
+    const nextBtn = document.getElementById('btn-next-question');
+    if (nextBtn) {
+        const hasFollowUp = Boolean(
+            live158State.lastEvalByIndex[currentQuestionIndex] &&
+            live158State.lastEvalByIndex[currentQuestionIndex].follow_up_question &&
+            String(live158State.lastEvalByIndex[currentQuestionIndex].follow_up_question).trim()
+        );
+        nextBtn.disabled = false;
+        nextBtn.innerText = hasFollowUp ? 'Continue to Next Question' : 'Next Question';
+        if (currentQuestionIndex === currentQuestions.length - 1) {
+            nextBtn.classList.add('hidden');
+        } else {
+            nextBtn.classList.remove('hidden');
+        }
     }
 
     renderDynamic158FeedbackBox(currentQuestionIndex);
@@ -5449,15 +5496,17 @@ async function toggleRecording() {
 }
 
 function startSpeechRecognition() {
-    // Live dictation (webkitSpeechRecognition) has been disabled per user request
-    // to avoid confusing, inaccurate text on the screen.
-    // The high-fidelity transcription is handled by Gemini 1.5 Pro on the backend.
-    document.getElementById('int-transcript-box').innerText = "Recording in progress...\n\n(Live on-screen dictation is turned off. A highly accurate final transcript will be generated automatically when you click 'Finish Interview').";
+    document.getElementById('int-transcript-box').innerText = 'Recording in progress. Take your time answering each question in your own words.';
 }
 
 function buildLiveInterviewUploadFormData(blob, pName, pLoc, transcriptOnly = false) {
     const fd = new FormData();
-    const answers158List = Object.values(live158State.answersByIndex).sort((a, b) => a.index - b.index);
+    const answers158List = Object.values(live158State.answersByIndex)
+        .sort((a, b) => a.index - b.index)
+        .map(a => ({
+            ...a,
+            liveAnswer: a.liveAnswer || (a.answeredLive ? '[Answered Live on Audio]' : '')
+        }));
     const discrepanciesList = Object.values(live158State.discrepanciesByIndex).sort((a, b) => a.questionIndex - b.questionIndex);
     fd.append('audio', blob, `${pName}_interview.webm`);
     fd.append('participantName', pName);
@@ -5470,18 +5519,18 @@ function buildLiveInterviewUploadFormData(blob, pName, pLoc, transcriptOnly = fa
 }
 
 async function finishInterview() {
-    saveCurrent158QuestionNote(false);
+    saveCurrent158QuestionNote(Boolean((mediaRecorder && mediaRecorder.state === 'recording') || (Array.isArray(audioChunks) && audioChunks.length > 0)));
     if (!mediaRecorder || audioChunks.length === 0) {
-        return alert('Please record your audio before submitting.');
+        return alert('Please press "Start Voice Recording" and answer the questions before submitting.');
     }
 
     const totalQuestions = currentQuestions.length || 158;
     const answeredCount = Object.values(live158State.answersByIndex).filter(a => a && a.answeredLive).length;
     if (answeredCount > 0 && answeredCount < totalQuestions) {
         const proceed = confirm(
-            `Only ${answeredCount} of ${totalQuestions} original LS/CMI questions are marked answered live.\n\n` +
-            `Per policy, all 158 questions (including items already on the consultation) should be asked live to catch discrepancies.\n\n` +
-            `Click OK to submit anyway (missing items will be flagged), or Cancel to return and finish remaining questions.`
+            `You have answered ${answeredCount} of ${totalQuestions} questions so far.\n\n` +
+            `Please try to answer all ${totalQuestions} questions if you can.\n\n` +
+            `Click Cancel to go back to the next unanswered question, or OK to finish and submit now.`
         );
         if (!proceed) {
             jumpToNextUnanswered158();
@@ -5499,7 +5548,7 @@ async function finishInterview() {
     const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
     const participantNameInput = document.getElementById('live-interview-name');
     if (participantNameInput && !participantNameInput.value.trim()) {
-        alert("Please enter the Participant Full Name before submitting.");
+        alert('Please enter your full name before submitting.');
         return;
     }
 
@@ -5529,7 +5578,7 @@ async function finishInterview() {
         
         if (!res.ok) throw new Error(data.error || 'Upload failed');
         
-        alert('Interview submitted successfully! AI Scoring draft and discrepancy log are generating.');
+        alert('Thank you! Your interview has been submitted successfully.');
         closeModal('modal-interview');
         if (currentUser && (currentUser.role === 'program_manager' || currentUser.role === 'staff' || currentUser.role === 'admin')) {
             loadPmDrafts();
@@ -5540,10 +5589,10 @@ async function finishInterview() {
     } catch (err) {
         if (err.name === 'AbortError' || err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
             console.warn('Audio upload timed out, falling back to transcript-only upload...');
-            btn.innerText = 'Audio too large. Uploading transcript only...';
+            btn.innerText = 'Saving responses...';
         } else {
             console.error('Upload error, trying transcript-only fallback:', err);
-            btn.innerText = 'Retrying without audio...';
+            btn.innerText = 'Saving responses...';
         }
     }
 
@@ -5560,7 +5609,7 @@ async function finishInterview() {
         
         if (!res2.ok) throw new Error(data2.error || 'Fallback upload failed');
         
-        alert('Interview transcript submitted successfully! The audio file was too large to upload, but the AI assessment will be generated from your transcript.');
+        alert('Thank you! Your interview responses have been submitted successfully.');
         closeModal('modal-interview');
         if (currentUser && (currentUser.role === 'program_manager' || currentUser.role === 'staff' || currentUser.role === 'admin')) {
             loadPmDrafts();
@@ -5569,8 +5618,8 @@ async function finishInterview() {
         }
     } catch (err2) {
         btn.disabled = false;
-        btn.innerText = '📤 Submit Interview';
-        alert('Submission failed: ' + err2.message + '\n\nPlease check your internet connection and try again. If the problem persists, ask your Program Manager to import the interview manually.');
+        btn.innerText = 'Finish & Submit Interview';
+        alert('We had trouble saving your interview (' + err2.message + '). Please check your internet connection and try again, or let a Turn90 staff member know.');
     }
 }
 
@@ -11740,15 +11789,21 @@ window.selectPortal = function(portalKey) {
     if (errBox) errBox.classList.add('hidden');
 };
 
-window.switchSixDashboard = function(dashKey) {
+window.switchSixDashboard = function(dashKey, extraParam = null) {
     const key = (dashKey || 'supervisor').toLowerCase();
     window.activeSixDashboardKey = key;
 
     // Highlight active tab in the 6-Dashboard Bar
     document.querySelectorAll('.dash6-tab-btn').forEach(btn => {
-        const isCur = btn.getAttribute('data-dash') === key;
-        btn.style.background = isCur ? '#2563eb' : '#1e293b';
-        btn.style.borderColor = isCur ? '#60a5fa' : '#334155';
+        const dash = btn.getAttribute('data-dash');
+        const isCur = dash === key;
+        if (dash === 'client_folders') {
+            btn.style.background = isCur ? '#2563eb' : '#0284c7';
+            btn.style.borderColor = isCur ? '#93c5fd' : '#38bdf8';
+        } else {
+            btn.style.background = isCur ? '#2563eb' : '#1e293b';
+            btn.style.borderColor = isCur ? '#60a5fa' : '#334155';
+        }
     });
 
     updateNav();
@@ -11756,6 +11811,11 @@ window.switchSixDashboard = function(dashKey) {
     if (key === 'lscmi') {
         showView('view-lscmi-dashboard');
         loadLscmiDedicatedDashboard();
+    } else if (key === 'client_folders') {
+        showView('view-client-folders-portal');
+        if (typeof window.loadClientFoldersPortal === 'function') {
+            window.loadClientFoldersPortal(extraParam || null);
+        }
     } else if (key === 'reentry_nav') {
         showView('view-reentry-dashboard');
         document.getElementById('rn-supervisor-banner')?.classList.remove('hidden');
@@ -11996,72 +12056,480 @@ window.loadLscmiDedicatedDashboard = async function() {
 };
 
 // ----------------------------------------------------------------------------
-// MODAL 1: PER-PARTICIPANT FOLDERS & UNIFIED GATE-FREE BRIEFCASE
+// CLIENT FOLDERS & HISTORICAL ARCHIVE PORTAL + INDIVIDUAL FOLDER WORKSPACE
 // ----------------------------------------------------------------------------
-window.openUnifiedParticipantFoldersModal = async function(preselectSlug = null) {
-    const modal = document.getElementById('modal-unified-participant-folders');
-    if (modal) modal.classList.remove('hidden');
+window.activeClientFolderSlug = null;
+window.activeClientFolderBundle = null;
+window.activeClientFolderTab = 'lscmi';
 
-    // Auto-scope center filter if currently on a specific Center Dashboard
-    const centerSelect = document.getElementById('upf-center-filter');
-    if (centerSelect && ['charleston', 'columbia', 'spartanburg'].includes(window.activeSixDashboardKey) && !preselectSlug) {
-        centerSelect.value = window.activeSixDashboardKey;
+function escapeJsArg(val) {
+    return String(val || '')
+        .replace(/\\/g, '\\\\')
+        .replace(/'/g, "\\'")
+        .replace(/"/g, '&quot;');
+}
+
+function renderMarkdownSafe(mdText, emptyText = 'None on file yet.') {
+    if (!mdText || !String(mdText).trim()) {
+        return `<div style="color: #64748b; font-style: italic; padding: 8px 0;">${escapeHtml(emptyText)}</div>`;
     }
+    try {
+        if (typeof marked !== 'undefined' && typeof marked.parse === 'function') {
+            return `<div class="cfp-md-rendered" style="font-size: 13px; line-height: 1.6; color: #1e293b;">${marked.parse(String(mdText))}</div>`;
+        }
+    } catch (e) {}
+    return `<pre style="white-space: pre-wrap; font-size: 12.5px; line-height: 1.55; color: #1e293b; margin: 0;">${escapeHtml(mdText)}</pre>`;
+}
 
+window.openClientFoldersPortal = function(preselectSlug = null) {
+    const legacyModal = document.getElementById('modal-unified-participant-folders');
+    if (legacyModal) legacyModal.classList.add('hidden');
+    window.switchSixDashboard('client_folders', preselectSlug || null);
+};
+
+window.openUnifiedParticipantFoldersModal = function(preselectSlug = null) {
+    window.openClientFoldersPortal(preselectSlug || null);
+};
+
+window.refreshActiveClientFolderIfOpen = function() {
+    const portalView = document.getElementById('view-client-folders-portal');
+    if (window.activeClientFolderSlug && portalView && !portalView.classList.contains('hidden')) {
+        window.selectClientFolderInPortal(window.activeClientFolderSlug, window.activeClientFolderTab || 'lscmi');
+    }
+};
+
+window.clearSelectedClientFolder = function() {
+    window.activeClientFolderSlug = null;
+    window.activeClientFolderBundle = null;
+    window.filterClientFoldersPortal();
+};
+
+window.switchClientFolderTab = function(tabKey) {
+    window.activeClientFolderTab = tabKey || 'lscmi';
+    document.querySelectorAll('.cfp-folder-tab-btn').forEach(btn => {
+        const isCur = btn.getAttribute('data-tab') === window.activeClientFolderTab;
+        btn.style.background = isCur ? '#0f172a' : '#f8fafc';
+        btn.style.color = isCur ? '#ffffff' : '#334155';
+        btn.style.borderColor = isCur ? '#0f172a' : '#cbd5e1';
+    });
+    document.querySelectorAll('.cfp-folder-tab-pane').forEach(pane => {
+        pane.classList.toggle('hidden', pane.getAttribute('data-pane') !== window.activeClientFolderTab);
+    });
+};
+
+window.loadClientFoldersPortal = async function(preselectSlug = null, forceRefresh = false) {
+    const pane = document.getElementById('cfp-folder-detail-pane');
+    if (pane && !preselectSlug && !window.activeClientFolderSlug) {
+        pane.innerHTML = `<div style="padding: 40px; text-align: center; color: #64748b;">Loading all client folders &amp; historical archive...</div>`;
+    }
     try {
         if (!window.cachedBriefcaseSchema) {
             const sRes = await fetch('/api/briefcase/schema');
             window.cachedBriefcaseSchema = await sRes.json();
         }
-        const res = await fetch('/api/participants/folders');
+        const res = await fetch(`/api/participants/folders${forceRefresh ? '?refresh=1' : ''}`);
         const data = await res.json();
         window.cachedUnifiedFolders = data.participants || [];
-        filterUnifiedParticipantFoldersList();
-        const targetSlug = preselectSlug || (window.cachedUnifiedFolders[0] && window.cachedUnifiedFolders[0].participant_key);
-        if (targetSlug) {
-            selectParticipantFolderInModal(targetSlug);
+        const totalBadge = document.getElementById('cfp-total-count');
+        if (totalBadge) totalBadge.innerText = `${window.cachedUnifiedFolders.length} Total Client Folders`;
+
+        if (preselectSlug) {
+            window.activeClientFolderSlug = preselectSlug;
+        }
+        window.filterClientFoldersPortal();
+
+        if (preselectSlug) {
+            await window.selectClientFolderInPortal(preselectSlug, window.activeClientFolderTab || 'lscmi');
+        } else if (window.activeClientFolderSlug) {
+            await window.selectClientFolderInPortal(window.activeClientFolderSlug, window.activeClientFolderTab || 'lscmi');
         }
     } catch (e) {
-        console.error('Error loading participant folders:', e);
+        console.error('Error loading client folders portal:', e);
+        if (pane) pane.innerHTML = `<div style="color: #dc2626; padding: 20px;">Error loading client folders: ${escapeHtml(e.message)}</div>`;
     }
 };
 
-window.filterUnifiedParticipantFoldersList = function() {
-    const q = (document.getElementById('upf-search-input')?.value || '').toLowerCase();
-    const loc = (document.getElementById('upf-center-filter')?.value || 'all').toLowerCase();
-    const listEl = document.getElementById('upf-directory-list');
-    if (!listEl) return;
-
-    const filtered = (window.cachedUnifiedFolders || []).filter(p => {
-        const matchQ = !q || p.name.toLowerCase().includes(q) || p.participant_key.toLowerCase().includes(q);
-        const matchLoc = loc === 'all' || String(p.location || '').toLowerCase().includes(loc);
-        return matchQ && matchLoc;
-    });
-
-    listEl.innerHTML = filtered.map(p => `
-        <div onclick="selectParticipantFolderInModal('${escapeHtml(p.participant_key)}')" style="cursor: pointer; background: white; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 12px; transition: all 0.15s;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <strong style="font-size: 13.5px; color: #0f172a;">📁 ${escapeHtml(p.name)}</strong>
-                <span style="font-size: 11px; padding: 2px 7px; border-radius: 999px; font-weight: 700; background: ${p.waitlist_ready ? '#dcfce7' : '#fef3c7'}; color: ${p.waitlist_ready ? '#166534' : '#92400e'};">
-                    ${p.waitlist_met_count}/9 Waitlist
-                </span>
-            </div>
-            <div style="font-size: 11px; color: #64748b; margin-top: 4px;">
-                📍 ${escapeHtml(p.location)} • ${p.has_lscmi_brief ? '📘 Brief ' : ''}${p.has_action_plan ? '🎯 Action Plan ' : ''}${p.caseload_eval?.skillcat_modules_completed ? `🛠️ ${p.caseload_eval.skillcat_modules_completed} SkillCat Mods` : ''}
-            </div>
-        </div>
-    `).join('');
+window.syncAllClientFoldersNow = async function(btn) {
+    const orig = btn ? btn.innerText : '';
+    if (btn) {
+        btn.disabled = true;
+        btn.innerText = '⏳ Syncing All Historical Archives...';
+    }
+    try {
+        const res = await fetch('/api/participants/folders/sync', { method: 'POST' });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Sync failed');
+        window.cachedUnifiedFolders = data.participants || [];
+        const totalBadge = document.getElementById('cfp-total-count');
+        if (totalBadge) totalBadge.innerText = `${window.cachedUnifiedFolders.length} Total Client Folders`;
+        window.filterClientFoldersPortal();
+        if (window.activeClientFolderSlug) {
+            await window.selectClientFolderInPortal(window.activeClientFolderSlug, window.activeClientFolderTab || 'lscmi');
+        }
+    } catch (err) {
+        alert('Folder sync error: ' + err.message);
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerText = orig || '🔄 Sync & Archive All Folders';
+        }
+    }
 };
 
-window.selectParticipantFolderInModal = async function(slug) {
-    const pane = document.getElementById('upf-folder-detail-pane');
+function getFilteredClientFoldersList() {
+    const q = (document.getElementById('cfp-search-input')?.value || '').trim().toLowerCase();
+    const center = (document.getElementById('cfp-center-filter')?.value || 'all').toLowerCase();
+    const track = (document.getElementById('cfp-track-filter')?.value || 'all').toLowerCase();
+    const docFilter = (document.getElementById('cfp-doc-filter')?.value || 'all').toLowerCase();
+
+    return (window.cachedUnifiedFolders || []).filter(p => {
+        if (center !== 'all' && !String(p.location || '').toLowerCase().includes(center)) return false;
+        if (track !== 'all' && !String(p.track || '').toLowerCase().includes(track)) return false;
+        if (docFilter === 'has_brief' && !p.has_lscmi_brief) return false;
+        if (docFilter === 'has_action_plan' && !p.has_action_plan) return false;
+        if (docFilter === 'has_scoring' && !p.has_lscmi_scoring) return false;
+        if (docFilter === 'has_legacy_briefs' && !p.has_legacy_case_briefs) return false;
+        if (docFilter === 'waitlist_ready' && !p.waitlist_ready) return false;
+        if (docFilter === 'needs_waitlist' && p.waitlist_ready) return false;
+        if (q) {
+            const hay = [p.name, p.participant_key, p.location, p.apricot_id, p.phone, p.email, p.lscmi_client_id].filter(Boolean).join(' ').toLowerCase();
+            if (!hay.includes(q)) return false;
+        }
+        return true;
+    });
+}
+
+window.filterClientFoldersPortal = function() {
+    const filtered = getFilteredClientFoldersList();
+    const matchCountEl = document.getElementById('cfp-match-count');
+    if (matchCountEl) matchCountEl.innerText = `${filtered.length} shown`;
+
+    const listEl = document.getElementById('cfp-directory-list');
+    if (listEl) {
+        if (filtered.length === 0) {
+            listEl.innerHTML = `<div style="padding: 18px; text-align: center; font-size: 12.5px; color: #64748b;">No client folders match your search filters.</div>`;
+        } else {
+            listEl.innerHTML = filtered.map(p => {
+                const isSelected = window.activeClientFolderSlug === p.participant_key;
+                return `
+                    <div onclick="selectClientFolderInPortal('${escapeJsArg(p.participant_key)}')" style="cursor: pointer; background: ${isSelected ? '#eff6ff' : '#ffffff'}; border: 1.5px solid ${isSelected ? '#2563eb' : '#cbd5e1'}; border-radius: 8px; padding: 10px 12px; transition: all 0.12s;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px;">
+                            <strong style="font-size: 13.5px; color: #0f172a;">📁 ${escapeHtml(p.name)}</strong>
+                            <span style="font-size: 10.5px; padding: 2px 7px; border-radius: 999px; font-weight: 700; white-space: nowrap; background: ${p.waitlist_ready ? '#dcfce7' : '#fef3c7'}; color: ${p.waitlist_ready ? '#166534' : '#92400e'};">
+                                ${p.waitlist_met_count || 0}/9 Waitlist
+                            </span>
+                        </div>
+                        <div style="font-size: 11px; color: #64748b; margin-top: 3px;">
+                            📍 ${escapeHtml(p.location || 'Charleston')}${p.apricot_id ? ` • #${escapeHtml(p.apricot_id)}` : ''} • ${p.track === 'reentry_nav' ? 'Reentry Nav' : 'First Shift'}
+                        </div>
+                        <div style="display: flex; gap: 4px; flex-wrap: wrap; margin-top: 5px; font-size: 10.5px;">
+                            ${p.has_lscmi_brief ? `<span style="background: #dbeafe; color: #1e40af; padding: 1px 6px; border-radius: 4px; font-weight: 700;">📘 Brief</span>` : ''}
+                            ${p.has_action_plan ? `<span style="background: #dcfce7; color: #166534; padding: 1px 6px; border-radius: 4px; font-weight: 700;">🎯 Plan</span>` : ''}
+                            ${p.has_lscmi_scoring ? `<span style="background: #e0e7ff; color: #3730a3; padding: 1px 6px; border-radius: 4px; font-weight: 700;">📊 Score</span>` : ''}
+                            ${p.history_events_count ? `<span style="background: #f1f5f9; color: #475569; padding: 1px 6px; border-radius: 4px; font-weight: 600;">🕰️ ${p.history_events_count}</span>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    }
+
+    if (!window.activeClientFolderSlug) {
+        renderClientFoldersOverviewGrid(filtered);
+    }
+};
+
+function renderClientFoldersOverviewGrid(list) {
+    const pane = document.getElementById('cfp-folder-detail-pane');
     if (!pane) return;
-    pane.innerHTML = `<div style="padding: 30px; text-align: center; color: #64748b;">Loading folder <code>data/participants/${escapeHtml(slug)}</code>...</div>`;
+    if (!list || list.length === 0) {
+        pane.innerHTML = `<div style="padding: 40px; text-align: center; color: #64748b;">No clients match the current search or filter criteria.</div>`;
+        return;
+    }
+
+    pane.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">
+            <div>
+                <h2 style="margin: 0; font-size: 18px; font-weight: 800; color: #0f172a;">All Client Folders (${list.length})</h2>
+                <p style="margin: 2px 0 0 0; font-size: 12.5px; color: #64748b;">Click any client card to open their historical folder, view or adjust LS/CMI documents, update their Briefcase, and inspect archived records.</p>
+            </div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(275px, 1fr)); gap: 12px;">
+            ${list.map(p => `
+                <div onclick="selectClientFolderInPortal('${escapeJsArg(p.participant_key)}')" style="cursor: pointer; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px; transition: all 0.15s;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 6px; margin-bottom: 6px;">
+                        <strong style="font-size: 14.5px; color: #0f172a;">📁 ${escapeHtml(p.name)}</strong>
+                        <span style="font-size: 11px; padding: 2px 8px; border-radius: 999px; font-weight: 700; white-space: nowrap; background: ${p.waitlist_ready ? '#dcfce7' : '#fef3c7'}; color: ${p.waitlist_ready ? '#166534' : '#92400e'};">
+                            Waitlist: ${p.waitlist_met_count || 0}/9
+                        </span>
+                    </div>
+                    <div style="font-size: 11.5px; color: #475569; margin-bottom: 8px;">
+                        📍 ${escapeHtml(p.location || 'Charleston')}${p.apricot_id ? ` • Apricot #${escapeHtml(p.apricot_id)}` : ''} • ${p.track === 'reentry_nav' ? 'Reentry Nav' : 'First Shift'}
+                    </div>
+                    <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                        <span style="font-size: 10.5px; padding: 2px 6px; border-radius: 4px; background: ${p.has_lscmi_brief ? '#dbeafe' : '#f1f5f9'}; color: ${p.has_lscmi_brief ? '#1e40af' : '#64748b'}; font-weight: 700;">${p.has_lscmi_brief ? '✅ LS/CMI Brief' : '⚪ No Brief'}</span>
+                        <span style="font-size: 10.5px; padding: 2px 6px; border-radius: 4px; background: ${p.has_action_plan ? '#dcfce7' : '#f1f5f9'}; color: ${p.has_action_plan ? '#166534' : '#64748b'}; font-weight: 700;">${p.has_action_plan ? '✅ Action Plan' : '⚪ No Plan'}</span>
+                        <span style="font-size: 10.5px; padding: 2px 6px; border-radius: 4px; background: ${p.has_lscmi_scoring ? '#e0e7ff' : '#f1f5f9'}; color: ${p.has_lscmi_scoring ? '#3730a3' : '#64748b'}; font-weight: 700;">${p.has_lscmi_scoring ? '✅ Scoring' : '⚪ No Scoring'}</span>
+                    </div>
+                    <div style="font-size: 11px; color: #64748b; margin-top: 8px;">
+                        📄 ${p.documents_count || 0} doc(s) • 📝 ${p.apricot_notes_count || 0} Apricot note(s) • 🕰️ ${p.history_events_count || 0} timeline events
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+window.previewFolderFile = async function(slug, scope, filename, displayTitle = '') {
+    if (!filename) return;
+    if (filename.toLowerCase().endsWith('.pdf')) {
+        window.open(`/api/participants/folder/${encodeURIComponent(slug)}/file/${encodeURIComponent(scope)}/${encodeURIComponent(filename)}`, '_blank');
+        return;
+    }
+    if (scope === 'documents') {
+        previewDocument(filename);
+        return;
+    }
+    // Render history or root snapshot inside modal-draft-viewer
+    const title = document.getElementById('draft-viewer-title');
+    const subtitle = document.getElementById('draft-viewer-subtitle');
+    const body = document.getElementById('draft-viewer-body');
+    const controls = document.getElementById('draft-viewer-controls');
+    const extraActions = document.getElementById('draft-viewer-extra-actions');
+    const btnPdf = document.getElementById('btn-draft-pdf-top');
+    const btnDocx = document.getElementById('btn-draft-docx-top');
+    const btnPrint = document.getElementById('btn-draft-print-top');
+
+    if (controls) controls.innerHTML = '';
+    if (extraActions) extraActions.innerHTML = '';
+    if (btnPdf) btnPdf.style.display = 'none';
+    if (btnDocx) btnDocx.style.display = 'none';
+    if (title) title.innerText = displayTitle || `Archived Snapshot: ${filename}`;
+    if (subtitle) subtitle.innerText = `Historical Archive (${scope}) — ${slug}`;
+    if (btnPrint) {
+        btnPrint.onclick = () => window.open(`/api/participants/folder/${encodeURIComponent(slug)}/file/${encodeURIComponent(scope)}/${encodeURIComponent(filename)}?print=1&autoprint=true`, '_blank');
+    }
+    if (body) body.innerHTML = '<p style="padding: 20px; color: var(--slate);">⏳ Loading archived file...</p>';
+    openModal('modal-draft-viewer');
+
+    try {
+        const res = await fetch(`/api/participants/folder/${encodeURIComponent(slug)}/file/${encodeURIComponent(scope)}/${encodeURIComponent(filename)}?format=json`);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Could not load snapshot');
+        if (filename.toLowerCase().endsWith('.md')) {
+            body.innerHTML = renderMarkdownSafe(data.content);
+        } else {
+            body.innerHTML = `<pre style="white-space: pre-wrap; font-size: 12.5px; line-height: 1.55; color: #1e293b; background: #f8fafc; padding: 14px; border-radius: 8px;">${escapeHtml(data.content || '')}</pre>`;
+        }
+    } catch (err) {
+        body.innerHTML = `<div style="padding: 20px; color: #dc2626;">Error loading archived file: ${escapeHtml(err.message)}</div>`;
+    }
+};
+
+window.toggleClientDocEditor = function(docType) {
+    const box = document.getElementById(`cfp-inline-editor-${docType}`);
+    if (box) box.classList.toggle('hidden');
+};
+
+window.saveClientFolderDocument = async function(slug, docType) {
+    const textEl = document.getElementById(`cfp-edit-textarea-${docType}`);
+    const reasonEl = document.getElementById(`cfp-edit-reason-${docType}`);
+    const btn = document.getElementById(`cfp-edit-save-btn-${docType}`);
+    const content = textEl ? textEl.value : '';
+    const reason = reasonEl ? reasonEl.value.trim() : '';
+
+    if (!content.trim()) {
+        return alert('Document content cannot be empty.');
+    }
+
+    const origText = btn ? btn.innerText : '';
+    if (btn) {
+        btn.disabled = true;
+        btn.innerText = '⏳ Saving & Archiving Prior Version...';
+    }
+
+    try {
+        const res = await fetch(`/api/participants/folder/${encodeURIComponent(slug)}/save-document`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ docType, content, reason, actor: currentUser?.name || 'Turn90 Staff' })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Save failed');
+
+        alert(`Saved updated ${docType.replace(/_/g, ' ')}! Prior version was safely archived in history/.`);
+        await window.loadClientFoldersPortal(slug);
+    } catch (err) {
+        alert('Error saving document: ' + err.message);
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerText = origText || '💾 Save & Archive Prior Version';
+        }
+    }
+};
+
+window.submitFolderFeedbackLoop = async function(slug) {
+    const pName = document.getElementById('cfp-fl-name')?.value?.trim();
+    const agreementStatus = document.getElementById('cfp-fl-status')?.value || 'resolved_via_feedback_loop';
+    const disagreedTarget = document.getElementById('cfp-fl-disagreed')?.value?.trim() || 'Initial Focus Area';
+    const replacementTarget = document.getElementById('cfp-fl-replacement')?.value?.trim() || 'Impulsivity & Decision Making (STAC 1I)';
+    const objectionQuote = document.getElementById('cfp-fl-quote')?.value?.trim() || 'Reviewed and adjusted during Action Plan review.';
+    const btn = document.getElementById('cfp-fl-submit-btn');
+
+    const orig = btn ? btn.innerText : '';
+    if (btn) {
+        btn.disabled = true;
+        btn.innerText = '⏳ Saving Revision...';
+    }
+    try {
+        const res = await fetch('/api/lscmi/feedback-loop', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                participant_name: pName || slug,
+                agreement_status: agreementStatus,
+                disagreed_target: disagreedTarget,
+                agreed_replacement_target: replacementTarget,
+                participant_objection_quote: objectionQuote
+            })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to log feedback loop');
+        alert('Action Plan Feedback Loop recorded and archived in client folder.');
+        await window.selectClientFolderInPortal(slug, 'lscmi');
+    } catch (err) {
+        alert('Feedback Loop Error: ' + err.message);
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerText = orig;
+        }
+    }
+};
+
+window.submitFolderCaseNote = async function(e, slug) {
+    if (e) e.preventDefault();
+    const content = document.getElementById('cfp-new-note-content')?.value?.trim();
+    const noteType = document.getElementById('cfp-new-note-type')?.value || 'Individual Session';
+    const category = document.getElementById('cfp-new-note-category')?.value || 'Case Management';
+    const sessionDate = document.getElementById('cfp-new-note-date')?.value || new Date().toISOString().split('T')[0];
+    const btn = document.getElementById('cfp-new-note-btn');
+
+    if (!content) return alert('Please enter case note content.');
+
+    if (btn) {
+        btn.disabled = true;
+        btn.innerText = 'Saving...';
+    }
+    try {
+        const res = await fetch(`/api/participants/folder/${encodeURIComponent(slug)}/case-note`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                content,
+                note_type: noteType,
+                category,
+                session_date: sessionDate,
+                author_name: currentUser?.name || 'Turn90 Staff'
+            })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Could not save case note');
+        await window.selectClientFolderInPortal(slug, 'notes');
+    } catch (err) {
+        alert('Case note error: ' + err.message);
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerText = '💾 Save Case Note to Folder';
+        }
+    }
+};
+
+function renderFolderDocRows(slug, docsArray = [], lscmiClientId = '') {
+    if (!docsArray || docsArray.length === 0) {
+        return `<div style="font-size: 12px; color: #64748b; padding: 6px 0;">No files in this category yet.</div>`;
+    }
+    return docsArray.map(d => {
+        const fname = d.filename;
+        const jsSlug = escapeJsArg(slug);
+        const jsFile = escapeJsArg(fname);
+        const jsScope = escapeJsArg(d.scope || 'documents');
+        const isMdOrTxt = d.ext === '.md' || d.ext === '.txt' || d.ext === '.json';
+        const isPdf = d.ext === '.pdf';
+        const sizeKb = d.size ? `${Math.max(1, Math.round(d.size / 1024))} KB` : '';
+
+        return `
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 7px 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 6px; flex-wrap: wrap;">
+                <div style="min-width: 200px;">
+                    <div style="font-size: 12.5px; font-weight: 700; color: #0f172a; word-break: break-word;">${escapeHtml(fname)}</div>
+                    <div style="font-size: 11px; color: #64748b;">${sizeKb}${d.updated_at ? ` • Updated ${new Date(d.updated_at).toLocaleDateString('en-US')}` : ''}</div>
+                </div>
+                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                    ${isMdOrTxt ? `
+                        <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 3px 9px; background: white;" onclick="previewFolderFile('${jsSlug}', '${jsScope}', '${jsFile}')">👁️ View</button>
+                        <button type="button" class="btn btn-outline" style="font-size: 11px; padding: 3px 9px; background: white;" onclick="window.open('${escapeHtml(d.print_url)}&autoprint=true', '_blank')">🖨️ Print</button>
+                    ` : ''}
+                    ${isPdf ? `
+                        <a class="btn btn-outline" style="font-size: 11px; padding: 3px 9px; background: white; text-decoration: none;" href="${escapeHtml(d.raw_url)}" target="_blank">📄 Open PDF</a>
+                    ` : ''}
+                    <a class="btn btn-outline" style="font-size: 11px; padding: 3px 9px; background: white; text-decoration: none;" href="${escapeHtml(d.download_url)}" download>⬇️ Download</a>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+window.selectClientFolderInPortal = async function(slug, activeTab = 'lscmi') {
+    const pane = document.getElementById('cfp-folder-detail-pane');
+    if (!pane) return;
+    window.activeClientFolderSlug = slug;
+    window.activeClientFolderTab = activeTab || 'lscmi';
+
+    // Update directory list selection highlight without losing filter
+    document.querySelectorAll('#cfp-directory-list > div').forEach(() => {});
+    const filtered = getFilteredClientFoldersList();
+    const listEl = document.getElementById('cfp-directory-list');
+    if (listEl && filtered.length) {
+        listEl.innerHTML = filtered.map(p => {
+            const isSelected = window.activeClientFolderSlug === p.participant_key;
+            return `
+                <div onclick="selectClientFolderInPortal('${escapeJsArg(p.participant_key)}')" style="cursor: pointer; background: ${isSelected ? '#eff6ff' : '#ffffff'}; border: 1.5px solid ${isSelected ? '#2563eb' : '#cbd5e1'}; border-radius: 8px; padding: 10px 12px; transition: all 0.12s;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px;">
+                        <strong style="font-size: 13.5px; color: #0f172a;">📁 ${escapeHtml(p.name)}</strong>
+                        <span style="font-size: 10.5px; padding: 2px 7px; border-radius: 999px; font-weight: 700; white-space: nowrap; background: ${p.waitlist_ready ? '#dcfce7' : '#fef3c7'}; color: ${p.waitlist_ready ? '#166534' : '#92400e'};">
+                            ${p.waitlist_met_count || 0}/9 Waitlist
+                        </span>
+                    </div>
+                    <div style="font-size: 11px; color: #64748b; margin-top: 3px;">
+                        📍 ${escapeHtml(p.location || 'Charleston')}${p.apricot_id ? ` • #${escapeHtml(p.apricot_id)}` : ''} • ${p.track === 'reentry_nav' ? 'Reentry Nav' : 'First Shift'}
+                    </div>
+                    <div style="display: flex; gap: 4px; flex-wrap: wrap; margin-top: 5px; font-size: 10.5px;">
+                        ${p.has_lscmi_brief ? `<span style="background: #dbeafe; color: #1e40af; padding: 1px 6px; border-radius: 4px; font-weight: 700;">📘 Brief</span>` : ''}
+                        ${p.has_action_plan ? `<span style="background: #dcfce7; color: #166534; padding: 1px 6px; border-radius: 4px; font-weight: 700;">🎯 Plan</span>` : ''}
+                        ${p.has_lscmi_scoring ? `<span style="background: #e0e7ff; color: #3730a3; padding: 1px 6px; border-radius: 4px; font-weight: 700;">📊 Score</span>` : ''}
+                        ${p.history_events_count ? `<span style="background: #f1f5f9; color: #475569; padding: 1px 6px; border-radius: 4px; font-weight: 600;">🕰️ ${p.history_events_count}</span>` : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    pane.innerHTML = `<div style="padding: 36px; text-align: center; color: #64748b;">Loading folder <code>data/participants/${escapeHtml(slug)}</code>...</div>`;
 
     try {
         const res = await fetch(`/api/participants/folder/${encodeURIComponent(slug)}`);
         const bundle = await res.json();
         if (!res.ok) throw new Error(bundle.error || 'Could not load folder');
+        window.activeClientFolderBundle = bundle;
+
+        // Hydrate currentInterviewsData so classic LS/CMI modals work seamlessly
+        const lscmiClientId = bundle.lscmi_client_id || `${bundle.participant_key}_${bundle.profile?.location || 'Charleston'}`;
+        if (typeof currentInterviewsData !== 'object' || !currentInterviewsData) {
+            currentInterviewsData = {};
+        }
+        currentInterviewsData[lscmiClientId] = bundle.lscmi_files || [];
 
         const schema = window.cachedBriefcaseSchema || (await (await fetch('/api/briefcase/schema')).json());
         const bc = bundle.briefcase || {};
@@ -12069,9 +12537,34 @@ window.selectParticipantFolderInModal = async function(slug) {
         const hasChronic = bc.has_chronic_health_condition === 'yes';
         const sc = bundle.skillcat_progress || {};
         const flags = bundle.caseload_evaluation?.data_evaluation_flags || [];
+        const pName = bundle.profile?.name || slug.replace(/_/g, ' ');
+        const jsSlug = escapeJsArg(bundle.participant_key);
+        const jsClientId = escapeJsArg(lscmiClientId);
+        const jsName = escapeJsArg(pName);
+
+        const docs = bundle.lscmi_documents || {};
+        const hasScoringOrDraft = Boolean((docs.scoring_forms && docs.scoring_forms.length) || bundle.lscmi_scoring_md);
+        const hasTranscriptOrGuide = Boolean((docs.transcripts && docs.transcripts.length) || (docs.interview_guides && docs.interview_guides.length) || bundle.lscmi_transcript_txt);
+        const hasCrimHistory = Boolean((docs.criminal_history && docs.criminal_history.some(f => f.filename.includes('_criminal_history.md'))));
+
+        const primaryBriefMd = (docs.briefs && docs.briefs.find(f => f.ext === '.md')?.filename) || '';
+        const primaryPlanMd = (docs.action_plans && docs.action_plans.find(f => f.ext === '.md')?.filename) || '';
+        const primaryScoringMd = (docs.scoring_forms && (docs.scoring_forms.find(f => f.filename.includes('_final_scoring_form.md')) || docs.scoring_forms.find(f => f.ext === '.md'))?.filename) || '';
+
+        const cmNotesData = bundle.case_management_notes || {};
+        const allCmNotes = [...(cmNotesData.case_notes || []), ...(cmNotesData.manual_folder_notes || [])];
+        const allCmEvals = cmNotesData.cm_session_evaluations || [];
+        const apricotHist = bundle.apricot_history || {};
+        const apricotEvals = apricotHist.evaluations || [];
+        const apricotNotes = apricotHist.processed_notes || [];
+        const reentryHist = bundle.reentry_history || {};
+        const progRec = bundle.program_records || {};
+        const historyEvents = (bundle.history_log && Array.isArray(bundle.history_log.events)) ? bundle.history_log.events : [];
+        const historyFiles = bundle.history_files || [];
+        const discLog = bundle.lscmi_discrepancies;
+        const ans158 = bundle.lscmi_158_answers;
 
         const renderDropdownField = (field) => {
-            // Conditional Medical Rule: If no chronic health conditions exist, suppress medical appointment prompts
             if (field.key === 'health_coverage_welvista' && !hasChronic) {
                 return `
                     <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 10px 12px; opacity: 0.85;">
@@ -12080,7 +12573,6 @@ window.selectParticipantFolderInModal = async function(slug) {
                     </div>
                 `;
             }
-
             const curVal = (items[field.key] && items[field.key].value) || field.default_value;
             const curOpt = field.options.find(o => o.value === curVal) || field.options[0];
             const isReady = curOpt && curOpt.ready;
@@ -12093,7 +12585,7 @@ window.selectParticipantFolderInModal = async function(slug) {
                         <label style="font-size: 12.5px; font-weight: 800; color: #0f172a;">${escapeHtml(field.title)}</label>
                         ${field.required_for_waitlist ? `<span style="font-size: 10.5px; padding: 2px 7px; border-radius: 999px; font-weight: 800; background: ${isReady ? '#16a34a' : '#dc2626'}; color: white;">${isReady ? '✓ Waitlist Ready' : 'Required for Waitlist'}</span>` : ''}
                     </div>
-                    <select onchange="saveUnifiedBriefcaseDropdown('${escapeHtml(slug)}', '${escapeHtml(field.key)}', this.value)" style="width: 100%; padding: 7px 10px; font-size: 12.5px; font-weight: 600; border: 1px solid #94a3b8; border-radius: 6px; background: white;">
+                    <select onchange="saveUnifiedBriefcaseDropdown('${jsSlug}', '${escapeJsArg(field.key)}', this.value)" style="width: 100%; padding: 7px 10px; font-size: 12.5px; font-weight: 600; border: 1px solid #94a3b8; border-radius: 6px; background: white;">
                         ${field.options.map(opt => `<option value="${escapeHtml(opt.value)}" ${opt.value === curVal ? 'selected' : ''}>${escapeHtml(opt.label)}</option>`).join('')}
                     </select>
                     ${field.conditional_note ? `<div style="font-size: 11px; color: #475569; margin-top: 5px;">💡 ${escapeHtml(field.conditional_note)}</div>` : ''}
@@ -12101,85 +12593,434 @@ window.selectParticipantFolderInModal = async function(slug) {
             `;
         };
 
+        const docCounts = {
+            briefs: (docs.briefs || []).length,
+            legacy_briefs: (docs.legacy_case_briefs || []).length,
+            action_plans: (docs.action_plans || []).length,
+            scoring_forms: (docs.scoring_forms || []).length,
+            interview_guides: (docs.interview_guides || []).length,
+            transcripts: (docs.transcripts || []).length,
+            criminal_history: (docs.criminal_history || []).length,
+            reentry_plans: (docs.reentry_plans || []).length
+        };
+
         pane.innerHTML = `
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 16px;">
+            <!-- Header -->
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 14px; margin-bottom: 14px;">
                 <div>
-                    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                        <h2 style="margin: 0; font-size: 22px; font-weight: 800; color: #0f172a;">📁 ${escapeHtml(bundle.profile?.name || slug)}</h2>
-                        <span style="font-size: 12px; padding: 4px 10px; border-radius: 999px; font-weight: 800; background: ${bc.waitlist_ready ? '#16a34a' : '#d97706'}; color: white;">
-                            ${bc.waitlist_ready ? '✅ FIRST SHIFT WAITLIST READY (9/9)' : `⏳ Waitlist Readiness: ${bc.waitlist_met_count || 0}/9 Required Items`}
+                    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
+                        <button type="button" class="btn btn-outline" onclick="clearSelectedClientFolder()" style="font-size: 11.5px; padding: 4px 10px;">← All Clients Grid</button>
+                        <h2 style="margin: 0; font-size: 22px; font-weight: 800; color: #0f172a;">📁 ${escapeHtml(pName)}</h2>
+                        <span style="font-size: 11.5px; padding: 3px 10px; border-radius: 999px; font-weight: 800; background: ${bc.waitlist_ready ? '#16a34a' : '#d97706'}; color: white;">
+                            ${bc.waitlist_ready ? '✅ WAITLIST READY (9/9)' : `⏳ Waitlist: ${bc.waitlist_met_count || 0}/9`}
                         </span>
-                        <span style="font-size: 12px; padding: 4px 10px; border-radius: 999px; background: #f1f5f9; color: #334155; font-weight: 700;">
+                        <span style="font-size: 11.5px; padding: 3px 9px; border-radius: 999px; background: #f1f5f9; color: #334155; font-weight: 700;">
                             📍 ${escapeHtml(bundle.profile?.location || 'Charleston')}
                         </span>
+                        <span style="font-size: 11.5px; padding: 3px 9px; border-radius: 999px; background: #e0f2fe; color: #0369a1; font-weight: 700;">
+                            ${bundle.profile?.track === 'reentry_nav' ? '🧭 Reentry Navigation' : '🏭 First Shift'}
+                        </span>
+                        ${bundle.profile?.apricot_id ? `<span style="font-size: 11.5px; padding: 3px 9px; border-radius: 999px; background: #ede9fe; color: #5b21b6; font-weight: 700;">Apricot #${escapeHtml(bundle.profile.apricot_id)}</span>` : ''}
                     </div>
-                    <div style="font-size: 12px; color: #64748b; margin-top: 4px;">
-                        Folder Path: <code>${escapeHtml(bundle.folder_path)}</code> • Action Plan Agreement: <strong>${escapeHtml(bundle.feedback_loop_log?.current_agreement_status || 'agreed')}</strong> • Voice Profile: <strong>${bundle.voice_profile?.enrolled ? '🎙️ Enrolled from LS/CMI' : 'Pending Audio'}</strong>
+                    <div style="font-size: 12px; color: #64748b;">
+                        Folder: <code>${escapeHtml(bundle.folder_path)}</code> • LS/CMI ID: <code>${escapeHtml(lscmiClientId)}</code> • Agreement: <strong>${escapeHtml(bundle.feedback_loop_log?.current_agreement_status || 'pending')}</strong> • Voice: <strong>${bundle.voice_profile?.enrolled ? '🎙️ Enrolled' : 'Pending Audio'}</strong>
                     </div>
                 </div>
+                <button type="button" class="btn btn-outline" onclick="selectClientFolderInPortal('${jsSlug}', '${escapeJsArg(window.activeClientFolderTab)}')" style="font-size: 12px; padding: 5px 11px;">🔄 Refresh Folder</button>
             </div>
 
             ${flags.length > 0 ? `
-                <div style="background: #fffbeb; border: 1.5px solid #fde68a; border-radius: 8px; padding: 12px 14px; margin-bottom: 16px;">
-                    <div style="font-size: 12.5px; font-weight: 800; color: #92400e; margin-bottom: 6px;">🚩 Active Data Evaluation & Caseload Flags</div>
-                    ${flags.map(f => `<div style="font-size: 12px; color: #78350f; margin-bottom: 3px;">• <strong>[${escapeHtml(f.code)}]</strong> ${escapeHtml(f.message)}</div>`).join('')}
+                <div style="background: #fffbeb; border: 1.5px solid #fde68a; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px;">
+                    <div style="font-size: 12px; font-weight: 800; color: #92400e; margin-bottom: 4px;">🚩 Active Data Evaluation &amp; Caseload Flags</div>
+                    ${flags.map(f => `<div style="font-size: 12px; color: #78350f; margin-bottom: 2px;">• <strong>[${escapeHtml(f.code)}]</strong> ${escapeHtml(f.message)}</div>`).join('')}
                 </div>
             ` : ''}
 
-            <!-- Unified Single-Document Gate-Free Briefcase (No Gates, All Dropdowns & Options) -->
-            <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 16px; margin-bottom: 20px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
-                    <div>
-                        <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: #0f172a;">💼 Unified Single-Document Briefcase (All Gates Removed — Auto-Populated Dropdowns)</h3>
-                        <p style="margin: 2px 0 0 0; font-size: 12px; color: #475569;">All 9 items below are required to be added to the First Shift Waitlist. Changing any dropdown saves immediately to the participant's folder.</p>
+            <!-- 5 Folder Navigation Tabs -->
+            <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">
+                <button type="button" class="btn cfp-folder-tab-btn" data-tab="lscmi" onclick="switchClientFolderTab('lscmi')" style="font-size: 12.5px; padding: 7px 12px; font-weight: 700; border: 1px solid #cbd5e1;">📋 LS/CMI Docs &amp; Adjustments (${docCounts.briefs + docCounts.legacy_briefs + docCounts.action_plans + docCounts.scoring_forms})</button>
+                <button type="button" class="btn cfp-folder-tab-btn" data-tab="briefcase" onclick="switchClientFolderTab('briefcase')" style="font-size: 12.5px; padding: 7px 12px; font-weight: 700; border: 1px solid #cbd5e1;">💼 Unified Briefcase (${bc.waitlist_met_count || 0}/9)</button>
+                <button type="button" class="btn cfp-folder-tab-btn" data-tab="notes" onclick="switchClientFolderTab('notes')" style="font-size: 12.5px; padding: 7px 12px; font-weight: 700; border: 1px solid #cbd5e1;">📝 Notes &amp; Apricot (${allCmNotes.length + apricotNotes.length})</button>
+                <button type="button" class="btn cfp-folder-tab-btn" data-tab="skillcat" onclick="switchClientFolderTab('skillcat')" style="font-size: 12.5px; padding: 7px 12px; font-weight: 700; border: 1px solid #cbd5e1;">🛠️ SkillCat &amp; Program (${sc.completed_count || 0} mods)</button>
+                <button type="button" class="btn cfp-folder-tab-btn" data-tab="history" onclick="switchClientFolderTab('history')" style="font-size: 12.5px; padding: 7px 12px; font-weight: 700; border: 1px solid #cbd5e1;">🕰️ Historical Timeline (${historyEvents.length})</button>
+            </div>
+
+            <!-- TAB 1: LS/CMI DOCUMENTS & CLASSIC ADJUSTMENTS -->
+            <div class="cfp-folder-tab-pane" data-pane="lscmi">
+                <!-- Classic Adjustment Action Bar -->
+                <div style="background: #f0f9ff; border: 1.5px solid #bae6fd; border-radius: 10px; padding: 14px; margin-bottom: 16px;">
+                    <div style="font-size: 12.5px; font-weight: 800; color: #0369a1; margin-bottom: 8px; text-transform: uppercase;">Classic LS/CMI Review &amp; Document Adjustment Tools</div>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                        <button type="button" class="btn btn-primary" style="font-size: 12.5px; padding: 7px 13px; font-weight: 700;" onclick="openSupervisorReviewModal('${jsClientId}', '${jsName}')">✍️ Review &amp; Approve / Adjust Feedback (Phase 2)</button>
+                        <button type="button" class="btn btn-outline" style="font-size: 12.5px; padding: 7px 13px; color: #059669; border-color: #059669; background: #ecfdf5; font-weight: 700;" onclick="openAdjustActionPlanModal('${jsClientId}', '${jsName}')">🎯 Adjust Action Plan Only</button>
+                        ${hasScoringOrDraft ? `<button type="button" class="btn btn-primary" style="font-size: 12.5px; padding: 7px 13px; background: #4338ca; border-color: #4338ca; font-weight: 700;" onclick="previewScoringWithGuide('${jsClientId}', '${jsName}')">⚖️ Dual Review: Scoring &amp; Guide</button>` : ''}
+                        ${hasTranscriptOrGuide ? `<button type="button" id="btn-gen-draft-${escapeHtml(lscmiClientId)}" class="btn btn-outline" style="font-size: 12.5px; padding: 7px 13px; color: #0284c7; border-color: #7dd3fc; background: white; font-weight: 700;" onclick="triggerGenerateAiDraft('${jsClientId}', '${jsName}')">${hasScoringOrDraft ? '🔄 Re-Score with AI' : '⚡ Generate AI Scoring Review'}</button>` : ''}
+                        ${!hasCrimHistory ? `<button type="button" class="btn btn-outline" style="font-size: 12.5px; padding: 7px 13px; background: white; font-weight: 600;" onclick="quickGenerateCriminalHistory('${jsClientId}', '${jsName}')">⚖️ + Criminal History</button>` : ''}
                     </div>
-                    <div style="background: white; border: 1px solid #cbd5e1; border-radius: 8px; padding: 6px 10px; font-size: 12px;">
-                        <label style="font-weight: 800; color: #1e293b; margin-right: 6px;">🩺 Has Chronic Health Condition?</label>
-                        <select onchange="saveUnifiedBriefcaseChronicToggle('${escapeHtml(slug)}', this.value)" style="padding: 4px 8px; font-size: 12px; font-weight: 700; border-radius: 4px; border: 1px solid #94a3b8;">
-                            <option value="no" ${!hasChronic ? 'selected' : ''}>No — Do NOT ask for medical appointments (N/A)</option>
-                            <option value="yes" ${hasChronic ? 'selected' : ''}>Yes — Requires treatment &/or daily meds</option>
+                </div>
+
+                <!-- LS/CMI Case Brief & Legacy Briefs -->
+                <div style="background: white; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 16px; margin-bottom: 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 12px;">
+                        <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: #0f172a;">📘 LS/CMI Case Brief</h3>
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                            ${primaryBriefMd ? `
+                                <button type="button" class="btn btn-outline" style="font-size: 11.5px; padding: 4px 10px;" onclick="previewDocument('${escapeJsArg(primaryBriefMd)}')">👁️ View</button>
+                                <button type="button" class="btn btn-outline" style="font-size: 11.5px; padding: 4px 10px;" onclick="printActiveDraftDocument('${escapeJsArg(primaryBriefMd)}')">🖨️ Print</button>
+                                <button type="button" class="btn btn-outline" style="font-size: 11.5px; padding: 4px 10px;" onclick="openActiveDraftPdf('${escapeJsArg(primaryBriefMd)}')">📄 PDF</button>
+                                <a class="btn btn-outline" style="font-size: 11.5px; padding: 4px 10px; text-decoration: none;" href="/api/documents/raw/${encodeURIComponent(primaryBriefMd.replace(/\.md$/, '.docx'))}?download=1" download>📑 Word (.docx)</a>
+                            ` : ''}
+                            <button type="button" class="btn btn-outline" style="font-size: 11.5px; padding: 4px 10px; border-color: #2563eb; color: #1d4ed8; font-weight: 700;" onclick="toggleClientDocEditor('brief')">✏️ Edit Brief Directly</button>
+                        </div>
+                    </div>
+
+                    <div id="cfp-inline-editor-brief" class="hidden" style="background: #f8fafc; border: 1.5px solid #93c5fd; border-radius: 8px; padding: 12px; margin-bottom: 14px;">
+                        <label style="display: block; font-size: 12px; font-weight: 700; color: #1e3a8a; margin-bottom: 6px;">Direct Edit — LS/CMI Case Brief (Markdown):</label>
+                        <textarea id="cfp-edit-textarea-brief" rows="12" class="form-control" style="font-family: monospace; font-size: 12.5px; width: 100%; box-sizing: border-box;">${escapeHtml(bundle.lscmi_brief_md || '')}</textarea>
+                        <div style="display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; align-items: center;">
+                            <input type="text" id="cfp-edit-reason-brief" placeholder="Optional adjustment note (saved to history log)..." class="form-control" style="flex: 1; min-width: 220px; font-size: 12px;">
+                            <button type="button" id="cfp-edit-save-btn-brief" class="btn btn-primary" style="font-size: 12px; padding: 7px 14px; font-weight: 700;" onclick="saveClientFolderDocument('${jsSlug}', 'brief')">💾 Save &amp; Archive Prior Version</button>
+                            <button type="button" class="btn btn-outline" style="font-size: 12px; padding: 7px 12px;" onclick="toggleClientDocEditor('brief')">Cancel</button>
+                        </div>
+                    </div>
+
+                    <div style="max-height: 360px; overflow-y: auto; background: #f8fafc; padding: 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                        ${renderMarkdownSafe(bundle.lscmi_brief_md, 'No LS/CMI Case Brief Markdown stored yet. Check legacy Case Brief files below or run Phase 2 Approval above.')}
+                    </div>
+
+                    ${(docs.legacy_case_briefs && docs.legacy_case_briefs.length > 0) ? `
+                        <div style="margin-top: 12px;">
+                            <div style="font-size: 12px; font-weight: 800; color: #475569; margin-bottom: 6px;">📚 Legacy &amp; Timestamped Case Brief Files (${docs.legacy_case_briefs.length})</div>
+                            ${renderFolderDocRows(bundle.participant_key, docs.legacy_case_briefs, lscmiClientId)}
+                        </div>
+                    ` : ''}
+                </div>
+
+                <!-- First Shift Action Plan & Feedback Loop -->
+                <div style="background: white; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 16px; margin-bottom: 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 12px;">
+                        <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: #0f172a;">🎯 First Shift Action Plan &amp; Adjustments</h3>
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                            ${primaryPlanMd ? `
+                                <button type="button" class="btn btn-outline" style="font-size: 11.5px; padding: 4px 10px;" onclick="previewDocument('${escapeJsArg(primaryPlanMd)}')">👁️ View</button>
+                                <button type="button" class="btn btn-outline" style="font-size: 11.5px; padding: 4px 10px;" onclick="printActiveDraftDocument('${escapeJsArg(primaryPlanMd)}')">🖨️ Print</button>
+                                <button type="button" class="btn btn-outline" style="font-size: 11.5px; padding: 4px 10px;" onclick="openActiveDraftPdf('${escapeJsArg(primaryPlanMd)}')">📄 PDF</button>
+                                <a class="btn btn-outline" style="font-size: 11.5px; padding: 4px 10px; text-decoration: none;" href="/api/documents/raw/${encodeURIComponent(primaryPlanMd.replace(/\.md$/, '.docx'))}?download=1" download>📑 Word (.docx)</a>
+                            ` : ''}
+                            <button type="button" class="btn btn-outline" style="font-size: 11.5px; padding: 4px 10px; color: #059669; border-color: #059669; font-weight: 700;" onclick="openAdjustActionPlanModal('${jsClientId}', '${jsName}')">🎯 Adjust Plan with AI</button>
+                            <button type="button" class="btn btn-outline" style="font-size: 11.5px; padding: 4px 10px; border-color: #2563eb; color: #1d4ed8; font-weight: 700;" onclick="toggleClientDocEditor('action_plan')">✏️ Edit Plan Directly</button>
+                        </div>
+                    </div>
+
+                    <div id="cfp-inline-editor-action_plan" class="hidden" style="background: #f8fafc; border: 1.5px solid #86efac; border-radius: 8px; padding: 12px; margin-bottom: 14px;">
+                        <label style="display: block; font-size: 12px; font-weight: 700; color: #166534; margin-bottom: 6px;">Direct Edit — Participant Action Plan (Markdown):</label>
+                        <textarea id="cfp-edit-textarea-action_plan" rows="12" class="form-control" style="font-family: monospace; font-size: 12.5px; width: 100%; box-sizing: border-box;">${escapeHtml(bundle.action_plan_md || '')}</textarea>
+                        <div style="display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; align-items: center;">
+                            <input type="text" id="cfp-edit-reason-action_plan" placeholder="Optional adjustment note (saved to history log)..." class="form-control" style="flex: 1; min-width: 220px; font-size: 12px;">
+                            <button type="button" id="cfp-edit-save-btn-action_plan" class="btn btn-primary" style="font-size: 12px; padding: 7px 14px; font-weight: 700; background: #059669; border-color: #059669;" onclick="saveClientFolderDocument('${jsSlug}', 'action_plan')">💾 Save &amp; Archive Prior Version</button>
+                            <button type="button" class="btn btn-outline" style="font-size: 12px; padding: 7px 12px;" onclick="toggleClientDocEditor('action_plan')">Cancel</button>
+                        </div>
+                    </div>
+
+                    <div style="max-height: 360px; overflow-y: auto; background: #f8fafc; padding: 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                        ${renderMarkdownSafe(bundle.action_plan_md, 'No Action Plan saved in this folder yet. Click "Adjust Plan with AI" or "Edit Plan Directly" to create one.')}
+                    </div>
+
+                    <details style="margin-top: 12px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 12px;">
+                        <summary style="cursor: pointer; font-size: 12.5px; font-weight: 700; color: #0f172a;">🔄 Log Action Plan Agreement / 4-Step Feedback Loop Revision</summary>
+                        <div style="margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 12px;">
+                            <input type="hidden" id="cfp-fl-name" value="${escapeHtml(pName)}">
+                            <div>
+                                <label style="font-weight: 700;">Agreement Status</label>
+                                <select id="cfp-fl-status" class="form-control" style="font-size: 12px;">
+                                    <option value="resolved_via_feedback_loop">🔄 Disagreed → Resolved via Feedback Loop</option>
+                                    <option value="agreed">✅ Agreed with Current Action Plan</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="font-weight: 700;">Target Adjusted (if disagreed)</label>
+                                <input type="text" id="cfp-fl-disagreed" class="form-control" placeholder="e.g. Family Conflict / Authority" style="font-size: 12px;">
+                            </div>
+                            <div>
+                                <label style="font-weight: 700;">Agreed Focus Target &amp; Tool Kit (1A–1N)</label>
+                                <input type="text" id="cfp-fl-replacement" class="form-control" placeholder="e.g. Impulsivity — Stop & Think (1I)" style="font-size: 12px;">
+                            </div>
+                            <div>
+                                <label style="font-weight: 700;">Participant Input / Quote</label>
+                                <input type="text" id="cfp-fl-quote" class="form-control" placeholder="What the participant asked to focus on..." style="font-size: 12px;">
+                            </div>
+                        </div>
+                        <button type="button" id="cfp-fl-submit-btn" class="btn btn-primary" style="margin-top: 8px; font-size: 12px; padding: 6px 14px; background: #0f766e; border-color: #0f766e;" onclick="submitFolderFeedbackLoop('${jsSlug}')">💾 Save Feedback Loop Update</button>
+                    </details>
+                </div>
+
+                <!-- Scoring Forms, Interview Guides, Transcripts, Criminal History & Reentry Plans -->
+                <div style="background: white; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 16px; margin-bottom: 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 12px;">
+                        <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: #0f172a;">📂 All LS/CMI &amp; Reentry Folder Documents</h3>
+                        <div style="display: flex; gap: 6px;">
+                            ${primaryScoringMd ? `<button type="button" class="btn btn-outline" style="font-size: 11.5px; padding: 4px 10px;" onclick="previewDocument('${escapeJsArg(primaryScoringMd)}')">📊 View Scoring Form</button>` : ''}
+                            <button type="button" class="btn btn-outline" style="font-size: 11.5px; padding: 4px 10px; border-color: #2563eb; color: #1d4ed8; font-weight: 700;" onclick="toggleClientDocEditor('scoring')">✏️ Edit Final Scoring Directly</button>
+                        </div>
+                    </div>
+
+                    <div id="cfp-inline-editor-scoring" class="hidden" style="background: #f8fafc; border: 1.5px solid #a5b4fc; border-radius: 8px; padding: 12px; margin-bottom: 14px;">
+                        <label style="display: block; font-size: 12px; font-weight: 700; color: #3730a3; margin-bottom: 6px;">Direct Edit — LS/CMI Scoring Form (Markdown):</label>
+                        <textarea id="cfp-edit-textarea-scoring" rows="12" class="form-control" style="font-family: monospace; font-size: 12.5px; width: 100%; box-sizing: border-box;">${escapeHtml(bundle.lscmi_scoring_md || '')}</textarea>
+                        <div style="display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; align-items: center;">
+                            <input type="text" id="cfp-edit-reason-scoring" placeholder="Optional score adjustment note..." class="form-control" style="flex: 1; min-width: 220px; font-size: 12px;">
+                            <button type="button" id="cfp-edit-save-btn-scoring" class="btn btn-primary" style="font-size: 12px; padding: 7px 14px; font-weight: 700;" onclick="saveClientFolderDocument('${jsSlug}', 'scoring')">💾 Save &amp; Archive Prior Version</button>
+                            <button type="button" class="btn btn-outline" style="font-size: 12px; padding: 7px 12px;" onclick="toggleClientDocEditor('scoring')">Cancel</button>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 12px;">
+                        <div>
+                            <div style="font-size: 12px; font-weight: 800; color: #3730a3; margin-bottom: 6px;">📊 Scoring Forms (${docCounts.scoring_forms})</div>
+                            ${renderFolderDocRows(bundle.participant_key, docs.scoring_forms, lscmiClientId)}
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; font-weight: 800; color: #0369a1; margin-bottom: 6px;">🎙️ Interview Guides (${docCounts.interview_guides})</div>
+                            ${renderFolderDocRows(bundle.participant_key, docs.interview_guides, lscmiClientId)}
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; font-weight: 800; color: #0f766e; margin-bottom: 6px;">📝 Transcripts (${docCounts.transcripts})</div>
+                            ${renderFolderDocRows(bundle.participant_key, docs.transcripts, lscmiClientId)}
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; font-weight: 800; color: #1e293b; margin-bottom: 6px;">⚖️ Criminal History &amp; Intelius (${docCounts.criminal_history})</div>
+                            ${renderFolderDocRows(bundle.participant_key, docs.criminal_history, lscmiClientId)}
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; font-weight: 800; color: #166534; margin-bottom: 6px;">🧭 Reentry Plans &amp; Action Guides (${docCounts.reentry_plans})</div>
+                            ${renderFolderDocRows(bundle.participant_key, docs.reentry_plans, lscmiClientId)}
+                        </div>
+                        ${(docs.other_files && docs.other_files.length) ? `
+                            <div>
+                                <div style="font-size: 12px; font-weight: 800; color: #475569; margin-bottom: 6px;">📎 Other Folder Files (${docs.other_files.length})</div>
+                                ${renderFolderDocRows(bundle.participant_key, docs.other_files, lscmiClientId)}
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+
+                ${(discLog || ans158) ? `
+                    <div style="background: #fef2f2; border: 1.5px solid #fca5a5; border-radius: 10px; padding: 14px;">
+                        <h3 style="margin: 0 0 8px 0; font-size: 15px; font-weight: 800; color: #991b1b;">⚠️ Staff-Only 158-Q Coverage &amp; Consultation Discrepancy Log</h3>
+                        <div style="font-size: 12.5px; color: #7f1d1d; margin-bottom: 8px;">
+                            Checklist Coverage: <strong>${ans158 ? `${ans158.answered_count || 0}/${ans158.total_questions || 158}` : 'N/A'}</strong> • Flagged Discrepancies: <strong>${discLog ? (discLog.discrepancy_count || (discLog.discrepancies || []).length) : 0}</strong>
+                        </div>
+                        ${(discLog && Array.isArray(discLog.discrepancies) && discLog.discrepancies.length > 0) ? discLog.discrepancies.map(d => `
+                            <div style="background: white; border: 1px solid #fecaca; border-radius: 6px; padding: 8px 10px; margin-bottom: 6px; font-size: 12px; color: #1e293b;">
+                                <strong>Q${escapeHtml(d.questionNumber || d.question_number || '?')}:</strong> ${escapeHtml(d.details || d.discrepancy_details || '')}
+                                <div style="font-size: 11.5px; color: #475569; margin-top: 2px;"><strong>Consultation:</strong> ${escapeHtml(d.consultationValue || d.consultation_value_on_file || 'N/A')} | <strong>Live Answer:</strong> ${escapeHtml(d.liveValue || d.live_participant_value || 'N/A')}</div>
+                            </div>
+                        `).join('') : '<div style="font-size: 12px; color: #065f46;">No discrepancies logged during live intake.</div>'}
+                    </div>
+                ` : ''}
+            </div>
+
+            <!-- TAB 2: UNIFIED BRIEFCASE -->
+            <div class="cfp-folder-tab-pane hidden" data-pane="briefcase">
+                <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
+                        <div>
+                            <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: #0f172a;">💼 Unified Single-Document Briefcase (Gate-Free Dropdowns)</h3>
+                            <p style="margin: 2px 0 0 0; font-size: 12px; color: #475569;">All 9 items below are required for the First Shift Waitlist. Every change saves immediately to the participant's folder and logs to history.</p>
+                        </div>
+                        <div style="background: white; border: 1px solid #cbd5e1; border-radius: 8px; padding: 6px 10px; font-size: 12px;">
+                            <label style="font-weight: 800; color: #1e293b; margin-right: 6px;">🩺 Chronic Health Condition?</label>
+                            <select onchange="saveUnifiedBriefcaseChronicToggle('${jsSlug}', this.value)" style="padding: 4px 8px; font-size: 12px; font-weight: 700; border-radius: 4px; border: 1px solid #94a3b8;">
+                                <option value="no" ${!hasChronic ? 'selected' : ''}>No — Do NOT ask for medical appointments (N/A)</option>
+                                <option value="yes" ${hasChronic ? 'selected' : ''}>Yes — Requires treatment &amp;/or daily meds</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="font-size: 12.5px; font-weight: 800; color: #1e3a8a; margin-bottom: 8px; text-transform: uppercase;">Section A: 9 Mandatory First Shift Waitlist Requirements</div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px; margin-bottom: 16px;">
+                        ${(schema.waitlist_requirements || []).map(renderDropdownField).join('')}
+                    </div>
+
+                    <div style="font-size: 12.5px; font-weight: 800; color: #1e3a8a; margin-bottom: 8px; text-transform: uppercase;">Section B: SkillCat Trade Pathway, Employment &amp; Benefits Dropdowns</div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;">
+                        ${[...(schema.employment_and_pathways || []), ...(schema.benefits_and_financial || [])].map(renderDropdownField).join('')}
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: CASE NOTES, SESSIONS & APRICOT HISTORY -->
+            <div class="cfp-folder-tab-pane hidden" data-pane="notes">
+                <form onsubmit="submitFolderCaseNote(event, '${jsSlug}')" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px; margin-bottom: 16px;">
+                    <div style="font-size: 13.5px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">➕ Add Case Note to Participant's Historical Folder</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+                        <input type="date" id="cfp-new-note-date" value="${new Date().toISOString().split('T')[0]}" class="form-control" style="font-size: 12px;">
+                        <select id="cfp-new-note-type" class="form-control" style="font-size: 12px;">
+                            <option value="Individual Session">Individual Session</option>
+                            <option value="Check-In">Check-In</option>
+                            <option value="Intake / LS/CMI">Intake / LS/CMI</option>
+                            <option value="Record Update">Record Update</option>
+                        </select>
+                        <select id="cfp-new-note-category" class="form-control" style="font-size: 12px;">
+                            <option value="Case Management">Case Management</option>
+                            <option value="Barriers & Stability">Barriers &amp; Stability</option>
+                            <option value="Employment & SkillCat">Employment &amp; SkillCat</option>
+                            <option value="Supervision / Legal">Supervision / Legal</option>
                         </select>
                     </div>
-                </div>
+                    <textarea id="cfp-new-note-content" rows="3" required class="form-control" placeholder="Enter session summary, barrier update, or historical note..." style="font-size: 13px; margin-bottom: 8px;"></textarea>
+                    <button type="submit" id="cfp-new-note-btn" class="btn btn-primary" style="font-size: 12px; padding: 7px 14px; font-weight: 700;">💾 Save Case Note to Folder</button>
+                </form>
 
-                <div style="font-size: 12.5px; font-weight: 800; color: #1e3a8a; margin-bottom: 8px; text-transform: uppercase;">Section A: 9 Mandatory First Shift Waitlist Requirements</div>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px; margin-bottom: 16px;">
-                    ${(schema.waitlist_requirements || []).map(renderDropdownField).join('')}
-                </div>
-
-                <div style="font-size: 12.5px; font-weight: 800; color: #1e3a8a; margin-bottom: 8px; text-transform: uppercase;">Section B: SkillCat Trade Pathway, Employment & Benefits Dropdowns</div>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;">
-                    ${[...(schema.employment_and_pathways || []), ...(schema.benefits_and_financial || [])].map(renderDropdownField).join('')}
-                </div>
-            </div>
-
-            <!-- SkillCat Scraped Module Progress inside Participant Folder -->
-            <div style="background: white; border: 1px solid #cbd5e1; border-radius: 10px; padding: 16px; margin-bottom: 20px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <h3 style="margin: 0; font-size: 15.5px; font-weight: 800; color: #0f172a;">🛠️ SkillCat Trade Pathway & Scraped Modules Worked On</h3>
-                    <span style="font-size: 12px; font-weight: 700; color: #1e40af; background: #dbeafe; padding: 3px 10px; border-radius: 999px;">
-                        Pathway: ${escapeHtml(sc.pathway || items.skillcat_pathway?.value || 'HVAC')} • ${sc.completed_count || 0} Modules Completed (${sc.completed_last_5_working_days || 0} in last 5 workdays)
-                    </span>
-                </div>
-                ${Array.isArray(sc.completed_modules) && sc.completed_modules.length > 0 ? `
-                    <div style="display: flex; flex-wrap: wrap; gap: 6px; max-height: 130px; overflow-y: auto; padding: 6px; background: #f8fafc; border-radius: 6px; border: 1px solid #e2e8f0;">
-                        ${sc.completed_modules.map(m => `<span style="font-size: 11.5px; padding: 4px 8px; background: white; border: 1px solid #cbd5e1; border-radius: 6px; color: #1e293b;">✅ <strong>${escapeHtml(m.course_name || m)}</strong> ${m.completed_date ? `<span style="color:#64748b;">(${escapeHtml(m.completed_date)})</span>` : ''}</span>`).join('')}
+                ${apricotEvals.length > 0 ? `
+                    <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 14px; margin-bottom: 16px;">
+                        <h3 style="margin: 0 0 6px 0; font-size: 14.5px; font-weight: 800; color: #1e3a8a;">🍑 Apricot Program Evaluation Summary</h3>
+                        ${apricotEvals.map(ae => `
+                            <div style="font-size: 12.5px; color: #1e293b; margin-bottom: 6px;">
+                                <strong>Program:</strong> ${escapeHtml(ae.program || 'N/A')} • <strong>Case Manager:</strong> ${escapeHtml(ae.case_manager || 'Unassigned')} • <strong>Case Plan:</strong> ${escapeHtml(ae.case_plan_status || 'N/A')} • <strong>Last Note:</strong> ${escapeHtml(ae.last_note_date || 'N/A')}
+                                ${ae.focus_areas_or_goals ? `<div style="margin-top: 3px; color: #334155;"><strong>Focus Areas:</strong> ${escapeHtml(ae.focus_areas_or_goals)}</div>` : ''}
+                            </div>
+                        `).join('')}
                     </div>
-                ` : `<div style="font-size: 12.5px; color: #64748b;">No completed SkillCat modules scraped yet for this participant.</div>`}
+                ` : ''}
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                    <div style="background: white; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px;">
+                        <h3 style="margin: 0 0 10px 0; font-size: 14.5px; font-weight: 800; color: #0f172a;">📝 Local Case Notes (${allCmNotes.length}) &amp; 1-on-1 CM Evals (${allCmEvals.length})</h3>
+                        <div style="max-height: 400px; overflow-y: auto;">
+                            ${allCmNotes.map(n => `
+                                <div style="border-left: 3px solid #2563eb; background: #f8fafc; padding: 8px 10px; border-radius: 4px; margin-bottom: 8px; font-size: 12px;">
+                                    <div style="font-weight: 700; color: #1e3a8a;">${escapeHtml(n.session_date || n.created_at || '')} • ${escapeHtml(n.note_type || 'Note')} (${escapeHtml(n.author_name || 'Staff')})</div>
+                                    <div style="color: #1e293b; margin-top: 3px; white-space: pre-wrap;">${escapeHtml(n.content || '')}</div>
+                                </div>
+                            `).join('')}
+                            ${allCmEvals.map(ev => `
+                                <div style="border-left: 3px solid #059669; background: #f0fdf4; padding: 8px 10px; border-radius: 4px; margin-bottom: 8px; font-size: 12px;">
+                                    <div style="font-weight: 700; color: #166534;">CM Eval: ${escapeHtml(ev.session_title || '')} (${escapeHtml(ev.cm_name || '')})</div>
+                                    <div style="color: #1e293b; margin-top: 3px;">${escapeHtml(String(ev.feedback || ev.summary_markdown || '').slice(0, 400))}</div>
+                                </div>
+                            `).join('')}
+                            ${(allCmNotes.length === 0 && allCmEvals.length === 0) ? '<div style="font-size: 12px; color: #64748b;">No local case notes or CM evals archived yet.</div>' : ''}
+                        </div>
+                    </div>
+
+                    <div style="background: white; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px;">
+                        <h3 style="margin: 0 0 10px 0; font-size: 14.5px; font-weight: 800; color: #0f172a;">📜 Apricot Processed Notes (${apricotNotes.length}) &amp; Reentry Sessions (${(reentryHist.sessions || []).length})</h3>
+                        <div style="max-height: 400px; overflow-y: auto;">
+                            ${(reentryHist.sessions || []).map(rs => `
+                                <div style="border-left: 3px solid #7c3aed; background: #faf5ff; padding: 8px 10px; border-radius: 4px; margin-bottom: 8px; font-size: 12px;">
+                                    <div style="font-weight: 700; color: #5b21b6;">Reentry: ${escapeHtml(rs.session_date || '')} — ${escapeHtml(rs.session_title || 'Session')}</div>
+                                    <div style="color: #1e293b; margin-top: 3px; white-space: pre-wrap;">${escapeHtml(String(rs.notes_text || rs.transcript_text || '').slice(0, 400))}</div>
+                                </div>
+                            `).join('')}
+                            ${apricotNotes.map(an => `
+                                <div style="border-left: 3px solid #d97706; background: #fffbeb; padding: 8px 10px; border-radius: 4px; margin-bottom: 8px; font-size: 12px;">
+                                    <div style="font-weight: 700; color: #92400e;">${escapeHtml(an.activity_date || '')} • ${escapeHtml(an.staff_name || 'Staff')} • ${escapeHtml(an.interaction_type || an.service_context || '')}</div>
+                                    <div style="color: #1e293b; margin-top: 3px; white-space: pre-wrap;">${escapeHtml(an.note_text || '')}</div>
+                                </div>
+                            `).join('')}
+                            ${(apricotNotes.length === 0 && (reentryHist.sessions || []).length === 0) ? '<div style="font-size: 12px; color: #64748b;">No Apricot or Reentry session history found for this client.</div>' : ''}
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Loaded LS/CMI Brief & Action Plan in Participant Folder -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                <div style="background: white; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px;">
-                    <h3 style="margin: 0 0 8px 0; font-size: 15px; font-weight: 800; color: #0f172a;">📘 LS/CMI Case Brief (Informs Case Management)</h3>
-                    <div style="max-height: 300px; overflow-y: auto; font-size: 12.5px; line-height: 1.55; color: #1e293b; background: #f8fafc; padding: 10px; border-radius: 6px; white-space: pre-wrap;">${bundle.lscmi_brief_md ? escapeHtml(bundle.lscmi_brief_md) : 'No LS/CMI Case Brief saved in folder yet.'}</div>
+            <!-- TAB 4: SKILLCAT & PROGRAM RECORDS -->
+            <div class="cfp-folder-tab-pane hidden" data-pane="skillcat">
+                <div style="background: white; border: 1px solid #cbd5e1; border-radius: 10px; padding: 16px; margin-bottom: 16px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+                        <h3 style="margin: 0; font-size: 15.5px; font-weight: 800; color: #0f172a;">🛠️ SkillCat Trade Pathway &amp; Completed Modules</h3>
+                        <span style="font-size: 12px; font-weight: 700; color: #1e40af; background: #dbeafe; padding: 3px 10px; border-radius: 999px;">
+                            Pathway: ${escapeHtml(sc.pathway || items.skillcat_pathway?.value || 'HVAC')} • ${sc.completed_count || 0} Modules (${sc.total_hours || 0} hrs) • Last 5 Workdays: ${sc.completed_last_5_working_days || 0}
+                        </span>
+                    </div>
+                    ${Array.isArray(sc.completed_modules) && sc.completed_modules.length > 0 ? `
+                        <div style="display: flex; flex-wrap: wrap; gap: 6px; max-height: 160px; overflow-y: auto; padding: 8px; background: #f8fafc; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 12px;">
+                            ${sc.completed_modules.map(m => `<span style="font-size: 11.5px; padding: 4px 8px; background: white; border: 1px solid #cbd5e1; border-radius: 6px; color: #1e293b;">✅ <strong>${escapeHtml(m.course_name || m)}</strong> ${m.completed_date ? `<span style="color:#64748b;">(${escapeHtml(m.completed_date)})</span>` : ''}</span>`).join('')}
+                        </div>
+                    ` : `<div style="font-size: 12.5px; color: #64748b; margin-bottom: 12px;">No completed SkillCat modules scraped yet for this client.</div>`}
+
+                    ${(Array.isArray(sc.historical_snapshots) && sc.historical_snapshots.length > 0) ? `
+                        <div style="font-size: 12.5px; font-weight: 800; color: #0f172a; margin-bottom: 6px;">📈 Historical SkillCat Snapshot Progress (${sc.historical_snapshots.length} dates)</div>
+                        <div style="max-height: 200px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 6px;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                                <thead style="background: #f8fafc;"><tr><th style="padding: 6px 8px; text-align: left;">Date</th><th style="padding: 6px 8px; text-align: left;">Pathway</th><th style="padding: 6px 8px; text-align: left;">Modules</th><th style="padding: 6px 8px; text-align: left;">Daily Delta</th><th style="padding: 6px 8px; text-align: left;">Status</th></tr></thead>
+                                <tbody>
+                                    ${sc.historical_snapshots.map(s => `<tr style="border-top: 1px solid #e2e8f0;"><td style="padding: 5px 8px;">${escapeHtml(s.date)}</td><td style="padding: 5px 8px;">${escapeHtml(s.pathway)}</td><td style="padding: 5px 8px; font-weight: 700;">${s.total_courses} (${s.total_hours}h)</td><td style="padding: 5px 8px;">+${s.daily_delta}</td><td style="padding: 5px 8px;">${s.stalled ? '⚠️ Stalled' : '✅ Active'}</td></tr>`).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    ` : ''}
                 </div>
-                <div style="background: white; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px;">
-                    <h3 style="margin: 0 0 8px 0; font-size: 15px; font-weight: 800; color: #0f172a;">🎯 First Shift Action Plan & Feedback Loop</h3>
-                    <div style="max-height: 300px; overflow-y: auto; font-size: 12.5px; line-height: 1.55; color: #1e293b; background: #f8fafc; padding: 10px; border-radius: 6px; white-space: pre-wrap;">${bundle.action_plan_md ? escapeHtml(bundle.action_plan_md) : 'No Action Plan saved in folder yet.'}</div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                    <div style="background: white; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px;">
+                        <h3 style="margin: 0 0 8px 0; font-size: 14.5px; font-weight: 800; color: #0f172a;">🩺 Consultations (${(bundle.screening_consultation?.history || []).length}) &amp; Feedback Loops (${(bundle.feedback_loop_log?.history || []).length})</h3>
+                        ${(bundle.screening_consultation?.history || []).map(s => `
+                            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 8px; border-radius: 6px; margin-bottom: 6px; font-size: 12px;">
+                                <strong>${escapeHtml(s.created_at || '')} • ${escapeHtml(s.eligibility_decision || '')}</strong>
+                                <div>${escapeHtml(s.ineligibility_reason || '')}</div>
+                            </div>
+                        `).join('') || '<div style="font-size: 12px; color: #64748b; margin-bottom: 8px;">No Screening Consultation history logged yet.</div>'}
+                        ${(bundle.feedback_loop_log?.history || []).map(f => `
+                            <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 8px; border-radius: 6px; margin-bottom: 6px; font-size: 12px;">
+                                <strong>${escapeHtml(f.created_at || '')} • ${escapeHtml(f.agreement_status || '')}</strong>
+                                <div>${escapeHtml(f.agreed_replacement_target || f.disagreed_target || '')} ${f.selected_toolkit_tool ? `(${escapeHtml(f.selected_toolkit_tool)})` : ''}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div style="background: white; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px;">
+                        <h3 style="margin: 0 0 8px 0; font-size: 14.5px; font-weight: 800; color: #0f172a;">📊 Program Records Summary</h3>
+                        <div style="font-size: 12.5px; color: #1e293b; line-height: 1.7;">
+                            <div>• <strong>Daily Points Logged:</strong> ${(progRec.daily_points || []).length} entries</div>
+                            <div>• <strong>Drug Tests Archived:</strong> ${(progRec.drug_tests || []).length} entries</div>
+                            <div>• <strong>Benefits Tracked:</strong> ${(progRec.benefits || []).length} programs</div>
+                            <div>• <strong>Resumes Saved:</strong> ${(progRec.resumes || []).length}</div>
+                            <div>• <strong>Reentry Goals:</strong> ${(reentryHist.goals || []).length} goals</div>
+                            <div>• <strong>Voice Profile:</strong> ${escapeHtml(bundle.voice_profile?.note || 'Pending LS/CMI recording')}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 5: HISTORICAL TIMELINE & ARCHIVED FILES -->
+            <div class="cfp-folder-tab-pane hidden" data-pane="history">
+                <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 16px;">
+                    <div style="background: white; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px;">
+                        <h3 style="margin: 0 0 10px 0; font-size: 15px; font-weight: 800; color: #0f172a;">🕰️ Chronological Client History Timeline (${historyEvents.length})</h3>
+                        <div style="max-height: 520px; overflow-y: auto;">
+                            ${historyEvents.length > 0 ? historyEvents.map(ev => `
+                                <div style="border-left: 3px solid #0284c7; background: #f8fafc; padding: 8px 12px; border-radius: 4px; margin-bottom: 8px; font-size: 12px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px;">
+                                        <strong style="color: #0f172a;">${escapeHtml(ev.action || 'Event')}</strong>
+                                        <span style="font-size: 10.5px; color: #64748b;">${ev.timestamp ? new Date(ev.timestamp).toLocaleString('en-US') : ''}</span>
+                                    </div>
+                                    ${ev.summary ? `<div style="color: #334155; margin-top: 3px;">${escapeHtml(ev.summary)}</div>` : ''}
+                                    <div style="font-size: 11px; color: #64748b; margin-top: 3px;">
+                                        By: ${escapeHtml(ev.actor || 'System')}
+                                        ${ev.snapshot_file ? ` • <a href="#" onclick="event.preventDefault(); previewFolderFile('${jsSlug}', 'history', '${escapeJsArg(ev.snapshot_file)}')">View Snapshot</a>` : ''}
+                                    </div>
+                                </div>
+                            `).join('') : '<div style="font-size: 12.5px; color: #64748b;">No historical timeline events recorded yet.</div>'}
+                        </div>
+                    </div>
+
+                    <div style="background: white; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px;">
+                        <h3 style="margin: 0 0 10px 0; font-size: 15px; font-weight: 800; color: #0f172a;">🗄️ Prior Version Snapshots (${historyFiles.length})</h3>
+                        <div style="max-height: 240px; overflow-y: auto; margin-bottom: 14px;">
+                            ${historyFiles.length > 0 ? renderFolderDocRows(bundle.participant_key, historyFiles, lscmiClientId) : '<div style="font-size: 12px; color: #64748b;">Previous versions of edited or re-generated briefs, action plans, and scoring forms will appear here automatically.</div>'}
+                        </div>
+                        <h3 style="margin: 0 0 8px 0; font-size: 14.5px; font-weight: 800; color: #0f172a;">📄 All Documents in Folder (${(bundle.document_files || []).length})</h3>
+                        <div style="max-height: 240px; overflow-y: auto;">
+                            ${renderFolderDocRows(bundle.participant_key, [...(docs.briefs || []), ...(docs.action_plans || []), ...(docs.scoring_forms || []), ...(docs.legacy_case_briefs || []), ...(docs.reentry_plans || [])], lscmiClientId)}
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
+
+        window.switchClientFolderTab(window.activeClientFolderTab || 'lscmi');
     } catch (err) {
         pane.innerHTML = `<div style="color: #dc2626; padding: 20px;">Error loading participant folder: ${escapeHtml(err.message)}</div>`;
     }
@@ -12194,7 +13035,10 @@ window.saveUnifiedBriefcaseDropdown = async function(slug, fieldKey, value) {
                 items: { [fieldKey]: { value } }
             })
         });
-        await selectParticipantFolderInModal(slug);
+        const portalView = document.getElementById('view-client-folders-portal');
+        if (portalView && !portalView.classList.contains('hidden')) {
+            await window.selectClientFolderInPortal(slug, 'briefcase');
+        }
     } catch (err) {
         alert('Failed to update Briefcase dropdown: ' + err.message);
     }
@@ -12214,7 +13058,10 @@ window.saveUnifiedBriefcaseChronicToggle = async function(slug, hasChronicVal) {
                 }
             })
         });
-        await selectParticipantFolderInModal(slug);
+        const portalView = document.getElementById('view-client-folders-portal');
+        if (portalView && !portalView.classList.contains('hidden')) {
+            await window.selectClientFolderInPortal(slug, 'briefcase');
+        }
     } catch (err) {
         alert('Failed to update Chronic Health toggle: ' + err.message);
     }

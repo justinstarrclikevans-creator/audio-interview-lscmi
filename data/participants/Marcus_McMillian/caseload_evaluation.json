@@ -3,10 +3,12 @@
   "participant_name": "Marcus McMillian",
   "location": "Charleston",
   "track": "first_shift",
+  "lscmi_client_id": "Marcus_McMillian_Charleston",
   "folder_path": "data/participants/Marcus_McMillian",
   "has_lscmi_brief": false,
   "has_lscmi_scoring": false,
   "has_action_plan": false,
+  "has_legacy_case_briefs": false,
   "action_plan_agreement": "pending_review",
   "waitlist_ready": false,
   "waitlist_score": "6/9",
@@ -14,6 +16,10 @@
   "skillcat_pathway": "HVAC",
   "skillcat_modules_completed": 8,
   "cm_notes_count": 0,
+  "apricot_notes_count": 0,
+  "reentry_sessions_count": 0,
+  "history_events_count": 0,
+  "documents_count": 0,
   "data_evaluation_flags": [
     {
       "code": "FLAG-WAITLIST-GAP",
@@ -31,5 +37,5 @@
       "message": "SkillCat stalled on HVAC pathway (0 modules completed)."
     }
   ],
-  "updated_at": "2026-11-22T17:18:01.725Z"
+  "updated_at": "2026-11-23T13:46:30.037Z"
 }

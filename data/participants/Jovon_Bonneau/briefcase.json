@@ -58,7 +58,7 @@
       "value": "contact_made_compliant",
       "notes": "Child support status verified",
       "source": "db_import",
-      "updated_at": "2026-11-22T17:18:01.442Z"
+      "updated_at": "2026-11-23T13:46:28.375Z"
     },
     "supervision_information": {
       "value": "active_logged_no_conflict",
@@ -76,19 +76,19 @@
       "value": "not_started",
       "notes": "0 modules completed (0.0 hrs)",
       "source": "skillcat_scraper",
-      "updated_at": "2026-11-22T17:18:01.442Z"
+      "updated_at": "2026-11-23T13:46:28.375Z"
     },
     "resume_and_email": {
       "value": "completed",
       "notes": "Resume completed",
       "source": "db_import",
-      "updated_at": "2026-11-22T17:18:01.442Z"
+      "updated_at": "2026-11-23T13:46:28.375Z"
     },
     "w9_and_banking": {
       "value": "verified",
       "notes": "Bank account / W-9 verified",
       "source": "db_import",
-      "updated_at": "2026-11-22T17:18:01.442Z"
+      "updated_at": "2026-11-23T13:46:28.375Z"
     },
     "transportation_and_gear": {
       "value": "commute_only_needs_gear",

@@ -1,0 +1,61 @@
+{
+  "participant_key": "Dewayne_Arledge",
+  "updated_at": "2026-11-23T13:46:29.120Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "6 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:276",
+      "event_key": "reentry_session:276",
+      "timestamp": "2026-10-29T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "Dewayne has not stopped by the center again yet.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:159",
+      "event_key": "reentry_session:159",
+      "timestamp": "2026-10-20T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update|Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "summary": "Dewayne is good for housing, he's currently staying at Calm Quarters. He had disability benefits for his Cerebral Palsy before he was incarcerated. He's been to the social security office and he should be getting his ben",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:160",
+      "event_key": "reentry_session:160",
+      "timestamp": "2026-10-16T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Kat Norsworthy)",
+      "summary": "came by on Friday 10/16, recent substance abuse as well as a SSI recipient so does not qualify for First Shift however is interested in Reentry Nav to assist with finding a part time job",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:161",
+      "event_key": "reentry_session:161",
+      "timestamp": "2026-10-02T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "NCNS",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

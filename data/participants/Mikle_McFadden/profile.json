@@ -9,22 +9,20 @@
   "apricot_id": "82682",
   "phone": "",
   "email": "",
-  "files": [
-    "Mikle_McFadden_Charleston_criminal_history.docx",
-    "Mikle_McFadden_Charleston_criminal_history.md",
-    "Mikle_McFadden_Charleston_draft_scoring_form.docx",
-    "Mikle_McFadden_Charleston_draft_scoring_form.md",
-    "Mikle_McFadden_Charleston_interview_guide.docx",
-    "Mikle_McFadden_Charleston_interview_guide.md",
-    "Mikle_McFadden_Charleston_transcript.txt"
-  ],
+  "lscmi_client_id": "Mikle_McFadden_Charleston",
   "folder_slug": "Mikle_McFadden",
   "folder_path": "data/participants/Mikle_McFadden",
   "has_lscmi_brief": false,
   "has_lscmi_scoring": true,
   "has_action_plan": false,
+  "has_legacy_case_briefs": false,
   "waitlist_ready": false,
-  "waitlist_met_count": 5,
+  "waitlist_met_count": 8,
   "data_flags_count": 2,
-  "updated_at": "2026-11-22T17:18:01.673Z"
+  "cm_notes_count": 0,
+  "apricot_notes_count": 3,
+  "reentry_sessions_count": 3,
+  "history_events_count": 11,
+  "documents_count": 7,
+  "updated_at": "2026-11-23T13:46:29.352Z"
 }

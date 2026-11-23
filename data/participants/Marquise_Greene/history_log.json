@@ -1,0 +1,149 @@
+{
+  "participant_key": "Marquise_Greene",
+  "updated_at": "2026-11-23T13:46:28.990Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "12 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:341",
+      "event_key": "reentry_session:341",
+      "timestamp": "2026-11-17T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Employment support – applications, resume, interview prep|Documentation support – ID, housing forms, paperwork (Daisy Boynton)",
+      "summary": "Called Marquise to get some info for hid RDF referral in December.\nemail: marquisegreene52@gmail.com\nbirthday: 10/20/1976\nAddress: 240 Hards (?) Drive, Georgetown, SC 29440\nDL #0007225733\n\nAlso referred him to the George",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:343",
+      "event_key": "reentry_session:343",
+      "timestamp": "2026-11-16T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "Tried to call Marquise because Kat said he texted her about applying for RDF (and said he hadn't heard anything from me, even though I've texted and called a few times). No answer, left a VM.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:342",
+      "event_key": "reentry_session:342",
+      "timestamp": "2026-11-16T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Marquise called back, we set up an appointment tomorrow to get his RDF application ready for Dec 1st. I asked if he'd been receiving my texts and calls and he said he put my number as a contact in today and can now see t",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:344",
+      "event_key": "reentry_session:344",
+      "timestamp": "2026-11-09T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "Reached out to see if Marquise is still interested in an RDF referral. No answer, text sent.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:254",
+      "event_key": "reentry_session:254",
+      "timestamp": "2026-10-30T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "Marquise got the DMV sheet showing he owes $500 in reinstatement fees (no tickets) - in RN case plan. Scheduled a call for today to get his RDF application ready for Monday. No answer, will try again later today or Monda",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:255",
+      "event_key": "reentry_session:255",
+      "timestamp": "2026-10-27T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Reached out asking how his appt. with Voc Rehab went. He said they put him in their job system and will notify him with openings. They also sent him to Goodwill for the ican program. He has an appointment there Dec 3rd a",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:43",
+      "event_key": "reentry_session:43",
+      "timestamp": "2026-10-19T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Marquise let me know that he has an appointment with Voc Rehab on 10/19 at 3pm and that he got his State ID. I will follow up with him after his appointment to see how it went.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:44",
+      "event_key": "reentry_session:44",
+      "timestamp": "2026-10-12T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "summary": "Sent Marquise info for voc rehab so he can set up an appointment.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:45",
+      "event_key": "reentry_session:45",
+      "timestamp": "2026-10-09T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "summary": "Sent him 2 job openings at the Dollar Tree in Georgetown.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:47",
+      "event_key": "reentry_session:47",
+      "timestamp": "2026-10-07T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Kat had already done the consultation and was at MacDougall so I couldn't get the details. Gave him a call anyways and he said his 2 main goals right now are getting his license back and finding employment. Currently in ",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:46",
+      "event_key": "reentry_session:46",
+      "timestamp": "2026-10-07T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "Sent him a job at Domino's in Georgetown to apply for.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:48",
+      "event_key": "reentry_session:48",
+      "timestamp": "2026-10-06T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED|Intake Appointment COMPLETED (Kat Norsworthy)",
+      "summary": "phone",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

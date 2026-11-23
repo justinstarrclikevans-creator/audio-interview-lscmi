@@ -1,0 +1,140 @@
+{
+  "participant_key": "Randy_Grant",
+  "participant_name": "Randy Grant",
+  "client_records": [
+    {
+      "id": 30,
+      "first_name": "Randy",
+      "last_name": "Grant",
+      "apricot_id": "80666",
+      "location": "Charleston",
+      "status": "archived",
+      "stability_tier": "at_risk",
+      "phone": null,
+      "email": null,
+      "notes": "Wants help finding work. Needs to pay off $2000 in DL fees so he can go to CDL school.",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-11-03 23:04:00",
+      "case_manager": "Daisy Boynton",
+      "enrollment_start": "2026-10-15",
+      "gate1_pct": 0,
+      "gate2_pct": 0,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "last_contact_date": "2026-10-29",
+      "last_contact_staff": "Daisy Boynton",
+      "last_contact_activity": "Case Note (documentation only) – no interaction or service",
+      "has_case_plan": 1,
+      "case_plan_text": "Wants help finding work. Needs to pay off $2000 in DL fees so he can go to CDL school."
+    }
+  ],
+  "sessions": [
+    {
+      "id": 261,
+      "client_id": 30,
+      "session_date": "2026-10-29",
+      "session_title": "Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Called to check in with Randy, no answer and VM not set up.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 262,
+      "client_id": 30,
+      "session_date": "2026-10-23",
+      "session_title": "Check-in conversation – brief status update (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Randy's aunt called and asked why Randy is not eligible for the program. I explained the stability requirements for the program. She called me racist for judging Randy based on his looks and said Randy is living with her (Randy reports living with his sister). I let her know that all the information I was giving her was based on Randy's conversations with Justin and me and based on things he had told us. She was not happy. Kat suggested Randy try Goodwill. His aunt liked that idea and said she'd tell Randy, although Randy didn't want to go to Goodwill when I talked to him about it earlier this week.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-03 23:04:00"
+    },
+    {
+      "id": 102,
+      "client_id": 30,
+      "session_date": "2026-10-19",
+      "session_title": "Check-in conversation – brief status update (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Still looking for work. Said he's been to the thrift store, Family Dollar, Taco Bell, KFC, MacDonalds, and some restaurant in the mall. I recommended he try Kiki's. I also recommended Goodwill but he wasn't super interested.",
+      "notes_text": "Still looking for work. Said he's been to the thrift store, Family Dollar, Taco Bell, KFC, MacDonalds, and some restaurant in the mall. I recommended he try Kiki's. I also recommended Goodwill but he wasn't super interested.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 103,
+      "client_id": 30,
+      "session_date": "2026-10-15",
+      "session_title": "Check-in conversation – brief status update (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Wants help getting a job in the Turn90 area. Walking as transportation. No resume and very little job experience. Has been to a bunch of the restaurants in the area, is not interested in any gas station jobs. I told him I'd see what I can find and get back to him on Monday. May also try to make a resume with him on Monday.",
+      "notes_text": "Wants help getting a job in the Turn90 area. Walking as transportation. No resume and very little job experience. Has been to a bunch of the restaurants in the area, is not interested in any gas station jobs. I told him I'd see what I can find and get back to him on Monday. May also try to make a resume with him on Monday.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 104,
+      "client_id": 30,
+      "session_date": "2026-10-13",
+      "session_title": "Check-in conversation – brief status update (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Randy stopped by in person asking about the program. I told him I'd give him a call to start reentry navigation. Still staying with sister.",
+      "notes_text": "Randy stopped by in person asking about the program. I told him I'd give him a call to start reentry navigation. Still staying with sister.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 105,
+      "client_id": 30,
+      "session_date": "2026-09-15",
+      "session_title": "Intake Appointment COMPLETED (Justin Evans)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Current Living and Employment Situation  \n• Has rarely worked throughout his life.  \n• Currently staying on his sister's couch; she wants him to leave.  \n• Has not worked during the 10 months since release from jail.  \n• Receives a small check from deceased parents, possibly a retirement benefit.  \n• Transportation is limited to a bicycle.  \n• Resides in North Charleston.  \n• Overall situation is unstable due to drug use, unemployment, and precarious housing.\n\nLegal and Financial Barriers  \n• Recently completed a two-year sentence in county jail; all charges are now closed.  \n• Owes $2,000 in fines on his driver's license, preventing him from obtaining a CDL.\n\nCareer Aspirations and Challenges  \n• Aspires to become a CDL driver.  \n• Needs to resolve outstanding fines to pursue CDL training.  \n• Must be physically able to pass the DOT physical exam for CDL eligibility.\n\nSupport and Next Steps  \n• Not currently suitable for first shift employment.  \n• Re-entry navigation support is available to help address barriers.  \n   ◦ Assistance may include paying off fines and enrolling in CDL school, contingent on passing the physical exam.",
+      "notes_text": "Current Living and Employment Situation  \n• Has rarely worked throughout his life.  \n• Currently staying on his sister's couch; she wants him to leave.  \n• Has not worked during the 10 months since release from jail.  \n• Receives a small check from deceased parents, possibly a retirement benefit.  \n• Transportation is limited to a bicycle.  \n• Resides in North Charleston.  \n• Overall situation is unstable due to drug use, unemployment, and precarious housing.\n\nLegal and Financial Barriers  \n• Recently completed a two-year sentence in county jail; all charges are now closed.  \n• Owes $2,000 in fines on his driver's license, preventing him from obtaining a CDL.\n\nCareer Aspirations and Challenges  \n• Aspires to become a CDL driver.  \n• Needs to resolve outstanding fines to pursue CDL training.  \n• Must be physically able to pass the DOT physical exam for CDL eligibility.\n\nSupport and Next Steps  \n• Not currently suitable for first shift employment.  \n• Re-entry navigation support is available to help address barriers.  \n   ◦ Assistance may include paying off fines and enrolling in CDL school, contingent on passing the physical exam.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    },
+    {
+      "id": 106,
+      "client_id": 30,
+      "session_date": "2026-09-11",
+      "session_title": "Intake Appointment SCHEDULED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": "Intake Appointment SCHEDULED",
+      "notes_text": "Intake Appointment SCHEDULED",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "goals": [
+    {
+      "id": 68,
+      "client_id": 30,
+      "goal_title": "Wants help finding work. Needs to pay off $2000 in DL fees so he can go to CDL school.",
+      "target_date": "2026-11-09",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"Wants help finding work. Needs to pay off $2000 in DL fees so he can go to CDL school.\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-10-26 01:13:54",
+      "updated_at": "2026-10-26 01:13:54"
+    }
+  ],
+  "case_plans": [],
+  "updated_at": "2026-11-23T13:46:29.037Z"
+}

@@ -1,0 +1,101 @@
+{
+  "participant_key": "Preston_Evans",
+  "participant_name": "Preston Evans",
+  "client_records": [
+    {
+      "id": 73,
+      "first_name": "Preston",
+      "last_name": "Evans",
+      "apricot_id": "82979",
+      "location": "Charleston",
+      "status": "active",
+      "stability_tier": "stable",
+      "phone": null,
+      "email": null,
+      "notes": "Address substance abuse issue and get all ID",
+      "created_at": "2026-11-22 17:35:09",
+      "updated_at": "2026-11-22 17:36:06",
+      "case_manager": "Daisy Boynton",
+      "enrollment_start": "2026-11-06",
+      "gate1_pct": 25,
+      "gate2_pct": 20,
+      "gate3_pct": 0,
+      "gate4_pct": 0,
+      "last_contact_date": "2026-11-18",
+      "last_contact_staff": "Daisy Boynton",
+      "last_contact_activity": "Check-in conversation – brief status update|Employment support – applications, resume, interview prep",
+      "has_case_plan": 1,
+      "case_plan_text": "Address substance abuse issue and get all ID"
+    }
+  ],
+  "sessions": [
+    {
+      "id": 441,
+      "client_id": 73,
+      "session_date": "2026-11-18",
+      "session_title": "Check-in conversation – brief status update|Employment support – applications, resume, interview prep (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Sent a text checking in with Preston and asking if he wants to set up a time to apply for SNAP. Also sent him the flyer for the Friday Walmart Distribution Center hiring event.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 443,
+      "client_id": 73,
+      "session_date": "2026-11-06",
+      "session_title": "Intake Appointment COMPLETED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "### Contact Summary\nCompleted an initial phone consultation with Preston Evans to explain the Turn90 program and assess eligibility and immediate needs. Preston was in transit on the bus but engaged well. Reviewed housing, identification, substance use history, criminal justice involvement, and work history.\n\n### Case Plan Goal Progress\n- No active goals prior to this session; established baseline for initial entry into the Reentry Navigation case plan.\n\n### Briefcase & Gate 1–4 Updates\n- Housing: Currently residing in an Oxford House in North Charleston (moved in recently, waiting to confirm exact address).\n- Vital Documents: Lost wallet recently. Paid DMV for a replacement Driver's License (has receipt, arriving by mail in ~10 days). Needs to replace Social Security Card and Birth Certificate (plans to apply for SS card online tonight).\n- Legal: Recently released from jail (~2 weeks ago). Has pending charges (Burglary 2nd, CDV, Domestic Violence). Not currently on probation or parole.\n- Financial/Child Support: Owes approximately $8,000 in child support arrears.\n- Substance Use: On methadone. Reported last use of unprescribed substances (heroin/fentanyl) a little over a week ago.\n- Food/Basic Needs: Experiencing immediate food insecurity; relying on downtown free feeding programs.\n\n### Referrals/Resources Provided\n- Sent local food bank and pantry resources via text/email.\n- Referred client to the Charleston Center for a mandatory substance use screening prior to program enrollment.\n\n### Next Steps\n- Preston to complete screening at the Charleston Center and share results with Turn90.\n- Follow up next week to confirm screening completion, verify receipt of Driver's License in the mail, and assist with SNAP/Food Stamp applications.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 442,
+      "client_id": 73,
+      "session_date": "2026-11-06",
+      "session_title": "Barrier removal – problem-solving or coordination support (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Sent Preston 3 food banks in North Charleston.",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    },
+    {
+      "id": 444,
+      "client_id": 73,
+      "session_date": "2026-11-05",
+      "session_title": "Intake Appointment SCHEDULED (Daisy Boynton)",
+      "session_type": "check_in",
+      "audio_file_path": null,
+      "transcript_text": null,
+      "notes_text": "Intake Appointment SCHEDULED",
+      "ai_analysis_json": null,
+      "next_conversation_topics": "Follow up on Reentry Navigation goals and Briefcase Gate 1–4 items.",
+      "created_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "goals": [
+    {
+      "id": 147,
+      "client_id": 73,
+      "goal_title": "Address substance abuse issue and get all ID",
+      "target_date": "2026-12-06",
+      "status": "in_progress",
+      "category": "general",
+      "action_steps": "[\"Review progress on \\\"Address substance abuse issue and get all ID\\\" during weekly Reentry Navigation check-in with Daisy Boynton\",\"Update corresponding Briefcase Gate 1–4 checklist items in Apricot once verified\"]",
+      "assigned_to": "joint",
+      "created_at": "2026-11-22 17:35:09",
+      "updated_at": "2026-11-22 17:35:09"
+    }
+  ],
+  "case_plans": [],
+  "updated_at": "2026-11-23T13:46:29.472Z"
+}

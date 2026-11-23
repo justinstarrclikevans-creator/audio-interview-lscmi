@@ -1,0 +1,160 @@
+{
+  "participant_key": "Alec_Greene",
+  "updated_at": "2026-11-23T13:46:28.867Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-11T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "6 chronological Apricot note(s) archived (Partial (Situations missing)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_casenote:204",
+      "event_key": "casenote:204",
+      "timestamp": "2026-11-11T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "Session Type: First Session (Initial Intake & Action Plan Alignment)\n\nUpdates & Briefcase / Gates Progress:\n- Gate 1 (Vital Docs): Client has State ID and SSN. Needs Birth Certificate; plans to use ID and SSN to schedule",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Diyoung Dantzler"
+    },
+    {
+      "id": "ms_doc:Alec_Greene_Spartanburg_criminal_history.docx",
+      "event_key": "doc:Alec_Greene_Spartanburg_criminal_history.docx",
+      "timestamp": "2026-11-04T16:36:02.779Z",
+      "category": "document",
+      "action": "Archived criminal history",
+      "summary": "Document stored in folder: Alec_Greene_Spartanburg_criminal_history.docx",
+      "filename": "Alec_Greene_Spartanburg_criminal_history.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Alec_Greene_Spartanburg_criminal_history.md",
+      "event_key": "doc:Alec_Greene_Spartanburg_criminal_history.md",
+      "timestamp": "2026-11-04T16:36:02.419Z",
+      "category": "document",
+      "action": "Archived criminal history",
+      "summary": "Document stored in folder: Alec_Greene_Spartanburg_criminal_history.md",
+      "filename": "Alec_Greene_Spartanburg_criminal_history.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Alec_Greene_Spartanburg_interview_guide.docx",
+      "event_key": "doc:Alec_Greene_Spartanburg_interview_guide.docx",
+      "timestamp": "2026-11-04T16:28:24.120Z",
+      "category": "document",
+      "action": "Archived interview guide",
+      "summary": "Document stored in folder: Alec_Greene_Spartanburg_interview_guide.docx",
+      "filename": "Alec_Greene_Spartanburg_interview_guide.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Alec_Greene_Spartanburg_draft_scoring_form.docx",
+      "event_key": "doc:Alec_Greene_Spartanburg_draft_scoring_form.docx",
+      "timestamp": "2026-11-04T16:28:22.795Z",
+      "category": "document",
+      "action": "Archived draft scoring",
+      "summary": "Document stored in folder: Alec_Greene_Spartanburg_draft_scoring_form.docx",
+      "filename": "Alec_Greene_Spartanburg_draft_scoring_form.docx",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Alec_Greene_Spartanburg_draft_scoring_form.md",
+      "event_key": "doc:Alec_Greene_Spartanburg_draft_scoring_form.md",
+      "timestamp": "2026-11-04T16:28:19.810Z",
+      "category": "document",
+      "action": "Archived draft scoring",
+      "summary": "Document stored in folder: Alec_Greene_Spartanburg_draft_scoring_form.md",
+      "filename": "Alec_Greene_Spartanburg_draft_scoring_form.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Alec_Greene_Spartanburg_interview_guide.md",
+      "event_key": "doc:Alec_Greene_Spartanburg_interview_guide.md",
+      "timestamp": "2026-11-04T16:28:19.808Z",
+      "category": "document",
+      "action": "Archived interview guide",
+      "summary": "Document stored in folder: Alec_Greene_Spartanburg_interview_guide.md",
+      "filename": "Alec_Greene_Spartanburg_interview_guide.md",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_doc:Alec_Greene_Spartanburg_transcript.txt",
+      "event_key": "doc:Alec_Greene_Spartanburg_transcript.txt",
+      "timestamp": "2026-11-04T16:28:19.807Z",
+      "category": "document",
+      "action": "Archived transcript",
+      "summary": "Document stored in folder: Alec_Greene_Spartanburg_transcript.txt",
+      "filename": "Alec_Greene_Spartanburg_transcript.txt",
+      "snapshot_file": "",
+      "actor": "Archive Sync"
+    },
+    {
+      "id": "ms_casenote:205",
+      "event_key": "casenote:205",
+      "timestamp": "2026-11-03T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Coaching / case management session – structured or in-depth meeting)",
+      "summary": "Session Type: Initial Intake & Action Plan Alignment\n\nClient Updates & Immediate Needs:\n- [Client] relocated from NC, seeking machine operation/warehouse work.\n- Pending medical issue: Seeing doctor on Monday regarding s",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Diyoung Dantzler"
+    },
+    {
+      "id": "ms_casenote:157",
+      "event_key": "casenote:157",
+      "timestamp": "2026-11-02T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Case Note (documentation only) – no interaction or service)",
+      "summary": "Case Note (documentation only) – no interaction or service",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Diyoung Dantzler"
+    },
+    {
+      "id": "ms_casenote:158",
+      "event_key": "casenote:158",
+      "timestamp": "2026-10-27T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Check-in conversation – brief status update)",
+      "summary": "Reached out to Mr. Greene and scheduled him for orientation this Friday.",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Matt Carlisle"
+    },
+    {
+      "id": "ms_casenote:159",
+      "event_key": "casenote:159",
+      "timestamp": "2026-10-22T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Intake Appointment COMPLETED)",
+      "summary": "Completed phone consultation with Alec to gather background information for case planning. Alec is currently living at Turn 12 (sober living) and reports this is stable housing he plans to keep. He has his Social Securit",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Daisy Boynton"
+    },
+    {
+      "id": "ms_casenote:160",
+      "event_key": "casenote:160",
+      "timestamp": "2026-10-21T00:00:00.000Z",
+      "category": "case_note",
+      "action": "Case Note (Intake Appointment SCHEDULED)",
+      "summary": "Intake Appointment SCHEDULED",
+      "filename": "case_management_notes.json",
+      "snapshot_file": "",
+      "actor": "Daisy Boynton"
+    }
+  ]
+}

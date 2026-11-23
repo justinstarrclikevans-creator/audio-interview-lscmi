@@ -295,11 +295,168 @@ const UNIFIED_BRIEFCASE_SCHEMA = {
     ]
 };
 
-function sanitizeParticipantSlug(name) {
+const PARTICIPANT_SLUG_ALIASES = {
+    dillon: 'Dillon_Johnson',
+    chris_barranco: 'Christopher_Barranco',
+    charlie_graham: 'Charlie_Graham_Jr',
+    she_lah_norman: 'Shelah_Norman',
+    william_countee_iii: 'William_Countee',
+    keyzelle_limamauel_curtis_thomas: 'Keyzelle_Thomas'
+};
+
+const CANONICAL_DISPLAY_NAMES = {
+    Dillon_Johnson: 'Dillon Johnson',
+    Christopher_Barranco: 'Christopher Barranco',
+    Charlie_Graham_Jr: 'Charlie Graham Jr',
+    Shelah_Norman: 'Shelah Norman',
+    William_Countee: 'William Countee',
+    Keyzelle_Thomas: 'Keyzelle Thomas'
+};
+
+const FOLDER_CACHE_TTL_MS = 60000;
+let _cachedFolderSummary = null;
+let _cachedFolderSummaryAt = 0;
+
+function invalidateFolderIndexCache() {
+    _cachedFolderSummary = null;
+    _cachedFolderSummaryAt = 0;
+}
+
+function buildRawParticipantSlug(name) {
     return String(name || 'Unknown_Participant')
-        .replace(/\b(Charleston|Columbia|Spartanburg|First Shift|Reentry|Turn90)\b/gi, '')
+        .replace(/^\d+_/, '')
+        .replace(/_?(Charleston|Columbia|Spartanburg|First Shift|Reentry Navigation|Reentry|Turn90)\b/gi, '')
         .replace(/[^a-zA-Z0-9]+/g, '_')
         .replace(/^_+|_+$/g, '') || 'Unknown_Participant';
+}
+
+function resolveCanonicalSlug(slugOrName) {
+    const rawSlug = buildRawParticipantSlug(slugOrName);
+    const aliasHit = PARTICIPANT_SLUG_ALIASES[rawSlug.toLowerCase()];
+    if (aliasHit) return aliasHit;
+
+    // Also match existing directory case-insensitively to prevent duplicate case-variant folders
+    try {
+        if (fs.existsSync(participantsRootDir)) {
+            const lower = rawSlug.toLowerCase();
+            if (PARTICIPANT_SLUG_ALIASES[lower]) return PARTICIPANT_SLUG_ALIASES[lower];
+            const existing = fs.readdirSync(participantsRootDir).find(d => d.toLowerCase() === lower);
+            if (existing && !PARTICIPANT_SLUG_ALIASES[existing.toLowerCase()]) {
+                return existing;
+            }
+        }
+    } catch (e) {}
+    return rawSlug;
+}
+
+function sanitizeParticipantSlug(name) {
+    return resolveCanonicalSlug(name);
+}
+
+function inferDocTypeFromFilename(filename = '') {
+    const f = String(filename || '').toLowerCase();
+    if (f.includes('_final_case_brief')) return 'brief';
+    if (f.includes('_case_brief_')) return 'legacy_brief';
+    if (f.includes('_participant_case_plan')) return 'action_plan';
+    if (f.includes('_final_scoring_form')) return 'final_scoring';
+    if (f.includes('_draft_scoring_form')) return 'draft_scoring';
+    if (f.includes('_interview_guide')) return 'interview_guide';
+    if (f.includes('_transcript')) return 'transcript';
+    if (f.includes('_criminal_history') || f.includes('_intelius_raw')) return 'criminal_history';
+    if (f.includes('_reentry_')) return 'reentry_plan';
+    return 'document';
+}
+
+function appendParticipantHistoryEvent(slugOrName, event = {}) {
+    try {
+        const slug = resolveCanonicalSlug(slugOrName);
+        const pDir = path.join(participantsRootDir, slug);
+        if (!fs.existsSync(pDir)) fs.mkdirSync(pDir, { recursive: true });
+        const logPath = path.join(pDir, 'history_log.json');
+
+        let logData = { participant_key: slug, updated_at: new Date().toISOString(), events: [] };
+        if (fs.existsSync(logPath)) {
+            try {
+                const parsed = JSON.parse(fs.readFileSync(logPath, 'utf8'));
+                if (Array.isArray(parsed)) {
+                    logData.events = parsed;
+                } else if (parsed && Array.isArray(parsed.events)) {
+                    logData.events = parsed.events;
+                }
+            } catch (e) {}
+        }
+
+        const entry = {
+            id: event.id || `evt_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+            event_key: event.event_key || null,
+            timestamp: event.timestamp || new Date().toISOString(),
+            category: event.category || 'general',
+            action: event.action || 'Folder Event',
+            summary: event.summary || '',
+            filename: event.filename || '',
+            snapshot_file: event.snapshot_file || '',
+            actor: event.actor || 'Turn90 Staff'
+        };
+
+        if (entry.event_key) {
+            const idx = logData.events.findIndex(e => e && e.event_key === entry.event_key);
+            if (idx >= 0) {
+                if (event.replace_existing) {
+                    logData.events[idx] = { ...logData.events[idx], ...entry };
+                } else {
+                    return logData.events[idx];
+                }
+            } else {
+                logData.events.push(entry);
+            }
+        } else {
+            logData.events.push(entry);
+        }
+
+        logData.events.sort((a, b) => new Date(b.timestamp || 0).getTime() - new Date(a.timestamp || 0).getTime());
+        logData.updated_at = new Date().toISOString();
+        fs.writeFileSync(logPath, JSON.stringify(logData, null, 2));
+        return entry;
+    } catch (e) {
+        return null;
+    }
+}
+
+function archiveParticipantDocumentVersion(slugOrName, { docType = 'document', filename = '', sourcePath = '', content = null, summary = '', actor = 'Turn90 Staff' } = {}) {
+    try {
+        const slug = resolveCanonicalSlug(slugOrName);
+        const pDir = path.join(participantsRootDir, slug);
+        const historyDir = path.join(pDir, 'history');
+        if (!fs.existsSync(historyDir)) fs.mkdirSync(historyDir, { recursive: true });
+
+        let payload = null;
+        if (sourcePath && fs.existsSync(sourcePath)) {
+            payload = fs.readFileSync(sourcePath);
+        } else if (content !== null && content !== undefined) {
+            payload = Buffer.isBuffer(content) ? content : Buffer.from(String(content), 'utf8');
+        }
+        if (!payload) return null;
+
+        const base = path.basename(filename || sourcePath || `${docType}.md`).replace(/[^a-zA-Z0-9._-]/g, '_');
+        const safeType = String(docType || 'doc').replace(/[^a-zA-Z0-9_-]/g, '_');
+        const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+        const snapName = `${stamp}_${safeType}_${base}`;
+        const snapPath = path.join(historyDir, snapName);
+        fs.writeFileSync(snapPath, payload);
+
+        appendParticipantHistoryEvent(slug, {
+            category: 'document_version',
+            action: `Archived ${safeType}`,
+            summary: summary || `Saved prior snapshot of ${base}`,
+            filename: base,
+            snapshot_file: snapName,
+            actor
+        });
+
+        return snapName;
+    } catch (e) {
+        return null;
+    }
 }
 
 function loadSkillCatHistory() {
@@ -597,13 +754,135 @@ function synthesizeBriefcaseFromLoadedInfo({
     return state;
 }
 
+function safeQueryAll(sql, params = []) {
+    try {
+        return db.prepare(sql).all(...params);
+    } catch (e) {
+        return [];
+    }
+}
+
+function safeQueryGet(sql, params = []) {
+    try {
+        return db.prepare(sql).get(...params) || null;
+    } catch (e) {
+        return null;
+    }
+}
+
+function computeBestLscmiClientId(files = [], fallbackPrefix = 'Participant_Charleston') {
+    const SUF_RE = /^(.+?)_(final_case_brief|participant_case_plan|final_scoring_form|draft_scoring_form|interview_guide|transcript|criminal_history)\.(md|txt)$/i;
+    const scoreMap = new Map();
+    const weights = {
+        final_case_brief: 12,
+        participant_case_plan: 10,
+        final_scoring_form: 8,
+        draft_scoring_form: 6,
+        interview_guide: 4,
+        transcript: 3,
+        criminal_history: 2
+    };
+    for (const f of files) {
+        const m = String(f).match(SUF_RE);
+        if (!m) continue;
+        const prefix = m[1];
+        const kind = m[2].toLowerCase();
+        scoreMap.set(prefix, (scoreMap.get(prefix) || 0) + (weights[kind] || 1));
+    }
+    if (scoreMap.size === 0) return fallbackPrefix;
+    return Array.from(scoreMap.entries()).sort((a, b) => b[1] - a[1])[0][0];
+}
+
+function categorizeParticipantDocuments(pDir, slug, lscmiClientId) {
+    const docsDir = path.join(pDir, 'documents');
+    const historyDir = path.join(pDir, 'history');
+    const docFiles = fs.existsSync(docsDir) ? fs.readdirSync(docsDir).filter(f => !f.startsWith('.')).sort() : [];
+    const histFilesRaw = fs.existsSync(historyDir) ? fs.readdirSync(historyDir).filter(f => !f.startsWith('.')).sort().reverse() : [];
+
+    const makeMeta = (dirPath, fname, scope) => {
+        let size = 0;
+        let updatedAt = null;
+        try {
+            const st = fs.statSync(path.join(dirPath, fname));
+            size = st.size;
+            updatedAt = new Date(st.mtimeMs).toISOString();
+        } catch (e) {}
+        const ext = path.extname(fname).toLowerCase();
+        const baseUrl = `/api/participants/folder/${encodeURIComponent(slug)}/file/${encodeURIComponent(scope)}/${encodeURIComponent(fname)}`;
+        return {
+            filename: fname,
+            ext,
+            size,
+            updated_at: updatedAt,
+            scope,
+            raw_url: baseUrl,
+            download_url: `${baseUrl}?download=1`,
+            print_url: `${baseUrl}?print=1`,
+            preview_supported: /\.(md|txt|json|pdf)$/i.test(fname)
+        };
+    };
+
+    const categories = {
+        briefs: [],
+        legacy_case_briefs: [],
+        action_plans: [],
+        scoring_forms: [],
+        interview_guides: [],
+        transcripts: [],
+        criminal_history: [],
+        reentry_plans: [],
+        other_files: []
+    };
+
+    for (const fname of docFiles) {
+        const meta = makeMeta(docsDir, fname, 'documents');
+        const low = fname.toLowerCase();
+        if (low.includes('_final_case_brief.')) categories.briefs.push(meta);
+        else if (low.includes('_case_brief_')) categories.legacy_case_briefs.push(meta);
+        else if (low.includes('_participant_case_plan.')) categories.action_plans.push(meta);
+        else if (low.includes('_final_scoring_form.') || low.includes('_draft_scoring_form.')) categories.scoring_forms.push(meta);
+        else if (low.includes('_interview_guide.')) categories.interview_guides.push(meta);
+        else if (low.includes('_transcript.')) categories.transcripts.push(meta);
+        else if (low.includes('_criminal_history.') || low.includes('_intelius_raw.')) categories.criminal_history.push(meta);
+        else if (low.includes('_reentry_')) categories.reentry_plans.push(meta);
+        else categories.other_files.push(meta);
+    }
+
+    // Sort legacy case briefs newest-first by mtime/filename
+    categories.legacy_case_briefs.sort((a, b) => String(b.updated_at || '').localeCompare(String(a.updated_at || '')) || b.filename.localeCompare(a.filename));
+
+    // Collect lscmi_files list compatible with currentInterviewsData[lscmiClientId]
+    const lscmiFilesSet = new Set(docFiles);
+    try {
+        if (lscmiClientId && fs.existsSync(dataDir)) {
+            for (const f of fs.readdirSync(dataDir)) {
+                if (f.startsWith(`${lscmiClientId}_`)) {
+                    lscmiFilesSet.add(f);
+                }
+            }
+        }
+    } catch (e) {}
+
+    const history_files = histFilesRaw.map(fname => makeMeta(historyDir, fname, 'history'));
+
+    return {
+        docFiles,
+        lscmi_files: Array.from(lscmiFilesSet).sort(),
+        lscmi_documents: categories,
+        history_files
+    };
+}
+
 // Build or refresh every participant's dedicated folder under data/participants/<Participant_Slug>/
-function syncAllParticipantFolders() {
+function syncAllParticipantFolders({ force = false } = {}) {
+    if (!force && _cachedFolderSummary && (Date.now() - _cachedFolderSummaryAt < FOLDER_CACHE_TTL_MS)) {
+        return _cachedFolderSummary;
+    }
+
     const skillcatHistory = loadSkillCatHistory();
-    const apricotCache = loadApricotFeedbackCache();
     const allDataFiles = fs.existsSync(dataDir) ? fs.readdirSync(dataDir) : [];
 
-    // Collect unified directory of participants across DB users, reentry_clients, and data/ assessment files
+    // Collect unified directory of participants across ALL sources (users, reentry, data files, Apricot, SkillCat history, consultations)
     const registry = new Map();
 
     const registerPerson = (rawName, info = {}) => {
@@ -613,31 +892,49 @@ function syncAllParticipantFolders() {
             .replace(/_(Charleston|Columbia|Spartanburg)$/i, '')
             .replace(/_/g, ' ')
             .trim();
-        if (!cleanName || cleanName.length < 2 || /^(Turn90|Supervisor|Charleston|Columbia|Spartanburg|Reentry|Jennifer Jeanquart|Jenn Jeanquart|Diyoung Dantzler|Terry Brooks|Justin Evans|Daisy Boynton|Terrence Brown|Terrance Brown|Keyzelle Thomas|Test |Sample )/i.test(cleanName)) {
+        if (!cleanName || cleanName.length < 2 || /^(Turn90|Supervisor|Charleston|Columbia|Spartanburg|Reentry|Jennifer Jeanquart|Jenn Jeanquart|Diyoung Dantzler|Terry Brooks|Justin Evans|Daisy Boynton|Terrence Brown|Terrance Brown|Test |Sample )/i.test(cleanName)) {
             return null;
         }
-        const slug = sanitizeParticipantSlug(cleanName);
+        const slug = resolveCanonicalSlug(cleanName);
+        const preferredName = CANONICAL_DISPLAY_NAMES[slug] || cleanName;
         if (!registry.has(slug)) {
             registry.set(slug, {
                 participant_key: slug,
-                name: cleanName,
+                name: preferredName,
                 location: info.location || 'Charleston',
                 track: info.track || 'first_shift',
                 status: info.status || 'active',
                 user_id: info.user_id || null,
+                user_ids: info.user_id ? [info.user_id] : [],
                 client_id: info.client_id || null,
+                client_ids: info.client_id ? [info.client_id] : [],
                 apricot_id: info.apricot_id || null,
+                apricot_ids: info.apricot_id ? [String(info.apricot_id)] : [],
                 phone: info.phone || '',
                 email: info.email || '',
+                aliases_seen: [cleanName],
                 files: []
             });
         } else {
             const existing = registry.get(slug);
-            if (info.user_id && !existing.user_id) existing.user_id = info.user_id;
-            if (info.client_id && !existing.client_id) existing.client_id = info.client_id;
+            if (!CANONICAL_DISPLAY_NAMES[slug] && cleanName.length > existing.name.length && /[A-Z]/.test(cleanName)) {
+                existing.name = cleanName;
+            }
+            if (cleanName && !existing.aliases_seen.includes(cleanName)) existing.aliases_seen.push(cleanName);
+            if (info.user_id) {
+                if (!existing.user_id) existing.user_id = info.user_id;
+                if (!existing.user_ids.includes(info.user_id)) existing.user_ids.push(info.user_id);
+            }
+            if (info.client_id) {
+                if (!existing.client_id) existing.client_id = info.client_id;
+                if (!existing.client_ids.includes(info.client_id)) existing.client_ids.push(info.client_id);
+            }
             if (info.location && existing.location === 'Charleston') existing.location = info.location;
             if (info.track) existing.track = info.track;
-            if (info.apricot_id && !existing.apricot_id) existing.apricot_id = info.apricot_id;
+            if (info.apricot_id) {
+                if (!existing.apricot_id) existing.apricot_id = info.apricot_id;
+                if (!existing.apricot_ids.includes(String(info.apricot_id))) existing.apricot_ids.push(String(info.apricot_id));
+            }
             if (info.phone && !existing.phone) existing.phone = info.phone;
             if (info.email && !existing.email) existing.email = info.email;
         }
@@ -645,12 +942,12 @@ function syncAllParticipantFolders() {
     };
 
     // 1. From users table (role = 'participant')
-    const dbParticipants = db.prepare(`
+    const dbParticipants = safeQueryAll(`
         SELECT u.*, p.overall_status, p.record_id, p.dl_status, p.housing_status, p.child_support_status
         FROM users u
         LEFT JOIN participant_profiles p ON u.id = p.user_id
         WHERE u.role = 'participant'
-    `).all();
+    `);
     for (const u of dbParticipants) {
         registerPerson(u.name, {
             user_id: u.id,
@@ -664,7 +961,7 @@ function syncAllParticipantFolders() {
     }
 
     // 2. From reentry_clients table
-    const reentryClients = db.prepare('SELECT * FROM reentry_clients').all();
+    const reentryClients = safeQueryAll('SELECT * FROM reentry_clients');
     for (const rc of reentryClients) {
         registerPerson(`${rc.first_name} ${rc.last_name}`, {
             client_id: rc.id,
@@ -677,15 +974,15 @@ function syncAllParticipantFolders() {
         });
     }
 
-    // 3. From data/ files (LS/CMI briefs, scoring forms, transcripts, action plans, reentry guides)
+    // 3. From data/ files (LS/CMI briefs, legacy Case_Brief files, scoring forms, transcripts, action plans, reentry guides)
     const SUFFIX_PATTERNS = [
-        '_draft_scoring_form', '_final_scoring_form', '_final_case_brief',
+        '_draft_scoring_form', '_final_scoring_form', '_final_case_brief', '_Case_Brief_',
         '_interview_guide', '_transcript.txt', '_participant_case_plan',
-        '_criminal_history', '_reentry_staff_case_plan', '_reentry_participant_action_guide',
+        '_criminal_history', '_intelius_raw', '_reentry_staff_case_plan', '_reentry_participant_action_guide',
         '_reentry_assessment_data'
     ];
     for (const fname of allDataFiles) {
-        if (fname.startsWith('.') || fname.endsWith('.sqlite') || fname === 'participants' || fname === 'voice_profiles') continue;
+        if (fname.startsWith('.') || fname.endsWith('.sqlite') || fname === 'participants' || fname === 'voice_profiles' || fname === 'temp_dropbox') continue;
         for (const suf of SUFFIX_PATTERNS) {
             if (fname.includes(suf)) {
                 const prefix = fname.substring(0, fname.indexOf(suf));
@@ -704,17 +1001,85 @@ function syncAllParticipantFolders() {
         }
     }
 
-    // 4. From SkillCat history snapshots
+    // Also inspect DB documents table for any file links
+    const dbDocsAll = safeQueryAll('SELECT d.*, u.name as user_name, u.location as user_location FROM documents d LEFT JOIN users u ON d.user_id = u.id');
+    for (const docRow of dbDocsAll) {
+        if (docRow.user_name) {
+            const entry = registerPerson(docRow.user_name, {
+                user_id: docRow.user_id,
+                location: docRow.user_location || 'Charleston'
+            });
+            if (entry && docRow.filename && fs.existsSync(path.join(dataDir, docRow.filename)) && !entry.files.includes(docRow.filename)) {
+                entry.files.push(docRow.filename);
+            }
+        }
+    }
+
+    // 4. From Apricot evaluations & processed notes (preserves historical/exited Apricot records)
+    const apricotEvals = safeQueryAll('SELECT * FROM apricot_participant_evaluations');
+    for (const ae of apricotEvals) {
+        if (!ae.full_name) continue;
+        registerPerson(ae.full_name, {
+            apricot_id: ae.record_id || null,
+            location: ae.center || 'Charleston',
+            track: /reentry/i.test(ae.program || '') ? 'reentry_nav' : 'first_shift'
+        });
+    }
+    const apricotNotePeople = safeQueryAll('SELECT DISTINCT record_id, first_name, last_name, center_location, program_enrollment FROM apricot_processed_notes');
+    for (const np of apricotNotePeople) {
+        const full = `${np.first_name || ''} ${np.last_name || ''}`.trim();
+        if (!full) continue;
+        registerPerson(full, {
+            apricot_id: np.record_id || null,
+            location: np.center_location || 'Charleston',
+            track: /reentry/i.test(np.program_enrollment || '') ? 'reentry_nav' : 'first_shift'
+        });
+    }
+
+    // 5. From ALL historical SkillCat snapshots (not just the latest)
     const scSnapshots = skillcatHistory.snapshots || skillcatHistory || {};
-    const latestSnapshotKey = Object.keys(scSnapshots).sort().pop();
+    const sortedSnapshotKeys = Object.keys(scSnapshots).sort();
+    const latestSnapshotKey = sortedSnapshotKeys[sortedSnapshotKeys.length - 1];
     const latestSkillCatEmployees = latestSnapshotKey && scSnapshots[latestSnapshotKey]
         ? Object.values(scSnapshots[latestSnapshotKey]).filter(e => e && typeof e === 'object' && (e.fullname || e.name))
         : [];
-    for (const scEmp of latestSkillCatEmployees) {
-        registerPerson(scEmp.fullname || scEmp.name, {
-            location: 'Charleston',
-            track: 'first_shift'
+    for (const snapKey of sortedSnapshotKeys) {
+        const snapObj = scSnapshots[snapKey];
+        if (!snapObj || typeof snapObj !== 'object') continue;
+        for (const scEmp of Object.values(snapObj)) {
+            if (!scEmp || typeof scEmp !== 'object' || !(scEmp.fullname || scEmp.name)) continue;
+            registerPerson(scEmp.fullname || scEmp.name, {
+                location: 'Charleston',
+                track: 'first_shift'
+            });
+        }
+    }
+
+    // 6. From screening_consultations, unified_briefcases, and reentry_case_plans
+    for (const sc of safeQueryAll('SELECT participant_name, location FROM screening_consultations')) {
+        registerPerson(sc.participant_name, { location: sc.location || 'Charleston' });
+    }
+    for (const ub of safeQueryAll('SELECT participant_name, location, track, user_id, client_id FROM unified_briefcases')) {
+        registerPerson(ub.participant_name, {
+            location: ub.location || 'Charleston',
+            track: ub.track || 'reentry_nav',
+            user_id: ub.user_id || null,
+            client_id: ub.client_id || null
         });
+    }
+    for (const rcp of safeQueryAll('SELECT participant_name, location, user_id FROM reentry_case_plans')) {
+        registerPerson(rcp.participant_name, {
+            user_id: rcp.user_id || null,
+            location: rcp.location || 'Charleston',
+            track: 'reentry_nav'
+        });
+    }
+
+    // Build list of alias dirs on disk per canonical slug so legacy alias folders merge seamlessly forward
+    const aliasDirsByCanonical = new Map();
+    for (const [aliasLower, canonical] of Object.entries(PARTICIPANT_SLUG_ALIASES)) {
+        if (!aliasDirsByCanonical.has(canonical)) aliasDirsByCanonical.set(canonical, []);
+        aliasDirsByCanonical.get(canonical).push(aliasLower);
     }
 
     // Now build/sync each participant's dedicated directory
@@ -722,39 +1087,126 @@ function syncAllParticipantFolders() {
     for (const [slug, person] of registry.entries()) {
         const pDir = path.join(participantsRootDir, slug);
         const docsDir = path.join(pDir, 'documents');
-        if (!fs.existsSync(docsDir)) {
-            fs.mkdirSync(docsDir, { recursive: true });
+        const historyDir = path.join(pDir, 'history');
+        if (!fs.existsSync(docsDir)) fs.mkdirSync(docsDir, { recursive: true });
+        if (!fs.existsSync(historyDir)) fs.mkdirSync(historyDir, { recursive: true });
+
+        // Merge any documents stored under an old alias participant directory
+        try {
+            const aliasLowers = aliasDirsByCanonical.get(slug) || [];
+            if (aliasLowers.length > 0 && fs.existsSync(participantsRootDir)) {
+                for (const dName of fs.readdirSync(participantsRootDir)) {
+                    if (dName !== slug && aliasLowers.includes(dName.toLowerCase())) {
+                        const oldDocsDir = path.join(participantsRootDir, dName, 'documents');
+                        if (fs.existsSync(oldDocsDir)) {
+                            for (const oldFile of fs.readdirSync(oldDocsDir)) {
+                                if (oldFile.startsWith('.')) continue;
+                                const oldPath = path.join(oldDocsDir, oldFile);
+                                const targetPath = path.join(docsDir, oldFile);
+                                if (!fs.existsSync(targetPath) && fs.statSync(oldPath).isFile()) {
+                                    fs.copyFileSync(oldPath, targetPath);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (e) {}
+
+        // Copy associated files from data/ into documents/ and snapshot changed versions to history/
+        const docSortByMtime = [];
+        for (const fname of person.files.sort()) {
+            const srcPath = path.join(dataDir, fname);
+            const dstPath = path.join(docsDir, fname);
+            try {
+                if (!fs.existsSync(srcPath) || !fs.statSync(srcPath).isFile()) continue;
+                const srcStat = fs.statSync(srcPath);
+                docSortByMtime.push({ fname, srcPath, mtimeMs: srcStat.mtimeMs });
+
+                if (!fs.existsSync(dstPath)) {
+                    fs.copyFileSync(srcPath, dstPath);
+                } else {
+                    const dstStat = fs.statSync(dstPath);
+                    let changed = srcStat.size !== dstStat.size;
+                    if (!changed && /\.(md|txt|json)$/i.test(fname) && srcStat.size < 2 * 1024 * 1024) {
+                        changed = !fs.readFileSync(srcPath).equals(fs.readFileSync(dstPath));
+                    }
+                    if (changed) {
+                        archiveParticipantDocumentVersion(slug, {
+                            docType: inferDocTypeFromFilename(fname),
+                            filename: fname,
+                            sourcePath: dstPath,
+                            summary: `Auto-archived prior version before syncing updated ${fname}`,
+                            actor: 'System Sync'
+                        });
+                        fs.copyFileSync(srcPath, dstPath);
+                    }
+                }
+            } catch (e) {}
         }
 
-        // Link/copy associated files into data/participants/<slug>/documents/ and extract key markdown documents
+        // Also check files already inside docsDir (e.g., merged from alias dir or uploaded directly) for extraction
+        let allFolderDocFiles = [];
+        try {
+            allFolderDocFiles = fs.readdirSync(docsDir).filter(f => !f.startsWith('.'));
+            for (const df of allFolderDocFiles) {
+                if (!docSortByMtime.some(d => d.fname === df)) {
+                    const dfPath = path.join(docsDir, df);
+                    const st = fs.statSync(dfPath);
+                    if (st.isFile()) docSortByMtime.push({ fname: df, srcPath: dfPath, mtimeMs: st.mtimeMs });
+                }
+            }
+        } catch (e) {}
+
+        // Sort newest-first so we pick the latest revision of each canonical document type
+        docSortByMtime.sort((a, b) => b.mtimeMs - a.mtimeMs);
+
         let lscmiBriefMd = '';
         let lscmiScoringMd = '';
         let actionPlanMd = '';
         let transcriptText = '';
 
-        for (const fname of person.files.sort()) {
-            const srcPath = path.join(dataDir, fname);
-            const dstPath = path.join(docsDir, fname);
-            try {
-                if (fs.existsSync(srcPath) && !fs.existsSync(dstPath)) {
-                    fs.copyFileSync(srcPath, dstPath);
-                }
-                if (fname.endsWith('.md') || fname.endsWith('.txt')) {
-                    const txt = fs.readFileSync(srcPath, 'utf8');
-                    if (fname.includes('_final_case_brief')) lscmiBriefMd = txt;
-                    else if (fname.includes('_final_scoring_form') || (fname.includes('_draft_scoring_form') && !lscmiScoringMd)) lscmiScoringMd = txt;
-                    else if (fname.includes('_participant_case_plan') || fname.includes('_reentry_staff_case_plan') || fname.includes('_reentry_participant_action_guide')) actionPlanMd = txt;
-                    else if (fname.includes('_transcript.txt')) transcriptText = txt;
-                }
-            } catch (e) {}
-        }
+        const pickTextByPattern = (predicate) => {
+            const hit = docSortByMtime.find(d => predicate(d.fname));
+            if (!hit) return '';
+            try { return fs.readFileSync(hit.srcPath, 'utf8'); } catch (e) { return ''; }
+        };
 
-        // Check reentry_case_plans table if actionPlanMd is still empty
-        if (person.user_id && !actionPlanMd) {
-            const rcp = db.prepare('SELECT * FROM reentry_case_plans WHERE user_id = ?').get(person.user_id);
-            if (rcp) {
-                actionPlanMd = rcp.staff_case_plan_md || rcp.participant_guide_md || '';
+        lscmiBriefMd = pickTextByPattern(f => f.includes('_final_case_brief.md'))
+            || pickTextByPattern(f => f.includes('_Case_Brief_') && f.endsWith('.txt'));
+        lscmiScoringMd = pickTextByPattern(f => f.includes('_final_scoring_form.md'))
+            || pickTextByPattern(f => f.includes('_draft_scoring_form.md'));
+        actionPlanMd = pickTextByPattern(f => f.includes('_participant_case_plan.md'))
+            || pickTextByPattern(f => f.includes('_reentry_participant_action_guide.md'))
+            || pickTextByPattern(f => f.includes('_reentry_staff_case_plan.md'));
+        transcriptText = pickTextByPattern(f => f.endsWith('_transcript.txt'));
+
+        // Gather ALL historical reentry records for this participant
+        const lowerNames = Array.from(new Set([person.name, ...person.aliases_seen].map(n => String(n || '').toLowerCase()).filter(Boolean)));
+        const rClientRows = [];
+        for (const rc of reentryClients) {
+            const rcFull = `${rc.first_name || ''} ${rc.last_name || ''}`.trim().toLowerCase();
+            if (person.client_ids.includes(rc.id) || lowerNames.includes(rcFull)) {
+                rClientRows.push(rc);
+                if (!person.client_ids.includes(rc.id)) person.client_ids.push(rc.id);
+                if (!person.client_id) person.client_id = rc.id;
             }
+        }
+        const reentrySessions = person.client_ids.length
+            ? safeQueryAll(`SELECT * FROM reentry_client_sessions WHERE client_id IN (${person.client_ids.map(() => '?').join(',')}) ORDER BY session_date DESC, id DESC`, person.client_ids)
+            : [];
+        const reentryGoals = person.client_ids.length
+            ? safeQueryAll(`SELECT * FROM reentry_client_goals WHERE client_id IN (${person.client_ids.map(() => '?').join(',')}) ORDER BY updated_at DESC, id DESC`, person.client_ids)
+            : [];
+
+        const reentryCasePlans = safeQueryAll('SELECT * FROM reentry_case_plans ORDER BY updated_at DESC, id DESC').filter(rcp => {
+            if (rcp.user_id && person.user_ids.includes(rcp.user_id)) return true;
+            const rName = String(rcp.participant_name || '').trim().toLowerCase();
+            return lowerNames.includes(rName) || resolveCanonicalSlug(rcp.participant_name || '') === slug;
+        });
+
+        if (!actionPlanMd && reentryCasePlans.length > 0) {
+            actionPlanMd = reentryCasePlans[0].participant_guide_md || reentryCasePlans[0].staff_case_plan_md || '';
         }
 
         // Write canonical markdown files inside participant folder
@@ -763,23 +1215,147 @@ function syncAllParticipantFolders() {
         if (actionPlanMd) fs.writeFileSync(path.join(pDir, 'action_plan.md'), actionPlanMd);
         if (transcriptText) fs.writeFileSync(path.join(pDir, 'lscmi_transcript.txt'), transcriptText);
 
-        // Gather Case Management notes & evaluations for this participant
-        const cmNotes = person.user_id
-            ? db.prepare('SELECT * FROM case_notes WHERE user_id = ? ORDER BY session_date DESC').all(person.user_id)
+        // Compute canonical lscmi_client_id matching data/ prefix
+        const lscmiClientId = computeBestLscmiClientId(allFolderDocFiles.length ? allFolderDocFiles : person.files, `${slug}_${person.location || 'Charleston'}`);
+
+        // Preserve any locally-entered manual notes from existing case_management_notes.json if stored outside SQLite
+        let existingManualNotes = [];
+        try {
+            const cmPath = path.join(pDir, 'case_management_notes.json');
+            if (fs.existsSync(cmPath)) {
+                const parsedCm = JSON.parse(fs.readFileSync(cmPath, 'utf8'));
+                if (Array.isArray(parsedCm.manual_folder_notes)) {
+                    existingManualNotes = parsedCm.manual_folder_notes;
+                }
+            }
+        } catch (e) {}
+
+        // Gather Case Management notes & evaluations (match FULL name or exact apricot_id — zero first-name leaks)
+        const cmNotes = person.user_ids.length
+            ? safeQueryAll(`SELECT * FROM case_notes WHERE user_id IN (${person.user_ids.map(() => '?').join(',')}) ORDER BY session_date DESC, id DESC`, person.user_ids)
             : [];
-        const cmEvals = db.prepare(`
+
+        const nameMatchers = Array.from(new Set([person.name, ...person.aliases_seen].filter(n => n && n.length >= 3)));
+        const nameClauses = nameMatchers.map(() => 'LOWER(session_title) LIKE ?');
+        const nameParams = nameMatchers.map(n => `%${n.toLowerCase()}%`);
+        const apricotIdParams = person.apricot_ids.length ? person.apricot_ids : [];
+        const apricotClause = apricotIdParams.length ? `apricot_id IN (${apricotIdParams.map(() => '?').join(',')})` : '0 = 1';
+        const whereCmEval = nameClauses.length ? `(${nameClauses.join(' OR ')} OR ${apricotClause})` : apricotClause;
+
+        const cmEvals = safeQueryAll(`
             SELECT id, location, session_title, cm_name, apricot_id, session_type, summary_markdown, feedback, next_session_recommendations, created_at
             FROM case_management_evaluations
-            WHERE session_title LIKE ? OR apricot_id = ?
+            WHERE ${whereCmEval}
             ORDER BY created_at DESC
-        `).all(`%${person.name.split(' ')[0]}%`, person.apricot_id || '__NONE__');
+        `, [...nameParams, ...apricotIdParams]);
 
         fs.writeFileSync(path.join(pDir, 'case_management_notes.json'), JSON.stringify({
             case_notes: cmNotes,
-            cm_session_evaluations: cmEvals
+            cm_session_evaluations: cmEvals,
+            manual_folder_notes: existingManualNotes
         }, null, 2));
 
-        // Match SkillCat progress (module-level scraping + pathways + flags)
+        // Gather historical Apricot records (evaluations + all chronological processed notes)
+        const matchingApricotEvals = apricotEvals.filter(ae => {
+            if (ae.record_id && person.apricot_ids.includes(String(ae.record_id))) return true;
+            const full = String(ae.full_name || '').trim().toLowerCase();
+            return lowerNames.includes(full) || resolveCanonicalSlug(ae.full_name || '') === slug;
+        });
+        const evalRecordIds = matchingApricotEvals.map(a => String(a.record_id)).filter(Boolean);
+        const allApricotIds = Array.from(new Set([...person.apricot_ids, ...evalRecordIds]));
+        if (!person.apricot_id && allApricotIds.length > 0) person.apricot_id = allApricotIds[0];
+
+        const noteClauses = ['LOWER(TRIM(COALESCE(first_name,\'\') || \' \' || COALESCE(last_name,\'\'))) IN (' + lowerNames.map(() => '?').join(',') + ')'];
+        const noteParams = [...lowerNames];
+        if (allApricotIds.length > 0) {
+            noteClauses.push(`CAST(record_id AS TEXT) IN (${allApricotIds.map(() => '?').join(',')})`);
+            noteParams.push(...allApricotIds);
+        }
+        const apricotNotes = safeQueryAll(`
+            SELECT id, record_id, first_name, last_name, activity_date, staff_name, service_context, interaction_type, note_text, center_location, program_enrollment, source, processed_at
+            FROM apricot_processed_notes
+            WHERE ${noteClauses.join(' OR ')}
+            ORDER BY activity_date DESC, id DESC
+        `, noteParams);
+
+        fs.writeFileSync(path.join(pDir, 'apricot_history.json'), JSON.stringify({
+            participant_key: slug,
+            participant_name: person.name,
+            apricot_ids: allApricotIds,
+            evaluations: matchingApricotEvals,
+            notes_count: apricotNotes.length,
+            processed_notes: apricotNotes,
+            updated_at: new Date().toISOString()
+        }, null, 2));
+
+        fs.writeFileSync(path.join(pDir, 'reentry_history.json'), JSON.stringify({
+            participant_key: slug,
+            participant_name: person.name,
+            client_records: rClientRows,
+            sessions: reentrySessions,
+            goals: reentryGoals,
+            case_plans: reentryCasePlans,
+            updated_at: new Date().toISOString()
+        }, null, 2));
+
+        // Archive Program Records (profiles, triggers, points, drug tests, benefits, resumes, DB documents)
+        const userIdClause = person.user_ids.length ? `user_id IN (${person.user_ids.map(() => '?').join(',')})` : null;
+        const profileRecords = userIdClause ? safeQueryAll(`SELECT * FROM participant_profiles WHERE ${userIdClause}`, person.user_ids) : [];
+        const casePlanTriggers = userIdClause ? safeQueryAll(`SELECT * FROM case_plan_triggers WHERE ${userIdClause}`, person.user_ids) : [];
+        const dailyPoints = userIdClause ? safeQueryAll(`SELECT * FROM daily_points WHERE ${userIdClause} ORDER BY date DESC`, person.user_ids) : [];
+        const drugTests = userIdClause ? safeQueryAll(`SELECT * FROM drug_tests WHERE ${userIdClause} ORDER BY test_date DESC, id DESC`, person.user_ids) : [];
+        const benefits = userIdClause ? safeQueryAll(`SELECT * FROM participant_benefits WHERE ${userIdClause} ORDER BY updated_at DESC`, person.user_ids) : [];
+        const resumes = userIdClause ? safeQueryAll(`SELECT * FROM resumes WHERE ${userIdClause} ORDER BY updated_at DESC`, person.user_ids) : [];
+        const dbDocuments = userIdClause ? safeQueryAll(`SELECT * FROM documents WHERE ${userIdClause} ORDER BY uploaded_at DESC`, person.user_ids) : [];
+        const legacyBriefcaseCount = userIdClause ? (safeQueryGet(`SELECT COUNT(*) as n FROM briefcase_items WHERE ${userIdClause}`, person.user_ids)?.n || 0) : 0;
+        const legacyGateCount = userIdClause ? (safeQueryGet(`SELECT COUNT(*) as n FROM gate_criteria WHERE ${userIdClause}`, person.user_ids)?.n || 0) : 0;
+
+        fs.writeFileSync(path.join(pDir, 'program_records.json'), JSON.stringify({
+            participant_key: slug,
+            participant_name: person.name,
+            profile_records: profileRecords,
+            case_plan_triggers: casePlanTriggers,
+            daily_points: dailyPoints,
+            drug_tests: drugTests,
+            benefits,
+            resumes,
+            db_documents: dbDocuments,
+            legacy_briefcase_items_count: legacyBriefcaseCount,
+            legacy_gate_criteria_count: legacyGateCount,
+            updated_at: new Date().toISOString()
+        }, null, 2));
+
+        // Match SkillCat progress across ALL historical snapshots + latest snapshot
+        const nameParts = person.name.toLowerCase().split(/\s+/).filter(Boolean);
+        const matchesSkillCatEmployee = (emp) => {
+            const eName = String(emp.fullname || emp.name || emp.employee_name || '').toLowerCase().trim();
+            if (!eName || nameParts.length === 0) return false;
+            if (nameParts.length === 1) return eName.split(/\s+/)[0] === nameParts[0];
+            return nameParts.every(part => eName.includes(part));
+        };
+
+        const historicalSnapshots = [];
+        let latestMatchedSkillCatEmp = null;
+        for (const snapKey of sortedSnapshotKeys) {
+            const snapObj = scSnapshots[snapKey];
+            if (!snapObj || typeof snapObj !== 'object') continue;
+            const match = Object.values(snapObj).find(e => e && typeof e === 'object' && matchesSkillCatEmployee(e));
+            if (match) {
+                const mods = match.completed_courses || match.modules || [];
+                const totalCourses = Number(match.total_courses ?? (Array.isArray(mods) ? mods.length : 0));
+                historicalSnapshots.push({
+                    date: snapKey,
+                    pathway: match.pathway || 'HVAC',
+                    total_courses: totalCourses,
+                    total_hours: Number((totalCourses * 1.5).toFixed(1)),
+                    completed_last_5_working_days: Number(match.completed_last_5_working_days || 0),
+                    daily_delta: Number(match.daily_delta || 0),
+                    stalled: Boolean(match.flagged_2_working_days || totalCourses === 0)
+                });
+                latestMatchedSkillCatEmp = match;
+            }
+        }
+
         let skillcatRecord = {
             pathway: 'HVAC',
             total_hours: 0,
@@ -789,39 +1365,36 @@ function syncAllParticipantFolders() {
             pathway_breakdown: {},
             portfolio_link: '',
             stalled: false,
-            flags: []
+            flags: [],
+            historical_snapshots: historicalSnapshots.slice().reverse()
         };
-        if (latestSkillCatEmployees.length > 0) {
-            const match = latestSkillCatEmployees.find(e => {
-                const eName = String(e.fullname || e.name || e.employee_name || '').toLowerCase();
-                return eName && person.name.toLowerCase().split(' ').every(part => eName.includes(part));
-            });
-            if (match) {
-                const mods = match.completed_courses || match.modules || [];
-                const totalCourses = Number(match.total_courses ?? (Array.isArray(mods) ? mods.length : 0));
-                skillcatRecord = {
-                    userid: match.userid || '',
-                    pathway: match.pathway || 'HVAC',
-                    pathway_breakdown: match.pathway_breakdown || {},
-                    learning_plans: match.learning_plans || [],
-                    portfolio_link: match.portfolio_link || '',
-                    last_login: match.last_login || '',
-                    latest_completion_date: match.latest_completion_date || null,
-                    total_hours: Number((totalCourses * 1.5).toFixed(1)),
-                    completed_count: totalCourses,
-                    completed_last_5_working_days: Number(match.completed_last_5_working_days || 0),
-                    daily_delta: Number(match.daily_delta || 0),
-                    completed_modules: Array.isArray(mods) ? mods : [],
-                    recent_modules_last_5_days: match.recent_modules_last_5_days || [],
-                    stalled: Boolean(match.flagged_2_working_days || totalCourses === 0),
-                    flags: Array.isArray(match.pathway_flags) ? match.pathway_flags : []
-                };
-            }
+        const latestMatch = (latestSkillCatEmployees.find(matchesSkillCatEmployee)) || latestMatchedSkillCatEmp;
+        if (latestMatch) {
+            const mods = latestMatch.completed_courses || latestMatch.modules || [];
+            const totalCourses = Number(latestMatch.total_courses ?? (Array.isArray(mods) ? mods.length : 0));
+            skillcatRecord = {
+                userid: latestMatch.userid || '',
+                pathway: latestMatch.pathway || 'HVAC',
+                pathway_breakdown: latestMatch.pathway_breakdown || {},
+                learning_plans: latestMatch.learning_plans || [],
+                portfolio_link: latestMatch.portfolio_link || '',
+                last_login: latestMatch.last_login || '',
+                latest_completion_date: latestMatch.latest_completion_date || null,
+                total_hours: Number((totalCourses * 1.5).toFixed(1)),
+                completed_count: totalCourses,
+                completed_last_5_working_days: Number(latestMatch.completed_last_5_working_days || 0),
+                daily_delta: Number(latestMatch.daily_delta || 0),
+                completed_modules: Array.isArray(mods) ? mods : [],
+                recent_modules_last_5_days: latestMatch.recent_modules_last_5_days || [],
+                stalled: Boolean(latestMatch.flagged_2_working_days || totalCourses === 0),
+                flags: Array.isArray(latestMatch.pathway_flags) ? latestMatch.pathway_flags : [],
+                historical_snapshots: historicalSnapshots.slice().reverse()
+            };
         }
         fs.writeFileSync(path.join(pDir, 'skillcat_progress.json'), JSON.stringify(skillcatRecord, null, 2));
 
-        // Load or initialize Unified Briefcase for this participant
-        const existingRow = db.prepare('SELECT briefcase_json FROM unified_briefcases WHERE participant_key = ?').get(slug);
+        // Load or initialize Unified Briefcase
+        const existingRow = safeQueryGet('SELECT briefcase_json FROM unified_briefcases WHERE participant_key = ?', [slug]);
         let existingBriefcase = null;
         if (existingRow && existingRow.briefcase_json) {
             try { existingBriefcase = JSON.parse(existingRow.briefcase_json); } catch (e) {}
@@ -841,7 +1414,7 @@ function syncAllParticipantFolders() {
         fs.writeFileSync(path.join(pDir, 'briefcase.json'), JSON.stringify(unifiedBriefcase, null, 2));
 
         // Load Action Plan Feedback Loop history
-        const feedbackLoops = db.prepare('SELECT * FROM action_plan_feedback_loops WHERE participant_key = ? ORDER BY created_at DESC').all(slug);
+        const feedbackLoops = safeQueryAll('SELECT * FROM action_plan_feedback_loops WHERE participant_key = ? ORDER BY created_at DESC', [slug]);
         const feedbackLoopData = {
             participant_key: slug,
             participant_name: person.name,
@@ -851,7 +1424,7 @@ function syncAllParticipantFolders() {
         fs.writeFileSync(path.join(pDir, 'feedback_loop_log.json'), JSON.stringify(feedbackLoopData, null, 2));
 
         // Load Screening Consultation history
-        const screenings = db.prepare('SELECT * FROM screening_consultations WHERE participant_key = ? ORDER BY created_at DESC').all(slug);
+        const screenings = safeQueryAll('SELECT * FROM screening_consultations WHERE participant_key = ? ORDER BY created_at DESC', [slug]);
         fs.writeFileSync(path.join(pDir, 'screening_consultation.json'), JSON.stringify({
             participant_key: slug,
             latest_screening: screenings[0] || null,
@@ -859,7 +1432,7 @@ function syncAllParticipantFolders() {
         }, null, 2));
 
         // Load Voice Profile
-        const voiceProf = db.prepare('SELECT * FROM voice_profiles WHERE profile_id = ?').get(`participant_${slug}`);
+        const voiceProf = safeQueryGet('SELECT * FROM voice_profiles WHERE profile_id = ?', [`participant_${slug}`]);
         fs.writeFileSync(path.join(pDir, 'voice_profile.json'), JSON.stringify(voiceProf || {
             profile_id: `participant_${slug}`,
             person_type: 'participant',
@@ -869,7 +1442,132 @@ function syncAllParticipantFolders() {
             note: transcriptText ? 'Voice profile anchored from LS/CMI assessment recording' : 'Pending LS/CMI audio recording'
         }, null, 2));
 
-        // Build Caseload Evaluation Summary (combining Brief, Action Plan, Feedback Loop, Unified Briefcase, CM Notes, SkillCat, and Data Flags)
+        // Build/merge historical timeline (idempotent event_key milestones + preserved manual events)
+        const historyLogPath = path.join(pDir, 'history_log.json');
+        let preservedEvents = [];
+        if (fs.existsSync(historyLogPath)) {
+            try {
+                const parsedHist = JSON.parse(fs.readFileSync(historyLogPath, 'utf8'));
+                preservedEvents = Array.isArray(parsedHist) ? parsedHist : (Array.isArray(parsedHist.events) ? parsedHist.events : []);
+            } catch (e) {}
+        }
+        const eventByKey = new Map();
+        const unkeyedEvents = [];
+        for (const ev of preservedEvents) {
+            if (!ev) continue;
+            if (ev.event_key) eventByKey.set(ev.event_key, ev);
+            else unkeyedEvents.push(ev);
+        }
+
+        const addMilestone = (eventKey, evObj) => {
+            if (!eventByKey.has(eventKey)) {
+                eventByKey.set(eventKey, {
+                    id: `ms_${eventKey}`,
+                    event_key: eventKey,
+                    ...evObj
+                });
+            }
+        };
+
+        for (const docMeta of docSortByMtime) {
+            addMilestone(`doc:${docMeta.fname}`, {
+                timestamp: new Date(docMeta.mtimeMs).toISOString(),
+                category: 'document',
+                action: `Archived ${inferDocTypeFromFilename(docMeta.fname).replace(/_/g, ' ')}`,
+                summary: `Document stored in folder: ${docMeta.fname}`,
+                filename: docMeta.fname,
+                snapshot_file: '',
+                actor: 'Archive Sync'
+            });
+        }
+        if (apricotNotes.length > 0) {
+            const newestDate = apricotNotes[0]?.activity_date || matchingApricotEvals[0]?.updated_at || new Date().toISOString();
+            addMilestone('apricot:summary', {
+                timestamp: new Date(newestDate).toISOString(),
+                category: 'apricot',
+                action: 'Apricot Historical Record Synced',
+                summary: `${apricotNotes.length} chronological Apricot note(s) archived (${matchingApricotEvals[0]?.case_plan_status || 'Historical Record'}).`,
+                filename: 'apricot_history.json',
+                snapshot_file: '',
+                actor: 'Apricot Sync'
+            });
+        }
+        for (const cn of cmNotes) {
+            addMilestone(`casenote:${cn.id}`, {
+                timestamp: new Date(cn.session_date || cn.created_at || Date.now()).toISOString(),
+                category: 'case_note',
+                action: `Case Note (${cn.note_type || 'Session'})`,
+                summary: String(cn.content || '').slice(0, 220),
+                filename: 'case_management_notes.json',
+                snapshot_file: '',
+                actor: cn.author_name || 'Turn90 Staff'
+            });
+        }
+        for (const ev of cmEvals) {
+            addMilestone(`cmeval:${ev.id}`, {
+                timestamp: new Date(ev.created_at || Date.now()).toISOString(),
+                category: 'cm_eval',
+                action: `CM Evaluation: ${ev.session_title || '1-on-1 Session'}`,
+                summary: String(ev.feedback || ev.summary_markdown || '').slice(0, 220),
+                filename: 'case_management_notes.json',
+                snapshot_file: '',
+                actor: ev.cm_name || 'Turn90 CM'
+            });
+        }
+        for (const rs of reentrySessions) {
+            addMilestone(`reentry_session:${rs.id}`, {
+                timestamp: new Date(rs.session_date || rs.created_at || Date.now()).toISOString(),
+                category: 'reentry_session',
+                action: `Reentry Session: ${rs.session_title || 'Check-in'}`,
+                summary: String(rs.notes_text || rs.next_conversation_topics || '').slice(0, 220),
+                filename: 'reentry_history.json',
+                snapshot_file: '',
+                actor: 'Reentry Navigator'
+            });
+        }
+        for (const dt of drugTests) {
+            addMilestone(`drugtest:${dt.id}`, {
+                timestamp: new Date(dt.test_date || dt.created_at || Date.now()).toISOString(),
+                category: 'drug_test',
+                action: `Drug Screen: ${dt.result || 'Recorded'}`,
+                summary: dt.notes || dt.substances_detected || '',
+                filename: 'program_records.json',
+                snapshot_file: '',
+                actor: dt.administered_by || 'Turn90 Staff'
+            });
+        }
+        for (const scItem of screenings) {
+            addMilestone(`screening:${scItem.id}`, {
+                timestamp: new Date(scItem.created_at || Date.now()).toISOString(),
+                category: 'screening',
+                action: `Screening Consultation (${scItem.eligibility_decision || 'Reviewed'})`,
+                summary: scItem.ineligibility_reason || '',
+                filename: 'screening_consultation.json',
+                snapshot_file: '',
+                actor: scItem.created_by || 'Turn90 Staff'
+            });
+        }
+        for (const fb of feedbackLoops) {
+            addMilestone(`feedback_loop:${fb.id}`, {
+                timestamp: new Date(fb.created_at || Date.now()).toISOString(),
+                category: 'feedback_loop',
+                action: `Action Plan Feedback Loop (${fb.agreement_status})`,
+                summary: fb.agreed_replacement_target ? `Adjusted to: ${fb.agreed_replacement_target} (${fb.selected_toolkit_tool || ''})` : (fb.participant_objection_quote || ''),
+                filename: 'feedback_loop_log.json',
+                snapshot_file: '',
+                actor: fb.logged_by || 'Turn90 Staff'
+            });
+        }
+
+        const mergedEvents = [...unkeyedEvents, ...Array.from(eventByKey.values())]
+            .sort((a, b) => new Date(b.timestamp || 0).getTime() - new Date(a.timestamp || 0).getTime());
+        fs.writeFileSync(historyLogPath, JSON.stringify({
+            participant_key: slug,
+            updated_at: new Date().toISOString(),
+            events: mergedEvents
+        }, null, 2));
+
+        // Build Caseload Evaluation Summary
         const flags = [];
         if (!unifiedBriefcase.waitlist_ready) {
             const missingWaitlist = unifiedBriefcase.waitlist_checklist.filter(i => !i.ready).map(i => i.title);
@@ -886,7 +1584,7 @@ function syncAllParticipantFolders() {
                 message: 'Participant disagreed with Action Plan target — requires collaborative 4-step Feedback Loop in next Case Management session.'
             });
         }
-        if (person.track === 'first_shift' && cmNotes.length === 0 && cmEvals.length === 0) {
+        if (person.track === 'first_shift' && cmNotes.length === 0 && cmEvals.length === 0 && existingManualNotes.length === 0) {
             flags.push({
                 code: 'FLAG-CM-CADENCE',
                 severity: 'warning',
@@ -901,22 +1599,29 @@ function syncAllParticipantFolders() {
             });
         }
 
+        const hasLegacyCaseBriefs = allFolderDocFiles.some(f => f.toLowerCase().includes('_case_brief_'));
         const caseloadEval = {
             participant_key: slug,
             participant_name: person.name,
             location: person.location,
             track: person.track,
+            lscmi_client_id: lscmiClientId,
             folder_path: `data/participants/${slug}`,
             has_lscmi_brief: Boolean(lscmiBriefMd),
             has_lscmi_scoring: Boolean(lscmiScoringMd),
             has_action_plan: Boolean(actionPlanMd),
+            has_legacy_case_briefs: hasLegacyCaseBriefs,
             action_plan_agreement: feedbackLoopData.current_agreement_status,
             waitlist_ready: unifiedBriefcase.waitlist_ready,
             waitlist_score: `${unifiedBriefcase.waitlist_met_count}/9`,
             medical_appointments_applicable: unifiedBriefcase.medical_appointments_applicable,
             skillcat_pathway: unifiedBriefcase.items.skillcat_pathway.value,
             skillcat_modules_completed: skillcatRecord.completed_count,
-            cm_notes_count: cmNotes.length + cmEvals.length,
+            cm_notes_count: cmNotes.length + cmEvals.length + existingManualNotes.length,
+            apricot_notes_count: apricotNotes.length,
+            reentry_sessions_count: reentrySessions.length,
+            history_events_count: mergedEvents.length,
+            documents_count: allFolderDocFiles.length,
             data_evaluation_flags: flags,
             updated_at: new Date().toISOString()
         };
@@ -924,18 +1629,35 @@ function syncAllParticipantFolders() {
 
         // Write Profile JSON
         const profileData = {
-            ...person,
+            participant_key: slug,
+            name: person.name,
+            location: person.location,
+            track: person.track,
+            status: person.status,
+            user_id: person.user_id,
+            client_id: person.client_id,
+            apricot_id: person.apricot_id,
+            phone: person.phone,
+            email: person.email,
+            lscmi_client_id: lscmiClientId,
             folder_slug: slug,
             folder_path: `data/participants/${slug}`,
             has_lscmi_brief: Boolean(lscmiBriefMd),
             has_lscmi_scoring: Boolean(lscmiScoringMd),
             has_action_plan: Boolean(actionPlanMd),
+            has_legacy_case_briefs: hasLegacyCaseBriefs,
             waitlist_ready: unifiedBriefcase.waitlist_ready,
             waitlist_met_count: unifiedBriefcase.waitlist_met_count,
             data_flags_count: flags.length,
+            cm_notes_count: caseloadEval.cm_notes_count,
+            apricot_notes_count: apricotNotes.length,
+            reentry_sessions_count: reentrySessions.length,
+            history_events_count: mergedEvents.length,
+            documents_count: allFolderDocFiles.length,
             updated_at: new Date().toISOString()
         };
         fs.writeFileSync(path.join(pDir, 'profile.json'), JSON.stringify(profileData, null, 2));
+
         summaryList.push({
             ...profileData,
             caseload_eval: caseloadEval,
@@ -948,14 +1670,19 @@ function syncAllParticipantFolders() {
         });
     }
 
+    summaryList.sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
+    _cachedFolderSummary = summaryList;
+    _cachedFolderSummaryAt = Date.now();
     return summaryList;
 }
 
 function getParticipantFolderBundle(slugOrName) {
-    const slug = sanitizeParticipantSlug(slugOrName);
+    const slug = resolveCanonicalSlug(slugOrName);
     const pDir = path.join(participantsRootDir, slug);
-    if (!fs.existsSync(pDir)) {
-        syncAllParticipantFolders();
+    const needsSync = !fs.existsSync(pDir)
+        || (!fs.existsSync(path.join(pDir, 'history_log.json')) && !fs.existsSync(path.join(pDir, 'apricot_history.json')));
+    if (needsSync) {
+        syncAllParticipantFolders({ force: true });
     }
     if (!fs.existsSync(pDir)) {
         return null;
@@ -970,30 +1697,125 @@ function getParticipantFolderBundle(slugOrName) {
         if (!fs.existsSync(p)) return '';
         try { return fs.readFileSync(p, 'utf8'); } catch (e) { return ''; }
     };
+
+    const profile = readJsonSafe('profile.json');
     const docsDir = path.join(pDir, 'documents');
-    const docFiles = fs.existsSync(docsDir) ? fs.readdirSync(docsDir) : [];
+    const rawDocFiles = fs.existsSync(docsDir) ? fs.readdirSync(docsDir).filter(f => !f.startsWith('.')) : [];
+    const lscmiClientId = profile.lscmi_client_id || computeBestLscmiClientId(rawDocFiles, `${slug}_${profile.location || 'Charleston'}`);
+    const categorized = categorizeParticipantDocuments(pDir, slug, lscmiClientId);
 
     return {
         participant_key: slug,
+        lscmi_client_id: lscmiClientId,
+        lscmi_files: categorized.lscmi_files,
+        lscmi_documents: categorized.lscmi_documents,
         folder_path: `data/participants/${slug}`,
-        profile: readJsonSafe('profile.json'),
+        profile,
         briefcase: readJsonSafe('briefcase.json'),
         caseload_evaluation: readJsonSafe('caseload_evaluation.json'),
         screening_consultation: readJsonSafe('screening_consultation.json'),
         feedback_loop_log: readJsonSafe('feedback_loop_log.json'),
         skillcat_progress: readJsonSafe('skillcat_progress.json'),
         case_management_notes: readJsonSafe('case_management_notes.json'),
+        apricot_history: readJsonSafe('apricot_history.json', { evaluations: [], processed_notes: [] }),
+        reentry_history: readJsonSafe('reentry_history.json', { client_records: [], sessions: [], goals: [], case_plans: [] }),
+        program_records: readJsonSafe('program_records.json', {}),
+        history_log: readJsonSafe('history_log.json', { participant_key: slug, events: [] }),
+        history_files: categorized.history_files,
+        lscmi_discrepancies: readJsonSafe('lscmi_discrepancies.json', null),
+        lscmi_158_answers: readJsonSafe('lscmi_158_answers.json', null),
         voice_profile: readJsonSafe('voice_profile.json'),
         lscmi_brief_md: readTextSafe('lscmi_brief.md'),
         lscmi_scoring_md: readTextSafe('lscmi_scoring.md'),
         action_plan_md: readTextSafe('action_plan.md'),
         lscmi_transcript_txt: readTextSafe('lscmi_transcript.txt'),
-        document_files: docFiles
+        document_files: categorized.docFiles
+    };
+}
+
+function saveParticipantEditableDocument(slugOrName, { docType, content, reason = '', actor = 'Turn90 Staff' } = {}) {
+    const SPECS = {
+        brief: { suffix: '_final_case_brief.md', canonical: 'lscmi_brief.md', label: 'LS/CMI Case Brief', flagKey: 'has_lscmi_brief' },
+        action_plan: { suffix: '_participant_case_plan.md', canonical: 'action_plan.md', label: 'First Shift Action Plan', flagKey: 'has_action_plan' },
+        scoring: { suffix: '_final_scoring_form.md', canonical: 'lscmi_scoring.md', label: 'LS/CMI Scoring Form', flagKey: 'has_lscmi_scoring' }
+    };
+    const spec = SPECS[docType];
+    if (!spec) {
+        throw new Error(`Unsupported docType "${docType}". Expected "brief", "action_plan", or "scoring".`);
+    }
+    if (typeof content !== 'string' || !content.trim()) {
+        throw new Error('Document content cannot be empty.');
+    }
+
+    const slug = resolveCanonicalSlug(slugOrName);
+    const pDir = path.join(participantsRootDir, slug);
+    const docsDir = path.join(pDir, 'documents');
+    if (!fs.existsSync(docsDir)) fs.mkdirSync(docsDir, { recursive: true });
+
+    let profile = {};
+    const profilePath = path.join(pDir, 'profile.json');
+    if (fs.existsSync(profilePath)) {
+        try { profile = JSON.parse(fs.readFileSync(profilePath, 'utf8')); } catch (e) {}
+    }
+
+    const existingDocs = fs.readdirSync(docsDir).filter(f => !f.startsWith('.'));
+    const lscmiClientId = profile.lscmi_client_id || computeBestLscmiClientId(existingDocs, `${slug}_${profile.location || 'Charleston'}`);
+    const dataFilename = `${lscmiClientId}${spec.suffix}`;
+    const dataFilePath = path.join(dataDir, dataFilename);
+    const canonicalPath = path.join(pDir, spec.canonical);
+    const folderDocPath = path.join(docsDir, dataFilename);
+
+    // Snapshot previous version before overwriting
+    const priorSource = fs.existsSync(dataFilePath) ? dataFilePath : (fs.existsSync(canonicalPath) ? canonicalPath : null);
+    let snapshotFile = null;
+    if (priorSource) {
+        snapshotFile = archiveParticipantDocumentVersion(slug, {
+            docType,
+            filename: dataFilename,
+            sourcePath: priorSource,
+            summary: `Archived previous ${spec.label} before direct edit${reason ? `: ${reason}` : ''}`,
+            actor
+        });
+    }
+
+    fs.writeFileSync(dataFilePath, content, 'utf8');
+    fs.writeFileSync(canonicalPath, content, 'utf8');
+    fs.writeFileSync(folderDocPath, content, 'utf8');
+
+    if (fs.existsSync(profilePath)) {
+        try {
+            profile[spec.flagKey] = true;
+            profile.lscmi_client_id = lscmiClientId;
+            profile.updated_at = new Date().toISOString();
+            fs.writeFileSync(profilePath, JSON.stringify(profile, null, 2));
+        } catch (e) {}
+    }
+
+    appendParticipantHistoryEvent(slug, {
+        category: 'document_edit',
+        action: `Updated ${spec.label}`,
+        summary: reason ? reason : `Direct edit saved to ${dataFilename}`,
+        filename: dataFilename,
+        snapshot_file: snapshotFile || '',
+        actor
+    });
+
+    invalidateFolderIndexCache();
+
+    return {
+        slug,
+        lscmi_client_id: lscmiClientId,
+        docType,
+        dataFilename,
+        dataFilePath,
+        folderDocPath,
+        canonicalPath,
+        snapshotFile
     };
 }
 
 function updateParticipantUnifiedBriefcase(slugOrName, updates = {}) {
-    const slug = sanitizeParticipantSlug(slugOrName);
+    const slug = resolveCanonicalSlug(slugOrName);
     const bundle = getParticipantFolderBundle(slug);
     const existing = (bundle && bundle.briefcase && bundle.briefcase.items) ? bundle.briefcase : null;
     const profile = (bundle && bundle.profile) || { name: slugOrName, location: 'Charleston', track: 'reentry_nav' };
@@ -1071,12 +1893,28 @@ function updateParticipantUnifiedBriefcase(slugOrName, updates = {}) {
     if (!fs.existsSync(pDir)) fs.mkdirSync(pDir, { recursive: true });
     fs.writeFileSync(path.join(pDir, 'briefcase.json'), JSON.stringify(state, null, 2));
 
+    const updatedKeys = updates.items ? Object.keys(updates.items).join(', ') : 'settings';
+    appendParticipantHistoryEvent(slug, {
+        category: 'briefcase',
+        action: 'Updated Unified Briefcase',
+        summary: `Updated ${updatedKeys} (Waitlist readiness: ${state.waitlist_met_count}/9).`,
+        filename: 'briefcase.json',
+        actor: 'Turn90 Staff'
+    });
+    invalidateFolderIndexCache();
+
     return state;
 }
 
 module.exports = {
+    PARTICIPANT_SLUG_ALIASES,
     UNIFIED_BRIEFCASE_SCHEMA,
     sanitizeParticipantSlug,
+    resolveCanonicalSlug,
+    invalidateFolderIndexCache,
+    appendParticipantHistoryEvent,
+    archiveParticipantDocumentVersion,
+    saveParticipantEditableDocument,
     syncAllParticipantFolders,
     getParticipantFolderBundle,
     updateParticipantUnifiedBriefcase,

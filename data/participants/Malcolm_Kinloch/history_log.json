@@ -1,0 +1,94 @@
+{
+  "participant_key": "Malcolm_Kinloch",
+  "updated_at": "2026-11-23T13:46:29.200Z",
+  "events": [
+    {
+      "id": "ms_apricot:summary",
+      "event_key": "apricot:summary",
+      "timestamp": "2026-11-12T00:00:00.000Z",
+      "category": "apricot",
+      "action": "Apricot Historical Record Synced",
+      "summary": "7 chronological Apricot note(s) archived (Yes (Goals & Gates Active)).",
+      "filename": "apricot_history.json",
+      "snapshot_file": "",
+      "actor": "Apricot Sync"
+    },
+    {
+      "id": "ms_reentry_session:395",
+      "event_key": "reentry_session:395",
+      "timestamp": "2026-11-12T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Case Note (documentation only) – no interaction or service (Daisy Boynton)",
+      "summary": "Called to let Malcolm know we're taking him off the waitlist because of his time conflict with Snyder. No answer, so I left a VM letting him know and telling him to call us back if anything changes or he's interested in ",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:289",
+      "event_key": "reentry_session:289",
+      "timestamp": "2026-10-29T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Called to check in on whether Malcolm is still interested in our program/able to switch his shifts around at Snyder. No answer, left a VM.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:288",
+      "event_key": "reentry_session:288",
+      "timestamp": "2026-10-29T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Terrence Brown)",
+      "summary": "Called to let him know that orientation was 10/30/26 at 3:30pm and he is currently working at synder but does not want to be taken off of the waitlist",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:210",
+      "event_key": "reentry_session:210",
+      "timestamp": "2026-10-22T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Terrence Brown)",
+      "summary": "Called to let him know that orientation is on friday the 23rd of Oct and he has a job with snyder that may conflict with with our hours and will be looking to switch shifts so that he can become enrolled into First Shift",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:211",
+      "event_key": "reentry_session:211",
+      "timestamp": "2026-10-20T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Check-in conversation – brief status update (Daisy Boynton)",
+      "summary": "Checked in on whether he's found any work through staffing agencies thus far. He said he had an interview at Snyder's on Azalea and they are going to hire him once his background check comes back. I told him to keep me p",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:212",
+      "event_key": "reentry_session:212",
+      "timestamp": "2026-10-12T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment COMPLETED (Daisy Boynton)",
+      "summary": "- Has all ID except DL (has never had one before)\n- Has GED in everything but math\n- Interested in other housing (currently no income, but is going to staffing agencies this afternoon) \n- on 3 year supervision\n\n*made him",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    },
+    {
+      "id": "ms_reentry_session:213",
+      "event_key": "reentry_session:213",
+      "timestamp": "2026-10-07T00:00:00.000Z",
+      "category": "reentry_session",
+      "action": "Reentry Session: Intake Appointment SCHEDULED (Daisy Boynton)",
+      "summary": "No answer. VM left.",
+      "filename": "reentry_history.json",
+      "snapshot_file": "",
+      "actor": "Reentry Navigator"
+    }
+  ]
+}

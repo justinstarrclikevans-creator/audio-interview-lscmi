@@ -3,10 +3,12 @@
   "participant_name": "Robert Shaw",
   "location": "Charleston",
   "track": "reentry_nav",
+  "lscmi_client_id": "Robert_Shaw_Charleston",
   "folder_path": "data/participants/Robert_Shaw",
   "has_lscmi_brief": false,
   "has_lscmi_scoring": false,
   "has_action_plan": false,
+  "has_legacy_case_briefs": false,
   "action_plan_agreement": "pending_review",
   "waitlist_ready": false,
   "waitlist_score": "7/9",
@@ -14,6 +16,10 @@
   "skillcat_pathway": "HVAC",
   "skillcat_modules_completed": 0,
   "cm_notes_count": 0,
+  "apricot_notes_count": 5,
+  "reentry_sessions_count": 4,
+  "history_events_count": 5,
+  "documents_count": 0,
   "data_evaluation_flags": [
     {
       "code": "FLAG-WAITLIST-GAP",
@@ -21,5 +27,5 @@
       "message": "7/9 First Shift Waitlist Briefcase items ready. Missing: 2. Social Security Card, 3. Birth Certificate"
     }
   ],
-  "updated_at": "2026-11-22T17:18:01.632Z"
+  "updated_at": "2026-11-23T13:46:29.212Z"
 }
