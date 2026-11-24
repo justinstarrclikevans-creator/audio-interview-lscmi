@@ -675,6 +675,84 @@ details.wp-disclosure.wp-subdisclosure .wp-disclosure-body {
     background: #fef2f2;
 }
 
+/* LS/CMI Recording Upload Preview & Native Progress Bar */
+.wp-audio-file-meta {
+    margin-top: 8px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1e3a8a;
+    font-size: 0.86rem;
+    font-weight: 600;
+}
+
+.wp-audio-file-meta.is-error {
+    background: #fef2f2;
+    border-color: #fecaca;
+    color: #991b1b;
+}
+
+.wp-audio-preview {
+    display: block;
+    inline-size: 100%;
+    margin-top: 8px;
+    border-radius: 8px;
+}
+
+.wp-upload-progress-wrap {
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+}
+
+.wp-upload-progress-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 6px;
+}
+
+progress.wp-upload-progress {
+    appearance: none;
+    border: 0 solid;
+    overflow: clip;
+    display: block;
+    inline-size: 100%;
+    block-size: 10px;
+    --progress-bar-radius: 1e5px;
+    border-radius: var(--progress-bar-radius);
+    background: #e2e8f0;
+    box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
+}
+
+progress.wp-upload-progress::-webkit-progress-bar {
+    background: transparent;
+}
+
+progress.wp-upload-progress::-webkit-progress-value {
+    background: var(--wp-primary);
+    border-radius: var(--progress-bar-radius);
+    transition: inline-size 0.3s;
+}
+
+progress.wp-upload-progress::-moz-progress-bar {
+    background: var(--wp-primary);
+    border-radius: var(--progress-bar-radius);
+    transition: inline-size 0.3s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    progress.wp-upload-progress::-webkit-progress-value {
+        transition: none;
+    }
+    progress.wp-upload-progress::-moz-progress-bar {
+        transition: none;
+    }
+}
+
 /* Mobile refinements */
 @media (max-width: 720px) {
     .main-content {

@@ -21,6 +21,8 @@ const multer = require('multer');
 const { Resend } = require('resend');
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
+const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -207,6 +209,31 @@ const diskStorage = multer.diskStorage({
     }
 });
 const fileUpload = multer({ storage: diskStorage });
+
+// Dedicated temporary disk storage for LS/CMI recording uploads (prevents OOM on large phone/Zoom recordings)
+const MAX_LSCMI_UPLOAD_BYTES = 150 * 1024 * 1024;
+const lscmiAudioDiskStorage = multer.diskStorage({
+    destination: (req, file, cb) => cb(null, os.tmpdir()),
+    filename: (req, file, cb) => {
+        const ext = path.extname(file.originalname || '').slice(0, 12).replace(/[^a-zA-Z0-9.]/g, '');
+        cb(null, `lscmi_upload_${Date.now()}_${crypto.randomBytes(6).toString('hex')}${ext}`);
+    }
+});
+const lscmiAudioUpload = multer({
+    storage: lscmiAudioDiskStorage,
+    limits: { fileSize: MAX_LSCMI_UPLOAD_BYTES }
+});
+function handleLscmiAudioUpload(req, res, next) {
+    lscmiAudioUpload.single('audio')(req, res, (err) => {
+        if (!err) return next();
+        if (err.code === 'LIMIT_FILE_SIZE') {
+            return res.status(413).json({
+                error: 'Recording exceeds the 150 MB upload limit. Please compress to MP3/M4A and retry.'
+            });
+        }
+        return res.status(400).json({ error: err.message || 'Invalid audio upload.' });
+    });
+}
 
 const resend = new Resend(process.env.RESEND_API_KEY || 're_dummy');
 
@@ -1885,7 +1912,7 @@ app.get('/api/file-content', (req, res) => {
         if (filename.includes('scoring_form') && !content.includes('Date of Birth (DOB):')) {
             try {
                 const nameMatch = content.match(/\*\*(?:Participant Name|Participant|Client):\*\*\s*([^\n|*]+)/i);
-                const inferredName = nameMatch ? nameMatch[1].trim() : filename.replace(/_(draft|final)_scoring_form.*$/i, '').replace(/_(Charleston|Columbia|Spartanburg)$/i, '').replace(/_/g, ' ');
+                const inferredName = nameMatch ? nameMatch[1].trim() : filename.replace(/_(draft|final)_scoring_form.*$/i, '').replace(/_(Charleston|Columbia|Spartanburg|Reentry_Navigation|Prison_Program)$/i, '').replace(/_/g, ' ');
                 const resolvedBio = resolveParticipantDobAndAge(inferredName, [content]);
                 content = ensureScoringHeaderHasDobAndAge(content, inferredName, 'Turn90', resolvedBio.dob, resolvedBio.age);
             } catch (e) { /* ignore */ }
@@ -3271,45 +3298,93 @@ app.get('/api/interviews/consultation-context', authenticateToken, (req, res) =>
     }
 });
 
-app.post('/api/interviews/manual-entry', memoryUpload.single('audio'), async (req, res) => {
+function safeUnlinkTempFile(filePath) {
     try {
-        const name = req.body.participantName;
-        let location = req.body.participantLocation || 'Charleston';
-        let transcriptText = req.body.transcript || '';
+        if (filePath && fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    } catch (_) {}
+}
 
-        if (!name || !name.trim()) {
-            return res.status(400).json({ error: 'Participant name is required.' });
+function normalizeAudioMimeType(mimetype, originalname = '') {
+    const rawMime = String(mimetype || '').split(';')[0].trim().toLowerCase();
+    const ext = path.extname(String(originalname || '')).toLowerCase();
+    const extMap = {
+        '.m4a': 'audio/mp4',
+        '.mp3': 'audio/mpeg',
+        '.wav': 'audio/wav',
+        '.ogg': 'audio/ogg',
+        '.webm': 'audio/webm',
+        '.aac': 'audio/aac',
+        '.flac': 'audio/flac',
+        '.mp4': 'video/mp4',
+        '.mov': 'video/quicktime',
+        '.3gp': 'audio/3gpp'
+    };
+    if (rawMime === 'audio/x-m4a') return 'audio/mp4';
+    if (!rawMime || rawMime === 'application/octet-stream') {
+        return extMap[ext] || 'audio/webm';
+    }
+    return rawMime;
+}
+
+function buildSafeLscmiClientId(cleanName, canonicalLocation) {
+    const safeName = String(cleanName || 'Participant').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_+|_+$/g, '') || 'Participant';
+    const safeLoc = String(canonicalLocation || 'Charleston').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_+|_+$/g, '') || 'Charleston';
+    return `${safeName}_${safeLoc}`;
+}
+
+const lscmiUploadJobs = new Map();
+function pruneOldLscmiUploadJobs() {
+    const cutoff = Date.now() - 60 * 60 * 1000;
+    for (const [id, job] of lscmiUploadJobs.entries()) {
+        if (Number(job.createdAtMs || 0) < cutoff) {
+            lscmiUploadJobs.delete(id);
         }
+    }
+}
 
-        const cleanName = name.trim();
-        // Auto-lookup Apricot Consultation & Collateral context for this participant
-        const consultCtx = getParticipantConsultationLscmiContext(cleanName);
-        if (consultCtx && consultCtx.center && (!req.body.participantLocation || req.body.participantLocation === 'Unknown')) {
-            location = consultCtx.center;
-        }
+async function runManualInterviewProcessing({
+    cleanName,
+    canonicalLocation,
+    clientId,
+    transcriptText: initialTranscript = '',
+    consultCtx = null,
+    uploadedFile = null,
+    actorName = 'Turn90 Staff',
+    onProgress = null
+}) {
+    const reportProgress = (percent, message) => {
+        try {
+            if (typeof onProgress === 'function') onProgress({ percent, message });
+        } catch (_) {}
+    };
 
-        const safeName = cleanName.replace(/[^a-zA-Z0-9]/g, '_');
-        const clientId = `${safeName}_${location}`;
+    let transcriptText = String(initialTranscript || '');
+    let results = null;
+    const { metaBySlug } = computeParticipantMetaMap();
+    const slug = resolveCanonicalSlug(cleanName);
+    const alreadyKnownMeta = metaBySlug.get(slug) || null;
 
-        // We no longer save the raw audio buffer to disk to prevent ENOSPC disk exhaustion on Render.
-        // It is streamed directly to Gemini in runPhase1WithAudio instead.
-
-        let results = null;
-
-        // If audio recording was uploaded, transcribe and score directly via Gemini Audio LLM
-        if (req.file && req.file.buffer && getGeminiApiKey()) {
-            console.log(`Processing uploaded audio interview for ${cleanName} with Gemini (Consultation Collateral Linked: ${!!consultCtx})...`);
+    try {
+        if (uploadedFile && uploadedFile.path) {
+            if (!getGeminiApiKey()) {
+                throw new Error('GEMINI_API_KEY is not configured; cannot transcribe uploaded audio recording.');
+            }
+            const audioBuffer = fs.readFileSync(uploadedFile.path);
+            const resolvedMime = normalizeAudioMimeType(uploadedFile.mimetype, uploadedFile.originalname);
+            console.log(`Processing uploaded audio interview for ${cleanName} (${canonicalLocation}, ${resolvedMime}, ${(audioBuffer.length / (1024 * 1024)).toFixed(2)} MB, Consultation Collateral Linked: ${!!consultCtx})...`);
             try {
-                const collateralNotes = [transcriptText, consultCtx?.collateralPromptText || ''].filter(Boolean).join('\n\n');
                 results = await runPhase1WithAudio(
-                    req.file.buffer, 
-                    req.file.mimetype || 'audio/webm', 
-                    cleanName, 
-                    location, 
-                    collateralNotes
+                    audioBuffer,
+                    resolvedMime,
+                    cleanName,
+                    canonicalLocation,
+                    transcriptText,
+                    '',
+                    consultCtx?.collateralPromptText || '',
+                    onProgress
                 );
 
-                if (results.transcript && results.transcript.trim()) {
+                if (results && results.transcript && results.transcript.trim()) {
                     transcriptText = results.transcript;
                 }
                 const transcriptPath = path.join(dataDir, `${clientId}_transcript.txt`);
@@ -3317,26 +3392,26 @@ app.post('/api/interviews/manual-entry', memoryUpload.single('audio'), async (re
 
                 const guidePath = path.join(dataDir, `${clientId}_interview_guide.md`);
                 const draftPath = path.join(dataDir, `${clientId}_draft_scoring_form.md`);
-                
+
                 fs.writeFileSync(guidePath, results.interview_guide);
                 fs.writeFileSync(draftPath, results.draft_scoring_form);
 
-                convertSingleMdToPdf(guidePath, guidePath.replace(/\.md$/, '.pdf'));
-                convertSingleMdToPdf(draftPath, draftPath.replace(/\.md$/, '.pdf'));
-                convertSingleMdToDocx(guidePath, guidePath.replace(/\.md$/, '.docx'));
-                convertSingleMdToDocx(draftPath, draftPath.replace(/\.md$/, '.docx'));
+                await Promise.resolve(convertSingleMdToPdf(guidePath, guidePath.replace(/\.md$/, '.pdf')));
+                await Promise.resolve(convertSingleMdToPdf(draftPath, draftPath.replace(/\.md$/, '.pdf')));
+                await Promise.resolve(convertSingleMdToDocx(guidePath, guidePath.replace(/\.md$/, '.docx')));
+                await Promise.resolve(convertSingleMdToDocx(draftPath, draftPath.replace(/\.md$/, '.docx')));
             } catch (audioLlmErr) {
                 console.error('Gemini audio interview processing error:', audioLlmErr);
                 fs.writeFileSync(path.join(dataDir, `${clientId}_error.txt`), `Failed: ${audioLlmErr.message}`);
                 throw new Error(`Audio processing error: ${audioLlmErr.message}`);
             }
         } else if (getGeminiApiKey()) {
-            // Text-only transcript or Consultation-driven assessment submitted
+            reportProgress(45, 'Processing transcript and generating 158-item LS/CMI guide & draft scoring...');
             if (!transcriptText || !transcriptText.trim()) {
                 if (consultCtx && consultCtx.collateralPromptText) {
                     transcriptText = consultCtx.collateralPromptText;
                 } else {
-                    transcriptText = `Assessment interview conducted with ${cleanName} at Turn90 ${location} center. Participant discussed employment history, education, family/support networks, legal background, and personal goals for stability.`;
+                    transcriptText = `Assessment interview conducted with ${cleanName} at Turn90 ${canonicalLocation} center. Participant discussed employment history, education, family/support networks, legal background, and personal goals for stability.`;
                 }
             } else if (consultCtx && consultCtx.collateralPromptText && !transcriptText.includes('APRICOT REENTRY CONSULTATION')) {
                 transcriptText = `${transcriptText}\n\n${consultCtx.collateralPromptText}`;
@@ -3346,18 +3421,18 @@ app.post('/api/interviews/manual-entry', memoryUpload.single('audio'), async (re
             fs.writeFileSync(transcriptPath, transcriptText);
 
             try {
-                results = await runPhase1(transcriptText, cleanName, location, consultCtx?.collateralPromptText || '');
+                results = await runPhase1(transcriptText, cleanName, canonicalLocation, '', consultCtx?.collateralPromptText || '');
                 const guidePath = path.join(dataDir, `${clientId}_interview_guide.md`);
                 const draftPath = path.join(dataDir, `${clientId}_draft_scoring_form.md`);
-                
+
                 fs.writeFileSync(guidePath, results.interview_guide);
                 fs.writeFileSync(draftPath, results.draft_scoring_form);
 
-                convertSingleMdToPdf(guidePath, guidePath.replace(/\.md$/, '.pdf'));
-                convertSingleMdToPdf(draftPath, draftPath.replace(/\.md$/, '.pdf'));
-                convertSingleMdToDocx(guidePath, guidePath.replace(/\.md$/, '.docx'));
-                convertSingleMdToDocx(draftPath, draftPath.replace(/\.md$/, '.docx'));
-            } catch(llmErr) {
+                await Promise.resolve(convertSingleMdToPdf(guidePath, guidePath.replace(/\.md$/, '.pdf')));
+                await Promise.resolve(convertSingleMdToPdf(draftPath, draftPath.replace(/\.md$/, '.pdf')));
+                await Promise.resolve(convertSingleMdToDocx(guidePath, guidePath.replace(/\.md$/, '.docx')));
+                await Promise.resolve(convertSingleMdToDocx(draftPath, draftPath.replace(/\.md$/, '.docx')));
+            } catch (llmErr) {
                 console.error('LLM Phase 1 generation failed:', llmErr);
                 fs.writeFileSync(path.join(dataDir, `${clientId}_error.txt`), `Failed: ${llmErr.message}`);
                 throw new Error(`AI Scoring draft generation failed: ${llmErr.message}`);
@@ -3366,14 +3441,13 @@ app.post('/api/interviews/manual-entry', memoryUpload.single('audio'), async (re
             if (!transcriptText || !transcriptText.trim()) {
                 transcriptText = (consultCtx && consultCtx.collateralPromptText)
                     ? consultCtx.collateralPromptText
-                    : `Assessment interview conducted with ${cleanName} at Turn90 ${location} center.`;
+                    : `Assessment interview conducted with ${cleanName} at Turn90 ${canonicalLocation} center.`;
             }
             fs.writeFileSync(path.join(dataDir, `${clientId}_transcript.txt`), transcriptText);
         }
 
-        // Sync manual entry artifacts into participant folder & log history
+        reportProgress(95, 'Saving files to participant folder and refreshing workspace...');
         try {
-            const slug = resolveCanonicalSlug(cleanName);
             const pDir = path.join(dataDir, 'participants', slug);
             if (!fs.existsSync(pDir)) fs.mkdirSync(pDir, { recursive: true });
             for (const extSuf of ['_transcript.txt', '_interview_guide.md', '_interview_guide.pdf', '_interview_guide.docx', '_draft_scoring_form.md', '_draft_scoring_form.pdf', '_draft_scoring_form.docx']) {
@@ -3385,27 +3459,205 @@ app.post('/api/interviews/manual-entry', memoryUpload.single('audio'), async (re
             if (transcriptText) {
                 fs.writeFileSync(path.join(pDir, 'lscmi_transcript.txt'), transcriptText);
             }
+            if (!alreadyKnownMeta) {
+                const existingBasic = db.prepare('SELECT participant_key FROM participant_basic_info WHERE participant_key = ?').get(slug);
+                if (!existingBasic) {
+                    const inferredTrack = canonicalLocation === 'Reentry Navigation'
+                        ? 'reentry_nav'
+                        : (canonicalLocation === 'Prison Program' ? 'prison_program' : 'first_shift');
+                    db.prepare(`
+                        INSERT OR IGNORE INTO participant_basic_info (
+                            participant_key, full_name, state, assigned_program_manager, attached_centers_json, primary_center, track, status, updated_by, updated_at
+                        ) VALUES (?, ?, 'SC', ?, ?, ?, ?, 'active', ?, CURRENT_TIMESTAMP)
+                    `).run(
+                        slug,
+                        cleanName,
+                        actorName && !/^turn90 staff$/i.test(actorName) ? actorName : 'Unassigned',
+                        JSON.stringify([canonicalLocation]),
+                        canonicalLocation,
+                        inferredTrack,
+                        actorName || 'Turn90 Staff'
+                    );
+                }
+            }
             appendParticipantHistoryEvent(cleanName, {
                 category: 'intake_interview',
-                action: results ? 'Intake Interview & Draft Generated' : 'Intake Transcript Saved',
-                summary: `Manual/uploaded intake saved for ${cleanName} (${location}).`,
-                filename: `${clientId}_transcript.txt`,
-                actor: 'Turn90 Staff'
+                action: uploadedFile
+                    ? (results ? 'Uploaded Audio Recording & AI Draft Generated' : 'Uploaded Audio Saved')
+                    : (results ? 'Intake Interview & Draft Generated' : 'Intake Transcript Saved'),
+                summary: `LS/CMI ${uploadedFile ? 'audio recording' : 'entry'} saved for ${cleanName} (${canonicalLocation}).`,
+                filename: results ? `${clientId}_draft_scoring_form.md` : `${clientId}_transcript.txt`,
+                actor: actorName || 'Turn90 Staff'
             });
             invalidateFolderIndexCache();
-        } catch (syncErr) {}
+            syncAllParticipantFolders({ force: true });
+            invalidateWorkspaceCaches();
+        } catch (syncErr) {
+            console.warn('[Manual Entry Sync] Warning:', syncErr.message);
+        }
 
-        res.json({
+        return {
             success: true,
             clientId,
             cleanName,
+            location: canonicalLocation,
+            participantKey: slug,
             hasDraft: !!results,
             consultationLinked: !!consultCtx,
-            message: results 
-                ? `Interview and Phase 1 Draft Scoring Form created for ${cleanName}${consultCtx ? ' (with Apricot Consultation collateral linked)' : ''}.` 
-                : `Interview saved for ${cleanName}. Ready for AI scoring.`
+            message: results
+                ? `LS/CMI recording and Phase 1 Draft Scoring Form saved for ${cleanName} (${canonicalLocation})${consultCtx ? ' (with Apricot Consultation collateral linked)' : ''}.`
+                : `LS/CMI entry saved for ${cleanName} (${canonicalLocation}). Ready for AI scoring.`
+        };
+    } finally {
+        safeUnlinkTempFile(uploadedFile && uploadedFile.path);
+    }
+}
+
+app.get('/api/interviews/upload-jobs/:jobId', (req, res) => {
+    pruneOldLscmiUploadJobs();
+    const job = lscmiUploadJobs.get(req.params.jobId);
+    if (!job) {
+        return res.status(404).json({ error: 'Upload job not found or expired.' });
+    }
+    return res.json({
+        jobId: job.jobId,
+        status: job.status,
+        percent: job.percent,
+        message: job.message,
+        clientId: job.clientId,
+        cleanName: job.cleanName,
+        location: job.location,
+        participantKey: job.participantKey,
+        result: job.result || null,
+        error: job.error || null,
+        updatedAt: job.updatedAt
+    });
+});
+
+app.post('/api/interviews/manual-entry', handleLscmiAudioUpload, async (req, res) => {
+    try {
+        const optionalUser = tryAttachOptionalUser(req);
+        const name = req.body.participantName;
+        const transcriptText = req.body.transcript || '';
+
+        if (!name || !String(name).trim()) {
+            safeUnlinkTempFile(req.file && req.file.path);
+            return res.status(400).json({ error: 'Participant name is required.' });
+        }
+
+        const cleanName = String(name).trim();
+        const consultCtx = getParticipantConsultationLscmiContext(cleanName);
+
+        let canonicalLocation = normalizeCenterName(req.body.participantLocation) || '';
+        if (!canonicalLocation && consultCtx && consultCtx.center) {
+            canonicalLocation = normalizeCenterName(consultCtx.center) || '';
+        }
+        if (!canonicalLocation && optionalUser && !isAdminUser(optionalUser) && optionalUser.assigned_center) {
+            canonicalLocation = normalizeCenterName(optionalUser.assigned_center) || '';
+        }
+        if (!canonicalLocation) canonicalLocation = 'Charleston';
+
+        if (optionalUser && !isAdminUser(optionalUser) && !canUserAccessCenters(optionalUser, [canonicalLocation])) {
+            safeUnlinkTempFile(req.file && req.file.path);
+            return res.status(403).json({
+                error: `Your account is scoped to ${getAllowedCentersForUser(optionalUser).join(', ')}. You cannot upload an LS/CMI for ${canonicalLocation}.`
+            });
+        }
+
+        if (req.file && Number(req.file.size || 0) < 100) {
+            safeUnlinkTempFile(req.file.path);
+            return res.status(400).json({ error: 'Uploaded audio file is empty or too small. Please choose a valid recording.' });
+        }
+
+        const hasAudio = Boolean(req.file && req.file.path);
+        const hasTranscript = Boolean(String(transcriptText).trim());
+        const hasCollateral = Boolean(consultCtx && consultCtx.collateralPromptText);
+        if (!hasAudio && !hasTranscript && !hasCollateral) {
+            return res.status(400).json({ error: 'Please attach an audio recording or provide an interview transcript/notes.' });
+        }
+
+        const clientId = buildSafeLscmiClientId(cleanName, canonicalLocation);
+        const slug = resolveCanonicalSlug(cleanName);
+        const actorName = (optionalUser && optionalUser.name) || 'Turn90 Staff';
+        const uploadedFile = req.file ? {
+            path: req.file.path,
+            mimetype: req.file.mimetype,
+            originalname: req.file.originalname,
+            size: req.file.size
+        } : null;
+
+        if (String(req.body.asyncMode || '') === 'true') {
+            pruneOldLscmiUploadJobs();
+            const jobId = crypto.randomUUID();
+            const job = {
+                jobId,
+                status: 'processing',
+                percent: 36,
+                message: hasAudio
+                    ? 'Audio received. Preparing transcription & 158-item LS/CMI analysis...'
+                    : 'Transcript received. Generating LS/CMI guide & scoring...',
+                clientId,
+                cleanName,
+                location: canonicalLocation,
+                participantKey: slug,
+                result: null,
+                error: null,
+                createdAtMs: Date.now(),
+                updatedAt: new Date().toISOString()
+            };
+            lscmiUploadJobs.set(jobId, job);
+
+            res.status(202).json({
+                success: true,
+                async: true,
+                jobId,
+                clientId,
+                cleanName,
+                location: canonicalLocation,
+                participantKey: slug,
+                message: job.message
+            });
+
+            runManualInterviewProcessing({
+                cleanName,
+                canonicalLocation,
+                clientId,
+                transcriptText,
+                consultCtx,
+                uploadedFile,
+                actorName,
+                onProgress: ({ percent, message }) => {
+                    job.percent = percent;
+                    job.message = message;
+                    job.updatedAt = new Date().toISOString();
+                }
+            }).then((result) => {
+                job.status = 'completed';
+                job.percent = 100;
+                job.message = result.message;
+                job.result = result;
+                job.updatedAt = new Date().toISOString();
+            }).catch((err) => {
+                job.status = 'failed';
+                job.error = err.message || 'Audio processing failed.';
+                job.message = job.error;
+                job.updatedAt = new Date().toISOString();
+            });
+            return;
+        }
+
+        const result = await runManualInterviewProcessing({
+            cleanName,
+            canonicalLocation,
+            clientId,
+            transcriptText,
+            consultCtx,
+            uploadedFile,
+            actorName
         });
-    } catch(err) {
+        return res.json(result);
+    } catch (err) {
+        safeUnlinkTempFile(req.file && req.file.path);
         console.error('Manual interview entry error:', err);
         res.status(500).json({ error: 'Failed to process interview entry: ' + err.message });
     }
@@ -3426,7 +3678,11 @@ app.post('/api/interviews/generate-draft', async (req, res) => {
         const cleanParts = String(clientId).replace(/^\d+_+/, '').split('_');
         let center = 'Charleston';
         let derivedName = cleanParts.join(' ');
-        if (['Charleston', 'Columbia', 'Spartanburg'].includes(cleanParts[cleanParts.length - 1])) {
+        const lastTwo = cleanParts.slice(-2).join('_');
+        if (['Reentry_Navigation', 'Prison_Program'].includes(lastTwo)) {
+            center = lastTwo.replace(/_/g, ' ');
+            derivedName = cleanParts.slice(0, -2).join(' ');
+        } else if (['Charleston', 'Columbia', 'Spartanburg'].includes(cleanParts[cleanParts.length - 1])) {
             center = cleanParts[cleanParts.length - 1];
             derivedName = cleanParts.slice(0, -1).join(' ');
         }
@@ -5811,6 +6067,7 @@ app.post('/api/upload-audio', memoryUpload.single('audio'), async (req, res) => 
                         actor: 'Turn90 AI Scorer'
                     });
                     syncAllParticipantFolders({ force: true });
+                    invalidateWorkspaceCaches();
                 } catch (syncErr) { /* ignore */ }
                 console.log(`LLM Phase 1 finished for ${name}. Pending review.`);
             } catch (llmErr) {

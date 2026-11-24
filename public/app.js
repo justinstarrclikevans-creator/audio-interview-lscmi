@@ -90,6 +90,7 @@ function endImpersonation() {
 
 document.addEventListener('DOMContentLoaded', async () => {
     checkImpersonation();
+    bindManualInterviewModalEvents();
     loadInterviewQuestions();
     const token = localStorage.getItem('fs_token');
     if (token) {
@@ -3464,7 +3465,7 @@ async function handleSelectConsultationCandidate(mode, selectedName) {
     if (nameInput) nameInput.value = selectedName;
 
     const locSelect = document.getElementById(locSelectId);
-    if (locSelect && center && ['Charleston', 'Columbia', 'Spartanburg'].includes(center)) {
+    if (locSelect && center && ['Charleston', 'Columbia', 'Spartanburg', 'Reentry Navigation', 'Prison Program'].includes(center)) {
         locSelect.value = center;
     }
 
@@ -3506,7 +3507,7 @@ async function loadInterviewConsultationSummary(mode, queryName) {
 
         const locSelectId = mode === 'live' ? 'live-interview-location' : 'man-interview-location';
         const locSelect = document.getElementById(locSelectId);
-        if (locSelect && ctx.center && ['Charleston', 'Columbia', 'Spartanburg'].includes(ctx.center)) {
+        if (locSelect && ctx.center && ['Charleston', 'Columbia', 'Spartanburg', 'Reentry Navigation', 'Prison Program'].includes(ctx.center)) {
             locSelect.value = ctx.center;
         }
 
@@ -3588,64 +3589,389 @@ function insertConsultationCollateralIntoManualBox() {
     }
 }
 
-function openManualInterviewModal() {
-    document.getElementById('form-manual-interview').reset();
-    document.getElementById('man-interview-status').innerText = '';
+const MAX_LSCMI_UPLOAD_BYTES = 150 * 1024 * 1024;
+const VALID_LSCMI_CENTERS = ['Charleston', 'Columbia', 'Spartanburg', 'Reentry Navigation', 'Prison Program'];
+let manualAudioPreviewUrl = null;
+
+function formatLscmiUploadBytes(bytes) {
+    const n = Number(bytes || 0);
+    if (n >= 1024 * 1024) return `${(n / (1024 * 1024)).toFixed(1)} MB`;
+    if (n >= 1024) return `${Math.round(n / 1024)} KB`;
+    return `${n} bytes`;
+}
+
+function clearManualAudioPreview() {
+    const preview = document.getElementById('man-audio-preview');
+    const meta = document.getElementById('man-audio-file-meta');
+    if (preview) {
+        try { preview.pause(); } catch (_) {}
+        preview.removeAttribute('src');
+        preview.load();
+        preview.classList.add('hidden');
+    }
+    if (manualAudioPreviewUrl) {
+        try { URL.revokeObjectURL(manualAudioPreviewUrl); } catch (_) {}
+        manualAudioPreviewUrl = null;
+    }
+    if (meta) {
+        meta.textContent = '';
+        meta.classList.remove('is-error');
+        meta.classList.add('hidden');
+    }
+}
+
+function closeManualInterviewModal() {
+    clearManualAudioPreview();
+    closeModal('modal-manual-interview');
+}
+
+function handleManualAudioFileChange() {
+    const audioInput = document.getElementById('man-interview-audio');
+    const meta = document.getElementById('man-audio-file-meta');
+    const preview = document.getElementById('man-audio-preview');
+    const statusBox = document.getElementById('man-interview-status');
+    if (!audioInput) return;
+
+    audioInput.removeAttribute('aria-invalid');
+    clearManualAudioPreview();
+
+    const file = audioInput.files && audioInput.files[0];
+    if (!file) return;
+
+    const tooLarge = file.size > MAX_LSCMI_UPLOAD_BYTES;
+    if (meta) {
+        meta.textContent = tooLarge
+            ? `⚠️ ${file.name} (${formatLscmiUploadBytes(file.size)}) exceeds the 150 MB limit. Compress to MP3 or M4A.`
+            : `🎵 Selected: ${file.name} (${formatLscmiUploadBytes(file.size)})`;
+        meta.classList.toggle('is-error', tooLarge);
+        meta.classList.remove('hidden');
+    }
+
+    if (tooLarge) {
+        audioInput.setAttribute('aria-invalid', 'true');
+        if (statusBox) statusBox.textContent = 'Selected file exceeds the 150 MB upload limit.';
+        return;
+    }
+    if (statusBox && /attach an ls\/cmi audio recording|150 MB/i.test(statusBox.textContent || '')) {
+        statusBox.textContent = '';
+    }
+
+    const canPreview = (file.type && file.type.startsWith('audio/'))
+        || /\.(mp3|wav|m4a|webm|ogg|aac|flac)$/i.test(file.name || '');
+    if (preview && canPreview) {
+        try {
+            manualAudioPreviewUrl = URL.createObjectURL(file);
+            preview.src = manualAudioPreviewUrl;
+            preview.classList.remove('hidden');
+        } catch (_) {}
+    }
+}
+
+function bindManualInterviewModalEvents() {
+    const form = document.getElementById('form-manual-interview');
+    if (!form || form.dataset.bound === 'true') return;
+    form.dataset.bound = 'true';
+
+    form.addEventListener('submit', handleManualInterviewSubmit);
+
+    const closeBtn = document.getElementById('btn-man-interview-close');
+    if (closeBtn) closeBtn.addEventListener('click', closeManualInterviewModal);
+
+    const cancelBtn = document.getElementById('btn-man-interview-cancel');
+    if (cancelBtn) cancelBtn.addEventListener('click', closeManualInterviewModal);
+
+    const candidateSelect = document.getElementById('man-interview-candidate-select');
+    if (candidateSelect) {
+        candidateSelect.addEventListener('change', (e) => handleSelectConsultationCandidate('manual', e.target.value));
+    }
+
+    const nameInput = document.getElementById('man-interview-name');
+    if (nameInput) {
+        nameInput.addEventListener('input', () => {
+            nameInput.setCustomValidity('');
+            nameInput.removeAttribute('aria-invalid');
+        });
+        nameInput.addEventListener('change', () => {
+            if (localStorage.getItem('fs_token')) {
+                loadInterviewConsultationSummary('manual', nameInput.value);
+            }
+        });
+    }
+
+    const audioInput = document.getElementById('man-interview-audio');
+    if (audioInput) {
+        audioInput.addEventListener('change', handleManualAudioFileChange);
+    }
+
+    const insertBtn = document.getElementById('btn-insert-consult-collateral');
+    if (insertBtn) {
+        insertBtn.addEventListener('click', insertConsultationCollateralIntoManualBox);
+    }
+
+    const modal = document.getElementById('modal-manual-interview');
+    if (modal) {
+        modal.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const submitBtn = document.getElementById('btn-man-interview-submit');
+                if (!submitBtn || !submitBtn.disabled) {
+                    closeManualInterviewModal();
+                }
+            }
+        });
+    }
+}
+
+function openManualInterviewModal(prefillName = '', prefillCenter = '') {
+    bindManualInterviewModalEvents();
+
+    const form = document.getElementById('form-manual-interview');
+    if (form) form.reset();
+
+    clearManualAudioPreview();
+
+    const nameInput = document.getElementById('man-interview-name');
+    if (nameInput) {
+        nameInput.setCustomValidity('');
+        nameInput.removeAttribute('aria-invalid');
+        nameInput.value = prefillName ? String(prefillName).trim() : '';
+    }
+
+    const audioInput = document.getElementById('man-interview-audio');
+    if (audioInput) {
+        audioInput.setCustomValidity('');
+        audioInput.removeAttribute('aria-invalid');
+    }
+
+    const statusBox = document.getElementById('man-interview-status');
+    if (statusBox) statusBox.textContent = '';
+
+    const progressWrap = document.getElementById('man-upload-progress-wrap');
+    const progressEl = document.getElementById('man-upload-progress');
+    const progressLabel = document.getElementById('man-upload-progress-label');
+    if (progressWrap) progressWrap.classList.add('hidden');
+    if (progressEl) progressEl.value = 0;
+    if (progressLabel) progressLabel.textContent = 'Preparing upload...';
+
+    const transcriptDetails = document.getElementById('man-transcript-details');
+    if (transcriptDetails) transcriptDetails.open = false;
+
     const sumBox = document.getElementById('man-consultation-summary-box');
     if (sumBox) sumBox.classList.add('hidden');
     const insertBtn = document.getElementById('btn-insert-consult-collateral');
     if (insertBtn) insertBtn.classList.add('hidden');
+
     const btn = document.getElementById('btn-man-interview-submit');
     if (btn) {
         btn.disabled = false;
-        btn.innerText = '🚀 Generate AI Assessment & Scoring';
+        btn.textContent = '📤 Upload & Generate LS/CMI Scoring';
     }
-    populateConsultationCandidateSelects();
+
+    const hasToken = !!localStorage.getItem('fs_token');
+    const pickerWrap = document.getElementById('man-candidate-picker-wrap');
+    const candidateSelect = document.getElementById('man-interview-candidate-select');
+    if (!hasToken) {
+        activeConsultationCollateralCache = null;
+        if (pickerWrap) pickerWrap.classList.add('hidden');
+        if (candidateSelect) {
+            candidateSelect.innerHTML = '<option value="">-- Sign in to link Consultation records --</option>';
+        }
+    } else {
+        if (pickerWrap) pickerWrap.classList.remove('hidden');
+        populateConsultationCandidateSelects();
+    }
+
+    const locSelect = document.getElementById('man-interview-location');
+    if (locSelect) {
+        const userCenter = currentUser && (currentUser.assigned_center || currentUser.location);
+        const preferred = prefillCenter || userCenter || 'Charleston';
+        if (VALID_LSCMI_CENTERS.includes(preferred)) {
+            locSelect.value = preferred;
+        }
+    }
+
+    if (hasToken && prefillName && String(prefillName).trim().length >= 3) {
+        loadInterviewConsultationSummary('manual', String(prefillName).trim());
+    }
+
     openModal('modal-manual-interview');
+
+    requestAnimationFrame(() => {
+        if (prefillName && audioInput) {
+            audioInput.focus();
+        } else if (nameInput) {
+            nameInput.focus();
+        }
+    });
+}
+window.openManualInterviewModal = openManualInterviewModal;
+
+function uploadManualInterviewWithXhr(formData, token, onUploadPercent) {
+    return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/api/interviews/manual-entry');
+        if (token) {
+            xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+        }
+        xhr.upload.onprogress = (evt) => {
+            if (evt.lengthComputable && typeof onUploadPercent === 'function') {
+                const pct = Math.min(35, Math.max(1, Math.round((evt.loaded / evt.total) * 35)));
+                onUploadPercent(pct, Math.round((evt.loaded / evt.total) * 100));
+            }
+        };
+        xhr.onload = () => {
+            let data = {};
+            try {
+                data = xhr.responseText ? JSON.parse(xhr.responseText) : {};
+            } catch (_) {
+                data = { error: `Unexpected server response (HTTP ${xhr.status}).` };
+            }
+            if (xhr.status >= 200 && xhr.status < 300) {
+                resolve(data);
+            } else {
+                reject(new Error(data.error || `Upload failed (HTTP ${xhr.status}).`));
+            }
+        };
+        xhr.onerror = () => reject(new Error('Network error while uploading LS/CMI recording.'));
+        xhr.onabort = () => reject(new Error('Upload was cancelled.'));
+        xhr.send(formData);
+    });
+}
+
+async function pollManualInterviewUploadJob(jobId, token, onJobUpdate) {
+    const maxPolls = 360; // Up to 15 minutes at 2.5s interval
+    for (let i = 0; i < maxPolls; i++) {
+        await new Promise((r) => setTimeout(r, 2500));
+        const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+        const res = await fetch(`/api/interviews/upload-jobs/${encodeURIComponent(jobId)}`, { headers });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+            throw new Error(data.error || `Lost track of upload job (HTTP ${res.status}).`);
+        }
+        if (typeof onJobUpdate === 'function') onJobUpdate(data);
+        if (data.status === 'completed') {
+            return data.result || data;
+        }
+        if (data.status === 'failed') {
+            throw new Error(data.error || data.message || 'Audio processing failed.');
+        }
+    }
+    throw new Error('Processing timed out while waiting for AI scoring. Check the participant folder in a moment.');
 }
 
 async function handleManualInterviewSubmit(e) {
     e.preventDefault();
-    const name = document.getElementById('man-interview-name').value.trim();
-    const location = document.getElementById('man-interview-location').value;
+    const nameInput = document.getElementById('man-interview-name');
+    const locSelect = document.getElementById('man-interview-location');
     const audioInput = document.getElementById('man-interview-audio');
-    const transcript = document.getElementById('man-interview-transcript').value.trim();
+    const transcriptEl = document.getElementById('man-interview-transcript');
     const btn = document.getElementById('btn-man-interview-submit');
     const statusBox = document.getElementById('man-interview-status');
+    const progressWrap = document.getElementById('man-upload-progress-wrap');
+    const progressEl = document.getElementById('man-upload-progress');
+    const progressLabel = document.getElementById('man-upload-progress-label');
 
-    if (!name) return alert('Please enter the participant name.');
+    const name = nameInput ? nameInput.value.trim() : '';
+    const location = locSelect ? locSelect.value : 'Charleston';
+    const transcript = transcriptEl ? transcriptEl.value.trim() : '';
+    const hasAudio = Boolean(audioInput && audioInput.files && audioInput.files.length > 0);
+    const hasCollateral = Boolean(activeConsultationCollateralCache && activeConsultationCollateralCache.collateralPromptText);
 
+    if (!name) {
+        if (nameInput) {
+            nameInput.setCustomValidity('Please enter the participant full name.');
+            nameInput.setAttribute('aria-invalid', 'true');
+            nameInput.focus();
+        }
+        if (statusBox) statusBox.textContent = 'Please enter the participant full name.';
+        return;
+    }
+
+    if (!hasAudio && !transcript && !hasCollateral) {
+        if (audioInput) {
+            audioInput.setAttribute('aria-invalid', 'true');
+            audioInput.focus();
+        }
+        if (statusBox) {
+            statusBox.textContent = 'Please attach an LS/CMI audio recording or open the optional transcript section to paste notes.';
+        }
+        return;
+    }
+
+    if (hasAudio && audioInput.files[0].size > MAX_LSCMI_UPLOAD_BYTES) {
+        if (audioInput) {
+            audioInput.setAttribute('aria-invalid', 'true');
+            audioInput.focus();
+        }
+        if (statusBox) statusBox.textContent = 'Selected file exceeds the 150 MB limit. Please compress it to MP3 or M4A.';
+        return;
+    }
+
+    const token = localStorage.getItem('fs_token') || '';
     const formData = new FormData();
     formData.append('participantName', name);
     formData.append('participantLocation', location);
     formData.append('transcript', transcript);
-    if (audioInput.files && audioInput.files.length > 0) {
+    formData.append('asyncMode', hasAudio ? 'true' : 'false');
+    if (hasAudio) {
         formData.append('audio', audioInput.files[0]);
     }
 
-    const hasAudio = audioInput.files && audioInput.files.length > 0;
+    const setProgress = (pct, msg) => {
+        if (progressWrap) progressWrap.classList.remove('hidden');
+        if (progressEl && typeof pct === 'number') progressEl.value = Math.min(100, Math.max(0, pct));
+        if (progressLabel && msg) progressLabel.textContent = msg;
+        if (statusBox && msg) statusBox.textContent = msg;
+    };
+
     btn.disabled = true;
-    btn.innerText = hasAudio ? '🎙️ Transcribing Audio & Generating AI Scoring...' : '⏳ Processing Interview & Generating AI Scoring...';
-    statusBox.innerText = hasAudio 
-        ? 'Uploading audio to Gemini, generating verbatim transcript, completing 158-item LS/CMI guide, and calculating draft scores (this may take 25-45 seconds)...' 
-        : 'Extracting responses, formatting LS/CMI interview guide, and generating draft scores...';
+    btn.textContent = hasAudio ? '🎙️ Uploading & Processing LS/CMI Audio...' : '⏳ Generating AI LS/CMI Scoring...';
+    setProgress(hasAudio ? 2 : 35, hasAudio
+        ? 'Uploading recording and preparing verbatim AI transcription...'
+        : 'Processing transcript and generating 158-item LS/CMI guide & draft scoring...');
 
     try {
-        const res = await fetch('/api/interviews/manual-entry', {
-            method: 'POST',
-            body: formData
+        let data = await uploadManualInterviewWithXhr(formData, token, (barPct, transferPct) => {
+            if (hasAudio) {
+                setProgress(barPct, transferPct < 100
+                    ? `Uploading audio recording (${transferPct}%)...`
+                    : 'Upload complete. Starting Gemini transcription & 158-item LS/CMI analysis...');
+            }
         });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Upload failed.');
 
-        alert(data.message || `Interview saved for ${name}!`);
-        closeModal('modal-manual-interview');
-        loadPmDrafts();
-    } catch(err) {
-        alert('Submission failed: ' + err.message);
+        if (data && data.async && data.jobId) {
+            setProgress(38, data.message || 'Audio uploaded. Transcribing recording verbatim & generating 158-item LS/CMI guide...');
+            data = await pollManualInterviewUploadJob(data.jobId, token, (job) => {
+                setProgress(Number(job.percent || 50), job.message || 'Processing LS/CMI recording...');
+            });
+        }
+
+        const successMsg = (data && data.message) || `LS/CMI recording processed and saved for ${name}!`;
+        setProgress(100, successMsg);
+        closeManualInterviewModal();
+
+        if (token) {
+            if (typeof window.showWorkspaceStatus === 'function') {
+                window.showWorkspaceStatus(successMsg, false);
+            }
+            if (typeof window.refreshActiveParticipantFileIfOpen === 'function') {
+                await window.refreshActiveParticipantFileIfOpen({ openLscmi: true });
+            }
+            if (typeof window.initWorkspacePortal === 'function') {
+                window.initWorkspacePortal(true);
+            }
+            if (typeof loadPmDrafts === 'function') loadPmDrafts();
+        } else {
+            const loginStatus = document.getElementById('login-upload-status');
+            if (loginStatus) {
+                loginStatus.textContent = successMsg;
+                loginStatus.classList.remove('hidden');
+            }
+        }
+    } catch (err) {
+        if (progressWrap) progressWrap.classList.add('hidden');
         btn.disabled = false;
-        btn.innerText = '🚀 Retry AI Assessment & Scoring';
-        statusBox.innerText = 'Error: ' + err.message;
+        btn.textContent = '📤 Retry Upload & Scoring';
+        if (statusBox) statusBox.textContent = `Error: ${err.message}`;
     }
 }
 

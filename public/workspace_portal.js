@@ -103,6 +103,8 @@
         }, 6500);
     }
 
+    window.showWorkspaceStatus = showGlobalStatus;
+
     function hideToolsPopover() {
         const pop = document.getElementById('wp-tools-popover');
         if (!pop) return;
@@ -282,10 +284,14 @@
         }
     };
 
-    window.refreshActiveParticipantFileIfOpen = function () {
+    window.refreshActiveParticipantFileIfOpen = async function (opts = {}) {
         const fileShell = document.getElementById('wp-participant-file-shell');
         if (state.activeFileSlug && fileShell && !fileShell.classList.contains('hidden')) {
-            window.openWorkspaceParticipantFile(state.activeFileSlug, { preserveScroll: true });
+            await window.openWorkspaceParticipantFile(state.activeFileSlug, { preserveScroll: true });
+            if (opts && opts.openLscmi) {
+                const lscmiDet = document.getElementById('wp-pf-lscmi');
+                if (lscmiDet) lscmiDet.open = true;
+            }
         }
     };
 
@@ -680,9 +686,15 @@
         const bcItems = bc.items || {};
         const hasChronic = bc.has_chronic_health_condition === 'yes';
 
-        const admin = isUserAdmin((typeof currentUser !== 'undefined' ? currentUser : null) || window.currentUser);
+        const activeUser = (typeof currentUser !== 'undefined' ? currentUser : null) || window.currentUser;
+        const admin = isUserAdmin(activeUser);
+        const userAssignedCenter = activeUser && (activeUser.assigned_center || activeUser.location);
+        const preferredUploadCenter = (!admin && userAssignedCenter && (file.centers || []).includes(userAssignedCenter))
+            ? userAssignedCenter
+            : (file.primary_center || (file.centers && file.centers[0]) || userAssignedCenter || 'Charleston');
         const lscmiIdEsc = esc(ls.lscmi_client_id || `${file.participant_key}_Charleston`).replace(/'/g, "\\'");
         const nameEsc = esc(file.name).replace(/'/g, "\\'");
+        const centerEsc = esc(preferredUploadCenter).replace(/'/g, "\\'");
         const primaryBriefMd = (docs.briefs && docs.briefs.find(f => f.ext === '.md')?.filename) || '';
         const primaryPlanMd = (docs.action_plans && docs.action_plans.find(f => f.ext === '.md')?.filename) || '';
         const primaryScoringMd = (docs.scoring_forms && (docs.scoring_forms.find(f => f.filename.includes('_final_scoring_form.md')) || docs.scoring_forms.find(f => f.ext === '.md'))?.filename) || '';
@@ -1032,7 +1044,11 @@
                     <summary>
                         <span class="wp-summary-title">4. LS/CMI (Brief, Action Plan &amp; Human-in-the-Loop)</span>
                         <span class="wp-summary-badge wp-summary-badge-purple">
-                            ${ls.lscmi_brief_md ? 'Brief On File' : 'No Brief'} • ${ls.action_plan_md ? 'Action Plan On File' : 'No Plan'}
+                            ${ls.lscmi_brief_md
+                                ? `Brief On File • ${ls.action_plan_md ? 'Action Plan On File' : 'No Plan'}`
+                                : (hasScoringOrDraft
+                                    ? `Phase 1 Draft Ready • ${ls.action_plan_md ? 'Action Plan On File' : 'Pending HITL'}`
+                                    : `No Brief • ${ls.action_plan_md ? 'Action Plan On File' : 'No Plan'}`)}
                         </span>
                     </summary>
                     <div class="wp-disclosure-body">
@@ -1045,9 +1061,22 @@
                                 ${hasScoringOrDraft ? `<button type="button" class="wp-btn wp-btn-sm" onclick="previewScoringWithGuide('${lscmiIdEsc}', '${nameEsc}')">⚖️ Dual Review: Scoring &amp; Guide</button>` : ''}
                                 ${hasTranscriptOrGuide ? `<button type="button" class="wp-btn wp-btn-sm" onclick="triggerGenerateAiDraft('${lscmiIdEsc}', '${nameEsc}')">${hasScoringOrDraft ? '🔄 Re-Score with AI' : '⚡ Generate AI Scoring Review'}</button>` : ''}
                                 ${!hasCrimHistory ? `<button type="button" class="wp-btn wp-btn-sm" onclick="quickGenerateCriminalHistory('${lscmiIdEsc}', '${nameEsc}')">⚖️ + Criminal History</button>` : ''}
+                                <button type="button" class="wp-btn wp-btn-sm" style="color: #1d4ed8; border-color: #93c5fd; background: #eff6ff;" onclick="openManualInterviewModal('${nameEsc}', '${centerEsc}')">📤 Upload LS/CMI Recording</button>
                                 <button type="button" class="wp-btn wp-btn-teal wp-btn-sm" onclick="openInterviewModal()">🎙️ Record New LS/CMI</button>
                             </div>
                         </div>
+
+                        ${(!ls.lscmi_brief_md && primaryScoringMd) ? `
+                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; background: #eff6ff; border: 1px solid #93c5fd; border-radius: 10px; padding: 12px 14px; margin-bottom: 14px;">
+                                <div style="font-size: 0.9rem; color: #1e3a8a; font-weight: 700;">
+                                    ✅ Phase 1 Draft Scoring Form is on file and ready for Phase 2 HITL Review &amp; Case Brief generation.
+                                </div>
+                                <div class="wp-actions-row">
+                                    <button type="button" class="wp-btn wp-btn-sm" onclick="previewDocument('${esc(primaryScoringMd).replace(/'/g, "\\'")}')">👁️ Preview Draft Scoring</button>
+                                    <button type="button" class="wp-btn wp-btn-primary wp-btn-sm" onclick="openSupervisorReviewModal('${lscmiIdEsc}', '${nameEsc}')">✍️ Open HITL Review</button>
+                                </div>
+                            </div>
+                        ` : ''}
 
                         <!-- LS/CMI Case Brief -->
                         <div style="border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px; margin-bottom: 14px; background: white;">
@@ -1402,6 +1431,20 @@
         if (loginRecBtn) {
             loginRecBtn.addEventListener('click', () => {
                 if (typeof window.openInterviewModal === 'function') window.openInterviewModal();
+            });
+        }
+
+        const loginUploadBtn = document.getElementById('btn-login-upload-lscmi');
+        if (loginUploadBtn) {
+            loginUploadBtn.addEventListener('click', () => {
+                if (typeof window.openManualInterviewModal === 'function') window.openManualInterviewModal();
+            });
+        }
+
+        const topUploadBtn = document.getElementById('btn-wp-upload-lscmi');
+        if (topUploadBtn) {
+            topUploadBtn.addEventListener('click', () => {
+                if (typeof window.openManualInterviewModal === 'function') window.openManualInterviewModal();
             });
         }
 

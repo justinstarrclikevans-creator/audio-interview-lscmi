@@ -898,7 +898,7 @@ function syncAllParticipantFolders({ force = false } = {}) {
         if (!rawName) return null;
         const cleanName = String(rawName)
             .replace(/^\d+_/, '')
-            .replace(/_(Charleston|Columbia|Spartanburg)$/i, '')
+            .replace(/_(Charleston|Columbia|Spartanburg|Reentry_Navigation|Prison_Program|Reentry Navigation|Prison Program)$/i, '')
             .replace(/_/g, ' ')
             .trim();
         if (!cleanName || cleanName.length < 2 || /^(Turn90|Supervisor|Charleston|Columbia|Spartanburg|Reentry|Jennifer Jeanquart|Jenn Jeanquart|Diyoung Dantzler|Terry Brooks|Justin Evans|Daisy Boynton|Terrence Brown|Terrance Brown|Test |Sample )/i.test(cleanName)) {

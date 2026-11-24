@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Turn90 Operations &amp; Case Management Portal</title>
     <link rel="stylesheet" href="style.css?v=1792000000005">
-    <link rel="stylesheet" href="workspace_portal.css?v=1792000000009">
+    <link rel="stylesheet" href="workspace_portal.css?v=1792000000010">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
@@ -133,9 +133,13 @@
                 <button type="button" id="btn-login-record-lscmi" class="wp-btn wp-btn-teal" style="width: 100%;">
                     🎙️ Record New LS/CMI Interview
                 </button>
+                <button type="button" id="btn-login-upload-lscmi" class="wp-btn" style="width: 100%; margin-top: 8px;">
+                    📤 Upload LS/CMI Recording
+                </button>
                 <p style="margin: 8px 0 0 0; font-size: 0.84rem; color: #475569; text-align: center;">
-                    Starting a live intake assessment? No login required.
+                    Starting a live intake or uploading a recorded LS/CMI interview? No login required.
                 </p>
+                <div id="login-upload-status" class="wp-status-banner hidden" role="status" aria-live="polite" style="margin-top: 10px;"></div>
 
                 <!-- Legacy hidden form elements preserved for compatibility -->
                 <div class="hidden" aria-hidden="true">
@@ -159,6 +163,7 @@
                     </div>
                     <div class="wp-actions-row">
                         <button type="button" id="btn-wp-refresh" class="wp-btn wp-btn-sm">🔄 Refresh</button>
+                        <button type="button" id="btn-wp-upload-lscmi" class="wp-btn wp-btn-sm">📤 Upload LS/CMI Recording</button>
                         <button type="button" id="btn-wp-record-lscmi" class="wp-btn wp-btn-teal wp-btn-sm">🎙️ Record New LS/CMI Interview</button>
                     </div>
                 </div>
@@ -2320,51 +2325,64 @@
         </div>
     </div>
 
-    <!-- Manual / External Interview Entry Modal (for Lawrence, Isiah, etc.) -->
-    <div id="modal-manual-interview" class="modal hidden">
+    <!-- Upload / Manual LS/CMI Intake Recording Modal -->
+    <div id="modal-manual-interview" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modal-manual-interview-title">
         <div class="modal-content modal-lg" style="max-width: 820px;">
             <div class="modal-header">
-                <h3>🎙️ Add / Import Intake Interview &amp; Consultation Collateral</h3>
-                <button class="modal-close" onclick="closeModal('modal-manual-interview')">&times;</button>
+                <h3 id="modal-manual-interview-title">📤 Upload LS/CMI Recording</h3>
+                <button type="button" id="btn-man-interview-close" class="modal-close" aria-label="Close upload dialog">&times;</button>
             </div>
-            <form id="form-manual-interview" onsubmit="handleManualInterviewSubmit(event)">
-                <div class="form-group" style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 10px 12px; border-radius: 8px; margin-bottom: 12px;">
-                    <label style="color: #1e40af; font-weight: 700;">📋 Quick-Link Apricot Consultation / First Shift Participant</label>
-                    <select id="man-interview-candidate-select" class="form-control" style="margin-top: 4px; font-size: 13px;" onchange="handleSelectConsultationCandidate('manual', this.value)">
+            <form id="form-manual-interview" method="POST" action="/api/interviews/manual-entry" aria-labelledby="modal-manual-interview-title" novalidate>
+                <div id="man-candidate-picker-wrap" class="form-group" style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 10px 12px; border-radius: 8px; margin-bottom: 12px;">
+                    <label for="man-interview-candidate-select" style="color: #1e40af; font-weight: 700;">📋 Quick-Link Apricot Consultation / Participant</label>
+                    <select id="man-interview-candidate-select" name="candidateQuickSelect" class="form-control" style="margin-top: 4px; font-size: 13px;">
                         <option value="">-- Select Participant to Auto-Load Consultation &amp; Case Notes --</option>
                     </select>
                 </div>
                 <div class="form-row" style="gap: 12px;">
                     <div class="form-group" style="flex: 2;">
-                        <label>Participant Full Name <span class="text-danger">*</span></label>
-                        <input type="text" id="man-interview-name" required placeholder="e.g. Carl Allen or Jayhova Freeman" class="form-control" onchange="loadInterviewConsultationSummary('manual', this.value)">
+                        <label for="man-interview-name">Participant Full Name <span class="text-danger" aria-hidden="true">*</span></label>
+                        <input type="text" id="man-interview-name" name="participantName" required autocomplete="name" enterkeyhint="next" placeholder="e.g. Carl Allen or Jayhova Freeman" class="form-control">
                     </div>
                     <div class="form-group" style="flex: 1;">
-                        <label>Turn90 Center Location</label>
-                        <select id="man-interview-location" class="form-control">
+                        <label for="man-interview-location">Turn90 Center Location</label>
+                        <select id="man-interview-location" name="participantLocation" class="form-control">
                             <option value="Charleston">Charleston</option>
                             <option value="Columbia">Columbia</option>
                             <option value="Spartanburg">Spartanburg</option>
+                            <option value="Reentry Navigation">Reentry Navigation</option>
+                            <option value="Prison Program">Prison Program</option>
                         </select>
                     </div>
                 </div>
                 <div id="man-consultation-summary-box" class="hidden" style="margin-top: 10px; margin-bottom: 10px; background: #f8fafc; border: 1.5px solid #93c5fd; border-radius: 8px; padding: 12px 14px; font-size: 12.5px;"></div>
                 <div class="form-group mt-3">
-                    <label>Interview Audio Recording (Optional)</label>
-                    <input type="file" id="man-interview-audio" accept="audio/*,.webm,.mp3,.m4a,.wav" class="form-control">
-                    <small class="text-slate" style="display: block; margin-top: 4px; font-size: 11px;">Attach audio recording if available (.webm, .mp3, .m4a, .wav). Any linked Apricot Consultation &amp; Case Notes will automatically be included as collateral verification.</small>
+                    <label for="man-interview-audio">LS/CMI Audio Recording <span class="text-slate" style="font-weight: 500;">(MP3, M4A, WAV, WebM, OGG, MP4 — up to 150 MB)</span></label>
+                    <input type="file" id="man-interview-audio" name="audio" accept="audio/*,video/mp4,video/webm,.webm,.mp3,.m4a,.wav,.ogg,.aac,.flac,.mp4,.mov,.3gp" class="form-control" aria-describedby="man-audio-help">
+                    <small id="man-audio-help" class="text-slate" style="display: block; margin-top: 4px; font-size: 12px;">Select a recorded LS/CMI interview from your phone, computer, or voice recorder. Turn90 will transcribe it verbatim, complete the 158-item LS/CMI interview guide, generate Phase 1 draft scoring, and enroll the participant's voice profile automatically.</small>
+                    <div id="man-audio-file-meta" class="wp-audio-file-meta hidden"></div>
+                    <audio id="man-audio-preview" controls class="wp-audio-preview hidden" aria-label="Selected LS/CMI recording preview"></audio>
                 </div>
-                <div class="form-group mt-3">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                        <label style="margin: 0;">Interview Transcript / Consultation Collateral Notes</label>
-                        <button type="button" id="btn-insert-consult-collateral" class="btn btn-outline hidden" style="padding: 2px 8px; font-size: 11px; color: #1d4ed8; border-color: #93c5fd; background: #eff6ff;" onclick="insertConsultationCollateralIntoManualBox()">📥 Insert Linked Apricot Consultation Notes</button>
+                <details id="man-transcript-details" class="wp-disclosure wp-subdisclosure" style="margin-top: 12px;">
+                    <summary><span class="wp-summary-title">Optional: Paste Transcript or Additional Notes</span></summary>
+                    <div class="wp-disclosure-body">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
+                                <label for="man-interview-transcript" style="margin: 0;">Interview Transcript / Consultation Collateral Notes</label>
+                                <button type="button" id="btn-insert-consult-collateral" class="btn btn-outline hidden" style="padding: 2px 8px; font-size: 11px; color: #1d4ed8; border-color: #93c5fd; background: #eff6ff;">📥 Insert Linked Apricot Consultation Notes</button>
+                            </div>
+                            <textarea id="man-interview-transcript" name="transcript" rows="6" class="form-control" placeholder="Optional when attaching an audio recording. Paste transcript text or leave blank to transcribe from the uploaded audio..."></textarea>
+                        </div>
                     </div>
-                    <textarea id="man-interview-transcript" rows="6" class="form-control" placeholder="Paste interview transcript or leave blank to score directly from linked Apricot Consultation &amp; Case Notes..."></textarea>
+                </details>
+                <div id="man-upload-progress-wrap" class="wp-upload-progress-wrap hidden">
+                    <div id="man-upload-progress-label" class="wp-upload-progress-label">Preparing upload...</div>
+                    <progress id="man-upload-progress" max="100" value="0" aria-labelledby="man-upload-progress-label" class="wp-upload-progress"></progress>
                 </div>
-                <div id="man-interview-status" class="mt-2 text-slate" style="font-size: 12px;"></div>
+                <div id="man-interview-status" class="mt-2 text-slate" role="status" aria-live="polite" style="font-size: 13px; font-weight: 600;"></div>
                 <div class="modal-footer mt-4">
-                    <button type="button" class="btn btn-outline" onclick="closeModal('modal-manual-interview')">Cancel</button>
-                    <button type="submit" id="btn-man-interview-submit" class="btn btn-primary">🚀 Generate AI Assessment & Scoring</button>
+                    <button type="button" id="btn-man-interview-cancel" class="btn btn-outline">Cancel</button>
+                    <button type="submit" id="btn-man-interview-submit" class="btn btn-primary">📤 Upload &amp; Generate LS/CMI Scoring</button>
                 </div>
             </form>
         </div>
@@ -3669,8 +3687,8 @@
         </div>
     </div>
 
-    <script src="app.js?v=1792000000009"></script>
-    <script src="workspace_portal.js?v=1792000000009"></script>
+    <script src="app.js?v=1792000000010"></script>
+    <script src="workspace_portal.js?v=1792000000010"></script>
 </body>
 </html>
 

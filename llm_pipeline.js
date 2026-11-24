@@ -824,14 +824,25 @@ Format requirements:
 }
 
 // Process Audio Uploads with High-Fidelity 2-Stage Gemini Pipeline
-async function runPhase1WithAudio(audioBuffer, mimeType, clientName, location, additionalNotes = "", unusedArg = "", explicitCollateral = "") {
+async function runPhase1WithAudio(audioBuffer, mimeType, clientName, location, additionalNotes = "", unusedArg = "", explicitCollateral = "", onProgress = null) {
     const apiKey = assertValidGeminiApiKey();
     const genAI = getPipelineGenAI();
+
+    const reportProgress = (percent, message) => {
+        try {
+            if (typeof onProgress === 'function') onProgress({ percent, message });
+        } catch (_) {}
+    };
+
+    const effectiveMime = (mimeType && mimeType !== 'application/octet-stream')
+        ? (mimeType === 'audio/x-m4a' ? 'audio/mp4' : mimeType)
+        : 'audio/webm';
 
     // Package audio: inline base64 if <= 20MB, or GoogleAIFileManager if > 20MB
     let audioPart;
     let uploadedFileName = null;
     try {
+        reportProgress(38, 'Uploading recording to AI transcription engine...');
         if (audioBuffer.length > 20 * 1024 * 1024) {
             console.log(`[Audio Pipeline] Audio is > 20MB (${(audioBuffer.length / (1024 * 1024)).toFixed(1)} MB), uploading via Gemini REST API to bypass disk...`);
             const url = `https://generativelanguage.googleapis.com/upload/v1beta/files?key=${encodeURIComponent(apiKey)}`;
@@ -842,7 +853,7 @@ async function runPhase1WithAudio(audioBuffer, mimeType, clientName, location, a
                     'X-Goog-Upload-Command': 'start, upload, finalize',
                     'X-Goog-Upload-Header-Content-Length': audioBuffer.length.toString(),
                     'X-Goog-Upload-File-Name': `${clientName}_interview_audio_${Date.now()}`,
-                    'Content-Type': mimeType || 'audio/webm'
+                    'Content-Type': effectiveMime
                 },
                 body: audioBuffer
             });
@@ -865,12 +876,12 @@ async function runPhase1WithAudio(audioBuffer, mimeType, clientName, location, a
                 attempts++;
             }
             
-            audioPart = { fileData: { mimeType: data.file.mimeType, fileUri: data.file.uri } };
+            audioPart = { fileData: { mimeType: data.file.mimeType || effectiveMime, fileUri: data.file.uri } };
         } else {
             console.log(`[Audio Pipeline] Audio is ${(audioBuffer.length / 1024).toFixed(1)} KB (<= 20MB), streaming inline base64 to Gemini...`);
             audioPart = {
                 inlineData: {
-                    mimeType: mimeType || 'audio/webm',
+                    mimeType: effectiveMime,
                     data: audioBuffer.toString('base64')
                 }
             };
@@ -878,6 +889,7 @@ async function runPhase1WithAudio(audioBuffer, mimeType, clientName, location, a
 
         // Stage 1: Full Verbatim Audio Transcription (thinkingBudget: 0 saves thinking-token spend)
         console.log(`[Audio Pipeline] Transcribing complete audio recording for ${clientName}...`);
+        reportProgress(50, 'Transcribing LS/CMI recording verbatim...');
         assertWithinDailyGeminiCap('lscmi_transcribe');
         const transcriptionModel = genAI.getGenerativeModel({
             model: getTranscribeModelName(),
@@ -919,6 +931,8 @@ ${additionalNotes && additionalNotes.trim() ? `\nFor context, here is a chronolo
         }
         console.log(`[Audio Pipeline] Transcription complete. Length: ${transcriptText.length} characters.`);
 
+        reportProgress(75, 'Enrolling participant voice profile and generating 158-item LS/CMI guide & draft scoring...');
+
         // Auto-enroll Participant Voice Profile from LS/CMI Audio Recording
         try {
             const pSlug = sanitizeParticipantSlug(clientName);
@@ -938,6 +952,8 @@ ${additionalNotes && additionalNotes.trim() ? `\nFor context, here is a chronolo
         // Stage 2: Comprehensive 158-Question Interview Guide & Draft Scoring Form
         console.log(`[Audio Pipeline] Generating full 158-question Interview Guide and Draft Scoring Form for ${clientName}...`);
         const phase1Output = await runPhase1(transcriptText, clientName, location, additionalNotes, explicitCollateral);
+
+        reportProgress(92, 'Finalizing LS/CMI documents...');
 
         return {
             transcript: transcriptText,
